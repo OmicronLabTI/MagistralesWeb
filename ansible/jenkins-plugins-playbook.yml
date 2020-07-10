@@ -1,5 +1,5 @@
 ---
-- name: Omicron Dev Server
+- name: Install Jenkins plugins
   hosts: all
   become: yes
   tasks:

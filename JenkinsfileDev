@@ -53,6 +53,7 @@ pipeline {
         stage('Sonar Services') {
             steps { 
                 dir ('services/'){
+                    sh 'dotnet --version'
                     /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
                         -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
                         -Dsonar.projectName=LaAcademiaAvon_Back_Net \
