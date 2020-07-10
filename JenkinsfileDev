@@ -20,74 +20,72 @@ pipeline {
 		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
 		SONAR_TOKEN = "";
 	}
-    stages {
-        stages('Build Components') {
-            stage('Build Front') {
-                steps {
-                    echo 'Building Frontend'
-                    dir ('frontend/web/'){
-                        //sh 'npm install'
-                    }
-                }
-            }
-            stage('Build Services') {
-                steps {
-                    echo 'Building ms1'
-                    dir ('services/'){
-                        //sh 'dotnet publish Axity.LaAcademia.Api/Axity.LaAcademia.Api.csproj -c Release -o ../app/'
-                    }
+    stages('Build Components') {
+        stage('Build Front') {
+            steps {
+                echo 'Building Frontend'
+                dir ('frontend/web/'){
+                    //sh 'npm install'
                 }
             }
         }
-		stages('Sonar Analisis') {
-            stage('Sonar Frontend Web') {
-                steps {
-                    dir ('frontend/web/'){
-                        echo 'Project: ${PROJECT_NAME}'
-                        echo 'Deploy: ${DEPLOY_PATTERN}'
-                        /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
-                            -Dsonar.projectKey=LaAcademiaAvon_Front \
-                            -Dsonar.sources=src/ \
-                            -Dsonar.host.url=http://devtools.axity.com/sonar7 \
-                            -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
-                    }
-                }
-            }
-            stage('Sonar Services') {
-                steps { 
-                    dir ('services/'){
-                        /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
-                            -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
-                            -Dsonar.projectName=LaAcademiaAvon_Back_Net \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://devtools.axity.com/sonar7 \
-                            -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
-                    }
+        stage('Build Services') {
+            steps {
+                echo 'Building ms1'
+                dir ('services/'){
+                    //sh 'dotnet publish Axity.LaAcademia.Api/Axity.LaAcademia.Api.csproj -c Release -o ../app/'
                 }
             }
         }
-        stage('Kubernetes Up') {
+    }
+    stages('Sonar Analisis') {
+        stage('Sonar Frontend Web') {
             steps {
-                echo 'Running Kubernetes'
-            }
-        }
-        stage('Database') {
-            steps {
-                dir ('database/'){
-                    echo 'Applying Db changes'
+                dir ('frontend/web/'){
+                    echo 'Project: ${PROJECT_NAME}'
+                    echo 'Deploy: ${DEPLOY_PATTERN}'
+                    /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
+                        -Dsonar.projectKey=LaAcademiaAvon_Front \
+                        -Dsonar.sources=src/ \
+                        -Dsonar.host.url=http://devtools.axity.com/sonar7 \
+                        -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
                 }
             }
         }
-        stage('Testing') {
-            steps {
-                dir ('testing/stress/'){
-                    echo 'Running Stress Testing'
+        stage('Sonar Services') {
+            steps { 
+                dir ('services/'){
+                    /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
+                        -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
+                        -Dsonar.projectName=LaAcademiaAvon_Back_Net \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://devtools.axity.com/sonar7 \
+                        -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
                 }
             }
-            steps {
-                dir ('testing/ui/'){
-                    echo 'Running UI Testing'
-                }
+        }
+    }
+    stage('Kubernetes Up') {
+        steps {
+            echo 'Running Kubernetes'
+        }
+    }
+    stage('Database') {
+        steps {
+            dir ('database/'){
+                echo 'Applying Db changes'
+            }
+        }
+    }
+    stage('Testing') {
+        steps {
+            dir ('testing/stress/'){
+                echo 'Running Stress Testing'
+            }
+        }
+        steps {
+            dir ('testing/ui/'){
+                echo 'Running UI Testing'
             }
         }
     }
