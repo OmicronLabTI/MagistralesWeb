@@ -1,0 +1,24 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'Omicron' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for Omicron
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'Moya/RxSwift', '~> 14.0'
+  pod 'ObjectMapper'
+  pod 'lottie-ios'
+
+  target 'OmicronTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'OmicronUITests' do
+    # Pods for testing
+  end
+
+end

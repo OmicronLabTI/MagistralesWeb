@@ -1,0 +1,24 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 64px);
+
+  mat-card {
+    max-height: 400px;
+    max-width: 400px;
+    margin: auto;
+
+    mat-card-content {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
