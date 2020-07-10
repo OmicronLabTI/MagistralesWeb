@@ -40,8 +40,8 @@ pipeline {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    echo 'Project: ${env.PROJECT_NAME}'
-                    echo 'Deploy: ${env.DEPLOY_PATTERN}'
+                    echo "Project: ${PROJECT_NAME}"
+                    echo "Deploy: ${DEPLOY_PATTERN}"
                     /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
                         -Dsonar.projectKey=LaAcademiaAvon_Front \
                         -Dsonar.sources=src/ \
