@@ -1,9 +1,9 @@
 pipeline {
     agent any
-    //tools {
+    tools {
         //maven 'M3'
-        //nodejs 'Node 3'
-    //}
+        nodejs 'NodeJs12'
+    }
     environment
 	{
 		//Functions
@@ -25,7 +25,8 @@ pipeline {
             steps {
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
-                    //sh 'npm install'
+                    sh 'node --version'
+                    sh 'npm --version'
                 }
             }
         }
@@ -33,6 +34,7 @@ pipeline {
             steps {
                 echo 'Building ms1'
                 dir ('services/'){
+                    sh 'dotnet --version'
                     //sh 'dotnet publish Axity.LaAcademia.Api/Axity.LaAcademia.Api.csproj -c Release -o ../app/'
                 }
             }
@@ -53,7 +55,6 @@ pipeline {
         stage('Sonar Services') {
             steps { 
                 dir ('services/'){
-                    sh 'dotnet --version'
                     /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
                         -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
                         -Dsonar.projectName=LaAcademiaAvon_Back_Net \
