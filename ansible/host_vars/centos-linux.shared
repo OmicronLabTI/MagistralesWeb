@@ -1,0 +1,6 @@
+# Connection variables for aximxomicronlab
+ansible_host: 10.211.55.5
+ansible_port: 22
+ansible_user: omicron
+ansible_become: true
+ansible_sudo_pass: B#&2mwkjZ&GE

@@ -1,0 +1,135 @@
+pipeline {
+    agent any
+    tools {
+        //maven 'M3'
+        //nodejs 'Node 3'
+    }
+    environment
+	{
+		//Functions
+		DEPLOY_PATTERN = NewPatterName()
+
+		// Paths to programas 
+		//SONARQUBE_PATH = "H:\\Tools\\SonnarQube\\SonarScanner.MSBuild.exe";
+		
+		// Projtect configurations
+		PROJECT_NAME = "20_OMICRONLAB_App-iOS-Formulas"
+
+		// General configurations		
+		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
+		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
+		SONAR_TOKEN = "";
+	}
+    stages {
+        stage('Build Components') {
+            stage('Build Front') {
+                steps {
+                    echo 'Building Frontend'
+                    dir ('frontend/web/'){
+                        //sh 'npm install'
+                    }
+                }
+            }
+            stage('Build Services') {
+                steps {
+                    echo 'Building ms1'
+                    dir ('services/'){
+                        //sh 'dotnet publish Axity.LaAcademia.Api/Axity.LaAcademia.Api.csproj -c Release -o ../app/'
+                    }
+                }
+            }
+        }
+		stage('Sonar Analisis') {
+            stage('Sonar Frontend Web') {
+                steps {
+                    dir ('frontend/web/'){
+                        echo 'Project: ${PROJECT_NAME}'
+                        echo 'Deploy: ${DEPLOY_PATTERN}'
+                        /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
+                            -Dsonar.projectKey=LaAcademiaAvon_Front \
+                            -Dsonar.sources=src/ \
+                            -Dsonar.host.url=http://devtools.axity.com/sonar7 \
+                            -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
+                    }
+                }
+            }
+            stage('Sonar Services') {
+                steps { 
+                    dir ('services/'){
+                        /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
+                            -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
+                            -Dsonar.projectName=LaAcademiaAvon_Back_Net \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://devtools.axity.com/sonar7 \
+                            -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
+                    }
+                }
+            }
+        }
+        stage('Kubernetes Up') {
+            steps {
+                echo 'Running Kubernetes'
+            }
+        }
+        stage('Database') {
+            steps {
+                dir ('database/'){
+                    echo 'Applying Db changes'
+                }
+            }
+        }
+        stage('Testing') {
+            steps {
+                dir ('testing/stress/'){
+                    echo 'Running Stress Testing'
+                }
+            }
+            steps {
+                dir ('testing/ui/'){
+                    echo 'Running UI Testing'
+                }
+            }
+        }
+    }
+    post { 
+        always { 
+            deleteDir()
+            //SlackMsg(currentBuild.currentResult) 
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
+
+def NewPatterName()
+{
+	return "_" + new Date().format( 'ddMMyyyy' ) + "_" + "${env.BUILD_NUMBER}";
+}
+
+def SlackMsg(String buildResult) 
+{
+	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  ". For more details got to ${env.JOB_URL}"
+	
+	if(buildResult == "SUCCESS")
+	{
+		slackSend color: "good", message: message
+	}
+	else if(buildResult == "UNSTABLE")
+	{ 
+		slackSend color: "warning", message: message
+	}
+	else
+	{
+		slackSend color: "danger", message: message
+	}
+}

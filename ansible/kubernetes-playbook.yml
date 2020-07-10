@@ -1,0 +1,4 @@
+---
+- import_playbook: kubernetes/prerequisites.yml
+- import_playbook: kubernetes/setting_up_nodes.yml
+- import_playbook: kubernetes/configure_master_node.yml
