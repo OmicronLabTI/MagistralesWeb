@@ -21,7 +21,7 @@ pipeline {
 		SONAR_TOKEN = "";
 	}
     stages {
-        stage('Build Components') {
+        stages('Build Components') {
             stage('Build Front') {
                 steps {
                     echo 'Building Frontend'
@@ -39,7 +39,7 @@ pipeline {
                 }
             }
         }
-		stage('Sonar Analisis') {
+		stages('Sonar Analisis') {
             stage('Sonar Frontend Web') {
                 steps {
                     dir ('frontend/web/'){
