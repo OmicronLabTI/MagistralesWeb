@@ -65,7 +65,7 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'kubectl get pods'
+                sh 'sudo kubectl get pods'
             }
         }
         stage('Database') {
