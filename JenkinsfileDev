@@ -1,9 +1,9 @@
 pipeline {
     agent any
-    tools {
+    //tools {
         //maven 'M3'
         //nodejs 'Node 3'
-    }
+    //}
     environment
 	{
 		//Functions
@@ -74,12 +74,14 @@ pipeline {
                 }
             }
         }
-        stage('Testing') {
+        stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
                     echo 'Running Stress Testing'
                 }
             }
+        }
+        stage('Testing UI') {
             steps {
                 dir ('testing/ui/'){
                     echo 'Running UI Testing'
