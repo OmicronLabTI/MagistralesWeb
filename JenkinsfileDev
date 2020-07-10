@@ -20,7 +20,7 @@ pipeline {
 		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
 		SONAR_TOKEN = "";
 	}
-    stages('Build Components') {
+    stages {
         stage('Build Front') {
             steps {
                 echo 'Building Frontend'
@@ -37,8 +37,6 @@ pipeline {
                 }
             }
         }
-    }
-    stages('Sonar Analisis') {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
@@ -64,28 +62,28 @@ pipeline {
                 }
             }
         }
-    }
-    stage('Kubernetes Up') {
-        steps {
-            echo 'Running Kubernetes'
-        }
-    }
-    stage('Database') {
-        steps {
-            dir ('database/'){
-                echo 'Applying Db changes'
+        stage('Kubernetes Up') {
+            steps {
+                echo 'Running Kubernetes'
             }
         }
-    }
-    stage('Testing') {
-        steps {
-            dir ('testing/stress/'){
-                echo 'Running Stress Testing'
+        stage('Database') {
+            steps {
+                dir ('database/'){
+                    echo 'Applying Db changes'
+                }
             }
         }
-        steps {
-            dir ('testing/ui/'){
-                echo 'Running UI Testing'
+        stage('Testing') {
+            steps {
+                dir ('testing/stress/'){
+                    echo 'Running Stress Testing'
+                }
+            }
+            steps {
+                dir ('testing/ui/'){
+                    echo 'Running UI Testing'
+                }
             }
         }
     }
