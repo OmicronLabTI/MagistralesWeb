@@ -1,0 +1,4 @@
+---
+- import_playbook: jenkins-playbook.yml
+- import_playbook: kubernetes-playbook.yml
+- import_playbook: utils.yml

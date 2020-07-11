@@ -1,0 +1,52 @@
+---
+- name: Install Utils
+  hosts: all
+  become: yes
+  tasks:
+ 
+    - name: Add Microsoft Package Repository
+      yum:
+        name: https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+        state: present
+
+    - name: Install NET Core SDK
+      yum:
+        name: dotnet-sdk-3.1
+        state: present
+    
+    - name: Install ASP.NET Core Runtime
+      yum:
+        name: aspnetcore-runtime-3.1
+        state: present
+    
+    - name: Creates sonar-scanner-ms directory
+      file:
+        path: /opt/sonar-scanner-ms
+        state: directory
+
+    - name: Install SonarScanner MS
+      unarchive:
+        src: https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/4.10.0.19059/sonar-scanner-msbuild-4.10.0.19059-netcoreapp2.0.zip
+        dest: /opt/sonar-scanner-ms
+        remote_src: yes
+
+    - name: Install SonarScanner
+      unarchive:
+        src: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
+        dest: /opt/
+        remote_src: yes
+    
+    - name: Move sonar-scanner folder
+      command: mv /opt/sonar-scanner-4.4.0.2170-linux/ /opt/sonar-scanner/
+
+    - name: Creates liquibase directory
+      file:
+        path: /opt/liquibase
+        state: directory
+
+    - name: Install Liquibase
+      unarchive:
+        src: https://github.com/liquibase/liquibase/releases/download/v3.10.1/liquibase-3.10.1.tar.gz
+        dest: /opt/liquibase
+        remote_src: yes
+    
