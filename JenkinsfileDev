@@ -23,6 +23,8 @@ pipeline {
     stages {
         stage('Build Front') {
             steps {
+                echo "Project: ${PROJECT_NAME}"
+                echo "Deploy: ${DEPLOY_PATTERN}"
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
                     sh 'node --version'
@@ -42,8 +44,7 @@ pipeline {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    echo "Project: ${PROJECT_NAME}"
-                    echo "Deploy: ${DEPLOY_PATTERN}"
+                    sh '/opt/sonar-scanner/bin/sonar-scanner --version'
                     /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
                         -Dsonar.projectKey=LaAcademiaAvon_Front \
                         -Dsonar.sources=src/ \
@@ -55,6 +56,7 @@ pipeline {
         stage('Sonar Services') {
             steps { 
                 dir ('services/'){
+                    sh 'dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll --version'
                     /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
                         -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
                         -Dsonar.projectName=LaAcademiaAvon_Back_Net \
