@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'OmicronDev'
+    }
     tools {
         //maven 'M3'
         nodejs 'NodeJs12'
