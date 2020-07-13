@@ -16,6 +16,7 @@ pipeline {
 		
 		// Projtect configurations
         COMPANY = "Omicron"
+        COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
 
 		// General configurations		
@@ -30,7 +31,7 @@ pipeline {
                 dir ('frontend/web/'){
                     sh 'npm install'
 					sh 'npm run build --prod'
-					sh "docker build -f 'Dockerfile' -t ${COMPANY}-web-repository ."
+					sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."
                 }
             }
         }
@@ -39,11 +40,11 @@ pipeline {
                 echo 'Building Fedetared Services'
                 dir ('services/apimanager/'){
                     sh 'mvn clean package'
-                    sh "docker build -f 'Dockerfile' -t ${COMPANY}-apimanager-repository ."
+                    sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-apimanager-repository ."
                 }
                 dir ('services/oauthserver/'){
                     sh 'mvn clean package'
-                    sh "docker build -f 'Dockerfile' -t ${COMPANY}-oauthserver-repository ."
+                    sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-oauthserver-repository ."
                 }
             }
         }
