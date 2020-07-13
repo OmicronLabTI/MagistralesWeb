@@ -106,6 +106,7 @@ pipeline {
             steps {
                 echo 'Running Kubernetes'
                 sh 'sudo kubectl delete -f deploy_dev.yaml'
+                sh 'docker prune -a'
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
             }
         }
