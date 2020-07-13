@@ -10,6 +10,14 @@
         url_username: admin
         url_password: admin123
         url: http://{{ ansible_host }}:8080
+    
+    - name: Install Slack 
+      jenkins_plugin:
+        name: slack
+        state: latest
+        url_username: admin
+        url_password: admin123
+        url: http://{{ ansible_host }}:8080
 
     - name: Restart Jenkins
       service:

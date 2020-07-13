@@ -1,9 +1,10 @@
 pipeline {
-    agent {
-        label 'OmicronDev'
-    }
+    agent any
+    //agent {
+      //  label 'OmicronDev'
+    //}
     tools {
-        //maven 'M3'
+        maven 'M3'
         nodejs 'NodeJs12'
     }
     environment
@@ -15,26 +16,39 @@ pipeline {
 		//SONARQUBE_PATH = "H:\\Tools\\SonnarQube\\SonarScanner.MSBuild.exe";
 		
 		// Projtect configurations
-		PROJECT_NAME = "20_OMICRONLAB_App-iOS-Formulas"
+        COMPANY = "Omicron"
+		PROJECT_NAME = "AppiOSFormulas"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
 		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
-		SONAR_TOKEN = "";
+		SONAR_TOKEN = "d54f4f0b0ecc98ca94c88640833783fe52216269";
 	}
     stages {
-        stage('Build Front') {
+        stage('Build Front Web') {
             steps {
-                echo "Project: ${PROJECT_NAME}"
-                echo "Deploy: ${DEPLOY_PATTERN}"
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
-                    sh 'node --version'
-                    sh 'npm --version'
+                    sh 'npm install'
+					sh 'npm run build --prod'
+					sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-web-repository ."
                 }
             }
         }
-        stage('Build Services') {
+        stage('Build Federated Services') {
+            steps {
+                echo 'Building Fedetared Services'
+                dir ('services/apimanager/'){
+                    sh 'mvn clean package'
+                    sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-apimanager-repository ."
+                }
+                dir ('services/oauthserver/'){
+                    sh 'mvn clean package'
+                    sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-oauthserver-repository ."
+                }
+            }
+        }
+        stage('Build Micro Services') {
             steps {
                 echo 'Building ms1'
                 dir ('services/'){
@@ -46,16 +60,36 @@ pipeline {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    sh '/opt/sonar-scanner/bin/sonar-scanner --version'
-                    /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
-                        -Dsonar.projectKey=LaAcademiaAvon_Front \
+                    //sh '/opt/sonar-scanner/bin/sonar-scanner --version'
+                    sh "/opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
                         -Dsonar.sources=src/ \
-                        -Dsonar.host.url=http://devtools.axity.com/sonar7 \
-                        -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
+                        -Dsonar.host.url=${SONAR_SERVER} \
+                        -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
-        stage('Sonar Services') {
+        stage('Sonar Federated Services') {
+            steps { 
+                dir ('services/apimanager/'){
+                    sh "mvn sonar:sonar \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
+                        -Dsonar.sources=src/main \
+                        -Dsonar.host.url=${SONAR_SERVER} \
+                        -Dsonar.login=${SONAR_TOKEN}"
+                }
+                dir ('services/oauthserver/'){
+                    sh "mvn sonar:sonar \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
+                        -Dsonar.sources=src/main \
+                        -Dsonar.host.url=${SONAR_SERVER} \
+                        -Dsonar.login=${SONAR_TOKEN}"
+                }
+            }
+        }
+        stage('Sonar Micro Services') {
             steps { 
                 dir ('services/'){
                     //sh 'dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll --version'
@@ -71,7 +105,8 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl get pods'
+                sh 'sudo kubectl delete -f deploy_dev.yaml'
+                sh 'sudo kubectl apply -f deploy_dev.yaml'
             }
         }
         stage('Database') {
