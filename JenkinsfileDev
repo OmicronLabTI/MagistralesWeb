@@ -31,7 +31,7 @@ pipeline {
                 dir ('frontend/web/'){
                     sh 'npm install'
 					sh 'npm run build --prod'
-					sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-web-repository ."
+					sh "docker build -f 'Dockerfile' -t ${COMPANY}-web-repository ."
                 }
             }
         }
@@ -40,11 +40,11 @@ pipeline {
                 echo 'Building Fedetared Services'
                 dir ('services/apimanager/'){
                     sh 'mvn clean package'
-                    sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-apimanager-repository ."
+                    sh "docker build -f 'Dockerfile' -t ${COMPANY}-apimanager-repository ."
                 }
                 dir ('services/oauthserver/'){
                     sh 'mvn clean package'
-                    sh "sudo docker build -f 'Dockerfile' -t ${COMPANY}-oauthserver-repository ."
+                    sh "docker build -f 'Dockerfile' -t ${COMPANY}-oauthserver-repository ."
                 }
             }
         }
