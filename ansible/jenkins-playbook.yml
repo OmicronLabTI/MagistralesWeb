@@ -3,11 +3,18 @@
   hosts: all
   become: yes
   tasks:
-    - name: Install yum
+
+    - name: Install openjdk8
       yum:
         name:
           - wget
           - java-1.8.0-openjdk
+    
+    - name: Install openjdk8 devel
+      yum:
+        name:
+          - wget
+          - java-1.8.0-openjdk-devel
  
     - name: Download jenkins.repo
       get_url:

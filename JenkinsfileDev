@@ -31,7 +31,10 @@ pipeline {
                 dir ('frontend/web/'){
                     sh 'npm install'
 					sh 'npm run build --prod'
-					sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."    
+                    }
                 }
             }
         }
@@ -40,6 +43,7 @@ pipeline {
                 echo 'Building Fedetared Services'
                 dir ('services/apimanager/'){
                     sh 'mvn clean package'
+                    sh 'docker login -u arquitecturaaxityswd -p Ax1ty&2019' 
                     sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-apimanager-repository ."
                 }
                 dir ('services/oauthserver/'){
