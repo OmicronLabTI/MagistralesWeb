@@ -4,27 +4,11 @@
   become: yes
   tasks:
 
-    - name: Download Java JRE
-      get_url:
-        url: https://download.oracle.com/otn/java/jdk/8u251-b08/3d5a2bb8f8d4428bbe94aed7ec7ae784/jre-8u251-linux-x64.rpm
-        dest: /tmp/jre-8u251-linux-x64.rpm
-        headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie; --no-check-certificate'
-
-    - name: install Java JRE rpm from a local file
+    - name: Install yum
       yum:
-        name: /tmp/jre-8u251-linux-x64.rpm
-        state: present
-
-    - name: Download Java JDK
-      get_url:
-        url: https://download.oracle.com/otn/java/jdk/8u251-b08/3d5a2bb8f8d4428bbe94aed7ec7ae784/jdk-8u251-linux-x64.rpm
-        dest: /tmp/jdk-8u251-linux-x64.rpm
-        headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie; --no-check-certificate'
-
-    - name: Install Java JDK rpm from a local file
-      yum:
-        name: /tmp/jdk-8u251-linux-x64.rpm
-        state: present
+        name:
+          - wget
+          - java-1.8.0-openjdk-devel
  
     - name: Add Microsoft Package Repository
       yum:
