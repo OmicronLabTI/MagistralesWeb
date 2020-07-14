@@ -49,9 +49,12 @@
         permanent: yes
         immediate: yes
 
-    - name: Copying required files
+    - name: Config permissions
       shell: |
-       sudo echo 'jenkins ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
+       ssh-keygen -t rsa -N '' -C "Jenkins agent key"
+       cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+       chmod 600 ~/.ssh/authorized_keys
+       sudo echo '{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
     
     - name: Install Git
       yum:
