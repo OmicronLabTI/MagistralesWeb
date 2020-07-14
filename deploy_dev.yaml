@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: Omicron-web-repository
+        image: omicron-web-repository
         env:
         - name: TZ
           value: America/Mexico_City
@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
       - name: apimanager
-        image: Omicron-apimanager-repository
+        image: omicron-apimanager-repository
         env:
         - name: TZ
           value: America/Mexico_City
@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
       - name: oauthserver
-        image: Omicron-oauthserver-repository
+        image: omicron-oauthserver-repository
         env:
         - name: TZ
           value: America/Mexico_City
