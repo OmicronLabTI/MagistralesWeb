@@ -43,7 +43,6 @@ pipeline {
                 echo 'Building Fedetared Services'
                 dir ('services/apimanager/'){
                     sh 'mvn clean package'
-                    sh 'docker login -u arquitecturaaxityswd -p Ax1ty&2019' 
                     sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-apimanager-repository ."
                 }
                 dir ('services/oauthserver/'){
