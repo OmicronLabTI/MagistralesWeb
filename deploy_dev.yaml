@@ -17,6 +17,7 @@ spec:
       containers:
       - name: web
         image: omicron-web-repository
+        imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: America/Mexico_City
@@ -57,6 +58,7 @@ spec:
       containers:
       - name: apimanager
         image: omicron-apimanager-repository
+        imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: America/Mexico_City
@@ -97,6 +99,7 @@ spec:
       containers:
       - name: oauthserver
         image: omicron-oauthserver-repository
+        imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: America/Mexico_City
