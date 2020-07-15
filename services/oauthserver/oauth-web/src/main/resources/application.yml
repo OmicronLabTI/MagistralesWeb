@@ -20,7 +20,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${APIMANAGER_SVC_SERVICE_HOST}:${APIMANAGER_SVC_SERVICE_PORT}/eureka
+      defaultZone: http://192.168.0.101:${APIMANAGER_SVC_SERVICE_PORT}/eureka
   instance:
     leaseRenewalIntervalInSeconds: 5   
     preferIpAddress: true
