@@ -71,7 +71,7 @@ pipeline {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    sh 'ng test --code-coverage'
+                    sh 'npm run test-ci'
                     sh '/opt/sonar-scanner/bin/sonar-scanner \
                         -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
                         -Dsonar.sources=src/ \
