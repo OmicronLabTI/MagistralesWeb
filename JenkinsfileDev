@@ -15,6 +15,7 @@ pipeline {
         COMPANY = "Omicron"
         COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
+        SLACK_CHANNEL = "#omicron_notifications"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
@@ -171,14 +172,14 @@ def SlackMsg(String buildResult)
 	
 	if(buildResult == "SUCCESS")
 	{
-		slackSend color: "good", message: message
+		slackSend channel: "${SLACK_CHANNEL}", color: "good", message: message
 	}
 	else if(buildResult == "UNSTABLE")
 	{ 
-		slackSend color: "warning", message: message
+		slackSend channel: "${SLACK_CHANNEL}", color: "warning", message: message
 	}
 	else
 	{
-		slackSend color: "danger", message: message
+		slackSend channel: "${SLACK_CHANNEL}", color: "danger", message: message
 	}
 }
