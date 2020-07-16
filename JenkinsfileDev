@@ -169,7 +169,7 @@ def NewPatterName()
 
 def SlackMsg(String buildResult) 
 {
-	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  ". For more details got to ${env.JOB_URL}"
+	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  " launched by ${env.CHANGE_AUTHOR_DISPLAY_NAME}. For more details got to ${env.JOB_URL}"
 	
 	if(buildResult == "SUCCESS")
 	{
