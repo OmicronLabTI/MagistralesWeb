@@ -55,6 +55,10 @@
         dest: /opt/sonar-scanner-ms
         remote_src: yes
 
+    - name: Config permissions SonarScanner MS
+      shell: |
+        chmod 777 -R /opt/sonar-scanner-ms/
+
     - name: Install SonarScanner
       unarchive:
         src: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
@@ -64,10 +68,9 @@
     - name: Move sonar-scanner folder
       command: mv /opt/sonar-scanner-4.4.0.2170-linux/ /opt/sonar-scanner/
     
-    - name: Config permissions
+    - name: Config permissions SonarScanner
       shell: |
        chmod 777 -R /opt/sonar-scanner/
-       chmod 777 -R /opt/sonar-scanner-ms/
 
     - name: Creates liquibase directory
       file:
