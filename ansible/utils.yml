@@ -3,7 +3,11 @@
   hosts: all
   become: yes
   tasks:
- 
+    - name: Creating a repository file for Google Chrome for Linux.
+      file:
+        path: /etc/yum.repos.d/google-chrome.repo
+        state: touch
+
     - name: Adding repository for Google Chrome for Linux.
       blockinfile:
         path: /etc/yum.repos.d/google-chrome.repo
