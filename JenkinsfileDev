@@ -142,6 +142,7 @@ pipeline {
     post { 
         always { 
             deleteDir()
+            echo 'Slack'
             SlackMsg(currentBuild.currentResult) 
         }
         success {
