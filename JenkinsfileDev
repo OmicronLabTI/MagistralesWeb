@@ -10,9 +10,6 @@ pipeline {
 	{
 		//Functions
 		DEPLOY_PATTERN = NewPatterName()
-
-		// Paths to programas 
-		//SONARQUBE_PATH = "H:\\Tools\\SonnarQube\\SonarScanner.MSBuild.exe";
 		
 		// Projtect configurations
         COMPANY = "Omicron"
