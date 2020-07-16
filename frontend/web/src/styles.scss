@@ -38,7 +38,7 @@ body {
 }
 
 /* Bootstrap 4 Fix for Angular Material */
-mat,
+[mat],
 ::after,
 ::before {
   box-sizing: unset;
