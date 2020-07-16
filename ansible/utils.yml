@@ -4,6 +4,22 @@
   become: yes
   tasks:
  
+    - name: Adding repository for Google Chrome for Linux.
+      blockinfile:
+      path: /etc/yum.repos.d/google-chrome.repo
+      block: |
+        [google-chrome]
+        name=google-chrome
+        baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+        enabled=1
+        gpgcheck=1
+        gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+
+    - name: Install Google Chrome
+      yum:
+        name: google-chrome-stable
+        state: present
+
     - name: Add Microsoft Package Repository
       yum:
         name: https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
