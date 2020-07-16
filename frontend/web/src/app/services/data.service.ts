@@ -27,7 +27,7 @@ export class DataService {
   }
 
   getToken(): string {
-    return sessionStorage.getItem('token')
+    return sessionStorage.getItem('token');
   }
 
   setToken(token: string) {

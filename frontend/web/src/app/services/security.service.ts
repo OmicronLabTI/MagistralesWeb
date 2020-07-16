@@ -12,9 +12,9 @@ import { ConsumeService } from './consume.service';
 })
 export class SecurityService {
 
-  constructor(private _http: HttpClient, private _dataService: DataService, private _consumeService: ConsumeService) { }
+  constructor(private http: HttpClient, private dataService: DataService, private consumeService: ConsumeService) { }
 
   login(req: ILoginReq): Observable<ILoginRes> {
-    return this._consumeService.httpPost(Endpoints.security.login, req);
+    return this.consumeService.httpPost(Endpoints.security.login, req);
   }
 }

@@ -8,36 +8,41 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
 
-  constructor(private _fb: FormBuilder, private _securityService: SecurityService, private _dataService: DataService, private _router: Router) {
-    this.formLogin = this._fb.group({
+  constructor(
+    private fb: FormBuilder,
+    private securityService: SecurityService,
+    private dataService: DataService,
+    private router: Router
+  ) {
+    this.formLogin = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
 
     // TEST ONLY
-    this.formLogin.get('username').setValue('eve.holt@reqres.in')
-    this.formLogin.get('password').setValue('cityslicka')
+    this.formLogin.get('username').setValue('eve.holt@reqres.in');
+    this.formLogin.get('password').setValue('cityslicka');
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   login() {
-    let data = <ILoginReq>{
+    const data = {
       email: this.formLogin.get('username').value,
-      password: this.formLogin.get('password').value
-    }
+      password: this.formLogin.get('password').value,
+    } as ILoginReq;
 
-    this._securityService.login(data).subscribe(res => {
-      this._dataService.setToken(res.token);
-      this._router.navigate(['home']);
+    this.securityService.login(data).subscribe(res => {
+      this.dataService.setToken(res.token);
+      this.router.navigate(['home']);
     }, err => {
-      this._dataService.setGeneralNotificationMessage(err);
-    });
+      this.dataService.setGeneralNotificationMessage(err);
+    }
+    );
   }
 }

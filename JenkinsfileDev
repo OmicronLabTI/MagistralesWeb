@@ -71,11 +71,12 @@ pipeline {
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    sh "/opt/sonar-scanner/bin/sonar-scanner \
+                    sh 'ng test --code-coverage'
+                    sh '/opt/sonar-scanner/bin/sonar-scanner \
                         -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
                         -Dsonar.sources=src/ \
                         -Dsonar.host.url=${SONAR_SERVER} \
-                        -Dsonar.login=${SONAR_TOKEN}"
+                        -Dsonar.login=${SONAR_TOKEN}'
                 }
             }
         }

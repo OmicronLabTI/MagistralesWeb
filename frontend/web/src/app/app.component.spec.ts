@@ -1,12 +1,14 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { MATERIAL_COMPONENTS } from './app.material';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        RouterTestingModule,
+        MATERIAL_COMPONENTS
       ],
       declarations: [
         AppComponent
@@ -30,6 +32,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('omicron app is running!');
+    expect(compiled.querySelector('span').textContent).toContain('omicron');
   });
 });
