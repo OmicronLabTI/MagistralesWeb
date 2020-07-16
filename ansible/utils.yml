@@ -43,6 +43,11 @@
     
     - name: Move sonar-scanner folder
       command: mv /opt/sonar-scanner-4.4.0.2170-linux/ /opt/sonar-scanner/
+    
+    - name: Config permissions
+      shell: |
+       chmod 777 -R /opt/sonar-scanner/
+       chmod 777 -R /opt/sonar-scanner-ms/
 
     - name: Creates liquibase directory
       file:
