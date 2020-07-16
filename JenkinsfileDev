@@ -15,7 +15,7 @@ pipeline {
         COMPANY = "Omicron"
         COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
-        SLACK_CHANNEL = "#omicron_notifications"
+        SLACK_CHANNEL = "#omicron_team"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
