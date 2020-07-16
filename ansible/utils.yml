@@ -11,6 +11,11 @@
 
     - name: Install NET Core SDK
       yum:
+        name: dotnet-sdk-2.2
+        state: present
+    
+    - name: Install NET Core SDK
+      yum:
         name: dotnet-sdk-3.1
         state: present
     
