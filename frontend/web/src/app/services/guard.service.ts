@@ -7,15 +7,15 @@ import { DataService } from './data.service';
 })
 export class GuardService implements CanActivate {
 
-  constructor(private _dataService: DataService, private _router: Router) {
+  constructor(private dataService: DataService, private router: Router) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this._dataService.userIsAuthenticated()) {
+    if (this.dataService.userIsAuthenticated()) {
       return true;
     }
 
-    this._router.navigate(['login']);
+    this.router.navigate(['login']);
     return false;
   }
 }
