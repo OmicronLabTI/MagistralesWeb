@@ -120,3 +120,41 @@ spec:
     - 192.168.0.101
   selector:
     app: oauthserver 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogos-deployment
+  labels:
+    app: catalogos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogos
+  template:
+    metadata:
+      labels:
+        app: catalogos
+    spec:
+      containers:
+      - name: catalogos
+        image: omicron-catalogos-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        ports:
+        - containerPort: 9010
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogos-svc
+spec:
+  type: NodePort
+  ports:
+  - port: 9010
+    protocol: TCP
+  selector:
+    app: catalogos 

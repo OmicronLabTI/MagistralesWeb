@@ -58,18 +58,21 @@ pipeline {
             }
         }
         stage('Build Micro Services') {
+            
             steps {
                 echo 'Building ms1'
-                dir ('services/'){
-                    sh 'dotnet --version'
-                    //sh 'dotnet publish Axity.LaAcademia.Api/Axity.LaAcademia.Api.csproj -c Release -o ../app/'
+                dir ('services/catalogos-service/'){
+                    sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o ../app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-catalogos-repository ."
+                    }
                 }
             }
         }
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
-                    //sh '/opt/sonar-scanner/bin/sonar-scanner --version'
                     sh "/opt/sonar-scanner/bin/sonar-scanner \
                         -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
                         -Dsonar.sources=src/ \
@@ -100,14 +103,12 @@ pipeline {
         }
         stage('Sonar Micro Services') {
             steps { 
-                dir ('services/'){
-                    //sh 'dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll --version'
-                    /*sh '/opt/sonar-runner-2.4/bin/sonar-runner \
-                        -Dsonar.projectKey=LaAcademiaAvon_Back_Net \
-                        -Dsonar.projectName=LaAcademiaAvon_Back_Net \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://devtools.axity.com/sonar7 \
-                        -Dsonar.login=e7a8085ab0f60254c49a1a9296e1cc4be0d99c73'*/
+                dir ('services/catalogos-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_catalogos_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Catalogos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs'"
+                    sh 'dotnet build Omicron.Catalogos.Microservice.sln'
+					sh 'dotnet test Omicron.Catalogos.Test/Omicron.Catalogos.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+                    sh 'dotnet build-server shutdown'
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
             }
         }
