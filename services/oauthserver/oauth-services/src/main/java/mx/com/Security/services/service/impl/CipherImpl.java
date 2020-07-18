@@ -17,15 +17,16 @@ public class CipherImpl implements ICipher {
     @Override
     public String createSHA(String input) {
 
-        MessageDigest digest = null;
+        MessageDigest digest;
+        byte[] encodedhash = new byte[0];
+
         try {
             digest = MessageDigest.getInstance("SHA-256");
+            encodedhash = digest.digest(
+                    input.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             LOG.error("Error al obtener HASH");
         }
-        byte[] encodedhash = digest.digest(
-                input.getBytes(StandardCharsets.UTF_8));
-
         return bytesToHex(encodedhash);
     }
 

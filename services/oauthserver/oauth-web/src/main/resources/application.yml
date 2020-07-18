@@ -1,12 +1,19 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost;databaseName=securitydb
+    #url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     username: sa
-    password: Axity&2019Arq
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-  jpa:
-    database-platform: org.hibernate.dialect.SQLServer2012Dialect
-    show-sql: true
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: always
+  #datasource:
+    #url: jdbc:sqlserver://localhost;databaseName=securitydb
+    #username: sa
+    #password: Axity&2019Arq
+    #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  #jpa:
+    #database-platform: org.hibernate.dialect.SQLServer2012Dialect
+    #show-sql: true
   application:
     name: oauth-service
   profiles:

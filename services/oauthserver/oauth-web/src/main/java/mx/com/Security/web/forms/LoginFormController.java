@@ -37,6 +37,7 @@ public class LoginFormController {
         String token = iOauthFacade.authorize(loginRequestTO).getAccess_token();
 
         Cookie tokenCookie = new Cookie("token", token);
+        tokenCookie.setHttpOnly(true);
         tokenCookie.setPath("/");
         response.addCookie(tokenCookie);
         response.setHeader("Location",loginRequestTO.getRedirectUri());

@@ -1,5 +1,9 @@
 package mx.com.Security.services;
 
+import mx.com.Security.services.facade.IOauthFacade;
+import mx.com.Security.services.service.IAuthService;
+import mx.com.Security.services.service.ICipher;
+import mx.com.Security.services.service.ITokenService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,5 +22,17 @@ public abstract class BaseTest {
 
     @Autowired
     public TestEntityManager entityManager;
+
+    @Autowired
+    public IAuthService authService;
+
+    @Autowired
+    public ITokenService tokenService;
+
+    @Autowired
+    public ICipher cipher;
+
+    @Autowired
+    public IOauthFacade oauthFacade;
 
 }
