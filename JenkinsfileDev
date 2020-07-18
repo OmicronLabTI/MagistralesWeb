@@ -120,7 +120,8 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl delete -f deploy_dev.yaml'
+                sh 'sudo kubectl delete --all deployments'
+                sh 'sudo kubectl delete --all services'
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
             }
         }
