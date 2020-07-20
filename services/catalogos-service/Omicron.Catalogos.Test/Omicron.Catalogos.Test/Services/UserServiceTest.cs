@@ -78,5 +78,23 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
             Assert.True(result != null);
             Assert.True(result.FirstName == "Jorge");
         }
+
+        /// <summary>
+        /// test the insert.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task InsertUser()
+        {
+            // Arrange
+            var user = this.GetUserDto();
+
+            // Act
+            var result = await this.userServices.InsertUser(user);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result);
+        }
     }
 }
