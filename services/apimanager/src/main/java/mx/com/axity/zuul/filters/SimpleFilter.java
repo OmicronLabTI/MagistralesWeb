@@ -38,6 +38,10 @@ public class SimpleFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
 
+        if(request.getRequestURI().contains("/api/oauth/oauthrs")) {
+            return null;
+        }
+
         log.info("Headers Authorization: " + request.getHeader("Authorization"));
         log.info("Headers User: " + request.getHeader("User"));
         log.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()));
