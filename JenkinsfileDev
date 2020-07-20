@@ -21,6 +21,10 @@ pipeline {
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
 		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
 		SONAR_TOKEN = "d54f4f0b0ecc98ca94c88640833783fe52216269";
+        COMMITER_EMAIL = sh (
+            script: 'git --no-pager show -s --format=\'%ae\'',
+            returnStdout: true
+        ).trim()
 	}
     stages {
         stage('Build Front Web') {
@@ -176,7 +180,7 @@ def NewPatterName()
 
 def SlackMsg(String buildResult) 
 {
-	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  " launched by ${env.GIT_AUTHOR_NAME}. For more details got to ${env.JOB_URL}"
+	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  " launched by ${env.COMMITER_EMAIL}. For more details got to ${env.JOB_URL}"
     echo "${env.BUILD_DISPLAY_NAME}"
 	
 	if(buildResult == "SUCCESS")
