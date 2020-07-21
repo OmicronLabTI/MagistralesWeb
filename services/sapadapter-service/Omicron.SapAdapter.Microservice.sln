@@ -1,0 +1,85 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Api", "Omicron.SapAdapter.Api\Omicron.SapAdapter.Api.csproj", "{7BAE0358-451B-49C8-A034-3AF7EA52AD66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Facade", "Omicron.SapAdapter.Facade\Omicron.SapAdapter.Facade.csproj", "{B3414384-5547-4ADB-986B-2E7E0BAB63D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commons", "Commons", "{897FF6DF-85E4-471E-8646-590A3FB0814B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Dtos", "Omicron.SapAdapter.Dtos\Omicron.SapAdapter.Dtos.csproj", "{0A7E3F3C-BBD2-414C-87CF-4989F3928DB3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.DependencyInjection", "Omicron.SapAdapter.DependencyInjection\Omicron.SapAdapter.DependencyInjection.csproj", "{5A73CF1C-21C7-4E80-BED0-608510BE46C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Services", "Omicron.SapAdapter.Services\Omicron.SapAdapter.Services.csproj", "{99FC9F95-23C9-4338-A5F7-D852B537434E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Entities", "Omicron.SapAdapter.Repository\Omicron.SapAdapter.Entities.csproj", "{8A77B66A-7219-4E28-AA8D-82675034F600}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.Resources", "Omicron.SapAdapter.Resources\Omicron.SapAdapter.Resources.csproj", "{8403357A-857A-4750-B82F-56227CA4D612}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StyleCop", "StyleCop", "{477B78B6-F923-4926-B0A5-857DAACDF679}"
+	ProjectSection(SolutionItems) = preProject
+		StyleCop\stylecop.json = StyleCop\stylecop.json
+		StyleCop\StyleCopeRules.ruleset = StyleCop\StyleCopeRules.ruleset
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapAdapter.DataAccess", "Omicron.SapAdapter.DataAccess\Omicron.SapAdapter.DataAccess.csproj", "{C13D899E-961D-450A-82E5-B2E9AB8E21CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.SapAdapter.Test", "Omicron.SapAdapter.Test\Omicron.SapAdapter.Test\Omicron.SapAdapter.Test.csproj", "{562F2256-E541-4A95-912A-59EF8B155458}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BAE0358-451B-49C8-A034-3AF7EA52AD66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BAE0358-451B-49C8-A034-3AF7EA52AD66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BAE0358-451B-49C8-A034-3AF7EA52AD66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BAE0358-451B-49C8-A034-3AF7EA52AD66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3414384-5547-4ADB-986B-2E7E0BAB63D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3414384-5547-4ADB-986B-2E7E0BAB63D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3414384-5547-4ADB-986B-2E7E0BAB63D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3414384-5547-4ADB-986B-2E7E0BAB63D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A7E3F3C-BBD2-414C-87CF-4989F3928DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A7E3F3C-BBD2-414C-87CF-4989F3928DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A7E3F3C-BBD2-414C-87CF-4989F3928DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A7E3F3C-BBD2-414C-87CF-4989F3928DB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A73CF1C-21C7-4E80-BED0-608510BE46C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A73CF1C-21C7-4E80-BED0-608510BE46C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A73CF1C-21C7-4E80-BED0-608510BE46C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A73CF1C-21C7-4E80-BED0-608510BE46C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99FC9F95-23C9-4338-A5F7-D852B537434E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99FC9F95-23C9-4338-A5F7-D852B537434E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99FC9F95-23C9-4338-A5F7-D852B537434E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99FC9F95-23C9-4338-A5F7-D852B537434E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A77B66A-7219-4E28-AA8D-82675034F600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A77B66A-7219-4E28-AA8D-82675034F600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A77B66A-7219-4E28-AA8D-82675034F600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A77B66A-7219-4E28-AA8D-82675034F600}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8403357A-857A-4750-B82F-56227CA4D612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8403357A-857A-4750-B82F-56227CA4D612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8403357A-857A-4750-B82F-56227CA4D612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8403357A-857A-4750-B82F-56227CA4D612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C13D899E-961D-450A-82E5-B2E9AB8E21CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C13D899E-961D-450A-82E5-B2E9AB8E21CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C13D899E-961D-450A-82E5-B2E9AB8E21CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C13D899E-961D-450A-82E5-B2E9AB8E21CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{562F2256-E541-4A95-912A-59EF8B155458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{562F2256-E541-4A95-912A-59EF8B155458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{562F2256-E541-4A95-912A-59EF8B155458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{562F2256-E541-4A95-912A-59EF8B155458}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5A73CF1C-21C7-4E80-BED0-608510BE46C8} = {897FF6DF-85E4-471E-8646-590A3FB0814B}
+		{8403357A-857A-4750-B82F-56227CA4D612} = {897FF6DF-85E4-471E-8646-590A3FB0814B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49F0DD31-B3ED-4861-8439-8814A4E7D07A}
+	EndGlobalSection
+EndGlobal
