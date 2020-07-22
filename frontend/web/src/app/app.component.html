@@ -1,11 +1,11 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" *ngIf="isLogin">
   <mat-toolbar-row>
     <span>omicron</span>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-progress-bar class="loading-bar" *ngIf="isLoading | async" mode="indeterminate"></mat-progress-bar>
 <router-outlet></router-outlet>
-<mat-toolbar class="footer">
+<mat-toolbar class="footer" *ngIf="isLogin">
   <mat-toolbar-row>
     <span>© {{ now | date: 'yyyy' }} omicron-lab</span>
   </mat-toolbar-row>

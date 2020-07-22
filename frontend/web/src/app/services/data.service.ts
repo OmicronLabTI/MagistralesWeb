@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 })
 export class DataService {
   private isLoading = new Subject<boolean>();
+  private isLogin = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
 
   constructor() { }
@@ -16,6 +17,13 @@ export class DataService {
 
   getIsLoading() {
     return this.isLoading.asObservable();
+  }
+  setIsLogin(isLogin: boolean){
+    this.isLogin.next(isLogin);
+  }
+
+  getIsLogin(){
+    return this.isLogin.asObservable();
   }
 
   getGeneralNotificationMessage() {
@@ -35,6 +43,6 @@ export class DataService {
   }
 
   userIsAuthenticated(): boolean {
-    return sessionStorage.getItem('token') ? true : false;
+    return !!sessionStorage.getItem('token');
   }
 }
