@@ -19,6 +19,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginLabel: UILabel!
     @IBOutlet weak var loginDescriptionLabel: UILabel!
     @IBOutlet weak var loginButtonDescriptionLabel: UILabel!
+    @IBOutlet weak var userLabel: UILabel!
+    @IBOutlet weak var passwordLabel: UILabel!
     
     lazy var viewModel: LoginViewModel = LoginViewModel()
     
@@ -74,9 +76,9 @@ class LoginViewController: UIViewController {
     
     func initComponents() {
 
-        self.view.backgroundColor = UIColor.init(red: 46/255, green: 134/255, blue: 193/255, alpha: 1.0)
+        self.view.backgroundColor = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
 
-        self.logoView.backgroundColor = UIColor.init(red: 46/255, green: 134/255, blue: 193/255, alpha: 1.0)
+        self.logoView.backgroundColor = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
 
         self.loginView.backgroundColor = UIColor.white
         self.loginView.layer.cornerRadius = 30
@@ -86,20 +88,27 @@ class LoginViewController: UIViewController {
         self.loginLabel.textColor = UIColor.black
         
         self.loginDescriptionLabel.text = "Ingresa a tu cuenta"
-        self.loginDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 22)
+        self.loginDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 24)
         self.loginDescriptionLabel.textColor = UIColor.black
         
-        self.usernameTextField.backgroundColor = UIColor.init(red: 248/255, green: 249/255, blue: 249/255, alpha: 1)
+        self.usernameTextField.backgroundColor = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
         self.usernameTextField.textColor = UIColor.black
-        self.usernameTextField.attributedPlaceholder = NSAttributedString(string: "Usuario", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
         
-        self.passwordTextField.backgroundColor = UIColor.init(red: 248/255, green: 249/255, blue: 249/255, alpha: 1)
+        self.passwordTextField.backgroundColor = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
         self.passwordTextField.textColor = UIColor.black
-        self.passwordTextField.attributedPlaceholder = NSAttributedString(string: "Contraseña", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         
-        self.loginButtonDescriptionLabel.text = "Ingresar"
-        self.loginButtonDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        self.loginButtonDescriptionLabel.text = "Entrar"
+        self.loginButtonDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        self.loginButtonDescriptionLabel.textColor = UIColor.init(red: 84/255, green: 128/255, blue: 136/255, alpha: 1)
         self.loginButtonDescriptionLabel.textColor = UIColor.black
+        
+        self.userLabel.text = "Usuario"
+        self.userLabel.textColor = UIColor.black
+        self.userLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        
+        self.passwordLabel.text = "Password"
+        self.passwordLabel.textColor = UIColor.black
+        self.passwordLabel.font = UIFont.boldSystemFont(ofSize: 12)
     }
     
     private func showAlert(message: String) {
@@ -108,4 +117,15 @@ class LoginViewController: UIViewController {
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
     }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        // NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: <#T##NSNotification.Name?#>, object: <#T##Any?#>)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+    }
+    
 }
