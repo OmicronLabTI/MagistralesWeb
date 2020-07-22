@@ -11,6 +11,8 @@ import RxCocoa
 import RxSwift
 
 class LoginViewController: UIViewController {
+    
+    // MARK: - OUTLETS
     @IBOutlet weak var usernameTextField : UITextField!
     @IBOutlet weak var passwordTextField : UITextField!
     @IBOutlet weak var loginButton : UIButton!
@@ -22,16 +24,22 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userLabel: UILabel!
     @IBOutlet weak var passwordLabel: UILabel!
     
+    // MARK: - VARIABLES
     lazy var viewModel: LoginViewModel = LoginViewModel()
-    
     let disposeBag = DisposeBag()
     
+    // MARK: - LIFE CYCLES
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModelBinding()
         initComponents()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
     
+    // MARK: - FUNCTIONS
     func viewModelBinding() {
         [
             usernameTextField.rx.text.orEmpty.bind(to: viewModel.username),
@@ -119,13 +127,16 @@ class LoginViewController: UIViewController {
     }
     
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        // NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: <#T##NSNotification.Name?#>, object: <#T##Any?#>)
+    @objc func keyBoardActions(notification: Notification) {
+        if (notification.name == UIResponder.keyboardWillShowNotification) {
+            self.view.frame.origin.y = -100
+        } else {
+            self.view.frame.origin.y = 0
+        }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
     }
     
 }
