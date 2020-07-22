@@ -10,12 +10,12 @@ import { LoginComponent } from './pages/login/login.component';
 import { APP_PROVIDERS } from './app.providers';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { TestComponent } from './components/test/test.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    LoginComponent
+    //TestComponent
   ],
   imports: [
     BrowserModule,
