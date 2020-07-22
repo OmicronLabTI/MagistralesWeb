@@ -8,11 +8,11 @@ import { GuardService } from './services/guard.service';
 const routes: Routes = [
   {
     path: 'login',
-    component: LoginComponent
+    loadChildren:() => import('./pages/login/login.module').then(m => m.LoginModule)
   },
   {
     path: 'home',
-    component: HomeComponent,
+    loadChildren:() => import('./pages/home/home.module').then(m => m.HomeModule),
     canActivate: [GuardService]
   },
   {

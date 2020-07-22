@@ -4,9 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HomeComponent } from './pages/home/home.component';
 import { MATERIAL_COMPONENTS } from './app.material';
-import { LoginComponent } from './pages/login/login.component';
 import { APP_PROVIDERS } from './app.providers';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,8 +12,6 @@ import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    LoginComponent
   ],
   imports: [
     BrowserModule,
