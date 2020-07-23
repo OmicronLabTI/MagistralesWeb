@@ -9,14 +9,14 @@
 namespace Omicron.Usuarios.DependencyInjection
 {
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Facade.Catalogs.Users;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.User;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -46,7 +46,7 @@ namespace Omicron.Usuarios.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext))));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
         /// <summary>

@@ -13,13 +13,11 @@ namespace Omicron.Usuarios.Api
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
-    using Omicron.Usuarios.Entities.Context;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
@@ -64,8 +62,6 @@ namespace Omicron.Usuarios.Api
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = this.Configuration["ConnectionStringsPostgres"];
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             DependencyInjector.RegisterServices(services);
@@ -76,8 +72,6 @@ namespace Omicron.Usuarios.Api
                 .WriteTo.RollingFile("log-{Date}.txt", LogEventLevel.Information)
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
-
-            services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
 
             ILoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.AddSerilog();
