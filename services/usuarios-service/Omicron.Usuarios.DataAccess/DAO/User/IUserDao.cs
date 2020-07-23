@@ -36,5 +36,12 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <param name="user">User Dto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> InsertUser(UserModel user);
+
+        /// <summary>
+        /// Method for looking the user by user name.
+        /// </summary>
+        /// <param name="userName">the user name.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<UserModel> GetUserByUserName(string userName);
     }
 }

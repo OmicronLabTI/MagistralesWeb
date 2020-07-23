@@ -9,6 +9,7 @@
 namespace Omicron.Usuarios.Services.Mapping
 {
     using AutoMapper;
+    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
 
@@ -24,6 +25,10 @@ namespace Omicron.Usuarios.Services.Mapping
         {
             this.CreateMap<UserModel, UserDto>();
             this.CreateMap<UserDto, UserModel>();
+            this.CreateMap<ResultDto, ResultModel>();
+            this.CreateMap<ResultModel, ResultDto>();
+            this.CreateMap<LoginDto, LoginModel>();
+            this.CreateMap<LoginModel, LoginDto>();
         }
     }
 }

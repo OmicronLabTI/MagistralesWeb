@@ -12,9 +12,12 @@ namespace Omicron.Usuarios.Services.User
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Newtonsoft.Json;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Services.Constants;
+    using Omicron.Usuarios.Services.Utils;
 
     /// <summary>
     /// Class User Service.
@@ -52,6 +55,28 @@ namespace Omicron.Usuarios.Services.User
         public async Task<bool> InsertUser(UserDto user)
         {
             return await this.userDao.InsertUser(this.mapper.Map<UserModel>(user));
+        }
+
+        /// <summary>
+        /// Method for validating the login.
+        /// </summary>
+        /// <param name="login">the login object.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> ValidateCredentials(LoginModel login)
+        {
+            var user = await this.userDao.GetUserByUserName(login.Username);
+
+            if (user == null || user.UserName == null)
+            {
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.UserDontExist, null, null);
+            }
+
+            if (!user.Password.Equals(login.Password))
+            {
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPassword, null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);
         }
     }
 }
