@@ -4,14 +4,26 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-  <!--<changeSet author="authorName" id="changelog-1.0">
-    <createTable tableName="C_PRUEBA">
-      <column name="ID" type="INT">
-        <constraints nullable="true" primaryKey="false" unique="false"/>
+  <changeSet author="gramirez" id="changelog-1.1">
+    <createTable tableName="User">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
       </column>
-      <column name="DS_NAME" type="VARCHAR(50)">
-        <constraints nullable="true" primaryKey="false" unique="false"/>
+      <column name="UserName" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="FirstName" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
       </column>
+	  <column name="LastName" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="Role" type="INT">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="Password" type="VARCHAR(80)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
     </createTable>
-  </changeSet>-->
+  </changeSet>
 </databaseChangeLog> 
