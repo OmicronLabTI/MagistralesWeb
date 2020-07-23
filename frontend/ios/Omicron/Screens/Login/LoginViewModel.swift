@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import CryptoKit
 
 class LoginViewModel {
     public let loginResponse : PublishSubject<LoginResponse> = PublishSubject()
@@ -32,13 +33,14 @@ class LoginViewModel {
         loginDidTap
             .withLatestFrom(input)
             .map({
-                Login(username: $0, password: $1)
+                Login(username: $0, password: self.convertPasswordToSHA256(password: $1))
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
                     self?.loginResponse.onNext(res)
+                    
                     }, onError: { [weak self] err in
                         self?.loading.onNext(false)
                         switch (err) {
@@ -49,5 +51,22 @@ class LoginViewModel {
                         }
                 }).disposed(by: self.disposeBag)
             }).disposed(by: disposeBag)
+    }
+    
+    func convertPasswordToSHA256(password: String) -> String {
+        guard let data = password.data(using: .utf8) else { return  "" }
+        let digest = SHA256.hash(data: data)
+        return digest.hexStr
+    }
+}
+
+extension Digest {
+    var bytes: [UInt8] { Array(makeIterator()) }
+    var data: Data { Data(bytes) }
+    
+    var hexStr: String {
+        bytes.map {
+            String(format: "%02X", $0)
+        }.joined()
     }
 }
