@@ -24,6 +24,9 @@ zuul:
     catalogos:
       path: /catalogos/**
       serviceId: catalogosservice
+    usuarios:
+      path: /usuarios/**
+      serviceId: usuariosservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 
 ribbon:

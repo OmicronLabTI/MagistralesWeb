@@ -15,6 +15,7 @@ namespace Omicron.Usuarios.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
     using StackExchange.Redis;
+    using Omicron.Usuarios.Dtos.Models;
 
     /// <summary>
     /// Class User Controller.
@@ -23,7 +24,7 @@ namespace Omicron.Usuarios.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserFacade logicFacade;
+        private readonly IUserFacade userFacade;
 
         private readonly IDatabase database;
 
@@ -32,13 +33,26 @@ namespace Omicron.Usuarios.Api.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
-        /// <param name="logicFacade">User Facade.</param>
+        /// <param name="userFacade">User Facade.</param>
         /// <param name="redis">Redis Cache.</param>
-        public UsersController(IUserFacade logicFacade, IConnectionMultiplexer redis)
+        public UsersController(IUserFacade userFacade, IConnectionMultiplexer redis)
         {
-            this.logicFacade = logicFacade ?? throw new ArgumentNullException(nameof(logicFacade));
+            this.userFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
             this.redis = redis ?? throw new ArgumentNullException(nameof(redis));
             this.database = redis.GetDatabase();
+        }
+
+        /// <summary>
+        /// Method to validate the credentials.
+        /// </summary>
+        /// <param name="loginDto">the loginDto.</param>
+        /// <returns>If the result of validation.</returns>
+        [HttpPost]
+        [Route("/validatecredentials")]
+        public async Task<IActionResult> ValidateCredentials([FromBody] LoginDto loginDto)
+        {
+            var response = await this.userFacade.ValidateCredentials(loginDto);
+            return this.Ok(response);
         }
 
         /// <summary>
@@ -49,7 +63,7 @@ namespace Omicron.Usuarios.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var response = await this.logicFacade.GetListUsersActive();
+            var response = await this.userFacade.GetListUsersActive();
             return this.Ok(response);
         }
 
@@ -69,7 +83,7 @@ namespace Omicron.Usuarios.Api.Controllers
 
             if (!result.HasValue)
             {
-                response = await this.logicFacade.GetListUserActive(userId);
+                response = await this.userFacade.GetListUserActive(userId);
 
                 ////Example to set value with Redis Cache
                 await this.database.StringSetAsync(userId.ToString(), JsonConvert.SerializeObject(response));
@@ -91,7 +105,7 @@ namespace Omicron.Usuarios.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserDto user)
         {
-            var response = await this.logicFacade.InsertUser(user);
+            var response = await this.userFacade.InsertUser(user);
             return this.Ok(response);
         }
 

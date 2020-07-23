@@ -10,6 +10,7 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
 
     /// <summary>
@@ -36,5 +37,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="user">User Model.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> InsertUser(UserDto user);
+
+        /// <summary>
+        /// Method to validate the users.
+        /// </summary>
+        /// <param name="loginDto">the loginDto.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> ValidateCredentials(LoginDto loginDto);
     }
 }

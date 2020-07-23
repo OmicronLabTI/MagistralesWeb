@@ -22,6 +22,6 @@ namespace Omicron.Usuarios.Entities.Context
         /// <value>
         /// Object UserModel CatUser.
         /// </value>
-        DbSet<UserModel> CatUser { get; set; }
+        DbSet<UserModel> Usuarios { get; set; }
     }
 }

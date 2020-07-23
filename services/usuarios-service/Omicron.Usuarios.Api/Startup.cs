@@ -9,8 +9,6 @@
 namespace Omicron.Usuarios.Api
 {
     using System;
-    using Omicron.Usuarios.Api.Filters;
-    using Omicron.Usuarios.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -18,6 +16,8 @@ namespace Omicron.Usuarios.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Omicron.Usuarios.Api.Filters;
+    using Omicron.Usuarios.DependencyInjection;
     using Prometheus;
     using Serilog;
     using Serilog.Events;

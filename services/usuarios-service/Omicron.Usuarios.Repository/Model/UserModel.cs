@@ -25,7 +25,15 @@ namespace Omicron.Usuarios.Entities.Model
         /// Int Id.
         /// </value>
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets UserName.
+        /// </summary>
+        /// <value>
+        /// String UserName.
+        /// </value>
+        public string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets FirstName.
@@ -44,19 +52,19 @@ namespace Omicron.Usuarios.Entities.Model
         public string LastName { get; set; }
 
         /// <summary>
-        /// Gets or sets Email.
+        /// Gets or sets Role.
         /// </summary>
         /// <value>
-        /// String Email.
+        /// String Role.
         /// </value>
-        public string Email { get; set; }
+        public int Role { get; set; }
 
         /// <summary>
-        /// Gets or sets Birthdate.
+        /// Gets or sets Password.
         /// </summary>
         /// <value>
-        /// String Birthdate.
+        /// String Password.
         /// </value>
-        public DateTime Birthdate { get; set; }
+        public string Password { get; set; }
     }
 }
