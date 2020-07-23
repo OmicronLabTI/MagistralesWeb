@@ -1,12 +1,43 @@
-<mat-toolbar color="primary" *ngIf="isLogin">
+<!--<mat-toolbar color="primary" *ngIf="isLogin">
   <mat-toolbar-row>
     <span>omicron</span>
   </mat-toolbar-row>
-</mat-toolbar>
+</mat-toolbar>-->
+<!--  BEGIN NAVBAR  -->
+<div class="header-container">
+    <div class="nav-logo align-self-center">
+        <img alt="logo-omicron" src="assets/images/logo2.svg"  class="logo-nav-bar">
+    </div>
+
+  <div class="user-logged-container">
+      <div class="media">
+
+          <div class="media-body align-self-center">
+              <h6><span>Hola,</span> Diego</h6>
+          </div>
+          <div class="link-logout">
+              <a id="user-profile-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </a>
+
+              <div class="dropdown-menu " aria-labelledby="user-profile-dropdown">
+                  <div class="">
+
+                      <div class="dropdown-item">
+                          <a class="" href="auth_login.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Cerrar sesión</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</div>
+<!--  END NAVBAR  -->
 <mat-progress-bar class="loading-bar" *ngIf="isLoading | async" mode="indeterminate"></mat-progress-bar>
 <router-outlet></router-outlet>
 <mat-toolbar class="footer" *ngIf="isLogin">
-  <mat-toolbar-row>
+<!--  <mat-toolbar-row>
     <span>© {{ now | date: 'yyyy' }} omicron-lab</span>
-  </mat-toolbar-row>
+  </mat-toolbar-row>-->
 </mat-toolbar>

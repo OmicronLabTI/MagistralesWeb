@@ -1,3 +1,29 @@
+.header-container {
+  width: 84%;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  justify-content: space-between;
+  margin-left: auto;
+  margin-right: auto;
+  height: 10%;
+}
+.user-logged-container{
+  display: flex;
+  justify-content: center;
+}
+.link-logout{
+  padding: 23%;
+}
+.dropdown-menu{
+  margin-right: 2%;
+}
+.logo-nav-bar{
+  width: 50%;
+  height: 50%;
+}
 .footer {
   position: fixed;
   bottom: 0;
