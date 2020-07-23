@@ -8,16 +8,17 @@
 
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Omicron.Usuarios.DataAccess.DAO.User;
-    using Omicron.Usuarios.Entities.Context;
-    using Omicron.Usuarios.Services.Mapping;
-    using Omicron.Usuarios.Services.User;
     using Microsoft.EntityFrameworkCore;
     using NUnit.Framework;
+    using Omicron.Usuarios.DataAccess.DAO.User;
+    using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Services.Mapping;
+    using Omicron.Usuarios.Services.User;
 
     /// <summary>
     /// Class UsersServiceTest.

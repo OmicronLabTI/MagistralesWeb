@@ -26,10 +26,10 @@ namespace Omicron.Usuarios.Test
         {
             return new List<UserModel>()
             {
-                new UserModel { Id = 1, FirstName = "Alejandro", LastName = "Ojeda", UserName = "Alex", Password = "abc", Role = 1 },
-                new UserModel { Id = 2, FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "abc", Role = 1 },
-                new UserModel { Id = 3, FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "abc", Role = 1 },
-                new UserModel { Id = 4, FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "abc", Role = 1 },
+                new UserModel { Id = "1", FirstName = "Alejandro", LastName = "Ojeda", UserName = "Alex", Password = "abc", Role = 1 },
+                new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "abc", Role = 1 },
+                new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "abc", Role = 1 },
+                new UserModel { Id = "4", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "abc", Role = 1 },
             };
         }
 
@@ -41,7 +41,7 @@ namespace Omicron.Usuarios.Test
         {
             return new UserDto
             {
-                Id = 10,
+                Id = "10",
                 FirstName = "Jorge",
                 LastName = "Morales",
                 UserName = "George",

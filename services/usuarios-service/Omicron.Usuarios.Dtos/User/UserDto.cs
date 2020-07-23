@@ -21,7 +21,7 @@ namespace Omicron.Usuarios.Dtos.User
         /// <value>
         /// Int Id.
         /// </value>
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets UserName.

@@ -25,7 +25,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// Int Id.
         /// </value>
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets UserName.
