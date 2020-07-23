@@ -40,7 +40,6 @@ class LoginViewModel {
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
                     self?.loginResponse.onNext(res)
-                    
                     }, onError: { [weak self] err in
                         self?.loading.onNext(false)
                         switch (err) {

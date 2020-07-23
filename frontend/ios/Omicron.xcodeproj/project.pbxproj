@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0BB57A4257C6A72E4D3CF5A4 /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C723D74196413AA0F7F3D7FE /* Pods_Omicron.framework */; };
+		7CE2C2AB24CA041B00517BD7 /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE2C2AA24CA041B00517BD7 /* InboxViewController.swift */; };
+		7CE2C2AD24CA043D00517BD7 /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE2C2AC24CA043D00517BD7 /* InboxModel.swift */; };
+		7CE2C2AF24CA048300517BD7 /* InboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE2C2AE24CA048300517BD7 /* InboxViewModel.swift */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
 		98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CB524AFBC6C00E7772F /* Main.storyboard */; };
@@ -52,6 +55,9 @@
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CE2C2AA24CA041B00517BD7 /* InboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
+		7CE2C2AC24CA043D00517BD7 /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
+		7CE2C2AE24CA048300517BD7 /* InboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModel.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAC24AFBC6C00E7772F /* Omicron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Omicron.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +126,16 @@
 				E9A40823AC4FB25AE1D8601D /* Pods-OmicronTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		7CE2C2A924CA03ED00517BD7 /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				7CE2C2AA24CA041B00517BD7 /* InboxViewController.swift */,
+				7CE2C2AC24CA043D00517BD7 /* InboxModel.swift */,
+				7CE2C2AE24CA048300517BD7 /* InboxViewModel.swift */,
+			);
+			path = Inbox;
 			sourceTree = "<group>";
 		};
 		98015CA324AFBC6C00E7772F = {
@@ -217,6 +233,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				7CE2C2A924CA03ED00517BD7 /* Inbox */,
 				98C8C02F24AFBD3000018A88 /* Login */,
 			);
 			path = Screens;
@@ -495,9 +512,12 @@
 				98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */,
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
+				7CE2C2AD24CA043D00517BD7 /* InboxModel.swift in Sources */,
+				7CE2C2AF24CA048300517BD7 /* InboxViewModel.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
+				7CE2C2AB24CA041B00517BD7 /* InboxViewController.swift in Sources */,
 				98C8C03E24AFCC9200018A88 /* Config.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,

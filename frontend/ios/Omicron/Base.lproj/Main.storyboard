@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="ipad12_9" orientation="landscape" layout="fullscreen" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
+    <device id="ipad10_5" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="i92-Du-Xlq">
+            <objects>
+                <navigationController id="EFE-v6-BeN" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="xwh-jl-ASU">
+                        <rect key="frame" x="0.0" y="0.0" width="1112" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="cyI-tn-MXe"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7H8-AJ-twg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-685" y="137"/>
+        </scene>
         <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="LoginViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1112" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="06E-On-AcD">
-                                <rect key="frame" x="0.0" y="0.0" width="1384" height="1024"/>
+                                <rect key="frame" x="0.0" y="50" width="1130" height="784"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HiA-HL-AaL">
-                                        <rect key="frame" x="0.0" y="0.0" width="686" height="1024"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="559" height="784"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="OmicronLogo" translatesAutoresizingMaskIntoConstraints="NO" id="hpa-5u-ffB">
-                                                <rect key="frame" x="40" y="412" width="606" height="200"/>
+                                                <rect key="frame" x="40" y="292" width="479" height="200"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="200" id="jRO-lP-2UQ"/>
                                                 </constraints>
@@ -36,10 +52,10 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ukv-Ng-I3F">
-                                        <rect key="frame" x="698" y="0.0" width="686" height="1024"/>
+                                        <rect key="frame" x="571" y="0.0" width="559" height="784"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="uJq-3H-9Mk">
-                                                <rect key="frame" x="192.5" y="333.5" width="301" height="357"/>
+                                                <rect key="frame" x="129" y="213.5" width="301" height="357"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Q2-ec-LDc">
                                                         <rect key="frame" x="0.0" y="0.0" width="301" height="20.5"/>
@@ -140,6 +156,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" id="2dg-Gq-Zt6"/>
                     <connections>
                         <outlet property="loginButton" destination="K4q-T4-k3T" id="OYB-7c-Lk8"/>
                         <outlet property="loginButtonDescriptionLabel" destination="vCe-c7-sa8" id="CFC-jh-stB"/>
@@ -151,11 +168,28 @@
                         <outlet property="passwordTextField" destination="ZIm-yZ-WYR" id="auO-JV-LJv"/>
                         <outlet property="userLabel" destination="IpV-05-wDS" id="Oto-Ob-USZ"/>
                         <outlet property="usernameTextField" destination="Vzx-eb-Yqk" id="XWU-df-02Q"/>
+                        <segue destination="VeG-KK-tnq" kind="show" identifier="InboxVC" id="FAO-5z-htO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="138.79941434846265" y="137.6953125"/>
+            <point key="canvasLocation" x="114" y="138"/>
+        </scene>
+        <!--Inbox View Controller-->
+        <scene sceneID="FOd-ys-7NH">
+            <objects>
+                <viewController storyboardIdentifier="inbox_vc" id="VeG-KK-tnq" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mFb-a4-Gaf">
+                        <rect key="frame" x="0.0" y="0.0" width="1112" height="834"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.0" green="0.49684340910000002" blue="0.60481375459999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <viewLayoutGuide key="safeArea" id="Sie-NY-0WF"/>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x4w-dg-l7U" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1174" y="138"/>
         </scene>
     </scenes>
     <resources>

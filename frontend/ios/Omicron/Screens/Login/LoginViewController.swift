@@ -33,7 +33,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         viewModelBinding()
         initComponents()
-        
+        self.navigationController?.isNavigationBarHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
@@ -69,7 +69,8 @@ class LoginViewController: UIViewController {
         viewModel.loginResponse
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
-                self.showSuccess(message: res.token ?? "")
+                //self.showSuccess(message: res.token ?? "")
+                self.performSegue(withIdentifier: "InboxVC", sender: self)
             })
             .disposed(by: disposeBag)
     }
