@@ -77,8 +77,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             var result = await this.userServices.GetUserAsync(2);
 
-            Assert.True(result != null);
-            Assert.True(result.FirstName == "Jorge");
+            Assert.True(result == null);
         }
 
         /// <summary>

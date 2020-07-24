@@ -101,7 +101,7 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(id.ToString(), response.Id);
         }
 
         /// <summary>
