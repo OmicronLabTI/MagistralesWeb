@@ -27,6 +27,9 @@ zuul:
     usuarios:
       path: /usuarios/**
       serviceId: usuariosservice
+    logs:
+      path: /logs/**
+      serviceId: logsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 
 ribbon:
