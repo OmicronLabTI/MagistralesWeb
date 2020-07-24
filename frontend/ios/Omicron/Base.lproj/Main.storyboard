@@ -7,10 +7,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
+        <!--Navigation View Controller-->
         <scene sceneID="i92-Du-Xlq">
             <objects>
-                <navigationController id="EFE-v6-BeN" sceneMemberID="viewController">
+                <navigationController id="EFE-v6-BeN" customClass="NavigationViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="xwh-jl-ASU">
                         <rect key="frame" x="0.0" y="0.0" width="1112" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -178,7 +178,7 @@
         <!--Inbox View Controller-->
         <scene sceneID="FOd-ys-7NH">
             <objects>
-                <viewController storyboardIdentifier="inbox_vc" id="VeG-KK-tnq" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="InboxViewController" storyboardIdentifier="InboxViewController" id="VeG-KK-tnq" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mFb-a4-Gaf">
                         <rect key="frame" x="0.0" y="0.0" width="1112" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

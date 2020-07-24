@@ -70,7 +70,7 @@ class LoginViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
                 //self.showSuccess(message: res.token ?? "")
-                self.performSegue(withIdentifier: "InboxVC", sender: self)
+                self.performSegue(withIdentifier: SegueIdentifiers.inboxVC, sender: self)
             })
             .disposed(by: disposeBag)
     }
@@ -84,10 +84,10 @@ class LoginViewController: UIViewController {
     }
     
     func initComponents() {
+        
+        self.view.backgroundColor =  OmicronColors.blue
 
-        self.view.backgroundColor = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
-
-        self.logoView.backgroundColor = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
+        self.logoView.backgroundColor = OmicronColors.blue
 
         self.loginView.backgroundColor = UIColor.white
         self.loginView.layer.cornerRadius = 30
@@ -100,15 +100,15 @@ class LoginViewController: UIViewController {
         self.loginDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 24)
         self.loginDescriptionLabel.textColor = UIColor.black
         
-        self.usernameTextField.backgroundColor = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
+        self.usernameTextField.backgroundColor = OmicronColors.ligthGray
         self.usernameTextField.textColor = UIColor.black
         
-        self.passwordTextField.backgroundColor = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
+        self.passwordTextField.backgroundColor = OmicronColors.ligthGray
         self.passwordTextField.textColor = UIColor.black
         
         self.loginButtonDescriptionLabel.text = "Entrar"
         self.loginButtonDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        self.loginButtonDescriptionLabel.textColor = UIColor.init(red: 84/255, green: 128/255, blue: 136/255, alpha: 1)
+        self.loginButtonDescriptionLabel.textColor = OmicronColors.blue
         self.loginButtonDescriptionLabel.textColor = UIColor.black
         
         self.userLabel.text = "Usuario"
