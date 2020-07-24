@@ -34,19 +34,29 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <inheritdoc/>
         public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
-            return await this.databaseContext.CatUser.ToListAsync();
+            return await this.databaseContext.Usuarios.ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<UserModel> GetUserAsync(int userId)
         {
-            return await this.databaseContext.CatUser.FirstOrDefaultAsync(p => p.Id.Equals(userId));
+            return await this.databaseContext.Usuarios.FirstOrDefaultAsync(p => p.Id.Equals(userId));
+        }
+
+        /// <summary>
+        /// Looks for the user by the user name.
+        /// </summary>
+        /// <param name="userName">the user name.</param>
+        /// <returns>the user.</returns>
+        public async Task<UserModel> GetUserByUserName(string userName)
+        {
+            return await this.databaseContext.Usuarios.FirstOrDefaultAsync(p => p.UserName.Equals(userName));
         }
 
         /// <inheritdoc/>
         public async Task<bool> InsertUser(UserModel user)
         {
-            var response = await this.databaseContext.CatUser.AddAsync(user);
+            var response = await this.databaseContext.Usuarios.AddAsync(user);
             bool result = response.State.Equals(EntityState.Added);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return result;

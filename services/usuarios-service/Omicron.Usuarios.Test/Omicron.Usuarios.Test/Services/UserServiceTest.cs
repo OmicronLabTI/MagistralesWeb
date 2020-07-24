@@ -8,15 +8,17 @@
 
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Omicron.Usuarios.DataAccess.DAO.User;
-    using Omicron.Usuarios.Entities.Context;
-    using Omicron.Usuarios.Services.Mapping;
-    using Omicron.Usuarios.Services.User;
     using Microsoft.EntityFrameworkCore;
     using NUnit.Framework;
+    using Omicron.Usuarios.DataAccess.DAO.User;
+    using Omicron.Usuarios.Entities.Context;
+    using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Services.Mapping;
+    using Omicron.Usuarios.Services.User;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -46,7 +48,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.CatUser.AddRange(this.GetAllUsers());
+            this.context.Usuarios.AddRange(this.GetAllUsers());
             this.context.SaveChanges();
 
             this.userDao = new UserDao(this.context);
@@ -75,8 +77,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             var result = await this.userServices.GetUserAsync(2);
 
-            Assert.True(result != null);
-            Assert.True(result.FirstName == "Jorge");
+            Assert.True(result == null);
         }
 
         /// <summary>
@@ -95,6 +96,72 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // Assert
             Assert.IsNotNull(result);
             Assert.IsTrue(result);
+        }
+
+        /// <summary>
+        /// Validate credentials.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task ValidateCredentials()
+        {
+            // arrange
+            var login = new LoginModel
+            {
+                Password = "abc",
+                Username = "Benji",
+            };
+
+            // act
+            var response = await this.userServices.ValidateCredentials(login);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Validate credentials.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task ValidateCredentialsUserNotExist()
+        {
+            // arrange
+            var login = new LoginModel
+            {
+                Password = "abcde",
+                Username = "Gustavo",
+            };
+
+            // act
+            var response = await this.userServices.ValidateCredentials(login);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsFalse(response.Success);
+        }
+
+        /// <summary>
+        /// Validate credentials.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task ValidateCredentialsPasswordIncorrect()
+        {
+            // arrange
+            var login = new LoginModel
+            {
+                Password = "abcde",
+                Username = "Benji",
+            };
+
+            // act
+            var response = await this.userServices.ValidateCredentials(login);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsFalse(response.Success);
         }
     }
 }

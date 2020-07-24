@@ -11,10 +11,14 @@ namespace Omicron.Usuarios.Test.Facade
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
+    using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Facade.Catalogs.Users;
+    using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -25,12 +29,17 @@ namespace Omicron.Usuarios.Test.Facade
     {
         private UserFacade userFacade;
 
+        private IMapper mapper;
+
         /// <summary>
         /// The init.
         /// </summary>
         [OneTimeSetUp]
         public void Init()
         {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
@@ -47,7 +56,17 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
                 .Returns(Task.FromResult(true));
 
-            this.userFacade = new UserFacade(mockServices.Object);
+            var result = new ResultModel
+            {
+                Success = true,
+                Code = 200,
+            };
+
+            mockServices
+                .Setup(m => m.ValidateCredentials(It.IsAny<LoginModel>()))
+                .Returns(Task.FromResult(result));
+
+            this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
         /// <summary>
@@ -82,7 +101,7 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(id.ToString(), response.Id);
         }
 
         /// <summary>
@@ -101,6 +120,28 @@ namespace Omicron.Usuarios.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
+        }
+
+        /// <summary>
+        /// Validate Credentials test.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task ValidateCredentialsTest()
+        {
+            // Arrange
+            var user = new LoginDto
+            {
+                Password = "password",
+                Username = "Gustavo",
+            };
+
+            // Act
+            var response = await this.userFacade.ValidateCredentials(user);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

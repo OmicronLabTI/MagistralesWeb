@@ -11,6 +11,7 @@ namespace Omicron.Usuarios.Services.User
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Usuarios.Dtos.User;
+    using Omicron.Usuarios.Entities.Model;
 
     /// <summary>
     /// Interface User Service.
@@ -36,5 +37,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="user">User Dto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> InsertUser(UserDto user);
+
+        /// <summary>
+        /// Method for validating the login.
+        /// </summary>
+        /// <param name="login">the login object.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> ValidateCredentials(LoginModel login);
     }
 }
