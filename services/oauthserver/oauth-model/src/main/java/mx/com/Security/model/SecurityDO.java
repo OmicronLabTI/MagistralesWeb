@@ -9,7 +9,7 @@ public class SecurityDO {
 
     @Id
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "username")
     private String username;
     @Column(name = "firstname")
@@ -21,11 +21,11 @@ public class SecurityDO {
     @Column(name = "password")
     private String password;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
