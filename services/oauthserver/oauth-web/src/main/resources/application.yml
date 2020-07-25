@@ -1,19 +1,18 @@
 spring:
   datasource:
     #url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-    initialization-mode: always
+    url: jdbc:postgresql://localhost:5432/omicrondev
+    username: omicronuser
+    password: Axity2020
+    driver-class-name: org.postgresql.Driver
   #datasource:
     #url: jdbc:sqlserver://localhost;databaseName=securitydb
     #username: sa
     #password: Axity&2019Arq
     #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-  #jpa:
-    #database-platform: org.hibernate.dialect.SQLServer2012Dialect
-    #show-sql: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
   application:
     name: oauth-service
   profiles:
@@ -27,7 +26,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://192.168.0.101:${APIMANAGER_SVC_SERVICE_PORT}/eureka
+      defaultZone: http://localhost:8761/eureka
   instance:
     leaseRenewalIntervalInSeconds: 5   
     preferIpAddress: true
