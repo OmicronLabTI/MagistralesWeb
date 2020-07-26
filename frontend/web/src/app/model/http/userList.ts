@@ -4,4 +4,5 @@ export class UserList{
     lastName: string;
     rol: string;
     status: string;
+    checkedRow?:boolean;
 }

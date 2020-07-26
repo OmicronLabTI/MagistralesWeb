@@ -19,7 +19,7 @@
     <div class="list-users-container">
         <div class="tr-titles">
             <label class="container">
-                <input type="checkbox" [defaultChecked]="checkedGeneral" (click)="checkGeneralEvent()">
+                <input type="checkbox" [checked]="checkedGeneral" (click)="checkPrincipalEvent()">
                 <span class="checkmark"></span>
             </label>
             <div class="name-title font-style-headers">
@@ -34,7 +34,7 @@
             <div class="status-title font-style-headers">
                 Estatus
             </div>
-            <div class="only-checked-principal">
+            <div class="only-checked-principal" (click)="deleteUser()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      class="feather feather-trash-2  delete-multiple">
@@ -47,7 +47,7 @@
         </div>
         <div class="tr-titles effect-hover" *ngFor="let user of listUserData">
             <label class="container">
-                <input type="checkbox" [defaultChecked]="checkedGeneral" (click)="checkGeneralEvent()">
+                <input type="checkbox" [checked]="user.checkedRow" (click)="checkGeneralEvent(user.id,user.checkedRow)">
                 <span class="checkmark"></span>
             </label>
             <div class="name-title font-style-headers">

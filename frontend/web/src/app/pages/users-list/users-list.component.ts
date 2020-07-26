@@ -45,12 +45,41 @@ export class UsersListComponent implements OnInit {
       "status": "inactivo"
     }
   ];
-  constructor() { }
-  checkGeneralEvent(){
-    console.log('value checked general: ', this.checkedGeneral)
-    this.checkedGeneral = !this.checkedGeneral;
+  constructor() {
+    this.listUserData.map(obj =>{
+      obj.checkedRow = false;
+    });
   }
+  checkPrincipalEvent(){
+    this.checkedGeneral = !this.checkedGeneral;
+   if(this.checkedGeneral){
+     this.changeAllUserTCheckRow(true);
+   }else {
+     this.changeAllUserTCheckRow(false);
+   }
+
+  }
+  checkGeneralEvent(userId: number, isChecked: boolean){
+      this.checkedGeneral = this.checkedGeneral ?!isChecked: this.checkedGeneral;
+
+    this.listUserData.filter(user => user.id === userId)
+        .forEach(user => user.checkedRow = !user.checkedRow)
+  }
+
+  changeAllUserTCheckRow(isChecked: boolean){
+    this.listUserData = this.listUserData.map(user =>{
+      user.checkedRow = isChecked;
+      return user;
+    });
+  }
+  deleteUser(){
+    this.checkedGeneral = false;
+    this.listUserData =     this.listUserData.filter(user => user.checkedRow === false);
+  }
+
   ngOnInit() {
+
+
   }
 
 }
