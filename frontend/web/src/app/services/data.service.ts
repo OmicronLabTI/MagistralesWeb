@@ -8,7 +8,7 @@ export class DataService {
   private isLoading = new Subject<boolean>();
   private isLogin = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
-
+  private modalName = new Subject<string>();
   constructor() { }
 
   setIsLoading(loading: boolean) {
@@ -44,5 +44,12 @@ export class DataService {
 
   userIsAuthenticated(): boolean {
     return !!sessionStorage.getItem('token');
+  }
+  setModalName(modalName: string){
+    this.modalName.next(modalName);
+  }
+
+  getModalName(){
+    return this.modalName.asObservable();
   }
 }

@@ -113,7 +113,13 @@ width: 100%;
   display: flex;
   justify-content: flex-end;
 }
-
+.test-style{
+  width: 50%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 /* The container */
 .container {
@@ -148,6 +154,12 @@ width: 100%;
   border-radius: 3px;
 }
 
+.jw-modal-body {
+  padding: 20px;
+  background: #fff;
+  margin: 40px;
+  width: 50%;
+}
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
   background-color: #a7a5a5;

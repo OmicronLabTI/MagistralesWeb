@@ -4,7 +4,7 @@
             <span>Usuarios</span>
         </div>
         <div class="add-user-container">
-            <div class="icon-add">
+            <div class="icon-add" (click)="openModal('addUserModal')">
                 <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
                      height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
@@ -63,7 +63,7 @@
                 {{user.status}}
             </div>
             <div class="checked-general">
-                <div class="icons-in-general">
+                <div class="icons-in-general" (click)="openModal('editUserModal')">
                     <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                 </div>
                 <div class="icons-in-general">
@@ -74,3 +74,15 @@
 
     </div>
 </div>
+<jw-modal id="addUserModal">
+    <h1>A Custom Modal!</h1>
+    <p>Home page text: </p>
+    <button (click)="closeModal('addUserModal');">Close</button>
+</jw-modal>
+
+<jw-modal id="editUserModal">
+    <div class="test-style">
+        <span>A Tall Custom Modal!</span>
+    </div>
+    <button (click)="closeModal('editUserModal');">Close</button>
+</jw-modal>

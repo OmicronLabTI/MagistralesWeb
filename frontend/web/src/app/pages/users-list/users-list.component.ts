@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {UserList} from "../../model/http/userList";
+import {ModalService} from "../../_modal";
+import {DataService} from "../../services/data.service";
 
 @Component({
   selector: 'app-users-list',
@@ -45,7 +47,7 @@ export class UsersListComponent implements OnInit {
       "status": "inactivo"
     }
   ];
-  constructor() {
+  constructor(private modalService: ModalService, private dataService: DataService) {
     this.listUserData.map(obj =>{
       obj.checkedRow = false;
     });
@@ -76,10 +78,15 @@ export class UsersListComponent implements OnInit {
     this.checkedGeneral = false;
     this.listUserData =     this.listUserData.filter(user => user.checkedRow === false);
   }
+  openModal(modalName: string) {
+    this.dataService.setModalName(modalName);
+    this.modalService.open(modalName);
+  }
 
+  closeModal(id: string) {
+    this.modalService.close(id);
+  }
   ngOnInit() {
-
-
   }
 
 }

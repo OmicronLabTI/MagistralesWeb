@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserListRoutingModule } from './user-list-routing.module';
 import {UsersListComponent} from "./users-list.component";
 import {FormsModule} from "@angular/forms";
+import {ModalModule} from "../../_modal";
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import {FormsModule} from "@angular/forms";
     imports: [
         CommonModule,
         UserListRoutingModule,
-        FormsModule
+        FormsModule,
+        ModalModule
     ]
 })
 export class UserListModule { }
