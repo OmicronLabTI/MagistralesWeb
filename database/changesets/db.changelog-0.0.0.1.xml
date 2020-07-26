@@ -69,4 +69,52 @@
     <addForeignKeyConstraint baseColumnNames="UserId" baseTableName="OrdersLogs" constraintName="fk_orderslogs_id" referencedColumnNames="Id" referencedTableName="User"/>
     <addForeignKeyConstraint baseColumnNames="UserId" baseTableName="UsersOrders" constraintName="fk_userorders_id" referencedColumnNames="Id" referencedTableName="User"/>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.4">
+	<renameTable
+		newTableName="user"
+		oldTableName="User"
+	/>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.5">
+	<renameColumn  
+		newColumnName="id"
+		oldColumnName="Id"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.6">
+	<renameColumn  
+		newColumnName="username"
+		oldColumnName="UserName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.7">
+	<renameColumn  
+		newColumnName="firstname"
+		oldColumnName="FirstName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.8">
+	<renameColumn  
+		newColumnName="lastname"
+		oldColumnName="LastName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.9">
+	<renameColumn  
+		newColumnName="role"
+		oldColumnName="Role"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.10">
+	<renameColumn  
+		newColumnName="password"
+		oldColumnName="Password"
+		tableName="user"
+	/>
+  </changeSet>
 </databaseChangeLog> 
