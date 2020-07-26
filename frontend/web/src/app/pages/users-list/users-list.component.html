@@ -45,31 +45,60 @@
                 </svg>
             </div>
         </div>
-        <div class="tr-titles effect-hover" *ngFor="let user of listUserData">
-            <label class="container">
-                <input type="checkbox" [checked]="user.checkedRow" (click)="checkGeneralEvent(user.id,user.checkedRow)">
-                <span class="checkmark"></span>
-            </label>
-            <div class="name-title font-style-headers">
-                {{user.name}}
-            </div>
-            <div class="name-title font-style-headers">
-                {{user.lastName}}
-            </div>
-            <div class="rol-title font-style-headers">
-                {{user.rol}}
-            </div>
-            <div class="status-title font-style-headers">
-                {{user.status}}
-            </div>
-            <div class="checked-general">
-                <div class="icons-in-general" (click)="openModal('editUserModal')">
-                    <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+        <div class="user-list-from-service">
+           <div class="tr-titles effect-hover " *ngFor="let user of listUserData">
+                <label class="container">
+                    <input type="checkbox" [checked]="user.checkedRow" (click)="checkGeneralEvent(user.id,user.checkedRow)">
+                    <span class="checkmark"></span>
+                </label>
+                <div class="name-title font-style-headers">
+                    {{user.name}}
                 </div>
-                <div class="icons-in-general">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-minus delete"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                <div class="name-title font-style-headers">
+                    {{user.lastName}}
+                </div>
+                <div class="rol-title font-style-headers">
+                    {{user.rol}}
+                </div>
+                <div class="status-title font-style-headers">
+                    {{user.status}}
+                </div>
+                <div class="checked-general">
+                    <div class="icons-in-general" (click)="openModal('editUserModal')">
+                        <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                    </div>
+                    <div class="icons-in-general">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-minus delete"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                    </div>
                 </div>
             </div>
+  <!--          <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"><strong>TEXT</strong></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let line of linesToWrite; index as i">
+                    <th scope="row">{{i}}</th>
+                    <th scope="row">{{line}}</th>
+                </tr>
+                </tbody>
+            </table>
+            <div
+                    class="search-results"
+                    infiniteScroll
+                    [infiniteScrollDistance]="2"
+                    (scrolled)="onScroll()"
+            ></div>-->
+            <div
+                    class="search-results"
+                    infiniteScroll
+                    infiniteScrollDistance="2"
+                    (scrolled)="onScroll()"
+            ></div>
         </div>
 
     </div>

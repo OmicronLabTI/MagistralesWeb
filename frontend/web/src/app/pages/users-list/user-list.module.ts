@@ -5,6 +5,7 @@ import { UserListRoutingModule } from './user-list-routing.module';
 import {UsersListComponent} from "./users-list.component";
 import {FormsModule} from "@angular/forms";
 import {ModalModule} from "../../_modal";
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import {ModalModule} from "../../_modal";
         CommonModule,
         UserListRoutingModule,
         FormsModule,
-        ModalModule
+        ModalModule,
+        InfiniteScrollModule
     ]
 })
 export class UserListModule { }

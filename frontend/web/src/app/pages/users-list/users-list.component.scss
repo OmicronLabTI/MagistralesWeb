@@ -28,7 +28,7 @@
 }
 .tr-titles{
   width: 100%;
-  height: 7%;
+
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -120,7 +120,11 @@ width: 100%;
   justify-content: center;
   align-items: center;
 }
-
+.user-list-from-service{
+  width: 100%;
+/*  height: 100%;
+  overflow-y: scroll;*/
+}
 /* The container */
 .container {
   width: 5%;

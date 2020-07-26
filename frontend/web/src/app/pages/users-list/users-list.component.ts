@@ -10,7 +10,114 @@ import {DataService} from "../../services/data.service";
 })
 export class UsersListComponent implements OnInit {
   checkedGeneral = false;
+  finishPage = 5;
+  actualPage: number;
   listUserData: UserList [] = [
+    {
+      "id": 0,
+      "name": "benny",
+      "lastName": "alvarado",
+      "rol": "administrador",
+      "status": "inactivo"
+    },
+    {
+      "id": 1,
+      "name": "berenice",
+      "lastName": "amezaga",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 2,
+      "name": "irma",
+      "lastName": "hernandez",
+      "rol": "gfb",
+      "status": "inactivo"
+    },
+    {
+      "id": 3,
+      "name": "erika",
+      "lastName": "villalba",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 4,
+      "name": "mayte",
+      "lastName": "rivera",
+      "rol": "qfb",
+      "status": "inactivo"
+    },
+    {
+      "id": 0,
+      "name": "benny",
+      "lastName": "alvarado",
+      "rol": "administrador",
+      "status": "inactivo"
+    },
+    {
+      "id": 1,
+      "name": "berenice",
+      "lastName": "amezaga",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 2,
+      "name": "irma",
+      "lastName": "hernandez",
+      "rol": "gfb",
+      "status": "inactivo"
+    },
+    {
+      "id": 3,
+      "name": "erika",
+      "lastName": "villalba",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 4,
+      "name": "mayte",
+      "lastName": "rivera",
+      "rol": "qfb",
+      "status": "inactivo"
+    },
+    {
+      "id": 0,
+      "name": "benny",
+      "lastName": "alvarado",
+      "rol": "administrador",
+      "status": "inactivo"
+    },
+    {
+      "id": 1,
+      "name": "berenice",
+      "lastName": "amezaga",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 2,
+      "name": "irma",
+      "lastName": "hernandez",
+      "rol": "gfb",
+      "status": "inactivo"
+    },
+    {
+      "id": 3,
+      "name": "erika",
+      "lastName": "villalba",
+      "rol": "administrador",
+      "status": "activo"
+    },
+    {
+      "id": 4,
+      "name": "mayte",
+      "lastName": "rivera",
+      "rol": "qfb",
+      "status": "inactivo"
+    },
     {
       "id": 0,
       "name": "benny",
@@ -51,6 +158,7 @@ export class UsersListComponent implements OnInit {
     this.listUserData.map(obj =>{
       obj.checkedRow = false;
     });
+    this.actualPage = 1;
   }
   checkPrincipalEvent(){
     this.checkedGeneral = !this.checkedGeneral;
@@ -86,7 +194,17 @@ export class UsersListComponent implements OnInit {
   closeModal(id: string) {
     this.modalService.close(id);
   }
+  onScroll(){
+    console.log('scrolled XDXDXD');
+    if (this.actualPage < this.finishPage) {
+      //method to call again to show more users
+      this.actualPage ++;
+    } else {
+      console.log('No more lines. Finish page!');
+    }
+  }
   ngOnInit() {
   }
+
 
 }
