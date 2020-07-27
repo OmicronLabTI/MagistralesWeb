@@ -32,14 +32,19 @@ export class LoginComponent implements OnInit {
   ngOnInit() { }
 
   login() {
-    const data = {
+    /*const data = {
       email: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
+    } as ILoginReq;*/
+    const data = {
+      email: 'eve.holt@reqres.in',
+      password: 'cityslicka',
     } as ILoginReq;
 
     this.securityService.login(data).subscribe(res => {
       this.dataService.setToken(res.token);
-      this.router.navigate(['home']);
+      this.dataService.setIsLogin(true);
+      this.router.navigate(['userList']);
     }, err => {
       this.dataService.setGeneralNotificationMessage(err);
     }

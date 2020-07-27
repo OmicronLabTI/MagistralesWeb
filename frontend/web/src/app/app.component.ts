@@ -13,9 +13,13 @@ export class AppComponent {
   title = 'omicron';
   now = new Date();
   isLoading: Observable<boolean>;
+  //isLogin: boolean = false;
+  isLogin: boolean = true;
 
   constructor(private _dataService: DataService, private _snackBar: MatSnackBar) {
+    //this._dataService.getIsLogin().subscribe(isLoginService => this.isLogin = isLoginService)
     this.isLoading = this._dataService.getIsLoading();
+    console.log('tokenServiceLogin: ', this._dataService.userIsAuthenticated())
 
     this._dataService
       .getGeneralNotificationMessage()
@@ -25,4 +29,5 @@ export class AppComponent {
         });
       });
   }
+
 }

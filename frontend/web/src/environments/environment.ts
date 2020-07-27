@@ -4,7 +4,19 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://reqres.in/api'
+  baseUrl: 'https://reqres.in/api',
+
+  modalNames: [
+    {
+      modalName:'addUserModal',
+      cssClassName: 'jw-modal-body-add-user'
+    },
+    {
+      modalName: 'editUserModal',
+      cssClassName: 'jw-modal-body-edit-user'
+    }
+  ],
+  defaultClassNameModal: 'jw-modal-body'
 };
 
 /*

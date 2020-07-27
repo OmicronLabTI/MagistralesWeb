@@ -1,0 +1,176 @@
+<div class="container-list-page">
+    <div class="header-page">
+        <div class="title-list-container">
+            <span>Usuarios</span>
+        </div>
+        <div class="add-user-container">
+            <div class="icon-add" (click)="openModal('addUserModal')">
+                <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
+                     height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="list-users-container">
+        <div class="tr-titles">
+            <label class="container">
+                <input type="checkbox" [checked]="checkedGeneral" (click)="checkPrincipalEvent()">
+                <span class="checkmark"></span>
+            </label>
+            <div class="name-title font-style-headers">
+                Nombre (s)
+            </div>
+            <div class="name-title font-style-headers">
+                Apellidos (s)
+            </div>
+            <div class="rol-title font-style-headers">
+                Rol
+            </div>
+            <div class="status-title font-style-headers">
+                Estatus
+            </div>
+            <div class="only-checked-principal" (click)="deleteUser()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="feather feather-trash-2  delete-multiple">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+            </div>
+        </div>
+        <div class="user-list-from-service">
+            <div class="tr-titles effect-hover " *ngFor="let user of listUserData">
+                <label class="container">
+                    <input type="checkbox" [checked]="user.checkedRow"
+                           (click)="checkGeneralEvent(user.id,user.checkedRow)">
+                    <span class="checkmark"></span>
+                </label>
+                <div class="name-title font-style-headers">
+                    {{user.name}}
+                </div>
+                <div class="name-title font-style-headers">
+                    {{user.lastName}}
+                </div>
+                <div class="rol-title font-style-headers">
+                    {{user.rol}}
+                </div>
+                <div class="status-title font-style-headers">
+                    {{user.status}}
+                </div>
+                <div class="checked-general">
+                    <div class="icons-in-general" (click)="openModal('editUserModal')">
+                        <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                    </div>
+                    <div class="icons-in-general">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-user-minus delete">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <!--          <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
+                      <table class="table">
+                          <thead>
+                          <tr>
+                              <th scope="col">#</th>
+                              <th scope="col"><strong>TEXT</strong></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr *ngFor="let line of linesToWrite; index as i">
+                              <th scope="row">{{i}}</th>
+                              <th scope="row">{{line}}</th>
+                          </tr>
+                          </tbody>
+                      </table>
+                      <div
+                              class="search-results"
+                              infiniteScroll
+                              [infiniteScrollDistance]="2"
+                              (scrolled)="onScroll()"
+                      ></div>-->
+            <div
+                    class="search-results"
+                    infiniteScroll
+                    infiniteScrollDistance="2"
+                    (scrolled)="onScroll()"
+            ></div>
+        </div>
+
+    </div>
+</div>
+<jw-modal id="addUserModal">
+    <form [formGroup]="addUserForm" class="text-left">
+    <div class="add-user-modal-container">
+        <div class="header-title-modal">
+            <div class="user-title-modal">
+                Agregar usuario
+            </div>
+            <div class="icon-close-modal" (click)="closeModal('addUserModal');">
+                <span>x</span>
+            </div>
+        </div>
+        <div class="content-modal">
+           <div class="modal-row">
+               <div class="input-row">
+                   <span>Usuario</span>
+                   <input type="text" formControlName="userName" placeholder="Crea un nombre de usuario">
+               </div>
+               <div class="input-row">
+                   <span>Nombre (s)</span>
+                   <input type="text" formControlName="names" placeholder="Nombre(s) del usuario">
+               </div>
+           </div>
+            <div class="modal-row">
+                <div class="input-row">
+                    <span>Apellido(s)</span>
+                    <input type="text" formControlName="lastName" placeholder="Apellido(s) del usuario">
+                </div>
+                <div class="input-row">
+                    <span>Rol</span>
+                    <select name="miselect" formControlName="userRol" class="select-add-modal">
+                        <option [value]="item.id" *ngFor="let item of userRolMock">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-row">
+                <div class="input-row">
+                    <span>Contraseña</span>
+                    <input type="text" formControlName="password" placeholder="Contraseña para la cuenta">
+                </div>
+                <div class="input-row">
+
+                </div>
+            </div>
+        </div>
+        <div class="footer-modal">
+            <div class="btns-modal">
+                <button class="btn-cancel-modal btn--modal" (click)="closeModal('addUserModal');">Cancelar</button>
+                <button class="btn-add-modal btn--modal">Agregar</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</jw-modal>
+
+<jw-modal id="editUserModal">
+    <div class="test-style">
+        <span>A Tall Custom Modal!</span>
+    </div>
+    <button (click)="closeModal('editUserModal');">Close</button>
+</jw-modal>
