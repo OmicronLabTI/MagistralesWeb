@@ -30,8 +30,8 @@ jw-modal {
     left: 0;
 
     /* semi-transparent black  */
-    background-color: #000;
-    opacity: 0.75;
+    background-color: #c7c5c5;
+    opacity: 0.3;
 
     /* z-index must be below .jw-modal and above everything else  */
     z-index: 900;
@@ -44,21 +44,24 @@ jw-modal {
     margin: 40px;
 }
 .jw-modal-body-add-user {
-    width: 90%;
-    height: 90%;
-    padding: 20px;
-    background: #fff;
-    /* margin exposes part of the modal background */
-    margin: 40px;
-}
-.jw-modal-body-edit-user{
-    width: 50%;
-    height: 50%;
+    width: 33rem;
+    height: 30rem;
+    margin-top: 3%;
     margin-left: auto;
     margin-right: auto;
+    border-radius: .3rem;
+    background: #fff;
+    border: none;
+    box-shadow: 0 0 15px 1px rgba(113, 106, 202, 0.2);
+    /* margin exposes part of the modal background */
+}
+.jw-modal-body-edit-user{
+    padding-top: 10%;
+    padding-left: 30%;
+    padding-right: 30%;
+
     background: #fff;
     /* margin exposes part of the modal background */
-    margin-top: 20%;
 }
 
 body.jw-modal-open {

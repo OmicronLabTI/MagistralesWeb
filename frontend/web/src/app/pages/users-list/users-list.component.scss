@@ -113,18 +113,151 @@ width: 100%;
   display: flex;
   justify-content: flex-end;
 }
-.test-style{
-  width: 50%;
-  height: 50%;
+.user-list-from-service{
+  width: 100%;
+  /*  height: 100%;
+    overflow-y: scroll;*/
+}
+.add-user-modal-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.header-title-modal{
+  width: 100%;
+  height: 11%;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 300;
+}
+.user-title-modal{
+  width: 90%;
+  height: 100%;
+  padding: 10px;
+  color: #3b3f5c;
+  font-size: 1.5em;
+
+}
+.icon-close-modal span{
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+}
+.icon-close-modal{
+  width: 10%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.user-list-from-service{
+.content-modal{
   width: 100%;
-/*  height: 100%;
-  overflow-y: scroll;*/
+  height: 74%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+.modal-row{
+  width: 100%;
+  height: 30%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.input-row{
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px;
+}
+.input-row span{
+  font-size: 15px;
+  color: #acb0c3;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+.input-row input{
+  border: 1px solid #bfc9d4;
+  color: #3b3f5c;
+  font-size: 1.1em;
+  letter-spacing: 1px;
+  height: calc(1.4em + 1.4rem + 2px);
+  padding: .75rem 1.25rem;
+  border-radius: 6px;
+  width: 100%;
+}
+.footer-modal{
+  width: 100%;
+  height: 15%;
+  display: flex;
+  justify-content: flex-end;
+}
+.btns-modal{
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.btn-cancel-modal{
+  width: 7rem;
+  height: 3rem;
+  font-size: 1em;
+  background-color: #fff;
+  font-weight: 500;
+  border: 1px solid #e8e8e8;
+  color: #3b3f5c;
+  padding: 0 10px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  margin: 5px;
+  transition: all 0.35s ease;
+
+}
+.btn-add-modal{
+  width: 7rem;
+  height: 3rem;
+  font-size: 1em;
+  color: #fff !important;
+  background-color: #6C90B3!important;
+  border: .1px solid #6C90B3;
+  padding: 0 10px;
+  text-shadow: none;
+  font-weight: 300;
+  word-wrap: break-word;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  border-radius: .25rem;
+  transition: all 0.35s ease;
+}
+.btn--modal:hover{
+  width: 7.1rem;
+  height: 3.1rem;
+  font-size: 1em;
+
+}
+.select-add-modal{
+  background-color: #fff;
+  border: 1px solid #bfc9d4;
+  color: #323236;
+  font-size: 1.1em;
+  letter-spacing: 1px;
+  height: calc(1.4em + 1.4rem + 2px);
+  padding: .75rem 1.25rem;
+  border-radius: 6px;
+  width: 100%;
+}
+
+
 /* The container */
 .container {
   width: 5%;
@@ -158,12 +291,6 @@ width: 100%;
   border-radius: 3px;
 }
 
-.jw-modal-body {
-  padding: 20px;
-  background: #fff;
-  margin: 40px;
-  width: 50%;
-}
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
   background-color: #a7a5a5;

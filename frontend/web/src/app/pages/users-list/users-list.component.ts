@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {UserList} from "../../model/http/userList";
 import {ModalService} from "../../_modal";
 import {DataService} from "../../services/data.service";
+import {UserRol} from "../../model/http/userRol";
 
 @Component({
   selector: 'app-users-list',
@@ -12,6 +13,7 @@ export class UsersListComponent implements OnInit {
   checkedGeneral = false;
   finishPage = 5;
   actualPage: number;
+  userRolMock : UserRol[] =[{id:1,name:'qfb'},{id:2, name:'administrador'}]
   listUserData: UserList [] = [
     {
       "id": 0,

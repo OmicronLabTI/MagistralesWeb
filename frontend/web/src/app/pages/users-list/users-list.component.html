@@ -46,9 +46,10 @@
             </div>
         </div>
         <div class="user-list-from-service">
-           <div class="tr-titles effect-hover " *ngFor="let user of listUserData">
+            <div class="tr-titles effect-hover " *ngFor="let user of listUserData">
                 <label class="container">
-                    <input type="checkbox" [checked]="user.checkedRow" (click)="checkGeneralEvent(user.id,user.checkedRow)">
+                    <input type="checkbox" [checked]="user.checkedRow"
+                           (click)="checkGeneralEvent(user.id,user.checkedRow)">
                     <span class="checkmark"></span>
                 </label>
                 <div class="name-title font-style-headers">
@@ -65,34 +66,44 @@
                 </div>
                 <div class="checked-general">
                     <div class="icons-in-general" (click)="openModal('editUserModal')">
-                        <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
                     </div>
                     <div class="icons-in-general">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-minus delete"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-user-minus delete">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
                     </div>
                 </div>
             </div>
-  <!--          <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col"><strong>TEXT</strong></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let line of linesToWrite; index as i">
-                    <th scope="row">{{i}}</th>
-                    <th scope="row">{{line}}</th>
-                </tr>
-                </tbody>
-            </table>
-            <div
-                    class="search-results"
-                    infiniteScroll
-                    [infiniteScrollDistance]="2"
-                    (scrolled)="onScroll()"
-            ></div>-->
+            <!--          <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
+                      <table class="table">
+                          <thead>
+                          <tr>
+                              <th scope="col">#</th>
+                              <th scope="col"><strong>TEXT</strong></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr *ngFor="let line of linesToWrite; index as i">
+                              <th scope="row">{{i}}</th>
+                              <th scope="row">{{line}}</th>
+                          </tr>
+                          </tbody>
+                      </table>
+                      <div
+                              class="search-results"
+                              infiniteScroll
+                              [infiniteScrollDistance]="2"
+                              (scrolled)="onScroll()"
+                      ></div>-->
             <div
                     class="search-results"
                     infiniteScroll
@@ -104,9 +115,55 @@
     </div>
 </div>
 <jw-modal id="addUserModal">
-    <h1>A Custom Modal!</h1>
-    <p>Home page text: </p>
-    <button (click)="closeModal('addUserModal');">Close</button>
+    <div class="add-user-modal-container">
+        <div class="header-title-modal">
+            <div class="user-title-modal">
+                Agregar usuario
+            </div>
+            <div class="icon-close-modal" (click)="closeModal('addUserModal');">
+                <span>x</span>
+            </div>
+        </div>
+        <div class="content-modal">
+           <div class="modal-row">
+               <div class="input-row">
+                   <span>Usuario</span>
+                   <input type="text" placeholder="Crea un nombre de usuario">
+               </div>
+               <div class="input-row">
+                   <span>Nombre (s)</span>
+                   <input type="text" placeholder="Nombre(s) del usuario">
+               </div>
+           </div>
+            <div class="modal-row">
+                <div class="input-row">
+                    <span>Apellido(s)</span>
+                    <input type="text" placeholder="Apellido(s) del usuario">
+                </div>
+                <div class="input-row">
+                    <span>Rol</span>
+                    <select name="miselect" class="select-add-modal">
+                        <option [value]="item.id" *ngFor="let item of userRolMock">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-row">
+                <div class="input-row">
+                    <span>Contraseña</span>
+                    <input type="text" placeholder="Contraseña para la cuenta">
+                </div>
+                <div class="input-row">
+
+                </div>
+            </div>
+        </div>
+        <div class="footer-modal">
+            <div class="btns-modal">
+                <button class="btn-cancel-modal btn--modal" (click)="closeModal('addUserModal');">Cancelar</button>
+                <button class="btn-add-modal btn--modal">Agregar</button>
+            </div>
+        </div>
+    </div>
 </jw-modal>
 
 <jw-modal id="editUserModal">
