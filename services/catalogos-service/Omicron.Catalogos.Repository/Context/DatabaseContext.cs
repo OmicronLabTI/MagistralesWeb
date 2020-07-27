@@ -27,5 +27,13 @@ namespace Omicron.Catalogos.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<UserModel> CatUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets the roles tables.
+        /// </summary>
+        /// <value>
+        /// The roles tables.
+        /// </value>
+        public virtual DbSet<RoleModel> RoleModel { get; set; }
     }
 }

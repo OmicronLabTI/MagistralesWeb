@@ -66,6 +66,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.ValidateCredentials(It.IsAny<LoginModel>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.CreateUser(It.IsAny<UserModel>()))
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -138,6 +142,24 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Act
             var response = await this.userFacade.ValidateCredentials(user);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test to create user.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateUserTest()
+        {
+            // arrange
+            var user = this.GetUserDto();
+
+            // Act
+            var response = await this.userFacade.CreateUser(user);
 
             // Assert
             Assert.IsNotNull(response);

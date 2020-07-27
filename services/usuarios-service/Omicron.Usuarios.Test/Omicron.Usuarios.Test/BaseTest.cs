@@ -47,6 +47,25 @@ namespace Omicron.Usuarios.Test
                 UserName = "George",
                 Password = "abc",
                 Role = 1,
+                Activo = 1,
+            };
+        }
+
+        /// <summary>
+        /// Returns a user model.
+        /// </summary>
+        /// <returns>the return model.</returns>
+        public UserModel GetUserModel()
+        {
+            return new UserModel
+            {
+                Id = "10",
+                FirstName = "Jorge",
+                LastName = "Morales",
+                UserName = "George",
+                Password = "abc",
+                Role = 1,
+                Activo = 1,
             };
         }
     }

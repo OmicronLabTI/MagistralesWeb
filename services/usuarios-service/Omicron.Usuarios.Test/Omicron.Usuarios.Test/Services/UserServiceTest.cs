@@ -13,7 +13,9 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using System.Threading.Tasks;
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
+    using Moq;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
@@ -89,6 +91,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // Arrange
             var user = this.GetUserDto();
+            user.Id = "12";
 
             // Act
             var result = await this.userServices.InsertUser(user);
@@ -162,6 +165,64 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // Assert
             Assert.IsNotNull(response);
             Assert.IsFalse(response.Success);
+        }
+
+        /// <summary>
+        /// Test To create user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateUser()
+        {
+            // arrange
+            var user = this.GetUserModel();
+            user.UserName = "ABC";
+
+            // act
+            var response = await this.userServices.CreateUser(user);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// creates the user with error the user exist.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateUserErrorByRepeatedUsername()
+        {
+            // arrange
+            var user = this.GetUserModel();
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await this.userServices.CreateUser(user));
+        }
+
+        /// <summary>
+        /// creates the user with error the user exist.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateUserErrorByDataBase()
+        {
+            // arrange
+            var user = this.GetUserModel();
+            var mockUser = new Mock<IUserDao>();
+
+            mockUser
+                .Setup(x => x.GetUserByUserName(It.IsAny<string>()))
+                .Returns(Task.FromResult(user));
+
+            mockUser
+                .Setup(x => x.InsertUser(It.IsAny<UserModel>()))
+                .Returns(Task.FromResult(false));
+
+            var userServiceMock = new UsersService(this.mapper, mockUser.Object);
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
         }
     }
 }

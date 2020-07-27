@@ -44,5 +44,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="login">the login object.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> ValidateCredentials(LoginModel login);
+
+        /// <summary>
+        /// Method to create a user.
+        /// </summary>
+        /// <param name="userModel">the user model.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> CreateUser(UserModel userModel);
     }
 }

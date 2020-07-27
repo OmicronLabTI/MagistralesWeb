@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+
 @Service
 public class AuthServiceImpl implements IAuthService {
 
@@ -22,7 +24,10 @@ public class AuthServiceImpl implements IAuthService {
     public void validateCredentials(String usr, String password) {
 
         SecurityDO securityDO = securityDAO.findFirstByUsername(usr);
-        if(!password.equals(securityDO.getPassword())){
+
+        String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
+
+        if(!encodedPassword.equals(securityDO.getPassword())){
             throw new UnAuthorizedException(ErrorMessages.INVALID_CREDENTIALS);
         }
     }
