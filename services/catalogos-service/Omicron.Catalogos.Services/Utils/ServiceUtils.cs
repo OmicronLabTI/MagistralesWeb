@@ -6,14 +6,12 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.Usuarios.Services.Utils
+namespace Omicron.Catalogos.Services.Utils
 {
-    using System;
-    using System.Text;
-    using Omicron.Usuarios.Entities.Model;
+    using Omicron.Catalogos.Entities.Model;
 
     /// <summary>
-    /// Class for common logic.
+    /// The static class for service utils.
     /// </summary>
     public static class ServiceUtils
     {
@@ -36,17 +34,6 @@ namespace Omicron.Usuarios.Services.Utils
                 ExceptionMessage = exceptionMessage,
                 Code = code,
             };
-        }
-
-        /// <summary>
-        /// Converts data to base64.
-        /// </summary>
-        /// <param name="data">the input.</param>
-        /// <returns>the string in base64.</returns>
-        public static string ConvertToBase64(string data)
-        {
-            var bytes = Encoding.ASCII.GetBytes(data);
-            return Convert.ToBase64String(bytes);
         }
     }
 }

@@ -48,5 +48,18 @@ namespace Omicron.Catalogos.Test
                 Birthdate = DateTime.Now,
             };
         }
+
+        /// <summary>
+        /// Gets all the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        public IEnumerable<RoleModel> GetListRoles()
+        {
+            return new List<RoleModel>
+            {
+                new RoleModel { Id = 1, Description = "Administrador" },
+                new RoleModel { Id = 2, Description = "QFB" },
+            };
+        }
     }
 }
