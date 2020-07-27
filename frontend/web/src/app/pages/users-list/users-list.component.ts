@@ -3,6 +3,7 @@ import {UserList} from "../../model/http/userList";
 import {ModalService} from "../../_modal";
 import {DataService} from "../../services/data.service";
 import {UserRol} from "../../model/http/userRol";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-users-list',
@@ -13,6 +14,7 @@ export class UsersListComponent implements OnInit {
   checkedGeneral = false;
   finishPage = 5;
   actualPage: number;
+  addUserForm: FormGroup;
   userRolMock : UserRol[] =[{id:1,name:'qfb'},{id:2, name:'administrador'}]
   listUserData: UserList [] = [
     {
@@ -156,11 +158,18 @@ export class UsersListComponent implements OnInit {
       "status": "inactivo"
     }
   ];
-  constructor(private modalService: ModalService, private dataService: DataService) {
+  constructor(private modalService: ModalService, private dataService: DataService, private formBuilder: FormBuilder) {
     this.listUserData.map(obj =>{
       obj.checkedRow = false;
     });
     this.actualPage = 1;
+    this.addUserForm = this.formBuilder.group({
+      userName:['',Validators.required],
+      names:['',Validators.required],
+      lastName:['',Validators.required],
+      userRol:['',Validators.required],
+      password:['', Validators.required]
+    })
   }
   checkPrincipalEvent(){
     this.checkedGeneral = !this.checkedGeneral;

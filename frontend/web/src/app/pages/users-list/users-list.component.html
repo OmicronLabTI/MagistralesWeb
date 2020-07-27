@@ -115,6 +115,7 @@
     </div>
 </div>
 <jw-modal id="addUserModal">
+    <form [formGroup]="addUserForm" class="text-left">
     <div class="add-user-modal-container">
         <div class="header-title-modal">
             <div class="user-title-modal">
@@ -128,21 +129,21 @@
            <div class="modal-row">
                <div class="input-row">
                    <span>Usuario</span>
-                   <input type="text" placeholder="Crea un nombre de usuario">
+                   <input type="text" formControlName="userName" placeholder="Crea un nombre de usuario">
                </div>
                <div class="input-row">
                    <span>Nombre (s)</span>
-                   <input type="text" placeholder="Nombre(s) del usuario">
+                   <input type="text" formControlName="names" placeholder="Nombre(s) del usuario">
                </div>
            </div>
             <div class="modal-row">
                 <div class="input-row">
                     <span>Apellido(s)</span>
-                    <input type="text" placeholder="Apellido(s) del usuario">
+                    <input type="text" formControlName="lastName" placeholder="Apellido(s) del usuario">
                 </div>
                 <div class="input-row">
                     <span>Rol</span>
-                    <select name="miselect" class="select-add-modal">
+                    <select name="miselect" formControlName="userRol" class="select-add-modal">
                         <option [value]="item.id" *ngFor="let item of userRolMock">{{item.name}}</option>
                     </select>
                 </div>
@@ -150,7 +151,7 @@
             <div class="modal-row">
                 <div class="input-row">
                     <span>Contraseña</span>
-                    <input type="text" placeholder="Contraseña para la cuenta">
+                    <input type="text" formControlName="password" placeholder="Contraseña para la cuenta">
                 </div>
                 <div class="input-row">
 
@@ -164,6 +165,7 @@
             </div>
         </div>
     </div>
+    </form>
 </jw-modal>
 
 <jw-modal id="editUserModal">
