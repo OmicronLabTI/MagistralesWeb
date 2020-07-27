@@ -14,7 +14,13 @@ const routes: Routes = [
     path: 'home',
     loadChildren:() => import('./pages/home/home.module').then(m => m.HomeModule),
     canActivate: [GuardService]
-  },{
+  },
+  {
+    path: 'userList',
+    loadChildren: () => import('./pages/users-list/user-list.module').then(m => m.UserListModule),
+    canActivate: [GuardService]
+  },
+  {
     path: 'userList',
     loadChildren: () => import('./pages/users-list/user-list.module').then(m => m.UserListModule),
     canActivate: [GuardService]
