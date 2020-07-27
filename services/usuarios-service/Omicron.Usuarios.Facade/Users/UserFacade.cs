@@ -67,5 +67,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.ValidateCredentials(this.mapper.Map<LoginModel>(loginDto)));
         }
+
+        /// <summary>
+        /// The create user method.
+        /// </summary>
+        /// <param name="userDto">The user Dto.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> CreateUser(UserDto userDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.CreateUser(this.mapper.Map<UserModel>(userDto)));
+        }
     }
 }

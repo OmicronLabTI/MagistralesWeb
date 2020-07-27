@@ -44,5 +44,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="loginDto">the loginDto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> ValidateCredentials(LoginDto loginDto);
+
+        /// <summary>
+        /// The create user method.
+        /// </summary>
+        /// <param name="userDto">The user Dto.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> CreateUser(UserDto userDto);
     }
 }

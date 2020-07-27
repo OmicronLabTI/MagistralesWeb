@@ -56,6 +56,19 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// The create user method.
+        /// </summary>
+        /// <param name="userDto">the userDto.</param>
+        /// <returns>the status of the insert.</returns>
+        [HttpPost]
+        [Route("/createUser")]
+        public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
+        {
+            var response = await this.userFacade.CreateUser(userDto);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method to get all users.
         /// </summary>
         /// <returns>List of users.</returns>
