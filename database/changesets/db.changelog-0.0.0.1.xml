@@ -206,4 +206,23 @@
       tableName="usersorders"
     />
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.24">
+    <createTable tableName="roles">
+      <column name="idrole" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="roledescription" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.25">
+	<addColumn tableName ="user">
+		<column 
+			name="activo"
+			type="INT"
+			defaultValue="0">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 
