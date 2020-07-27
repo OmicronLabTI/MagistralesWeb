@@ -225,4 +225,14 @@
 		</column>
 	</addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.26">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="Administrador"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.27">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="QFB"/>
+	</insert>
+  </changeSet>  
 </databaseChangeLog> 
