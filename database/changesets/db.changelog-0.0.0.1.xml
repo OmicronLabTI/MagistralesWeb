@@ -117,4 +117,93 @@
 		tableName="user"
 	/>
   </changeSet>
+  <changeSet author="gcruz" id="changelog-1.11">
+    <renameTable
+      newTableName="orderslogs"
+      oldTableName="OrdersLogs"
+    />  
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.12">
+    <renameColumn  
+      newColumnName="id"
+      oldColumnName="Id"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.13">
+    <renameColumn  
+      newColumnName="logdatetime"
+      oldColumnName="LogDateTime"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.14">
+    <renameColumn  
+      newColumnName="userid"
+      oldColumnName="UserId"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.15">
+    <renameColumn  
+      newColumnName="type"
+      oldColumnName="Type"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.16">
+    <renameColumn  
+      newColumnName="noid"
+      oldColumnName="NoId"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.17">
+    <renameColumn  
+      newColumnName="description"
+      oldColumnName="Description"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.18">
+    <renameTable
+      newTableName="usersorders"
+      oldTableName="UsersOrders"
+    />  
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.19">
+    <renameColumn  
+      newColumnName="id"
+      oldColumnName="Id"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.20">
+    <renameColumn  
+      newColumnName="userid"
+      oldColumnName="UserId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.21">
+    <renameColumn  
+      newColumnName="salesorderid"
+      oldColumnName="SalesOrderId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.22">
+    <renameColumn  
+      newColumnName="productionorderid"
+      oldColumnName="ProductionOrderId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.23">
+    <renameColumn  
+      newColumnName="status"
+      oldColumnName="Status"
+      tableName="usersorders"
+    />
+  </changeSet>
 </databaseChangeLog> 
