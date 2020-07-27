@@ -77,5 +77,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.CreateUser(this.mapper.Map<UserModel>(userDto)));
         }
+
+        /// <summary>
+        /// Gets all the user with offset and limit.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetUsers(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUsers(parameters));
+        }
     }
 }

@@ -51,5 +51,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="userModel">the user model.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> CreateUser(UserModel userModel);
+
+        /// <summary>
+        /// the method to return data.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUsers(Dictionary<string, string> parameters);
     }
 }
