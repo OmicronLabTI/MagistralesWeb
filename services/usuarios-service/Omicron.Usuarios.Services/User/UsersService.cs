@@ -10,9 +10,11 @@ namespace Omicron.Usuarios.Services.User
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading.Tasks;
     using AutoMapper;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
@@ -77,6 +79,32 @@ namespace Omicron.Usuarios.Services.User
             }
 
             return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);
+        }
+
+        /// <summary>
+        /// Method to create a user.
+        /// </summary>
+        /// <param name="userModel">the user model.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> CreateUser(UserModel userModel)
+        {
+            var user = await this.userDao.GetUserByUserName(userModel.UserName);
+
+            if (user != null)
+            {
+                throw new CustomServiceException(ServiceConstants.UserAlreadyExist, HttpStatusCode.BadRequest);
+            }
+
+            userModel.Id = Guid.NewGuid().ToString("D");
+            userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
+            var dataBaseResponse = await this.userDao.InsertUser(userModel);
+
+            if (!dataBaseResponse)
+            {
+                throw new CustomServiceException(ServiceConstants.ErrorWhileInsertingUser, HttpStatusCode.InternalServerError);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null);
         }
     }
 }
