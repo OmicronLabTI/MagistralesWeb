@@ -70,7 +70,7 @@ class LoginViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
                 //self.showSuccess(message: res.token ?? "")
-                self.performSegue(withIdentifier: SegueIdentifiers.inboxVC, sender: self)
+                self.performSegue(withIdentifier: "SplitView" , sender: self)
             })
             .disposed(by: disposeBag)
     }
