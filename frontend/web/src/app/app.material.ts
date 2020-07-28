@@ -20,7 +20,8 @@ import {
   MatDatepickerModule,
   MatNativeDateModule,
   MatRadioModule, 
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatCheckboxModule,
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [
@@ -45,7 +46,6 @@ export const MATERIAL_COMPONENTS = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatRadioModule, 
-  MatAutocompleteModule
-
-
+  MatAutocompleteModule,
+  MatCheckboxModule
 ]

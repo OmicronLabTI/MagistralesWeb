@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
-import { MatPaginator } from '@angular/material';
+import {MatButtonModule} from '@angular/material/button';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
+export interface PedidoElement {
+  cons: number;
+  codigo: string;
+  cliente: string;
+  medico: string;
+  asesor: string;
+  f_inicio: string;
+  f_fin: string;
+  status: string;
+  qfb_asignado: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+const ELEMENT_DATA: PedidoElement[] = [
+  {cons: 1, codigo: 'C000012', cliente: 'Farmacias Ahorro', medico: 'Juan Escutia Sanchez', asesor: 'Laura Menendez Castro', f_inicio: '01/11/2020', f_fin: '30/11/2020', status: 'Abierto', qfb_asignado: '-'},
+  {cons: 2, codigo: 'C000013', cliente: 'Farmacias Similares', medico: 'Leonor Esqueda Robles', asesor: 'Gabriel Cruz Garcia', f_inicio: '01/11/2020', f_fin: '30/11/2020', status: 'Cerrado', qfb_asignado: 'Raul Marquez'},
+  {cons: 3, codigo: 'C000014', cliente: 'Doctores Asociados', medico: 'Emiliano Sanchez Bautista', asesor: 'Manuel Martinez Castro', f_inicio: '01/11/2020', f_fin: '30/11/2020', status: 'Abierto', qfb_asignado: 'Victor Miranda'},
+  {cons: 4, codigo: 'C000015', cliente: 'Medicos del Norte', medico: 'Dolores Conejo Lima', asesor: 'Moncerrat Cruz Perez', f_inicio: '01/11/2020', f_fin: '30/11/2020', status: 'Planificado', qfb_asignado: 'Adriana Flores'},
+  {cons: 5, codigo: 'C000016', cliente: 'Farmacos especializados', medico: 'Pedro Peralta Longoria', asesor: 'Laura Menendez Castro', f_inicio: '01/11/2020', f_fin: '30/11/2020', status: 'Liberado', qfb_asignado: 'Lizbeth Alvarez'}
 ];
 
 @Component({
@@ -28,14 +28,19 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./pedidos.component.scss']
 })
 export class PedidosComponent implements OnInit {
+  
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'weight', 'symbol']
+  displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions']
   dataSource = new MatTableDataSource()
 
   constructor() { }
 
   ngOnInit() {
     this.dataSource.data = ELEMENT_DATA;
+  }
+
+  toggleSelection() {
+    
   }
 
 }
