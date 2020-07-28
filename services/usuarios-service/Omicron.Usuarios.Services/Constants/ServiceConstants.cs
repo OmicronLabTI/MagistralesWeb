@@ -42,5 +42,15 @@ namespace Omicron.Usuarios.Services.Constants
         /// Error while saving the user.
         /// </summary>
         public const string ErrorWhileInsertingUser = "Error al guardar usuario.";
+
+        /// <summary>
+        /// const for offset.
+        /// </summary>
+        public const string Offset = "offset";
+
+        /// <summary>
+        /// Const for the limit.
+        /// </summary>
+        public const string Limit = "limit";
     }
 }

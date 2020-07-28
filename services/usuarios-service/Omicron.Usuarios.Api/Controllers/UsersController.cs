@@ -9,13 +9,14 @@
 namespace Omicron.Usuarios.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Omicron.Usuarios.Dtos.User;
-    using Omicron.Usuarios.Facade.Catalogs.Users;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
-    using StackExchange.Redis;
     using Omicron.Usuarios.Dtos.Models;
+    using Omicron.Usuarios.Dtos.User;
+    using Omicron.Usuarios.Facade.Catalogs.Users;
+    using StackExchange.Redis;
 
     /// <summary>
     /// Class User Controller.
@@ -65,6 +66,19 @@ namespace Omicron.Usuarios.Api.Controllers
         public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
             var response = await this.userFacade.CreateUser(userDto);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets all the users.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the users.</returns>
+        [HttpGet]
+        [Route("/getUsers")]
+        public async Task<IActionResult> GetUsers([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.userFacade.GetUsers(parameters);
             return this.Ok(response);
         }
 

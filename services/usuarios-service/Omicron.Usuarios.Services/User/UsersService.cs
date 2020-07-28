@@ -10,6 +10,7 @@ namespace Omicron.Usuarios.Services.User
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -105,6 +106,27 @@ namespace Omicron.Usuarios.Services.User
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null);
+        }
+
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetUsers(Dictionary<string, string> parameters)
+        {
+            var users = await this.userDao.GetAllUsersAsync();
+
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.Id).ToList();
+            var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
         }
     }
 }

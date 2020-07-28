@@ -51,5 +51,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="userDto">The user Dto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> CreateUser(UserDto userDto);
+
+        /// <summary>
+        /// Gets all the user with offset and limit.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUsers(Dictionary<string, string> parameters);
     }
 }
