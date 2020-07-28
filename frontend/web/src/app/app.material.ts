@@ -8,8 +8,9 @@ import {
   MatListModule,
   MatSnackBarModule,
   MatIconModule,
-  MatMenuModule
+  MatMenuModule,
 } from '@angular/material';
+
 export const MATERIAL_COMPONENTS = [
   MatToolbarModule,
   MatInputModule,
@@ -20,5 +21,7 @@ export const MATERIAL_COMPONENTS = [
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+
+
 ]

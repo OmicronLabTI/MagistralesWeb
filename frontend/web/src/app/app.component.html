@@ -65,12 +65,9 @@
         <!--
                 <a (click)="sidenav.toggle()" href="" mat-list-item>Close</a>
         -->
-        <a href="#" mat-list-item>Menu Item 1</a>
-        <a href="#" mat-list-item>Menu Item 2</a>
-        <a href="#" mat-list-item>Menu Item 3</a>
-        <a href="#" mat-list-item>Menu Item 4</a>
-        <a href="#" mat-list-item>Menu Item 5</a>
-        <a href="#"mat-list-item>Menu Item 6</a>
+        <a mat-list-item [routerLink]="['home']">Home</a>
+        <a mat-list-item>Datos de inventario</a>
+        <a mat-list-item [routerLink]="['userList']">Usuarios</a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content fxFlexFill>
