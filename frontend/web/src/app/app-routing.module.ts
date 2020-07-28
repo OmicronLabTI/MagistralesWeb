@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/login/login.component';
 import { GuardService } from './services/guard.service';
 
 
@@ -13,6 +11,11 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren:() => import('./pages/home/home.module').then(m => m.HomeModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'userList',
+    loadChildren:() => import('./pages/user-list/user-list.module').then(m => m.UserListModule),
     canActivate: [GuardService]
   },
   {
