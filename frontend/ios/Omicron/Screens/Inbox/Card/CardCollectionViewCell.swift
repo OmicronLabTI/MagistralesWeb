@@ -16,6 +16,8 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var numberDescriptionLabel: UILabel!
     @IBOutlet weak var baseDocumentLabel: UILabel!
     @IBOutlet weak var baseDocumentDescriptionLabel: UILabel!
+    @IBOutlet weak var containerLabel: UILabel!
+    @IBOutlet weak var containerDescriptionLabel: UILabel!
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var tagDescriptionLabel: UILabel!
     @IBOutlet weak var plannedQuantityLabel: UILabel!
@@ -31,6 +33,11 @@ class CardCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        self.contentView.backgroundColor = .white
+        self.contentView.layer.borderColor = UIColor.black.cgColor
+        self.contentView.layer.borderWidth = 2
+        self.contentView.layer.cornerRadius = 10
     }
 
 }

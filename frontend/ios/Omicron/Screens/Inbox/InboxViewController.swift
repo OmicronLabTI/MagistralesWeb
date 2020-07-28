@@ -82,6 +82,6 @@ extension InboxViewController: UICollectionViewDelegate {
 
 extension InboxViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: cardWidth, height: cardWidth - 10)
+        return CGSize(width: cardWidth, height: cardWidth - 30)
     }
 }
