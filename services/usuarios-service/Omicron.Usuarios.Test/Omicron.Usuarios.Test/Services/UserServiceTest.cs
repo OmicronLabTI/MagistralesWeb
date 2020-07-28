@@ -9,6 +9,7 @@
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -209,11 +210,12 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // arrange
             var user = this.GetUserModel();
+            user.UserName = "test";
             var mockUser = new Mock<IUserDao>();
 
             mockUser
                 .Setup(x => x.GetUserByUserName(It.IsAny<string>()))
-                .Returns(Task.FromResult(user));
+                .Returns(Task.FromResult<UserModel>(null));
 
             mockUser
                 .Setup(x => x.InsertUser(It.IsAny<UserModel>()))
@@ -223,6 +225,42 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetAllUsersWithOffsetLimit()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("offset", "2");
+            dic.Add("limit", "10");
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+
+            // Assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test to  delete user.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task DeleteUser()
+        {
+            // arrange
+            var listIds = new List<string> { "1", };
+
+            // act
+            var response = await this.userServices.DeleteUser(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
         }
     }
 }
