@@ -1,0 +1,68 @@
+<div class="cont-center">
+
+  <div class=" clearfix">
+    <h1 class="titles title-head float-left">Pedidos</h1>
+    <mat-form-field class="float-right" appearance="fill">
+      <mat-label>Mostrar pedidos:</mat-label>
+      <mat-select>
+        <mat-option value="Diarios">
+          Diarios
+        </mat-option>
+        <mat-option value="Semanales">
+          Semanales
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+    <div class="start-element mobile-center-input">
+      <mat-form-field >
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar...">       
+      </mat-form-field>
+    </div>
+    
+    <div class="last-element mobile-complete-btn mobile-bottom-item">
+      <button mat-raised-button class="button-cta ">
+        <mat-icon aria-hidden="false">person_add</mat-icon>
+        &nbsp; Crear Nuevo Registro &nbsp; 
+      </button>
+    </div>
+  
+    <table mat-table [dataSource]="dataSource"  style="text-align: center;" class="shadow-gral-table">  
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef class="cantered"> Nombre</th>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell"> {{element.position}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="cantered mobile-hide"> Correo electrónico </th>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdemail mobile-hide"> {{element.name}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="weight">
+            <th mat-header-cell *matHeaderCellDef class="cantered mobile-hide">  Teléfono </th>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide"> {{element.weight}} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="symbol">
+            <th mat-header-cell *matHeaderCellDef class="cantered mobile-hide">  Departamento </th>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.symbol}} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef  class="cantered">  Acciones </th>
+            <td mat-cell class="tdcell tdactions"> 
+                <button mat-icon-button class="ico-col-pri" >
+                  <mat-icon >edit</mat-icon>
+                </button>
+      
+                <button mat-icon-button class="ico-col-sec">
+                  <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+  </div>

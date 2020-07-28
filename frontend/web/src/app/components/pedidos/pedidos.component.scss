@@ -1,0 +1,41 @@
+table {
+    width: 100%;
+  }
+  
+  .cantered{
+    text-align: center;
+    font-size: 16px !important;
+  
+  }
+  
+  .tdcell{
+    text-align: center;
+    font-size: 14px !important;
+    text-transform: capitalize;
+  
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 28% !important;
+    width: 18% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+  
+  .tdphone{
+      width: 10% !important;
+  }
+  
+  .tdactions{
+      width: 10% !important;
+  }
+  
+  .tdemail{
+      text-transform: none !important;
+  }

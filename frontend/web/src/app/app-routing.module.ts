@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { GuardService } from './services/guard.service';
-
+import { PedidosComponent } from './components/pedidos/pedidos.component';
 
 const routes: Routes = [
   {
@@ -24,6 +24,10 @@ const routes: Routes = [
     path: 'userList',
     loadChildren: () => import('./pages/users-list/user-list.module').then(m => m.UserListModule),
     canActivate: [GuardService]
+  },
+  {
+    path: 'pedidos',
+    component: PedidosComponent
   },
   {
     path: '**',

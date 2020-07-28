@@ -57,3 +57,61 @@ body {
   text-align: center !important;
 }
 
+@media(min-width: 769px){
+  .cont-center{
+      margin-left: 10%;
+      margin-top: 2%;
+      margin-right: 10%;
+      margin-bottom: 5%;;
+  }
+}
+
+@media(max-width: 768px){
+  .cont-center{
+      margin-left: 2%;
+      margin-right: 2%;
+      margin-top: 3rem;
+  }
+}
+@media(min-width: 769px){
+  .cont-center-notop{
+      margin-left: 10%;
+      margin-right: 10%;
+      margin-bottom: 5%;;
+  }
+}
+
+body > app-root > mat-sidenav-container > mat-sidenav-content > app-general-services > div.cont-center > table{
+  margin-top: 3rem !important;
+}
+
+body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen > div.cont-center > div.tab-top-space > mat-list{
+  background-color:#fff;
+}
+
+@media(max-width: 768px){
+  body > app-root > app-menu-bar > mat-sidenav-container > mat-sidenav-content > app-pre-registry > div.cont-center > mat-card > form > div.first-in-div > mat-form-field{
+      display: block;
+  }
+}
+
+@media(max-width: 768px){
+  body > app-root > app-menu-bar > mat-sidenav-container > mat-sidenav-content > app-wizard > div.cont-center > div > mat-horizontal-stepper > div.mat-horizontal-content-container{
+      margin-top: -2rem;
+      }
+  
+      #mat-checkbox-1 > label,
+      #mat-checkbox-2 > label{
+          margin-top: 0.8rem;
+      }
+  }
+
+  .title-head{
+    font-size: x-large;
+    font-style: unset;
+    color: #1b4063;
+  }
+
+  .mat-form-field-infix{
+    padding: 0px !important;
+  }
