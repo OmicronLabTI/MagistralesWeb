@@ -70,6 +70,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.CreateUser(It.IsAny<UserModel>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.GetUsers(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -164,6 +168,25 @@ namespace Omicron.Usuarios.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test to get all users.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetAllUsersWithOffset()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("Offset", "1");
+            dic.Add("Limit", "2");
+
+            // act
+            var response = await this.userFacade.GetUsers(dic);
+
+            // Assert
+            Assert.IsNotNull(response);
         }
     }
 }

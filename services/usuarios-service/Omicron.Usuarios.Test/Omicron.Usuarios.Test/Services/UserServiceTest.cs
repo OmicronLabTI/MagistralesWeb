@@ -9,6 +9,7 @@
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -223,6 +224,25 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetAllUsersWithOffsetLimit()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("offset", "2");
+            dic.Add("limit", "10");
+
+            // act
+            var response = this.userServices.GetUsers(dic);
+
+            // Assert
+            Assert.IsNotNull(response);
         }
     }
 }
