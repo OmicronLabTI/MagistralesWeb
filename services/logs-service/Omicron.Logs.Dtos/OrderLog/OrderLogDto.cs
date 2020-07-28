@@ -9,6 +9,7 @@
 namespace Omicron.Logs.Dtos.OrderLog
 {
     using System;
+    using Omicron.Logs.Dtos.UserOrder;
 
     /// <summary>
     /// Class OrderLog Dto.
@@ -62,5 +63,13 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// String description.
         /// </value>
         public string description { get; set; }
+
+        /// <summary>
+        /// Gets or sets detalle.
+        /// </summary>
+        /// <value>
+        /// String detalle.
+        /// </value>
+        public List<UsersOrder> detalle { get; set; }
     }
 }

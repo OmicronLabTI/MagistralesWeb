@@ -47,7 +47,7 @@ namespace Omicron.Logs.Api.Controllers
         /// <param name="orderlog">OrderLog Model.</param>
         /// <returns>Success or exception.</returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] OrderLogDto orderlog)
+        public async Task<IActionResult> Post([FromBody] List<OrderLogDto> orderlog)
         {
             var response = await this.logicFacade.InsertOrderLog(orderlog);
             return this.Ok(response);
