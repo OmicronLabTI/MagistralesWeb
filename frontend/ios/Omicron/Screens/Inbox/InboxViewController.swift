@@ -15,14 +15,21 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     
     
     var text = ""
+    let listImages = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]
+    private let cardWidth = UIScreen.main.bounds.width / 2.5
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
-        numberlLabel.text = self.text
+        print("TAMAÑO: \(cardWidth)")
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        collectionView.register(UINib(nibName: "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "card")
         // Do any additional setup after loading the view.
     }
     
@@ -55,4 +62,26 @@ class InboxViewController: UIViewController {
     }
     */
 
+}
+extension InboxViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 9
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "card", for: indexPath) as? CardCollectionViewCell
+        return cell!
+    }
+    
+    
+}
+
+extension InboxViewController: UICollectionViewDelegate {
+    
+}
+
+extension InboxViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: cardWidth, height: cardWidth - 10)
+    }
 }

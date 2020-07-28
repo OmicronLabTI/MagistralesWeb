@@ -182,16 +182,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="791.5" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqT-QF-iUU">
-                                <rect key="frame" x="346" y="367" width="100" height="100"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="Sx2-2n-omF"/>
-                                    <constraint firstAttribute="height" constant="100" id="odx-bo-uX8"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Mc-gk-gPN">
                                 <rect key="frame" x="0.0" y="0.0" width="791.5" height="115"/>
                                 <subviews>
@@ -249,20 +239,33 @@
                                     <constraint firstAttribute="trailing" secondItem="te1-tz-2vg" secondAttribute="trailing" constant="20" id="yX7-O5-X6E"/>
                                 </constraints>
                             </view>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HTk-p1-6Au">
+                                <rect key="frame" x="20" y="135" width="751.5" height="679"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="qSm-Zi-mYZ">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="HTk-p1-6Au" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" constant="20" id="0jZ-IU-Kf7"/>
                             <constraint firstAttribute="trailing" secondItem="5Mc-gk-gPN" secondAttribute="trailing" id="4z9-Ai-qhC"/>
                             <constraint firstItem="5Mc-gk-gPN" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" id="5eq-pq-RTJ"/>
+                            <constraint firstItem="6ZC-de-fnf" firstAttribute="trailing" secondItem="HTk-p1-6Au" secondAttribute="trailing" constant="20" id="UAk-UV-P8m"/>
                             <constraint firstItem="5Mc-gk-gPN" firstAttribute="top" secondItem="i2U-wQ-yxQ" secondAttribute="top" id="XmZ-id-AZw"/>
-                            <constraint firstItem="hqT-QF-iUU" firstAttribute="centerX" secondItem="i2U-wQ-yxQ" secondAttribute="centerX" id="ZIL-bM-dsj"/>
-                            <constraint firstItem="hqT-QF-iUU" firstAttribute="centerY" secondItem="i2U-wQ-yxQ" secondAttribute="centerY" id="rpz-lD-09M"/>
+                            <constraint firstItem="HTk-p1-6Au" firstAttribute="top" secondItem="5Mc-gk-gPN" secondAttribute="bottom" constant="20" id="fol-lF-K95"/>
+                            <constraint firstItem="6ZC-de-fnf" firstAttribute="bottom" secondItem="HTk-p1-6Au" secondAttribute="bottom" constant="20" id="iCE-lO-QyI"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6ZC-de-fnf"/>
                     </view>
                     <connections>
+                        <outlet property="collectionView" destination="HTk-p1-6Au" id="PXP-7D-xfI"/>
                         <outlet property="finishedButton" destination="Sk7-Zh-BjH" id="Ku5-i1-a9a"/>
-                        <outlet property="numberlLabel" destination="hqT-QF-iUU" id="aJB-vu-WEa"/>
                         <outlet property="pendingButton" destination="Jev-kI-Spn" id="KEe-ko-tuK"/>
                         <outlet property="processButton" destination="7P0-go-amH" id="Dpc-G5-zPv"/>
                         <outlet property="statusNameLabel" destination="R2N-ae-Jk2" id="u8L-q2-Hc2"/>

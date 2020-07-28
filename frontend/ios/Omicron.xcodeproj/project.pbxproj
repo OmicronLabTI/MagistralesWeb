@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0BB57A4257C6A72E4D3CF5A4 /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C723D74196413AA0F7F3D7FE /* Pods_Omicron.framework */; };
+		7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */; };
+		7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */; };
 		7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D124CB9553005A7FED /* InboxViewController.swift */; };
 		7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D324CB9576005A7FED /* InboxViewModel.swift */; };
 		7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D524CB9588005A7FED /* InboxModel.swift */; };
@@ -58,6 +60,8 @@
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
+		7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardCollectionViewCell.xib; sourceTree = "<group>"; };
 		7CE216D124CB9553005A7FED /* InboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		7CE216D324CB9576005A7FED /* InboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModel.swift; sourceTree = "<group>"; };
 		7CE216D524CB9588005A7FED /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
@@ -134,6 +138,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		7CBA553924CF8E5400918C38 /* Card */ = {
+			isa = PBXGroup;
+			children = (
+				7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */,
+				7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */,
+			);
+			path = Card;
+			sourceTree = "<group>";
+		};
 		7CE216D724CB9D40005A7FED /* StatusSection */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +160,7 @@
 		7CE2C2A924CA03ED00517BD7 /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				7CBA553924CF8E5400918C38 /* Card */,
 				7CE216D724CB9D40005A7FED /* StatusSection */,
 				7CE216D124CB9553005A7FED /* InboxViewController.swift */,
 				7CE216D324CB9576005A7FED /* InboxViewModel.swift */,
@@ -395,6 +409,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
+				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
@@ -541,6 +556,7 @@
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				7CE216DB24CC121F005A7FED /* StatusViewCell.swift in Sources */,
+				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
 				7CE216D924CC1201005A7FED /* StatusSectionTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
