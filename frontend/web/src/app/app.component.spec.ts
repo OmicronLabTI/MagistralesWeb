@@ -2,13 +2,15 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { MATERIAL_COMPONENTS } from './app.material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        MATERIAL_COMPONENTS
+        MATERIAL_COMPONENTS,
+          BrowserAnimationsModule
       ],
       declarations: [
         AppComponent
@@ -32,6 +34,10 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
+<<<<<<< HEAD
     expect(compiled.querySelector('span').textContent).toContain('Hola ,');
+=======
+    expect(compiled.querySelector('span').textContent).toContain('Hola , ');
+>>>>>>> ea4d16748d62bea1925c9ea0ffade9856f80486c
   });
 });

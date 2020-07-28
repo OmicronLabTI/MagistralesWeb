@@ -1,8 +1,9 @@
-export class UserList{
-    id: number;
-    name: string;
+export class UserList {
+    id: string;
+    userName: string;
+    firstName: string;
     lastName: string;
-    rol: string;
-    status: string;
-    checkedRow?:boolean;
+    role: number;
+    password: string;
+    activo: number;
 }

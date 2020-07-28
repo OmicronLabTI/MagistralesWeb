@@ -29,5 +29,7 @@ export class AppComponent {
         });
       });
   }
-
+  logoutSession(){
+    console.log('logout<>')
+  }
 }

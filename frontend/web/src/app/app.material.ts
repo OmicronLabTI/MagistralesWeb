@@ -4,7 +4,23 @@ import {
   MatButtonModule,
   MatProgressBarModule,
   MatCardModule,
-  MatSnackBarModule
+  MatSidenavModule,
+  MatListModule,
+  MatSnackBarModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSelectModule,
+  MatExpansionModule,
+  MatPaginatorModule,
+  MatTableModule,
+  MatSlideToggleModule,
+  MatDialogModule,
+  MatTabsModule,
+  MatProgressSpinnerModule, 
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule, 
+  MatAutocompleteModule
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [
@@ -13,5 +29,23 @@ export const MATERIAL_COMPONENTS = [
   MatButtonModule,
   MatProgressBarModule,
   MatCardModule,
-  MatSnackBarModule
+  MatSidenavModule,
+  MatListModule,
+  MatSnackBarModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSelectModule,
+  MatExpansionModule,
+  MatPaginatorModule,
+  MatTableModule,
+  MatSlideToggleModule,
+  MatDialogModule,
+  MatTabsModule,
+  MatProgressSpinnerModule, 
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule, 
+  MatAutocompleteModule
+
+
 ]
