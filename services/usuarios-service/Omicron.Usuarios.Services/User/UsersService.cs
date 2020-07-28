@@ -76,7 +76,7 @@ namespace Omicron.Usuarios.Services.User
 
             if (!user.Password.Equals(login.Password))
             {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPassword, null, null);
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null);
             }
 
             return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);
@@ -127,6 +127,29 @@ namespace Omicron.Usuarios.Services.User
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
+        }
+
+        /// <summary>
+        /// Deletes the user logically.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> DeleteUser(List<string> listIds)
+        {
+            var listUserToUpdate = new List<UserModel>();
+            foreach (var i in listIds)
+            {
+                var user = await this.userDao.GetUserById(i);
+
+                if (user != null)
+                {
+                    user.Activo = 0;
+                    listUserToUpdate.Add(user);
+                }
+            }
+
+            var response = await this.userDao.UpdateUsers(listUserToUpdate);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
         }
     }
 }

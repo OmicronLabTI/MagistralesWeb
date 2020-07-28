@@ -30,6 +30,7 @@ namespace Omicron.Usuarios.Test
                 new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "abc", Role = 1, Activo = 1 },
                 new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "abc", Role = 1, Activo = 1 },
                 new UserModel { Id = "4", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "abc", Role = 1, Activo = 1 },
+                new UserModel { Id = "5", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "abc", Role = 1, Activo = 1 },
             };
         }
 
