@@ -58,5 +58,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="parameters">the params.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetUsers(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> DeleteUser(List<string> listIds);
     }
 }

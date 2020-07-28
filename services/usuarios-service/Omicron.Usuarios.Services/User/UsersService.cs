@@ -128,5 +128,28 @@ namespace Omicron.Usuarios.Services.User
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
         }
+
+        /// <summary>
+        /// Deletes the user logically.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> DeleteUser(List<string> listIds)
+        {
+            var listUserToUpdate = new List<UserModel>();
+            foreach (var i in listIds)
+            {
+                var user = await this.userDao.GetUserById(i);
+
+                if (user != null)
+                {
+                    user.Activo = 0;
+                    listUserToUpdate.Add(user);
+                }
+            }
+
+            var response = await this.userDao.UpdateUsers(listUserToUpdate);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
+        }
     }
 }
