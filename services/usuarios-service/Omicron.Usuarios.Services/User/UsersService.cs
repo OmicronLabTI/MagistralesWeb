@@ -76,7 +76,7 @@ namespace Omicron.Usuarios.Services.User
 
             if (!user.Password.Equals(login.Password))
             {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPassword, null, null);
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null);
             }
 
             return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);

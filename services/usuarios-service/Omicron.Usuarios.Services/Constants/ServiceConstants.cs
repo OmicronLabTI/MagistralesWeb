@@ -31,7 +31,7 @@ namespace Omicron.Usuarios.Services.Constants
         /// <summary>
         /// If the password is incorrect.
         /// </summary>
-        public const string IncorrectPassword = "La contraseña es incorrecta, intenta de nuevo";
+        public const string IncorrectPass = "La contraseña es incorrecta, intenta de nuevo";
 
         /// <summary>
         /// Text when the username already exists.

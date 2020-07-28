@@ -210,11 +210,12 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // arrange
             var user = this.GetUserModel();
+            user.UserName = "test";
             var mockUser = new Mock<IUserDao>();
 
             mockUser
                 .Setup(x => x.GetUserByUserName(It.IsAny<string>()))
-                .Returns(Task.FromResult(user));
+                .Returns(Task.FromResult<UserModel>(null));
 
             mockUser
                 .Setup(x => x.InsertUser(It.IsAny<UserModel>()))
