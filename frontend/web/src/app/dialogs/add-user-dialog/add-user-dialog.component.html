@@ -1,0 +1,80 @@
+<div class="add-user-container">
+    <mat-card class="add-user-card">
+        <mat-card-header class="card-header-container">
+            <mat-card-title>Agregar usuario</mat-card-title>
+            <mat-icon mat-dialog-close>clear</mat-icon>
+
+        </mat-card-header>
+        <mat-card-content class="content-card-container">
+            <form [formGroup]="addUserForm" class="form-add-user">
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Ingresa usuario" formControlName="userName">
+                            <mat-error *ngIf="addUserForm?.controls.userName?.errors?.required">
+                                Usuario es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Nombre(s)" formControlName="firstName">
+                            <mat-error *ngIf="addUserForm?.controls.firstName?.errors?.required">
+                                Nombre es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Apellido(s)" formControlName="lastName">
+                            <mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
+                                Apellido es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="fill" class="custom-field">
+                            <mat-label>Selecciona rol</mat-label>
+                            <mat-select formControlName="role">
+                                <mat-option value="option">Option</mat-option>
+                                <mat-option value="option">Option 2</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm?.controls.role?.errors?.required">
+                                Rol es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Contraseña" formControlName="password">
+                            <mat-error *ngIf="addUserForm?.controls.password?.errors?.required">
+                                Contraseña es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="fill" class="custom-field">
+                            <mat-label>Selecciona estatus</mat-label>
+                            <mat-select formControlName="activo">
+                                <mat-option value="option">Option</mat-option>
+                                <mat-option value="option">Option 2</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm?.controls.activo?.errors?.required">
+                                Estatus es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+
+        </mat-card-content>
+        <mat-card-actions class="options-footer">
+            <button mat-button>Cancelar</button>
+            <button mat-button class="btn-add-modal" mat-dialog-close [disabled]="addUserForm.invalid">Agregar</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

@@ -27,7 +27,10 @@ $omicron-theme: mat-light-theme($omicron-primary, $omicron-accent, $omicron-warn
 @include angular-material-theme($omicron-theme);
 
 /* You can add global styles to this file, and also import other style files */
-
+.custom-dialog-container .mat-dialog-container {
+  margin-top: 10px;
+  padding: 0;
+}
 html,
 body {
   height: 100%;

@@ -22,6 +22,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
         ReactiveFormsModule,
         MATERIAL_COMPONENTS,
         FlexLayoutModule
+
     ],
   providers: [
     APP_PROVIDERS

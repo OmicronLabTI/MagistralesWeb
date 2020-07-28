@@ -6,4 +6,5 @@ export class UserList {
     role: number;
     password: string;
     activo: number;
+    isChecked?: boolean = false;
 }

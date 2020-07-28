@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
 
     this.securityService.login(data).subscribe(res => {
       this.dataService.setToken(res.token);
+      this.dataService.setIsLogin(true);
       this.router.navigate(['home']);
     }, err => {
       this.dataService.setGeneralNotificationMessage(err);
