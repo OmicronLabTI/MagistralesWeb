@@ -2,7 +2,6 @@
 // For more information: https://material.angular.io/guide/theming
 @import "~@angular/material/theming";
 @import "./assets/styles/bootstrap-grid.min.css";
-@import "./assets/styles/bootstrap/css/bootstrap.min.css";
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -57,7 +56,7 @@ body {
   text-align: center !important;
 }
 
-@media(min-width: 769px){
+/*@media(min-width: 769px){
   .cont-center{
       margin-left: 10%;
       margin-top: 2%;
@@ -79,9 +78,9 @@ body {
       margin-right: 10%;
       margin-bottom: 5%;;
   }
-}
+}*/
 
-body > app-root > mat-sidenav-container > mat-sidenav-content > app-general-services > div.cont-center > table{
+/*body > app-root > mat-sidenav-container > mat-sidenav-content > app-general-services > div.cont-center > table{
   margin-top: 3rem !important;
 }
 
@@ -114,4 +113,4 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 
   .mat-form-field-infix{
     padding: 0px !important;
-  }
+  }*/
