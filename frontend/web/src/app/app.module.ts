@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { PedidosComponent } from './components/pedidos/pedidos.component';
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { FlexLayoutModule } from "@angular/flex-layout";
         HttpClientModule,
         ReactiveFormsModule,
         MATERIAL_COMPONENTS,
-        FlexLayoutModule
+        FlexLayoutModule,
+        FormsModule
     ],
   providers: [
     APP_PROVIDERS

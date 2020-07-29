@@ -3,41 +3,58 @@
     <div class="title-list-container">
       <span>Pedidos</span>
     </div>
+    <div class="filter-select">
+      <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span>Diarios</span></button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Diarios</button>
+        <button mat-menu-item>Semanales</button>
+        <button mat-menu-item>Quincenales</button>
+        <button mat-menu-item>Mensuales</button>
+      </mat-menu>
+    </div>
   </div>
 
-  <!--<mat-form-field appearance="fill">
-    <mat-label>Mostrar pedidos:</mat-label>
-    <mat-select>
-      <mat-option value="Diarios">
-        Diarios
-      </mat-option>
-      <mat-option value="Semanales">
-        Semanales
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div class=" clearfix">
-    <div class="start-element mobile-center-input">
+  <div class="table-toolbar">
+    <div class="table-toolbar-search">
       <mat-form-field >
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar...">       
       </mat-form-field>
     </div>
-  </div>-->
+    <div class="table-toolbar-buttons">
+      <button mat-raised-button class="button-blue ">
+        &nbsp; Procesar &nbsp; 
+      </button>
+      &nbsp;
+      &nbsp;
+      <button mat-raised-button class="button-blue ">
+        &nbsp; Asignar &nbsp; 
+      </button>
+      &nbsp;
+      &nbsp;
+      <button mat-raised-button class="button-blue ">
+        &nbsp; Finalizar &nbsp; 
+      </button>
+      &nbsp;
+      &nbsp;
+      <button mat-raised-button class="button-blue ">
+        &nbsp; Cancelar &nbsp; 
+      </button>
+      &nbsp;
+      &nbsp;
+      <button mat-raised-button class="button-blue ">
+        &nbsp; Filtrar &nbsp; 
+      </button>
+    </div>
+  </div>
 
-  <!--<div class="last-element mobile-complete-btn mobile-bottom-item">
-    <button mat-raised-button class="button-cta ">
-      <mat-icon aria-hidden="false">person_add</mat-icon>
-      &nbsp; Crear Nuevo Registro &nbsp; 
-    </button>
-  </div>-->
   <div class="list-users-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
           <ng-container matColumnDef="seleccion">&nbsp;
             <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox (click)="toggleSelection();"></mat-checkbox>
+              <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
             </th>
             <td mat-cell *matCellDef="let element" class="">
-              <mat-checkbox ></mat-checkbox>
+              <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
             </td>
           </ng-container>
           <ng-container matColumnDef="cons">
