@@ -65,5 +65,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="listIds">the list ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> DeleteUser(List<string> listIds);
+
+        /// <summary>
+        /// update the user.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <returns>the user updaterd.</returns>
+        Task<ResultModel> UpdateUser(UserModel user);
     }
 }
