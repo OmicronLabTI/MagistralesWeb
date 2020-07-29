@@ -262,5 +262,37 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateUser()
+        {
+            // arrange
+            var user = this.GetUserModel();
+            user.Id = "1";
+
+            // act
+            var response = await this.userServices.UpdateUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateUserUserNotExist()
+        {
+            // arrange
+            var user = this.GetUserModel();
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await this.userServices.UpdateUser(user));
+        }
     }
 }
