@@ -31,6 +31,26 @@ namespace Omicron.Usuarios.Services.Constants
         /// <summary>
         /// If the password is incorrect.
         /// </summary>
-        public const string IncorrectPassword = "La contraseña es incorrecta, intenta de nuevo";
+        public const string IncorrectPass = "La contraseña es incorrecta, intenta de nuevo";
+
+        /// <summary>
+        /// Text when the username already exists.
+        /// </summary>
+        public const string UserAlreadyExist = "El usuario ya existe, favor de elegir otro.";
+
+        /// <summary>
+        /// Error while saving the user.
+        /// </summary>
+        public const string ErrorWhileInsertingUser = "Error al guardar usuario.";
+
+        /// <summary>
+        /// const for offset.
+        /// </summary>
+        public const string Offset = "offset";
+
+        /// <summary>
+        /// Const for the limit.
+        /// </summary>
+        public const string Limit = "limit";
     }
 }

@@ -8,8 +8,6 @@
 
 namespace Omicron.Usuarios.Dtos.User
 {
-    using System;
-
     /// <summary>
     /// Class User Dto.
     /// </summary>
@@ -62,5 +60,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// String Password.
         /// </value>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public int Activo { get; set; }
     }
 }

@@ -60,10 +60,29 @@ namespace Omicron.Usuarios.Test.Facade
             {
                 Success = true,
                 Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = new ResultDto(),
+                UserError = string.Empty,
             };
 
             mockServices
                 .Setup(m => m.ValidateCredentials(It.IsAny<LoginModel>()))
+                .Returns(Task.FromResult(result));
+
+            mockServices
+                .Setup(m => m.CreateUser(It.IsAny<UserModel>()))
+                .Returns(Task.FromResult(result));
+
+            mockServices
+                .Setup(m => m.GetUsers(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(result));
+
+            mockServices
+                .Setup(m => m.DeleteUser(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(result));
+
+            mockServices
+                .Setup(m => m.UpdateUser(It.IsAny<UserModel>()))
                 .Returns(Task.FromResult(result));
 
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
@@ -101,7 +120,7 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(id.ToString(), response.Id);
         }
 
         /// <summary>
@@ -142,6 +161,87 @@ namespace Omicron.Usuarios.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test to create user.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateUserTest()
+        {
+            // arrange
+            var user = this.GetUserDto();
+
+            // Act
+            var response = await this.userFacade.CreateUser(user);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test to get all users.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetAllUsersWithOffset()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("Offset", "1");
+            dic.Add("Limit", "2");
+
+            // act
+            var response = await this.userFacade.GetUsers(dic);
+
+            // Assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// test to delete users.
+        /// </summary>
+        /// <returns>deltes the users.</returns>
+        [Test]
+        public async Task DeleteUsers()
+        {
+            // Arrange
+            var listData = new List<string> { "1", "2", "3", };
+
+            // Act
+            var response = await this.userFacade.DeleteUser(listData);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateUser()
+        {
+            // Arrange
+            var user = this.GetUserDto();
+
+            // Act
+            var response = await this.userFacade.UpdateUser(user);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
         }
     }
 }

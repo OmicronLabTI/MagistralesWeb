@@ -67,5 +67,45 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.ValidateCredentials(this.mapper.Map<LoginModel>(loginDto)));
         }
+
+        /// <summary>
+        /// The create user method.
+        /// </summary>
+        /// <param name="userDto">The user Dto.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> CreateUser(UserDto userDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.CreateUser(this.mapper.Map<UserModel>(userDto)));
+        }
+
+        /// <summary>
+        /// Gets all the user with offset and limit.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetUsers(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUsers(parameters));
+        }
+
+        /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> DeleteUser(List<string> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.DeleteUser(listIds));
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the user updated.</returns>
+        public async Task<ResultDto> UpdateUser(UserDto user)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.UpdateUser(this.mapper.Map<UserModel>(user)));
+        }
     }
 }

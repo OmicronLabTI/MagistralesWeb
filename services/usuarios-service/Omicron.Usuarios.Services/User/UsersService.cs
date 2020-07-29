@@ -10,9 +10,12 @@ namespace Omicron.Usuarios.Services.User
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
     using AutoMapper;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
@@ -73,10 +76,105 @@ namespace Omicron.Usuarios.Services.User
 
             if (!user.Password.Equals(login.Password))
             {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPassword, null, null);
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null);
             }
 
             return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);
+        }
+
+        /// <summary>
+        /// Method to create a user.
+        /// </summary>
+        /// <param name="userModel">the user model.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> CreateUser(UserModel userModel)
+        {
+            var user = await this.userDao.GetUserByUserName(userModel.UserName);
+
+            if (user != null)
+            {
+                throw new CustomServiceException(ServiceConstants.UserAlreadyExist, HttpStatusCode.BadRequest);
+            }
+
+            userModel.Id = Guid.NewGuid().ToString("D");
+            userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
+            var dataBaseResponse = await this.userDao.InsertUser(userModel);
+
+            if (!dataBaseResponse)
+            {
+                throw new CustomServiceException(ServiceConstants.ErrorWhileInsertingUser, HttpStatusCode.InternalServerError);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null);
+        }
+
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetUsers(Dictionary<string, string> parameters)
+        {
+            var users = await this.userDao.GetAllUsersAsync();
+
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.Id).ToList();
+            var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
+        }
+
+        /// <summary>
+        /// Deletes the user logically.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> DeleteUser(List<string> listIds)
+        {
+            var listUserToUpdate = new List<UserModel>();
+            foreach (var i in listIds)
+            {
+                var user = await this.userDao.GetUserById(i);
+
+                if (user != null)
+                {
+                    user.Activo = 0;
+                    listUserToUpdate.Add(user);
+                }
+            }
+
+            var response = await this.userDao.UpdateUsers(listUserToUpdate);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
+        }
+
+        /// <summary>
+        /// update the user.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <returns>the user updaterd.</returns>
+        public async Task<ResultModel> UpdateUser(UserModel user)
+        {
+            var usertoUpdate = await this.userDao.GetUserById(user.Id);
+
+            if (usertoUpdate == null)
+            {
+                throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
+            }
+
+            usertoUpdate.UserName = user.UserName;
+            usertoUpdate.FirstName = user.FirstName;
+            usertoUpdate.LastName = user.LastName;
+            usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
+            usertoUpdate.Role = user.Role;
+            usertoUpdate.Activo = user.Activo;
+
+            var response = await this.userDao.UpdateUser(usertoUpdate);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
         }
     }
 }

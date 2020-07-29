@@ -61,5 +61,39 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return result;
         }
+
+        /// <summary>
+        /// Updates the uses.
+        /// </summary>
+        /// <param name="listUsers">the list of users.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> UpdateUsers(List<UserModel> listUsers)
+        {
+            this.databaseContext.Usuarios.UpdateRange(listUsers);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Method for get user by id from db.
+        /// </summary>
+        /// <param name="userId">User Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<UserModel> GetUserById(string userId)
+        {
+            return await this.databaseContext.Usuarios.FirstOrDefaultAsync(p => p.Id.Equals(userId));
+        }
+
+        /// <summary>
+        /// Updates a single user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the user.</returns>
+        public async Task<bool> UpdateUser(UserModel user)
+        {
+            this.databaseContext.Usuarios.Update(user);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
     }
 }

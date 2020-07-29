@@ -44,5 +44,33 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="loginDto">the loginDto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> ValidateCredentials(LoginDto loginDto);
+
+        /// <summary>
+        /// The create user method.
+        /// </summary>
+        /// <param name="userDto">The user Dto.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> CreateUser(UserDto userDto);
+
+        /// <summary>
+        /// Gets all the user with offset and limit.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUsers(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> DeleteUser(List<string> listIds);
+
+        /// <summary>
+        /// updates the user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> UpdateUser(UserDto user);
     }
 }

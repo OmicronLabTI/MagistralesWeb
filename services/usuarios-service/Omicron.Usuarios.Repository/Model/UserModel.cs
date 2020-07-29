@@ -15,7 +15,7 @@ namespace Omicron.Usuarios.Entities.Model
     /// <summary>
     /// Class User Model.
     /// </summary>
-    [Table("User")]
+    [Table("user")]
     public class UserModel
     {
         /// <summary>
@@ -25,6 +25,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// Int Id.
         /// </value>
         [Key]
+        [Column("id")]
         public string Id { get; set; }
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String UserName.
         /// </value>
+        [Column("username")]
         public string UserName { get; set; }
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String FirstName.
         /// </value>
+        [Column("firstname")]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String LastName.
         /// </value>
+        [Column("lastname")]
         public string LastName { get; set; }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String Role.
         /// </value>
+        [Column("role")]
         public int Role { get; set; }
 
         /// <summary>
@@ -65,6 +70,16 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String Password.
         /// </value>
+        [Column("password")]
         public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets Active.
+        /// </summary>
+        /// <value>
+        /// String Active.
+        /// </value>
+        [Column("activo")]
+        public int Activo { get; set; }
     }
 }

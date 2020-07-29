@@ -44,5 +44,33 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="login">the login object.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> ValidateCredentials(LoginModel login);
+
+        /// <summary>
+        /// Method to create a user.
+        /// </summary>
+        /// <param name="userModel">the user model.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> CreateUser(UserModel userModel);
+
+        /// <summary>
+        /// the method to return data.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUsers(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Deletes the user logically.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> DeleteUser(List<string> listIds);
+
+        /// <summary>
+        /// update the user.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <returns>the user updaterd.</returns>
+        Task<ResultModel> UpdateUser(UserModel user);
     }
 }

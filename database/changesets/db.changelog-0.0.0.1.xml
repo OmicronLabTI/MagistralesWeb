@@ -28,14 +28,14 @@
   </changeSet>
   <changeSet author="gcruz" id="changelog-1.2">
     <createTable tableName="OrdersLogs">
-      <column name="Id" type="INT" autoincrement="true">
+      <column name="Id" type="INT" autoIncrement="true">
         <constraints nullable="false" primaryKey="true" unique="true"/>
       </column>
       <column name="LogDateTime" type="TIMESTAMP">
         <constraints nullable="false" primaryKey="false" unique="false"/>
       </column>	  
 	  <column name="UserId" type="VARCHAR(50)">
-        <constraints nullable="false" foreignKeyName="fk_user_id" referencedTableName="User" referencedColumnNames="Id"/>
+        <constraints nullable="false"/>
       </column>
 	  <column name="Type" type="VARCHAR(2)">
         <constraints nullable="false" primaryKey="false" unique="false"/>
@@ -50,11 +50,11 @@
   </changeSet>
   <changeSet author="gcruz" id="changelog-1.3">
     <createTable tableName="UsersOrders">
-      <column name="Id" type="INT" autoincrement="true">
+      <column name="Id" type="INT" autoIncrement="true">
         <constraints nullable="false" primaryKey="true" unique="true"/>
       </column>	  
 	  <column name="UserId" type="VARCHAR(50)">
-        <constraints nullable="false" foreignKeyName="fk_user_id" referencedTableName="User" referencedColumnNames="Id"/>
+        <constraints nullable="true"/>
       </column>
 	  <column name="SalesOrderId" type="VARCHAR(50)">
         <constraints nullable="false" primaryKey="false" unique="false"/>
@@ -66,5 +66,173 @@
         <constraints nullable="false" primaryKey="false" unique="false"/>
       </column>	  
     </createTable>
+    <addForeignKeyConstraint baseColumnNames="UserId" baseTableName="OrdersLogs" constraintName="fk_orderslogs_id" referencedColumnNames="Id" referencedTableName="User"/>
+    <addForeignKeyConstraint baseColumnNames="UserId" baseTableName="UsersOrders" constraintName="fk_userorders_id" referencedColumnNames="Id" referencedTableName="User"/>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.4">
+	<renameTable
+		newTableName="user"
+		oldTableName="User"
+	/>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.5">
+	<renameColumn  
+		newColumnName="id"
+		oldColumnName="Id"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.6">
+	<renameColumn  
+		newColumnName="username"
+		oldColumnName="UserName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.7">
+	<renameColumn  
+		newColumnName="firstname"
+		oldColumnName="FirstName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.8">
+	<renameColumn  
+		newColumnName="lastname"
+		oldColumnName="LastName"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.9">
+	<renameColumn  
+		newColumnName="role"
+		oldColumnName="Role"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.10">
+	<renameColumn  
+		newColumnName="password"
+		oldColumnName="Password"
+		tableName="user"
+	/>
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.11">
+    <renameTable
+      newTableName="orderslogs"
+      oldTableName="OrdersLogs"
+    />  
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.12">
+    <renameColumn  
+      newColumnName="id"
+      oldColumnName="Id"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.13">
+    <renameColumn  
+      newColumnName="logdatetime"
+      oldColumnName="LogDateTime"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.14">
+    <renameColumn  
+      newColumnName="userid"
+      oldColumnName="UserId"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.15">
+    <renameColumn  
+      newColumnName="type"
+      oldColumnName="Type"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.16">
+    <renameColumn  
+      newColumnName="noid"
+      oldColumnName="NoId"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.17">
+    <renameColumn  
+      newColumnName="description"
+      oldColumnName="Description"
+      tableName="orderslogs"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.18">
+    <renameTable
+      newTableName="usersorders"
+      oldTableName="UsersOrders"
+    />  
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.19">
+    <renameColumn  
+      newColumnName="id"
+      oldColumnName="Id"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.20">
+    <renameColumn  
+      newColumnName="userid"
+      oldColumnName="UserId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.21">
+    <renameColumn  
+      newColumnName="salesorderid"
+      oldColumnName="SalesOrderId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.22">
+    <renameColumn  
+      newColumnName="productionorderid"
+      oldColumnName="ProductionOrderId"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gcruz" id="changelog-1.23">
+    <renameColumn  
+      newColumnName="status"
+      oldColumnName="Status"
+      tableName="usersorders"
+    />
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.24">
+    <createTable tableName="roles">
+      <column name="idrole" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="roledescription" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.25">
+	<addColumn tableName ="user">
+		<column 
+			name="activo"
+			type="INT"
+			defaultValue="0">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.26">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="Administrador"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.27">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="QFB"/>
+	</insert>
+  </changeSet>  
 </databaseChangeLog> 
