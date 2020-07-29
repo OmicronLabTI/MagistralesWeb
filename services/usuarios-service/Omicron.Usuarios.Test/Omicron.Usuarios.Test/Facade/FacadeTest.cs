@@ -60,6 +60,9 @@ namespace Omicron.Usuarios.Test.Facade
             {
                 Success = true,
                 Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = new ResultDto(),
+                UserError = string.Empty,
             };
 
             mockServices
@@ -72,6 +75,10 @@ namespace Omicron.Usuarios.Test.Facade
 
             mockServices
                 .Setup(m => m.GetUsers(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(result));
+
+            mockServices
+                .Setup(m => m.DeleteUser(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(result));
 
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
@@ -187,6 +194,28 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// test to delete users.
+        /// </summary>
+        /// <returns>deltes the users.</returns>
+        [Test]
+        public async Task DeleteUsers()
+        {
+            // Arrange
+            var listData = new List<string> { "1", "2", "3", };
+
+            // Act
+            var response = await this.userFacade.DeleteUser(listData);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
         }
     }
 }

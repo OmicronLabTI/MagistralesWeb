@@ -87,5 +87,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetUsers(parameters));
         }
+
+        /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> DeleteUser(List<string> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.DeleteUser(listIds));
+        }
     }
 }

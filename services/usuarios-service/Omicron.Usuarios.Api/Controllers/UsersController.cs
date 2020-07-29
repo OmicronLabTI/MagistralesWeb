@@ -9,6 +9,7 @@
 namespace Omicron.Usuarios.Api.Controllers
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
@@ -79,6 +80,19 @@ namespace Omicron.Usuarios.Api.Controllers
         public async Task<IActionResult> GetUsers([FromQuery] Dictionary<string, string> parameters)
         {
             var response = await this.userFacade.GetUsers(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// method to delete user.
+        /// </summary>
+        /// <param name="listIds">the list of id.</param>
+        /// <returns>the response.</returns>
+        [Route("/")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUsers(string[] listIds)
+        {
+            var response = await this.userFacade.DeleteUser(listIds.ToList());
             return this.Ok(response);
         }
 
