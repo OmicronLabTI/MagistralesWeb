@@ -81,6 +81,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.DeleteUser(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.UpdateUser(It.IsAny<UserModel>()))
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -208,6 +212,28 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Act
             var response = await this.userFacade.DeleteUser(listData);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateUser()
+        {
+            // Arrange
+            var user = this.GetUserDto();
+
+            // Act
+            var response = await this.userFacade.UpdateUser(user);
 
             // Assert
             Assert.IsNotNull(response);

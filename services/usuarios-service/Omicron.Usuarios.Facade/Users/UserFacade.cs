@@ -97,5 +97,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.DeleteUser(listIds));
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the user updated.</returns>
+        public async Task<ResultDto> UpdateUser(UserDto user)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.UpdateUser(this.mapper.Map<UserModel>(user)));
+        }
     }
 }

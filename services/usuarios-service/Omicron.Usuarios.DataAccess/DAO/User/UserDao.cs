@@ -83,5 +83,17 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         {
             return await this.databaseContext.Usuarios.FirstOrDefaultAsync(p => p.Id.Equals(userId));
         }
+
+        /// <summary>
+        /// Updates a single user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the user.</returns>
+        public async Task<bool> UpdateUser(UserModel user)
+        {
+            this.databaseContext.Usuarios.Update(user);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
     }
 }

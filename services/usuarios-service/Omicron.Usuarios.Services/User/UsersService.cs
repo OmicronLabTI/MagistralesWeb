@@ -151,5 +151,30 @@ namespace Omicron.Usuarios.Services.User
             var response = await this.userDao.UpdateUsers(listUserToUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
         }
+
+        /// <summary>
+        /// update the user.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <returns>the user updaterd.</returns>
+        public async Task<ResultModel> UpdateUser(UserModel user)
+        {
+            var usertoUpdate = await this.userDao.GetUserById(user.Id);
+
+            if (usertoUpdate == null)
+            {
+                throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
+            }
+
+            usertoUpdate.UserName = user.UserName;
+            usertoUpdate.FirstName = user.FirstName;
+            usertoUpdate.LastName = user.LastName;
+            usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
+            usertoUpdate.Role = user.Role;
+            usertoUpdate.Activo = user.Activo;
+
+            var response = await this.userDao.UpdateUser(usertoUpdate);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
+        }
     }
 }
