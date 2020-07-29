@@ -25,6 +25,7 @@ class InboxViewController: UIViewController {
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModelBinding()
         self.initComponents()
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -35,6 +36,16 @@ class InboxViewController: UIViewController {
     }
     
     // MARK: Functions
+    
+    func viewModelBinding() -> Void {
+        [
+            finishedButton.rx.tap.bind(to: inboxModel.finishedDidTab),
+            pendingButton.rx.tap.bind(to: inboxModel.pendingDidTab),
+            processButton.rx.tap.bind(to: inboxModel.processDidTab),
+        ].forEach({ $0.disposed(by: disposeBag) })
+        
+    }
+    
     func initComponents() -> Void {
         self.statusNameLabel.text = "Asignadas"
         self.statusNameLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
