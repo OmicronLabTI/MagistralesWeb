@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -18,8 +18,9 @@ export class TokenInterceptor implements HttpInterceptor {
     const token = this._dataService.getToken();
 
     if (token && !this.endpointExcluded(req.url)) {
-      req = req.clone({ headers: req.headers.append('token', token) });
+      //req = req.clone({ headers: req.headers.append('token', token) });#only to production
     }
+    console.log('req: ', req)
     return req;
   }
 

@@ -46,11 +46,10 @@
                     <div class="form-field">
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Selecciona rol</mat-label>
-                            <mat-select formControlName="role">
-                                <mat-option value="1">Administrador</mat-option>
-                                <mat-option value="2">QFB</mat-option>
+                            <mat-select formControlName="userRole">
+                                <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="addUserForm?.controls.role?.errors?.required">
+                            <mat-error *ngIf="addUserForm?.controls.userRole?.errors?.required">
                                 Rol es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>

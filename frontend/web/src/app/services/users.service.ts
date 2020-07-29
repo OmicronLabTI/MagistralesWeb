@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from "./consume.service";
 import {IUserReq} from "../model/http/users";
 import {Endpoints} from "../../environments/endpoints";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'

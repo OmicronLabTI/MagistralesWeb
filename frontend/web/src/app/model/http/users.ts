@@ -1,7 +1,7 @@
 import {BaseResponseHttp} from "./commons";
 
 export class IUserReq {
-    id: string;
+    id?: string;
     userName: string;
     firstName: string;
     lastName: string;

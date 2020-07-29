@@ -88,8 +88,8 @@ namespace Omicron.Usuarios.Api.Controllers
         /// </summary>
         /// <param name="listIds">the list of id.</param>
         /// <returns>the response.</returns>
-        [Route("/")]
-        [HttpDelete]
+        [Route("/deactivateUser")]
+        [HttpPatch]
         public async Task<IActionResult> DeleteUsers(string[] listIds)
         {
             var response = await this.userFacade.DeleteUser(listIds.ToList());

@@ -1,14 +1,13 @@
 import { environment } from './environment';
-
 export const Endpoints = {
   security: {
     login: `${environment.baseUrl}/login?delay=2`
   },
   users:{
-    createUser:`${environment.baseUrlServices}/createUser`,
-    roles:`${environment.baseUrlServices}/api/catalogos/getroles`,
-    getUsers:`${environment.baseUrlServices}/api/usuarios/getUsers`,
-    delete:`${environment.baseUrlServices}/api/usuario/`
+    createUser:`${environment.baseUrlUsers}/createUser`,
+    roles:`${environment.baseUrlCatalogs}/getroles`,
+    getUsers:`${environment.baseUrlUsers}/getUsers`,
+    delete:`${environment.baseUrlUsers}/deactivateUser`
   }
 }
 

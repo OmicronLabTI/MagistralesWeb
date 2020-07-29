@@ -20,7 +20,7 @@ export class ConsumeService {
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
-      this.http.get<any>(url, { headers: objHeaders })
+      this.http.get<any>(url, )
         .subscribe(response => {
           observer.next(response);
           observer.complete();
