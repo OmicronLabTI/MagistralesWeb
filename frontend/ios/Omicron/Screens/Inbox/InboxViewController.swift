@@ -30,6 +30,7 @@ class InboxViewController: UIViewController {
         collectionView.delegate = self
         collectionView.register(UINib(nibName:
             "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "card")
+        finishedButton.isHidden = true
         // Do any additional setup after loading the view.
     }
     
@@ -82,7 +83,7 @@ extension InboxViewController: UICollectionViewDelegate {
 }
 
 extension InboxViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: cardWidth, height: cardWidth - 100)
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        return CGSize(width: 300, height: cardWidth - 200)
+//    }
 }

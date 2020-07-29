@@ -34,9 +34,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-        initLabels()
+        //Initialization code
         assignedStyleCard(color: OmicronColors.assignedStatus.cgColor)
+        initLabels()
     }
     
     func initLabels() -> Void {
@@ -68,9 +68,9 @@ class CardCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.boldSystemFont(ofSize: fontSize)
     }
     func assignedStyleCard(color: CGColor)  -> Void{
-        self.contentCard.layer.cornerRadius = 20
+        self.contentCard.layer.cornerRadius = CGFloat(20)
         self.contentCard.layer.borderColor = color
-        self.contentCard.layer.borderWidth = 1
+        self.contentCard.layer.borderWidth = CGFloat(1)
         
     }
 }

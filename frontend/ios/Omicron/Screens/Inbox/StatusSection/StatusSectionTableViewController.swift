@@ -16,10 +16,15 @@ class StatusSectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = OmicronColors.tableStatus
+        let index = NSIndexPath(row: 0, section: 0)
+        self.tableView.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
+        self.title = "Mis órdenes"
+        tableView.tableFooterView = UIView()
+    
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        tableView.tableFooterView = UIView()
+    
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,8 +45,6 @@ class StatusSectionTableViewController: UITableViewController {
         let statusName = "\(arrayData[indexPath.row + 1]!.statusName)"
         vc.statusNameLabel.text = statusName
         changeButtons(statusName: statusName, vc: vc)
-        let cardView: CardCollectionViewCell = CardCollectionViewCell()
-        cardView.assignedStyleCard(color: OmicronColors.finishedStatus.cgColor)
     }
     
     func changeButtons(statusName: String, vc: InboxViewController) {
