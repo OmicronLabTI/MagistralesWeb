@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 class CardCollectionViewCell: UICollectionViewCell {
 
@@ -33,11 +35,42 @@ class CardCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
-        self.contentView.backgroundColor = .white
-        self.contentView.layer.borderColor = UIColor.black.cgColor
-        self.contentView.layer.borderWidth = 2
-        self.contentView.layer.cornerRadius = 10
+        initLabels()
+        assignedStyleCard(color: OmicronColors.assignedStatus.cgColor)
     }
-
+    
+    func initLabels() -> Void {
+        self.labelsStyle(label: numberLabel, text: "No:", fontSize: 12)
+        self.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 12)
+        self.labelsStyle(label: baseDocumentLabel, text: "Documento Base:", fontSize: 12)
+        self.labelsStyle(label: baseDocumentDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: containerLabel, text: "Envase:", fontSize: 12)
+        self.labelsStyle(label: containerDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: tagLabel, text: "Etiqueta:", fontSize: 12)
+        self.labelsStyle(label: tagDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:", fontSize: 12)
+        self.labelsStyle(label: plannedQuantityDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:", fontSize: 12)
+        self.labelsStyle(label: startDateDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:", fontSize: 12)
+        self.labelsStyle(label: finishDateDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: productLabel, text: "Descripción del producto:", fontSize: 12)
+        self.labelsStyle(label: productDescriptionLabel, text: "", fontSize: 12)
+        changeIconButton(button: self.showDetail, iconName: "showProcessDetailButton.png")
+    }
+    
+    func changeIconButton(button: UIButton, iconName: String) -> Void{
+        button.setImage(UIImage(named: iconName), for: .normal)
+    }
+    
+    func labelsStyle(label: UILabel, text: String, fontSize: CGFloat) -> Void {
+        label.text = text
+        label.font = UIFont.boldSystemFont(ofSize: fontSize)
+    }
+    func assignedStyleCard(color: CGColor)  -> Void{
+        self.contentCard.layer.cornerRadius = 20
+        self.contentCard.layer.borderColor = color
+        self.contentCard.layer.borderWidth = 1
+        
+    }
 }

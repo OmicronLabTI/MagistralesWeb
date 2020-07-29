@@ -36,11 +36,12 @@ class StatusSectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "InboxViewController") as! InboxViewController
-        print(type(of: vc))
         splitViewController?.showDetailViewController(vc, sender: nil)
         let statusName = "\(arrayData[indexPath.row + 1]!.statusName)"
         vc.statusNameLabel.text = statusName
         changeButtons(statusName: statusName, vc: vc)
+        let cardView: CardCollectionViewCell = CardCollectionViewCell()
+        cardView.assignedStyleCard(color: OmicronColors.finishedStatus.cgColor)
     }
     
     func changeButtons(statusName: String, vc: InboxViewController) {

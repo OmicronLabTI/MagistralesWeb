@@ -7,3 +7,12 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
+
+class  InboxViewModel {
+    
+    init() {
+     
+    }
+}

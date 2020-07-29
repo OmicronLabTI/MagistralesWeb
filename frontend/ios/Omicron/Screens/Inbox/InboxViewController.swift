@@ -7,29 +7,29 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class InboxViewController: UIViewController {
     
-    @IBOutlet weak var numberlLabel: UILabel!
     @IBOutlet weak var statusNameLabel: UILabel!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    lazy var inboxModel: InboxViewModel = InboxViewModel()
+    let disposeBag = DisposeBag()
     
-    
-    var text = ""
     let listImages = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
-        print("TAMAÑO: \(cardWidth)")
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-        collectionView.register(UINib(nibName: "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "card")
+        collectionView.register(UINib(nibName:
+            "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "card")
         // Do any additional setup after loading the view.
     }
     
@@ -37,7 +37,6 @@ class InboxViewController: UIViewController {
     func initComponents() -> Void {
         self.statusNameLabel.text = "Asignadas"
         self.statusNameLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-        
         self.setStyleButton(button: self.finishedButton, title: "Terminado", color: OmicronColors.finishedStatus)
         self.setStyleButton(button: self.pendingButton, title: "Pendiente", color: OmicronColors.pendingStatus)
         self.setStyleButton(button: self.processButton, title: "En proceso", color: OmicronColors.processStatus)
@@ -77,11 +76,13 @@ extension InboxViewController: UICollectionViewDataSource {
 }
 
 extension InboxViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+    }
 }
 
 extension InboxViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: cardWidth, height: cardWidth - 30)
+        return CGSize(width: cardWidth, height: cardWidth - 100)
     }
 }
