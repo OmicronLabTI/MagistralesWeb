@@ -40,6 +40,10 @@ export class DataService {
   setToken(token: string) {
     sessionStorage.setItem('token', token);
   }
+  clearToken(){
+    sessionStorage.removeItem('token');
+  }
+
 
   userIsAuthenticated(): boolean {
     return !!sessionStorage.getItem('token');

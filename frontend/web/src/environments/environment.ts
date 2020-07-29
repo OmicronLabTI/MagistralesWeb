@@ -4,9 +4,15 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://reqres.in/api'
+  baseUrl: 'https://reqres.in/api',
+  baseUrlServices:'http://localhost:/'
 };
 
+export const MODAL_NAMES =  {
+  addUserModal: 'addModal',
+  editUser: 'editModal'
+
+};
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

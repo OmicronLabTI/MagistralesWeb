@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {UserList} from "../../model/http/userList";
+import {IUserListRes, IUserReq} from "../../model/http/users";
 import {MatDialog} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../../dialogs/add-user-dialog/add-user-dialog.component";
+import {UsersService} from "../../services/users.service";
 
 @Component({
   selector: 'app-user-list',
@@ -11,8 +12,7 @@ import {AddUserDialogComponent} from "../../dialogs/add-user-dialog/add-user-dia
 export class UserListComponent implements OnInit {
   isAllComplete = false;
   displayedColumns: string[] = ['delete','names', 'lastName', 'role', 'status','actions'];
-  userList: UserList[] = [];
-  dataSource : UserList[] = [
+  dataSource : IUserReq[] = [
     {
       "id": 'dsafasdf1',
       "userName": 'benny',
@@ -59,12 +59,16 @@ export class UserListComponent implements OnInit {
       "activo": 1
     }
   ];
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog,private usersService: UsersService) {
     this.dataSource.map(user =>{
       user.isChecked = false;
     });
   }
   ngOnInit() {
+    /*this.usersService.getUsers().subscribe((userRes: IUserListRes) => {
+      console.log('user list: ',userRes);
+      this.dataSource = userRes.response;
+    })*/
   }
 
   updateAllComplete() {
@@ -81,31 +85,22 @@ export class UserListComponent implements OnInit {
     console.log('data set all: ', this.dataSource)
   }
 
-  onEdit(id: string) {
-    console.log('edit id: ', id)
 
-  }
-
-  onDelete(id: string ) {
-    console.log('delete id: ', id)
-    this.dataSource = this.dataSource.filter(user => user.id !== id)
-  }
-
-  deleteMany() {
-    console.log('to delete: ', this.dataSource.filter(user => user.isChecked))
+  deleteUsers() {
+    console.log('to delete: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
     this.dataSource = this.dataSource.filter(user => !user.isChecked)
+/*
+    this.usersService.deleteUsers(this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}));
+*/
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+  openDialog(modalTypeOpen: string) {
+      this.dialog.open(AddUserDialogComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        animal: 'panda'
+        modalType: modalTypeOpen
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 }

@@ -32,7 +32,8 @@ export class AppComponent {
   }
   ngOnInit() { console.log('on init')}
   logoutSession(){
+    this._dataService.setIsLogin(false);
+    this._dataService.clearToken();
     this.router.navigate(['/login'])
-    console.log('logout<>')
   }
 }

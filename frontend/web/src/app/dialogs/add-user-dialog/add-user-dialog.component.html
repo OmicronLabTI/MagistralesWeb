@@ -10,17 +10,23 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Ingresa usuario" formControlName="userName">
+                            <input matInput placeholder="Ingresa usuario" formControlName="userName" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.userName?.errors?.required">
-                                Usuario es <strong>requerido</strong>
+                                Usuario es <strong>requerido</strong>a
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.userName?.errors?.maxLength">
+                                Solo 50 caracteres.
                             </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Nombre(s)" formControlName="firstName">
+                            <input matInput placeholder="Nombre(s)" formControlName="firstName" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.firstName?.errors?.required">
                                 Nombre es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.firstName?.errors?.maxLength">
+                                Solo 50 caracteres.
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -28,9 +34,12 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Apellido(s)" formControlName="lastName">
+                            <input matInput placeholder="Apellido(s)" formControlName="lastName" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
                                 Apellido es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.firstName?.errors?.maxLength">
+                                Solo 50 caracteres.
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -38,8 +47,8 @@
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Selecciona rol</mat-label>
                             <mat-select formControlName="role">
-                                <mat-option value="option">Option</mat-option>
-                                <mat-option value="option">Option 2</mat-option>
+                                <mat-option value="1">Administrador</mat-option>
+                                <mat-option value="2">QFB</mat-option>
                             </mat-select>
                             <mat-error *ngIf="addUserForm?.controls.role?.errors?.required">
                                 Rol es <strong>requerido</strong>
@@ -50,18 +59,21 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Contraseña" formControlName="password">
+                            <input matInput placeholder="Contraseña" formControlName="password" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.password?.errors?.required">
                                 Contraseña es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.password?.errors?.maxLength">
+                                Solo 8 caracteres.
                             </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field appearance="fill" class="custom-field">
+                        <mat-form-field appearance="fill" class="custom-field" *ngIf="isForEditModal">
                             <mat-label>Selecciona estatus</mat-label>
                             <mat-select formControlName="activo">
-                                <mat-option value="option">Option</mat-option>
-                                <mat-option value="option">Option 2</mat-option>
+                                <mat-option value="0">Inactivo</mat-option>
+                                <mat-option value="1">Activo</mat-option>
                             </mat-select>
                             <mat-error *ngIf="addUserForm?.controls.activo?.errors?.required">
                                 Estatus es <strong>requerido</strong>
@@ -73,8 +85,8 @@
 
         </mat-card-content>
         <mat-card-actions class="options-footer">
-            <button mat-button>Cancelar</button>
-            <button mat-button class="btn-add-modal" mat-dialog-close [disabled]="addUserForm.invalid">Agregar</button>
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="addUserForm.invalid" (click)="saveUser()">Agregar</button>
         </mat-card-actions>
     </mat-card>
 </div>
