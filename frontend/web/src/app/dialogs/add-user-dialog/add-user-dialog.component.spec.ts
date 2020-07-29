@@ -1,6 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { AddUserDialogComponent } from './add-user-dialog.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
+import { HttpClientModule } from '@angular/common/http';
+import {
+  MatCardModule,
+
+  MatDialogModule
+} from '@angular/material';
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
@@ -8,7 +16,10 @@ describe('AddUserDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddUserDialogComponent ]
+      imports:[FormsModule,HttpClientModule,MatCardModule,ReactiveFormsModule, MatDialogModule],
+      declarations: [ AddUserDialogComponent ],
+      schemas:[CUSTOM_ELEMENTS_SCHEMA],
+      providers:[  { provide: MAT_DIALOG_DATA, useValue: {} }]
     })
     .compileComponents();
   }));
