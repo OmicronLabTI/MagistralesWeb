@@ -142,20 +142,28 @@ pipeline {
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
+				dir ('services/logs-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_logs_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Logs.Test/Omicron.Logs.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Logs.Api/**'"
+                    sh 'dotnet build Omicron.Logs.Microservice.sln'
+					sh 'dotnet test Omicron.Logs.Test/Omicron.Logs.Test/Omicron.Logs.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+                    sh 'dotnet build-server shutdown'
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+                }
             }
         }
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl delete --all deployments'
-                sh 'sudo kubectl delete --all services'
+                /*sh 'sudo kubectl delete -f deploy_dev.yaml'*/
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
+				sh 'sudo kubectl rollout status Deployment/postgres-deployment --timeout 0s'
             }
         }
         stage('Database') {
             steps {
                 dir ('database/'){
                     sh '/opt/liquibase/liquibase --version'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
                     echo 'Applying Db changes'
                 }
             }
