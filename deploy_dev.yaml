@@ -24,21 +24,6 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: web-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: web 
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -106,21 +91,6 @@ spec:
         ports:
         - containerPort: 8090
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: oauthserver-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 8090
-    targetPort: 8090
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: oauthserver 
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -144,20 +114,10 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
         ports:
         - containerPort: 9010
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: catalogos-svc
-spec:
-  type: NodePort
-  ports:
-  - port: 9010
-    protocol: TCP
-  selector:
-    app: catalogos 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -182,20 +142,38 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
         ports:
         - containerPort: 5101
 ---
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: usuarios-svc
+  name: logs-deployment
+  labels:
+    app: logs
 spec:
-  type: NodePort
-  ports:
-  - port: 5101
-    protocol: TCP
+  replicas: 1
   selector:
-    app: usuarios
+    matchLabels:
+      app: logs
+  template:
+    metadata:
+      labels:
+        app: logs
+    spec:
+      containers:
+      - name: logs
+        image: omicron-logs-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5104
 ---
 apiVersion: apps/v1
 kind: Deployment
