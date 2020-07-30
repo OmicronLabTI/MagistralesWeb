@@ -11,10 +11,15 @@ namespace Omicron.SapAdapter.Test.Facade
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.Dtos.User;
+    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Facade.Catalogs.Users;
+    using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
 
     /// <summary>
@@ -25,12 +30,19 @@ namespace Omicron.SapAdapter.Test.Facade
     {
         private UserFacade userFacade;
 
+        private SapFacade sapFacade;
+
+        private IMapper mapper;
+
         /// <summary>
         /// The init.
         /// </summary>
         [OneTimeSetUp]
         public void Init()
         {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
@@ -47,6 +59,22 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
                 .Returns(Task.FromResult(true));
 
+            var mockSapServices = new Mock<ISapService>();
+
+            var response = new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = true,
+                Success = true,
+                UserError = string.Empty,
+            };
+
+            mockSapServices
+                .Setup(m => m.GetOrders())
+                .Returns(Task.FromResult(response));
+
+            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
 
@@ -101,6 +129,21 @@ namespace Omicron.SapAdapter.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
+        }
+
+        /// <summary>
+        /// Test to get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        [Test]
+        public async Task GetPedidos()
+        {
+            // Arrange
+            // Act
+            var response = this.sapFacade.GetOrders();
+
+            // Assert
+            Assert.IsNotNull(response);
         }
     }
 }

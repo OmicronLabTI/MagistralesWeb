@@ -27,5 +27,13 @@ namespace Omicron.SapAdapter.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<UserModel> CatUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<OrderModel> OrderModel { get; set; }
     }
 }

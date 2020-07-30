@@ -22,6 +22,10 @@ namespace Omicron.Catalogos.Services.Catalogs
     {
         private readonly ICatalogDao catalogDao;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CatalogService"/> class.
+        /// </summary>
+        /// <param name="catalogDao">the catalog dao.</param>
         public CatalogService(ICatalogDao catalogDao)
         {
             this.catalogDao = catalogDao ?? throw new ArgumentNullException(nameof(catalogDao));
