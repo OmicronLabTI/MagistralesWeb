@@ -12,7 +12,7 @@
                         <mat-form-field class="custom-field">
                             <input matInput placeholder="Ingresa usuario" formControlName="userName" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.userName?.errors?.required">
-                                Usuario es <strong>requerido</strong>a
+                                Usuario es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!addUserForm?.controls.userName?.errors?.maxLength">
                                 Solo 50 caracteres.
@@ -46,10 +46,10 @@
                     <div class="form-field">
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Selecciona rol</mat-label>
-                            <mat-select formControlName="userRole">
+                            <mat-select formControlName="userTypeR">
                                 <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="addUserForm?.controls.userRole?.errors?.required">
+                            <mat-error *ngIf="addUserForm?.controls.userTypeR?.errors?.required">
                                 Rol es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
@@ -58,12 +58,12 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Contraseña" formControlName="password" maxlength="50">
-                            <mat-error *ngIf="addUserForm?.controls.password?.errors?.required">
-                                Contraseña es <strong>requerido</strong>
-                            </mat-error>
-                            <mat-error *ngIf="!addUserForm?.controls.password?.errors?.maxLength">
-                                Solo 8 caracteres.
+                            <input matInput placeholder="Contraseña" formControlName="password" maxlength="8">
+                            <mat-error *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
+                                La contraseña debe contener lo siguiente:
+                                8 caracteres como mínimo
+                                una letra mayúscula
+                                un número
                             </mat-error>
                         </mat-form-field>
                     </div>

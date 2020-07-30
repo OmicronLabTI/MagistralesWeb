@@ -16,8 +16,9 @@ export const MODAL_NAMES =  {
   editUser: 'editModal'
 };
 
-export const CONS_USER_DIALOG = {
-  defaultDefault: 'QFB'
+export const CONST_USER_DIALOG = {
+  defaultDefault: 'QFB',
+  patternPassWord: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
 }
 
 export const CONST_NUMBER = {

@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CONS_USER_DIALOG, MODAL_NAMES} from "../../../environments/environment";
+import {CONST_USER_DIALOG, MODAL_NAMES} from "../../../environments/environment";
 import {UsersService} from "../../services/users.service";
 import {IRolesRes, IUserReq, RoleUser} from "../../model/http/users";
 import {ErrorService} from "../../services/error.service";
@@ -25,8 +25,8 @@ export class AddUserDialogComponent implements OnInit {
       userName:['',[Validators.required,Validators.maxLength(50)]],
       firstName:['',[Validators.required,Validators.maxLength(50)]],
       lastName:['',[Validators.required,Validators.maxLength(50)]],
-      userRole:['',Validators.required],
-      password:['', [Validators.required,Validators.maxLength(8)]],
+      userTypeR:['',Validators.required],
+      password:['', [Validators.required,Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
       activo:['', Validators.required]
     });
   }
@@ -35,7 +35,7 @@ export class AddUserDialogComponent implements OnInit {
     this.usersService.getRoles().subscribe((rolesRes:IRolesRes) => {
      this.userRoles = rolesRes.response;
       this.addUserForm.get('userRole').
-                        setValue(this.userRoles.filter(user => CONS_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString())
+                        setValue(this.userRoles.filter(user => CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString())
     },error => this.errorService.httpError(error));
 
     if(!this.isForEditModal){
@@ -49,7 +49,7 @@ export class AddUserDialogComponent implements OnInit {
       userName: this.addUserForm.get('userName').value,
       firstName: this.addUserForm.get('firstName').value,
       lastName: this.addUserForm.get('lastName').value,
-      role: Number(this.addUserForm.get('userRole').value),
+      role: Number(this.addUserForm.get('userTypeR').value),
       password: this.addUserForm.get('password').value,
       activo: Number(this.addUserForm.get('activo').value)
     };
