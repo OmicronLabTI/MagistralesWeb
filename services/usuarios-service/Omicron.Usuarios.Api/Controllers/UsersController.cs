@@ -97,6 +97,19 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the response.</returns>
+        [Route("/updateUser")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(UserDto user)
+        {
+            var response = await this.userFacade.UpdateUser(user);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method to get all users.
         /// </summary>
         /// <returns>List of users.</returns>
