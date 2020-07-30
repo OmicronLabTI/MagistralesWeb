@@ -176,5 +176,16 @@ namespace Omicron.Usuarios.Services.User
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
         }
+
+        /// <summary>
+        /// gets the user.
+        /// </summary>
+        /// <param name="userName">the user.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetUser(string userName)
+        {
+            var user = await this.userDao.GetUserByUserName(userName);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, user, null);
+        }
     }
 }

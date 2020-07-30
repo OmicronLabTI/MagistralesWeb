@@ -107,5 +107,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.UpdateUser(this.mapper.Map<UserModel>(user)));
         }
+
+        /// <summary>
+        /// Get the user.
+        /// </summary>
+        /// <param name="userName">the username.</param>
+        /// <returns>the user.</returns>
+        public async Task<ResultDto> GetUser(string userName)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUser(userName));
+        }
     }
 }
