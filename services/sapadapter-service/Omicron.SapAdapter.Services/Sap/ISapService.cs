@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Services.Sap
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model;
 
@@ -19,7 +20,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// get the orders.
         /// </summary>
+        /// <param name="parameters">the params.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<ResultModel> GetOrders();
+        Task<ResultModel> GetOrders(Dictionary<string, string> parameters);
     }
 }

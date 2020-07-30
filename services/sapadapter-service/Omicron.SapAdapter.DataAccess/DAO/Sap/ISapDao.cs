@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using Omicron.SapAdapter.Entities.Model;
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<OrderModel>> GetAllOrders();
+        Task<IEnumerable<CompleteOrder>> GetAllOrders(DateTime date);
 
     }
 }

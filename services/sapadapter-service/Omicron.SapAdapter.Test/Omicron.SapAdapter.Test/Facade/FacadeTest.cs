@@ -71,7 +71,7 @@ namespace Omicron.SapAdapter.Test.Facade
             };
 
             mockSapServices
-                .Setup(m => m.GetOrders())
+                .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
@@ -139,8 +139,10 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetPedidos()
         {
             // Arrange
+            var dict = new Dictionary<string, string>();
+
             // Act
-            var response = this.sapFacade.GetOrders();
+            var response = this.sapFacade.GetOrders(dict);
 
             // Assert
             Assert.IsNotNull(response);

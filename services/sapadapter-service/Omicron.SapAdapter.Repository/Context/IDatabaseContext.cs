@@ -31,5 +31,29 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<OrderModel> OrderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<AsesorModel> AsesorModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<DetallePedido> DetallePedido { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<ProductoModel> ProductoModel { get; set; }
     }
 }

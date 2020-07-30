@@ -8,8 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Context
 {
-    using Omicron.SapAdapter.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.SapAdapter.Entities.Model;
 
     /// <summary>
     /// Class DBcontext.
@@ -35,5 +35,42 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         public virtual DbSet<OrderModel> OrderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<AsesorModel> AsesorModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<DetallePedido> DetallePedido { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<ProductoModel> ProductoModel { get; set; }
+
+        /// <summary>
+        /// model creating.
+        /// </summary>
+        /// <param name="builder">the builder.</param>
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<DetallePedido>().HasKey(table => new
+            {
+                table.PedidoId,
+                table.DetalleId,
+            });
+        }
     }
 }

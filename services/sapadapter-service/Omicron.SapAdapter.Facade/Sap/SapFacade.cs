@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Facade.Sap
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
@@ -37,10 +38,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Method to return orders.
         /// </summary>
+        /// <param name="parameters">The params.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultDto> GetOrders()
+        public async Task<ResultDto> GetOrders(Dictionary<string, string> parameters)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetOrders());
+            return this.mapper.Map<ResultDto>(await this.sapService.GetOrders(parameters));
         }
     }
 }

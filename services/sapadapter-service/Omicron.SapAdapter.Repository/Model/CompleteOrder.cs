@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="OrderModel.cs" company="Axity">
+// <copyright file="CompleteOrder.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,77 +9,64 @@
 namespace Omicron.SapAdapter.Entities.Model
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// The ORDR table.
+    /// class for the complete order.
     /// </summary>
-    [Table("ORDR")]
-    public class OrderModel
+    public class CompleteOrder
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("DocEntry")]
-        public int PedidoId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("DocNum")]
         public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("CardName")]
         public string Cliente { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("CardCode")]
         public string Codigo { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ShipToCode")]
         public string Medico { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("SlpCode")]
-        public int AsesorId { get; set; }
+        public string AsesorName { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("DocDate")]
         public DateTime FechaInicio { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("DocDueDate")]
         public DateTime FechaFin { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("DocStatus")]
         public string PedidoStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public bool IsChecked { get; set; }
     }
 }

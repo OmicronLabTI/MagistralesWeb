@@ -8,7 +8,10 @@
 
 namespace Omicron.SapAdapter.Services.Utils
 {
+    using System;
+    using System.Collections.Generic;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Services.Constants;
 
     /// <summary>
     /// The class for the services.
@@ -34,6 +37,31 @@ namespace Omicron.SapAdapter.Services.Utils
                 ExceptionMessage = exceptionMessage,
                 Code = code,
             };
+        }
+
+        /// <summary>
+        /// gets the date filter for sap.
+        /// </summary>
+        /// <param name="filter">the dictionary.</param>
+        /// <returns>the datetime.</returns>
+        public static DateTime GetDateFilter(Dictionary<string, string> filter)
+        {
+            if (!filter.ContainsKey(ServiceConstants.FilterDate) || filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Today))
+            {
+                return DateTime.Today;
+            }
+
+            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.TwoWeeks))
+            {
+                return DateTime.Today.AddDays(-14);
+            }
+
+            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Month))
+            {
+                return new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            }
+
+            return DateTime.Today;
         }
     }
 }

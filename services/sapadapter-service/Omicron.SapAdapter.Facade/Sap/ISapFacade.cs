@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Facade.Sap
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Dtos.Models;
 
@@ -19,7 +20,8 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Method to return orders.
         /// </summary>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<ResultDto> GetOrders();
+        Task<ResultDto> GetOrders(Dictionary<string, string> parameters);
     }
 }

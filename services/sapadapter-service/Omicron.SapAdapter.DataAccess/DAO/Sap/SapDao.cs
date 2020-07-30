@@ -36,9 +36,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// get orders.
         /// </summary>
         /// <returns>the orders.</returns>
-        public async Task<IEnumerable<OrderModel>> GetAllOrders()
+        public async Task<IEnumerable<CompleteOrder>> GetAllOrders(DateTime date)
         {
-            return await this.databaseContext.OrderModel.ToListAsync();
+            
+                var query = await (from order in this.databaseContext.OrderModel
+                                   join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                                   join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                                   join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                                   where order.FechaInicio >= date && producto.IsMagistral == "N"
+                                   select new CompleteOrder
+                                   {
+                                       DocNum = order.DocNum,
+                                       Cliente = order.Cliente,
+                                       Codigo = order.Codigo,
+                                       Medico = order.Medico,
+                                       AsesorName = asesor.AsesorName,
+                                       FechaInicio = order.FechaInicio,
+                                       FechaFin = order.FechaFin,
+                                       PedidoStatus = order.PedidoStatus,
+                                       IsChecked = false
+                                   }).ToListAsync();
+
+                return query;
         }
     }
 }

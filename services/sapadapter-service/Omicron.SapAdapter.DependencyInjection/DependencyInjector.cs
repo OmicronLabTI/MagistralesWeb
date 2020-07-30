@@ -17,6 +17,9 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Sap;
+    using Omicron.SapAdapter.DataAccess.DAO.Sap;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -36,6 +39,10 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IUserFacade, UserFacade>();
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IUserDao, UserDao>();
+
+            Services.AddTransient<ISapFacade, SapFacade>();
+            Services.AddTransient<ISapService, SapService>();
+            Services.AddTransient<ISapDao, SapDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }

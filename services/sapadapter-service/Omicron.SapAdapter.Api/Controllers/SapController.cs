@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Omicron.SapAdapter.Facade.Sap;
@@ -34,12 +35,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Method to get all orders.
         /// </summary>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>List of orders.</returns>
         [Route("/orders")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> parameters)
         {
-            var response = await this.sapFacade.GetOrders();
+            var response = await this.sapFacade.GetOrders(parameters);
             return this.Ok(response);
         }
     }
