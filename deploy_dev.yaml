@@ -178,6 +178,34 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+      - name: sapadapter
+        image: omicron-sapadapter-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5102
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: postgres-deployment
   labels:
     app: postgres

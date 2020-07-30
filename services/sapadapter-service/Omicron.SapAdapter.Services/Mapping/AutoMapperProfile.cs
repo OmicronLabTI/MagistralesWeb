@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Mapping
 {
     using AutoMapper;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
 
@@ -24,6 +25,9 @@ namespace Omicron.SapAdapter.Services.Mapping
         {
             this.CreateMap<UserModel, UserDto>();
             this.CreateMap<UserDto, UserModel>();
+
+            this.CreateMap<ResultDto, ResultModel>();
+            this.CreateMap<ResultModel, ResultDto>();
         }
     }
 }
