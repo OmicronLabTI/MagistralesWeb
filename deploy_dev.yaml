@@ -111,13 +111,10 @@ kind: Service
 metadata:
   name: oauthserver-svc
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 8090
-    targetPort: 8090
     protocol: TCP
-  externalIPs:
-    - 192.168.0.101
   selector:
     app: oauthserver 
 ---
