@@ -34,10 +34,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-<<<<<<< HEAD
     expect(compiled.querySelector('span').textContent).toContain('Hola ,');
-=======
-    expect(compiled.querySelector('span').textContent).toContain('Hola , ');
->>>>>>> ea4d16748d62bea1925c9ea0ffade9856f80486c
   });
 });

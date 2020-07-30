@@ -4,7 +4,7 @@
             <span>Usuarios</span>
         </div>
         <div class="add-user-container">
-            <div class="icon-add" >
+            <div class="icon-add" (click)="openDialog('addModal')">
                 <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
                      height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
@@ -19,31 +19,69 @@
     <div class="list-users-container">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-            <!--- Note that these columns can be defined in any order.
-                  The actual rendered columns are set as a property on the row definition" -->
-
             <!-- Position Column -->
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox color="primary"
+                                  [checked]="isAllComplete"
+                                  [indeterminate]="someComplete()"
+                                  (change)="setAll($event.checked)"
+                    >
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-checkbox [(ngModel)]="element.isChecked"
+                                  (ngModelChange)="updateAllComplete()"
+                                  color="primary">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="names">
-                <th mat-header-cell *matHeaderCellDef> Name(s) </th>
-                <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+                <th mat-header-cell class="centered" *matHeaderCellDef > Name(s) </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell"> {{element.firstName}} </td>
             </ng-container>
 
             <!-- Name Column -->
             <ng-container matColumnDef="lastName">
-                <th mat-header-cell *matHeaderCellDef> Apellido(s) </th>
-                <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+                <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > Apellido(s) </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.lastName}} </td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="role">
-                <th mat-header-cell *matHeaderCellDef> Rol </th>
-                <td mat-cell *matCellDef="let element"> {{element.role}} </td>
+                <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > Rol </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.role}} </td>
             </ng-container>
 
             <!-- Symbol Column -->
             <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef> Status </th>
-                <td mat-cell *matCellDef="let element"> {{element.activo}} </td>
+                <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > Status </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.activo}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell class="tdcell tdcell-center delete-many-icon" *matHeaderCellDef >
+                <button mat-button (click)="deleteUsers()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="delete-multiple">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </button>
+                </th>
+                <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
+                    <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal')" >
+                        <mat-icon >edit</mat-icon>
+                    </button>
+
+                    <button mat-icon-button class="ico-col-sec" (click)="deleteUsers()">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

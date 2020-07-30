@@ -1,39 +1,8 @@
-.container-list-page{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: #fff;
-
-}
-.header-page{
-  width: 100%;
-  height: 12%;
-  margin-top: .5%;
-}
-.list-users-container{
-  width: 100%;
-  height: 88%;
-  display: flex;
-  flex-direction: column;
-}
-.title-list-container{
-  width: 100%;
-  height: 50%;
-  display: flex;
-
-}
-.title-list-container span{
-  font-size: 26px;
-  color: #3b3f5c;
-  font-weight: 400;
-}
 .add-user-container{
   width: 100%;
   display: flex;
   justify-content: flex-end;
 }
-table {
-  width: 100%;
+.delete-many-icon{
+  text-align: center;
 }

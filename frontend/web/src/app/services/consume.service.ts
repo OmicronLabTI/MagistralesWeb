@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { DataService } from './data.service';
 
@@ -20,7 +20,7 @@ export class ConsumeService {
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
-      this.http.get<any>(url, { headers: objHeaders })
+      this.http.get<any>(url, )
         .subscribe(response => {
           observer.next(response);
           observer.complete();
@@ -73,6 +73,28 @@ export class ConsumeService {
           observer.error(err);
           this.dataService.setIsLoading(false);
         });
+    });
+  }
+
+  httpDelete<T>(url: string, body: any, headers?) {
+    let objHeaders = new HttpHeaders();
+    if (headers) {
+      Object.keys(headers).forEach((key) => {
+        objHeaders = objHeaders.append(key, headers[key]);
+      });
+    }
+
+    this.dataService.setIsLoading(true);
+    return new Observable<T>(observer => {
+      /*this.http.delete<any>(url, body, { headers: objHeaders })
+          .subscribe(response => {
+            observer.next(response);
+            observer.complete();
+            this.dataService.setIsLoading(false);
+          }, err => {
+            observer.error(err);
+            this.dataService.setIsLoading(false);
+          });*/
     });
   }
 }

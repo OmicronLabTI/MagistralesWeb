@@ -3,6 +3,8 @@ import { DataService } from './services/data.service';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
+import { Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-root',
@@ -13,13 +15,12 @@ export class AppComponent {
   title = 'omicron';
   now = new Date();
   isLoading: Observable<boolean>;
-  //isLogin: boolean = false;
-  isLogin: boolean = true;
-
-  constructor(private _dataService: DataService, private _snackBar: MatSnackBar) {
-    //this._dataService.getIsLogin().subscribe(isLoginService => this.isLogin = isLoginService)
+  isLogin: boolean = false;
+  constructor(private _dataService: DataService, private _snackBar: MatSnackBar,
+             private router: Router) {
     this.isLoading = this._dataService.getIsLoading();
-    console.log('tokenServiceLogin: ', this._dataService.userIsAuthenticated())
+    this.isLogin = this._dataService.userIsAuthenticated();
+    this._dataService.getIsLogin().subscribe( isLoginS => this.isLogin = isLoginS);
 
     this._dataService
       .getGeneralNotificationMessage()
@@ -29,7 +30,10 @@ export class AppComponent {
         });
       });
   }
+  ngOnInit() { console.log('on init')}
   logoutSession(){
-    console.log('logout<>')
+    this._dataService.setIsLogin(false);
+    this._dataService.clearToken();
+    this.router.navigate(['/login'])
   }
 }

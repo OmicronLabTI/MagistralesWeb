@@ -5,20 +5,29 @@
 export const environment = {
   production: false,
   baseUrl: 'https://reqres.in/api',
-
-  modalNames: [
-    {
-      modalName:'addUserModal',
-      cssClassName: 'jw-modal-body-add-user'
-    },
-    {
-      modalName: 'editUserModal',
-      cssClassName: 'jw-modal-body-edit-user'
-    }
-  ],
-  defaultClassNameModal: 'jw-modal-body'
+  baseUrlUsers:'http://localhost:5101',
+  baseUrlCatalogs:'http://localhost:9010',
+  apiCatalogs:'/api/catalogos',
+  apiUsers:'/api/usuarios'
 };
 
+export const MODAL_NAMES =  {
+  addUserModal: 'addModal',
+  editUser: 'editModal'
+};
+
+export const CONST_USER_DIALOG = {
+  defaultDefault: 'QFB',
+  patternPassWord: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+}
+
+export const CONST_NUMBER = {
+  zero:0,
+  one:1,
+  two:2,
+  three:3
+
+}
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
