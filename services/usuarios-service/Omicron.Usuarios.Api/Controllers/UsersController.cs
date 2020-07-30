@@ -30,18 +30,14 @@ namespace Omicron.Usuarios.Api.Controllers
 
         private readonly IDatabase database;
 
-        private readonly IConnectionMultiplexer redis;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userFacade">User Facade.</param>
         /// <param name="redis">Redis Cache.</param>
-        public UsersController(IUserFacade userFacade, IConnectionMultiplexer redis)
+        public UsersController(IUserFacade userFacade)
         {
             this.userFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
-            this.redis = redis ?? throw new ArgumentNullException(nameof(redis));
-            this.database = redis.GetDatabase();
         }
 
         /// <summary>
