@@ -9,14 +9,15 @@
 /* Begin PBXBuildFile section */
 		0BB57A4257C6A72E4D3CF5A4 /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C723D74196413AA0F7F3D7FE /* Pods_Omicron.framework */; };
 		7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */; };
+		7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA924D27E5800D26B96 /* RootViewController.swift */; };
+		7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAB24D2839400D26B96 /* RootViewModel.swift */; };
+		7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */; };
+		7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAF24D2A0FC00D26B96 /* RootModel.swift */; };
 		7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */; };
 		7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */; };
 		7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D124CB9553005A7FED /* InboxViewController.swift */; };
 		7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D324CB9576005A7FED /* InboxViewModel.swift */; };
 		7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D524CB9588005A7FED /* InboxModel.swift */; };
-		7CE216D924CC1201005A7FED /* StatusSectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D824CC1201005A7FED /* StatusSectionTableViewController.swift */; };
-		7CE216DB24CC121F005A7FED /* StatusViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216DA24CC121F005A7FED /* StatusViewCell.swift */; };
-		7CFF559D24CF3DD100198397 /* StatusSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFF559C24CF3DD100198397 /* StatusSectionModel.swift */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
 		98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CB524AFBC6C00E7772F /* Main.storyboard */; };
@@ -62,14 +63,15 @@
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewModel.swift; sourceTree = "<group>"; };
+		7C844BA924D27E5800D26B96 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		7C844BAB24D2839400D26B96 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
+		7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTableViewCell.swift; sourceTree = "<group>"; };
+		7C844BAF24D2A0FC00D26B96 /* RootModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootModel.swift; sourceTree = "<group>"; };
 		7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardCollectionViewCell.xib; sourceTree = "<group>"; };
 		7CE216D124CB9553005A7FED /* InboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		7CE216D324CB9576005A7FED /* InboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModel.swift; sourceTree = "<group>"; };
 		7CE216D524CB9588005A7FED /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
-		7CE216D824CC1201005A7FED /* StatusSectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusSectionTableViewController.swift; sourceTree = "<group>"; };
-		7CE216DA24CC121F005A7FED /* StatusViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusViewCell.swift; sourceTree = "<group>"; };
-		7CFF559C24CF3DD100198397 /* StatusSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusSectionModel.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAC24AFBC6C00E7772F /* Omicron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Omicron.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -140,6 +142,17 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		7C844BA824D27E1B00D26B96 /* RootView */ = {
+			isa = PBXGroup;
+			children = (
+				7C844BA924D27E5800D26B96 /* RootViewController.swift */,
+				7C844BAB24D2839400D26B96 /* RootViewModel.swift */,
+				7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */,
+				7C844BAF24D2A0FC00D26B96 /* RootModel.swift */,
+			);
+			path = RootView;
+			sourceTree = "<group>";
+		};
 		7CBA553924CF8E5400918C38 /* Card */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,21 +163,11 @@
 			path = Card;
 			sourceTree = "<group>";
 		};
-		7CE216D724CB9D40005A7FED /* StatusSection */ = {
-			isa = PBXGroup;
-			children = (
-				7CE216D824CC1201005A7FED /* StatusSectionTableViewController.swift */,
-				7CE216DA24CC121F005A7FED /* StatusViewCell.swift */,
-				7CFF559C24CF3DD100198397 /* StatusSectionModel.swift */,
-			);
-			path = StatusSection;
-			sourceTree = "<group>";
-		};
 		7CE2C2A924CA03ED00517BD7 /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
+				7C844BA824D27E1B00D26B96 /* RootView */,
 				7CBA553924CF8E5400918C38 /* Card */,
-				7CE216D724CB9D40005A7FED /* StatusSection */,
 				7CE216D124CB9553005A7FED /* InboxViewController.swift */,
 				7CE216D324CB9576005A7FED /* InboxViewModel.swift */,
 				7CE216D524CB9588005A7FED /* InboxModel.swift */,
@@ -544,6 +547,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
+				7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */,
 				98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */,
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
@@ -551,17 +555,17 @@
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
-				7CFF559D24CF3DD100198397 /* StatusSectionModel.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
+				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
 				98C8C03E24AFCC9200018A88 /* Config.swift in Sources */,
+				7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */,
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
-				7CE216DB24CC121F005A7FED /* StatusViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
-				7CE216D924CC1201005A7FED /* StatusSectionTableViewController.swift in Sources */,
+				7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

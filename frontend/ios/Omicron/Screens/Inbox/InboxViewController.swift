@@ -12,6 +12,7 @@ import RxCocoa
 
 class InboxViewController: UIViewController {
     
+    
     @IBOutlet weak var statusNameLabel: UILabel!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
