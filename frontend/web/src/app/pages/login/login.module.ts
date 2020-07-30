@@ -7,15 +7,18 @@ import {MATERIAL_COMPONENTS} from "../../app.material";
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {BrowserModule} from "@angular/platform-browser";
+import {ExtendedModule, FlexModule} from "@angular/flex-layout";
 
 
 @NgModule({
   declarations: [LoginComponent],
-  imports: [
-    CommonModule,
-    LoginRoutingModule,
-    MATERIAL_COMPONENTS,
-    ReactiveFormsModule
-  ]
+    imports: [
+        CommonModule,
+        LoginRoutingModule,
+        MATERIAL_COMPONENTS,
+        ReactiveFormsModule,
+        FlexModule,
+        ExtendedModule
+    ]
 })
 export class LoginModule { }

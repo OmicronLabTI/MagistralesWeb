@@ -58,7 +58,7 @@
       </mat-toolbar-row>
     </mat-toolbar>
   </div>
-<div class="mat-container-custom">
+<div [ngClass]="isLogin? 'mat-container-custom-home': 'mat-container-custom-login'">
   <mat-sidenav-container fxFlexFill>
     <mat-sidenav #sidenav>
       <mat-nav-list>

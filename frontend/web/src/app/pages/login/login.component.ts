@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
-
+  gridColumns = 3; //delete
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
@@ -32,13 +32,9 @@ export class LoginComponent implements OnInit {
   ngOnInit() { }
 
   login() {
-    /*const data = {
+    const data = {
       email: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
-    } as ILoginReq;*/
-    const data = {
-      email: 'eve.holt@reqres.in',
-      password: 'cityslicka',
     } as ILoginReq;
 
     this.securityService.login(data).subscribe(res => {
@@ -49,5 +45,10 @@ export class LoginComponent implements OnInit {
       this.dataService.setGeneralNotificationMessage(err);
     }
     );
+  }
+
+
+  toggleGridColumns() {///delete
+    this.gridColumns = this.gridColumns === 3 ? 4 : 3;
   }
 }
