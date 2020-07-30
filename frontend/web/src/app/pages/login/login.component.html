@@ -1,24 +1,53 @@
-<div class="login-container">
-  <mat-card>
-    <mat-card-header>
-      Login
-    </mat-card-header>
-    <mat-card-content [formGroup]="formLogin">
-      <mat-form-field class="login-field">
-        <input matInput placeholder="Usuario" name="username" formControlName="username" required>
-        <mat-error>
-          <span *ngIf="formLogin?.controls.username?.errors?.required">Usuario requerido</span>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="login-field">
-        <input matInput placeholder="Contraseña" name="password" formControlName="password" type="password" required>
-        <mat-error>
-          <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
-        </mat-error>
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" [disabled]="formLogin.invalid" (click)="login()">Ingresar</button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+<mat-toolbar color="primary">
+  <span>Card view demo</span>
+  <button mat-button (click)="toggleGridColumns()" fxHide.lt-md>
+    <span *ngIf="gridColumns === 4">Three Columns</span>
+    <span *ngIf="gridColumns === 3">Four Columns</span>
+  </button>
+</mat-toolbar>
+<div class="content" fxLayout="row wrap" fxLayoutGap="16px grid">
+  <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let num of [1,2,3,4,5,6,7]">
+    <mat-card class="mat-elevation-z4" >
+      <mat-card-header>
+        <mat-card-title>Mountains {{num}}</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="https://hipertextual.com/files/2019/12/hipertextual-primer-trailer-iron-man-2020-2019702779.jpg">
+      <mat-card-content>
+        <p>
+          The Himalayas is a mountain range in Asia.
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>-->
+
+<!--<div class="login-container">
+ <div class="card-login-container">
+   <mat-card>
+     <mat-card-header>
+       Login
+     </mat-card-header>
+     <mat-card-content [formGroup]="formLogin">
+       <mat-form-field class="login-field">
+         <input matInput placeholder="Usuario" name="username" formControlName="username" required>
+         <mat-error>
+           <span *ngIf="formLogin?.controls.username?.errors?.required">Usuario requerido</span>
+         </mat-error>
+       </mat-form-field>
+       <mat-form-field class="login-field">
+         <input matInput placeholder="Contraseña" name="password" formControlName="password" type="password" required>
+         <mat-error>
+           <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
+         </mat-error>
+       </mat-form-field>
+     </mat-card-content>
+     <mat-card-actions>
+       <button mat-button color="primary" [disabled]="formLogin.invalid" (click)="login()">Ingresar</button>
+     </mat-card-actions>
+   </mat-card>
+ </div>
+</div>-->

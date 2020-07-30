@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
-
+  gridColumns = 3; //delete
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
@@ -45,5 +45,10 @@ export class LoginComponent implements OnInit {
       this.dataService.setGeneralNotificationMessage(err);
     }
     );
+  }
+
+
+  toggleGridColumns() {///delete
+    this.gridColumns = this.gridColumns === 3 ? 4 : 3;
   }
 }
