@@ -8,7 +8,8 @@ export const environment = {
   baseUrlUsers:'http://localhost:5101',
   baseUrlCatalogs:'http://localhost:9010',
   apiCatalogs:'/api/catalogos',
-  apiUsers:'/api/usuarios'
+  apiUsers:'/api/usuarios',
+  baseUrlPedidos:'http://localhost:5102',
 };
 
 export const MODAL_NAMES =  {

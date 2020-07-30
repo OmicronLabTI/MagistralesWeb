@@ -72,5 +72,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="user">the user.</param>
         /// <returns>the user updaterd.</returns>
         Task<ResultModel> UpdateUser(UserModel user);
+
+        /// <summary>
+        /// gets the user.
+        /// </summary>
+        /// <param name="userName">the user.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUser(string userName);
     }
 }

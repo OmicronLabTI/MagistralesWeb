@@ -6,10 +6,11 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_PROVIDERS } from './app.providers';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpParams } from '@angular/common/http';
 import { PedidosComponent } from './components/pedidos/pedidos.component';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from '@angular/forms';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { FormsModule } from '@angular/forms';
         ReactiveFormsModule,
         MATERIAL_COMPONENTS,
         FlexLayoutModule,
-        FormsModule
+        FormsModule,
+        InfiniteScrollModule
     ],
   providers: [
     APP_PROVIDERS

@@ -8,6 +8,9 @@ export const Endpoints = {
     roles:`${environment.baseUrlCatalogs}/getroles`,
     getUsers:`${environment.baseUrlUsers}/getUsers`,
     delete:`${environment.baseUrlUsers}/deactivateUser`
+  },
+  pedidos:{
+    getPedidos: `${environment.baseUrlPedidos}/orders`,
   }
 }
 

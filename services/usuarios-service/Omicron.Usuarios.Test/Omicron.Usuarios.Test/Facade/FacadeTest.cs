@@ -85,6 +85,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.UpdateUser(It.IsAny<UserModel>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.GetUser(It.IsAny<string>()))
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -234,6 +238,28 @@ namespace Omicron.Usuarios.Test.Facade
 
             // Act
             var response = await this.userFacade.UpdateUser(user);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// Gets the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetUser()
+        {
+            // arrange
+            var userName = "Gus";
+
+            // act
+            var response = await this.userFacade.GetUser(userName);
 
             // Assert
             Assert.IsNotNull(response);
