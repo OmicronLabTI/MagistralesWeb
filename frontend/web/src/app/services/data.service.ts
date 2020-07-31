@@ -8,6 +8,7 @@ export class DataService {
   private isLoading = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
   private isLogin = new Subject<boolean>();
+  //private isCallToUsersList = new Subject()
   constructor() { }
 
   setIsLogin(isLogin: boolean){

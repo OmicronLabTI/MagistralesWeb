@@ -1,7 +1,8 @@
 <div class="add-user-container">
     <mat-card class="add-user-card">
         <mat-card-header class="card-header-container">
-            <mat-card-title>Agregar usuario</mat-card-title>
+            <mat-card-title ><span *ngIf="!isForEditModal">Agregar usuario</span><span *ngIf="isForEditModal">Editar usuario</span>
+            </mat-card-title>
             <mat-icon mat-dialog-close>clear</mat-icon>
 
         </mat-card-header>
@@ -33,7 +34,7 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field class="custom-field">
+                        <mat-form-field class="custom-field magin-top-field">
                             <input matInput placeholder="Apellido(s)" formControlName="lastName" maxlength="50">
                             <mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
                                 Apellido es <strong>requerido</strong>
@@ -57,13 +58,13 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field class="custom-field">
+                        <mat-form-field class="custom-field magin-top-field">
                             <input matInput placeholder="Contraseña" formControlName="password" maxlength="8">
                             <mat-error *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
                                 La contraseña debe contener lo siguiente:
-                                8 caracteres como mínimo
-                                una letra mayúscula
-                                un número
+                                8 caracteres como mínimo,
+                                ,una letra mayúscula
+                                y un número
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -85,7 +86,10 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="addUserForm.invalid" (click)="saveUser()">Agregar</button>
+            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="addUserForm.invalid" (click)="saveUser()">
+                <span *ngIf="!isForEditModal">Agregar</span>
+                <span *ngIf="isForEditModal">Guardar</span>
+            </button>
         </mat-card-actions>
     </mat-card>
 </div>
