@@ -87,7 +87,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              OrdenFabricacionId = d.PedidoId,
                              CodigoProducto = d.ProductoId,
                              DescripcionProducto = d.Description,
-                             QtyPlanned = dp.Quantity,
+                             QtyPlanned = (int)dp.Quantity,
                              FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
                              FechaOfFin = null,
                              Status = dp.Status,
