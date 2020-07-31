@@ -84,6 +84,10 @@ body {
   float: left;
 }
 
+.title-list-container span{
+  font-weight: bold !important;
+}
+
 .filter-select{
   width: 50%;
   float: right;
@@ -265,9 +269,23 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 }
 
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-  background: #1b55e2 !important; 
+  background: #6C90B3 !important; 
 }
 
 .material-icons svg{
   font-size: 12px !important;
+}
+
+.mat-raised-button {
+  padding: 0 5px !important;
+}
+
+.mat-stroked-button.mat-primary {
+  color: #515365 !important;
+  border: 1px solid #3b3f5c !important;
+}
+
+.mat-stroked-button.green {
+  color: #8dbf42 !important;
+  border: 1px solid #8dbf42 !important;
 }
