@@ -37,19 +37,21 @@ export class AddUserDialogComponent implements OnInit {
     this.usersService.getRoles().subscribe((rolesRes:IRolesRes) => {
      this.userRoles = rolesRes.response;
      console.log('roles: ', rolesRes.response)
+      this.addUserForm.get('userTypeR').
+        setValue(!this.isForEditModal ? this.userRoles.
+        filter(user => CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() : this.userToEdit.role.toString())
     },error => this.errorService.httpError(error));
 
     if(!this.isForEditModal){
+      console.log('new:::')
       this.addUserForm.get('activo').setValue(1);
-      this.addUserForm.get('userTypeR').
-      setValue(this.userRoles.filter(user => CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString())
       console.log('data add: ', this.addUserForm.value)
     }else {
       console.log('edit data: ', this.userToEdit)
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
       this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
       this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
-      this.addUserForm.get('userTypeR').setValue(this.userToEdit.role.toString());
+      //this.addUserForm.get('userTypeR').setValue(this.userToEdit.role.toString());
       this.addUserForm.get('password').setValue(this.userToEdit.password);
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
 

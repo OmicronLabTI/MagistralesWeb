@@ -6,6 +6,23 @@
 .delete-many-icon{
   text-align: center;
 }
+.icon-add{
+  cursor: pointer;
+}
+.no-users-registered{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  color: #5f606c;
+  font-size: 1.5em;
+}
+.icon-many-delete svg{
+  cursor: pointer;
+  color: #515365;
+  width: 20px;
+  fill: rgba(27, 85, 226, 0.23921568627450981);
+}
 
 /*td.mat-cell { //to see pretty
   !* row padding *!

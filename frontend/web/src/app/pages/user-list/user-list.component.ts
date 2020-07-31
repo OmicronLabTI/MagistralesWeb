@@ -15,9 +15,7 @@ export class UserListComponent implements OnInit {
   displayedColumns: string[] = ['delete','names', 'lastName', 'role', 'status','actions'];
   dataSource : IUserReq[];
   constructor(private dialog: MatDialog,private usersService: UsersService) {
-  /*  this.dataSource.map(user =>{
-      user.isChecked = false;
-    });*/
+    
   }
   ngOnInit() {
   this.getUsers();
