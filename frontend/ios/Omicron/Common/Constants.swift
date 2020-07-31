@@ -20,6 +20,8 @@ struct Constants {
 
 struct ViewControllerIdentifiers {
     static let inboxViewController = "InboxViewController"
+    static let storieboardName = "Main"
+    static let splitViewController = "SplitViewController"
 }
 
 struct OmicronColors {
@@ -36,4 +38,24 @@ struct OmicronColors {
 struct UsersDefaultsConstants {
     static let isSessionActive = "isSessionActive"
     static let accessToken = "accessToken"
+}
+
+struct ImagesNames {
+    static let openEye = "ojo.png"
+    static let closeEye = "esconder.png"
+}
+
+struct CommonStrings {
+    static let login = "Login"
+    static let logIntoYourAccount = "Ingresa a tu cuenta"
+    static let enter = "Entrar"
+    static let user = "Usuario"
+    static let password = "Password"
+    static let Emty = ""
+    static let OK = "OK"
+}
+
+struct FontsNames {
+    static let SFProDisplayBold = "SFProDisplay-Bold"
+    static let SFProDisplayRegular = "SFProDisplay-Regular"
 }

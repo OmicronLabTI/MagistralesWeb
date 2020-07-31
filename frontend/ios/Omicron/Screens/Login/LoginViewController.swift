@@ -35,6 +35,11 @@ class LoginViewController: UIViewController {
         viewModelBinding()
         initComponents()
         setupKeyboard()
+        
+        for family in UIFont.familyNames.sorted() {
+            let names = UIFont.fontNames(forFamilyName: family)
+            print("Family: \(family) Font names: \(names)")
+        }
     }
     
     
@@ -68,7 +73,7 @@ class LoginViewController: UIViewController {
         viewModel.loginResponse
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
-                let splitVC = self.getViewController(storyBoardName: "Main", viewControllerName: "SplitViewController") as! UISplitViewController
+                let splitVC = self.getViewController(storyBoardName: ViewControllerIdentifiers.storieboardName, viewControllerName: ViewControllerIdentifiers.splitViewController) as! UISplitViewController
                 self.view.addSubview(splitVC.view)
                 self.view.bounds = splitVC.view.bounds
                 self.addChild(splitVC)
@@ -98,12 +103,12 @@ class LoginViewController: UIViewController {
         self.loginView.backgroundColor = UIColor.white
         self.loginView.layer.cornerRadius = 30
         
-        self.loginLabel.text = "Login"
-        self.loginLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        self.loginLabel.text = CommonStrings.login
+        self.loginLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
         self.loginLabel.textColor = UIColor.black
         
-        self.loginDescriptionLabel.text = "Ingresa a tu cuenta"
-        self.loginDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        self.loginDescriptionLabel.text = CommonStrings.logIntoYourAccount
+        self.loginDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 24)
         self.loginDescriptionLabel.textColor = UIColor.black
         
         self.usernameTextField.backgroundColor = OmicronColors.ligthGray
@@ -112,22 +117,22 @@ class LoginViewController: UIViewController {
         self.passwordTextField.backgroundColor = OmicronColors.ligthGray
         self.passwordTextField.textColor = UIColor.black
         
-        self.loginButtonDescriptionLabel.text = "Entrar"
-        self.loginButtonDescriptionLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        self.loginButtonDescriptionLabel.text = CommonStrings.enter
+        self.loginButtonDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 18)
         self.loginButtonDescriptionLabel.textColor = OmicronColors.blue
         self.loginButtonDescriptionLabel.textColor = UIColor.black
         
-        self.userLabel.text = "Usuario"
+        self.userLabel.text = CommonStrings.user
         self.userLabel.textColor = UIColor.black
-        self.userLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        self.userLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
         
-        self.passwordLabel.text = "Password"
+        self.passwordLabel.text = CommonStrings.password
         self.passwordLabel.textColor = UIColor.black
-        self.passwordLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        self.passwordLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
         
         self.passwordTextField.rightViewMode = .unlessEditing
-        self.button.setImage(UIImage(named: "ojo.png"), for: .normal)
-        self.button.imageEdgeInsets = UIEdgeInsets(top: 5, left: -24, bottom: 5, right: 15)
+        self.button.setImage(UIImage(named: ImagesNames.openEye), for: .normal)
+        self.button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -24, bottom: 0, right: 10)
         self.button.frame = CGRect(x: CGFloat(passwordTextField.frame.size.width - 25), y: 5, width: 15, height: 25)
         self.button.addTarget(self, action: #selector(self.btnPasswordVisibilityClicked), for: .touchUpInside)
         self.passwordTextField.rightView = button
@@ -135,8 +140,8 @@ class LoginViewController: UIViewController {
     }
     
     private func showAlert(message: String) {
-        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: nil)
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
     }
@@ -165,10 +170,10 @@ class LoginViewController: UIViewController {
         (sender as! UIButton).isSelected = !(sender as! UIButton).isSelected
         if (sender as! UIButton).isSelected {
             passwordTextField.isSecureTextEntry = false
-            button.setImage(UIImage(named: "ojo.png"), for: .normal)
+            button.setImage(UIImage(named: ImagesNames.openEye), for: .normal)
         } else {
             passwordTextField.isSecureTextEntry = true
-            button.setImage(UIImage(named: "esconder.png"), for: .normal)
+            button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
         }
     }
 }

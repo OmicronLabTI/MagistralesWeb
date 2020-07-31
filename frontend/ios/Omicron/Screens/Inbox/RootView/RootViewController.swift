@@ -41,7 +41,8 @@ class RootViewController: UIViewController {
         self.viewTable.tableFooterView = UIView()
         self.viewTable.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
-        self.myOrdesLabel.font = UIFont.boldSystemFont(ofSize: 25)
+       // self.myOrdesLabel.font = UIFont.boldSystemFont(ofSize: 25)
+        self.myOrdesLabel.font = UIFont(name: "SF Pro", size: 25)
         self.view.backgroundColor = OmicronColors.tableStatus
     }
     
