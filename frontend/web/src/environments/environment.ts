@@ -5,14 +5,14 @@
 export const environment = {
   production: false,
 
-  baseUrl: 'http://192.168.0.101:8000',//prod
+  baseUrl: 'http://localhost:8000',//prod
   //baseUrl: 'https://febf9d417342.ngrok.io', //dev
   baseUrlLogin:'http://localhost:8090', //dev
   baseUrlUsers:'http://localhost:5101', //dev
   baseUrlCatalogs:'http://localhost:9010', //dev
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs:'/api/catalogos',
-  apiUsers:'/api/usuarios'
+  apiUsers:'/api/usuarios',
 };
 
 export const MODAL_NAMES =  {

@@ -27,7 +27,6 @@ export class ConsumeService {
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
-      //this.http.get<any>(url, { headers: objHeaders, params: objParams })
       this.http.get<any>(url, { headers: objHeaders, params: objParams })
         .subscribe(response => {
           observer.next(response);

@@ -9,8 +9,19 @@ import {
   MatSnackBarModule,
   MatIconModule,
   MatMenuModule,
+  MatSelectModule,
+  MatExpansionModule,
+  MatPaginatorModule,
+  MatTableModule,
+  MatSlideToggleModule,
+  MatDialogModule,
+  MatTabsModule,
+  MatProgressSpinnerModule, 
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule, 
+  MatAutocompleteModule,
   MatCheckboxModule,
-  MatDialogModule
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [
@@ -20,11 +31,22 @@ export const MATERIAL_COMPONENTS = [
   MatButtonModule,
   MatProgressBarModule,
   MatCardModule,
+  MatSidenavModule,
+  MatListModule,
   MatSnackBarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatMenuModule,
-    MatDialogModule
-
+  MatIconModule,
+  MatMenuModule,
+  MatSelectModule,
+  MatExpansionModule,
+  MatPaginatorModule,
+  MatTableModule,
+  MatSlideToggleModule,
+  MatDialogModule,
+  MatTabsModule,
+  MatProgressSpinnerModule, 
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule, 
+  MatAutocompleteModule,
+  MatCheckboxModule
 ]

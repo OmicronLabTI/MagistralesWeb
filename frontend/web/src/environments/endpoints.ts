@@ -9,7 +9,10 @@ export const Endpoints = {
     getUsers:`${environment.baseUrl}/api/usuarios/getUsers?offset=0&limit=10`,
     delete:`${environment.baseUrl}/api/usuarios/deactivateUser`,
     update:`${environment.baseUrl}/api/usuarios/updateUser`,
-
+  },
+  pedidos:{
+    getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
+    getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
   }
 }
 
