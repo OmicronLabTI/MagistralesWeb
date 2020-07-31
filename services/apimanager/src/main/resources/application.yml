@@ -30,6 +30,9 @@ zuul:
     logs:
       path: /logs/**
       serviceId: logsservice
+    sapadapter:
+      path: /sapadapter/**
+      serviceId: sapadapterService
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 
 ribbon:

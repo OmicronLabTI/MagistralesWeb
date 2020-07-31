@@ -294,5 +294,22 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await this.userServices.UpdateUser(user));
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetUser()
+        {
+            // arrange
+            var user = "George";
+
+            // act
+            var response = await this.userServices.GetUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

@@ -72,5 +72,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="user">the user to update.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> UpdateUser(UserDto user);
+
+        /// <summary>
+        /// Get the user.
+        /// </summary>
+        /// <param name="userName">the username.</param>
+        /// <returns>the user.</returns>
+        Task<ResultDto> GetUser(string userName);
     }
 }

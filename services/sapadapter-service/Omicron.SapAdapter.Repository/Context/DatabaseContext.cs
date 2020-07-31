@@ -8,8 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Context
 {
-    using Omicron.SapAdapter.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.SapAdapter.Entities.Model;
 
     /// <summary>
     /// Class DBcontext.
@@ -27,5 +27,58 @@ namespace Omicron.SapAdapter.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<UserModel> CatUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<OrderModel> OrderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<AsesorModel> AsesorModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<DetallePedidoModel> DetallePedido { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<ProductoModel> ProductoModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
+
+        /// <summary>
+        /// model creating.
+        /// </summary>
+        /// <param name="builder">the builder.</param>
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<DetallePedidoModel>().HasKey(table => new
+            {
+                table.PedidoId,
+                table.DetalleId,
+            });
+        }
     }
 }
