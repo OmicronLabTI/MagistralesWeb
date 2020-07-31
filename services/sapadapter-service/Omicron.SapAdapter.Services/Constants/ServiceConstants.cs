@@ -31,6 +31,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string TwoWeeks = "twoweeks";
 
         /// <summary>
+        /// one week value.
+        /// </summary>
+        public const string Week = "week";
+
+        /// <summary>
         /// month value.
         /// </summary>
         public const string Month = "month";
