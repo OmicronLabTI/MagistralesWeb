@@ -42,7 +42,7 @@ class InboxViewController: UIViewController {
         [
             finishedButton.rx.tap.bind(to: inboxModel.finishedDidTab),
             pendingButton.rx.tap.bind(to: inboxModel.pendingDidTab),
-            processButton.rx.tap.bind(to: inboxModel.processDidTab),
+            processButton.rx.tap.bind(to: inboxModel.processDidTab)
         ].forEach({ $0.disposed(by: disposeBag) })
         
     }

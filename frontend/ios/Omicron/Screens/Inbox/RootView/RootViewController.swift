@@ -19,6 +19,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var myOrdesLabel: UILabel!
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     
+     lazy var inboxViewModel = self.getInboxViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
@@ -32,6 +33,7 @@ class RootViewController: UIViewController {
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { [weak self] indexPath in
             print("Elemento elegido: \(indexPath.row)")
+            self?.inboxViewModel?.setSelection(index: indexPath.row)
             }).disposed(by: disposeBag)
     }
     
@@ -68,5 +70,11 @@ class RootViewController: UIViewController {
         default:
             print("")
         }
+    }
+    private func getInboxViewModel() -> InboxViewModel? {
+        if let vc = self.splitViewController?.viewControllers.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
+            return vc.inboxModel
+        }
+        return nil
     }
 }

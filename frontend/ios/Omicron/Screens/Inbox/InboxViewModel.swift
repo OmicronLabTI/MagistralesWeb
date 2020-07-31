@@ -15,6 +15,11 @@ class  InboxViewModel {
     var finishedDidTab = PublishSubject<Void>();
     var pendingDidTab = PublishSubject<Void>();
     var processDidTab = PublishSubject<Void>();
+//    var finishedButtonIsHidden: Driver<Bool>
+//    var pendingButtonIsHidden: Driver<Bool>
+//    var processButtonIsHidden: Driver<Bool>
+    
+    
     var disposeBag = DisposeBag();
     init() {
         // Funcionalidad para el botón de Terminar
@@ -31,5 +36,9 @@ class  InboxViewModel {
         processDidTab.subscribe(onNext: {
             print("Botón de proceso")
             }).disposed(by: disposeBag)
+    }
+    
+    func setSelection(index: Int) -> Void {
+        print("Index desde table: \(index)")
     }
 }
