@@ -23,6 +23,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButtonDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
     @IBOutlet weak var passwordLabel: UILabel!
+    let button = UIButton(type: .custom)
     
     // MARK: - VARIABLES
     lazy var viewModel: LoginViewModel = LoginViewModel()
@@ -33,11 +34,9 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         viewModelBinding()
         initComponents()
-        self.navigationController?.isNavigationBarHidden = true
-        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        setupKeyboard()
     }
+    
     
     // MARK: - FUNCTIONS
     func viewModelBinding() {
@@ -125,6 +124,14 @@ class LoginViewController: UIViewController {
         self.passwordLabel.text = "Password"
         self.passwordLabel.textColor = UIColor.black
         self.passwordLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        
+        self.passwordTextField.rightViewMode = .unlessEditing
+        self.button.setImage(UIImage(named: "ojo.png"), for: .normal)
+        self.button.imageEdgeInsets = UIEdgeInsets(top: 5, left: -24, bottom: 5, right: 15)
+        self.button.frame = CGRect(x: CGFloat(passwordTextField.frame.size.width - 25), y: 5, width: 15, height: 25)
+        self.button.addTarget(self, action: #selector(self.btnPasswordVisibilityClicked), for: .touchUpInside)
+        self.passwordTextField.rightView = button
+        self.passwordTextField.rightViewMode = .always
     }
     
     private func showAlert(message: String) {
@@ -147,4 +154,21 @@ class LoginViewController: UIViewController {
         self.view.endEditing(true)
     }
     
+    func setupKeyboard() -> Void {
+        self.navigationController?.isNavigationBarHidden = true
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+    
+    @IBAction func btnPasswordVisibilityClicked( sender: Any) {
+        (sender as! UIButton).isSelected = !(sender as! UIButton).isSelected
+        if (sender as! UIButton).isSelected {
+            passwordTextField.isSecureTextEntry = false
+            button.setImage(UIImage(named: "ojo.png"), for: .normal)
+        } else {
+            passwordTextField.isSecureTextEntry = true
+            button.setImage(UIImage(named: "esconder.png"), for: .normal)
+        }
+    }
 }
