@@ -7,9 +7,16 @@ import { Subject } from 'rxjs';
 export class DataService {
   private isLoading = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
-
+  private isLogin = new Subject<boolean>();
   constructor() { }
 
+  setIsLogin(isLogin: boolean){
+    this.isLogin.next(isLogin);
+  }
+
+  getIsLogin(){
+    return this.isLogin.asObservable();
+  }
   setIsLoading(loading: boolean) {
     this.isLoading.next(loading);
   }
@@ -33,8 +40,12 @@ export class DataService {
   setToken(token: string) {
     sessionStorage.setItem('token', token);
   }
+  clearToken(){
+    sessionStorage.removeItem('token');
+  }
+
 
   userIsAuthenticated(): boolean {
-    return sessionStorage.getItem('token') ? true : false;
+    return !!sessionStorage.getItem('token');
   }
 }
