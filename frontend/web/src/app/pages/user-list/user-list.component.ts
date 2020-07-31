@@ -12,63 +12,24 @@ import {UsersService} from "../../services/users.service";
 export class UserListComponent implements OnInit {
   isAllComplete = false;
   displayedColumns: string[] = ['delete','names', 'lastName', 'role', 'status','actions'];
-  dataSource : IUserReq[] = [
-    {
-      "id": 'dsafasdf1',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf2',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf3',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf4',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf5',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    }
-  ];
+  dataSource : IUserReq[];
   constructor(private dialog: MatDialog,private usersService: UsersService) {
-    this.dataSource.map(user =>{
+  /*  this.dataSource.map(user =>{
       user.isChecked = false;
-    });
+    });*/
   }
   ngOnInit() {
-    /*this.usersService.getUsers().subscribe((userRes: IUserListRes) => {
+  this.getUsers();
+  }
+  getUsers(){
+    this.usersService.getUsers().subscribe((userRes: IUserListRes) => {
       console.log('user list: ',userRes);
       this.dataSource = userRes.response;
-    })*/
+      this.dataSource.map(user =>{
+        user.isChecked = false;
+      });
+
+    })
   }
 
   updateAllComplete() {
@@ -88,18 +49,40 @@ export class UserListComponent implements OnInit {
 
   deleteUsers() {
     console.log('to delete: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
-    this.dataSource = this.dataSource.filter(user => !user.isChecked)
-/*
-    this.usersService.deleteUsers(this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}));
-*/
+    const idsToDelete = this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id});
+    console.log('before: ', idsToDelete)
+    this.usersService.deleteUsers(idsToDelete).subscribe(
+        resDelete =>{
+          console.log('res delete: ',resDelete);
+          this.dataSource = this.dataSource.filter(user => !user.isChecked)
+
+        },
+        error => {
+          console.log('error delete: ', error)
+        }
+    );
+
   }
 
-  openDialog(modalTypeOpen: string) {
-      this.dialog.open(AddUserDialogComponent, {
+  openDialog(modalTypeOpen: string,userId : any) {
+    let userToEdit: {};
+    console.log('user: ', userId);
+    if(userId !== ''){
+      userToEdit = this.dataSource.filter(user => user.id === userId)[0];
+      console.log('user: ', userToEdit);
+    }
+
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        modalType: modalTypeOpen
+        modalType: modalTypeOpen,
+        userToEditM: userToEdit
       }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+      this.getUsers();
     });
 
   }

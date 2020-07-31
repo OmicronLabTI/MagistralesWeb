@@ -13,12 +13,14 @@ import {ErrorService} from "../../services/error.service";
 })
 export class AddUserDialogComponent implements OnInit {
   optionDefULTRole: number;
+  userToEdit: IUserReq;
   addUserForm: FormGroup;
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
               private usersService:UsersService, private errorService: ErrorService) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
+    this.userToEdit = this.data.userToEditM;
     console.log('data drom: ', this.data.modalType,'modal names: ', MODAL_NAMES)
 
     this.addUserForm = this.formBuilder.group({
@@ -29,33 +31,61 @@ export class AddUserDialogComponent implements OnInit {
       password:['', [Validators.required,Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
       activo:['', Validators.required]
     });
+
   }
 
   ngOnInit() {
     this.usersService.getRoles().subscribe((rolesRes:IRolesRes) => {
      this.userRoles = rolesRes.response;
-      this.addUserForm.get('userRole').
+     console.log('roles: ', rolesRes.response)
+      this.addUserForm.get('userTypeR').
                         setValue(this.userRoles.filter(user => CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString())
     },error => this.errorService.httpError(error));
 
     if(!this.isForEditModal){
       this.addUserForm.get('activo').setValue(1);
       console.log('data add: ', this.addUserForm.value)
+    }else {
+      console.log('edit data: ', this.userToEdit)
+      this.addUserForm.get('userName').setValue(this.userToEdit.userName);
+      this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
+      this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
+      this.addUserForm.get('userTypeR').setValue(this.userToEdit.role.toString());
+      this.addUserForm.get('password').setValue(this.userToEdit.password);
+      this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
+
     }
   }
 
   saveUser() {
-    const user: IUserReq = {
-      userName: this.addUserForm.get('userName').value,
-      firstName: this.addUserForm.get('firstName').value,
-      lastName: this.addUserForm.get('lastName').value,
-      role: Number(this.addUserForm.get('userTypeR').value),
-      password: this.addUserForm.get('password').value,
-      activo: Number(this.addUserForm.get('activo').value)
-    };
-    console.log('value user: ', user);
-    this.usersService.createUser(user).subscribe( resUser => console.log('resUser: ', resUser),
-        error => console.log('error create: ', error));
+
+
+    if(!this.isForEditModal){
+      const user: IUserReq = {
+        userName: this.addUserForm.get('userName').value,
+        firstName: this.addUserForm.get('firstName').value,
+        lastName: this.addUserForm.get('lastName').value,
+        role: Number(this.addUserForm.get('userTypeR').value),
+        password: this.addUserForm.get('password').value,
+        activo: Number(this.addUserForm.get('activo').value)
+      };
+      console.log('value user: ', user);
+      this.usersService.createUser(user).subscribe( resUser => console.log('resUser: ', resUser),
+          error => console.log('error create: ', error));
+    }else {
+      const user: IUserReq = {
+        id: this.userToEdit.id,
+        userName: this.addUserForm.get('userName').value,
+        firstName: this.addUserForm.get('firstName').value,
+        lastName: this.addUserForm.get('lastName').value,
+        role: Number(this.addUserForm.get('userTypeR').value),
+        password: this.addUserForm.get('password').value,
+        activo: Number(this.addUserForm.get('activo').value)
+      };
+      console.log('value user edit: ', user);
+      this.usersService.updateUser(user).subscribe( resUser => console.log('resUserEdit: ', resUser),
+          error => console.log('error edit: ', error));
+    }
 
   }
 }

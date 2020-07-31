@@ -4,7 +4,7 @@
             <span>Usuarios</span>
         </div>
         <div class="add-user-container">
-            <div class="icon-add" (click)="openDialog('addModal')">
+            <div class="icon-add" (click)="openDialog('addModal','')">
                 <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
                      height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
@@ -74,7 +74,7 @@
                 </button>
                 </th>
                 <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
-                    <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal')" >
+                    <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal',element.id)" >
                         <mat-icon >edit</mat-icon>
                     </button>
 

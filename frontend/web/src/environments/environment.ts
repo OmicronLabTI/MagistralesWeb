@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   baseUrl: 'http://localhost:8000',
+  baseUrlLogin:'http://localhost:8090',
   baseUrlUsers:'http://localhost:5101',
   baseUrlCatalogs:'http://localhost:9010',
   apiLogin: '/api/oauth/oauthrs',

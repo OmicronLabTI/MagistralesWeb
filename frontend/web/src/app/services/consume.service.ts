@@ -84,7 +84,7 @@ export class ConsumeService {
     });
   }
 
-  httpDelete<T>(url: string, body: any, headers?) {
+  httpPatch<T>(url: string, body: any, headers?) {
     let objHeaders = new HttpHeaders();
     if (headers) {
       Object.keys(headers).forEach((key) => {
@@ -94,7 +94,7 @@ export class ConsumeService {
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
-      /*this.http.delete<any>(url, body, { headers: objHeaders })
+      this.http.patch<any>(url, body, { headers: objHeaders })
           .subscribe(response => {
             observer.next(response);
             observer.complete();
@@ -102,7 +102,7 @@ export class ConsumeService {
           }, err => {
             observer.error(err);
             this.dataService.setIsLoading(false);
-          });*/
+          });
     });
   }
 }

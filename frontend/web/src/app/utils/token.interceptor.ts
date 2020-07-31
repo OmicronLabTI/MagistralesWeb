@@ -18,7 +18,14 @@ export class TokenInterceptor implements HttpInterceptor {
     const token = this._dataService.getToken();
 
     if (token && !this.endpointExcluded(req.url)) {
-      req = req.clone({ headers: req.headers.append('token', token) });
+      //req = req.clone({ headers: req.headers.append('token', token) });
+      req = req.clone({
+        setHeaders: {
+          Accept: 'application/json',
+          'Content-Type': `application/json`,
+          Authorization: `Bearer ${token}`
+        }
+      });
     }
     console.log('req: ', req)
     return req;
