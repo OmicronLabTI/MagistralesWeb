@@ -47,6 +47,8 @@ class LoginViewModel {
                         switch (err) {
                         case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
                             self?.error.onNext(httpError?.error ?? Constants.Errors.serverError.rawValue)
+                        case RequestError.unauthorized:
+                            self?.error.onNext(Constants.Errors.unauthorized.rawValue)
                         default:
                             self?.error.onNext(Constants.Errors.serverError.rawValue)
                         }

@@ -35,7 +35,6 @@ class RootViewController: UIViewController {
         let index = NSIndexPath(row: 0, section: 0)
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { [weak self] indexPath in
-            print("Elemento elegido: \(indexPath.row)")
             self?.inboxViewModel?.setSelection(index: indexPath.row)
             }).disposed(by: disposeBag)
     }

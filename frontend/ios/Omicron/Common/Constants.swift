@@ -11,6 +11,7 @@ import UIKit
 struct Constants {
     enum Errors: String {
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
+        case unauthorized = "Lo sentimos, las credenciales son inválidas"
     }
     
     enum Tags: Int {

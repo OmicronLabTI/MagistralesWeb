@@ -56,7 +56,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.labelsStyle(label: finishDateDescriptionLabel, text: "")
         self.labelsStyle(label: productLabel, text: "Descripción del producto:")
         self.labelsStyle(label: productDescriptionLabel, text: "")
-        changeIconButton(button: self.showDetail, iconName: "showProcessDetailButton.png")
+        changeIconButton(button: self.showDetail, iconName: "showAssignedDetailButton.png")
     }
     
     func changeIconButton(button: UIButton, iconName: String) -> Void{
