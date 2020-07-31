@@ -74,6 +74,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetOrderDetails(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -146,6 +150,28 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // Assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Get detalle de pedido.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetDetallePedidos()
+        {
+            // Arrange
+            var docEntry = "10";
+
+            // act
+            var response = await this.sapFacade.GetDetallePedidos(docEntry);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
         }
     }
 }
