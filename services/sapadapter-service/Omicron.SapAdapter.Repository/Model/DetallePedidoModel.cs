@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="DetallePedido.cs" company="Axity">
+// <copyright file="DetallePedidoModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -15,7 +15,7 @@ namespace Omicron.SapAdapter.Entities.Model
     /// class for the detalle del pedido.
     /// </summary>
     [Table("RDR1")]
-    public class DetallePedido
+    public class DetallePedidoModel
     {
         /// <summary>
         /// Gets or sets Code.
@@ -39,5 +39,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("ItemCode")]
         public string ProductoId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("Dscription")]
+        public string Description { get; set; }
     }
 }

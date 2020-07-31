@@ -11,10 +11,12 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
 
     /// <summary>
@@ -41,10 +43,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
 
-            // this.context.OrderModel.AddRange(this.GetListRoles());
-            // this.context.SaveChanges();
+            var mockPedidoService = new Mock<IPedidosService>();
+
             this.sapDao = new SapDao(this.context);
-            this.sapService = new SapService(this.sapDao);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object);
         }
 
         /// <summary>
@@ -120,6 +122,23 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// the order detail.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetOrderDetail()
+        {
+            // arrange
+            var docId = 10;
+
+            // act
+            var result = await this.sapService.GetOrderDetails(docId);
+
+            // Assert
             Assert.IsNotNull(result);
         }
     }
