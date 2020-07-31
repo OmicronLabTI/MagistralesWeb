@@ -23,12 +23,10 @@ export class UsersService {
   getUsers(){
     return this.consumeService.httpGet(Endpoints.users.getUsers);
   }
-  deleteUsers(idsToDelete: string[]){//check
-    console.log('idsde: ',idsToDelete)
+  deleteUsers(idsToDelete: string[]){
     return this.consumeService.httpPatch(Endpoints.users.delete,idsToDelete);
   }
   updateUser(user: IUserReq){
-  console.log('user req update: ', user)
     return this.consumeService.httpPut(Endpoints.users.update,user);
 
 }

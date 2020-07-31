@@ -24,10 +24,6 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
-
-    // TEST ONLY
-    this.formLogin.get('username').setValue('eve.holt@reqres.in');
-    this.formLogin.get('password').setValue('cityslicka');
   }
 
   ngOnInit() { }
@@ -46,8 +42,8 @@ export class LoginComponent implements OnInit {
       this.dataService.setIsLogin(true);
       this.router.navigate(['home']);
     }, err => {
-      console.log('errorLogin: ', err)
-      this.dataService.setGeneralNotificationMessage(err);
+      console.log('error  login: ', err)
+      this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
     }
     );
   }

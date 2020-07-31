@@ -8,7 +8,7 @@
      <mat-card-content [formGroup]="formLogin" class="card-content-custom">
        <mat-form-field class="login-field">
          <mat-card-title class="text-left" >
-           <span class="title-login text-left">Usuario</span>
+           <span class="title-input text-left">Usuario</span>
          </mat-card-title>
          <div class="input-user-custom">
            <div class="user-icon-login">
@@ -24,7 +24,7 @@
        </mat-form-field>
        <mat-form-field class="login-field">
          <mat-card-title class="text-left" >
-           <span class="title-login text-left">Password</span>
+           <span class="title-input text-left">Password</span>
          </mat-card-title>
          <div class="input-user-custom">
            <div class="icon-close-pass">
@@ -42,10 +42,6 @@
          <mat-error>
            <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
          </mat-error>
-        <!-- <input matInput placeholder="Contraseña" name="password" formControlName="password" type="password" required>
-         <mat-error>
-           <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
-         </mat-error>-->
        </mat-form-field>
      </mat-card-content>
      <mat-card-actions class="actions-custom">

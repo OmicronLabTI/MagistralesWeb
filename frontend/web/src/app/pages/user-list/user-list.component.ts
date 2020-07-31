@@ -3,6 +3,7 @@ import {IUserListRes, IUserReq} from "../../model/http/users";
 import {MatDialog} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../../dialogs/add-user-dialog/add-user-dialog.component";
 import {UsersService} from "../../services/users.service";
+import {CONST_STRING} from "../../../environments/environment";
 
 @Component({
   selector: 'app-user-list',
@@ -47,11 +48,13 @@ export class UserListComponent implements OnInit {
   }
 
 
-  deleteUsers() {
-    console.log('to delete: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
-    const idsToDelete = this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id});
-    console.log('before: ', idsToDelete)
-    this.usersService.deleteUsers(idsToDelete).subscribe(
+  deleteUsers(idUser: string) {
+    if(idUser !== CONST_STRING.empty) {
+      this.dataSource.filter(user => user.id === idUser).forEach(user => user.isChecked = true)
+    }
+
+    console.log('before: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
+    this.usersService.deleteUsers(this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id})).subscribe(
         resDelete =>{
           console.log('res delete: ',resDelete);
           this.dataSource = this.dataSource.filter(user => !user.isChecked)
@@ -64,10 +67,10 @@ export class UserListComponent implements OnInit {
 
   }
 
-  openDialog(modalTypeOpen: string,userId : any) {
+  openDialog(modalTypeOpen: string,userId : string) {
     let userToEdit: {};
     console.log('user: ', userId);
-    if(userId !== ''){
+    if(userId !== CONST_STRING.empty){
       userToEdit = this.dataSource.filter(user => user.id === userId)[0];
       console.log('user: ', userToEdit);
     }
