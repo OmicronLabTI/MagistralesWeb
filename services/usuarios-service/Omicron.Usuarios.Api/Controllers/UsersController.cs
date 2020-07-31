@@ -106,6 +106,19 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get user By Id.
+        /// </summary>
+        /// <param name="userId">User Id.</param>
+        /// <returns>User Model.</returns>
+        [Route("/user/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> Get(string userId)
+        {
+            var result = await this.userFacade.GetUser(userId.ToString());
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Method to get all users.
         /// </summary>
         /// <returns>List of users.</returns>
@@ -114,36 +127,6 @@ namespace Omicron.Usuarios.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var response = await this.userFacade.GetListUsersActive();
-            return this.Ok(response);
-        }
-
-        /// <summary>
-        /// Method to get user By Id.
-        /// </summary>
-        /// <param name="userId">User Id.</param>
-        /// <returns>User Model.</returns>
-        [Route("{userId}")]
-        [HttpGet]
-        public async Task<IActionResult> Get(int userId)
-        {
-            UserDto response = null;
-
-            ////Example to get value with Redis Cache
-            var result = await this.database.StringGetAsync(userId.ToString());
-
-            if (!result.HasValue)
-            {
-                response = await this.userFacade.GetListUserActive(userId);
-
-                ////Example to set value with Redis Cache
-                await this.database.StringSetAsync(userId.ToString(), JsonConvert.SerializeObject(response));
-            }
-            else
-            {
-                ////If key in Redis, deserialize response and return object
-                response = JsonConvert.DeserializeObject<UserDto>(result);
-            }
-
             return this.Ok(response);
         }
 
