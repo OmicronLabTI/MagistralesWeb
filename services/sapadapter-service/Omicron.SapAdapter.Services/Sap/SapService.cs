@@ -16,6 +16,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -25,13 +26,17 @@ namespace Omicron.SapAdapter.Services.Sap
     {
         private readonly ISapDao sapDao;
 
+        private readonly IPedidosService pedidosService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
-        public SapService(ISapDao sapDao)
+        /// <param name="pedidosService">the pedidosservice.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
+            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
         }
 
         /// <summary>
@@ -63,6 +68,8 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetOrderDetails(int docId)
         {
             var details = await this.sapDao.GetAllDetails(docId);
+
+            // var usersQfb = await this.pedidosService.GetUserPedidos(details.Select(x => x.OrdenFabricacionId).Distinct().ToList());
             details.ToList().ForEach(x => x.Status = ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null);
