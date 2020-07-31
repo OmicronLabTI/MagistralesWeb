@@ -14,12 +14,12 @@ enum ApiService {
 }
 
 extension ApiService: TargetType {
-    var baseURL: URL { return URL(string: Config.baseUrl)! }
     
+    var baseURL: URL { return URL(string: Config.baseUrl)! }
     var path: String {
         switch self {
         case .login(_):
-            return "/login"
+            return "/authorize"
         }
     }
     
