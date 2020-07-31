@@ -35,11 +35,11 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return "https://febf9d417342.ngrok.io/api/oauth/oauthrs"
+            return "https://375096a2390a.ngrok.io/api/oauth/oauthrs"
         case .stagingRelease,
              .appstore,
              .release:
-            return "https://febf9d417342.ngrok.io/api/oauth/oauthrs"
+            return "https://375096a2390a.ngrok.io/api/oauth/oauthrs"
         }
     }()
 }

@@ -27,6 +27,7 @@ class InboxViewController: UIViewController {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Do any additional setup after loading the view.
         viewModelBinding()
         self.initComponents()
         collectionView.dataSource = self
@@ -34,18 +35,22 @@ class InboxViewController: UIViewController {
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
-        // Do any additional setup after loading the view.
     }
     
     // MARK: Functions
-    
     func viewModelBinding() -> Void {
         [
             finishedButton.rx.tap.bind(to: inboxModel.finishedDidTab),
             pendingButton.rx.tap.bind(to: inboxModel.pendingDidTab),
             processButton.rx.tap.bind(to: inboxModel.processDidTab)
         ].forEach({ $0.disposed(by: disposeBag) })
-        
+     
+        inboxModel.thereAreNotOrdes
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { res in
+                self.chageStatusName(index: res)
+                self.hideButtons(index: res)
+            }).disposed(by: disposeBag)
     }
     
     func initComponents() -> Void {
@@ -54,10 +59,6 @@ class InboxViewController: UIViewController {
         self.setStyleButton(button: self.finishedButton, title: "Terminado", color: OmicronColors.finishedStatus)
         self.setStyleButton(button: self.pendingButton, title: "Pendiente", color: OmicronColors.pendingStatus)
         self.setStyleButton(button: self.processButton, title: "En proceso", color: OmicronColors.processStatus)
-        for family in UIFont.familyNames.sorted() {
-            let names = UIFont.fontNames(forFamilyName: family)
-            print("Family: \(family) Font names: \(names)")
-        }
     }
     
     func setStyleButton( button: UIButton ,title: String, color: UIColor) {
@@ -68,7 +69,49 @@ class InboxViewController: UIViewController {
         button.layer.borderColor = color.cgColor
         button.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
     }
+    
+    func chageStatusName(index: Int) -> Void {
+        switch index {
+        case 0:
+            self.statusNameLabel.text = "Asignadas"
+        case 1:
+            self.statusNameLabel.text = "En Proceso"
+        case 2:
+            self.statusNameLabel.text = "Pendientes"
+        case 3:
+            self.statusNameLabel.text = "Terminado"
+        case 4:
+            self.statusNameLabel.text = "Reasignado"
+        default:
+            print("")
+        }
+    }
+    
+    private func hideButtons(index: Int) {
+        switch index {
+        case 0:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: false, pendingButtonIsHidden: false)
+        case 2:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
+        case 3:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 4:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: false, pendingButtonIsHidden: true)
+        default:
+            print("")
+        }
+    }
+    
+    private func changePropertyIsHiddenStatusButtons(processButtonIsHidden: Bool, finishedButtonIsHidden: Bool, pendingButtonIsHidden: Bool) -> Void {
+        self.processButton.isHidden = processButtonIsHidden
+        self.finishedButton.isHidden = finishedButtonIsHidden
+        self.pendingButton.isHidden = pendingButtonIsHidden
+    }
 }
+
+
 extension InboxViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 9
@@ -78,8 +121,6 @@ extension InboxViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "card", for: indexPath) as? CardCollectionViewCell
         return cell!
     }
-    
-    
 }
 
 extension InboxViewController: UICollectionViewDelegate {

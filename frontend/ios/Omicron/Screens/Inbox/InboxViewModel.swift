@@ -15,6 +15,7 @@ class  InboxViewModel {
     var finishedDidTab = PublishSubject<Void>();
     var pendingDidTab = PublishSubject<Void>();
     var processDidTab = PublishSubject<Void>();
+    var thereAreNotOrdes = PublishSubject<Int>()
 //    var finishedButtonIsHidden: Driver<Bool>
 //    var pendingButtonIsHidden: Driver<Bool>
 //    var processButtonIsHidden: Driver<Bool>
@@ -39,6 +40,13 @@ class  InboxViewModel {
     }
     
     func setSelection(index: Int) -> Void {
+        
+         //Aqui se consume servicio
+//        let assigned =
+//        [
+//            Orden(No: 1, BaseDocument: "SFJDFJDF123", Container: "Envasd", Tag: "34", PlannedQuantity: "Envase", startDate: "27/03/1994", finishDate: "27/03/1994", descriptionProduct: "Descripción del producto")
+//        ]
         print("Index desde table: \(index)")
+        self.thereAreNotOrdes.onNext(index)
     }
 }
