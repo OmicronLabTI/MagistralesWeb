@@ -13,6 +13,7 @@
 		7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAB24D2839400D26B96 /* RootViewModel.swift */; };
 		7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */; };
 		7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAF24D2A0FC00D26B96 /* RootModel.swift */; };
+		7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BB124D3BA5800D26B96 /* SplitViewController.swift */; };
 		7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */; };
 		7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */; };
 		7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D124CB9553005A7FED /* InboxViewController.swift */; };
@@ -67,6 +68,7 @@
 		7C844BAB24D2839400D26B96 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
 		7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTableViewCell.swift; sourceTree = "<group>"; };
 		7C844BAF24D2A0FC00D26B96 /* RootModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootModel.swift; sourceTree = "<group>"; };
+		7C844BB124D3BA5800D26B96 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardCollectionViewCell.xib; sourceTree = "<group>"; };
 		7CE216D124CB9553005A7FED /* InboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 				7CE216D124CB9553005A7FED /* InboxViewController.swift */,
 				7CE216D324CB9576005A7FED /* InboxViewModel.swift */,
 				7CE216D524CB9588005A7FED /* InboxModel.swift */,
+				7C844BB124D3BA5800D26B96 /* SplitViewController.swift */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -554,6 +557,7 @@
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
+				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,

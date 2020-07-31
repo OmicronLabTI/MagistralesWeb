@@ -33,7 +33,7 @@ class LoginViewModel {
         loginDidTap
             .withLatestFrom(input)
             .map({
-                Login(username: $0, password: self.convertPasswordToSHA256(password: $1))
+                Login(username: $0, password: $1)
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)

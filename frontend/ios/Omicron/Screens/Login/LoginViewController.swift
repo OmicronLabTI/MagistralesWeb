@@ -69,10 +69,17 @@ class LoginViewController: UIViewController {
         viewModel.loginResponse
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
-                //self.showSuccess(message: res.token ?? "")
-                self.performSegue(withIdentifier: "SplitView" , sender: self)
+                let splitVC = self.getViewController(storyBoardName: "Main", viewControllerName: "SplitViewController") as! UISplitViewController
+                self.view.addSubview(splitVC.view)
+                self.view.bounds = splitVC.view.bounds
+                self.addChild(splitVC)
             })
             .disposed(by: disposeBag)
+    }
+    
+    func getViewController(storyBoardName: String, viewControllerName: String) -> UIViewController{
+        let storyBoard = UIStoryboard(name: storyBoardName, bundle: nil)
+        return storyBoard.instantiateViewController(identifier: viewControllerName)
     }
     
     func showSuccess(message: String) {

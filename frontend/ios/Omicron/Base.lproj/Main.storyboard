@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M3I-HA-Kcq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
     <device id="ipad10_5" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -168,6 +168,7 @@
                         <outlet property="passwordTextField" destination="ZIm-yZ-WYR" id="auO-JV-LJv"/>
                         <outlet property="userLabel" destination="IpV-05-wDS" id="Oto-Ob-USZ"/>
                         <outlet property="usernameTextField" destination="Vzx-eb-Yqk" id="XWU-df-02Q"/>
+                        <segue destination="M3I-HA-Kcq" kind="show" identifier="splitView" id="Anc-Xc-dmh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -437,7 +438,8 @@
         <!--Split View Controller-->
         <scene sceneID="THk-VW-Nl3">
             <objects>
-                <splitViewController id="M3I-HA-Kcq" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="SplitViewController" id="M3I-HA-Kcq" customClass="SplitViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="IGc-3R-BiL"/>
                     <connections>
                         <segue destination="JSY-bC-ejf" kind="relationship" relationship="masterViewController" id="SII-yJ-RSe"/>
                         <segue destination="jwh-yn-yGS" kind="relationship" relationship="detailViewController" id="T5P-mb-cZm"/>
