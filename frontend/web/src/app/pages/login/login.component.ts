@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
   gridColumns = 3; //delete
+  hide = true;
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
