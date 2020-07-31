@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
       console.log('acces token: ', res)
       this.dataService.setToken(res.access_token);
       this.dataService.setIsLogin(true);
-      this.router.navigate(['home']);
+      this.router.navigate(['pedidos']);
     }, err => {
       console.log('error  login: ', err)
       this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
@@ -48,8 +48,4 @@ export class LoginComponent implements OnInit {
     );
   }
 
-
-  toggleGridColumns() {///delete
-    this.gridColumns = this.gridColumns === 3 ? 4 : 3;
-  }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
-import {IPedidoDetalleReq, IPedidoDetalleListRes} from "../../model/http/detallepedidos.model";
+import { IPedidoDetalleListRes} from "../../model/http/detallepedidos.model";
 import { ActivatedRoute } from "@angular/router";
 
 @Component({
