@@ -11,8 +11,8 @@ export const Endpoints = {
     update:`${environment.baseUrl}/api/usuarios/updateUser`,
   },
   pedidos:{
-    getPedidos: `${environment.baseUrlPedidos}/orders`,
-    getDetallePedido: `${environment.baseUrlPedidos}/detail/`,
+    getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
+    getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
   }
 }
 

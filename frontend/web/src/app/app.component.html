@@ -41,13 +41,13 @@
 -->
         <div fxShow="true" fxHide.lt-md class="menu-options-container">
           <!-- The following menu items will be hidden on both SM and XS screen sizes -->
-          <div class="menu-option-button" [routerLink]="['home']">
+          <div class="menu-option-button" [routerLink]="['pedidos']">
             <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <a class="nav-link title-nav-header" mat-button>Home</a>
+            <a class="nav-link title-nav-header" mat-button>Pedidos</a>
           </div>
           <div class="menu-option-button margin-left-options">
             <svg xmlns="http://www.w3.org/2000/svg"   focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><g fill="#fff"><path fill-rule="evenodd" d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5L8 5.961L14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/></g></svg>
-            <a class="nav-link title-nav-header" mat-button>Datos de inventario</a>
+            <a class="nav-link title-nav-header" mat-button>Órdenes de Fabricación</a>
           </div>
           <div class="menu-option-button margin-left-options" [routerLink]="['userList']">
             <svg xmlns="http://www.w3.org/2000/svg" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path class="clr-i-solid clr-i-solid-path-1" d="M12 16.14h-.87a8.67 8.67 0 0 0-6.43 2.52l-.24.28v8.28h4.08v-4.7l.55-.62l.25-.29a11 11 0 0 1 4.71-2.86A6.59 6.59 0 0 1 12 16.14z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-2" d="M31.34 18.63a8.67 8.67 0 0 0-6.43-2.52a10.47 10.47 0 0 0-1.09.06a6.59 6.59 0 0 1-2 2.45a10.91 10.91 0 0 1 5 3l.25.28l.54.62v4.71h3.94v-8.32z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-3" d="M11.1 14.19h.31a6.45 6.45 0 0 1 3.11-6.29a4.09 4.09 0 1 0-3.42 6.33z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-4" d="M24.43 13.44a6.54 6.54 0 0 1 0 .69a4.09 4.09 0 0 0 .58.05h.19A4.09 4.09 0 1 0 21.47 8a6.53 6.53 0 0 1 2.96 5.44z" fill="#fff"/><circle class="clr-i-solid clr-i-solid-path-5" cx="17.87" cy="13.45" r="4.47" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-6" d="M18.11 20.3A9.69 9.69 0 0 0 11 23l-.25.28v6.33a1.57 1.57 0 0 0 1.6 1.54h11.49a1.57 1.57 0 0 0 1.6-1.54V23.3l-.24-.3a9.58 9.58 0 0 0-7.09-2.7z" fill="#fff"/></svg>
@@ -66,12 +66,12 @@
                 <a (click)="sidenav.toggle()" href="" mat-list-item>Close</a>
         -->
         <a mat-list-item [routerLink]="['pedidos']">Pedidos</a>
-        <a mat-list-item>Datos de inventario</a>
+        <a mat-list-item >Órdenes de Fabricación</a>
         <a mat-list-item [routerLink]="['userList']">Usuarios</a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content fxFlexFill>
-      <mat-progress-bar class="loading-bar" mode="indeterminate"></mat-progress-bar>
+      <mat-progress-bar class="loading-bar" *ngIf="isLoading | async" mode="indeterminate"></mat-progress-bar>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

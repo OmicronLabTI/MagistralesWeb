@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
 
-  baseUrl: 'http://192.168.0.101:8000',//prod
+  baseUrl: 'http://localhost:8000',//prod
   //baseUrl: 'https://febf9d417342.ngrok.io', //dev
   baseUrlLogin:'http://localhost:8090', //dev
   baseUrlUsers:'http://localhost:5101', //dev
@@ -13,7 +13,6 @@ export const environment = {
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs:'/api/catalogos',
   apiUsers:'/api/usuarios',
-  baseUrlPedidos:'http://localhost:5102',
 };
 
 export const MODAL_NAMES =  {
