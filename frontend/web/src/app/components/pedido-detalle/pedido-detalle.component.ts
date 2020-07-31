@@ -13,6 +13,7 @@ export class PedidoDetalleComponent implements OnInit {
   allComplete: boolean = false;
   actualPage: number = 0;
   docNum: string;
+  docStatus: string;
   displayedColumns: string[] = [
     'seleccion',
     'cons',
@@ -33,6 +34,7 @@ export class PedidoDetalleComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get("id")
+      this.docStatus = params.get("status")
     })
     this.getDetallePedido();
   }

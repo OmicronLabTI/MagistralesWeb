@@ -25,7 +25,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'pdetalle/:id',
+    path: 'pdetalle/:id/:status',
     component: PedidoDetalleComponent,
     canActivate: [GuardService]
   },
