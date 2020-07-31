@@ -126,6 +126,8 @@ namespace Omicron.Usuarios.Services.User
             var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.Id).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
+            listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
         }
 
