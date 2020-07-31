@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Test.Services
     /// class for the test.
     /// </summary>
     [TestFixture]
-    public class SapServiceTest
+    public class SapServiceTest : BaseTest
     {
         private ISapService sapService;
 
@@ -42,7 +42,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
+            this.context.AsesorModel.Add(this.GetAsesorModel());
+            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
+            this.context.OrderModel.AddRange(this.GetOrderModel());
+            this.context.ProductoModel.AddRange(this.GetProductoModel());
 
+            this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
 
             this.sapDao = new SapDao(this.context);
@@ -133,7 +139,7 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetOrderDetail()
         {
             // arrange
-            var docId = 10;
+            var docId = 100;
 
             // act
             var result = await this.sapService.GetOrderDetails(docId);

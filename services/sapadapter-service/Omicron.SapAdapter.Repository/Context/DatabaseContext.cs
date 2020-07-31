@@ -71,10 +71,10 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <summary>
         /// model creating.
         /// </summary>
-        /// <param name="builder">the builder.</param>
-        protected override void OnModelCreating(ModelBuilder builder)
+        /// <param name="modelBuilder">the builder.</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.Entity<DetallePedidoModel>().HasKey(table => new
+            modelBuilder.Entity<DetallePedidoModel>().HasKey(table => new
             {
                 table.PedidoId,
                 table.DetalleId,

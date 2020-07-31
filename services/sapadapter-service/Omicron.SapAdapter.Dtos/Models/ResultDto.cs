@@ -42,11 +42,5 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// </summary>
         /// <value>The response.</value>
         public object Response { get; set; }
-
-        /// <summary>
-        /// Gets or sets Comments.
-        /// </summary>
-        /// <value>The Comments.</value>
-        public object Comments { get; set; }
     }
 }

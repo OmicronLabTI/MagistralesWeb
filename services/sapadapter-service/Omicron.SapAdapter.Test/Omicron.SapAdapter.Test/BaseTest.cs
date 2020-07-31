@@ -48,5 +48,80 @@ namespace Omicron.SapAdapter.Test
                 Birthdate = DateTime.Now,
             };
         }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public AsesorModel GetAsesorModel()
+        {
+            return new AsesorModel
+            {
+                AsesorId = 1,
+                AsesorName = "Gustavo",
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<OrderModel> GetOrderModel()
+        {
+            return new List<OrderModel>
+            {
+                new OrderModel { PedidoId = 100, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C" },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<DetallePedidoModel> GetDetallePedido()
+        {
+            return new List<DetallePedidoModel>
+            {
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 100, ProductoId = "Abc Aspirina" },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 100, ProductoId = "Buscapina" },
+            };
+        }
+
+        /// <summary>
+        /// get the product.
+        /// </summary>
+        /// <returns>the product.</returns>
+        public List<ProductoModel> GetProductoModel()
+        {
+            return new List<ProductoModel>
+            {
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina" },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<OrdenFabricacionModel> GetOrdenFabricacionModel()
+        {
+            return new List<OrdenFabricacionModel>
+            {
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100 },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<CompleteDetailOrderModel> GetCompleteDetailOrderModel()
+        {
+            return new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
+                new CompleteDetailOrderModel { CodigoProducto = "Buscapina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 101, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
+            };
+        }
     }
 }

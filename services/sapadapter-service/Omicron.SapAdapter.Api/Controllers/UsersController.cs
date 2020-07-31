@@ -10,10 +10,10 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using Omicron.SapAdapter.Dtos.User;
-    using Omicron.SapAdapter.Facade.Catalogs.Users;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
+    using Omicron.SapAdapter.Dtos.User;
+    using Omicron.SapAdapter.Facade.Catalogs.Users;
     using StackExchange.Redis;
 
     /// <summary>
@@ -31,7 +31,6 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="logicFacade">User Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
         public UsersController(IUserFacade logicFacade)
         {
             this.logicFacade = logicFacade ?? throw new ArgumentNullException(nameof(logicFacade));
