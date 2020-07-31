@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CONST_USER_DIALOG, MODAL_NAMES} from "../../../environments/environment";
+import {CONST_STRING, CONST_USER_DIALOG, MODAL_NAMES} from "../../../environments/environment";
 import {UsersService} from "../../services/users.service";
 import {IRolesRes, IUserReq, RoleUser} from "../../model/http/users";
 import {ErrorService} from "../../services/error.service";
@@ -21,7 +21,6 @@ export class AddUserDialogComponent implements OnInit {
               private usersService:UsersService, private errorService: ErrorService) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
-    console.log('data drom: ', this.data.modalType,'modal names: ', MODAL_NAMES)
 
     this.addUserForm = this.formBuilder.group({
       userName:['',[Validators.required,Validators.maxLength(50)]],
