@@ -24,7 +24,7 @@ struct ViewControllerIdentifiers {
 
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
-    static let ligthGray = UIColor.init(red: 246/255, green: 246/255, blue: 86/255, alpha: 1)
+    static let ligthGray = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
     static let assignedStatus = UIColor.init(red: 12/255, green: 204/255, blue: 86/255, alpha: 1)
     static let processStatus = UIColor.init(red: 255/255, green: 0/255, blue: 0/255, alpha: 1)
     static let pendingStatus = UIColor.init(red: 255/255, green: 184/255, blue: 0/255, alpha: 1)
