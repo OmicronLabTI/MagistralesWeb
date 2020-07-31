@@ -9,11 +9,13 @@ import {HttpClient} from "@angular/common/http";
 })
 export class UsersService {
 
-  constructor(private consumeService: ConsumeService) {
+  constructor(private consumeService: ConsumeService, private httpClient: HttpClient) {
   }
 
   createUser(user: IUserReq){
-    return this.consumeService.httpPost(Endpoints.users.createUser,user);
+    console.log('user req inter: ', user)
+    return this.httpClient.post(Endpoints.users.createUser,user);
+    //return this.consumeService.httpPost(Endpoints.users.createUser,user);
   }
   getRoles(){
     return this.consumeService.httpGet(Endpoints.users.roles);
@@ -21,7 +23,11 @@ export class UsersService {
   getUsers(){
     return this.consumeService.httpGet(Endpoints.users.getUsers);
   }
-  deleteUsers(idsToDelete: string[]){//check
-    return this.consumeService.httpDelete(Endpoints.users.delete,'');
+  deleteUsers(idsToDelete: string[]){
+    return this.consumeService.httpPatch(Endpoints.users.delete,idsToDelete);
   }
+  updateUser(user: IUserReq){
+    return this.consumeService.httpPut(Endpoints.users.update,user);
+
+}
 }

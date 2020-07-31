@@ -3,6 +3,7 @@ import {IUserListRes, IUserReq} from "../../model/http/users";
 import {MatDialog} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../../dialogs/add-user-dialog/add-user-dialog.component";
 import {UsersService} from "../../services/users.service";
+import {CONST_STRING} from "../../../environments/environment";
 
 @Component({
   selector: 'app-user-list',
@@ -12,63 +13,24 @@ import {UsersService} from "../../services/users.service";
 export class UserListComponent implements OnInit {
   isAllComplete = false;
   displayedColumns: string[] = ['delete','names', 'lastName', 'role', 'status','actions'];
-  dataSource : IUserReq[] = [
-    {
-      "id": 'dsafasdf1',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf2',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf3',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf4',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    },
-    {
-      "id": 'dsafasdf5',
-      "userName": 'benny',
-      "firstName":'benny',
-      "lastName": "alvarado",
-      "role": 1,
-      "password":'123',
-      "activo": 1
-    }
-  ];
+  dataSource : IUserReq[];
   constructor(private dialog: MatDialog,private usersService: UsersService) {
-    this.dataSource.map(user =>{
+  /*  this.dataSource.map(user =>{
       user.isChecked = false;
-    });
+    });*/
   }
   ngOnInit() {
-    /*this.usersService.getUsers().subscribe((userRes: IUserListRes) => {
+  this.getUsers();
+  }
+  getUsers(){
+    this.usersService.getUsers().subscribe((userRes: IUserListRes) => {
       console.log('user list: ',userRes);
       this.dataSource = userRes.response;
-    })*/
+      this.dataSource.map(user =>{
+        user.isChecked = false;
+      });
+
+    })
   }
 
   updateAllComplete() {
@@ -86,20 +48,44 @@ export class UserListComponent implements OnInit {
   }
 
 
-  deleteUsers() {
-    console.log('to delete: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
-    this.dataSource = this.dataSource.filter(user => !user.isChecked)
-/*
-    this.usersService.deleteUsers(this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}));
-*/
+  deleteUsers(idUser: string) {
+    if(idUser !== CONST_STRING.empty) {
+      this.dataSource.filter(user => user.id === idUser).forEach(user => user.isChecked = true)
+    }
+
+    console.log('before: ', this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id}))
+    this.usersService.deleteUsers(this.dataSource.filter(user => user.isChecked).map(user =>{ return user.id})).subscribe(
+        resDelete =>{
+          console.log('res delete: ',resDelete);
+          this.dataSource = this.dataSource.filter(user => !user.isChecked)
+
+        },
+        error => {
+          console.log('error delete: ', error)
+        }
+    );
+
   }
 
-  openDialog(modalTypeOpen: string) {
-      this.dialog.open(AddUserDialogComponent, {
+  openDialog(modalTypeOpen: string,userId : string) {
+    let userToEdit: {};
+    console.log('user: ', userId);
+    if(userId !== CONST_STRING.empty){
+      userToEdit = this.dataSource.filter(user => user.id === userId)[0];
+      console.log('user: ', userToEdit);
+    }
+
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        modalType: modalTypeOpen
+        modalType: modalTypeOpen,
+        userToEditM: userToEdit
       }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+      this.getUsers();
     });
 
   }

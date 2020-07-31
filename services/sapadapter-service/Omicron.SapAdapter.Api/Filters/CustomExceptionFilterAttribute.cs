@@ -9,9 +9,9 @@
 namespace Omicron.SapAdapter.Api.Filters
 {
     using System.Net;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Serilog;
 
     /// <summary>
@@ -33,10 +33,10 @@ namespace Omicron.SapAdapter.Api.Filters
         /// <inheritdoc/>
         public override void OnException(ExceptionContext context)
         {
-            HttpStatusCode status = HttpStatusCode.OK;
             string message = string.Empty;
 
             var exceptionType = context.Exception.GetType();
+            HttpStatusCode status;
             if (exceptionType == typeof(CustomServiceException))
             {
                 message = "Error generico";
