@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
-import {IPedidoReq, IPedidosListRes} from "../../model/http/pedidos";
+import { IPedidosListRes} from "../../model/http/pedidos";
 
 @Component({
   selector: 'app-pedidos',
