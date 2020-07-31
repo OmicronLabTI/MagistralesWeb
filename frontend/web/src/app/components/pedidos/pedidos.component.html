@@ -53,59 +53,59 @@
             <th mat-header-cell *matHeaderCellDef>
               <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
             </th>
-            <td mat-cell *matCellDef="let element" class="">
+            <td mat-cell *matCellDef="let element" class="seleccion">
               <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
             </td>
           </ng-container>
           <ng-container matColumnDef="cons">
-            <th mat-header-cell *matHeaderCellDef class="centered"> #</th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell"> {{element.docNum}} </td>
+            <th mat-header-cell *matHeaderCellDef class="">DOCUMENTO</th>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell documento"> {{element.docNum}} </td>
           </ng-container>
         
           <ng-container matColumnDef="codigo">
             <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdemail mobile-hide"> {{element.codigo}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigocliente"> {{element.codigo}} </td>
           </ng-container>
         
           <ng-container matColumnDef="cliente">
             <th mat-header-cell *matHeaderCellDef class="mobile-hide">  NOMBRE DEL CLIENTE </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide"> {{element.cliente}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide cliente"> {{element.cliente}} </td>
           </ng-container>
   
           <ng-container matColumnDef="medico">
             <th mat-header-cell *matHeaderCellDef class="mobile-hide">  NOMBRE DEL MEDICO </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.medico}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide medico"> {{element.medico}} </td>
           </ng-container>
 
           <ng-container matColumnDef="asesor">
             <th mat-header-cell *matHeaderCellDef class="mobile-hide">  NOMBRE DEL ASESOR </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.asesorName}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide asesor"> {{element.asesorName}} </td>
           </ng-container>
 
           <ng-container matColumnDef="f_inicio">
             <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA INICIO </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide"> {{element.fechaInicio.substring(10, 0)}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechainicio"> {{element.fechaInicio.substring(10, 0)}} </td>
           </ng-container>
 
           <ng-container matColumnDef="f_fin">
             <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA FINALIZACIÓN </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide"> {{element.fechaFin.substring(10, 0)}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaFin.substring(10, 0)}} </td>
           </ng-container>
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide"> <button mat-stroked-button color="primary">{{element.pedidoStatus}}</button> </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.pedidoStatus}}</button> </td>
           </ng-container>
 
           <ng-container matColumnDef="qfb_asignado">
             <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  QFB ASIGNADO </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide"> {{element.qfb}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.qfb}} </td>
           </ng-container>
   
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
             <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions"> 
-                <button mat-icon-button class="ico-col-pri" >
+                <button mat-icon-button class="ico-col-pri" [routerLink]="['/pdetalle', element.docNum]">
                   <mat-icon >article</mat-icon>
                 </button>
             </td>

@@ -16,4 +16,8 @@ export class PedidosService {
     queryString = queryString+"limit="+params['limit']+"&";
     return this.consumeService.httpGet(Endpoints.pedidos.getPedidos+queryString);
   }
+
+  getDetallePedido(docNum: string){
+    return this.consumeService.httpGet(Endpoints.pedidos.getDetallePedido+docNum)
+  }
 }

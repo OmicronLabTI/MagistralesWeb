@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GuardService } from './services/guard.service';
 import { PedidosComponent } from './components/pedidos/pedidos.component';
+import { PedidoDetalleComponent } from './components/pedido-detalle/pedido-detalle.component';
 
 const routes: Routes = [
   {
@@ -20,7 +21,13 @@ const routes: Routes = [
   },
   {
     path: 'pedidos',
-    component: PedidosComponent
+    component: PedidosComponent,
+    canActivate: [GuardService]
+  },
+  {
+    path: 'pdetalle/:id',
+    component: PedidoDetalleComponent,
+    canActivate: [GuardService]
   },
   {
     path: '**',

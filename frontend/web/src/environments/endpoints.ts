@@ -11,6 +11,7 @@ export const Endpoints = {
   },
   pedidos:{
     getPedidos: `${environment.baseUrlPedidos}/orders`,
+    getDetallePedido: `${environment.baseUrlPedidos}/detail/`,
   }
 }
 

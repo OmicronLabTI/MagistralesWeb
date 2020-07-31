@@ -11,11 +11,13 @@ import { PedidosComponent } from './components/pedidos/pedidos.component';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { PedidoDetalleComponent } from './components/pedido-detalle/pedido-detalle.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PedidosComponent,
+    PedidoDetalleComponent,
   ],
     imports: [
         BrowserModule,
