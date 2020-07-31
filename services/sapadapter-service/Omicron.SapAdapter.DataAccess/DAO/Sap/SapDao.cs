@@ -51,8 +51,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        Codigo = order.Codigo,
                                        Medico = order.Medico,
                                        AsesorName = asesor.AsesorName,
-                                       FechaInicio = order.FechaInicio,
-                                       FechaFin = order.FechaFin,
+                                       FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                                       FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                        PedidoStatus = order.PedidoStatus,
                                        IsChecked = false
                                    }).ToListAsync();
@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CodigoProducto = d.ProductoId,
                              DescripcionProducto = d.Description,
                              QtyPlanned = o.Quantity,
-                             FechaOf = o.PostDate,
+                             FechaOf = o.PostDate.ToString("dd/MM/yyyy"),
                              FechaOfFin = null,
                              Status = o.Status,
                              IsChecked = false
