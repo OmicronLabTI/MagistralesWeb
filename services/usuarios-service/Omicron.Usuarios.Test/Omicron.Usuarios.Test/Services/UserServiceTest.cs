@@ -112,7 +112,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // arrange
             var login = new LoginModel
             {
-                Password = "abc",
+                Password = "QXhpdHkyMDIw",
                 Username = "Benji",
             };
 
@@ -121,7 +121,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.IsFalse(response.Success);
         }
 
         /// <summary>
