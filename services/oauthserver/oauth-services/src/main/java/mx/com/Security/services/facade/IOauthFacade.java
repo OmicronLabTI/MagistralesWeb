@@ -8,6 +8,6 @@ public interface IOauthFacade {
 
     void validate(ValidTokenRequestTO validTokenRequest);
 
-    TokenRefreshResponseTO renew(TokenRenewRequestTO tokenRenewRequest);
+    TokenResponseTO renew(TokenRenewRequestTO tokenRenewRequest);
 
 }
