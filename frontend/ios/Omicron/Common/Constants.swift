@@ -22,6 +22,9 @@ struct ViewControllerIdentifiers {
     static let inboxViewController = "InboxViewController"
     static let storieboardName = "Main"
     static let splitViewController = "SplitViewController"
+    static let cardCollectionViewCell = "CardCollectionViewCell"
+    static let cardReuseIdentifier = "card"
+    static let rootTableViewCell = "RootTableViewCell"
 }
 
 struct OmicronColors {
@@ -58,4 +61,5 @@ struct CommonStrings {
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
     static let SFProDisplayRegular = "SFProDisplay-Regular"
+    static let SFProDisplayMedium = "SFProDisplay-Medium"
 }

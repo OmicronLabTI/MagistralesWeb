@@ -40,22 +40,22 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     func initLabels() -> Void {
-        self.labelsStyle(label: numberLabel, text: "No:", fontSize: 12)
-        self.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 12)
-        self.labelsStyle(label: baseDocumentLabel, text: "Documento Base:", fontSize: 12)
-        self.labelsStyle(label: baseDocumentDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: containerLabel, text: "Envase:", fontSize: 12)
-        self.labelsStyle(label: containerDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: tagLabel, text: "Etiqueta:", fontSize: 12)
-        self.labelsStyle(label: tagDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:", fontSize: 12)
-        self.labelsStyle(label: plannedQuantityDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:", fontSize: 12)
-        self.labelsStyle(label: startDateDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:", fontSize: 12)
-        self.labelsStyle(label: finishDateDescriptionLabel, text: "", fontSize: 12)
-        self.labelsStyle(label: productLabel, text: "Descripción del producto:", fontSize: 12)
-        self.labelsStyle(label: productDescriptionLabel, text: "", fontSize: 12)
+        self.labelsStyle(label: numberLabel, text: "No:")
+        self.labelsStyle(label: numberDescriptionLabel, text: " ")
+        self.labelsStyle(label: baseDocumentLabel, text: "Documento Base:")
+        self.labelsStyle(label: baseDocumentDescriptionLabel, text: "")
+        self.labelsStyle(label: containerLabel, text: "Envase:")
+        self.labelsStyle(label: containerDescriptionLabel, text: "")
+        self.labelsStyle(label: tagLabel, text: "Etiqueta:")
+        self.labelsStyle(label: tagDescriptionLabel, text: "")
+        self.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:")
+        self.labelsStyle(label: plannedQuantityDescriptionLabel, text: "")
+        self.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:")
+        self.labelsStyle(label: startDateDescriptionLabel, text: "")
+        self.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:")
+        self.labelsStyle(label: finishDateDescriptionLabel, text: "")
+        self.labelsStyle(label: productLabel, text: "Descripción del producto:")
+        self.labelsStyle(label: productDescriptionLabel, text: "")
         changeIconButton(button: self.showDetail, iconName: "showProcessDetailButton.png")
     }
     
@@ -63,13 +63,14 @@ class CardCollectionViewCell: UICollectionViewCell {
         button.setImage(UIImage(named: iconName), for: .normal)
     }
     
-    func labelsStyle(label: UILabel, text: String, fontSize: CGFloat) -> Void {
+    func labelsStyle(label: UILabel, text: String) -> Void {
         label.text = text
-        label.font = UIFont.boldSystemFont(ofSize: fontSize)
+        label.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 13)
     }
+    
     func assignedStyleCard(color: CGColor)  -> Void{
         self.contentCard.layer.cornerRadius = CGFloat(20)
-        self.contentCard.layer.borderColor = color
+        self.contentCard.layer.borderColor = color 
         self.contentCard.layer.borderWidth = CGFloat(1)
         
     }

@@ -12,18 +12,19 @@ import RxCocoa
 
 class InboxViewController: UIViewController {
     
-    
+    // MARK: Outlets
     @IBOutlet weak var statusNameLabel: UILabel!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    // MARK:  Variables
     lazy var inboxModel: InboxViewModel = InboxViewModel()
     let disposeBag = DisposeBag()
-    
-    let listImages = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",]
     private let cardWidth = UIScreen.main.bounds.width / 2.5
+    
+    // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModelBinding()
@@ -31,7 +32,7 @@ class InboxViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName:
-            "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "card")
+            ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
         // Do any additional setup after loading the view.
     }
@@ -49,10 +50,14 @@ class InboxViewController: UIViewController {
     
     func initComponents() -> Void {
         self.statusNameLabel.text = "Asignadas"
-        self.statusNameLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        self.statusNameLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 39)
         self.setStyleButton(button: self.finishedButton, title: "Terminado", color: OmicronColors.finishedStatus)
         self.setStyleButton(button: self.pendingButton, title: "Pendiente", color: OmicronColors.pendingStatus)
         self.setStyleButton(button: self.processButton, title: "En proceso", color: OmicronColors.processStatus)
+        for family in UIFont.familyNames.sorted() {
+            let names = UIFont.fontNames(forFamilyName: family)
+            print("Family: \(family) Font names: \(names)")
+        }
     }
     
     func setStyleButton( button: UIButton ,title: String, color: UIColor) {
@@ -61,19 +66,8 @@ class InboxViewController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 10
         button.layer.borderColor = color.cgColor
+        button.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 extension InboxViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -92,10 +86,4 @@ extension InboxViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
     }
-}
-
-extension InboxViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: 300, height: cardWidth - 200)
-//    }
 }

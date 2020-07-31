@@ -11,19 +11,22 @@ import RxSwift
 import RxCocoa
 
 class RootViewController: UIViewController {
-
-    let cellIndetifier = "RootTableViewCell"
-    let disposeBag = DisposeBag()
-    let rootViewModel = RootViewModel()
+    
+    // MARK: Outlets
     @IBOutlet weak var viewTable: UITableView!
     @IBOutlet weak var myOrdesLabel: UILabel!
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     
-     lazy var inboxViewModel = self.getInboxViewModel()
+    // Variables
+    let disposeBag = DisposeBag()
+    let rootViewModel = RootViewModel()
+    lazy var inboxViewModel = self.getInboxViewModel()
+    
+    // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
-        rootViewModel.arrayData.bind(to: viewTable.rx.items(cellIdentifier: cellIndetifier, cellType:  RootTableViewCell.self)) { _, data, cell in
+        rootViewModel.arrayData.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType:  RootTableViewCell.self)) { _, data, cell in
             cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
             cell.indicatorStatusNameLabel.text = data.statusName
             cell.indicatorStatusNumber.text = String(data.numberTask)
@@ -37,12 +40,15 @@ class RootViewController: UIViewController {
             }).disposed(by: disposeBag)
     }
     
+    // MARK: Functions
     func initComponents() {
         self.viewTable.tableFooterView = UIView()
         self.viewTable.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
-       // self.myOrdesLabel.font = UIFont.boldSystemFont(ofSize: 25)
-        self.myOrdesLabel.font = UIFont(name: "SF Pro", size: 25)
+        self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
+        self.searchOrdesSearchBar.text = "Buscar órden"
+        self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
+        self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
         self.view.backgroundColor = OmicronColors.tableStatus
     }
     
