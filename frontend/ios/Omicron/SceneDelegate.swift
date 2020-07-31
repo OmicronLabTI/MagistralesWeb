@@ -20,8 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let _ = (scene as? UIWindowScene) else { return }
         
         if let windowScene = scene as? UIWindowScene {
-            UserDefaults.standard.bool(forKey: "SessionActive")
-            if UserDefaults.standard.bool(forKey: "SessionActive") {
+            //UserDefaults.standard.bool(forKey: "SessionActive")
+            if UserDefaults.standard.bool(forKey: UsersDefaultsConstants.isSessionActive) {
                 let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let inboxViewController = mainStoryboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.inboxViewController) as! InboxViewController
                 let nav = UINavigationController(rootViewController: inboxViewController)

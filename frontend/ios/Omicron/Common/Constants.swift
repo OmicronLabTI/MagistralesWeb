@@ -32,3 +32,8 @@ struct OmicronColors {
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
 }
+
+struct UsersDefaultsConstants {
+    static let isSessionActive = "isSessionActive"
+    static let accessToken = "accessToken"
+}

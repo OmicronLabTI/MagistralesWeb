@@ -33,13 +33,14 @@ class LoginViewModel {
         loginDidTap
             .withLatestFrom(input)
             .map({
-                Login(username: $0, password: $1)
+                Login(username: $0, password: $1, redirectUri: "", clientId2: "")
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
-                    UserDefaults.standard.set(true, forKey: "SessionActive")
+                    UserDefaults.standard.set(true, forKey: UsersDefaultsConstants.isSessionActive)
+                    UserDefaults.standard.set(res.access_token, forKey: UsersDefaultsConstants.accessToken)
                     self?.loginResponse.onNext(res)
                     }, onError: { [weak self] err in
                         self?.loading.onNext(false)
