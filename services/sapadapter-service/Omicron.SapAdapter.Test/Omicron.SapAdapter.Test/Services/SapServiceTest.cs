@@ -11,17 +11,19 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
 
     /// <summary>
     /// class for the test.
     /// </summary>
     [TestFixture]
-    public class SapServiceTest
+    public class SapServiceTest : BaseTest
     {
         private ISapService sapService;
 
@@ -40,11 +42,17 @@ namespace Omicron.SapAdapter.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
+            this.context.AsesorModel.Add(this.GetAsesorModel());
+            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
+            this.context.OrderModel.AddRange(this.GetOrderModel());
+            this.context.ProductoModel.AddRange(this.GetProductoModel());
 
-            // this.context.OrderModel.AddRange(this.GetListRoles());
-            // this.context.SaveChanges();
+            this.context.SaveChanges();
+            var mockPedidoService = new Mock<IPedidosService>();
+
             this.sapDao = new SapDao(this.context);
-            this.sapService = new SapService(this.sapDao);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object);
         }
 
         /// <summary>
@@ -120,6 +128,23 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// the order detail.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetOrderDetail()
+        {
+            // arrange
+            var docId = 100;
+
+            // act
+            var result = await this.sapService.GetOrderDetails(docId);
+
+            // Assert
             Assert.IsNotNull(result);
         }
     }

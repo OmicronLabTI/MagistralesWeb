@@ -46,7 +46,7 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <value>
         /// Object UserModel OrderModel.
         /// </value>
-        DbSet<DetallePedido> DetallePedido { get; set; }
+        DbSet<DetallePedidoModel> DetallePedido { get; set; }
 
         /// <summary>
         /// Gets or sets OrderModel.
@@ -55,5 +55,13 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<ProductoModel> ProductoModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
     }
 }

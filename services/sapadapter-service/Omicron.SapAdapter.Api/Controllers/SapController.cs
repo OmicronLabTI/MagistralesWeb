@@ -44,5 +44,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetOrders(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the detail of the order.
+        /// </summary>
+        /// <param name="docEntry">the detail id.</param>
+        /// <returns>the details.</returns>
+        [Route("/detail/{docEntry}")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetails(string docEntry)
+        {
+            var result = await this.sapFacade.GetDetallePedidos(docEntry);
+            return this.Ok(result);
+        }
     }
 }

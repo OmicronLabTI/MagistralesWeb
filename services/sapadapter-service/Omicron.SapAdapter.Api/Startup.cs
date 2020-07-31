@@ -9,8 +9,6 @@
 namespace Omicron.SapAdapter.Api
 {
     using System;
-    using Omicron.SapAdapter.Api.Filters;
-    using Omicron.SapAdapter.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -18,10 +16,14 @@ namespace Omicron.SapAdapter.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Omicron.SapAdapter.Api.Filters;
+    using Omicron.SapAdapter.DependencyInjection;
+    using Omicron.SapAdapter.Services.Pedidos;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
     using StackExchange.Redis;
+    using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
 
     /// <summary>
@@ -30,6 +32,8 @@ namespace Omicron.SapAdapter.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
+
+        private const string LogsService = "http://logsservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -97,6 +101,13 @@ namespace Omicron.SapAdapter.Api
                     },
                 });
             });
+
+            services.AddHttpClient("logs", c =>
+            {
+                c.BaseAddress = new Uri(LogsService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IPedidosService, PedidoService>();
 
             this.AddRedis(services, Log.Logger);
 

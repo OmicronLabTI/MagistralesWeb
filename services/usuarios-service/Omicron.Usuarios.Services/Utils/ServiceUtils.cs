@@ -48,5 +48,16 @@ namespace Omicron.Usuarios.Services.Utils
             var bytes = Encoding.ASCII.GetBytes(data);
             return Convert.ToBase64String(bytes);
         }
+
+        /// <summary>
+        /// Convert from Base64.
+        /// </summary>
+        /// <param name="data">the hash.</param>
+        /// <returns>the data.</returns>
+        public static string ConvertFromBase64(string data)
+        {
+            var bytes = Convert.FromBase64String(data);
+            return ASCIIEncoding.ASCII.GetString(bytes);
+        }
     }
 }

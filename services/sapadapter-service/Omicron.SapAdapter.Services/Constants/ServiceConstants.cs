@@ -8,6 +8,8 @@
 
 namespace Omicron.SapAdapter.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The constants classs.
     /// </summary>
@@ -42,5 +44,19 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Const for the limit.
         /// </summary>
         public const string Limit = "limit";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictStatus { get; } = new Dictionary<string, string>
+        {
+            { "P", "Planificado" },
+            { "L", "Cerrado" },
+            { "C", "Cancelado" },
+            { "R", "Liberado" },
+        };
     }
 }
