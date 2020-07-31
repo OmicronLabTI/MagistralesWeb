@@ -61,6 +61,11 @@ namespace Omicron.SapAdapter.Services.Utils
                 return new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             }
 
+            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Week))
+            {
+                return DateTime.Today.AddDays(-7);
+            }
+
             return DateTime.Today;
         }
     }

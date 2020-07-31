@@ -78,16 +78,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          {
                              Pedido = o.PedidoId, ItemCode = o.ProductoId
                          }
-                         where d.PedidoId == pedidoId
-                         select new CompleteDetailOrderModel
+                         into DetallePedido                         
+                         from dp in DetallePedido.DefaultIfEmpty()
+                         join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
+                         where d.PedidoId == pedidoId && p.IsMagistral == "Y"
+                               select new CompleteDetailOrderModel
                          {
                              OrdenFabricacionId = d.PedidoId,
                              CodigoProducto = d.ProductoId,
                              DescripcionProducto = d.Description,
-                             QtyPlanned = o.Quantity,
-                             FechaOf = o.PostDate.ToString("dd/MM/yyyy"),
+                             QtyPlanned = (int)dp.Quantity,
+                             FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
                              FechaOfFin = null,
-                             Status = o.Status,
+                             Status = dp.Status,
                              IsChecked = false
                          }).ToListAsync();
 
