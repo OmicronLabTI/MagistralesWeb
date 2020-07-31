@@ -11,7 +11,7 @@
   border-radius: 20px;
   border: 1px solid #e0e6ed;
   -webkit-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.09019607843137255), 0 1px 20px 0 rgba(0, 0, 0, 0.08), 0 1px 11px 0 rgba(0, 0, 0, 0.06);
-  -moz-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.09019607843137255), 0 1px 20px 0 rgba(0, 0, 0, 0.08), 0px 1px 11px 0 rgba(0, 0, 0, 0.06);
+  -moz-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.09019607843137255), 0 1px 20px 0 rgba(0, 0, 0, 0.08), 0 1px 11px 0 rgba(0, 0, 0, 0.06);
   box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.09019607843137255), 0 1px 20px 0 rgba(0, 0, 0, 0.08), 0 1px 11px 0 rgba(0, 0, 0, 0.06);
 }
 .title-login{
@@ -27,7 +27,7 @@
 }
 .card-content-custom{
    padding: 5% 5% 0 5%;
-   height: 18rem;
+   height: 16rem;
  }
 .input-user-custom{
   width: 100%;
@@ -35,6 +35,12 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+mat-card img{
+  margin-top: 1%;
+}
+.navbar-logo{
+  margin-top: 1%;
 }
 .user-icon-login{
   width: 15%;
@@ -64,12 +70,14 @@
   padding: 5%;
   display: flex;
 justify-content: center;
+  height: 6rem;
 }
 .btn-login{
   width: 100%;
   color: #fff !important;
   background-color: #6C90B3!important;
   border-color: #6C90B3;
+  height: 3rem;
 }
 //delete
 .content {
