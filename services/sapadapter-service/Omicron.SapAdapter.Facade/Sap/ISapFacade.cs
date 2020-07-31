@@ -23,5 +23,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">The parameters.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the details.
+        /// </summary>
+        /// <param name="docEntry">the order ir.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetDetallePedidos(string docEntry);
     }
 }

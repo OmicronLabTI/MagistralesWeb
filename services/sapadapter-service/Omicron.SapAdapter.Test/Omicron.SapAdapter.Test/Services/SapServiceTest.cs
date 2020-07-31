@@ -122,5 +122,22 @@ namespace Omicron.SapAdapter.Test.Services
 
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// the order detail.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetOrderDetail()
+        {
+            // arrange
+            var docId = 10;
+
+            // act
+            var result = await this.sapService.GetOrderDetails(docId);
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
     }
 }

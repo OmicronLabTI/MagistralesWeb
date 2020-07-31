@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <value>
         /// Object UserModel OrderModel.
         /// </value>
-        public virtual DbSet<DetallePedido> DetallePedido { get; set; }
+        public virtual DbSet<DetallePedidoModel> DetallePedido { get; set; }
 
         /// <summary>
         /// Gets or sets OrderModel.
@@ -61,12 +61,20 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<ProductoModel> ProductoModel { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="builder">the builder.</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<DetallePedido>().HasKey(table => new
+            builder.Entity<DetallePedidoModel>().HasKey(table => new
             {
                 table.PedidoId,
                 table.DetalleId,

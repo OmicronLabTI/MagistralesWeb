@@ -9,8 +9,8 @@
 namespace Omicron.SapAdapter.Services.Sap
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -53,6 +53,19 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersOrdered = orders.OrderBy(o => o.DocNum);
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null);
+        }
+
+        /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="docId">the doc id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetOrderDetails(int docId)
+        {
+            var details = await this.sapDao.GetAllDetails(docId);
+            details.ToList().ForEach(x => x.Status = ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status);
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null);
         }
     }
 }
