@@ -4,9 +4,10 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://reqres.in/api',
+  baseUrl: 'http://localhost:8000',
   baseUrlUsers:'http://localhost:5101',
   baseUrlCatalogs:'http://localhost:9010',
+  apiLogin: '/api/oauth/oauthrs',
   apiCatalogs:'/api/catalogos',
   apiUsers:'/api/usuarios'
 };

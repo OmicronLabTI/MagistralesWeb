@@ -1,7 +1,7 @@
 import { environment } from './environment';
 export const Endpoints = {
   security: {
-    login: `${environment.baseUrl}/login?delay=2`
+    login: `${environment.baseUrl}/api/oauth/oauthrs/authorize`
   },
   users:{
     createUser:`${environment.baseUrlUsers}/createUser`,

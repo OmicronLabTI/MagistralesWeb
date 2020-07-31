@@ -33,16 +33,20 @@ export class LoginComponent implements OnInit {
   ngOnInit() { }
 
   login() {
-    const data = {
-      email: this.formLogin.get('username').value,
+    const userLoginReq = {
+      user: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
+      redirectUri: 'asdad',
+      clientId2:''
     } as ILoginReq;
-
-    this.securityService.login(data).subscribe(res => {
-      this.dataService.setToken(res.token);
+    console.log('to req user: ', userLoginReq)
+    this.securityService.login(userLoginReq).subscribe(res => {
+      console.log('acces token: ', res)
+      this.dataService.setToken(res.access_token);
       this.dataService.setIsLogin(true);
       this.router.navigate(['home']);
     }, err => {
+      console.log('errorLogin: ', err)
       this.dataService.setGeneralNotificationMessage(err);
     }
     );
