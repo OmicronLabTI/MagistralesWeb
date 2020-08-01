@@ -7,7 +7,7 @@
       <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span #menuValue>Mensuales</span></button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="setSpanTitle(menuValue, 'Mensuales', 'month')">Mensuales</button>
-        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Del día</button>
+        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Diarios</button>
         <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'week')">Semanales</button>
         <button mat-menu-item (click)="setSpanTitle(menuValue, 'Quincenales', 'twoweeks')">Quincenales</button>
       </mat-menu>
