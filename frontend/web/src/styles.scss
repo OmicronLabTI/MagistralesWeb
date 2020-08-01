@@ -84,6 +84,10 @@ body {
   float: left;
 }
 
+.title-list-container span{
+  font-weight: bold !important;
+}
+
 .filter-select{
   width: 50%;
   float: right;
@@ -151,7 +155,7 @@ table {
 th{
   color: #6C90B3 !important;
   font-weight: bold !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   flex: 0 0 28% !important;
   word-wrap: break-word !important;
   white-space: unset !important;
@@ -173,16 +177,11 @@ th.centered {
 }
 
 .ico-col-pri{
-  font-size: 12px;
-  color: #3C1053;
-}
-
-.ico-col-sec{
-  color: #ff08a1;
+  font-size: 10px;
 }
 
 .tdcell {
-  font-size: 12px;
+  font-size: 10px;
   color: #515365 !important;
   word-wrap: break-word !important;
   white-space: unset !important;
@@ -265,9 +264,23 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 }
 
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-  background: #1b55e2 !important; 
+  background: #6C90B3 !important; 
 }
 
 .material-icons svg{
-  font-size: 12px !important;
+  font-size: 10px !important;
+}
+
+.mat-raised-button {
+  padding: 0 5px !important;
+}
+
+.mat-stroked-button.mat-primary {
+  color: #6C90B3 !important;
+  border: 1px solid #6C90B3 !important;
+}
+
+.mat-stroked-button.green {
+  color: #8dbf42 !important;
+  border: 1px solid #8dbf42 !important;
 }

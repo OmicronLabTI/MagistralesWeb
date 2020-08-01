@@ -7,8 +7,8 @@
       <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span #menuValue>Mensuales</span></button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="setSpanTitle(menuValue, 'Mensuales', 'month')">Mensuales</button>
-        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Del día</button>
-        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'date')">Semanales</button>
+        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Diarios</button>
+        <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'week')">Semanales</button>
         <button mat-menu-item (click)="setSpanTitle(menuValue, 'Quincenales', 'twoweeks')">Quincenales</button>
       </mat-menu>
     </div>
@@ -17,7 +17,7 @@
   <div class="table-toolbar">
     <div class="table-toolbar-search">
       <mat-form-field >
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar...">       
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar pedidos...">
       </mat-form-field>
     </div>
     <div class="table-toolbar-buttons">
@@ -58,13 +58,13 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="cons">
-            <th mat-header-cell *matHeaderCellDef class="">DOCUMENTO</th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell documento"> {{element.docNum}} </td>
+            <th mat-header-cell *matHeaderCellDef class="centered">#</th>
+            <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center documento"> {{i+1}} </td>
           </ng-container>
         
           <ng-container matColumnDef="codigo">
             <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigocliente"> {{element.codigo}} </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigocliente"> {{element.docNum}} </td>
           </ng-container>
         
           <ng-container matColumnDef="cliente">
@@ -94,7 +94,7 @@
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS </th>
-            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.pedidoStatus}}</button> </td>
+            <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button [ngClass]="element.class">{{element.pedidoStatus}}</button> </td>
           </ng-container>
 
           <ng-container matColumnDef="qfb_asignado">
@@ -106,7 +106,7 @@
             <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
             <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions"> 
                 <button mat-icon-button class="ico-col-pri" [routerLink]="['/pdetalle', element.docNum, element.pedidoStatus]">
-                  <mat-icon >article</mat-icon>
+                  <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path d="M32 6H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM19 22H9a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm8-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2z" class="clr-i-solid clr-i-solid-path-1" fill="#626262"></path></svg></mat-icon>
                 </button>
             </td>
           </ng-container>

@@ -11,6 +11,7 @@ export class IPedidoReq {
     fechaFin: string;
     pedidoStatus: string;
     qfb?: string;
+    class?: string;
 }
 export class IPedidosRes extends BaseResponseHttp{
     response: any;
