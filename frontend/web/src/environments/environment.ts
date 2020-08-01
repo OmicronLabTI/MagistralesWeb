@@ -4,15 +4,14 @@
 
 export const environment = {
   production: false,
-
-  baseUrl: 'http://localhost:8000',//prod
-  //baseUrl: 'https://febf9d417342.ngrok.io', //dev
-  baseUrlLogin:'http://localhost:8090', //dev
-  baseUrlUsers:'http://localhost:5101', //dev
-  baseUrlCatalogs:'http://localhost:9010', //dev
+  baseUrl: 'http://localhost:8000', // prod
+  // baseUrl: 'https://febf9d417342.ngrok.io', //dev
+  baseUrlLogin: 'http://localhost:8090', // dev
+  baseUrlUsers: 'http://localhost:5101', // dev
+  baseUrlCatalogs: 'http://localhost:9010', // dev
   apiLogin: '/api/oauth/oauthrs',
-  apiCatalogs:'/api/catalogos',
-  apiUsers:'/api/usuarios',
+  apiCatalogs: '/api/catalogos',
+  apiUsers: '/api/usuarios',
 };
 
 export const MODAL_NAMES =  {
@@ -22,19 +21,19 @@ export const MODAL_NAMES =  {
 export const CONST_USER_DIALOG = {
   defaultDefault: 'QFB',
   patternPassWord: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
-}
+};
 
 export const CONST_NUMBER = {
-  zero:0,
-  one:1,
-  two:2,
-  three:3
+  zero: 0,
+  one: 1,
+  two: 2,
+  three: 3
 
-}
+};
 
 export const CONST_STRING = {
-  empty:''
-}
+  empty: ''
+};
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

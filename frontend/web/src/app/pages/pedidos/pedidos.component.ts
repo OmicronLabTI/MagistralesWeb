@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
 import { IPedidosListRes} from "../../model/http/pedidos";
+import { createElementCssSelector } from '@angular/compiler';
 
 @Component({
   selector: 'app-pedidos',
@@ -30,7 +31,9 @@ export class PedidosComponent implements OnInit {
     this.pedidosService.getPedidos(this.params).subscribe(
       (pedidoRes: IPedidosListRes) => {
         pedidoRes.response.forEach(element => {
-          element.pedidoStatus = element.pedidoStatus == "O" ? "Abierta" : "Cerrada";
+          element.pedidoStatus = element.pedidoStatus == "O" ? "Abierto" : "Cerrado";
+          console.log("asdasdasdsd");
+          element.class = element.pedidoStatus == "Abierto" ? "green": "mat-primary";
           this.dataSource.data.push(element);
         })
         this.dataSource._updateChangeSubscription();

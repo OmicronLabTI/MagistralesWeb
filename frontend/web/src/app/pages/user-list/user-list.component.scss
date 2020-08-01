@@ -49,6 +49,10 @@ table {
 }*/
 .tr-custom{
   height: 30px !important;
-  box-shadow: 0 2px 4px rgba(126,142,177,0.45) !important;
+  box-shadow: 0 2px 4px rgba(110, 112, 117, 0.45) !important;
   margin: 5px !important;
+}
+
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background: #6C90B3 !important; 
 }

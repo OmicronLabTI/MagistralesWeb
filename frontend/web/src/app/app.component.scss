@@ -90,23 +90,28 @@
 .menu-option-button{
   font-size: 1em;
   font-weight: 400;
-  color: #fafafa;
   vertical-align: text-bottom;
   display: flex;
   justify-content: center;
   align-items: center;
   border-right: 1px solid #515365;
 }
+
 .menu-option-button svg{
   width: 25px;
   height: 25px;
-  color: #e0e6ed;
   vertical-align: bottom;
   margin-right: 6px;
   stroke-width: 1.3px;/* to see select option*/
   cursor: pointer;
 }
 
+.menu-active-color{
+  color: #04151F;
+}
+.menu-no-active-color{
+  color: #fafafa;
+}
 .footer {
   position: fixed;
   bottom: 0;
