@@ -26,6 +26,8 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
+        self.title = "Sergio Flores"
+        
         rootViewModel.arrayData.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType:  RootTableViewCell.self)) { _, data, cell in
             cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
             cell.indicatorStatusNameLabel.text = data.statusName
@@ -51,32 +53,6 @@ class RootViewController: UIViewController {
         self.view.backgroundColor = OmicronColors.tableStatus
     }
     
-    func changeButtons(indexStatus: Int, vc: InboxViewController) {
-        switch indexStatus {
-        case 0: // Asignadas
-            vc.processButton.isHidden = false
-            vc.finishedButton.isHidden = true
-            vc.pendingButton.isHidden = false
-        case 1: //En Proceso
-            vc.processButton.isHidden = true
-            vc.finishedButton.isHidden = false
-            vc.pendingButton.isHidden = false
-        case 2: //Pendientes
-            vc.processButton.isHidden = false
-            vc.finishedButton.isHidden = true
-            vc.pendingButton.isHidden = true
-        case 3: //Terminado
-            vc.processButton.isHidden = true
-            vc.finishedButton.isHidden = true
-            vc.pendingButton.isHidden = true
-        case 4: //Reasignado
-            vc.processButton.isHidden = true
-            vc.finishedButton.isHidden = false
-            vc.pendingButton.isHidden = true
-        default:
-            print("")
-        }
-    }
     private func getInboxViewModel() -> InboxViewModel? {
         if let vc = self.splitViewController?.viewControllers.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
             return vc.inboxModel

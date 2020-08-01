@@ -23,7 +23,7 @@ enum RequestError: Error {
 
 class NetworkManager {
     static let shared: NetworkManager = NetworkManager()
-    private var provider: MoyaProvider<ApiService>
+    private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [AccessTokenPlugin{_ in "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTYyNzE5NzYsInVzZXIiOiJzZXJnaW8ifQ.0UTtUBZAeJ_Ehn8pv5oECQER33hAatP5qPYBNX7dQhc"}])
     
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()) {
         self.provider = provider
@@ -34,6 +34,12 @@ class NetworkManager {
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
+    
+//    func getInfoUser() -> Observable<UserInfoResponse> {
+//        let req: ApiService = ApiService.getInfoUser()
+//        let res: Observable<UserInfoResponse> = makeRequest(request: req)
+//        return res
+//    }
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in

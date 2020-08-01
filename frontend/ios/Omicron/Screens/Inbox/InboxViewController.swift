@@ -45,7 +45,7 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxModel.processDidTab)
         ].forEach({ $0.disposed(by: disposeBag) })
      
-        inboxModel.thereAreNotOrdes
+        inboxModel.indexSelectedOfTable
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
                 self.chageStatusName(index: res)
@@ -114,7 +114,7 @@ class InboxViewController: UIViewController {
 
 extension InboxViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 9
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
