@@ -155,7 +155,7 @@ table {
 th{
   color: #6C90B3 !important;
   font-weight: bold !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   flex: 0 0 28% !important;
   word-wrap: break-word !important;
   white-space: unset !important;
@@ -177,16 +177,11 @@ th.centered {
 }
 
 .ico-col-pri{
-  font-size: 12px;
-  color: #3C1053;
-}
-
-.ico-col-sec{
-  color: #ff08a1;
+  font-size: 10px;
 }
 
 .tdcell {
-  font-size: 12px;
+  font-size: 10px;
   color: #515365 !important;
   word-wrap: break-word !important;
   white-space: unset !important;
@@ -273,7 +268,7 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 }
 
 .material-icons svg{
-  font-size: 12px !important;
+  font-size: 10px !important;
 }
 
 .mat-raised-button {

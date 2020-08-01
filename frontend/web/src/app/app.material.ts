@@ -22,6 +22,7 @@ import {
   MatRadioModule, 
   MatAutocompleteModule,
   MatCheckboxModule,
+  TooltipPosition
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [

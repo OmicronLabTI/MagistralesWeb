@@ -3,6 +3,8 @@ import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
 import { IPedidoDetalleListRes} from "../../model/http/detallepedidos.model";
 import { ActivatedRoute } from "@angular/router";
+import {TooltipPosition} from "@angular/material/tooltip";
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-pedido-detalle',

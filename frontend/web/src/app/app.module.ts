@@ -12,6 +12,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.co
         MATERIAL_COMPONENTS,
         FlexLayoutModule,
         FormsModule,
-        InfiniteScrollModule
+        InfiniteScrollModule,
+        MatTooltipModule
     ],
   providers: [
     APP_PROVIDERS

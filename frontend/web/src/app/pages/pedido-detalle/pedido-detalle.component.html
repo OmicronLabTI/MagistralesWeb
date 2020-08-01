@@ -14,7 +14,7 @@
     <div class="table-toolbar">
       <div class="table-toolbar-search">
         <mat-form-field >
-          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar órdenes de fabricación...">       
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar órdenes...">       
         </mat-form-field>
       </div>
       <div class="table-toolbar-buttons">
@@ -65,13 +65,15 @@
               </ng-container>
 
             <ng-container matColumnDef="codigoProducto">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CODIGO DEL PRODUCTO </th>
+              <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
               <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdemail mobile-hide codigoproducto"> {{element.codigoProducto}} </td>
             </ng-container>
           
             <ng-container matColumnDef="descripcionProducto">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide">  DESCRIPCIÓN DEL PRODUCTO </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{element.descripcionProducto}} </td>
+              <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
+              <td mat-cell matTooltip="EMULSION COLAGENO ELASTINA 10%, DIOXIDO DE TITANIO 5%, HIALURONICO 3%, MANTECA DE KARITE 3%, VIT C 4"
+              matTooltipPosition="right"
+              aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{element.descripcionProducto}} </td>
             </ng-container>
     
             <ng-container matColumnDef="qtyPlanned">
@@ -80,22 +82,22 @@
             </ng-container>
   
             <ng-container matColumnDef="fechaOF">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  FECHA ORDEN </th>
+              <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  FECHA DE ORDEN DE FABRICACIÓN </th>
               <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
             </ng-container>
   
             <ng-container matColumnDef="fechaOFFin">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA TERMINO </th>
+              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA DE TÉRMINO (QFB) </th>
               <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaOfFin}} </td>
             </ng-container>
   
             <ng-container matColumnDef="qfb">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  QFB </th>
+              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  QFB ASIGNADO </th>
               <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.qfb}} </td>
             </ng-container>
   
             <ng-container matColumnDef="statusOF">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS </th>
+              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN </th>
               <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.status}}</button> </td>
             </ng-container>
     

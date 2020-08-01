@@ -32,7 +32,7 @@ export class PedidosComponent implements OnInit {
       (pedidoRes: IPedidosListRes) => {
         pedidoRes.response.forEach(element => {
           element.pedidoStatus = element.pedidoStatus == "O" ? "Abierto" : "Cerrado";
-          console.log(element.pedidoStatus);
+          console.log("asdasdasdsd");
           element.class = element.pedidoStatus == "Abierto" ? "green": "mat-primary";
           this.dataSource.data.push(element);
         })
