@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
       user: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
       redirectUri: 'asdad',
-      clientId2:''
+      clientId2: ''
     } as ILoginReq;
     console.log('to req user: ', userLoginReq)
     this.securityService.login(userLoginReq).subscribe(res => {

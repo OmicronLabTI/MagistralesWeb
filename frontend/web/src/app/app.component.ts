@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
 import { Router} from "@angular/router";
+import {CONST_NUMBER} from "../environments/environment";
 
 
 @Component({
@@ -12,10 +13,11 @@ import { Router} from "@angular/router";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  iconMenuActive: number = CONST_NUMBER.one;
   title = 'omicron';
   now = new Date();
   isLoading: Observable<boolean>;
-  isLogin: boolean = false;
+  isLogin = false;
   constructor(private _dataService: DataService, private _snackBar: MatSnackBar,
              private router: Router) {
     this.isLoading = this._dataService.getIsLoading();
@@ -35,5 +37,9 @@ export class AppComponent {
     this._dataService.setIsLogin(false);
     this._dataService.clearToken();
     this.router.navigate(['/login'])
+  }
+
+  changeIconActive(newMeuActive: number) {
+    this.iconMenuActive = newMeuActive;
   }
 }
