@@ -49,8 +49,10 @@ mat-card img{
   width: 15%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+}
+.to-background-color svg{
+  color: #888ea8;
+  fill: rgba(0, 23, 55, 0.08);
 }
 .user-input-login{
   width: 85%;
@@ -68,6 +70,12 @@ mat-card img{
 .eye-pass-login{
   width: 15%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.eye-pass-login button{
+  color: #b0b0b0;
 }
 .actions-custom{
   padding: 5%;
