@@ -22,12 +22,13 @@ class OmicronTests: XCTestCase {
     }
     
     func testLoginValid() {
+        let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY"
         let disposeBag = DisposeBag()
         let viewModel = LoginViewModel()
-        viewModel.username.onNext("admin")
-        viewModel.password.onNext("12345")
+        viewModel.username.onNext("sergio")
+        viewModel.password.onNext("Passw0rd")
         viewModel.canLogin.asObservable().subscribe(onNext: { valid in
-            XCTAssertTrue(valid)
+            XCTAssertTrue(valid, testToken)
             }).disposed(by: disposeBag)
     }
     
@@ -41,11 +42,11 @@ class OmicronTests: XCTestCase {
     
     func testLoginService() {
         let disposeBag = DisposeBag()
-        let data = Login(username: "admin", password: "12345")
+        let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "")
         let manager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         manager.login(data: (data)).subscribe(onNext: { res in
-            XCTAssertNotNil(res.token)
-            XCTAssertEqual(res.token, "12345")
+            XCTAssertNotNil(res.access_token)
+            XCTAssertEqual(res.access_token, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY")
         }).disposed(by: disposeBag)
     }
 }

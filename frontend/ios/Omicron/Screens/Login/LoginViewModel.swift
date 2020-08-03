@@ -37,7 +37,7 @@ class LoginViewModel {
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)
-//                NetworkManager.shared.getInfoUser().subscribe(onNext: { [weak self ] res in
+//                NetworkManagerq.shared.getInfoUser().subscribe(onNext: { [weak self ] res in
 //
 //                        print("datos: \(res)")
 //                    }, onError:{ [weak self] res in

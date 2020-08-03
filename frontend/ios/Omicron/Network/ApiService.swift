@@ -47,7 +47,8 @@ extension ApiService: TargetType {
     var sampleData: Data {
         switch self {
         case .login:
-            return "{\"token\": \"12345\"}".utf8Encoded
+            let loginResponse = "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY\",\"token_type\": \"Bearer\",\"expires_in\": 3600,\"scope\": \"\"}"
+            return loginResponse.utf8Encoded
 //        case .getInfoUser:
 //            return "".utf8Encoded
         }
