@@ -34,7 +34,7 @@ namespace Omicron.Logs.DataAccess.DAO.UserOrder
         /// <inheritdoc/>
         public async Task<bool> InsertUserOrder(UserOrderModel userorder)
         {
-            var response = await this.databaseContext.UserOrder.AddAsync(userorder);
+            var response = await this.databaseContext.UserOrderModel.AddAsync(userorder);
             bool result = response.State.Equals(EntityState.Added);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return result;
