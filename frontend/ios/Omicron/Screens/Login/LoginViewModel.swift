@@ -61,25 +61,6 @@ class LoginViewModel {
                             self?.error.onNext(Constants.Errors.serverError.rawValue)
                         }
                 }).disposed(by: self.disposeBag)
-                
-                
             }).disposed(by: disposeBag)
-    }
-    
-    func convertPasswordToSHA256(password: String) -> String {
-        guard let data = password.data(using: .utf8) else { return  "" }
-        let digest = SHA256.hash(data: data)
-        return digest.hexStr
-    }
-}
-
-extension Digest {
-    var bytes: [UInt8] { Array(makeIterator()) }
-    var data: Data { Data(bytes) }
-    
-    var hexStr: String {
-        bytes.map {
-            String(format: "%02X", $0)
-        }.joined()
     }
 }

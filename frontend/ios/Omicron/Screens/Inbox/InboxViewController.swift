@@ -54,11 +54,11 @@ class InboxViewController: UIViewController {
     }
     
     func initComponents() -> Void {
-        self.statusNameLabel.text = "Asignadas"
+        self.statusNameLabel.text = StatusNameConstants.assignedStatus
         self.statusNameLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 39)
-        self.setStyleButton(button: self.finishedButton, title: "Terminado", color: OmicronColors.finishedStatus)
-        self.setStyleButton(button: self.pendingButton, title: "Pendiente", color: OmicronColors.pendingStatus)
-        self.setStyleButton(button: self.processButton, title: "En proceso", color: OmicronColors.processStatus)
+        self.setStyleButton(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus)
+        self.setStyleButton(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus)
+        self.setStyleButton(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus)
     }
     
     func setStyleButton( button: UIButton ,title: String, color: UIColor) {
@@ -73,15 +73,15 @@ class InboxViewController: UIViewController {
     func chageStatusName(index: Int) -> Void {
         switch index {
         case 0:
-            self.statusNameLabel.text = "Asignadas"
+            self.statusNameLabel.text = StatusNameConstants.assignedStatus
         case 1:
-            self.statusNameLabel.text = "En Proceso"
+            self.statusNameLabel.text = StatusNameConstants.inProcessStatus
         case 2:
-            self.statusNameLabel.text = "Pendientes"
+            self.statusNameLabel.text = StatusNameConstants.penddingStatus
         case 3:
-            self.statusNameLabel.text = "Terminado"
+            self.statusNameLabel.text = StatusNameConstants.finishedStatus
         case 4:
-            self.statusNameLabel.text = "Reasignado"
+            self.statusNameLabel.text = StatusNameConstants.reassignedStatus
         default:
             print("")
         }

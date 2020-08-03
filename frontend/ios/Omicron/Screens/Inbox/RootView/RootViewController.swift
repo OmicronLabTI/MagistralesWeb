@@ -47,7 +47,7 @@ class RootViewController: UIViewController {
         self.viewTable.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
-        self.searchOrdesSearchBar.text = "Buscar órden"
+        self.searchOrdesSearchBar.text = CommonStrings.searchOrden
         self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
         self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
         self.view.backgroundColor = OmicronColors.tableStatus

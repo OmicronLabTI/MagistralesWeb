@@ -57,10 +57,19 @@ struct CommonStrings {
     static let password = "Password"
     static let Emty = ""
     static let OK = "OK"
+    static let searchOrden = "Buscar órden"
 }
 
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
     static let SFProDisplayRegular = "SFProDisplay-Regular"
     static let SFProDisplayMedium = "SFProDisplay-Medium"
+}
+
+struct StatusNameConstants {
+    static let assignedStatus = "Asignadas"
+    static let inProcessStatus = "En Proceso"
+    static let penddingStatus = "Pendientes"
+    static let finishedStatus = "Terminado"
+    static let reassignedStatus = "Reasignado"
 }

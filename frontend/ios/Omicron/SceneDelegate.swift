@@ -20,20 +20,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let _ = (scene as? UIWindowScene) else { return }
         
         if scene is UIWindowScene {
-            //UserDefaults.standard.bool(forKey: "SessionActive")
+            // Verifica cuando un usuario ya inició sesión o no, Si inició sesión la mantiene activa y se redirije a Inbox, en caso contrario se redirije a Login
             if UserDefaults.standard.bool(forKey: UsersDefaultsConstants.isSessionActive) {
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let initialViewController = storyboard.instantiateViewController(withIdentifier: "SplitViewController")
+                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+                let initialViewController = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.splitViewController)
                 self.window?.rootViewController = initialViewController
                 self.window?.makeKeyAndVisible()
-//                let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//                let inboxViewController = mainStoryboard.instantiateViewController(withIdentifier: "SplitViewController") as! UISplitViewController
-//                let nav = UINavigationController(rootViewController: inboxViewController)
-//                let window = UIWindow(windowScene: windowScene)
-//                window.rootViewController = nav
-//                self.window = window
-//                window.makeKeyAndVisible()
-                
             }
         }
     }
