@@ -16,13 +16,12 @@ import {
   MatSlideToggleModule,
   MatDialogModule,
   MatTabsModule,
-  MatProgressSpinnerModule, 
+  MatProgressSpinnerModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatRadioModule, 
+  MatRadioModule,
   MatAutocompleteModule,
-  MatCheckboxModule,
-  TooltipPosition
+  MatCheckboxModule
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [
@@ -44,10 +43,10 @@ export const MATERIAL_COMPONENTS = [
   MatSlideToggleModule,
   MatDialogModule,
   MatTabsModule,
-  MatProgressSpinnerModule, 
+  MatProgressSpinnerModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatRadioModule, 
+  MatRadioModule,
   MatAutocompleteModule,
   MatCheckboxModule
-]
+];

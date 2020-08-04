@@ -34,7 +34,8 @@ public class OauthFacadeTest extends BaseTest {
         Assert.assertTrue(tokenResponseTO.getAccess_token().length() > 30);
         Assert.assertEquals(ttl, tokenResponseTO.getExpires_in());
         Assert.assertEquals("Bearer", tokenResponseTO.getToken_type());
-        Assert.assertEquals("", tokenResponseTO.getScope());
+        Assert.assertNotNull("", tokenResponseTO.getRefresh_token());
+        Assert.assertTrue(tokenResponseTO.getRefresh_token().length() > 30);
     }
 
     @Test(expected = UnAuthorizedException.class)
@@ -96,10 +97,17 @@ public class OauthFacadeTest extends BaseTest {
 
         TokenRenewRequestTO tokenRenewRequestTO = new TokenRenewRequestTO();
         tokenRenewRequestTO.setGrant_type("");
-        tokenRenewRequestTO.setRefresh_token(tokenResponseTO.getAccess_token());
+        tokenRenewRequestTO.setRefresh_token(tokenResponseTO.getRefresh_token());
         tokenRenewRequestTO.setScope("");
 
-        oauthFacade.renew(tokenRenewRequestTO);
+        TokenResponseTO tokenRenewedResponseTO = oauthFacade.renew(tokenRenewRequestTO);
+
+        Assert.assertNotNull(tokenRenewedResponseTO.getAccess_token());
+        Assert.assertTrue(tokenRenewedResponseTO.getAccess_token().length() > 30);
+        Assert.assertEquals(ttl, tokenRenewedResponseTO.getExpires_in());
+        Assert.assertEquals("Bearer", tokenRenewedResponseTO.getToken_type());
+        Assert.assertNotNull("", tokenRenewedResponseTO.getRefresh_token());
+        Assert.assertTrue(tokenRenewedResponseTO.getRefresh_token().length() > 30);
     }
 
     @Test(expected = UnAuthorizedException.class)
