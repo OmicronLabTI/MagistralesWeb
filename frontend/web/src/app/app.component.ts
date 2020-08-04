@@ -3,8 +3,9 @@ import { DataService } from './services/data.service';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
-import { Router} from "@angular/router";
-import {CONST_NUMBER} from "../environments/environment";
+import { Router} from '@angular/router';
+import {CONST_NUMBER} from './constants/const';
+
 
 
 @Component({
@@ -18,25 +19,24 @@ export class AppComponent {
   now = new Date();
   isLoading: Observable<boolean>;
   isLogin = false;
-  constructor(private _dataService: DataService, private _snackBar: MatSnackBar,
-             private router: Router) {
-    this.isLoading = this._dataService.getIsLoading();
-    this.isLogin = this._dataService.userIsAuthenticated();
-    this._dataService.getIsLogin().subscribe( isLoginS => this.isLogin = isLoginS);
+  constructor(private dataService: DataService, private snackBar: MatSnackBar,
+              private router: Router) {
+    this.isLoading = this.dataService.getIsLoading();
+    this.isLogin = this.dataService.userIsAuthenticated();
+    this.dataService.getIsLogin().subscribe( isLoginS => this.isLogin = isLoginS);
 
-    this._dataService
+    this.dataService
       .getGeneralNotificationMessage()
       .subscribe(msg => {
-        this._snackBar.open(msg, 'OK', {
+        this.snackBar.open(msg, 'OK', {
           duration: AppConfig.generalMessageTimeout
         });
       });
   }
-  ngOnInit() { console.log('on init')}
-  logoutSession(){
-    this._dataService.setIsLogin(false);
-    this._dataService.clearToken();
-    this.router.navigate(['/login'])
+  logoutSession() {
+    this.dataService.setIsLogin(false);
+    this.dataService.clearToken();
+    this.router.navigate(['/login']);
   }
 
   changeIconActive(newMeuActive: number) {

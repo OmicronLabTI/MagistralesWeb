@@ -8,7 +8,7 @@ import { APP_PROVIDERS } from './app.providers';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 import { PedidosComponent } from './pages/pedidos/pedidos.component';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
