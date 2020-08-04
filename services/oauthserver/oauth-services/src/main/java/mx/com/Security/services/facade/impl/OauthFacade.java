@@ -22,19 +22,23 @@ public class OauthFacade implements IOauthFacade {
     @Value("${security.values.ttl}")
     private int ttl;
 
+    @Value("${security.values.ttl-refresh}")
+    private int ttlRefresh;
 
     @Override
     public TokenResponseTO authorize(LoginRequestTO loginRequest) {
 
         authService.validateCredentials(loginRequest.getUser(), loginRequest.getPassword());
 
-        String token = tokenService.generateToken(loginRequest.getClientId(), loginRequest.getUser(), "admin");
+        String access_token = tokenService.generateToken(loginRequest.getClientId(), loginRequest.getUser(), "admin", ttl);
+
+        String refresh_token = tokenService.generateToken(loginRequest.getClientId(), loginRequest.getUser(), "admin", ttlRefresh);
 
         TokenResponseTO tokenResponse = new TokenResponseTO();
-        tokenResponse.setAccess_token(token);
+        tokenResponse.setAccess_token(access_token);
         tokenResponse.setExpires_in(ttl);
         tokenResponse.setToken_type("Bearer");
-        tokenResponse.setScope("");
+        tokenResponse.setRefresh_token(refresh_token);
 
         return tokenResponse;
     }
@@ -46,21 +50,22 @@ public class OauthFacade implements IOauthFacade {
     }
 
     @Override
-    public TokenRefreshResponseTO renew(TokenRenewRequestTO tokenRenewRequest) {
+    public TokenResponseTO renew(TokenRenewRequestTO tokenRenewRequest) {
 
         Map<String, String> claims = tokenService.decodeToken(tokenRenewRequest.getRefresh_token());
 
         authService.validateUserExist(claims.get("user"));
 
-        String token = tokenService.generateToken(claims.get("clientId"), claims.get("user"), claims.get("profile"));
+        String access_token = tokenService.generateToken(claims.get("clientId"), claims.get("user"), claims.get("profile"), ttl);
 
-        TokenRefreshResponseTO tokenRefreshResponse = new TokenRefreshResponseTO();
-        tokenRefreshResponse.setAccess_token(token);
-        tokenRefreshResponse.setExpires_in(ttl);
-        tokenRefreshResponse.setToken_type("Bearer");
-        tokenRefreshResponse.setScope("");
-        tokenRefreshResponse.setRefresh_token(tokenRenewRequest.getRefresh_token());
+        String refresh_token = tokenService.generateToken(claims.get("clientId"), claims.get("user"), claims.get("profile"), ttlRefresh);
 
-        return tokenRefreshResponse;
+        TokenResponseTO tokenResponse = new TokenResponseTO();
+        tokenResponse.setAccess_token(access_token);
+        tokenResponse.setExpires_in(ttl);
+        tokenResponse.setToken_type("Bearer");
+        tokenResponse.setRefresh_token(refresh_token);
+
+        return tokenResponse;
     }
 }
