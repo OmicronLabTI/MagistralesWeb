@@ -69,4 +69,12 @@ export class PedidosComponent implements OnInit {
     this.getPedidos();
   }
 
+  processOrders(){
+    let numDocs = [];
+    this.dataSource.data.filter(t => t['isChecked'] == true).forEach(function(el){
+      numDocs.push(el['docNum']);
+    });
+    
+  }
+
 }
