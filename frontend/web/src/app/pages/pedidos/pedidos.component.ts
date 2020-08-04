@@ -3,6 +3,10 @@ import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { IPedidosListRes} from '../../model/http/pedidos';
 import { createElementCssSelector } from '@angular/compiler';
+import { DataService } from '../../services/data.service';
+import { CONST_STRING} from '../../constants/const';
+import {Messages} from '../../constants/messages';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -20,7 +24,11 @@ export class PedidosComponent implements OnInit {
   displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions']
   dataSource = new MatTableDataSource()
 
-  constructor(private pedidosService: PedidosService) { }
+  constructor(
+    private pedidosService: PedidosService,
+    private dataService: DataService,
+    private errorService: ErrorService
+  ) { }
 
   ngOnInit() {
     this.getPedidos();
@@ -28,17 +36,18 @@ export class PedidosComponent implements OnInit {
 
   getPedidos() {
     this.params['offset'] = this.actualPage;
-    this.pedidosService.getPedidos(this.params).subscribe(
-      (pedidoRes: IPedidosListRes) => {
-        pedidoRes.response.forEach(element => {
-          element.pedidoStatus = element.pedidoStatus == "O" ? "Abierto" : "Cerrado";
-          console.log("asdasdasdsd");
-          element.class = element.pedidoStatus == "Abierto" ? "green": "mat-primary";
-          this.dataSource.data.push(element);
-        })
-        this.dataSource._updateChangeSubscription();
-      }
-    );
+    this.pedidosService.getPedidos(this.params).subscribe((pedidoRes: IPedidosListRes) => {
+      pedidoRes.response.forEach(element => {
+        element.pedidoStatus = element.pedidoStatus == "O" ? "Abierto" : "Cerrado";
+        element.class = element.pedidoStatus == "Abierto" ? "green": "mat-primary";
+        this.dataSource.data.push(element);
+      })
+      this.dataSource._updateChangeSubscription();
+    },
+    error => {
+      console.log(error);
+      this.errorService.httpError(error);
+    });
   }
 
   updateAllComplete() {
@@ -70,11 +79,19 @@ export class PedidosComponent implements OnInit {
   }
 
   processOrders(){
-    let numDocs = [];
-    this.dataSource.data.filter(t => t['isChecked'] == true).forEach(function(el){
-      numDocs.push(el['docNum']);
+    this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
+    .then((result: any) => {
+      if (result.isConfirmed) {
+        this.pedidosService.processOrders(this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])).subscribe(
+          () => {
+            this.getPedidos();
+          },
+          error => {
+            this.errorService.httpError(error);
+          }
+        );
+      }
     });
-    
   }
 
 }

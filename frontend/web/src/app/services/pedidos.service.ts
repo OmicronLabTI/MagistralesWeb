@@ -20,4 +20,8 @@ export class PedidosService {
   getDetallePedido(docNum: string){
     return this.consumeService.httpGet(Endpoints.pedidos.getDetallePedido+docNum)
   }
+
+  processOrders(docNum: number[]){
+    return this.consumeService.httpPost(Endpoints.pedidos.processOrders,docNum);
+  }
 }
