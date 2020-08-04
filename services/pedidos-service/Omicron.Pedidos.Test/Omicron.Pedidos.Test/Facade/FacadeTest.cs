@@ -14,7 +14,10 @@ namespace Omicron.Pedidos.Test.Facade
     using Moq;
     using NUnit.Framework;
     using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Facade.Catalogs.Users;
+    using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -25,6 +28,8 @@ namespace Omicron.Pedidos.Test.Facade
     {
         private UserFacade userFacade;
 
+        private PedidoFacade pedidoFacade;
+
         /// <summary>
         /// The init.
         /// </summary>
@@ -34,6 +39,15 @@ namespace Omicron.Pedidos.Test.Facade
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
+
+            var response = new ResultModel
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
+            };
 
             mockServices
                 .Setup(m => m.GetAllUsersAsync())
@@ -46,6 +60,11 @@ namespace Omicron.Pedidos.Test.Facade
             mockServices
                 .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
                 .Returns(Task.FromResult(true));
+
+            var mockServicesPedidos = new Mock<IPedidosService>();
+            mockServicesPedidos
+                .Setup(m => m.ProcessOrders(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
 
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -101,6 +120,23 @@ namespace Omicron.Pedidos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
+        }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task ProcessOrders()
+        {
+            // arrange
+            var listIds = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.pedidoFacade.ProcessOrders(listIds);
+
+            // arrange
+            Assert.IsNotNull(response);
         }
     }
 }

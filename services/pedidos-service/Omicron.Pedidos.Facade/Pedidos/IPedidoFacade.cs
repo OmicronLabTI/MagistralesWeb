@@ -1,0 +1,27 @@
+﻿// <summary>
+// <copyright file="IPedidoFacade.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.Pedidos.Facade.Pedidos
+{
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Omicron.Pedidos.Dtos.Models;
+
+    /// <summary>
+    /// interfaces for the pedidos.
+    /// </summary>
+    public interface IPedidoFacade
+    {
+        /// <summary>
+        /// process the orders.
+        /// </summary>
+        /// <param name="pedidosIds">the pedidos list.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> ProcessOrders(List<int> pedidosIds);
+    }
+}
