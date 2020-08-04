@@ -26,8 +26,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="userError">the user error.</param>
         /// <param name="responseObj">the responseobj.</param>
         /// <param name="exceptionMessage">the exception message.</param>
+        /// <param name="comments">the comments.</param>
         /// <returns>the resultModel.</returns>
-        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage)
+        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage, object comments)
         {
             return new ResultModel
             {
@@ -36,6 +37,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 UserError = userError,
                 ExceptionMessage = exceptionMessage,
                 Code = code,
+                Comments = comments,
             };
         }
 
