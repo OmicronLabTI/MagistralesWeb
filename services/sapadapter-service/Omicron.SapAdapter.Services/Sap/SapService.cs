@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Utils;
@@ -76,6 +77,29 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null);
+        }
+
+        /// <summary>
+        /// Gets the orders with their detail.
+        /// </summary>
+        /// <param name="pedidosIds">the detail.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds)
+        {
+            var listData = new List<OrderWithDetailModel>();
+
+            foreach (var x in pedidosIds)
+            {
+                var data = new OrderWithDetailModel();
+                var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
+                var detail = (await this.sapDao.GetAllDetails(x)).Where(s => string.IsNullOrEmpty(s.Status));
+
+                data.Order = order;
+                data.Detalle = detail.ToList();
+                listData.Add(data);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listData, null);
         }
     }
 }

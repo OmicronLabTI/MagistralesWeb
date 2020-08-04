@@ -166,5 +166,22 @@ namespace Omicron.SapAdapter.Test.Services
             // Assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetPedidoWithDetail()
+        {
+            // arrange
+            var listIds = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetPedidoWithDetail(listIds);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

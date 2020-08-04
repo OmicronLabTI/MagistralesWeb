@@ -55,5 +55,15 @@ namespace Omicron.SapAdapter.Facade.Sap
             int.TryParse(docEntry, out var docId);
             return this.mapper.Map<ResultDto>(await this.sapService.GetOrderDetails(docId));
         }
+
+        /// <summary>
+        /// Gets the details.
+        /// </summary>
+        /// <param name="pedidosId">the order ir.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetPedidoWithDetail(List<int> pedidosId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetPedidoWithDetail(pedidosId));
+        }
     }
 }

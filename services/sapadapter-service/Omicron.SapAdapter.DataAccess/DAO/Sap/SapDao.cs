@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// Class for the dao.
@@ -38,26 +39,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrders(DateTime date)
         {
-            
-                var query = await (from order in this.databaseContext.OrderModel
-                                   join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                                   join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
-                                   join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                                   where order.FechaInicio >= date && producto.IsMagistral == "Y"
-                                   select new CompleteOrderModel
-                                   {
-                                       DocNum = order.DocNum,
-                                       Cliente = order.Cliente,
-                                       Codigo = order.Codigo,
-                                       Medico = order.Medico,
-                                       AsesorName = asesor.AsesorName,
-                                       FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                                       FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                                       PedidoStatus = order.PedidoStatus,
-                                       IsChecked = false
-                                   }).ToListAsync();
 
-                return query;
+            var query = await (from order in this.databaseContext.OrderModel
+                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                               where order.FechaInicio >= date && producto.IsMagistral == "Y"
+                               select new CompleteOrderModel
+                               {
+                                   DocNum = order.DocNum,
+                                   Cliente = order.Cliente,
+                                   Codigo = order.Codigo,
+                                   Medico = order.Medico,
+                                   AsesorName = asesor.AsesorName,
+                                   FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                                   PedidoStatus = order.PedidoStatus,
+                                   IsChecked = false
+                               }).ToListAsync();
+
+            return query;
         }
 
         /// <summary>
@@ -68,31 +69,42 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(int pedidoId)
         {
             var query = await (from d in this.databaseContext.DetallePedido
-                         join o in this.databaseContext.OrdenFabricacionModel on
-                         new
-                         {
-                             Pedido = d.PedidoId, ItemCode = d.ProductoId
-                         }
-                         equals
-                         new
-                         {
-                             Pedido = o.PedidoId, ItemCode = o.ProductoId
-                         }
-                         into DetallePedido                         
-                         from dp in DetallePedido.DefaultIfEmpty()
-                         join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
-                         where d.PedidoId == pedidoId && p.IsMagistral == "Y"
+                               join o in this.databaseContext.OrdenFabricacionModel on
+                               new
+                               {
+                                   Pedido = d.PedidoId, ItemCode = d.ProductoId
+                               }
+                               equals
+                               new
+                               {
+                                   Pedido = o.PedidoId, ItemCode = o.ProductoId
+                               }
+                               into DetallePedido
+                               from dp in DetallePedido.DefaultIfEmpty()
+                               join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
+                               where d.PedidoId == pedidoId && p.IsMagistral == "Y"
                                select new CompleteDetailOrderModel
-                         {
-                             OrdenFabricacionId = d.PedidoId,
-                             CodigoProducto = d.ProductoId,
-                             DescripcionProducto = d.Description,
-                             QtyPlanned = (int)dp.Quantity,
-                             FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
-                             FechaOfFin = null,
-                             Status = dp.Status,
-                             IsChecked = false
-                         }).ToListAsync();
+                               {
+                                   OrdenFabricacionId = d.PedidoId,
+                                   CodigoProducto = d.ProductoId,
+                                   DescripcionProducto = d.Description,
+                                   QtyPlanned = (int)dp.Quantity,
+                                   FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
+                                   FechaOfFin = null,
+                                   Status = dp.Status,
+                                   IsChecked = false
+                               }).ToListAsync();
+
+            return query;
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<List<OrderModel>> GetOrdersById(int pedidoID)
+        {
+            var query = await this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID).ToListAsync();
 
             return query;
         }

@@ -173,5 +173,27 @@ namespace Omicron.SapAdapter.Test.Facade
             Assert.IsEmpty(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetPedidoWithDetail()
+        {
+            // arrange
+            var listDocs = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.sapFacade.GetPedidoWithDetail(listDocs);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }
