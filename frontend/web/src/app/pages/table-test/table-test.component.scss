@@ -1,0 +1,19 @@
+.test-table-container {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.table-container {
+  width: 100%;
+  height: 80%;
+  overflow-y: scroll;
+}
+.paginator-container {
+  width: 100%;
+  height: 20%;
+}
+table {
+  width: 100%;
+}
