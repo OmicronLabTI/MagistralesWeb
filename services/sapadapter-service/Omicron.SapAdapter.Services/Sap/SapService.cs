@@ -70,7 +70,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var details = await this.sapDao.GetAllDetails(docId);
 
             // var usersQfb = await this.pedidosService.GetUserPedidos(details.Select(x => x.OrdenFabricacionId).Distinct().ToList());
-            details.ToList().ForEach(x => x.Status = ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status);
+            details.ToList().ForEach(x =>
+            {
+                x.Status = !string.IsNullOrEmpty(x.Status) && ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status;
+            });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null);
         }

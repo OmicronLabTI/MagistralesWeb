@@ -1,0 +1,58 @@
+.add-user-container{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.delete-many-icon{
+  text-align: center;
+}
+.icon-add{
+  cursor: pointer;
+}
+.no-users-registered{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  color: #5f606c;
+  font-size: 1.5em;
+}
+.icon-many-delete svg{
+  cursor: pointer;
+  color: #515365;
+  width: 20px;
+  fill: rgba(27, 85, 226, 0.23921568627450981);
+}
+
+/*td.mat-cell { //to see pretty
+  !* row padding *!
+  padding: 16px 0;
+  margin: 10px;
+  !* row border *!
+  border-bottom: 1px solid #ffa600;
+  border-top: 1px solid #ffa600;
+}
+
+td.mat-cell:first-child {
+  !* row border *!
+  border-left: 1px solid #ffa600;
+}
+
+td.mat-cell:last-child {
+  !* row border *!
+  border-right: 1px solid #ffa600;
+}
+
+table {
+  !* row spacing / margin *!
+  border-spacing: 0 8px !important;
+}*/
+.tr-custom{
+  height: 30px !important;
+  box-shadow: 0 2px 4px rgba(110, 112, 117, 0.45) !important;
+  margin: 5px !important;
+}
+
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background: #6C90B3 !important; 
+}

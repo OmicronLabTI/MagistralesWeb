@@ -117,6 +117,25 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
+        public async Task GetOrdersWeek()
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FilterDate, ServiceConstants.Week },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
         public async Task GetOrdersOtherDate()
         {
             // arrange

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
-
+  hide = true;
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
@@ -23,26 +23,28 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
-
-    // TEST ONLY
-    this.formLogin.get('username').setValue('eve.holt@reqres.in');
-    this.formLogin.get('password').setValue('cityslicka');
   }
 
   ngOnInit() { }
 
   login() {
-    const data = {
-      email: this.formLogin.get('username').value,
+    const userLoginReq = {
+      user: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
+      redirectUri: 'asdad',
+      clientId2: ''
     } as ILoginReq;
-
-    this.securityService.login(data).subscribe(res => {
-      this.dataService.setToken(res.token);
-      this.router.navigate(['home']);
+    console.log('to req user: ', userLoginReq);
+    this.securityService.login(userLoginReq).subscribe(res => {
+      console.log('acces token: ', res);
+      this.dataService.setToken(res.access_token);
+      this.dataService.setIsLogin(true);
+      this.router.navigate(['pedidos']);
     }, err => {
-      this.dataService.setGeneralNotificationMessage(err);
+      console.log('error  login: ', err);
+      this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
     }
     );
   }
+
 }
