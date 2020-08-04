@@ -84,6 +84,7 @@ export class PedidosComponent implements OnInit {
       if (result.isConfirmed) {
         this.pedidosService.processOrders(this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])).subscribe(
           () => {
+            this.dataService.presentToastCustom(Messages.success, 'success', CONST_STRING.empty, false, false)
             this.getPedidos();
           },
           error => {
