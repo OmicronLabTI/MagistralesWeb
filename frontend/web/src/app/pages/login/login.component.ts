@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   formLogin: FormGroup;
-  gridColumns = 3; //delete
   hide = true;
   constructor(
     private fb: FormBuilder,
@@ -35,14 +34,14 @@ export class LoginComponent implements OnInit {
       redirectUri: 'asdad',
       clientId2: ''
     } as ILoginReq;
-    console.log('to req user: ', userLoginReq)
+    console.log('to req user: ', userLoginReq);
     this.securityService.login(userLoginReq).subscribe(res => {
-      console.log('acces token: ', res)
+      console.log('acces token: ', res);
       this.dataService.setToken(res.access_token);
       this.dataService.setIsLogin(true);
       this.router.navigate(['pedidos']);
     }, err => {
-      console.log('error  login: ', err)
+      console.log('error  login: ', err);
       this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
     }
     );

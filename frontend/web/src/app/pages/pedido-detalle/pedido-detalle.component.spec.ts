@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PedidoDetalleComponent } from './pedido-detalle.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
+import {RouterModule} from "@angular/router";
+import {RouterTestingModule} from "@angular/router/testing";
+import {MatTableModule} from "@angular/material";
+import {HttpClientModule} from "@angular/common/http";
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -8,7 +13,9 @@ describe('PedidoDetalleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PedidoDetalleComponent ]
+      imports: [RouterModule, MatTableModule, HttpClientModule, RouterTestingModule],
+      declarations: [ PedidoDetalleComponent ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
