@@ -39,27 +39,19 @@ class LoginViewModel {
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
-                    UserDefaults.standard.set(true, forKey: UsersDefaultsConstants.isSessionActive)
-                    UserDefaults.standard.set(res.access_token, forKey: UsersDefaultsConstants.accessToken)
+                    Persistence.shared.saveUserData(data: res)
                     self?.loginResponse.onNext(res)
                     }, onError: { [weak self] err in
                         self?.loading.onNext(false)
                         switch (err) {
                         case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
-                            self?.error.onNext(httpError?.error ?? Constants.Errors.serverError.rawValue)
-                        case RequestError.unauthorized:
-                            self?.error.onNext(Constants.Errors.unauthorized.rawValue)
+                            self?.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
+                        case RequestError.unauthorized(let httpError):
+                            self?.error.onNext(httpError?.userError ?? Constants.Errors.unauthorized.rawValue)
                         default:
                             self?.error.onNext(Constants.Errors.serverError.rawValue)
                         }
                 }).disposed(by: self.disposeBag)
-                
-                NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
-                    print("--------------------> \(res)")
-                    
-                    }, onError: { errorService in
-                        print("Error: \(errorService)")
-                }).disposed(by: self.disposeBag)     
             }).disposed(by: disposeBag)
     }
 }

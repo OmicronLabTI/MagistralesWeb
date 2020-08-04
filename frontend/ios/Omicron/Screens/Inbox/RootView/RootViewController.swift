@@ -26,40 +26,47 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
+            print("--------------------> \(res)")
+            
+            }, onError: { errorService in
+                print("Error: \(errorService)")
+        }).disposed(by: self.disposeBag)
+        
         // Desde aqui consumo el servicio
         var assignedOrders =
         [
-            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
         ]
         
         let inProcessOrdes =
         [
-            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
         ]
         
         let penddingOrders =
         [
-            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 5", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Orden(No: 1, BaseDocument: "Documento base 6", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 5", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Order(no: 1, baseDocument: "Documento base 6", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
         ]
         
         let finishedOrders =
         [
-            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
         ]
         
         let reasignedOrders =
         [
-            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
         ]
         
         self.dataStatus = [
@@ -97,7 +104,7 @@ class RootViewController: UIViewController {
         let index = NSIndexPath(row: 0, section: 0)
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { [weak self] indexPath in
-        let orden = Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        let orden = Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
             self?.inboxViewModel?.setSelection(index: indexPath.row, orden: orden)
             }).disposed(by: disposeBag)
     }

@@ -39,7 +39,7 @@ class  InboxViewModel {
             }).disposed(by: disposeBag)
     }
     
-    func setSelection(index: Int, orden: Orden) -> Void {
+    func setSelection(index: Int, orden: Order) -> Void {
         print("Index desde table: \(index)")
         print("Datos a pintar: \(orden)")
         self.indexSelectedOfTable.onNext(index)

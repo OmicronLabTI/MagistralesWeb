@@ -35,8 +35,11 @@
 		98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CBA24AFBC6D00E7772F /* LaunchScreen.storyboard */; };
 		98015CC724AFBC6D00E7772F /* OmicronTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CC624AFBC6D00E7772F /* OmicronTests.swift */; };
 		98015CD224AFBC6D00E7772F /* OmicronUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CD124AFBC6D00E7772F /* OmicronUITests.swift */; };
+		980F234324DA11900073E2C8 /* refresh_token.json in Resources */ = {isa = PBXBuildFile; fileRef = 980F234224DA11900073E2C8 /* refresh_token.json */; };
+		980F234524DA11AE0073E2C8 /* login.json in Resources */ = {isa = PBXBuildFile; fileRef = 980F234424DA11AE0073E2C8 /* login.json */; };
 		98532B2F24B390A80015BBC6 /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 98532B2E24B390A80015BBC6 /* loading.json */; };
 		98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98532B3124B3933C0015BBC6 /* LottieManager.swift */; };
+		98B7845A24DA228A005A38FC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B7845924DA228A005A38FC /* Persistence.swift */; };
 		98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03024AFBD4100018A88 /* LoginViewModel.swift */; };
 		98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03224AFBD4C00018A88 /* LoginViewController.swift */; };
 		98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03424AFBD5900018A88 /* LoginModel.swift */; };
@@ -100,8 +103,11 @@
 		98015CCD24AFBC6D00E7772F /* OmicronUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OmicronUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CD124AFBC6D00E7772F /* OmicronUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmicronUITests.swift; sourceTree = "<group>"; };
 		98015CD324AFBC6D00E7772F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		980F234224DA11900073E2C8 /* refresh_token.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = refresh_token.json; sourceTree = "<group>"; };
+		980F234424DA11AE0073E2C8 /* login.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = login.json; sourceTree = "<group>"; };
 		98532B2E24B390A80015BBC6 /* loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = loading.json; sourceTree = "<group>"; };
 		98532B3124B3933C0015BBC6 /* LottieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieManager.swift; sourceTree = "<group>"; };
+		98B7845924DA228A005A38FC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		98C8C03024AFBD4100018A88 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		98C8C03224AFBD4C00018A88 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		98C8C03424AFBD5900018A88 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
@@ -257,9 +263,19 @@
 			path = OmicronUITests;
 			sourceTree = "<group>";
 		};
+		980F234124DA115E0073E2C8 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				980F234224DA11900073E2C8 /* refresh_token.json */,
+				980F234424DA11AE0073E2C8 /* login.json */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		98532B2C24B390870015BBC6 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				980F234124DA115E0073E2C8 /* Mocks */,
 				7C52115F24D4816D0052B2F5 /* Fonts */,
 				98532B2D24B390900015BBC6 /* Lottie */,
 				98015CB824AFBC6D00E7772F /* Assets.xcassets */,
@@ -317,6 +333,7 @@
 			children = (
 				98C8C03B24AFCC7B00018A88 /* Constants.swift */,
 				98C8C03D24AFCC9200018A88 /* Config.swift */,
+				98B7845924DA228A005A38FC /* Persistence.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -447,7 +464,9 @@
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
+				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
+				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,6 +611,7 @@
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
+				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
 				98C8C03E24AFCC9200018A88 /* Config.swift in Sources */,

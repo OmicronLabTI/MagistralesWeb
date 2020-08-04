@@ -14,7 +14,7 @@ import ObjectMapper
 enum RequestError: Error {
     case unknownError
     case invalidRequest(error: HttpError?)
-    case unauthorized
+    case unauthorized(error: HttpError?)
     case notFound
     case invalidResponse
     case serverError(error: HttpError?)
@@ -55,7 +55,7 @@ class NetworkManager {
     private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-        AuthPlugin(tokenClosure: { return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY1ODA3MjAsInVzZXIiOiJzZXJnaW8ifQ.hN-Yqvxa-e0zwJceCh9gbiTjp3klapMHI2JlJS6yA6w" })
+        AuthPlugin(tokenClosure: { return Persistence.shared.getUserData()?.access_token })
     ])) {
         self.provider = provider
     }
@@ -71,6 +71,18 @@ class NetworkManager {
         let res: Observable<UserInfoResponse> = makeRequest(request: req)
         return res
     }
+
+    func renew(data: Renew) -> Observable<LoginResponse> {
+        let req: ApiService = ApiService.renew(data: data)
+        let res: Observable<LoginResponse> = makeRequest(request: req)
+        return res
+    }
+    
+//    func getInfoUser() -> Observable<UserInfoResponse> {
+//        let req: ApiService = ApiService.getInfoUser()
+//        let res: Observable<UserInfoResponse> = makeRequest(request: req)
+//        return res
+//    }
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
@@ -94,7 +106,12 @@ class NetworkManager {
                         observer.onError(RequestError.invalidRequest(error: err))
                         break
                     case 401:
-                        observer.onError(RequestError.unauthorized)
+                        if request.needsAuth {
+                            // TODO Renew Token
+                        } else {
+                            let err = Mapper<HttpError>().map(JSONObject: json)
+                            observer.onError(RequestError.unauthorized(error: err))
+                        }
                         break
                     case 404:
                         observer.onError(RequestError.notFound)
@@ -117,4 +134,15 @@ class NetworkManager {
             return Disposables.create()
         })
     }
+    
+//    private func handleTokenRefresh() -> Observable<Bool> {
+//        if let userData = Persistence.shared.getUserData() {
+//            guard let refreshToken = userData.refresh_token else {
+//                return Observable.just(false)
+//            }
+//            let data = Renew(refreshToken: refreshToken)
+//        }
+//
+//        return Disposables.create()
+//    }
 }

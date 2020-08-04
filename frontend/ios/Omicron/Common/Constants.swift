@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+
 struct Constants {
     enum Errors: String {
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
@@ -42,6 +43,7 @@ struct OmicronColors {
 struct UsersDefaultsConstants {
     static let isSessionActive = "isSessionActive"
     static let accessToken = "accessToken"
+    static let userData = "userData"
 }
 
 struct ImagesNames {

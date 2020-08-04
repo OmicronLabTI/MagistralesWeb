@@ -12,9 +12,10 @@ import Moya
 enum ApiService {
     case login(data: Login)
     case getInfoUser(userId: String)
+    case renew(data: Renew)
 }
 
-extension ApiService:  AuthorizedTargetType {
+extension ApiService: AuthorizedTargetType {
     var needsAuth: Bool {
         switch self {
         case .login:
@@ -24,7 +25,6 @@ extension ApiService:  AuthorizedTargetType {
         }
     }
     
-    
     var baseURL: URL { return URL(string: Config.baseUrl)! }
     var path: String {
         switch self {
@@ -32,12 +32,14 @@ extension ApiService:  AuthorizedTargetType {
             return "/oauth/oauthrs/authorize"
         case.getInfoUser(let userId):
             return "/usuarios/user/\(userId)"
+        case .renew:
+            return "/oauth/oauthrs/renew"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .login:
+        case .login, .renew:
             return .post
         case .getInfoUser:
             return .get
@@ -50,16 +52,27 @@ extension ApiService:  AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .getInfoUser:
             return .requestPlain
+        case .renew(let data):
+            return .requestJSONEncodable(data)
         }
     }
         
     var sampleData: Data {
         switch self {
         case .login:
-            let loginResponse = "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY\",\"token_type\": \"Bearer\",\"expires_in\": 3600,\"scope\": \"\"}"
-            return loginResponse.utf8Encoded
+            guard let url = Bundle.main.url(forResource: "login", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
         case .getInfoUser:
             return "".utf8Encoded
+        case .renew:
+            guard let url = Bundle.main.url(forResource: "refresh_token", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
         }
     }
     var headers: [String: String]? {

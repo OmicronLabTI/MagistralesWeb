@@ -20,7 +20,20 @@ struct Section: Codable {
     }
 }
 
-class UserInfoResponse {
+class UserInfoResponse: HttpResponse {
+    var response: User?
+
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
+}
+
+class User {
     var id: String?
     var userName: String?
     var firstName: String?
@@ -31,7 +44,7 @@ class UserInfoResponse {
     required init?(map: Map) {}
 }
 
-extension UserInfoResponse: Mappable {
+extension User: Mappable {
     func mapping(map: Map) {
         self.id <- map["id"]
         self.userName <- map["userName"]
@@ -44,22 +57,22 @@ extension UserInfoResponse: Mappable {
 }
 
 
-struct Orden: Codable {
-    var No: Int
-    var BaseDocument: String
-    var Container: String
-    var Tag: String
-    var PlannedQuantity: String
+struct Order: Codable {
+    var no: Int
+    var baseDocument: String
+    var container: String
+    var tag: String
+    var plannedQuantity: String
     var startDate: String
     var finishDate: String
     var descriptionProduct: String
         
-    init(No: Int, BaseDocument: String, Container: String, Tag: String, PlannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
-        self.No = No
-        self.BaseDocument = BaseDocument
-        self.Container = Container
-        self.Tag = Tag
-        self.PlannedQuantity = PlannedQuantity
+    init(no: Int, baseDocument: String, container: String, tag: String, plannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
+        self.no = no
+        self.baseDocument = baseDocument
+        self.container = container
+        self.tag = tag
+        self.plannedQuantity = plannedQuantity
         self.startDate = startDate
         self.finishDate = finishDate
         self.descriptionProduct = descriptionProduct
