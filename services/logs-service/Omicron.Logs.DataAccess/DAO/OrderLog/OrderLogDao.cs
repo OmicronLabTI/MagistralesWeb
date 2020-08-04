@@ -32,12 +32,11 @@ namespace Omicron.Logs.DataAccess.DAO.OrderLog
         }
 
         /// <inheritdoc/>
-        public async Task<bool> InsertOrderLog(OrderLogModel orderlog)
+        public async Task<bool> InsertOrderLog(List<OrderLogModel> orderlog)
         {
-            var response = await this.databaseContext.OrderLog.AddAsync(orderlog);
-            bool result = response.State.Equals(EntityState.Added);
+            await this.databaseContext.OrderLogModel.AddRangeAsync(orderlog);            
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-            return result;
+            return true;
         }
     }
 }

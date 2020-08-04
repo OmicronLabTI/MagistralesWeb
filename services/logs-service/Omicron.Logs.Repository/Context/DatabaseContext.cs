@@ -25,7 +25,20 @@ namespace Omicron.Logs.Entities.Context
         {
         }
 
-        /// <inheritdoc/>
-        public virtual DbSet<UserModel> CatUser { get; set; }
+        /// <summary>
+        /// Gets or sets the order model.
+        /// </summary>
+        /// <value>
+        /// the order model.
+        /// </value>
+        public virtual DbSet<OrderLogModel> OrderLogModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order model.
+        /// </summary>
+        /// <value>
+        /// the order model.
+        /// </value>
+        public virtual DbSet<UserOrderModel> UserOrderModel { get; set; }
     }
 }

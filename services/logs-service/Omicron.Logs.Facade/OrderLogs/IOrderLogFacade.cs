@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="IUserFacade.cs" company="Axity">
+// <copyright file="IOrderLogFacade.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -22,6 +22,6 @@ namespace Omicron.Logs.Facade.OrderLogs
         /// </summary>
         /// <param name="orderlog">OrderLog Model.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> InsertOrderLog(OrderLogDto orderlog);
+        Task<bool> InsertOrderLog(List<OrderLogDto> orderlog);
     }
 }

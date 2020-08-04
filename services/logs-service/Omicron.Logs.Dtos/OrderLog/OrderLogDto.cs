@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="UserDto.cs" company="Axity">
+// <copyright file="OrderLogDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,6 +9,7 @@
 namespace Omicron.Logs.Dtos.OrderLog
 {
     using System;
+    using System.Collections.Generic;
     using Omicron.Logs.Dtos.UserOrder;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// Int id.
         /// </value>
-        public int id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets logdatetime.
@@ -30,7 +31,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// datetime logdatetime.
         /// </value>
-        public DateTime logdatetime { get; set; }
+        public DateTime Logdatetime { get; set; }
 
         /// <summary>
         /// Gets or sets userid.
@@ -38,7 +39,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// String userid.
         /// </value>
-        public string userid { get; set; }
+        public string Userid { get; set; }
 
         /// <summary>
         /// Gets or sets type.
@@ -46,7 +47,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// String type.
         /// </value>
-        public string type { get; set; }
+        public string Type { get; set; }
 
         /// <summary>
         /// Gets or sets noid.
@@ -54,7 +55,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// String noid.
         /// </value>
-        public string noid { get; set; }
+        public string Noid { get; set; }
 
         /// <summary>
         /// Gets or sets description.
@@ -62,7 +63,7 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// String description.
         /// </value>
-        public string description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets detalle.
@@ -70,6 +71,6 @@ namespace Omicron.Logs.Dtos.OrderLog
         /// <value>
         /// String detalle.
         /// </value>
-        public List<UsersOrder> detalle { get; set; }
+        public List<UserOrderDto> Detalle { get; set; }
     }
 }
