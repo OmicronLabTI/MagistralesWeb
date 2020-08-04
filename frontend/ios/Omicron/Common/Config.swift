@@ -35,11 +35,11 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return "https://075af511dc8c.ngrok.io/api"
+            return "https://6e3494cd1291.ngrok.io/api"
         case .stagingRelease,
              .appstore,
              .release:
-            return "https://075af511dc8c.ngrok.io/api"
+            return "https://6e3494cd1291.ngrok.io/api"
         }
     }()
 }

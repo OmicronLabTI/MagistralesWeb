@@ -39,14 +39,9 @@ class  InboxViewModel {
             }).disposed(by: disposeBag)
     }
     
-    func setSelection(index: Int) -> Void {
-        
-         //Aqui se consume servicio
-//        let assigned =
-//        [
-//            Orden(No: 1, BaseDocument: "SFJDFJDF123", Container: "Envasd", Tag: "34", PlannedQuantity: "Envase", startDate: "27/03/1994", finishDate: "27/03/1994", descriptionProduct: "Descripción del producto")
-//        ]
+    func setSelection(index: Int, orden: Orden) -> Void {
         print("Index desde table: \(index)")
+        print("Datos a pintar: \(orden)")
         self.indexSelectedOfTable.onNext(index)
     }
 }

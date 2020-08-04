@@ -37,14 +37,6 @@ class LoginViewModel {
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)
-//                NetworkManagerq.shared.getInfoUser().subscribe(onNext: { [weak self ] res in
-//
-//                        print("datos: \(res)")
-//                    }, onError:{ [weak self] res in
-//                        print("error\(res)")
-//
-//                }).disposed(by: self.disposeBag)
-                
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
                     UserDefaults.standard.set(true, forKey: UsersDefaultsConstants.isSessionActive)
@@ -61,6 +53,13 @@ class LoginViewModel {
                             self?.error.onNext(Constants.Errors.serverError.rawValue)
                         }
                 }).disposed(by: self.disposeBag)
+                
+                NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
+                    print("--------------------> \(res)")
+                    
+                    }, onError: { errorService in
+                        print("Error: \(errorService)")
+                }).disposed(by: self.disposeBag)     
             }).disposed(by: disposeBag)
     }
 }

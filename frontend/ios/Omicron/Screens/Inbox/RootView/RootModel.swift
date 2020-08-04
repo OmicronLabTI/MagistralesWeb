@@ -9,13 +9,11 @@ import Foundation
 import ObjectMapper
 
 struct Section: Codable {
-    var index: Int
     var statusName: String
     var numberTask: Int
     var imageIndicatorStatus: String
     
-    init( index: Int, statusName: String, numberTask: Int, imageIndicatorStatus: String) {
-        self.index = index
+    init(statusName: String, numberTask: Int, imageIndicatorStatus: String) {
         self.statusName = statusName
         self.numberTask = numberTask
         self.imageIndicatorStatus = imageIndicatorStatus
@@ -42,5 +40,28 @@ extension UserInfoResponse: Mappable {
         self.role <- map["role"]
         self.password <- map ["password"]
         self.activo <- map["activo"]
+    }
+}
+
+
+struct Orden: Codable {
+    var No: Int
+    var BaseDocument: String
+    var Container: String
+    var Tag: String
+    var PlannedQuantity: String
+    var startDate: String
+    var finishDate: String
+    var descriptionProduct: String
+        
+    init(No: Int, BaseDocument: String, Container: String, Tag: String, PlannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
+        self.No = No
+        self.BaseDocument = BaseDocument
+        self.Container = Container
+        self.Tag = Tag
+        self.PlannedQuantity = PlannedQuantity
+        self.startDate = startDate
+        self.finishDate = finishDate
+        self.descriptionProduct = descriptionProduct
     }
 }

@@ -11,18 +11,27 @@ import Moya
 
 enum ApiService {
     case login(data: Login)
-    //case getInfoUser)
+    case getInfoUser(userId: String)
 }
 
-extension ApiService: TargetType {
+extension ApiService:  AuthorizedTargetType {
+    var needsAuth: Bool {
+        switch self {
+        case .login:
+            return false
+        default:
+            return true
+        }
+    }
+    
     
     var baseURL: URL { return URL(string: Config.baseUrl)! }
     var path: String {
         switch self {
         case .login(_):
             return "/oauth/oauthrs/authorize"
-//        case.getInfoUser(_):
-//            return "/usuarios/user/sergio"
+        case.getInfoUser(let userId):
+            return "/usuarios/user/\(userId)"
         }
     }
     
@@ -30,8 +39,8 @@ extension ApiService: TargetType {
         switch self {
         case .login:
             return .post
-//        case .getInfoUser:
-//            return .get
+        case .getInfoUser:
+            return .get
         }
     }
     
@@ -39,8 +48,8 @@ extension ApiService: TargetType {
         switch self {
         case .login(let data):
             return .requestJSONEncodable(data)
-//        case .getInfoUser(_):
-//            return .requestJSONEncodable("")
+        case .getInfoUser:
+            return .requestPlain
         }
     }
         
@@ -49,13 +58,13 @@ extension ApiService: TargetType {
         case .login:
             let loginResponse = "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY\",\"token_type\": \"Bearer\",\"expires_in\": 3600,\"scope\": \"\"}"
             return loginResponse.utf8Encoded
-//        case .getInfoUser:
-//            return "".utf8Encoded
+        case .getInfoUser:
+            return "".utf8Encoded
         }
     }
     var headers: [String: String]? {
-        return ["Content-type": "application/json"]
-    }
+            return ["Content-type": "application/json"]
+        }
 }
 
 // MARK: - Helpers
@@ -66,16 +75,5 @@ private extension String {
     
     var utf8Encoded: Data {
         return data(using: .utf8)!
-    }
-}
-
-extension ApiService: AccessTokenAuthorizable {
-    var authorizationType: AuthorizationType? {
-        switch self {
-        case .login:
-            return .none
-        default:
-            return .bearer
-        }
     }
 }

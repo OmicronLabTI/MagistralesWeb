@@ -72,6 +72,5 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.contentCard.layer.cornerRadius = CGFloat(20)
         self.contentCard.layer.borderColor = color 
         self.contentCard.layer.borderWidth = CGFloat(1)
-        
     }
 }

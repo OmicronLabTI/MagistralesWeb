@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 class RootViewController: UIViewController {
-    
+
     // MARK: Outlets
     @IBOutlet weak var viewTable: UITableView!
     @IBOutlet weak var myOrdesLabel: UILabel!
@@ -21,23 +21,84 @@ class RootViewController: UIViewController {
     let disposeBag = DisposeBag()
     let rootViewModel = RootViewModel()
     lazy var inboxViewModel = self.getInboxViewModel()
-    
+    var dataStatus:[Section] = []
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        initComponents()
+        
+        // Desde aqui consumo el servicio
+        var assignedOrders =
+        [
+            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        ]
+        
+        let inProcessOrdes =
+        [
+            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        ]
+        
+        let penddingOrders =
+        [
+            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 5", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+            Orden(No: 1, BaseDocument: "Documento base 6", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        ]
+        
+        let finishedOrders =
+        [
+            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        ]
+        
+        let reasignedOrders =
+        [
+            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+        ]
+        
+        self.dataStatus = [
+            Section( statusName: "Asignadas", numberTask: assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
+            Section(statusName: "En Proceso", numberTask: inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
+            Section(statusName: "Pendientes", numberTask: penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
+            Section(statusName: "Terminado", numberTask: finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
+            Section(statusName: "Reasignado", numberTask: reasignedOrders.count, imageIndicatorStatus: "reassignedStatus")
+        ]
+
+        
+//        self.rootViewModel.dataStatus
+//            .observeOn(MainScheduler.instance)
+//            .subscribe(onNext: { res in
+//                self.dataStatus = res
+//                print("data: \(self.dataStatus)")
+//            }).disposed(by: disposeBag)
+        
+        Observable.just(dataStatus).bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType:  RootTableViewCell.self)) { _, data, cell in
+                    cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
+                    cell.indicatorStatusNameLabel.text = data.statusName
+                    cell.indicatorStatusNumber.text = String(data.numberTask)
+                }.disposed(by: disposeBag)
+        
+        
+        
+//        self.rootViewModel.dataStatus.observeOn(MainScheduler.instance).bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType:  RootTableViewCell.self)) { _, data, cell in
+//            cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
+//            cell.indicatorStatusNameLabel.text = data.statusName
+//            cell.indicatorStatusNumber.text = String(data.numberTask)
+//        }.disposed(by: disposeBag)
+//        initComponents()
+        
         self.title = "Sergio Flores"
-        
-        rootViewModel.arrayData.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType:  RootTableViewCell.self)) { _, data, cell in
-            cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
-            cell.indicatorStatusNameLabel.text = data.statusName
-            cell.indicatorStatusNumber.text = String(data.numberTask)
-        }.disposed(by: disposeBag)
-        
         let index = NSIndexPath(row: 0, section: 0)
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { [weak self] indexPath in
-            self?.inboxViewModel?.setSelection(index: indexPath.row)
+        let orden = Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+            self?.inboxViewModel?.setSelection(index: indexPath.row, orden: orden)
             }).disposed(by: disposeBag)
     }
     

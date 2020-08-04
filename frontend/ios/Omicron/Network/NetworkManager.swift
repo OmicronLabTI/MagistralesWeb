@@ -21,11 +21,42 @@ enum RequestError: Error {
     case serverUnavailable
 }
 
+protocol AuthorizedTargetType: TargetType {
+    var needsAuth: Bool { get }
+}
+
 class NetworkManager {
-    static let shared: NetworkManager = NetworkManager()
-    private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [AccessTokenPlugin{_ in "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTYyNzE5NzYsInVzZXIiOiJzZXJnaW8ifQ.0UTtUBZAeJ_Ehn8pv5oECQER33hAatP5qPYBNX7dQhc"}])
     
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()) {
+    static let shared: NetworkManager = NetworkManager()
+    
+    class TokenSource {
+        var token: String?
+        init() { }
+    }
+    
+ struct AuthPlugin: PluginType {
+   let tokenClosure: () -> String?
+
+   func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
+     guard
+       let token = tokenClosure(),
+       let target = target as? AuthorizedTargetType,
+       target.needsAuth
+     else {
+       return request
+     }
+
+     var request = request
+     request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+     return request
+   }
+ }
+
+    private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
+    
+    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
+        AuthPlugin(tokenClosure: { return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY1ODA3MjAsInVzZXIiOiJzZXJnaW8ifQ.hN-Yqvxa-e0zwJceCh9gbiTjp3klapMHI2JlJS6yA6w" })
+    ])) {
         self.provider = provider
     }
     
@@ -35,11 +66,11 @@ class NetworkManager {
         return res
     }
     
-//    func getInfoUser() -> Observable<UserInfoResponse> {
-//        let req: ApiService = ApiService.getInfoUser()
-//        let res: Observable<UserInfoResponse> = makeRequest(request: req)
-//        return res
-//    }
+    func getInfoUser(userId: String) -> Observable<UserInfoResponse> {
+        let req: ApiService = ApiService.getInfoUser(userId: userId)
+        let res: Observable<UserInfoResponse> = makeRequest(request: req)
+        return res
+    }
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
