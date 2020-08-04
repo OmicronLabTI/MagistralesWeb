@@ -9,14 +9,14 @@
 namespace Omicron.Logs.DependencyInjection
 {
     using AutoMapper;
-    using Omicron.Logs.DataAccess.DAO.User;
-    using Omicron.Logs.Entities.Context;
-    using Omicron.Logs.Facade.Catalogs.Users;
-    using Omicron.Logs.Services.Mapping;
-    using Omicron.Logs.Services.User;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Logs.DataAccess.DAO.OrderLog;
+    using Omicron.Logs.Entities.Context;
+    using Omicron.Logs.Facade.OrderLogs;
+    using Omicron.Logs.Services.Mapping;
+    using Omicron.Logs.Services.OrderLog;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -33,9 +33,9 @@ namespace Omicron.Logs.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
-            Services.AddTransient<IUserFacade, UserFacade>();
-            Services.AddTransient<IUsersService, UsersService>();
-            Services.AddTransient<IUserDao, UserDao>();
+            Services.AddTransient<IOrderLogFacade, OrderLogFacade>();
+            Services.AddTransient<IOrdersLogService, OrdersLogService>();
+            Services.AddTransient<IOrderLogDao, OrderLogDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }

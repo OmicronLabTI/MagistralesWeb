@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="UserModel.cs" company="Axity">
+// <copyright file="OrderLogModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -25,7 +25,7 @@ namespace Omicron.Logs.Entities.Model
         /// Int Id.
         /// </value>
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets logdatetime.
@@ -33,7 +33,7 @@ namespace Omicron.Logs.Entities.Model
         /// <value>
         /// Datetime logdatetime.
         /// </value>
-        public Datetime logdatetime { get; set; }
+        public DateTime Logdatetime { get; set; }
 
         /// <summary>
         /// Gets or sets userid.
@@ -41,7 +41,7 @@ namespace Omicron.Logs.Entities.Model
         /// <value>
         /// String userid.
         /// </value>
-        public string userid { get; set; }
+        public string Userid { get; set; }
 
         /// <summary>
         /// Gets or sets type.
@@ -49,7 +49,7 @@ namespace Omicron.Logs.Entities.Model
         /// <value>
         /// String type.
         /// </value>
-        public string type { get; set; }
+        public string Type { get; set; }
 
         /// <summary>
         /// Gets or sets noid.
@@ -57,7 +57,7 @@ namespace Omicron.Logs.Entities.Model
         /// <value>
         /// String noid.
         /// </value>
-        public string noid { get; set; }
+        public string Noid { get; set; }
 
         /// <summary>
         /// Gets or sets description.
@@ -65,6 +65,6 @@ namespace Omicron.Logs.Entities.Model
         /// <value>
         /// String description.
         /// </value>
-        public string description { get; set; }
+        public string Description { get; set; }
     }
 }

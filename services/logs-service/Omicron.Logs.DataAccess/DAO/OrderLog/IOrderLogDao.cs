@@ -22,6 +22,6 @@ namespace Omicron.Logs.DataAccess.DAO.OrderLog
         /// </summary>
         /// <param name="orderlog">OrderLog Dto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> InsertOrderLog(OrderLogModel orderlog);
+        Task<bool> InsertOrderLog(List<OrderLogModel> orderlog);
     }
 }

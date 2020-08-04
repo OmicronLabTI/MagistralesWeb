@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="UsersController.cs" company="Axity">
+// <copyright file="OrdersLogsController.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,12 +9,13 @@
 namespace Omicron.Logs.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Omicron.Logs.Dtos.OrderLog;
-    using Omicron.Logs.Facade.OrderLogs;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
-    using StackExchange.Redis;  
+    using Omicron.Logs.Dtos.OrderLog;
+    using Omicron.Logs.Facade.OrderLogs;
+    using StackExchange.Redis;
 
     /// <summary>
     /// Class OrdersLogs Controller.
@@ -23,7 +24,7 @@ namespace Omicron.Logs.Api.Controllers
     [ApiController]
     public class OrdersLogsController : ControllerBase
     {
-        private readonly IOrdersLogsFacade logicFacade;
+        private readonly IOrderLogFacade logicFacade;
 
         private readonly IDatabase database;
 

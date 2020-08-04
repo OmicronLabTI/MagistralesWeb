@@ -13,9 +13,6 @@ namespace Omicron.Logs.Test.Facade
     using System.Threading.Tasks;
     using Moq;
     using NUnit.Framework;
-    using Omicron.Logs.Dtos.User;
-    using Omicron.Logs.Facade.Catalogs.Users;
-    using Omicron.Logs.Services.User;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -23,6 +20,7 @@ namespace Omicron.Logs.Test.Facade
     [TestFixture]
     public class FacadeTest : BaseTest
     {
+        /*
         private UserFacade userFacade;
 
         /// <summary>
@@ -101,6 +99,6 @@ namespace Omicron.Logs.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
-        }
+        }*/
     }
 }

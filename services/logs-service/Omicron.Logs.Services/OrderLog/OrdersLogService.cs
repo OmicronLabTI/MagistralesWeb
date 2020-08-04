@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="UsersService.cs" company="Axity">
+// <copyright file="OrdersLogService.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -12,46 +12,34 @@ namespace Omicron.Logs.Services.OrderLog
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Omicron.Logs.DataAccess.DAO.User;
+    using Omicron.Logs.DataAccess.DAO.OrderLog;
     using Omicron.Logs.Dtos.OrderLog;
     using Omicron.Logs.Entities.Model;
 
     /// <summary>
     /// Class User Service.
     /// </summary>
-    public class UsersService : IUsersService
+    public class OrdersLogService : IOrdersLogService
     {
         private readonly IMapper mapper;
 
-        private readonly IUserDao userDao;
+        private readonly IOrderLogDao orderLogDao;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsersService"/> class.
+        /// Initializes a new instance of the <see cref="OrdersLogService"/> class.
         /// </summary>
         /// <param name="mapper">Object to mapper.</param>
-        /// <param name="userDao">Object to userDao.</param>
-        public UsersService(IMapper mapper, IUserDao userDao)
+        /// <param name="orderLogDao">Object to userDao.</param>
+        public OrdersLogService(IMapper mapper, IOrderLogDao orderLogDao)
         {
             this.mapper = mapper;
-            this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
+            this.orderLogDao = orderLogDao ?? throw new ArgumentNullException(nameof(orderLogDao));
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        public async Task<bool> InsertOrderLog(List<OrderLogDto> orderlog)
         {
-            return this.mapper.Map<List<UserDto>>(await this.userDao.GetAllUsersAsync());
-        }
-
-        /// <inheritdoc/>
-        public async Task<UserDto> GetUserAsync(int userId)
-        {
-            return this.mapper.Map<UserDto>(await this.userDao.GetUserAsync(userId));
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> InsertUser(UserDto user)
-        {
-            return await this.userDao.InsertUser(this.mapper.Map<UserModel>(user));
+            return await this.orderLogDao.InsertOrderLog(this.mapper.Map<List<OrderLogModel>>(orderlog));
         }
     }
 }
