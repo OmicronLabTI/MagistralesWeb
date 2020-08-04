@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
 
     /// <summary>
@@ -35,13 +36,13 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// process the orders.
         /// </summary>
-        /// <param name="pedidosIds">the id of the orders.</param>
+        /// <param name="orderDto">the id of the orders.</param>
         /// <returns>the result.</returns>
         [Route("/processOrders")]
         [HttpPost]
-        public async Task<IActionResult> ProcessOrders(List<int> pedidosIds)
+        public async Task<IActionResult> ProcessOrders(ProcessOrderDto orderDto)
         {
-            var response = await this.pedidoFacade.ProcessOrders(pedidosIds);
+            var response = await this.pedidoFacade.ProcessOrders(orderDto);
             return this.Ok(response);
         }
     }

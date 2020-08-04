@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.DataAccess.DAO.User;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Catalogs.Users;
@@ -41,6 +42,7 @@ namespace Omicron.Pedidos.DependencyInjection
 
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();
+            Services.AddTransient<IPedidosDao, PedidosDao>();
 
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
@@ -52,7 +54,7 @@ namespace Omicron.Pedidos.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext))));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
         /// <summary>

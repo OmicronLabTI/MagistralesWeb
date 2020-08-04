@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -41,11 +42,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// process the orders.
         /// </summary>
-        /// <param name="pedidosIds">the pedidos list.</param>
+        /// <param name="orderDto">the pedidos list.</param>
         /// <returns>the result.</returns>
-        public async Task<ResultDto> ProcessOrders(List<int> pedidosIds)
+        public async Task<ResultDto> ProcessOrders(ProcessOrderDto orderDto)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessOrders(pedidosIds));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessOrders(this.mapper.Map<ProcessOrderModel>(orderDto)));
         }
     }
 }

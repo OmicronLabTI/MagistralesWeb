@@ -20,8 +20,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// process the orders.
         /// </summary>
-        /// <param name="pedidosIds">the pedidos list.</param>
+        /// <param name="orderDto">the pedidos list.</param>
         /// <returns>the result.</returns>
-        Task<ResultDto> ProcessOrders(List<int> pedidosIds);
+        Task<ResultDto> ProcessOrders(ProcessOrderDto orderDto);
     }
 }

@@ -22,6 +22,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="pedidosId">the ids of the orders.</param>
         /// <returns>the result.</returns>
-        Task<ResultModel> ProcessOrders(List<int> pedidosId);
+        Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId);
     }
 }
