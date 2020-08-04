@@ -198,6 +198,29 @@ th.centered {
 .tdcell-center{
   text-align: center;
 }
+.confirm-button-class {
+  background: #6C90B3;
+  color: white;
+  width: 80px;
+  height: 25px;
+  z-index: -1;
+  margin-left: 5px;
+}
+
+.cancel-button-class {
+  background: white;
+  color: black;
+  width: 80px;
+  height: 25px;
+  border: black 1px solid;
+  margin-right: 5px;
+}
+
+.swal2-actions {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 
 /*@media(min-width: 769px){
   .cont-center{
