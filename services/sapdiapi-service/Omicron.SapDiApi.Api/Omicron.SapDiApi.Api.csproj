@@ -210,9 +210,14 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Omicron.SapDiApi.Facade\Omicron.SapDiApi.Facade.csproj">
+      <Project>{474b53e6-c2e2-47ab-9d0c-9cb2d3a66f35}</Project>
+      <Name>Omicron.SapDiApi.Facade</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
