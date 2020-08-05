@@ -91,7 +91,7 @@
             ]
         },
         {
-            "statusId": 1,
+            "statusId": 3,
             "statusName": "Pendientes",
             "orders": [{
                 "no": 1,
@@ -136,7 +136,7 @@
             ]
         },
         {
-            "statusId": 1,
+            "statusId": 4,
             "statusName": "Terminado",
             "orders": [{
                 "no": 1,
@@ -181,7 +181,7 @@
             ]
         },
         {
-            "statusId": 1,
+            "statusId": 5,
             "statusName": "Reasignado",
             "orders": [{
                 "no": 1,

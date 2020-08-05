@@ -8,18 +8,7 @@
 import Foundation
 import ObjectMapper
 
-struct Section: Codable {
-    var statusName: String
-    var numberTask: Int
-    var imageIndicatorStatus: String
-    
-    init(statusName: String, numberTask: Int, imageIndicatorStatus: String) {
-        self.statusName = statusName
-        self.numberTask = numberTask
-        self.imageIndicatorStatus = imageIndicatorStatus
-    }
-}
-
+// MARK: UserModel
 class UserInfoResponse: HttpResponse {
     var response: User?
 
@@ -57,24 +46,108 @@ extension User: Mappable {
 }
 
 
-struct Order: Codable {
-    var no: Int
-    var baseDocument: String
-    var container: String
-    var tag: String
-    var plannedQuantity: String
-    var startDate: String
-    var finishDate: String
-    var descriptionProduct: String
-        
-    init(no: Int, baseDocument: String, container: String, tag: String, plannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
-        self.no = no
-        self.baseDocument = baseDocument
-        self.container = container
-        self.tag = tag
-        self.plannedQuantity = plannedQuantity
-        self.startDate = startDate
-        self.finishDate = finishDate
-        self.descriptionProduct = descriptionProduct
+// MARK: StatusModel
+class StatusResponse: HttpResponse {
+    var status: [Status]?
+    
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        status <- map["status"]
+    }
+}
+
+class Status {
+    var statusId: Int?
+    var statusName: String?
+    var orders: [Order]?
+    
+    required init?(map: Map) {}
+}
+
+extension Status: Mappable {
+    func mapping(map: Map) {
+        self.statusId <- map["statusId"]
+        self.statusName <- map["statusName"]
+        self.orders <- map["orders"]
+    }
+}
+
+class Order {
+    var no: Int?
+    var baseDocument: String?
+    var container: String?
+    var tag: String?
+    var plannedQuantity: String?
+    var startDate: String?
+    var finishDate: String?
+    var descriptionProduct: String?
+    required init?(map: Map) {}
+}
+
+extension Order: Mappable {
+    func mapping(map: Map) {
+        no <- map["no"]
+        baseDocument <- map["baseDocument"]
+        container <- map["container"]
+        tag <- map["tag"]
+        plannedQuantity <- map["plannedQuantity"]
+        startDate <- map["startDate"]
+        finishDate <- map["finishDate"]
+        descriptionProduct <- map["descriptionProduct"]
+    }
+}
+
+class StatusRequest: Codable {
+    var qfbId: Int
+    
+    init(qfbId: Int) {
+        self.qfbId = qfbId
+    }
+}
+
+
+
+//class Order: Codable {
+//    var no: Int
+//    var baseDocument: String
+//    var container: String
+//    var tag: String
+//    var plannedQuantity: String
+//    var startDate: String
+//    var finishDate: String
+//    var descriptionProduct: String
+//
+//    init(no: Int, baseDocument: String, container: String, tag: String, plannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
+//        self.no = no
+//        self.baseDocument = baseDocument
+//        self.container = container
+//        self.tag = tag
+//        self.plannedQuantity = plannedQuantity
+//        self.startDate = startDate
+//        self.finishDate = finishDate
+//        self.descriptionProduct = descriptionProduct
+//    }
+// }
+
+
+
+
+
+
+
+
+struct Section: Codable {
+    var statusName: String
+    var numberTask: Int
+    var imageIndicatorStatus: String
+    
+    init(statusName: String, numberTask: Int, imageIndicatorStatus: String) {
+        self.statusName = statusName
+        self.numberTask = numberTask
+        self.imageIndicatorStatus = imageIndicatorStatus
     }
 }

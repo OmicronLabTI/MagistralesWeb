@@ -9,7 +9,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-
 class RootViewController: UIViewController {
 
     // MARK: Outlets
@@ -20,61 +19,65 @@ class RootViewController: UIViewController {
     // Variables
     let disposeBag = DisposeBag()
     let rootViewModel = RootViewModel()
+    var dataStatus: [Section] = []
     lazy var inboxViewModel = self.getInboxViewModel()
-    var dataStatus:[Section] = []
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+//          NO Borrar  ++++++++++++
+//        NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
+//            print("--------------------> \(res)")
+//
+//            }, onError: { errorService in
+//                print("Error: \(errorService)")
+//        }).disposed(by: self.disposeBag)
         
-        NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
-            print("--------------------> \(res)")
-            
-            }, onError: { errorService in
-                print("Error: \(errorService)")
-        }).disposed(by: self.disposeBag)
+        
+        
         
         // Desde aqui consumo el servicio
-        var assignedOrders =
-        [
-            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-        ]
         
-        let inProcessOrdes =
-        [
-            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-        ]
-        
-        let penddingOrders =
-        [
-            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 5", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-            Order(no: 1, baseDocument: "Documento base 6", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-        ]
-        
-        let finishedOrders =
-        [
-            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-        ]
-        
-        let reasignedOrders =
-        [
-            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-        ]
+//        var assignedOrders =
+//        [
+//            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+//        ]
+//
+//        let inProcessOrdes =
+//        [
+//            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+//        ]
+//
+//        let penddingOrders =
+//        [
+//            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 2", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 3", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 4", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 5", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
+//            Order(no: 1, baseDocument: "Documento base 6", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+//        ]
+//
+//        let finishedOrders =
+//        [
+//            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+//        ]
+//
+//        let reasignedOrders =
+//        [
+//            Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+//        ]
         
         self.dataStatus = [
-            Section( statusName: "Asignadas", numberTask: assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
-            Section(statusName: "En Proceso", numberTask: inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
-            Section(statusName: "Pendientes", numberTask: penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
-            Section(statusName: "Terminado", numberTask: finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
-            Section(statusName: "Reasignado", numberTask: reasignedOrders.count, imageIndicatorStatus: "reassignedStatus")
+            Section(statusName: "Asignadas", numberTask:  1, imageIndicatorStatus: "assignedStatus"),
+            Section(statusName: "En Proceso", numberTask: 1, imageIndicatorStatus: "processStatus"),
+            Section(statusName: "Pendientes", numberTask: 1, imageIndicatorStatus: "pendingStatus"),
+            Section(statusName: "Terminado", numberTask: 1, imageIndicatorStatus: "finishedStatus"),
+            Section(statusName: "Reasignado", numberTask: 1, imageIndicatorStatus: "reassignedStatus")
         ]
 
         
@@ -104,8 +107,8 @@ class RootViewController: UIViewController {
         let index = NSIndexPath(row: 0, section: 0)
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { [weak self] indexPath in
-        let orden = Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-            self?.inboxViewModel?.setSelection(index: indexPath.row, orden: orden)
+        //let orden = Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
+          //  self?.inboxViewModel?.setSelection(index: indexPath.row, orden: orden)
             }).disposed(by: disposeBag)
     }
     

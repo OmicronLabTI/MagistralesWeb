@@ -71,18 +71,19 @@ class NetworkManager {
         let res: Observable<UserInfoResponse> = makeRequest(request: req)
         return res
     }
+    
+    func getStatusList(qfbId: StatusRequest) -> Observable<StatusResponse> {
+        let req: ApiService = ApiService.getStatusList(qfbId: qfbId)
+            let res: Observable<StatusResponse> = makeRequest(request: req)
+            return res
+        }
 
     func renew(data: Renew) -> Observable<LoginResponse> {
         let req: ApiService = ApiService.renew(data: data)
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
-    
-//    func getInfoUser() -> Observable<UserInfoResponse> {
-//        let req: ApiService = ApiService.getInfoUser()
-//        let res: Observable<UserInfoResponse> = makeRequest(request: req)
-//        return res
-//    }
+
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in

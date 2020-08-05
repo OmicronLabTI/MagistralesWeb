@@ -7,60 +7,42 @@
 //
 import RxSwift
 import RxCocoa
-
+import Moya // Borrar cuando se consuma bien el servicio
 class RootViewModel {
+    // MARK: Variables
+    var assignedOrders: [Order] = []
+    var inProcessOrdes: [Order] = []
+    var penddingOrders: [Order] = []
+    var finishedOrders: [Order] = []
+    var reassignedOrders: [Order] = []
+    
     public let dataStatus: PublishSubject<[Section]> = PublishSubject()
+    let disposeBag = DisposeBag()
+    
     init() {
-//        var assignedOrders =
-//        [
-//            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-//        ]
-//
-//        let inProcessOrdes =
-//        [
-//            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-//        ]
-//
-//        let penddingOrders =
-//        [
-//            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 2", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 3", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 4", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 5", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1"),
-//            Orden(No: 1, BaseDocument: "Documento base 6", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-//        ]
-//
-//        let finishedOrders =
-//        [
-//            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-//        ]
-//
-//        let reasignedOrders =
-//        [
-//            Orden(No: 1, BaseDocument: "Documento base 1", Container: "Contenedor 1", Tag: "Tag 1", PlannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-//        ]
-//
-//        self.dataStatus.onNext([
-//            Section( statusName: "Asignadas", numberTask: assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
-//            Section(statusName: "En Proceso", numberTask: inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
-//            Section(statusName: "Pendientes", numberTask: penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
-//            Section(statusName: "Terminado", numberTask: finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
-//            Section(statusName: "Reasignado", numberTask: reasignedOrders.count, imageIndicatorStatus: "reassignedStatus")
-//        ])
         
-//        self.dataStatus = ([
-//                Section( statusName: "Asignadas", numberTask: assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
-//                Section(statusName: "En Proceso", numberTask: inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
-//                Section(statusName: "Pendientes", numberTask: penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
-//                Section(statusName: "Terminado", numberTask: finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
-//                Section(statusName: "Reasignado", numberTask: reasignedOrders.count, imageIndicatorStatus: "reassignedStatus")
-//            ])
+        let manager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+        let statusRequest: StatusRequest = StatusRequest(qfbId: 1)
+        manager.getStatusList(qfbId: statusRequest).subscribe(onNext: { res in
+
+            for status in res.status! {
+                switch status.statusId {
+                case 1:
+                    self.assignedOrders = status.orders!
+               case 2:
+                    self.inProcessOrdes = status.orders!
+                case 3:
+                    self.penddingOrders = status.orders!
+                case 4:
+                    self.finishedOrders = status.orders!
+                case 5:
+                    self.reassignedOrders = status.orders!
+                default:
+                    print("")
+                }
+            }
+        }).disposed(by: disposeBag)
+        
     }
     
 }
