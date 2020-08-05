@@ -80,6 +80,18 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <returns>the list.</returns>
+        [HttpGet]
+        [Route("/qfb")]
+        public async Task<IActionResult> GetQfb()
+        {
+            var response = await this.userFacade.GetQfb();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// method to delete user.
         /// </summary>
         /// <param name="listIds">the list of id.</param>

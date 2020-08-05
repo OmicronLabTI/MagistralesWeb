@@ -117,5 +117,14 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetUser(userName));
         }
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetQfb()
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetQfb());
+        }
     }
 }

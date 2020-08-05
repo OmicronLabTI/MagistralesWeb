@@ -89,6 +89,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.GetUser(It.IsAny<string>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.GetQfb())
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -260,6 +264,25 @@ namespace Omicron.Usuarios.Test.Facade
 
             // act
             var response = await this.userFacade.GetUser(userName);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <returns>the qfb.</returns>
+        [Test]
+        public async Task GetQfb()
+        {
+            // act
+            var response = await this.userFacade.GetQfb();
 
             // Assert
             Assert.IsNotNull(response);
