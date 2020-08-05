@@ -39,7 +39,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrders(DateTime initDate, DateTime endDate)
         {
-
                 var query = await (from order in this.databaseContext.OrderModel
                                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                                    join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId

@@ -78,6 +78,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetOrderDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetPedidoWithDetail(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }

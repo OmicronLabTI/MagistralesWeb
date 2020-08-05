@@ -92,27 +92,6 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// filters the list by the params.
-        /// </summary>
-        /// <param name="orderModels">the list of data.</param>
-        /// <param name="parameters">the params.</param>
-        /// <returns>the data.</returns>
-        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters)
-        {
-            if (parameters.ContainsKey(ServiceConstants.Status))
-            {
-                orderModels = orderModels.Where(x => x.PedidoStatus.Equals(parameters[ServiceConstants.Status])).ToList();
-            }
-
-            if (parameters.ContainsKey(ServiceConstants.Qfb))
-            {
-                orderModels = orderModels.Where(x => x.Qfb == parameters[ServiceConstants.Qfb]).ToList();
-            }
-
-            return orderModels;
-        }
-
-        /// <summary>
         /// Gets the orders with their detail.
         /// </summary>
         /// <param name="pedidosIds">the detail.</param>
@@ -132,7 +111,28 @@ namespace Omicron.SapAdapter.Services.Sap
                 listData.Add(data);
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listData, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listData, null, null);
+        }
+
+        /// <summary>
+        /// filters the list by the params.
+        /// </summary>
+        /// <param name="orderModels">the list of data.</param>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters)
+        {
+            if (parameters.ContainsKey(ServiceConstants.Status))
+            {
+                orderModels = orderModels.Where(x => x.PedidoStatus.Equals(parameters[ServiceConstants.Status])).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.Qfb))
+            {
+                orderModels = orderModels.Where(x => x.Qfb == parameters[ServiceConstants.Qfb]).ToList();
+            }
+
+            return orderModels;
         }
     }
 }
