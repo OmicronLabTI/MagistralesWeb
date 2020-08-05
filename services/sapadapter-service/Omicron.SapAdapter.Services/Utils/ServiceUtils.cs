@@ -46,29 +46,31 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="filter">the dictionary.</param>
         /// <returns>the datetime.</returns>
-        public static DateTime GetDateFilter(Dictionary<string, string> filter)
+        public static Dictionary<string, DateTime> GetDateFilter(Dictionary<string, string> filter)
         {
-            if (!filter.ContainsKey(ServiceConstants.FilterDate) || filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Today))
+            var dictToReturn = new Dictionary<string, DateTime>();
+
+            if (filter.ContainsKey(ServiceConstants.FechaInicio))
             {
-                return DateTime.Today;
+                DateTime.TryParse(filter[ServiceConstants.FechaInicio], out var fechaInit);
+                dictToReturn.Add(ServiceConstants.FechaInicio, fechaInit);
+            }
+            else
+            {
+                dictToReturn.Add(ServiceConstants.FechaInicio, DateTime.Today.AddDays(-30));
             }
 
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.TwoWeeks))
+            if (filter.ContainsKey(ServiceConstants.FechaFin))
             {
-                return DateTime.Today.AddDays(-14);
+                DateTime.TryParse(filter[ServiceConstants.FechaFin], out var fechaInit);
+                dictToReturn.Add(ServiceConstants.FechaFin, fechaInit);
+            }
+            else
+            {
+                dictToReturn.Add(ServiceConstants.FechaFin, DateTime.Today);
             }
 
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Month))
-            {
-                return DateTime.Today.AddDays(-30);
-            }
-
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Week))
-            {
-                return DateTime.Today.AddDays(-7);
-            }
-
-            return DateTime.Today;
+            return dictToReturn;
         }
     }
 }

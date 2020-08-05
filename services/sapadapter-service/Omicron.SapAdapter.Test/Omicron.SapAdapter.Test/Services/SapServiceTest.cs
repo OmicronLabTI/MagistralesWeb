@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -65,7 +66,45 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FilterDate, ServiceConstants.Today },
+                { ServiceConstants.FechaInicio, DateTime.Now.ToString() },
+                { ServiceConstants.FechaFin, DateTime.Now.ToString() },
+                { ServiceConstants.Status, "O" },
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersTodayNoDates()
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>();
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersTodayById()
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, "100" },
             };
 
             // act
