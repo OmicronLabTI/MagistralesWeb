@@ -3,7 +3,7 @@ import {IUserListRes, IUserReq} from '../../model/http/users';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dialog.component';
 import {UsersService} from '../../services/users.service';
-import { CONST_STRING} from '../../constants/const';
+import {CONST_NUMBER, CONST_STRING} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
 import {Messages} from '../../constants/messages';
@@ -19,12 +19,12 @@ export class UserListComponent implements OnInit {
     isAllComplete = false;
     displayedColumns: string[] = ['delete', 'names', 'lastName', 'role', 'status', 'actions'];
     dataSource = new MatTableDataSource<IUserReq>();
-    pageSize = 10;
+    pageSize = CONST_NUMBER.ten;
     pageEvent: PageEvent;
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    lengthPaginator = 0;
-    offset = 0;
-    limit = 0;
+    lengthPaginator = CONST_NUMBER.zero;
+    offset = CONST_NUMBER.zero;
+    limit = CONST_NUMBER.ten;
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
                 private errorService: ErrorService) {
     }
@@ -34,12 +34,12 @@ export class UserListComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
 
-    getUsers(isPaginator: boolean = false) {
+    getUsers() {
 
-        this.usersService.getUsers(isPaginator ? this.offset : 0, isPaginator ? this.limit : 10).subscribe((userRes: IUserListRes) => {
+        this.usersService.getUsers(this.offset, this.limit).subscribe((userRes: IUserListRes) => {
                 this.lengthPaginator = 21;
                 this.dataSource.data = userRes.response;
-                console.log('res user: ', userRes.response);
+                console.log('res user: ', userRes);
                 this.dataSource.data.map( user => {
                     user.isChecked = false;
                 });
@@ -72,7 +72,7 @@ export class UserListComponent implements OnInit {
                 if (result.isConfirmed) {
                     this.usersService.deleteUsers(this.dataSource.data.filter(user => user.isChecked).map(user => user.id)).subscribe(
                         () => {
-                            this.getUsers(true);
+                            this.getUsers();
                         },
                         error => {
                             this.errorService.httpError(error);
@@ -99,21 +99,9 @@ export class UserListComponent implements OnInit {
     }
 
     changeDataEvent(event: PageEvent) {
-        console.log('before offset: ', this.offset, ' before limit : ', this.limit);
-        console.log('event: ', event);
-     /*   if (event.previousPageIndex < event.pageIndex) {
-            console.log('if')
-            this.offset = (event.pageSize * (event.pageIndex));
-            this.limit = (event.pageSize * (event.pageIndex + 1));
-        } else {
-            console.log('else')
-            this.offset = (event.pageIndex) * event.pageSize;
-            this.limit = (event.pageIndex + 1) * event.pageSize;
-        }*/
         this.offset = (event.pageSize * (event.pageIndex));
         this.limit = (event.pageSize * (event.pageIndex + 1));
-        console.log('offset: ', this.offset, ' limit : ', this.limit);
-        this.getUsers(true);
+        this.getUsers();
         return event;
     }
 }
