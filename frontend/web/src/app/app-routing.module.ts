@@ -20,10 +20,6 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'table',
-    loadChildren: () => import('./pages/table-test/table-test.module').then(m => m.TableTestModule),
-  },
-  {
     path: 'pedidos',
     component: PedidosComponent,
     canActivate: [GuardService]
