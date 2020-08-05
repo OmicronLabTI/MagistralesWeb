@@ -31,7 +31,7 @@
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button color="primary">
+            <button mat-raised-button class="button-blue">
             &nbsp; Agregar componente &nbsp; 
             </button>
             &nbsp;
@@ -49,7 +49,97 @@
     
     <div class="list-users-container">
         <mat-tab-group>
-            <mat-tab label="General"> Content 2 </mat-tab>
+            <mat-tab label="General">
+                <div>
+                    <mat-form-field appearance="outline" class="generalinput readonly" style="width: 15.8%;">
+                        <mat-label>Tipo</mat-label>
+                        <input matInput placeholder="Tipo" readonly>
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>Estado</mat-label>
+                        <input matInput placeholder="Estado">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>Cantidad planificada</mat-label>
+                        <input matInput placeholder="Cantidad planificada">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>Nombre de</mat-label>
+                        <input matInput placeholder="Nombre de">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>Almacén</mat-label>
+                        <input matInput placeholder="Almacén">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>N°</mat-label>
+                        <input matInput placeholder="N°">
+                        
+                    </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="generalinput">
+                        <mat-label></mat-label>
+                        <input matInput placeholder="Placeholder">
+                        
+                    </mat-form-field>
+                </div>
+            </mat-tab>
             <mat-tab label="Componentes">
                 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
                     <ng-container matColumnDef="seleccion">&nbsp;
