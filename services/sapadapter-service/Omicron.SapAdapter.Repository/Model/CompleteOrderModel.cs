@@ -64,6 +64,12 @@ namespace Omicron.SapAdapter.Entities.Model
         public string PedidoStatus { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Qfb { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets IsChecked.
         /// </summary>
         /// <value>The IsChecked.</value>

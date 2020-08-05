@@ -42,5 +42,11 @@ namespace Omicron.Usuarios.Dtos.Models
         /// </summary>
         /// <value>The response.</value>
         public object Response { get; set; }
+
+        /// <summary>
+        /// Gets or sets Response.
+        /// </summary>
+        /// <value>The response.</value>
+        public object Comments { get; set; }
     }
 }

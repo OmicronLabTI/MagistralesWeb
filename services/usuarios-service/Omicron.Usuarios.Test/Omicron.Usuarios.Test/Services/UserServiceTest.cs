@@ -121,7 +121,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.IsFalse(response.Success);
         }
 
         /// <summary>
