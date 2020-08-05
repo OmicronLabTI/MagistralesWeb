@@ -79,5 +79,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="userName">the user.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> GetUser(string userName);
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <param name="roleId">The roleid.</param>
+        /// <returns>the list of qfb.</returns>
+        Task<ResultModel> GetUsersByRole(string roleId);
     }
 }

@@ -47,8 +47,21 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>get the orders.</returns>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
+            var orders = new List<CompleteOrderModel>();
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-            var orders = await this.sapDao.GetAllOrders(dateFilter);
+
+            if (parameters.ContainsKey(ServiceConstants.DocNum))
+            {
+                int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
+                orders = (await this.sapDao.GetAllOrdersById(docNum)).ToList();
+            }
+            else
+            {
+                orders = (await this.sapDao.GetAllOrders(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+            }
+
+            // var usersQfb = await this.pedidosService.GetUserPedidos(details.Select(x => x.OrdenFabricacionId).Distinct().ToList());
+            orders = this.FilterList(orders, parameters);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -58,7 +71,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum);
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count());
         }
 
         /// <summary>
@@ -70,13 +83,33 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(docId);
 
-            // var usersQfb = await this.pedidosService.GetUserPedidos(details.Select(x => x.OrdenFabricacionId).Distinct().ToList());
             details.ToList().ForEach(x =>
             {
                 x.Status = !string.IsNullOrEmpty(x.Status) && ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status;
             });
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
+        }
+
+        /// <summary>
+        /// filters the list by the params.
+        /// </summary>
+        /// <param name="orderModels">the list of data.</param>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters)
+        {
+            if (parameters.ContainsKey(ServiceConstants.Status))
+            {
+                orderModels = orderModels.Where(x => x.PedidoStatus.Equals(parameters[ServiceConstants.Status])).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.Qfb))
+            {
+                orderModels = orderModels.Where(x => x.Qfb == parameters[ServiceConstants.Qfb]).ToList();
+            }
+
+            return orderModels;
         }
 
         /// <summary>
