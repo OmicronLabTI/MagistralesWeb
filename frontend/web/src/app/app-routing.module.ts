@@ -7,16 +7,16 @@ import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.co
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren:() => import('./pages/login/login.module').then(m => m.LoginModule)
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
   },
   {
     path: 'home',
-    loadChildren:() => import('./pages/home/home.module').then(m => m.HomeModule),
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
     canActivate: [GuardService]
   },
   {
     path: 'userList',
-    loadChildren:() => import('./pages/user-list/user-list.module').then(m => m.UserListModule),
+    loadChildren: () => import('./pages/user-list/user-list.module').then(m => m.UserListModule),
     canActivate: [GuardService]
   },
   {
@@ -32,6 +32,7 @@ const routes: Routes = [
   {
     path: '**',
     redirectTo: '/login'
+
   }
 ];
 

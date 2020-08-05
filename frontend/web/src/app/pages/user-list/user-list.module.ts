@@ -14,6 +14,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import {MatSelectModule} from '@angular/material/select';
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
-        MatSelectModule
+        MatSelectModule,
+        MatPaginatorModule
     ],
     entryComponents: [AddUserDialogComponent],
 })
