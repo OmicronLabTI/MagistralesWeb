@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {UsersService} from "../../services/users.service";
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -73,25 +74,33 @@ export class TableTestComponent implements OnInit {
         {position: 29, name: 'Potassium', weight: 39.0983, symbol: 'K'},
         {position: 30, name: 'Calcium', weight: 40.078, symbol: 'Ca'}
     ];
-  dataSource = new MatTableDataSource(this.ELEMENT_DATA);
-  pageSize = 10;
+    pageSize = 10;
   previousPageIndex: number[] = [];
-  constructor() { }
+    dataSource = new MatTableDataSource();
+    constructor(private usersService: UsersService) {
+    }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.data = this.ELEMENT_DATA;
+    console.log('data init: ', this.dataSource.data);
   }
 
-    changeDataEvent(event: PageEvent) {
+     changeDataEvent(event: PageEvent) {
       console.log('pageSize: ', event.pageSize);
       const oldData: any[] = this.dataSource.data;
       if (event.previousPageIndex < event.pageIndex && !this.previousPageIndex.includes(event.pageIndex)) {
           console.log('exec data')
           if (event.pageIndex === 1) {
-              this.secondLote.forEach((row, index) => {
-                  oldData[((event.pageIndex * event.pageSize) + index)] = row;
-                  // console.log(' row: ', row, ' index: ', index);
-              });
+             // setTimeout(function(){
+                  this.secondLote.forEach((row, index) => {
+                      oldData[((event.pageIndex * event.pageSize) + index)] = row;
+                      // console.log(' row: ', row, ' index: ', index);
+                  });
+             // }, 3000);
+           /*  await this.usersService.getUsers(0, 10).toPromise().then(
+                  user => console.log(' user: ', user)
+              );*/
           } else {
               this.thirdLote.forEach((row, index) => {
                   oldData[((event.pageIndex * this.pageSize) + index)] = row;

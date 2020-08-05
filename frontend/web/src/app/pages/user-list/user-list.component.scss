@@ -23,7 +23,18 @@
   width: 20px;
   fill: rgba(27, 85, 226, 0.23921568627450981);
 }
-
+.table-container {
+  width: 100%;
+  height: 80%;
+  overflow-y: scroll;
+}
+.paginator-container {
+  width: 100%;
+  height: 20%;
+}
+.fixed-header{
+  position: fixed;
+}
 /*td.mat-cell { //to see pretty
   !* row padding *!
   padding: 16px 0;
