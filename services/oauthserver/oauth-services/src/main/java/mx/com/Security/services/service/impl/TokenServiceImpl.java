@@ -27,11 +27,8 @@ public class TokenServiceImpl implements ITokenService {
     @Value("${security.values.secret}")
     private String secretWord;
 
-    @Value("${security.values.ttl}")
-    private int ttl;
-
     @Override
-    public String generateToken(String clientId, String user, String profile) {
+    public String generateToken(String clientId, String user, String profile, int ttl) {
 
         String token;
         try {

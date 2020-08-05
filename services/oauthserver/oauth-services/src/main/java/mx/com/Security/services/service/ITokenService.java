@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface ITokenService{
 
-    String generateToken(String clientId, String user, String profile);
+    String generateToken(String clientId, String user, String profile, int ttl);
 
     void validateToken(String token);
 

@@ -12,6 +12,7 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
     using Omicron.Usuarios.Entities.Model;
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -94,6 +95,16 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
             this.databaseContext.Usuarios.Update(user);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// looks users based in the roleId.
+        /// </summary>
+        /// <param name="roleId">the role id.</param>
+        /// <returns>the result.</returns>
+        public async Task<IEnumerable<UserModel>> GetUsersByRole(int roleId)
+        {
+            return await this.databaseContext.Usuarios.Where(x => x.Role == roleId && x.Activo == 1).ToListAsync();
         }
     }
 }

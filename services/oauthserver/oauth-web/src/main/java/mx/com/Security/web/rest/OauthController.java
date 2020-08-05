@@ -41,7 +41,7 @@ public class OauthController {
     public ResponseEntity renewToken(@RequestBody TokenRenewRequestTO tokenRenewRequest) {
 
         LOG.info("Se invoca /renew");
-        TokenRefreshResponseTO tokenRefreshResponse = iOauthFacade.renew(tokenRenewRequest);
+        TokenResponseTO tokenRefreshResponse = iOauthFacade.renew(tokenRenewRequest);
         return new ResponseEntity<>(tokenRefreshResponse, HttpStatus.OK);
     }
 
