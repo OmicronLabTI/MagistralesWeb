@@ -3,6 +3,7 @@ export const CONST_NUMBER = {
     one: 1,
     two: 2,
     three: 3,
+    ten: 10,
     timeToast: 2000
 
 };

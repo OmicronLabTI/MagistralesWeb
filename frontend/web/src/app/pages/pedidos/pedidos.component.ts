@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { IPedidosListRes} from '../../model/http/pedidos';
-import { createElementCssSelector } from '@angular/compiler';
+import {IPedidoReq, IPedidosListRes, ParamsPedidos} from '../../model/http/pedidos';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {CONST_NUMBER} from '../../constants/const';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-pedidos',
@@ -10,33 +12,41 @@ import { createElementCssSelector } from '@angular/compiler';
   styleUrls: ['./pedidos.component.scss']
 })
 export class PedidosComponent implements OnInit {
-  allComplete: boolean = false;
-  actualPage: number = 0;
-  params = {
-    date: "month",
-    offset: this.actualPage,
-    limit: 5
-  };
-  displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions']
-  dataSource = new MatTableDataSource()
-
-  constructor(private pedidosService: PedidosService) { }
+  allComplete = false;
+  params = new ParamsPedidos();
+  // tslint:disable-next-line:max-line-length
+  displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions'];
+  dataSource = new MatTableDataSource<IPedidoReq>();
+  pageSize = CONST_NUMBER.ten;
+  pageEvent: PageEvent;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  lengthPaginator = CONST_NUMBER.zero;
+  offset = CONST_NUMBER.zero;
+  limit = CONST_NUMBER.ten;
+  fullDate: string[] = [];
+  constructor(private pedidosService: PedidosService, private datePipe: DatePipe) {
+    this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
+    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+  }
 
   ngOnInit() {
     this.getPedidos();
+    this.dataSource.paginator = this.paginator;
   }
 
   getPedidos() {
-    this.params['offset'] = this.actualPage;
+    this.params.offset = this.offset;
+    this.params.limit = this.limit;
     this.pedidosService.getPedidos(this.params).subscribe(
       (pedidoRes: IPedidosListRes) => {
-        pedidoRes.response.forEach(element => {
-          element.pedidoStatus = element.pedidoStatus == "O" ? "Abierto" : "Cerrado";
-          console.log("asdasdasdsd");
-          element.class = element.pedidoStatus == "Abierto" ? "green": "mat-primary";
-          this.dataSource.data.push(element);
-        })
-        this.dataSource._updateChangeSubscription();
+        this.lengthPaginator = pedidoRes.comments;
+        console.log('pedidos res: ', pedidoRes);
+        this.dataSource.data = pedidoRes.response;
+        this.dataSource.data.forEach(element => {
+          element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
+          element.class = element.pedidoStatus === "Abierto" ? "green": "mat-primary";
+        });
       }
     );
   }
@@ -60,13 +70,20 @@ export class PedidosComponent implements OnInit {
     this.dataSource.data.forEach(t => t['isChecked'] = completed);
   }
 
-  setSpanTitle(menuValue: any, title: string, date: string){
+  setSpanTitle(menuValue: any, title: string) {
     menuValue.textContent = title;
-    this.params['date'] = date;
-    this.params['offset'] = 0;
+    this.params.offset = this.offset;
+    this.params.limit = this.limit;
     this.dataSource.data = [];
     this.dataSource._updateChangeSubscription();
     this.getPedidos();
+  }
+
+  changeDataEvent(event: PageEvent) {
+    this.offset = (event.pageSize * (event.pageIndex));
+    this.limit = (event.pageSize * (event.pageIndex + 1));
+    this.getPedidos();
+    return event;
   }
 
 }

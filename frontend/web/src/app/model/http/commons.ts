@@ -3,4 +3,5 @@ export class BaseResponseHttp {
     userError: any;
     exceptionMessage: any;
     success: boolean;
+    comments?: number;
 }
