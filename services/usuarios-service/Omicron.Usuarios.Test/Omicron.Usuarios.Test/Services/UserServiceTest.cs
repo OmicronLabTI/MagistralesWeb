@@ -318,8 +318,10 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         [Test]
         public async Task GetQfb()
         {
+            var roleId = "1";
+
             // act
-            var response = await this.userServices.GetQfb();
+            var response = await this.userServices.GetUsersByRole(roleId);
 
             // assert
             Assert.IsNotNull(response);

@@ -82,12 +82,13 @@ namespace Omicron.Usuarios.Api.Controllers
         /// <summary>
         /// gets the qfb.
         /// </summary>
+        /// <param name="roleId">the roleId.</param>
         /// <returns>the list.</returns>
         [HttpGet]
-        [Route("/qfb")]
-        public async Task<IActionResult> GetQfb()
+        [Route("/role/{roleId}")]
+        public async Task<IActionResult> GetQfb(string roleId)
         {
-            var response = await this.userFacade.GetQfb();
+            var response = await this.userFacade.GetUsersByRole(roleId);
             return this.Ok(response);
         }
 

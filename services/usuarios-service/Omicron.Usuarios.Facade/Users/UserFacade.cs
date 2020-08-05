@@ -121,10 +121,11 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <summary>
         /// gets the qfb.
         /// </summary>
+        /// <param name="roleId">the roleId.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultDto> GetQfb()
+        public async Task<ResultDto> GetUsersByRole(string roleId)
         {
-            return this.mapper.Map<ResultDto>(await this.usersService.GetQfb());
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUsersByRole(roleId));
         }
     }
 }

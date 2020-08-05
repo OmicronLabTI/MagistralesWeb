@@ -90,7 +90,7 @@ namespace Omicron.Usuarios.Test.Facade
                 .Returns(Task.FromResult(result));
 
             mockServices
-                .Setup(m => m.GetQfb())
+                .Setup(m => m.GetUsersByRole(It.IsAny<string>()))
                 .Returns(Task.FromResult(result));
 
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
@@ -281,8 +281,11 @@ namespace Omicron.Usuarios.Test.Facade
         [Test]
         public async Task GetQfb()
         {
+            // Arrange
+            var roleid = "1";
+
             // act
-            var response = await this.userFacade.GetQfb();
+            var response = await this.userFacade.GetUsersByRole(roleid);
 
             // Assert
             Assert.IsNotNull(response);

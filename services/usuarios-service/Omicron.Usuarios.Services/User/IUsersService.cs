@@ -83,7 +83,8 @@ namespace Omicron.Usuarios.Services.User
         /// <summary>
         /// gets the qfb.
         /// </summary>
+        /// <param name="roleId">The roleid.</param>
         /// <returns>the list of qfb.</returns>
-        Task<ResultModel> GetQfb();
+        Task<ResultModel> GetUsersByRole(string roleId);
     }
 }
