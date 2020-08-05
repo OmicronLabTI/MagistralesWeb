@@ -310,5 +310,21 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetQfb()
+        {
+            var roleId = "1";
+
+            // act
+            var response = await this.userServices.GetUsersByRole(roleId);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

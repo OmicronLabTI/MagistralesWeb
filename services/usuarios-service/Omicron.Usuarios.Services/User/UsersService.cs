@@ -189,5 +189,17 @@ namespace Omicron.Usuarios.Services.User
             var user = await this.userDao.GetUserByUserName(userName);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, user, null, null);
         }
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <param name="roleId">The roleid.</param>
+        /// <returns>the list of qfb.</returns>
+        public async Task<ResultModel> GetUsersByRole(string roleId)
+        {
+            int.TryParse(roleId, out int roleInt);
+            var users = await this.userDao.GetUsersByRole(roleInt);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, users, null, users.Count());
+        }
     }
 }
