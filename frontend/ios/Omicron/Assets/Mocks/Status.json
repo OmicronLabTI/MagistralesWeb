@@ -1,0 +1,229 @@
+{
+    "status": [
+        {
+            "statusId": 1,
+            "statusName": "Asignadas",
+            "orders": [{
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            }
+            ]
+        },
+        {
+            "statusId": 2,
+            "statusName": "En proceso",
+            "orders": [{
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            }
+            ]
+        },
+        {
+            "statusId": 1,
+            "statusName": "Pendientes",
+            "orders": [{
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            }
+            ]
+        },
+        {
+            "statusId": 1,
+            "statusName": "Terminado",
+            "orders": [{
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            }
+            ]
+        },
+        {
+            "statusId": 1,
+            "statusName": "Reasignado",
+            "orders": [{
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            }
+            ]
+        }
+    ]
+}
