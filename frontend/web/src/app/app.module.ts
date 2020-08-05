@@ -32,7 +32,7 @@ import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula
         FlexLayoutModule,
         FormsModule,
         InfiniteScrollModule,
-        MatTooltipModule
+        MatTooltipModule        
     ],
   providers: [
     APP_PROVIDERS

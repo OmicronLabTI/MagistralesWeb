@@ -21,6 +21,7 @@ export class IFormulaReq {
 }
 
 export class IFormulaDetalleReq {
+    isChecked: boolean;
     numero: string;
     descripcion: string;
     cantidadBase: number;

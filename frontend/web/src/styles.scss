@@ -129,12 +129,12 @@ body {
 }
 
 .table-toolbar .table-toolbar-search{
-  width: 20%;
+  width: 10%;
   float: left;
 }
 
 .table-toolbar .table-toolbar-buttons{
-  width: 80%;
+  width: 90%;
   float: right;
   text-align: right;
 }
@@ -306,4 +306,41 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 .mat-stroked-button.green {
   color: #8dbf42 !important;
   border: 1px solid #8dbf42 !important;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: rgba(108, 144, 179, 1);
+}
+
+.mat-input-element {
+  caret-color: rgba(108, 144, 179, 1) !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: rgba(108, 144, 179, 1) !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+}
+
+td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+    padding: 0 3px !important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #fff;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 .75em 0 .75em !important;
+}
+
+.mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+  transform: translateY(0%) !important;
 }

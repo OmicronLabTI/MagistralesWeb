@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
-import { IFormulaDetalleRes} from "../../model/http/detalleformula";
+import { IFormulaDetalleRes, IFormulaDetalleReq} from "../../model/http/detalleformula";
 import { ActivatedRoute } from "@angular/router";
 import {TooltipPosition} from "@angular/material/tooltip";
-import {FormControl} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+
+
+const ELEMENT_DATA: IFormulaDetalleReq[] = [
+  {isChecked: false, numero: "MP-0001", descripcion: "BENZOTO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
+  {isChecked: false, numero: "MP-0002", descripcion: "CLORATO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
+  {isChecked: false, numero: "MP-0003", descripcion: "CLORIDRATO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
+];
 
 @Component({
   selector: 'app-detalle-formula',
   templateUrl: './detalle-formula.component.html',
   styleUrls: ['./detalle-formula.component.scss']
 })
+
 export class DetalleFormulaComponent implements OnInit {
   allComplete: boolean = false;
   actualPage: number = 0;
@@ -19,39 +27,29 @@ export class DetalleFormulaComponent implements OnInit {
   displayedColumns: string[] = [
     'seleccion',
     'cons',
-    'ordenFabricacionId',
-    'codigoProducto',
-    'descripcionProducto',
-    'qtyPlanned',
-    'fechaOF',
-    'fechaOFFin',
-    'qfb',
-    'statusOF',
-    'actions'
+    'numero',
+    'descripcion',
+    'cantbase',
+    'cantreq',
+    'consumido',
+    'disponible',
+    'unidad',
+    'almacen',
+    'cantpend',
+    'enstock',
+    'cantalmacen'
   ]
-  dataSource = new MatTableDataSource()
+  dataSource = new MatTableDataSource();
 
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.docNum = params.get("id")
-      this.docStatus = params.get("status")
-    })
-    this.getDetallePedido();
+    this.dataSource.data = ELEMENT_DATA;
+    console.log(this.dataSource.data);
   }
 
   getDetallePedido() {
-    this.pedidosService.getDetallePedido(this.docNum).subscribe(
-      (pedidoDetalleRes: IPedidoDetalleListRes) => {
-        pedidoDetalleRes.response.forEach(element => {
-          element.fechaOf = element.fechaOf == null ? "----------" : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? "----------" : element.fechaOfFin.substring(10, 0);
-          this.dataSource.data.push(element);
-        })
-        this.dataSource._updateChangeSubscription();
-      }
-    );
+    
   }
 
   updateAllComplete() {

@@ -1,0 +1,60 @@
+.seleccion{
+    width: 3% !important;
+}
+
+.consecutivo{
+    width: 3% !important;
+}
+
+.numero{
+    width: 8% !important;
+}
+
+.descripcion{
+    width: 13% !important;
+}
+
+.cantbase{
+    width: 8% !important;
+}
+
+.cantreq{
+    width: 8% !important;
+}
+
+.consumido{
+    width: 8% !important;
+}
+
+.disponible{
+    width: 8% !important;
+}
+
+.unidad{
+    width: 8% !important;
+}
+
+.almacen{
+    width: 8% !important;
+}
+
+.cantpend{
+    width: 8% !important;
+}
+
+.enstock{
+    width: 8% !important;
+}
+
+.cantalmacen{
+    width: 10% !important;
+}
+
+::ng-deep .mat-form-field-infix,
+::ng-deep .mat-form-field-infix,
+::ng-deep .mat-form-field-infix,
+::ng-deep .mat-form-field-infix { width: 80px !important; }
+
+::ng-deep .mat-form-field-underline {
+    display: none;
+}
