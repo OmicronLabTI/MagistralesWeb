@@ -13,12 +13,14 @@ import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PedidosComponent,
     PedidoDetalleComponent,
+    DetalleFormulaComponent,
   ],
     imports: [
         BrowserModule,

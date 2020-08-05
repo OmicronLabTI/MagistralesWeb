@@ -1,0 +1,130 @@
+
+<div class="container-list-page">
+    <div class="header-page">
+      <div class="title-list-container">
+        <span>Orden de fabricación</span>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle del pedido</div>
+      </div>
+      <div class="filter-select">
+        <div class="docbase">Documento base: {{docNum}} </div>
+        <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{docStatus}}</span> </div>
+      </div>
+    </div>
+  
+    <div class="table-toolbar">
+        <div class="table-toolbar-search">
+
+        </div>
+        <div class="table-toolbar-buttons">
+            <button mat-raised-button class="button-blue">
+            &nbsp; Mi lista de componentes &nbsp; 
+            </button>
+            &nbsp;
+            &nbsp;
+            <button mat-raised-button class="button-blue">
+            &nbsp; Crear lista de componentes &nbsp; 
+            </button>
+            &nbsp;
+            &nbsp;
+            <button mat-stroked-button color="primary">
+            &nbsp; Agregar componente &nbsp; 
+            </button>
+            &nbsp;
+            &nbsp;
+            <button mat-raised-button class="button-blue">
+            &nbsp; Eliminar componente &nbsp; 
+            </button>
+            &nbsp;
+            &nbsp;
+            <button mat-raised-button class="button-blue">
+            &nbsp; Guardar &nbsp; 
+            </button>
+        </div>
+    </div>
+    
+    <div class="list-users-container">
+        <mat-tab-group>
+            <mat-tab label="General"> Content 2 </mat-tab>
+            <mat-tab label="Componentes">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                    <ng-container matColumnDef="seleccion">&nbsp;
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="seleccion">
+                        <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
+                    </td>
+                    </ng-container>
+                    <ng-container matColumnDef="cons">
+                    <th mat-header-cell *matHeaderCellDef class="centered">#</th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center consecutivo"> {{i+1}} </td>
+                    </ng-container>
+                
+                    <ng-container matColumnDef="ordenFabricacionId">
+                        <th mat-header-cell *matHeaderCellDef class=""> N°</th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> <form class="example-form">
+                            <mat-form-field class="example-full-width">
+                              <input matInput value="{{element.ordenFabricacionId}}" style="width: 40px;">
+                            </mat-form-field></form></td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="codigoProducto">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdemail mobile-hide codigoproducto"> {{element.codigoProducto}} </td>
+                    </ng-container>
+                
+                    <ng-container matColumnDef="descripcionProducto">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CANTIDAD BASE </th>
+                    <td mat-cell matTooltip="EMULSION COLAGENO ELASTINA 10%, DIOXIDO DE TITANIO 5%, HIALURONICO 3%, MANTECA DE KARITE 3%, VIT C 4"
+                    matTooltipPosition="right"
+                    aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{element.descripcionProducto}} </td>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="qtyPlanned">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CTD. REQUERIDA </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide cantplan"> {{element.qtyPlanned}} </td>| number:'1.2-2'
+                    </ng-container>
+        
+                    <ng-container matColumnDef="fechaOF">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CONSUMIDO </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="fechaOFFin">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  DISPONIBLE </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaOfFin}} </td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="qfb">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  UNIDAD </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.qfb}} </td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="statusOF">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ALMACÉN </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.status}}</button> </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="statusOF">
+                        <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> CANTIDAD PENDIENTE </th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.status}}</button> </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="statusOF">
+                        <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> EN STOCK </th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.status}}</button> </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="statusOF">
+                        <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> CANTIDAD EN ALMACÉN </th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button color="primary">{{element.status}}</button> </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </mat-tab>
+            <mat-tab label="Comentarios"> Content 3 </mat-tab>
+        </mat-tab-group>
+        
+    </div>
+  </div>
