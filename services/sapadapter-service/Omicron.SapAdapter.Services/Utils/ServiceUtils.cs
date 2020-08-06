@@ -53,41 +53,54 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (filter.ContainsKey(ServiceConstants.FechaInicio))
             {
-                var dateArrayNum = new List<int>();
-                var dateArray = filter[ServiceConstants.FechaInicio].Split("/");
-                dateArray.ToList().ForEach(x =>
-                {
-                    int.TryParse(x, out int result);
-                    dateArrayNum.Add(result);
-                });
-
-                var date = new DateTime(dateArrayNum[2], dateArrayNum[1], dateArrayNum[0]);
-                dictToReturn.Add(ServiceConstants.FechaInicio, date);
-            }
-            else
-            {
-                dictToReturn.Add(ServiceConstants.FechaInicio, DateTime.Today.AddDays(-30));
+                return GetDictDates(filter[ServiceConstants.FechaInicio]);
             }
 
             if (filter.ContainsKey(ServiceConstants.FechaFin))
             {
-                var dateArrayNum = new List<int>();
-                var dateArray = filter[ServiceConstants.FechaFin].Split("/");
-                dateArray.ToList().ForEach(x =>
-                {
-                    int.TryParse(x, out int result);
-                    dateArrayNum.Add(result);
-                });
-
-                var date = new DateTime(dateArrayNum[2], dateArrayNum[1], dateArrayNum[0]);
-                dictToReturn.Add(ServiceConstants.FechaFin, date);
-            }
-            else
-            {
-                dictToReturn.Add(ServiceConstants.FechaFin, DateTime.Today);
+                return GetDictDates(filter[ServiceConstants.FechaFin]);
             }
 
             return dictToReturn;
+        }
+
+        /// <summary>
+        /// gets the dictionary.
+        /// </summary>
+        /// <param name="dateRange">the date range.</param>
+        /// <returns>the data.</returns>
+        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
+        {
+            var dictToReturn = new Dictionary<string, DateTime>();
+            var dates = dateRange.Split("-");
+
+            var dateInicioArray = GetDatesAsArray(dates[0]);
+            var dateFinArray = GetDatesAsArray(dates[1]);
+
+            var dateInicio = new DateTime(dateInicioArray[2], dateInicioArray[1], dateInicioArray[0]);
+            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0]);
+            dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
+            dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
+            return dictToReturn;
+        }
+
+        /// <summary>
+        /// split the dates to int array.
+        /// </summary>
+        /// <param name="date">the date in string.</param>
+        /// <returns>the dates.</returns>
+        private static List<int> GetDatesAsArray(string date)
+        {
+            var dateArrayNum = new List<int>();
+            var dateArray = date.Split("/");
+
+            dateArray.ToList().ForEach(x =>
+            {
+                int.TryParse(x, out int result);
+                dateArrayNum.Add(result);
+            });
+
+            return dateArrayNum;
         }
     }
 }
