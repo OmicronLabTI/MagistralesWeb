@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace Omicron.SapAdapter.Test.Services
     /// class for the test.
     /// </summary>
     [TestFixture]
-    public class SapServiceTest
+    public class SapServiceTest : BaseTest
     {
         private ISapService sapService;
 
@@ -42,7 +43,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
+            this.context.AsesorModel.Add(this.GetAsesorModel());
+            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
+            this.context.OrderModel.AddRange(this.GetOrderModel());
+            this.context.ProductoModel.AddRange(this.GetProductoModel());
 
+            this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
 
             this.sapDao = new SapDao(this.context);
@@ -59,7 +66,10 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FilterDate, ServiceConstants.Today },
+                { ServiceConstants.FechaInicio, DateTime.Now.ToString() },
+                { ServiceConstants.FechaFin, DateTime.Now.ToString() },
+                { ServiceConstants.Status, "O" },
+                { ServiceConstants.Qfb, "abc" },
             };
 
             // act
@@ -73,13 +83,10 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task GetOrdersTwoWeeks()
+        public async Task GetOrdersTodayNoDates()
         {
             // arrange
-            var dicParams = new Dictionary<string, string>
-            {
-                { ServiceConstants.FilterDate, ServiceConstants.TwoWeeks },
-            };
+            var dicParams = new Dictionary<string, string>();
 
             // act
             var result = await this.sapService.GetOrders(dicParams);
@@ -92,31 +99,12 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task GetOrdersMoth()
+        public async Task GetOrdersTodayById()
         {
             // arrange
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FilterDate, ServiceConstants.Month },
-            };
-
-            // act
-            var result = await this.sapService.GetOrders(dicParams);
-
-            Assert.IsNotNull(result);
-        }
-
-        /// <summary>
-        /// gets the orders test.
-        /// </summary>
-        /// <returns>the orders.</returns>
-        [Test]
-        public async Task GetOrdersOtherDate()
-        {
-            // arrange
-            var dicParams = new Dictionary<string, string>
-            {
-                { ServiceConstants.FilterDate, string.Empty },
+                { ServiceConstants.DocNum, "100" },
             };
 
             // act
@@ -133,7 +121,7 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetOrderDetail()
         {
             // arrange
-            var docId = 10;
+            var docId = 100;
 
             // act
             var result = await this.sapService.GetOrderDetails(docId);

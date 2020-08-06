@@ -11,12 +11,10 @@ namespace Omicron.Logs.Test.Services.Catalogs
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Omicron.Logs.DataAccess.DAO.User;
-    using Omicron.Logs.Entities.Context;
-    using Omicron.Logs.Services.Mapping;
-    using Omicron.Logs.Services.User;
     using Microsoft.EntityFrameworkCore;
     using NUnit.Framework;
+    using Omicron.Logs.Entities.Context;
+    using Omicron.Logs.Services.Mapping;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -24,6 +22,7 @@ namespace Omicron.Logs.Test.Services.Catalogs
     [TestFixture]
     public class UserServiceTest : BaseTest
     {
+        /*
         private IUsersService userServices;
 
         private IMapper mapper;
@@ -95,6 +94,6 @@ namespace Omicron.Logs.Test.Services.Catalogs
             // Assert
             Assert.IsNotNull(result);
             Assert.IsTrue(result);
-        }
+        }*/
     }
 }

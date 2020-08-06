@@ -9,7 +9,7 @@
 namespace Omicron.Logs.Services.Mapping
 {
     using AutoMapper;
-    using Omicron.Logs.Dtos.User;
+    using Omicron.Logs.Dtos.OrderLog;
     using Omicron.Logs.Entities.Model;
 
     /// <summary>
@@ -22,8 +22,8 @@ namespace Omicron.Logs.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
-            this.CreateMap<UserModel, UserDto>();
-            this.CreateMap<UserDto, UserModel>();
+            this.CreateMap<OrderLogModel, OrderLogDto>();
+            this.CreateMap<OrderLogDto, OrderLogModel>();
         }
     }
 }

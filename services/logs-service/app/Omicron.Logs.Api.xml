@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Omicron.Logs.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Omicron.Logs.Api.Controllers.UsersController">
+            <summary>
+            Class User Controller.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Controllers.UsersController.#ctor(Omicron.Logs.Facade.Catalogs.Users.IUserFacade,StackExchange.Redis.IConnectionMultiplexer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.Logs.Api.Controllers.UsersController"/> class.
+            </summary>
+            <param name="logicFacade">User Facade.</param>
+            <param name="redis">Redis Cache.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Controllers.UsersController.Get">
+            <summary>
+            Method to get all users.
+            </summary>
+            <returns>List of users.</returns>
+        </member>
+        <member name="M:Omicron.Logs.Api.Controllers.UsersController.Get(System.Int32)">
+            <summary>
+            Method to get user By Id.
+            </summary>
+            <param name="userId">User Id.</param>
+            <returns>User Model.</returns>
+        </member>
+        <member name="M:Omicron.Logs.Api.Controllers.UsersController.Post(Omicron.Logs.Dtos.User.UserDto)">
+            <summary>
+            Method to Add User.
+            </summary>
+            <param name="user">User Model.</param>
+            <returns>Success or exception.</returns>
+        </member>
+        <member name="M:Omicron.Logs.Api.Controllers.UsersController.Ping">
+            <summary>
+            Method Ping.
+            </summary>
+            <returns>Pong.</returns>
+        </member>
+        <member name="T:Omicron.Logs.Api.Filters.CustomActionFilterAttribute">
+            <summary>
+            Class Action Filter.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomActionFilterAttribute.#ctor(Serilog.ILogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.Logs.Api.Filters.CustomActionFilterAttribute"/> class.
+            </summary>
+            <param name="logger">Object Logger.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomActionFilterAttribute.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomActionFilterAttribute.OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomActionFilterAttribute.OnResultExecuting(Microsoft.AspNetCore.Mvc.Filters.ResultExecutingContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomActionFilterAttribute.OnResultExecuted(Microsoft.AspNetCore.Mvc.Filters.ResultExecutedContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Omicron.Logs.Api.Filters.CustomExceptionFilterAttribute">
+            <summary>
+            Class Exception Filter.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomExceptionFilterAttribute.#ctor(Serilog.ILogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.Logs.Api.Filters.CustomExceptionFilterAttribute"/> class.
+            </summary>
+            <param name="logger">Object Logger.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.CustomExceptionFilterAttribute.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Omicron.Logs.Api.Filters.ResponseMiddleware">
+            <summary>
+            Class Response Middlewere.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.ResponseMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.Logs.Api.Filters.ResponseMiddleware"/> class.
+            </summary>
+            <param name="next">Request Delegate.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Filters.ResponseMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Method to generate histogram response time for request.
+            </summary>
+            <param name="context">Http Context.</param>
+            <returns>Task.</returns>
+        </member>
+        <member name="T:Omicron.Logs.Api.Program">
+            <summary>
+            Class Program.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Program.Main(System.String[])">
+            <summary>
+            Main Program.
+            </summary>
+            <param name="args">List of arguments.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Program.CreateWebHostBuilder(System.String[])">
+            <summary>
+            Method to execute app.
+            </summary>
+            <param name="args">List of arguments.</param>
+            <returns>Web Host Builder.</returns>
+        </member>
+        <member name="T:Omicron.Logs.Api.Startup">
+            <summary>
+            Class Startup.
+            </summary>
+        </member>
+        <member name="M:Omicron.Logs.Api.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.Logs.Api.Startup"/> class.
+            </summary>
+            <param name="configuration">App Configuration.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Startup.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:Omicron.Logs.Api.Startup"/> class.
+            </summary>
+        </member>
+        <member name="P:Omicron.Logs.Api.Startup.Configuration">
+            <summary>
+            Gets configuration.
+            </summary>
+            <value>
+            App Settings Configuration.
+            </value>
+        </member>
+        <member name="M:Omicron.Logs.Api.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Method to configure services.
+            </summary>
+            <param name="services">Service Collection.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">Application Builder.</param>
+            <param name="env">Hosting Environment.</param>
+        </member>
+        <member name="M:Omicron.Logs.Api.Startup.AddRedis(Microsoft.Extensions.DependencyInjection.IServiceCollection,Serilog.ILogger)">
+            <summary>
+            Add configuration Redis.
+            </summary>
+            <param name="services">Service Collection.</param>
+            <param name="logger">The logger.</param>
+        </member>
+    </members>
+</doc>

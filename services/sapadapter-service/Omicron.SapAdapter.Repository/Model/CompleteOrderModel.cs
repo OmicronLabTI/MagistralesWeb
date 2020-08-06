@@ -49,19 +49,25 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime FechaInicio { get; set; }
+        public string FechaInicio { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime FechaFin { get; set; }
+        public string FechaFin { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         public string PedidoStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Qfb { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gets or sets IsChecked.

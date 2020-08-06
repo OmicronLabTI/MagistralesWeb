@@ -1,24 +1,52 @@
-<div class="login-container">
-  <mat-card>
-    <mat-card-header>
-      Login
-    </mat-card-header>
-    <mat-card-content [formGroup]="formLogin">
-      <mat-form-field class="login-field">
-        <input matInput placeholder="Usuario" name="username" formControlName="username" required>
-        <mat-error>
-          <span *ngIf="formLogin?.controls.username?.errors?.required">Usuario requerido</span>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="login-field">
-        <input matInput placeholder="Contraseña" name="password" formControlName="password" type="password" required>
-        <mat-error>
-          <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
-        </mat-error>
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" [disabled]="formLogin.invalid" (click)="login()">Ingresar</button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+<div class="login-container" fxLayout="row wrap" fxLayoutGap="grid">
+  <div fxFlex.xs="100%" fxFlex.sm ="80%" fxFlex="31rem" class="card-login-container">
+    <mat-card>
+      <img mat-card-image src="assets/images/logo2.svg" class="navbar-logo" alt="logo">
+      <mat-card-title class="text-center" >
+        <span class="title-login">Logueate con tu cuenta para iniciar sesión</span>
+      </mat-card-title>
+      <mat-card-content [formGroup]="formLogin" class="card-content-custom">
+        <mat-form-field class="login-field">
+          <mat-card-title class="text-left" >
+            <span class="title-input text-left">Usuario</span>
+          </mat-card-title>
+          <div class="input-user-custom">
+            <div class="user-icon-login to-background-color">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-input-login">
+              <input  matInput type="text" class="form-control height-input" placeholder="" formControlName="username">
+            </div>
+          </div>
+          <mat-error>
+            <span *ngIf="formLogin?.controls.username?.errors?.required">Usuario requerido</span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="login-field">
+          <mat-card-title class="text-left" >
+            <span class="title-input text-left">Password</span>
+          </mat-card-title>
+          <div class="input-user-custom">
+            <div class="icon-close-pass to-background-color">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="input-pass-login">
+              <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" class="form-control height-input">
+            </div>
+            <div class="eye-pass-login">
+              <button mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </div>
+          </div>
+          <mat-error>
+            <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="actions-custom">
+        <button mat-button class="btn-login" [disabled]="formLogin.invalid" (click)="login()">Ingresar</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+ </div>

@@ -9,17 +9,17 @@
 namespace Omicron.SapAdapter.DependencyInjection
 {
     using AutoMapper;
-    using Omicron.SapAdapter.DataAccess.DAO.User;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Facade.Catalogs.Users;
-    using Omicron.SapAdapter.Services.Mapping;
-    using Omicron.SapAdapter.Services.User;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Omicron.SapAdapter.Facade.Sap;
-    using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.DataAccess.DAO.User;
+    using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Facade.Catalogs.Users;
+    using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.Sap;
+    using Omicron.SapAdapter.Services.User;
 
     /// <summary>
     /// Class for DependencyInjector.

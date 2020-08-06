@@ -42,5 +42,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The response.</value>
         public object Response { get; set; }
+
+        /// <summary>
+        /// Gets or sets Response.
+        /// </summary>
+        /// <value>The response.</value>
+        public object Comments { get; set; }
     }
 }

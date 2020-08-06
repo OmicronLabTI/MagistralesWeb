@@ -1,0 +1,120 @@
+<div class="container-list-page">
+    <div class="header-page">
+        <div class="title-list-container">
+            <span>Usuarios</span>
+        </div>
+        <div class="add-user-container">
+            <div class="icon-add" (click)="openDialog('addModal','')">
+                <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
+                     height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="list-users-container">
+        <div class="no-users-registered" *ngIf="dataSource.data.length === 0">
+            <span>No hay usuarios registrados</span>
+        </div>
+        <div *ngIf="dataSource.data.length !== 0" class="table-container">
+            <table  mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <!-- Position Column -->
+                <ng-container matColumnDef="delete">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox
+                                [checked]="isAllComplete"
+                                [indeterminate]="someComplete()"
+                                (change)="setAll($event.checked)"
+                        >
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-checkbox [(ngModel)]="element.isChecked"
+                                      (ngModelChange)="updateAllComplete()"
+                        >
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="names">
+                    <th mat-header-cell class="centered" *matHeaderCellDef > Nombre(s) </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables text-center tdcell"> {{element.firstName}} </td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="lastName">
+                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > Apellido(s) </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide"> {{element.lastName}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="role">
+                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > Rol </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > <span *ngIf="element.role === 2">QFB</span> <span *ngIf="element.role === 1">Administrador</span> </td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > Estatus </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > Activo </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell class="tdcell tdcell-center delete-many-icon" *matHeaderCellDef >
+                        <button mat-icon-button class="ico-col-pri" (click)="deleteUsers('')">
+                            <mat-icon class="icon-many-delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="delete-multiple">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
+                        <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal',element.id)" >
+                            <mat-icon class="icon-many-delete">
+                                <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24"
+                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                </svg>
+                            </mat-icon>
+                        </button>
+
+                        <button mat-icon-button class="ico-col-pri" (click)="deleteUsers(element.id)">
+                            <mat-icon class="icon-many-delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="feather feather-user-minus delete">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                                </svg>
+                            </mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+        <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
+            <mat-paginator
+                    [pageSizeOptions]="[5, 10, 15]"
+                    [pageSize]="pageSize"
+                    [length]="lengthPaginator"
+                    (page)="pageEvent = changeDataEvent($event)"
+            ></mat-paginator>
+        </div>
+    </div>
+</div>

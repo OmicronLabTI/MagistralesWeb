@@ -1,8 +1,13 @@
 export interface ILoginReq {
-  email: string;
+  user: string;
   password: string;
+  redirectUri: string;
+  clientId2: string;
 }
 
 export interface ILoginRes {
-  token: string;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
 }

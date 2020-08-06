@@ -112,7 +112,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // arrange
             var login = new LoginModel
             {
-                Password = "abc",
+                Password = "QXhpdHkyMDIw",
                 Username = "Benji",
             };
 
@@ -121,7 +121,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -307,6 +306,22 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // act
             var response = await this.userServices.GetUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetQfb()
+        {
+            var roleId = "1";
+
+            // act
+            var response = await this.userServices.GetUsersByRole(roleId);
 
             // assert
             Assert.IsNotNull(response);

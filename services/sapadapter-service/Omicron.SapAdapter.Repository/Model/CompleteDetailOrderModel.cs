@@ -37,19 +37,19 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal QtyPlanned { get; set; }
+        public int? QtyPlanned { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime FechaOf { get; set; }
+        public string FechaOf { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime? FechaOfFin { get; set; }
+        public string FechaOfFin { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

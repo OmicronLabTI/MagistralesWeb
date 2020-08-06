@@ -52,5 +52,10 @@ namespace Omicron.Usuarios.Services.Constants
         /// Const for the limit.
         /// </summary>
         public const string Limit = "limit";
+
+        /// <summary>
+        /// the qfb role.
+        /// </summary>
+        public const int RoleQfb = 2;
     }
 }

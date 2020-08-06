@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
-import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {HttpHeaders, HttpClient, HttpParams} from '@angular/common/http';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class ConsumeService {
       });
     }
 
-    let objParams = new HttpParams();
+   let objParams = new HttpParams();
     if (params) {
       Object.keys(params).forEach((key) => {
         objParams = objParams.append(key, params[key]);
@@ -80,6 +80,28 @@ export class ConsumeService {
           observer.error(err);
           this.dataService.setIsLoading(false);
         });
+    });
+  }
+
+  httpPatch<T>(url: string, body: any, headers?) {
+    let objHeaders = new HttpHeaders();
+    if (headers) {
+      Object.keys(headers).forEach((key) => {
+        objHeaders = objHeaders.append(key, headers[key]);
+      });
+    }
+
+    this.dataService.setIsLoading(true);
+    return new Observable<T>(observer => {
+      this.http.patch<any>(url, body, { headers: objHeaders })
+          .subscribe(response => {
+            observer.next(response);
+            observer.complete();
+            this.dataService.setIsLoading(false);
+          }, err => {
+            observer.error(err);
+            this.dataService.setIsLoading(false);
+          });
     });
   }
 }

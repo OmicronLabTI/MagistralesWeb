@@ -8,8 +8,8 @@
 
 namespace Omicron.Logs.Entities.Context
 {
-    using Omicron.Logs.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Logs.Entities.Model;
 
     /// <summary>
     /// Interface IDataBaseContext.
@@ -17,11 +17,19 @@ namespace Omicron.Logs.Entities.Context
     public interface IDatabaseContext
     {
         /// <summary>
-        /// Gets or sets CatUser.
+        /// Gets or sets the order model.
         /// </summary>
         /// <value>
-        /// Object UserModel CatUser.
+        /// the order model.
         /// </value>
-        DbSet<UserModel> CatUser { get; set; }
+        DbSet<OrderLogModel> OrderLogModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order model.
+        /// </summary>
+        /// <value>
+        /// the order model.
+        /// </value>
+        DbSet<UserOrderModel> UserOrderModel { get; set; }
     }
 }
