@@ -27,9 +27,6 @@ zuul:
     usuarios:
       path: /usuarios/**
       serviceId: usuariosservice
-    logs:
-      path: /logs/**
-      serviceId: logsservice
     sapadapter:
       path: /sapadapter/**
       serviceId: sapadapterService
