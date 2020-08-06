@@ -20,18 +20,16 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     // MARK:  Variables
-    lazy var inboxModel: InboxViewModel = InboxViewModel()
+    lazy var inboxViewModel: InboxViewModel = InboxViewModel()
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
-    
+    private var typeCard: Int = 0
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         viewModelBinding()
         self.initComponents()
-        collectionView.dataSource = self
-        collectionView.delegate = self
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
@@ -40,17 +38,53 @@ class InboxViewController: UIViewController {
     // MARK: Functions
     func viewModelBinding() -> Void {
         [
-            finishedButton.rx.tap.bind(to: inboxModel.finishedDidTab),
-            pendingButton.rx.tap.bind(to: inboxModel.pendingDidTab),
-            processButton.rx.tap.bind(to: inboxModel.processDidTab)
+            finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTab),
+            pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTab),
+            processButton.rx.tap.bind(to: inboxViewModel.processDidTab)
         ].forEach({ $0.disposed(by: disposeBag) })
      
-        inboxModel.indexSelectedOfTable
+        inboxViewModel.indexSelectedOfTable
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
                 self.chageStatusName(index: res)
                 self.hideButtons(index: res)
+                self.typeCard = res
             }).disposed(by: disposeBag)
+        
+        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { row, data, cell in
+            self.changepropertiesOfCard(cell: cell)
+            cell.numberDescriptionLabel.text = "\(data.no!)"
+            cell.baseDocumentDescriptionLabel.text = data.baseDocument!
+            cell.containerDescriptionLabel.text = data.container!
+            cell.tagDescriptionLabel.text = data.tag!
+            cell.plannedQuantityDescriptionLabel.text = data.plannedQuantity!
+            cell.startDateDescriptionLabel.text = data.startDate!
+            cell.finishDateDescriptionLabel.text = data.finishDate!
+            cell.productDescriptionLabel.text = data.descriptionProduct!
+        }.disposed(by: disposeBag)
+        
+    }
+    
+    func changepropertiesOfCard(cell: CardCollectionViewCell) {
+        switch self.typeCard {
+        case 0:
+            self.propertyCard(cell: cell, borderColor: OmicronColors.assignedStatus, iconName: ButtonNameOfCards.assigned)
+        case 1:
+            self.propertyCard(cell: cell, borderColor: OmicronColors.processStatus, iconName: ButtonNameOfCards.inProcess)
+        case 2:
+            self.propertyCard(cell: cell, borderColor: OmicronColors.pendingStatus, iconName: ButtonNameOfCards.pendding)
+        case 3:
+            self.propertyCard(cell: cell, borderColor: OmicronColors.finishedStatus, iconName: ButtonNameOfCards.finished)
+        case 4:
+            self.propertyCard(cell: cell, borderColor: OmicronColors.reassignedStatus, iconName: ButtonNameOfCards.reasigned)
+        default:
+            print("")
+        }
+    }
+    
+    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
+        cell.assignedStyleCard(color: borderColor.cgColor)
+        cell.changeIconButton(iconName: iconName)
     }
     
     func initComponents() -> Void {
@@ -112,19 +146,19 @@ class InboxViewController: UIViewController {
 }
 
 
-extension InboxViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "card", for: indexPath) as? CardCollectionViewCell
-        return cell!
-    }
-}
-
-extension InboxViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-    }
-}
+//extension InboxViewController: UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return 0
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "card", for: indexPath) as? CardCollectionViewCell
+//        return cell!
+//    }
+//}
+//
+//extension InboxViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//
+//    }
+//}

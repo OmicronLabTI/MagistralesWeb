@@ -19,7 +19,7 @@ class RootViewController: UIViewController {
     // Variables
     let disposeBag = DisposeBag()
     let rootViewModel = RootViewModel()
-    var dataStatus: [Section] = []
+    var dataStatusOfService: [Section] = []
     lazy var inboxViewModel = self.getInboxViewModel()
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -41,6 +41,10 @@ class RootViewController: UIViewController {
     // MARK: Functions
     func viewModelBinding() {
 
+        rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
+            self.dataStatusOfService = data
+        }).disposed(by: disposeBag)
+        
         // Muestra los datos de la sección "Mis ordenes"
         rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) {
             row, data, cell in
@@ -49,12 +53,11 @@ class RootViewController: UIViewController {
             cell.indicatorStatusNumber.text = String(data.numberTask)
         }.disposed(by: disposeBag)
         
-        // Seleciona AssignedStatus
+        // Detecta el evento cuando se selecciona un status de la tabla
         let index = NSIndexPath(row: 0, section: 0)
         viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
-            //let orden = Order(no: 1, baseDocument: "Documento base 1", container: "Contenedor 1", tag: "Tag 1", plannedQuantity: "cantidad planeada 1", startDate: "27/03/2020", finishDate: "24/04/2020", descriptionProduct: "Descripción del producto 1")
-            //  self?.inboxViewModel?.setSelection(index: indexPath.row, orden: orden)
+            self.inboxViewModel?.setSelection(index: indexPath.row, orders: self.dataStatusOfService[indexPath.row].orders)
         }).disposed(by: disposeBag)
     }
     
@@ -71,7 +74,7 @@ class RootViewController: UIViewController {
     
     private func getInboxViewModel() -> InboxViewModel? {
         if let vc = self.splitViewController?.viewControllers.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
-            return vc.inboxModel
+            return vc.inboxViewModel
         }
         return nil
     }

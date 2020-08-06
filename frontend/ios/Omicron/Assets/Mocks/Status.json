@@ -87,6 +87,26 @@
                 "startDate": "27/03/2020",
                 "finishDate": "24/04/2020",
                 "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
+            },
+            {
+                "no": 1,
+                "baseDocument": "Documento base 1",
+                "container": "Contenedor 1",
+                "tag": "Tag 1",
+                "plannedQuantity": "cantidad planeada 1",
+                "startDate": "27/03/2020",
+                "finishDate": "24/04/2020",
+                "descriptionProduct": "Descripción del producto 1"
             }
             ]
         },
@@ -183,46 +203,7 @@
         {
             "statusId": 5,
             "statusName": "Reasignado",
-            "orders": [{
-                "no": 1,
-                "baseDocument": "Documento base 1",
-                "container": "Contenedor 1",
-                "tag": "Tag 1",
-                "plannedQuantity": "cantidad planeada 1",
-                "startDate": "27/03/2020",
-                "finishDate": "24/04/2020",
-                "descriptionProduct": "Descripción del producto 1"
-            },
-            {
-                "no": 1,
-                "baseDocument": "Documento base 1",
-                "container": "Contenedor 1",
-                "tag": "Tag 1",
-                "plannedQuantity": "cantidad planeada 1",
-                "startDate": "27/03/2020",
-                "finishDate": "24/04/2020",
-                "descriptionProduct": "Descripción del producto 1"
-            },
-            {
-                "no": 1,
-                "baseDocument": "Documento base 1",
-                "container": "Contenedor 1",
-                "tag": "Tag 1",
-                "plannedQuantity": "cantidad planeada 1",
-                "startDate": "27/03/2020",
-                "finishDate": "24/04/2020",
-                "descriptionProduct": "Descripción del producto 1"
-            },
-            {
-                "no": 1,
-                "baseDocument": "Documento base 1",
-                "container": "Contenedor 1",
-                "tag": "Tag 1",
-                "plannedQuantity": "cantidad planeada 1",
-                "startDate": "27/03/2020",
-                "finishDate": "24/04/2020",
-                "descriptionProduct": "Descripción del producto 1"
-            }
+            "orders": [
             ]
         }
     ]

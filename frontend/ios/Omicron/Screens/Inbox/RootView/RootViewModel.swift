@@ -40,11 +40,11 @@ class RootViewModel {
                 }
             }
             let data = [
-                Section(statusName: "Asignadas", numberTask:  self.assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
-                Section(statusName: "En Proceso", numberTask: self.inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
-                Section(statusName: "Pendientes", numberTask: self.penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
-                Section(statusName: "Terminado", numberTask: self.finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
-                Section(statusName: "Reasignado", numberTask: self.reassignedOrders.count, imageIndicatorStatus: "reassignedStatus")
+                Section(statusName: StatusNameConstants.assignedStatus, numberTask:  self.assignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: self.assignedOrders),
+                Section(statusName: StatusNameConstants.inProcessStatus, numberTask: self.inProcessOrdes.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: self.inProcessOrdes),
+                Section(statusName: StatusNameConstants.penddingStatus, numberTask: self.penddingOrders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders:  self.penddingOrders),
+                Section(statusName: StatusNameConstants.finishedStatus, numberTask: self.finishedOrders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: self.finishedOrders),
+                Section(statusName: StatusNameConstants.reassignedStatus, numberTask: self.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self.reassignedOrders)
             ]
             self.dataStatus.accept(data)
         }).disposed(by: disposeBag)

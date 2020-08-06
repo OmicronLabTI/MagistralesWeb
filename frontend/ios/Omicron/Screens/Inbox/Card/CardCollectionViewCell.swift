@@ -56,11 +56,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.labelsStyle(label: finishDateDescriptionLabel, text: "")
         self.labelsStyle(label: productLabel, text: "Descripción del producto:")
         self.labelsStyle(label: productDescriptionLabel, text: "")
-        changeIconButton(button: self.showDetail, iconName: "showAssignedDetailButton.png")
+        changeIconButton(iconName: "showAssignedDetailButton.png")
     }
     
-    func changeIconButton(button: UIButton, iconName: String) -> Void{
-        button.setImage(UIImage(named: iconName), for: .normal)
+    func changeIconButton(iconName: String) -> Void{
+        self.showDetail.setImage(UIImage(named: iconName), for: .normal)
     }
     
     func labelsStyle(label: UILabel, text: String) -> Void {

@@ -109,45 +109,16 @@ class StatusRequest: Codable {
     }
 }
 
-
-
-//class Order: Codable {
-//    var no: Int
-//    var baseDocument: String
-//    var container: String
-//    var tag: String
-//    var plannedQuantity: String
-//    var startDate: String
-//    var finishDate: String
-//    var descriptionProduct: String
-//
-//    init(no: Int, baseDocument: String, container: String, tag: String, plannedQuantity: String, startDate: String, finishDate: String, descriptionProduct: String) {
-//        self.no = no
-//        self.baseDocument = baseDocument
-//        self.container = container
-//        self.tag = tag
-//        self.plannedQuantity = plannedQuantity
-//        self.startDate = startDate
-//        self.finishDate = finishDate
-//        self.descriptionProduct = descriptionProduct
-//    }
-// }
-
-
-
-
-
-
-
-
-struct Section: Codable {
+struct Section {
     var statusName: String
     var numberTask: Int
     var imageIndicatorStatus: String
+    var orders: [Order]
     
-    init(statusName: String, numberTask: Int, imageIndicatorStatus: String) {
+    init(statusName: String, numberTask: Int, imageIndicatorStatus: String, orders: [Order]) {
         self.statusName = statusName
         self.numberTask = numberTask
         self.imageIndicatorStatus = imageIndicatorStatus
+        self.orders = orders
     }
 }
