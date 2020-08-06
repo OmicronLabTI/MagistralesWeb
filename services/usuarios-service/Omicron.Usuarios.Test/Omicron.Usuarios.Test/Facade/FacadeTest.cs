@@ -93,6 +93,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.GetUsersByRole(It.IsAny<string>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -286,6 +290,28 @@ namespace Omicron.Usuarios.Test.Facade
 
             // act
             var response = await this.userFacade.GetUsersByRole(roleid);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// tet test.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetUsersById()
+        {
+            // arrange
+            var listIds = new List<string>();
+
+            // act
+            var response = this.userFacade.GetUsersById(listIds);
 
             // Assert
             Assert.IsNotNull(response);

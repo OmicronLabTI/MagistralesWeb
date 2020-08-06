@@ -17,14 +17,6 @@ namespace Omicron.SapAdapter.Entities.Context
     public interface IDatabaseContext
     {
         /// <summary>
-        /// Gets or sets CatUser.
-        /// </summary>
-        /// <value>
-        /// Object UserModel CatUser.
-        /// </value>
-        DbSet<UserModel> CatUser { get; set; }
-
-        /// <summary>
         /// Gets or sets OrderModel.
         /// </summary>
         /// <value>

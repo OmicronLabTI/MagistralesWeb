@@ -19,6 +19,7 @@ namespace Omicron.SapAdapter.Api
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.User;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
@@ -33,7 +34,9 @@ namespace Omicron.SapAdapter.Api
     {
         private const string AXITYURL = "https://www.axity.com/";
 
-        private const string LogsService = "http://logsservice/";
+        private const string PedidoService = "http://pedidosservice/";
+
+        private const string UserService = "http://usuariosservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -102,12 +105,19 @@ namespace Omicron.SapAdapter.Api
                 });
             });
 
-            services.AddHttpClient("logs", c =>
+            services.AddHttpClient("pedidos", c =>
             {
-                c.BaseAddress = new Uri(LogsService);
+                c.BaseAddress = new Uri(PedidoService);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IPedidosService, PedidoService>();
+
+            services.AddHttpClient("users", c =>
+            {
+                c.BaseAddress = new Uri(UserService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IUsersService, UsersService>();
 
             this.AddRedis(services, Log.Logger);
 

@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -31,6 +32,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaFin(DateTime initDate, DateTime endDate);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<List<OrderModel>> GetOrdersById(int pedidoID);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
@@ -42,6 +49,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>get the orders.</returns>
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int id);
+
+        /// <summary>
+        /// gets the orders by product and item.
+        /// </summary>
+        /// <param name="pedidoId">the product id.</param>
+        /// <param name="productId">the product id.</param>
+        /// <returns>the data.</returns>
+        Task<OrdenFabricacionModel> GetProdOrderByOrderProduct(int pedidoId, string productId);
 
     }
 }

@@ -9,14 +9,19 @@
 namespace Omicron.Pedidos.DependencyInjection
 {
     using AutoMapper;
-    using Omicron.Pedidos.DataAccess.DAO.User;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Facade.Catalogs.Users;
-    using Omicron.Pedidos.Services.Mapping;
-    using Omicron.Pedidos.Services.User;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.DataAccess.DAO.User;
+    using Omicron.Pedidos.Entities.Context;
+    using Omicron.Pedidos.Facade.Catalogs.Users;
+    using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Services.Mapping;
+    using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -36,6 +41,13 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IUserFacade, UserFacade>();
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IUserDao, UserDao>();
+
+            Services.AddTransient<IPedidoFacade, PedidoFacade>();
+            Services.AddTransient<IPedidosService, PedidosService>();
+            Services.AddTransient<IPedidosDao, PedidosDao>();
+            Services.AddTransient<ISapDiApi, SapDiApi>();
+            Services.AddTransient<ISapAdapter, SapAdapter>();
+
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }
@@ -46,7 +58,7 @@ namespace Omicron.Pedidos.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext))));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
         /// <summary>

@@ -127,5 +127,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetUsersByRole(roleId));
         }
+
+        /// <summary>
+        /// the list ids.
+        /// </summary>
+        /// <param name="listIds">the users.</param>
+        /// <returns>the users by id.</returns>
+        public async Task<ResultDto> GetUsersById(List<string> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUsersById(listIds));
+        }
     }
 }

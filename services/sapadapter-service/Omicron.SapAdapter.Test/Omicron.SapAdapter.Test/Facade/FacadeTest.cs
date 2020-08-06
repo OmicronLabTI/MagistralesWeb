@@ -16,7 +16,6 @@ namespace Omicron.SapAdapter.Test.Facade
     using NUnit.Framework;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Facade.Catalogs.Users;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
@@ -28,8 +27,6 @@ namespace Omicron.SapAdapter.Test.Facade
     [TestFixture]
     public class FacadeTest : BaseTest
     {
-        private UserFacade userFacade;
-
         private SapFacade sapFacade;
 
         private IMapper mapper;
@@ -46,18 +43,6 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
-
-            mockServices
-                .Setup(m => m.GetAllUsersAsync())
-                .Returns(Task.FromResult(listUser));
-
-            mockServices
-                .Setup(m => m.GetUserAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(user));
-
-            mockServices
-                .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
-                .Returns(Task.FromResult(true));
 
             var mockSapServices = new Mock<ISapService>();
 
@@ -78,61 +63,15 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetOrderDetails(It.IsAny<int>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetPedidoWithDetail(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            mockSapServices
+                .Setup(m => m.GetProdOrderByOrderItem(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
-            this.userFacade = new UserFacade(mockServices.Object);
-        }
-
-        /// <summary>
-        /// Test for selecting all users.
-        /// </summary>
-        /// <returns>nothing.</returns>
-        [Test]
-        public async Task GetAllUsersAsyncTest()
-        {
-            // arrange
-
-            // Act
-            var response = await this.userFacade.GetListUsersActive();
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
-        }
-
-        /// <summary>
-        /// gets the user.
-        /// </summary>
-        /// <returns>the user with the correct id.</returns>
-        [Test]
-        public async Task GetListUserActive()
-        {
-            // arrange
-            var id = 10;
-
-            // Act
-            var response = await this.userFacade.GetListUserActive(id);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
-        }
-
-        /// <summary>
-        /// Test for inseting users.
-        /// </summary>
-        /// <returns>the bool if it was inserted.</returns>
-        [Test]
-        public async Task InsertUser()
-        {
-            // Arrange
-            var user = new UserDto();
-
-            // Act
-            var response = await this.userFacade.InsertUser(user);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response);
         }
 
         /// <summary>
@@ -164,6 +103,50 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetDetallePedidos(docEntry);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetPedidoWithDetail()
+        {
+            // arrange
+            var listDocs = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.sapFacade.GetPedidoWithDetail(listDocs);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetProdOrderByOrderItem()
+        {
+            // arrange
+            var listDocs = new List<string> { "12" };
+
+            // act
+            var response = await this.sapFacade.GetProdOrderByOrderItem(listDocs);
 
             // Assert
             Assert.IsNotNull(response);

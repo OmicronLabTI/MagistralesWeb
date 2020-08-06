@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.Mapping
 {
     using AutoMapper;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
 
@@ -24,6 +25,11 @@ namespace Omicron.Pedidos.Services.Mapping
         {
             this.CreateMap<UserModel, UserDto>();
             this.CreateMap<UserDto, UserModel>();
+
+            this.CreateMap<ResultDto, ResultModel>();
+            this.CreateMap<ResultModel, ResultDto>();
+            this.CreateMap<ProcessOrderModel, ProcessOrderDto>();
+            this.CreateMap<ProcessOrderDto, ProcessOrderModel>();
         }
     }
 }
