@@ -63,6 +63,27 @@ class InboxViewController: UIViewController {
             cell.productDescriptionLabel.text = data.descriptionProduct!
         }.disposed(by: disposeBag)
         
+        inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
+            
+            if(data.orders.count == 0 && data.indexStatusSelected > 0) {
+                var message: String = ""
+                switch data.indexStatusSelected {
+                case 0:
+                    message = "No tienes ordenes Asignadas"
+                case 1:
+                    message = "No tienes ordenes En proceso"
+                case 2:
+                    message = "No tienes ordenes Pendientes"
+                case 3:
+                    message = "No tienes ordenes Terminadas"
+                case 4:
+                    message = "No tienes ordenes Reasignadas"
+                default:
+                    print("")
+                }
+                AlertManager.shared.showAlert(message: message, view: self)
+            }
+        }).disposed(by: disposeBag)
     }
     
     func changepropertiesOfCard(cell: CardCollectionViewCell) {
@@ -144,21 +165,3 @@ class InboxViewController: UIViewController {
         self.pendingButton.isHidden = pendingButtonIsHidden
     }
 }
-
-
-//extension InboxViewController: UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 0
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "card", for: indexPath) as? CardCollectionViewCell
-//        return cell!
-//    }
-//}
-//
-//extension InboxViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//
-//    }
-//}

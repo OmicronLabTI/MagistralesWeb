@@ -17,6 +17,7 @@ class  InboxViewModel {
     var processDidTab = PublishSubject<Void>();
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
+    var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
 //    var finishedButtonIsHidden: Driver<Bool>
 //    var pendingButtonIsHidden: Driver<Bool>
 //    var processButtonIsHidden: Driver<Bool>
@@ -41,9 +42,8 @@ class  InboxViewModel {
     }
     
     func setSelection(index: Int, orders: [Order]) -> Void {
-        print("Index desde table: \(index)")
-        print("Datos a pintar: \(orders)")
         self.indexSelectedOfTable.onNext(index)
         self.statusData.accept(orders)
+        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: orders))
     }
 }

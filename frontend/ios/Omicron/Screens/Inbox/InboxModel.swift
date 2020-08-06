@@ -8,5 +8,13 @@
 
 import Foundation
 
+class ValidStatusData {
+    var indexStatusSelected: Int
+    var orders: [Order]
     
+    init(indexStatusSelected: Int, orders: [Order]) {
+        self.indexStatusSelected = indexStatusSelected
+        self.orders = orders
+    }
+}
 

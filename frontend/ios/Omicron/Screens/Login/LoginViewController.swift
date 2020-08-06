@@ -82,11 +82,11 @@ class LoginViewController: UIViewController {
     }
     
     func showSuccess(message: String) {
-        showAlert(message: message)
+        AlertManager.shared.showAlert(message: message, view: self)
     }
     
     func showError(error: String) {
-        showAlert(message: error)
+        AlertManager.shared.showAlert(message: error, view: self)
     }
     
     func initComponents() {
@@ -133,15 +133,7 @@ class LoginViewController: UIViewController {
         self.passwordTextField.rightView = button
         self.passwordTextField.rightViewMode = .always
     }
-    
-    private func showAlert(message: String) {
-        let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: nil)
-        alert.addAction(okAction)
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    
+        
     @objc func keyBoardActions(notification: Notification) {
         if (notification.name == UIResponder.keyboardWillShowNotification) {
             self.view.frame.origin.y = -100
