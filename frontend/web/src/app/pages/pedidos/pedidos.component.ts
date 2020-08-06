@@ -1,6 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
+import { createElementCssSelector } from '@angular/compiler';
+import { DataService } from '../../services/data.service';
+import { CONST_STRING} from '../../constants/const';
+import {Messages} from '../../constants/messages';
+import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, IPedidosListRes, ParamsPedidos} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
@@ -26,10 +31,16 @@ export class PedidosComponent implements OnInit {
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   fullDate: string[] = [];
-  constructor(private pedidosService: PedidosService, private datePipe: DatePipe, private dialog: MatDialog) {
+  constructor(
+    private pedidosService: PedidosService,
+    private datePipe: DatePipe,
+    private dataService: DataService,
+    private errorService: ErrorService,
+    private dialog: MatDialog
+  ) {
     this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
-    this.params.fini = `01/07/${this.fullDate[2]}`;
-    this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    // his.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
   ngOnInit() {
@@ -48,6 +59,10 @@ export class PedidosComponent implements OnInit {
           element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
+      },
+      error => {
+        console.log(error);
+        this.errorService.httpError(error);
       }
     );
   }
@@ -80,6 +95,22 @@ export class PedidosComponent implements OnInit {
     this.getPedidos();
   }
 
+  processOrders() {
+    this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
+    .then((result: any) => {
+      if (result.isConfirmed) {
+        this.pedidosService.processOrders(this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus == 'Abierto')).map(t => t.docNum)).subscribe(
+          () => {
+            this.dataService.presentToastCustom(Messages.success, 'success', CONST_STRING.empty, false, false);
+            this.getPedidos();
+          },
+          error => {
+            this.errorService.httpError(error);
+          }
+        );
+      }
+    });
+  }
   changeDataEvent(event: PageEvent) {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;

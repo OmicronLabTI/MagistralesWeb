@@ -41,7 +41,7 @@
 .tdactions{
     width: 10% !important;
 }
-
+.hide { display: none; }
 ::ng-deep .mat-focused .mat-form-field-label {
     /*change color of label  */
     color: #6C90B3 !important;
