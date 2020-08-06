@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -55,22 +56,23 @@ namespace Omicron.SapAdapter.Services.Sap
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
+            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
+
+            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
+            var users = await this.usersService.GetUsersById(userIDs);
+            var listUsers = JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+
+            orders = this.FilterList(orders, parameters, userOrders, listUsers);
+
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var ordersOrdered = orders.OrderBy(o => o.DocNum);
+            var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-
-            var userOrderModel = await this.pedidosService.GetUserPedidos(orderToReturn.Select(x => x.DocNum).Distinct().ToList());
-            var userOrders = (List<UserOrderModel>)userOrderModel.Response;
-
-            var userIDs = userOrders.Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs);
-
-            orders = this.FilterList(orders, parameters);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count());
         }
 
@@ -143,17 +145,38 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="orderModels">the list of data.</param>
         /// <param name="parameters">the params.</param>
+        /// <param name="userOrder">the usr orders.</param>
+        /// <param name="users">the users.</param>
         /// <returns>the data.</returns>
-        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters)
+        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters, List<UserOrderModel> userOrder, List<UserModel> users)
         {
+            orderModels.ForEach(x =>
+            {
+                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString());
+                var userId = order == null ? string.Empty : order.Userid;
+                var user = users.FirstOrDefault(y => y.Id.Equals(userId));
+
+                x.PedidoStatus = order == null ? string.Empty : order.Status;
+                x.Qfb = user == null ? string.Empty : user.FirstName;
+            });
+
+            if (parameters.ContainsKey(ServiceConstants.DocNum))
+            {
+                int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
+                var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+                var listToReturn = new List<CompleteOrderModel> { ordersById };
+                return listToReturn;
+            }
+
             if (parameters.ContainsKey(ServiceConstants.Status))
             {
-                orderModels = orderModels.Where(x => x.PedidoStatus.Equals(parameters[ServiceConstants.Status])).ToList();
+                var status = parameters[ServiceConstants.Status];
+                orderModels = orderModels.Where(x => x.PedidoStatus == status).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
-                orderModels = orderModels.Where(x => x.Qfb == parameters[ServiceConstants.Qfb]).ToList();
+                orderModels = orderModels.Where(x => x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
             }
 
             return orderModels;

@@ -13,12 +13,8 @@ namespace Omicron.SapAdapter.Services.User
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Newtonsoft.Json;
-    using Omicron.SapAdapter.DataAccess.DAO.User;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.User;
-    using Omicron.SapAdapter.Entities.Model;
 
     /// <summary>
     /// Class User Service.

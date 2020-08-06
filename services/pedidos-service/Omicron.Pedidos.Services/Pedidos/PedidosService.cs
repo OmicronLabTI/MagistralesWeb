@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();
             var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
-            return ServiceUtils.CreateResult(true, 200, null, orders, null);
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders), null);
         }
     }
 }

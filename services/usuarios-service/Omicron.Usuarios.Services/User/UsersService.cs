@@ -210,7 +210,7 @@ namespace Omicron.Usuarios.Services.User
         public async Task<ResultModel> GetUsersById(List<string> listIds)
         {
             var users = await this.userDao.GetUsersById(listIds);
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, users, null, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(users), null, null);
         }
     }
 }

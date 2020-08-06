@@ -19,6 +19,8 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -43,6 +45,8 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();
             Services.AddTransient<IPedidosDao, PedidosDao>();
+            Services.AddTransient<ISapDiApi, SapDiApi>();
+            Services.AddTransient<ISapAdapter, SapAdapter>();
 
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
