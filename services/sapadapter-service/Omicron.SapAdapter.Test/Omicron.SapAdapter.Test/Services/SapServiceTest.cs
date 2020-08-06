@@ -14,11 +14,15 @@ namespace Omicron.SapAdapter.Test.Services
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
+    using Omicron.SapAdapter.Services.User;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// class for the test.
@@ -29,6 +33,8 @@ namespace Omicron.SapAdapter.Test.Services
         private ISapService sapService;
 
         private ISapDao sapDao;
+
+        private IUsersService userService;
 
         private DatabaseContext context;
 
@@ -51,9 +57,18 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockPedidoService
+                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
             this.sapDao = new SapDao(this.context);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object);
         }
 
         /// <summary>
@@ -61,13 +76,13 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task GetOrdersToday()
+        public async Task GetOrdersFechaIni()
         {
             // arrange
+            var dates = DateTime.Now.ToString("dd/MM/yyyy");
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FechaInicio, DateTime.Now.ToString() },
-                { ServiceConstants.FechaFin, DateTime.Now.ToString() },
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dates) },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
             };
@@ -83,10 +98,38 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task GetOrdersTodayNoDates()
+        public async Task GetOrdersFechaFin()
         {
             // arrange
-            var dicParams = new Dictionary<string, string>();
+            var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
+                { ServiceConstants.Status, "O" },
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersId()
+        {
+            // arrange
+            var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, "100" },
+                { ServiceConstants.Status, "O" },
+                { ServiceConstants.Qfb, "abc" },
+            };
 
             // act
             var result = await this.sapService.GetOrders(dicParams);
