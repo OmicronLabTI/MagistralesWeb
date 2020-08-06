@@ -1,1 +1,103 @@
-<p>find-orders-dialog works!</p>
+<div class="find-orders-container">
+    <mat-card class="orders-card">
+        <mat-card-header class="card-header-container">
+            <mat-card-title><span>Buscar pedidos</span>
+            </mat-card-title>
+            <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
+        </mat-card-header>
+        <mat-card-content class="content-card-container">
+            <form [formGroup]="findOrdersForm"  class="form-orders">
+                <div class="row-form-order">
+                    <div class="form-field-full">
+                        <mat-form-field class="custom-field-full">
+                            <input matInput placeholder="Ingresar pedido"
+                                   maxlength="60"
+                                   class="height-input"
+                                    formControlName="docNum">
+                            <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
+                                Pedido es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
+                                Solo 60 caracteres
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-order">
+                    <div class="form-field-left">
+                        <mat-form-field appearance="fill" class="custom-field">
+                            <mat-label>Fecha</mat-label>
+                            <mat-select formControlName="dateType" >
+                                <mat-option value="0">Inicio</mat-option>
+                                <mat-option value="1">Finalización</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
+                                Tipo de fecha es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field-right">
+                        <div class="dates-container">
+                            <div class="date-init">
+                                <mat-form-field class="date-picker-custom" appearance="fill">
+                                    <mat-label>fecha de</mat-label>
+                                    <input matInput [matDatepicker]="dp3" disabled formControlName="fini">
+                                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                                    <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
+                                        Fecha de es <strong>requerido</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="date-init">
+                                <mat-form-field class="date-picker-custom" appearance="fill">
+                                    <mat-label>fecha hasta</mat-label>
+                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin">
+                                    <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+                                    <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+                                    <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
+                                        Fecha hasta es <strong>requerido</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-form-order">
+                    <div class="form-field-left margin-top-status">
+                        <mat-form-field appearance="fill" class="custom-field">
+                            <mat-label>Estatus</mat-label>
+                            <mat-select formControlName="status">
+                                <mat-option value="0">Abierto</mat-option>
+                                <mat-option value="1">Cancelado</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="findOrdersForm?.controls.status?.errors?.required">
+                                Estatus es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field-right">
+                        <mat-form-field appearance="fill" class="custom-field-full">
+                            <mat-label>QFB Asignado</mat-label>
+                            <mat-select formControlName="qfb">
+                                <mat-option value="0">Juan</mat-option>
+                                <mat-option value="1">Irma</mat-option>
+                                <mat-option value="1">Ricardo</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="findOrdersForm?.controls.qfb?.errors?.required">
+                                Qfb es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </mat-card-content>
+        <mat-card-actions class="options-footer">
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
+                <span>Buscar</span>
+                <!--<span *ngIf="isForEditModal">Guardar</span>  [disabled]="addUserForm.invalid"-->
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

@@ -5,6 +5,8 @@ import {IPedidoReq, IPedidosListRes, ParamsPedidos} from '../../model/http/pedid
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {DatePipe} from '@angular/common';
+import {MatDialog} from '@angular/material/dialog';
+import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -24,7 +26,7 @@ export class PedidosComponent implements OnInit {
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   fullDate: string[] = [];
-  constructor(private pedidosService: PedidosService, private datePipe: DatePipe) {
+  constructor(private pedidosService: PedidosService, private datePipe: DatePipe, private dialog: MatDialog) {
     this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
     this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}`;
     this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
@@ -45,21 +47,21 @@ export class PedidosComponent implements OnInit {
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
           element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
-          element.class = element.pedidoStatus === "Abierto" ? "green": "mat-primary";
+          element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       }
     );
   }
 
   updateAllComplete() {
-    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t['isChecked']);
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
   }
 
   someComplete(): boolean {
     if (this.dataSource.data == null) {
       return false;
     }
-    return this.dataSource.data.filter(t => t['isChecked']).length > 0 && !this.allComplete;
+    return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
   }
 
   setAll(completed: boolean) {
@@ -67,7 +69,7 @@ export class PedidosComponent implements OnInit {
     if (this.dataSource.data == null) {
       return;
     }
-    this.dataSource.data.forEach(t => t['isChecked'] = completed);
+    this.dataSource.data.forEach(t => t.isChecked = completed);
   }
 
   setSpanTitle(menuValue: any, title: string) {
@@ -85,5 +87,12 @@ export class PedidosComponent implements OnInit {
     this.getPedidos();
     return event;
   }
-
+  openFindOrdersDialog() {
+    const dialogRef = this.dialog.open(FindOrdersDialogComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+        modalType: 'orders',
+      }
+    });
+  }
 }

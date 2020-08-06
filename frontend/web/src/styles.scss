@@ -247,7 +247,15 @@ th.centered {
   display: flex;
   flex-direction: row-reverse;
 }
-
+.custom-field {
+  width: 100%;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.height-input{
+  height: 2rem;
+}
 
 /*@media(min-width: 769px){
   .cont-center{
