@@ -42,7 +42,7 @@ namespace Omicron.SapDiApi.Api.Controllers
         [Route("createFabOrder")]
         public async Task<IHttpActionResult> CreateFabOrder([FromBody] List<OrderWithDetailDto> orderWithDetailDto)
         {
-            var result = this.sapFacade.CreateFabOrder(orderWithDetailDto);
+            var result = await this.sapFacade.CreateFabOrder(orderWithDetailDto);
             return this.Ok(result);
         }
 

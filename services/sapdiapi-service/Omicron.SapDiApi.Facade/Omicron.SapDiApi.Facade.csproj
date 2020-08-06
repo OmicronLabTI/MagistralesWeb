@@ -79,6 +79,10 @@
       <Project>{34b8298c-a3ce-49c1-a9b4-e991a897fc5e}</Project>
       <Name>Omicron.SapDiApi.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Omicron.SapDiApi.Services\Omicron.SapDiApi.Services.csproj">
+      <Project>{71299035-F66A-4331-ACC3-1C2FB02D0FC2}</Project>
+      <Name>Omicron.SapDiApi.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

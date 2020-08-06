@@ -14,21 +14,22 @@ namespace Omicron.SapDiApi.Facade.Sap
     using Omicron.SapDiApi.Dtos.Models;
     using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Services.SapDiApi;
     using SAPbobsCOM;
     public class SapFacade : ISapFacade
     {
         private readonly IMapper mapper;
 
-        private readonly Company company;
+        private readonly ISapDiApiService sapDiApiService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
         /// <param name="mapper"></param>
-        public SapFacade(IMapper mapper)
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService)
         {
             this.mapper = mapper;
-            this.company = Connection.Company; 
+            this.sapDiApiService = sapDiApiService;
         }
 
         /// <summary>
@@ -37,7 +38,8 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <returns>the result.</returns>
         public async Task<ResultDto> CreateFabOrder(List<OrderWithDetailDto> orderWithDetailDto)
         {
-            return new ResultDto();
+            var model = this.mapper.Map<List<OrderWithDetailModel>>(orderWithDetailDto);
+            return this.mapper.Map<ResultDto>(this.sapDiApiService.InsertOrdenFab(model));
         }
     }
 }

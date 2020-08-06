@@ -46,5 +46,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("Dscription")]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("Quantity")]
+        public int Quantity { get; set; }
     }
 }

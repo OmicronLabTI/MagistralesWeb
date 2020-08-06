@@ -41,6 +41,12 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int? QtyPlannedDetalle { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string FechaOf { get; set; }
 
         /// <summary>

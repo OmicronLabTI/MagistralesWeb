@@ -11,11 +11,9 @@ namespace Omicron.SapDiApi.Api.Configuration
     using System.Web.Http.Dependencies;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
-    using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
     using Omicron.SapDiApi.Facade.Sap;
-    using Omicron.SapDiApi.Services.Mapping;
-    using SAPbobsCOM;
+    using Omicron.SapDiApi.Services.SapDiApi;
     using Unity;    
 
     /// <summary>
@@ -36,6 +34,8 @@ namespace Omicron.SapDiApi.Api.Configuration
         {
             var mappingConfig = new MapperConfiguration(cfg => 
             {
+                cfg.CreateMap<ResultModel, ResultDto>();
+                cfg.CreateMap<ResultDto, ResultModel>();
                 cfg.CreateMap<OrderDto, OrderModel>();
                 cfg.CreateMap<OrderModel, OrderDto>();
                 cfg.CreateMap<CompleteDetailModel, CompleteDetailDto>();
@@ -46,6 +46,7 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
             container.RegisterType<ISapFacade, SapFacade>();
+            container.RegisterType<ISapDiApiService, SapDiApiService>();
 
             if (container == null)
             {
