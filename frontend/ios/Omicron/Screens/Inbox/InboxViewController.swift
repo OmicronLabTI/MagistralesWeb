@@ -66,9 +66,8 @@ class InboxViewController: UIViewController {
         }.disposed(by: disposeBag)
         
         inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
-            
+            var message: String = ""
             if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
-                var message: String = ""
                 switch data.indexStatusSelected {
                 case 0:
                     message = "No tienes ordenes Asignadas"
@@ -81,10 +80,10 @@ class InboxViewController: UIViewController {
                 case 4:
                     message = "No tienes ordenes Reasignadas"
                 default:
-                    print("")
+                    message = ""
                 }
-                AlertManager.shared.showAlert(message: message, view: self)
             }
+            self.collectionView.setEmptyMessage(message)
         }).disposed(by: disposeBag)
     }
     
@@ -165,5 +164,24 @@ class InboxViewController: UIViewController {
         self.processButton.isHidden = processButtonIsHidden
         self.finishedButton.isHidden = finishedButtonIsHidden
         self.pendingButton.isHidden = pendingButtonIsHidden
+    }
+}
+
+extension UICollectionView {
+
+    func setEmptyMessage(_ message: String) {
+        let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
+        messageLabel.text = message
+        messageLabel.textColor = .black
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = .center;
+        messageLabel.font = UIFont(name: "TrebuchetMS", size: 15)
+        messageLabel.sizeToFit()
+
+        self.backgroundView = messageLabel;
+    }
+
+    func restore() {
+        self.backgroundView = nil
     }
 }
