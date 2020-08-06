@@ -11,10 +11,16 @@ namespace Omicron.Pedidos.Test.Facade
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Facade.Catalogs.Users;
+    using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Services.Mapping;
+    using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -25,15 +31,29 @@ namespace Omicron.Pedidos.Test.Facade
     {
         private UserFacade userFacade;
 
+        private PedidoFacade pedidoFacade;
+
         /// <summary>
         /// The init.
         /// </summary>
         [OneTimeSetUp]
         public void Init()
         {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            var mapper = mapperConfiguration.CreateMapper();
+
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
+
+            var response = new ResultModel
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
+            };
 
             mockServices
                 .Setup(m => m.GetAllUsersAsync())
@@ -47,6 +67,16 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
                 .Returns(Task.FromResult(true));
 
+            var mockServicesPedidos = new Mock<IPedidosService>();
+            mockServicesPedidos
+                .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.GetUserOrderBySalesOrder(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
 
@@ -101,6 +131,45 @@ namespace Omicron.Pedidos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
+        }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task ProcessOrders()
+        {
+            // arrange
+            var order = new ProcessOrderDto();
+
+            // act
+            var response = await this.pedidoFacade.ProcessOrders(order);
+
+            // arrange
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetUserOrderBySalesOrder()
+        {
+            // arrange
+            var listIds = new List<int>();
+
+            // act
+            var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
         }
     }
 }

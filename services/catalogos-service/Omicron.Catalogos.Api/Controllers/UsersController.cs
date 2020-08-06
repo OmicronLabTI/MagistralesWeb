@@ -31,7 +31,6 @@ namespace Omicron.Catalogos.Api.Controllers
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="logicFacade">User Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
         public UsersController(IUserFacade logicFacade)
         {
             this.logicFacade = logicFacade ?? throw new ArgumentNullException(nameof(logicFacade));

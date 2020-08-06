@@ -30,5 +30,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="docId">the doc id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> GetOrderDetails(int docId);
+
+        /// <summary>
+        /// Gets the orders with their detail.
+        /// </summary>
+        /// <param name="pedidosIds">the detail.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds);
+
+        /// <summary>
+        /// Gets the production orders bu produc and id.
+        /// </summary>
+        /// <param name="pedidosIds">list ids each elemente is orderId-producId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetProdOrderByOrderItem(List<string> pedidosIds);
     }
 }

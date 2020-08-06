@@ -27,5 +27,21 @@ namespace Omicron.Pedidos.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<UserModel> CatUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatUser.
+        /// </summary>
+        /// <value>
+        /// Object UserModel CatUser.
+        /// </value>
+        public virtual DbSet<UserOrderModel> UserOrderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatUser.
+        /// </summary>
+        /// <value>
+        /// Object UserModel CatUser.
+        /// </value>
+        public virtual DbSet<OrderLogModel> OrderLogModel { get; set; }
     }
 }
