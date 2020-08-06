@@ -5,10 +5,12 @@
 //  Created by Axity on 29/07/20.
 //  Copyright © 2020 Diego Cárcamo. All rights reserved.
 //
+
 import RxSwift
 import RxCocoa
 import Moya // Borrar cuando se consuma bien el servicio
 class RootViewModel {
+    
     // MARK: Variables
     var assignedOrders: [Order] = []
     var inProcessOrdes: [Order] = []
@@ -16,20 +18,16 @@ class RootViewModel {
     var finishedOrders: [Order] = []
     var reassignedOrders: [Order] = []
     
-    public let dataStatus: PublishSubject<[Section]> = PublishSubject()
+    public var dataStatus: BehaviorRelay<[Section]> = BehaviorRelay(value: [])
     let disposeBag = DisposeBag()
     
     init() {
-        
-        let manager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-        let statusRequest: StatusRequest = StatusRequest(qfbId: 1)
-        manager.getStatusList(qfbId: statusRequest).subscribe(onNext: { res in
-
+        NetworkManager.shared.getStatusList(qfbId: StatusRequest.init(qfbId: 1)).subscribe(onNext: { res in
             for status in res.status! {
                 switch status.statusId {
                 case 1:
                     self.assignedOrders = status.orders!
-               case 2:
+                case 2:
                     self.inProcessOrdes = status.orders!
                 case 3:
                     self.penddingOrders = status.orders!
@@ -41,8 +39,14 @@ class RootViewModel {
                     print("")
                 }
             }
+            let data = [
+                Section(statusName: "Asignadas", numberTask:  self.assignedOrders.count, imageIndicatorStatus: "assignedStatus"),
+                Section(statusName: "En Proceso", numberTask: self.inProcessOrdes.count, imageIndicatorStatus: "processStatus"),
+                Section(statusName: "Pendientes", numberTask: self.penddingOrders.count, imageIndicatorStatus: "pendingStatus"),
+                Section(statusName: "Terminado", numberTask: self.finishedOrders.count, imageIndicatorStatus: "finishedStatus"),
+                Section(statusName: "Reasignado", numberTask: self.reassignedOrders.count, imageIndicatorStatus: "reassignedStatus")
+            ]
+            self.dataStatus.accept(data)
         }).disposed(by: disposeBag)
-        
     }
-    
 }
