@@ -10,10 +10,10 @@ namespace Omicron.Pedidos.Api.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using Omicron.Pedidos.Dtos.User;
-    using Omicron.Pedidos.Facade.Catalogs.Users;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Facade.Catalogs.Users;
     using StackExchange.Redis;
 
     /// <summary>
@@ -27,18 +27,13 @@ namespace Omicron.Pedidos.Api.Controllers
 
         private readonly IDatabase database;
 
-        private readonly IConnectionMultiplexer redis;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="logicFacade">User Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
-        public UsersController(IUserFacade logicFacade, IConnectionMultiplexer redis)
+        public UsersController(IUserFacade logicFacade)
         {
             this.logicFacade = logicFacade ?? throw new ArgumentNullException(nameof(logicFacade));
-            this.redis = redis ?? throw new ArgumentNullException(nameof(redis));
-            this.database = redis.GetDatabase();
         }
 
         /// <summary>

@@ -23,5 +23,21 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object UserModel CatUser.
         /// </value>
         DbSet<UserModel> CatUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatUser.
+        /// </summary>
+        /// <value>
+        /// Object UserModel CatUser.
+        /// </value>
+        DbSet<UserOrderModel> UserOrderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatUser.
+        /// </summary>
+        /// <value>
+        /// Object UserModel CatUser.
+        /// </value>
+        DbSet<OrderLogModel> OrderLogModel { get; set; }
     }
 }

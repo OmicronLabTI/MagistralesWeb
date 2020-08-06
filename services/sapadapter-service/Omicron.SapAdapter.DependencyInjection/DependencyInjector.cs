@@ -13,9 +13,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.DataAccess.DAO.User;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Facade.Catalogs.Users;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
@@ -36,10 +34,7 @@ namespace Omicron.SapAdapter.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
-            Services.AddTransient<IUserFacade, UserFacade>();
             Services.AddTransient<IUsersService, UsersService>();
-            Services.AddTransient<IUserDao, UserDao>();
-
             Services.AddTransient<ISapFacade, SapFacade>();
             Services.AddTransient<ISapService, SapService>();
             Services.AddTransient<ISapDao, SapDao>();

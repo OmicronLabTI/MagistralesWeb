@@ -9,8 +9,8 @@
 namespace Omicron.SapAdapter.Services.Utils
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
 

@@ -119,6 +119,19 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// gets the users by  id.
+        /// </summary>
+        /// <param name="listIds">the list.</param>
+        /// <returns>the usrse.</returns>
+        [Route("/getUsersById")]
+        [HttpPost]
+        public async Task<IActionResult> GetUsersById(List<string> listIds)
+        {
+            var response = await this.userFacade.GetUsersById(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method to get user By Id.
         /// </summary>
         /// <param name="userId">User Id.</param>
