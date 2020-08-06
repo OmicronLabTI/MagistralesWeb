@@ -45,5 +45,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.ProcessOrders(orderDto);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// the list ids.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/salesOrder")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderBySalesOrder(List<int> listIds)
+        {
+            var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+            return this.Ok(response);
+        }
     }
 }

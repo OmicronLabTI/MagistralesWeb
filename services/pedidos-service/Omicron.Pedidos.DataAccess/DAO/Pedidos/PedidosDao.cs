@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -46,17 +47,20 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<bool> InsertOrderLog(List<OrderLogModel> orderLog)
         {
-            try
-            {
-                this.databaseContext.OrderLogModel.AddRange(orderLog);
-                await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                return true;
-            }
-            
+            this.databaseContext.OrderLogModel.AddRange(orderLog);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
             return true;
+        }
+
+        /// <summary>
+        /// the list ids.
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.Salesorderid)).ToListAsync();
         }
     }
 }

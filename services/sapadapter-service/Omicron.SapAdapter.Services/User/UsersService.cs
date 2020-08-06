@@ -10,9 +10,13 @@ namespace Omicron.SapAdapter.Services.User
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.User;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
 
@@ -21,37 +25,37 @@ namespace Omicron.SapAdapter.Services.User
     /// </summary>
     public class UsersService : IUsersService
     {
-        private readonly IMapper mapper;
-
-        private readonly IUserDao userDao;
+        /// <summary>
+         /// Client Http.
+         /// </summary>
+        private readonly HttpClient httpClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsersService"/> class.
+        /// Initializes a new instance of the <see cref="UsersService" /> class.
         /// </summary>
-        /// <param name="mapper">Object to mapper.</param>
-        /// <param name="userDao">Object to userDao.</param>
-        public UsersService(IMapper mapper, IUserDao userDao)
+        /// <param name="httpClient">Client Http.</param>
+        public UsersService(HttpClient httpClient)
         {
-            this.mapper = mapper;
-            this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
+            this.httpClient = httpClient;
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        /// <summary>
+        /// Method for get all users from db.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetUsersById(List<string> listIds)
         {
-            return this.mapper.Map<List<UserDto>>(await this.userDao.GetAllUsersAsync());
-        }
+            ResultDto result;
+            var stringContent = new StringContent(JsonConvert.SerializeObject(listIds), UnicodeEncoding.UTF8, "application/json");
 
-        /// <inheritdoc/>
-        public async Task<UserDto> GetUserAsync(int userId)
-        {
-            return this.mapper.Map<UserDto>(await this.userDao.GetUserAsync(userId));
-        }
+            var url = this.httpClient.BaseAddress + "getUsersById";
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
+            {
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
 
-        /// <inheritdoc/>
-        public async Task<bool> InsertUser(UserDto user)
-        {
-            return await this.userDao.InsertUser(this.mapper.Map<UserModel>(user));
+            return result;
         }
     }
 }

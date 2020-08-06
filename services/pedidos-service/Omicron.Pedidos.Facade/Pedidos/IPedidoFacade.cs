@@ -23,5 +23,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="orderDto">the pedidos list.</param>
         /// <returns>the result.</returns>
         Task<ResultDto> ProcessOrders(ProcessOrderDto orderDto);
+
+        /// <summary>
+        /// returns the list of userOrder by sales order.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrderBySalesOrder(List<int> listIds);
     }
 }

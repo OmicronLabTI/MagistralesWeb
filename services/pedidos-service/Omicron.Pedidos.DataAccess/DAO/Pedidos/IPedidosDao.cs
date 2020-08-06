@@ -27,5 +27,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="orderLog">UserOrder Dto.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> InsertOrderLog(List<OrderLogModel> orderLog);
+
+        /// <summary>
+        /// the list ids.
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs);
     }
 }

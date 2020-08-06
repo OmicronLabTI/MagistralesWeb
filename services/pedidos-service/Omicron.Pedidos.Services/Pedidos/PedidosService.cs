@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -59,6 +60,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders.Response), null);
+        }
+
+        /// <summary>
+        /// returns the orders.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
+            return ServiceUtils.CreateResult(true, 200, null, orders, null);
         }
     }
 }

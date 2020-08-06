@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// clase de pedido Service.

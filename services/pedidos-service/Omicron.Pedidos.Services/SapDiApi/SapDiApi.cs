@@ -6,14 +6,14 @@
 // </copyright>
 // </summary>
 
-using Newtonsoft.Json;
-using Omicron.Pedidos.Entities.Model;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Omicron.Pedidos.Services.SapDiApi
 {
+    using System.Net.Http;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Omicron.Pedidos.Entities.Model;
+
     /// <summary>
     /// the sap adapter.
     /// </summary>
