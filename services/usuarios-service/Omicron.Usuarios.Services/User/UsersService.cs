@@ -71,15 +71,15 @@ namespace Omicron.Usuarios.Services.User
 
             if (user == null || user.UserName == null)
             {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.UserDontExist, null, null);
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.UserDontExist, null, null, null);
             }
 
             if (!user.Password.Equals(login.Password))
             {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null);
+                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null, null);
             }
 
-            return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null);
+            return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null, null);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Omicron.Usuarios.Services.User
                 throw new CustomServiceException(ServiceConstants.ErrorWhileInsertingUser, HttpStatusCode.InternalServerError);
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null, null);
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Omicron.Usuarios.Services.User
 
             listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, users.Count());
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Omicron.Usuarios.Services.User
             }
 
             var response = await this.userDao.UpdateUsers(listUserToUpdate);
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Activo = user.Activo;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
         }
 
         /// <summary>
@@ -187,7 +187,19 @@ namespace Omicron.Usuarios.Services.User
         public async Task<ResultModel> GetUser(string userName)
         {
             var user = await this.userDao.GetUserByUserName(userName);
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, user, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, user, null, null);
+        }
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <param name="roleId">The roleid.</param>
+        /// <returns>the list of qfb.</returns>
+        public async Task<ResultModel> GetUsersByRole(string roleId)
+        {
+            int.TryParse(roleId, out int roleInt);
+            var users = await this.userDao.GetUsersByRole(roleInt);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, users, null, users.Count());
         }
     }
 }

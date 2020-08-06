@@ -22,7 +22,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteOrderModel>> GetAllOrders(DateTime date);
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaFin(DateTime initDate, DateTime endDate);
 
         /// <summary>
         /// gets the details.
@@ -30,6 +36,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="pedidoId">PedidoID</param>
         /// <returns>the details.</returns>
         Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(int pedidoId);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int id);
 
     }
 }

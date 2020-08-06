@@ -44,7 +44,8 @@ namespace Omicron.SapAdapter.Services.Pedidos
             ResultDto result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");
 
-            using (var response = await this.httpClient.PostAsync(string.Empty, stringContent))
+            var url = this.httpClient.BaseAddress + "getUserOrder/salesOrder";
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
             }

@@ -64,5 +64,12 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <param name="user">the user to update.</param>
         /// <returns>the user.</returns>
         Task<bool> UpdateUser(UserModel user);
+
+        /// <summary>
+        /// looks users based in the roleId.
+        /// </summary>
+        /// <param name="roleId">the role id.</param>
+        /// <returns>the result.</returns>
+        Task<IEnumerable<UserModel>> GetUsersByRole(int roleId);
     }
 }

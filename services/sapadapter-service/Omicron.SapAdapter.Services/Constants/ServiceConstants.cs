@@ -18,27 +18,27 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
-        public const string FilterDate = "date";
+        public const string DocNum = "docNum";
 
         /// <summary>
-        /// today value.
+        /// the filter for orders.
         /// </summary>
-        public const string Today = "today";
+        public const string FechaInicio = "fini";
 
         /// <summary>
-        /// two weeks value.
+        /// the filter for orders.
         /// </summary>
-        public const string TwoWeeks = "twoweeks";
+        public const string FechaFin = "ffin";
 
         /// <summary>
-        /// one week value.
+        /// the filter for orders.
         /// </summary>
-        public const string Week = "week";
+        public const string Status = "status";
 
         /// <summary>
-        /// month value.
+        /// the filter for orders.
         /// </summary>
-        public const string Month = "month";
+        public const string Qfb = "qfb";
 
         /// <summary>
         /// const for offset.

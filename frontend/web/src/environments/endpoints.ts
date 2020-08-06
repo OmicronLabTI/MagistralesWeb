@@ -6,7 +6,7 @@ export const Endpoints = {
   users: {
     createUser: `${environment.baseUrl}/api/usuarios/createuser`,
     roles: `${environment.baseUrl}/api/catalogos/getroles`,
-    getUsers: `${environment.baseUrl}/api/usuarios/getUsers?offset=0&limit=10`,
+    getUsers: `${environment.baseUrl}/api/usuarios/getUsers`,
     delete: `${environment.baseUrl}/api/usuarios/deactivateUser`,
     update: `${environment.baseUrl}/api/usuarios/updateUser`,
   },

@@ -79,5 +79,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="userName">the username.</param>
         /// <returns>the user.</returns>
         Task<ResultDto> GetUser(string userName);
+
+        /// <summary>
+        /// gets the qfb.
+        /// </summary>
+        /// <param name="roleId">the roleid.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUsersByRole(string roleId);
     }
 }

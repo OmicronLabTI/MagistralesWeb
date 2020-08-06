@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Utils
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
@@ -26,8 +27,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="userError">the user error.</param>
         /// <param name="responseObj">the responseobj.</param>
         /// <param name="exceptionMessage">the exception message.</param>
+        /// <param name="comments">the comments.</param>
         /// <returns>the resultModel.</returns>
-        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage)
+        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage, object comments)
         {
             return new ResultModel
             {
@@ -36,6 +38,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 UserError = userError,
                 ExceptionMessage = exceptionMessage,
                 Code = code,
+                Comments = comments,
             };
         }
 
@@ -44,29 +47,60 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="filter">the dictionary.</param>
         /// <returns>the datetime.</returns>
-        public static DateTime GetDateFilter(Dictionary<string, string> filter)
+        public static Dictionary<string, DateTime> GetDateFilter(Dictionary<string, string> filter)
         {
-            if (!filter.ContainsKey(ServiceConstants.FilterDate) || filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Today))
+            var dictToReturn = new Dictionary<string, DateTime>();
+
+            if (filter.ContainsKey(ServiceConstants.FechaInicio))
             {
-                return DateTime.Today;
+                return GetDictDates(filter[ServiceConstants.FechaInicio]);
             }
 
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.TwoWeeks))
+            if (filter.ContainsKey(ServiceConstants.FechaFin))
             {
-                return DateTime.Today.AddDays(-14);
+                return GetDictDates(filter[ServiceConstants.FechaFin]);
             }
 
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Month))
-            {
-                return DateTime.Today.AddDays(-30);
-            }
+            return dictToReturn;
+        }
 
-            if (filter[ServiceConstants.FilterDate].Equals(ServiceConstants.Week))
-            {
-                return DateTime.Today.AddDays(-7);
-            }
+        /// <summary>
+        /// gets the dictionary.
+        /// </summary>
+        /// <param name="dateRange">the date range.</param>
+        /// <returns>the data.</returns>
+        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
+        {
+            var dictToReturn = new Dictionary<string, DateTime>();
+            var dates = dateRange.Split("-");
 
-            return DateTime.Today;
+            var dateInicioArray = GetDatesAsArray(dates[0]);
+            var dateFinArray = GetDatesAsArray(dates[1]);
+
+            var dateInicio = new DateTime(dateInicioArray[2], dateInicioArray[1], dateInicioArray[0]);
+            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0]);
+            dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
+            dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
+            return dictToReturn;
+        }
+
+        /// <summary>
+        /// split the dates to int array.
+        /// </summary>
+        /// <param name="date">the date in string.</param>
+        /// <returns>the dates.</returns>
+        private static List<int> GetDatesAsArray(string date)
+        {
+            var dateArrayNum = new List<int>();
+            var dateArray = date.Split("/");
+
+            dateArray.ToList().ForEach(x =>
+            {
+                int.TryParse(x, out int result);
+                dateArrayNum.Add(result);
+            });
+
+            return dateArrayNum;
         }
     }
 }
