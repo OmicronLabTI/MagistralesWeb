@@ -36,8 +36,8 @@ export class PedidosComponent implements OnInit {
     private errorService: ErrorService
   ) {
     this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
-    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}`;
-    this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    //this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
   ngOnInit() {

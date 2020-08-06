@@ -11,7 +11,7 @@ export class PedidosService {
   constructor(private consumeService: ConsumeService) { }
 
   getPedidos(params: ParamsPedidos) {
-    const queryString = `?fini=${params.fini}&ffin=${params.ffin}&offset=${params.offset}&limit=${params.limit}`;
+    const queryString = `?fini=${params.fini}&offset=${params.offset}&limit=${params.limit}`;
     return this.consumeService.httpGet(`${Endpoints.pedidos.getPedidos}${queryString}`);
   }
 
