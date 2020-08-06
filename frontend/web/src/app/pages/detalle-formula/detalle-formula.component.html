@@ -2,8 +2,8 @@
 <div class="container-list-page">
     <div class="header-page">
       <div class="title-list-container">
-        <span>Orden de fabricación</span>
-        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle del pedido</div>
+        <span>Detalle</span>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle</div>
       </div>
       <div class="filter-select">
         <div class="docbase">Documento base: {{docNum}} </div>
@@ -50,93 +50,80 @@
     <div class="list-users-container">
         <mat-tab-group>
             <mat-tab label="General">
-                <div>
-                    <mat-form-field appearance="outline" class="generalinput readonly" style="width: 15.8%;">
+                <div style="margin-top: 10px;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Tipo</mat-label>
-                        <input matInput placeholder="Tipo" readonly>
-                        
+                        <input matInput placeholder="Tipo" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Estado</mat-label>
-                        <input matInput placeholder="Estado">
-                        
+                        <input matInput placeholder="Estado" disabled value="asdasd">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                         <mat-label>Cantidad planificada</mat-label>
-                        <input matInput placeholder="Cantidad planificada">
-                        
+                        <input matInput placeholder="Cantidad planificada" value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Nombre de</mat-label>
-                        <input matInput placeholder="Nombre de">
-                        
+                        <input matInput placeholder="Nombre de" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Almacén</mat-label>
-                        <input matInput placeholder="Almacén">
-                        
+                        <input matInput placeholder="Almacén" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>N°</mat-label>
-                        <input matInput placeholder="N°">
-                        
+                        <input matInput placeholder="N°" disabled value="ALGO">
                     </mat-form-field>
                 </div>
-                <div>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                <div style="margin-top: 10px;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
+                        <mat-label>Cálculo de fecha de enrutamiento</mat-label>
+                        <input matInput placeholder="Cálculo de fecha de enrutamiento" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24.1%;">
+                        <mat-label>Fecha orden de fabricación</mat-label>
+                        <input matInput placeholder="Fecha orden de fabricación" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24.1%;">
+                        <mat-label>Fecha de inicio</mat-label>
+                        <input matInput placeholder="Fecha de inicio" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
+                        <mat-label>Fecha de finalización</mat-label>
+                        <input matInput placeholder="Fecha de finalización" value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                </div>
+                <div style="margin-top: 10px;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24%;">
+                        <mat-label>Usuario</mat-label>
+                        <input matInput placeholder="Usuario" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
+                        <mat-label>Origen</mat-label>
+                        <input matInput placeholder="Origen" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24%;">
+                        <mat-label>Pedido de cliente</mat-label>
+                        <input matInput placeholder="Pedido de cliente" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
+                        <mat-label>Cliente</mat-label>
+                        <input matInput placeholder="Cliente" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
+                        <mat-label>Cantidad planificada</mat-label>
+                        <input matInput placeholder="Cantidad planificada" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                </div>
+                <div style="margin-top: 10px;">
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
+                        <mat-label>Cantidad completada</mat-label>
+                        <input matInput placeholder="Cantidad completada" disabled value="ALGO">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput">
-                        <mat-label></mat-label>
-                        <input matInput placeholder="Placeholder">
-                        
+                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
+                        <mat-label>Fecha de cierre real</mat-label>
+                        <input matInput placeholder="Cantidad completada" disabled value="ALGO">
                     </mat-form-field>
                 </div>
             </mat-tab>

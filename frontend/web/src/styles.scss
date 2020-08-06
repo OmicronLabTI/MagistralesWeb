@@ -357,7 +357,7 @@ table .mat-form-field-appearance-outline .mat-form-field-outline {
 }
 
 table td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
-    padding: 0 3px !important;
+  padding: 0 3px !important;
 }
 
 table .mat-form-field-appearance-fill .mat-form-field-flex {
@@ -379,8 +379,71 @@ mat-form-field{
 mat-form-field.generalinput{
   margin: 0 5px;
   font-size: 12px;
+  color: #6C90B3 !important;
+  font-weight: bold !important;
 }
 
-.generalinput .mat-form-field-appearance-outline .mat-form-field-outline {
-  background-color: #5f606c !important;
+.mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button, .mat-fab, .mat-mini-fab {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #6C90B3;
+}
+
+div.breadcrumb{
+  font-size: 12px !important;
+  padding: 0.65rem .95rem;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  transform: none;
+  line-height: 17px;
+  background-color: #e9ecef;
+  width: 300px;
+  text-align: inherit;
+  color: #3b3f5c;
+  box-shadow: none;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+a.breadcrumblink{
+  text-decoration: none;
+  color: #3b3f5c !important;
+}
+
+a.breadcrumblink:visited{
+  color: #3b3f5c !important;
+}
+a.breadcrumblink:hover{
+  color: #3b3f5c !important;
+}
+
+.mat-form-field-label {
+  color: #6C90B3 !important;
+}
+
+.mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+  color: #6C90B3 !important;
+}
+
+.mat-input-element:disabled, .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after {
+  color: #6C90B3;
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-start {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-gap {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-end {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0.7em 0 0.7em 0 !important;
 }
