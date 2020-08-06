@@ -13,16 +13,14 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using NUnit.Framework;
     using Newtonsoft.Json;
+    using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// class for the test.
