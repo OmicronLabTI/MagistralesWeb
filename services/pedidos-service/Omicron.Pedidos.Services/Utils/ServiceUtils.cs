@@ -44,7 +44,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="ordenFabId">the ids to create.</param>
         /// <returns>the list.</returns>
-        public static List<UserOrderModel> CreateUserOrder(List<int> ordenFabId)
+        public static List<UserOrderModel> CreateUserOrder(List<FabricacionOrderModel> ordenFabId)
         {
             var listToReturn = new List<UserOrderModel>();
             ordenFabId.ForEach(x =>
@@ -52,8 +52,8 @@ namespace Omicron.Pedidos.Services.Utils
                 var userOrder = new UserOrderModel
                 {
                     Status = ServiceConstants.Planificada,
-                    Salesorderid = x.ToString(),
-                    Productionorderid = x.ToString(),
+                    Salesorderid = x.PedidoId.ToString(),
+                    Productionorderid = x.OrdenId.ToString(),
                 };
 
                 listToReturn.Add(userOrder);
@@ -69,7 +69,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosId">pedidos seleccionados.</param>
         /// <param name="ordenesFabId">ordenes creadas.</param>
         /// <returns>the list to insert.</returns>
-        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, List<int> ordenesFabId)
+        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, List<FabricacionOrderModel> ordenesFabId)
         {
             var listToReturn = new List<OrderLogModel>();
 
@@ -91,11 +91,31 @@ namespace Omicron.Pedidos.Services.Utils
                 {
                     Description = ServiceConstants.OrdenFabricacionPlan,
                     Logdatetime = DateTime.Now,
-                    Noid = x.ToString(),
+                    Noid = x.OrdenId.ToString(),
                     Type = ServiceConstants.OrdenFab,
                     Userid = user,
                 });
             });
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the list of keys by a value.
+        /// </summary>
+        /// <param name="dictResult">the dict.</param>
+        /// <param name="correctValue">the correct value.</param>
+        /// <returns>the list.</returns>
+        public static List<string> GetListFabOrders(Dictionary<string, string> dictResult, string correctValue)
+        {
+            var listToReturn = new List<string>();
+            foreach (var k in dictResult.Keys)
+            {
+                if (dictResult[k].Equals(correctValue))
+                {
+                    listToReturn.Add(k);
+                }
+            }
 
             return listToReturn;
         }

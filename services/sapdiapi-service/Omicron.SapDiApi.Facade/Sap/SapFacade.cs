@@ -39,7 +39,7 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> CreateFabOrder(List<OrderWithDetailDto> orderWithDetailDto)
         {
             var model = this.mapper.Map<List<OrderWithDetailModel>>(orderWithDetailDto);
-            return this.mapper.Map<ResultDto>(this.sapDiApiService.InsertOrdenFab(model));
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.InsertOrdenFab(model));
         }
     }
 }

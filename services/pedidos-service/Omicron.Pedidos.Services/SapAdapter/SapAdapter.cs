@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.SapAdapter
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -38,14 +39,22 @@ namespace Omicron.Pedidos.Services.SapAdapter
         /// get orders with the data.
         /// </summary>
         /// <param name="listPedidos">the orders.</param>
+        /// <param name="route">the route.</param>
         /// <returns>the return.</returns>
-        public async Task<ResultModel> GetSapOrders(List<int> listPedidos)
+        public async Task<ResultModel> PostSapAdapter(object listPedidos, string route)
         {
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");
-            var url = this.httpClient.BaseAddress + "getDetails";
+            var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
             }
 

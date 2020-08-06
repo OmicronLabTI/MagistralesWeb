@@ -20,8 +20,9 @@ namespace Omicron.Pedidos.Services.SapAdapter
         /// <summary>
         /// get orders with the data.
         /// </summary>
-        /// <param name="listPedidos">the orders.</param>
+        /// <param name="dataToSend">the orders.</param>
+        /// <param name="route">route to send.</param>
         /// <returns>the return.</returns>
-        Task<ResultModel> GetSapOrders(List<int> listPedidos);
+        Task<ResultModel> PostSapAdapter(object dataToSend, string route);
     }
 }

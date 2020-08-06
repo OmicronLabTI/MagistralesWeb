@@ -117,6 +117,27 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the production orders bu produc and id.
+        /// </summary>
+        /// <param name="pedidosIds">list ids each elemente is orderId-producId.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetProdOrderByOrderItem(List<string> pedidosIds)
+        {
+            var result = new List<OrdenFabricacionModel>();
+
+            foreach (var o in pedidosIds)
+            {
+                var data = o.Split("-");
+                int.TryParse(data[0], out int pedidoId);
+
+                var order = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
+                result.Add(order);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(result), null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

@@ -52,6 +52,6 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("Quantity")]
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

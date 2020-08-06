@@ -143,7 +143,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    CodigoProducto = d.ProductoId,
                                    DescripcionProducto = d.Description,
                                    QtyPlanned = (int)dp.Quantity,
-                                   QtyPlannedDetalle = d.Quantity,
+                                   QtyPlannedDetalle = (int)d.Quantity,
                                    FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
                                    FechaOfFin = null,
                                    Status = dp.Status,
@@ -162,6 +162,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = await this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID).ToListAsync();
 
             return query;
+        }
+
+        /// <summary>
+        /// gets the orders by product and item.
+        /// </summary>
+        /// <param name="pedidoId">the product id.</param>
+        /// <param name="productId">the product id.</param>
+        /// <returns>the data.</returns>
+        public async Task<OrdenFabricacionModel> GetProdOrderByOrderProduct(int pedidoId, string productId)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O").ToListAsync();
+            return query.FirstOrDefault();
         }
     }
 }

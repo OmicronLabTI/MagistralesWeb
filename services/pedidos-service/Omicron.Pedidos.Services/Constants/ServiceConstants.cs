@@ -16,7 +16,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// status planificada.
         /// </summary>
-        public const string Planificada = "Planificada";
+        public const string Planificada = "Planificado";
 
         /// <summary>
         /// orden de venta plan.
@@ -37,5 +37,20 @@ namespace Omicron.Pedidos.Services.Constants
         /// orden venta.
         /// </summary>
         public const string OrdenVenta = "OV";
+
+        /// <summary>
+        /// the ok value.
+        /// </summary>
+        public const string Ok = "Ok";
+
+        /// <summary>
+        /// the get with orders.
+        /// </summary>
+        public const string GetOrderWithDetail = "getDetails";
+
+        /// <summary>
+        /// gets the order by product item and product order.
+        /// </summary>
+        public const string GetProdOrderByOrderItem = "getProductionOrderItem";
     }
 }

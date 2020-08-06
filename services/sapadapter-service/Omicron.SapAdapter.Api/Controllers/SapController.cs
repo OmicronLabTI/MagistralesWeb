@@ -70,5 +70,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var result = await this.sapFacade.GetPedidoWithDetail(pedidosId);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// gets the order with the details.
+        /// </summary>
+        /// <param name="pedidosId">the ids.</param>
+        /// <returns>the result.</returns>
+        [Route("/getProductionOrderItem")]
+        [HttpPost]
+        public async Task<IActionResult> GetProdOrderByOrderItem(List<string> pedidosId)
+        {
+            var result = await this.sapFacade.GetProdOrderByOrderItem(pedidosId);
+            return this.Ok(result);
+        }
     }
 }

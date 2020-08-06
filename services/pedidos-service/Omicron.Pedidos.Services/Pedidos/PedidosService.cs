@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
@@ -50,14 +51,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId)
         {
-            var orders = await this.sapAdapter.GetSapOrders(pedidosId.ListIds);
-            var resultSap = await this.sapDiApi.CreateFabOrder(orders.Response);
+            var orders = await this.sapAdapter.PostSapAdapter(pedidosId.ListIds, ServiceConstants.GetOrderWithDetail);
 
-            var listToInsert = ServiceUtils.CreateUserOrder(pedidosId.ListIds);
-            var listOrderToInsert = ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, new List<int>());
+            var resultSap = await this.sapDiApi.CreateFabOrder(orders.Response);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            var listToLook = ServiceUtils.GetListFabOrders(dictResult, ServiceConstants.Ok);
+
+            var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
+            var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
+
+            var listToInsert = ServiceUtils.CreateUserOrder(listOrders);
+            var listOrderToInsert = ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, listOrders);
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
-            await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            try
+            {
+                await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            }
+            catch (Exception ex)
+            {
+            }
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders.Response), null);
         }

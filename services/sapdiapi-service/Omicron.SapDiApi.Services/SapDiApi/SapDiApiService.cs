@@ -47,7 +47,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     double.TryParse(plannedQty, out double plannedQtyNumber);
 
                     var prodObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
-                    prodObj.StartDate = DateTime.Now;
+                    prodObj.StartDate = pedido.Order.FechaInicio;
+                    prodObj.DueDate = pedido.Order.FechaFin;
                     prodObj.ItemNo = orf.CodigoProducto;
                     prodObj.ProductDescription = orf.DescripcionProducto;
                     prodObj.PlannedQuantity = plannedQtyNumber;

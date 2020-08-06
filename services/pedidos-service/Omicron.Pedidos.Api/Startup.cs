@@ -36,7 +36,7 @@ namespace Omicron.Pedidos.Api
 
         private const string SapAdapterUrl = "http://sapadapterservice/";
 
-        private const string SapDiApiUrl = "http://sapdiapiservice/";
+        private const string SapDiApiUrl = "http://localhost:55545/SapDiApi/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.

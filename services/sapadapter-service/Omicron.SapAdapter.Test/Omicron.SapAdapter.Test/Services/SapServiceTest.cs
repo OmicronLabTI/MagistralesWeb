@@ -146,5 +146,22 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetProdOrderByOrderItem()
+        {
+            // arrange
+            var listIds = new List<string> { "100-Buscapina" };
+
+            // act
+            var result = await this.sapService.GetProdOrderByOrderItem(listIds);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }
