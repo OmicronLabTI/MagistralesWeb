@@ -12,7 +12,7 @@ import Moya
 
 @testable import Omicron
 
-class OmicronTests: XCTestCase {
+class LoginTest: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -43,10 +43,11 @@ class OmicronTests: XCTestCase {
     func testLoginService() {
         let disposeBag = DisposeBag()
         let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "")
+        let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY3MzM1NTgsInVzZXIiOiJzZXJnaW8ifQ.W9kstVRF9qm_s2diVt-Ki0xb4FwkXIA0QtEFSDAlXCM"
         let manager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         manager.login(data: (data)).subscribe(onNext: { res in
             XCTAssertNotNil(res.access_token)
-            XCTAssertEqual(res.access_token, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY")
+            XCTAssertEqual(res.access_token, testToken)
         }).disposed(by: disposeBag)
     }
     
