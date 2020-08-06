@@ -18,6 +18,7 @@ class  InboxViewModel {
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
     var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
+    let rootViewModel = RootViewModel()
 //    var finishedButtonIsHidden: Driver<Bool>
 //    var pendingButtonIsHidden: Driver<Bool>
 //    var processButtonIsHidden: Driver<Bool>
@@ -38,6 +39,11 @@ class  InboxViewModel {
         // Funcionalidad para el botón de En Proceso
         processDidTab.subscribe(onNext: {
             print("Botón de proceso")
+            }).disposed(by: disposeBag)
+        rootViewModel.dataStatus.subscribe(onNext: { data in
+            let assignedData = data[0].orders
+            self.statusData.accept(assignedData)
+            self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
             }).disposed(by: disposeBag)
     }
     

@@ -24,6 +24,8 @@ class InboxViewController: UIViewController {
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     private var typeCard: Int = 0
+    let rootViewModel = RootViewModel();
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +67,7 @@ class InboxViewController: UIViewController {
         
         inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
             
-            if(data.orders.count == 0 && data.indexStatusSelected > 0) {
+            if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
                 var message: String = ""
                 switch data.indexStatusSelected {
                 case 0:

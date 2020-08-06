@@ -79,7 +79,7 @@ struct StatusNameConstants {
 struct ButtonNameOfCards {
     static let assigned = "showAssignedDetailButton.png"
     static let inProcess = "showProcessDetailButton.png"
-    static let pendding = "showReasignedDetailButton.png"
+    static let pendding = "showPenddingDetailButton.png"
     static let finished = "showFinishedDetailButton.png"
     static let reasigned = "showReasignedDetailButton.png"
 }
