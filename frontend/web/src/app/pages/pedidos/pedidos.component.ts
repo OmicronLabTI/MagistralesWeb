@@ -57,6 +57,10 @@ export class PedidosComponent implements OnInit {
           element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
           element.class = element.pedidoStatus === "Abierto" ? "green": "mat-primary";
         });
+      },
+      error => {
+        console.log(error);
+        this.errorService.httpError(error);
       }
     );
   }
