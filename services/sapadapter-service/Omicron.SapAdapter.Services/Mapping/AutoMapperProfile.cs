@@ -23,9 +23,6 @@ namespace Omicron.SapAdapter.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
-            this.CreateMap<UserModel, UserDto>();
-            this.CreateMap<UserDto, UserModel>();
-
             this.CreateMap<ResultDto, ResultModel>();
             this.CreateMap<ResultModel, ResultDto>();
         }

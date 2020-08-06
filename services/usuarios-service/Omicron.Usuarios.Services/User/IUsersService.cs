@@ -86,5 +86,12 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="roleId">The roleid.</param>
         /// <returns>the list of qfb.</returns>
         Task<ResultModel> GetUsersByRole(string roleId);
+
+        /// <summary>
+        /// returns user by id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUsersById(List<string> listIds);
     }
 }

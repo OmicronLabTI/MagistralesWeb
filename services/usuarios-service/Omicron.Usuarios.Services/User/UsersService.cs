@@ -201,5 +201,16 @@ namespace Omicron.Usuarios.Services.User
             var users = await this.userDao.GetUsersByRole(roleInt);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, users, null, users.Count());
         }
+
+        /// <summary>
+        /// returns user by id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUsersById(List<string> listIds)
+        {
+            var users = await this.userDao.GetUsersById(listIds);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(users), null, null);
+        }
     }
 }

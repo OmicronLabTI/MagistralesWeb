@@ -234,5 +234,8 @@
 	<insert tableName="roles"> 
 		<column name="roledescription" value="QFB"/>
 	</insert>
-  </changeSet>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.28">
+    <dropNotNullConstraint tableName="usersorders" columnName="userid" columnDataType="varchar(50)"/>
+  </changeSet>
 </databaseChangeLog> 
