@@ -192,7 +192,7 @@
     <Compile Include="Configuration\UnityResolver.cs" />
     <Compile Include="Configuration\APIConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\LayoutElementsController.cs" />
+    <Compile Include="Controllers\SapDiApiController.cs" />
     <Compile Include="Filters\ModelFilterAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -214,9 +214,17 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Omicron.SapDiApi.Dtos\Omicron.SapDiApi.Dtos.csproj">
+      <Project>{5de3ee7c-46bc-42d0-b974-e4475b3979c4}</Project>
+      <Name>Omicron.SapDiApi.Dtos</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Omicron.SapDiApi.Facade\Omicron.SapDiApi.Facade.csproj">
       <Project>{474b53e6-c2e2-47ab-9d0c-9cb2d3a66f35}</Project>
       <Name>Omicron.SapDiApi.Facade</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Omicron.SapDiApi.Services\Omicron.SapDiApi.Services.csproj">
+      <Project>{71299035-F66A-4331-ACC3-1C2FB02D0FC2}</Project>
+      <Name>Omicron.SapDiApi.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

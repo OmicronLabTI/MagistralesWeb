@@ -155,18 +155,30 @@
             <param name="shortMessage">Brief description</param>
             <param name="ex">Exception instance</param>
         </member>
-        <member name="T:Omicron.SapDiApi.Api.Controllers.LayoutElementsController">
+        <member name="T:Omicron.SapDiApi.Api.Controllers.SapDiApiController">
             <summary>
             Layout Element controller for any layout element which belongs to a specific layout
             </summary>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.LayoutElementsController.#ctor">
+        <member name="F:Omicron.SapDiApi.Api.Controllers.SapDiApiController.sapFacade">
             <summary>
-            Initializes a new instance of the <see cref="T:Omicron.SapDiApi.Api.Controllers.LayoutElementsController"/> class.
-            It creates the mapping object for internal types with its corresponding model.
+            Gets or sets the sa.
             </summary>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.LayoutElementsController.Get">
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.#ctor(Omicron.SapDiApi.Facade.Sap.ISapFacade)">
+            <summary>
+            /// Initializes a new instance of the <see cref="T:Omicron.SapDiApi.Api.Controllers.SapDiApiController"/> class.
+            </summary>
+            <param name="sapFacade">the facade.</param>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateFabOrder(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.OrderWithDetailDto})">
+            <summary>
+            the createorder
+            </summary>
+            <param name="orderWithDetailDto">the detial.</param>
+            <returns>the reult.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.Get">
             <summary>
             the ping pong.
             </summary>

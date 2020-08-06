@@ -42,7 +42,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
         {
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(pedidos), UnicodeEncoding.UTF8, "application/json");
-            var url = this.httpClient.BaseAddress + "getDetails";
+            var url = this.httpClient.BaseAddress + "createFabOrder";
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());

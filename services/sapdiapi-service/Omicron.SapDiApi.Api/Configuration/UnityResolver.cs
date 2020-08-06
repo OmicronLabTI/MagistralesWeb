@@ -7,11 +7,12 @@
 namespace Omicron.SapDiApi.Api.Configuration
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
+    using System.Collections.Generic;    
     using System.Web.Http.Dependencies;
+    using AutoMapper;
     using Microsoft.Practices.Unity;
+    using Omicron.SapDiApi.Facade.Sap;
+    using Omicron.SapDiApi.Services.Mapping;
 
     /// <summary>
     /// IOC Resolver for wrpping the unity container
@@ -29,6 +30,11 @@ namespace Omicron.SapDiApi.Api.Configuration
         /// <param name="container">Unity container</param>
         public UnityResolver(IUnityContainer container)
         {
+            ////var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
+            ////container.RegisterInstance("mapper", mappingConfig.CreateMapper());
+            
+            container.RegisterType<ISapFacade, SapFacade>();
+
             if (container == null)
             {
                 throw new ArgumentNullException("container");
