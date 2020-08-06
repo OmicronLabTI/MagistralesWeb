@@ -28,7 +28,7 @@ export class PedidosComponent implements OnInit {
   fullDate: string[] = [];
   constructor(private pedidosService: PedidosService, private datePipe: DatePipe, private dialog: MatDialog) {
     this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
-    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.params.fini = `01/07/${this.fullDate[2]}`;
     this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
@@ -43,7 +43,6 @@ export class PedidosComponent implements OnInit {
     this.pedidosService.getPedidos(this.params).subscribe(
       (pedidoRes: IPedidosListRes) => {
         this.lengthPaginator = pedidoRes.comments;
-        console.log('pedidos res: ', pedidoRes);
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
           element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
@@ -83,7 +82,7 @@ export class PedidosComponent implements OnInit {
 
   changeDataEvent(event: PageEvent) {
     this.offset = (event.pageSize * (event.pageIndex));
-    this.limit = (event.pageSize * (event.pageIndex + 1));
+    this.limit = event.pageSize;
     this.getPedidos();
     return event;
   }

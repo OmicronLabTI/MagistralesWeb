@@ -41,9 +41,9 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha de</mat-label>
-                                    <input matInput [matDatepicker]="dp3" disabled formControlName="fini">
+                                    <input matInput [matDatepicker]="dp3" disabled formControlName="fini" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                                    <mat-datepicker #dp3 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
                                         Fecha de es <strong>requerido</strong>
                                     </mat-error>
@@ -52,9 +52,9 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha hasta</mat-label>
-                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin">
+                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+                                    <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
                                         Fecha hasta es <strong>requerido</strong>
                                     </mat-error>
@@ -68,12 +68,9 @@
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
-                                <mat-option value="0">Abierto</mat-option>
-                                <mat-option value="1">Cancelado</mat-option>
+                                <mat-option value="Abierto">Abierto</mat-option>
+                                <mat-option value="Planificado">Planificado</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="findOrdersForm?.controls.status?.errors?.required">
-                                Estatus es <strong>requerido</strong>
-                            </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
@@ -84,9 +81,6 @@
                                 <mat-option value="1">Irma</mat-option>
                                 <mat-option value="1">Ricardo</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="findOrdersForm?.controls.qfb?.errors?.required">
-                                Qfb es <strong>requerido</strong>
-                            </mat-error>
                         </mat-form-field>
                     </div>
                 </div>
