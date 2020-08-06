@@ -55,12 +55,22 @@ namespace Omicron.SapAdapter.Services.Sap
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
                 orders = (await this.sapDao.GetAllOrdersById(docNum)).ToList();
             }
+
+            if (parameters.ContainsKey(ServiceConstants.FechaInicio))
+            {
+                orders = (await this.sapDao.GetAllOrdersByFechaIni(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+            }
             else
             {
-                orders = (await this.sapDao.GetAllOrders(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+                orders = (await this.sapDao.GetAllOrdersByFechaFin(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
             }
 
-            // var usersQfb = await this.pedidosService.GetUserPedidos(details.Select(x => x.OrdenFabricacionId).Distinct().ToList());
+            var usersQfb = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
+
+
+
+
+
             orders = this.FilterList(orders, parameters);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";

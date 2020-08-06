@@ -37,13 +37,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// get orders.
         /// </summary>
         /// <returns>the orders.</returns>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrders(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate)
         {
                 var query = await (from order in this.databaseContext.OrderModel
                                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                                    join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                                   where order.FechaInicio >= initDate && order.FechaFin <= endDate && producto.IsMagistral == "Y"
+                                   where order.FechaInicio >= initDate && order.FechaInicio <= endDate && producto.IsMagistral == "Y"
                                    select new CompleteOrderModel
                                    {
                                        DocNum = order.DocNum,
@@ -56,6 +56,34 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        PedidoStatus = order.PedidoStatus,
                                        IsChecked = false
                                    }).ToListAsync();
+
+            return query;
+        }
+
+        /// <summary>
+        /// get orders.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaFin(DateTime initDate, DateTime endDate)
+        {
+
+            var query = await (from order in this.databaseContext.OrderModel
+                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                               where order.FechaFin >= initDate && order.FechaFin <= endDate && producto.IsMagistral == "Y"
+                               select new CompleteOrderModel
+                               {
+                                   DocNum = order.DocNum,
+                                   Cliente = order.Cliente,
+                                   Codigo = order.Codigo,
+                                   Medico = order.Medico,
+                                   AsesorName = asesor.AsesorName,
+                                   FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                                   PedidoStatus = order.PedidoStatus,
+                                   IsChecked = false
+                               }).ToListAsync();
 
             return query;
         }
