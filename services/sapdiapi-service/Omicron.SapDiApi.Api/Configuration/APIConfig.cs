@@ -6,9 +6,9 @@
 
 namespace Omicron.SapDiApi.Api.Configuration
 {    
-    using System.Web.Http;        
-    using Microsoft.Practices.Unity;
+    using System.Web.Http;
     using Omicron.SapDiApi.Api.Filters;
+    using Unity;
 
     /// <summary>
     /// Global API configuration

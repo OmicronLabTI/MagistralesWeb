@@ -8,7 +8,8 @@ namespace Omicron.SapDiApi.Api.Controllers
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using System.Web.Http;    
+    using System.Web.Http;
+    using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
     using Omicron.SapDiApi.Facade.Sap;
     

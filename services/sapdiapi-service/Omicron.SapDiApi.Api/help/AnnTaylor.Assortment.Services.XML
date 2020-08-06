@@ -82,7 +82,7 @@
             Unity container
             </summary>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Configuration.UnityResolver.#ctor(Microsoft.Practices.Unity.IUnityContainer)">
+        <member name="M:Omicron.SapDiApi.Api.Configuration.UnityResolver.#ctor(Unity.IUnityContainer)">
             <summary>
             Initializes a new instance of the <see cref="T:Omicron.SapDiApi.Api.Configuration.UnityResolver"/> class.
             </summary>

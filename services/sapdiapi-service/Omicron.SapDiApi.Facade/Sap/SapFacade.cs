@@ -12,17 +12,23 @@ namespace Omicron.SapDiApi.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
-
+    using SAPbobsCOM;
     public class SapFacade : ISapFacade
     {
-        ////private readonly IMapper mapper;
+        private readonly IMapper mapper;
+
+        private readonly Company company;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
-        public SapFacade()
-        {            
+        /// <param name="mapper"></param>
+        public SapFacade(IMapper mapper)
+        {
+            this.mapper = mapper;
+            this.company = Connection.Company; 
         }
 
         /// <summary>

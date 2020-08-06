@@ -31,7 +31,6 @@ namespace Omicron.SapDiApi.Services.Mapping
             this.CreateMap<CompleteDetailDto, CompleteDetailModel>();
             this.CreateMap<OrderWithDetailDto, OrderWithDetailModel>();
             this.CreateMap<OrderWithDetailModel, OrderWithDetailDto>();
-
         }
     }
 }

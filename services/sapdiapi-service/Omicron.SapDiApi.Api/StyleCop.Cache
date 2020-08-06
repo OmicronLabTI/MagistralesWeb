@@ -532,121 +532,6 @@
     </timestamps>
     <violations />
   </sourcecode>
-  <sourcecode name="ArrayInputAttribute.cs" parser="StyleCop.CSharp.CsParser">
-    <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.951</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
-      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
-      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
-      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
-      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
-      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
-      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
-      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
-    </timestamps>
-    <violations />
-  </sourcecode>
-  <sourcecode name="BufferNonStreamedContentHandler.cs" parser="StyleCop.CSharp.CsParser">
-    <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.952</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
-      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
-      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
-      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
-      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
-      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
-      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
-      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
-    </timestamps>
-    <violations />
-  </sourcecode>
-  <sourcecode name="NoBufferPolicySelector.cs" parser="StyleCop.CSharp.CsParser">
-    <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.953</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
-      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
-      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
-      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
-      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
-      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
-      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
-      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
-    </timestamps>
-    <violations />
-  </sourcecode>
-  <sourcecode name="APIConfig.cs" parser="StyleCop.CSharp.CsParser">
-    <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.949</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
-      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
-      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
-      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
-      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
-      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
-      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
-      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
-    </timestamps>
-    <violations />
-  </sourcecode>
-  <sourcecode name="BaseController.cs" parser="StyleCop.CSharp.CsParser">
-    <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.958</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
-      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
-      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
-      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
-      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
-      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
-      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
-      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
-    </timestamps>
-    <violations />
-  </sourcecode>
   <sourcecode name="LayoutElementsController.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
       <styleCop>2020/08/05 17:38:21.877</styleCop>
@@ -670,117 +555,232 @@
     </timestamps>
     <violations />
   </sourcecode>
+  <sourcecode name="ArrayInputAttribute.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:16.990</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations />
+  </sourcecode>
+  <sourcecode name="BufferNonStreamedContentHandler.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:16.991</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations />
+  </sourcecode>
+  <sourcecode name="NoBufferPolicySelector.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:17.002</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations />
+  </sourcecode>
+  <sourcecode name="BaseController.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:17.003</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations />
+  </sourcecode>
   <sourcecode name="ModelFilterAttribute.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.963</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:17.011</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />
   </sourcecode>
   <sourcecode name="AssemblyInfo.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.976</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:17.020</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />
   </sourcecode>
   <sourcecode name="Startup.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 17:38:17.982</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 21:21:17.029</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />
   </sourcecode>
   <sourcecode name=".NETFramework,Version=v4.5.2.AssemblyAttributes.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
       <sourceFile>2020/08/04 12:24:11.206</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations />
+  </sourcecode>
+  <sourcecode name="APIConfig.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/05 23:36:36.488</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />
   </sourcecode>
   <sourcecode name="SapDiApiController.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 19:52:16.310</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/06 00:08:04.103</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />
@@ -790,23 +790,23 @@
   </project>
   <sourcecode name="UnityResolver.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
-      <styleCop>2020/08/05 17:38:21.877</styleCop>
-      <settingsFile>2020/08/05 17:38:21.856</settingsFile>
-      <sourceFile>2020/08/05 19:54:34.327</sourceFile>
-      <parser>2020/08/05 17:38:21.877</parser>
-      <StyleCop.CSharp.DocumentationRules>2020/08/05 17:38:21.877</StyleCop.CSharp.DocumentationRules>
+      <styleCop>2020/08/05 21:21:25.917</styleCop>
+      <settingsFile>2020/08/05 21:21:25.899</settingsFile>
+      <sourceFile>2020/08/06 00:26:03.838</sourceFile>
+      <parser>2020/08/05 21:21:25.917</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/05 21:21:25.917</StyleCop.CSharp.DocumentationRules>
       <StyleCop.CSharp.DocumentationRules.FilesHashCode>0</StyleCop.CSharp.DocumentationRules.FilesHashCode>
-      <StyleCop.CSharp.LayoutRules>2020/08/05 17:38:21.877</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules>2020/08/05 21:21:25.917</StyleCop.CSharp.LayoutRules>
       <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
-      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.MaintainabilityRules>
       <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
-      <StyleCop.CSharp.NamingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.NamingRules>
       <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
-      <StyleCop.CSharp.OrderingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.OrderingRules>
       <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
-      <StyleCop.CSharp.ReadabilityRules>2020/08/05 17:38:21.877</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/05 21:21:25.917</StyleCop.CSharp.ReadabilityRules>
       <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
-      <StyleCop.CSharp.SpacingRules>2020/08/05 17:38:21.877</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules>2020/08/05 21:21:25.917</StyleCop.CSharp.SpacingRules>
       <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
     </timestamps>
     <violations />

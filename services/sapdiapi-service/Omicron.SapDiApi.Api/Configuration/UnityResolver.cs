@@ -10,9 +10,13 @@ namespace Omicron.SapDiApi.Api.Configuration
     using System.Collections.Generic;    
     using System.Web.Http.Dependencies;
     using AutoMapper;
-    using Microsoft.Practices.Unity;
+    using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Entities.Context;
+    using Omicron.SapDiApi.Entities.Models;
     using Omicron.SapDiApi.Facade.Sap;
     using Omicron.SapDiApi.Services.Mapping;
+    using SAPbobsCOM;
+    using Unity;    
 
     /// <summary>
     /// IOC Resolver for wrpping the unity container
@@ -30,9 +34,17 @@ namespace Omicron.SapDiApi.Api.Configuration
         /// <param name="container">Unity container</param>
         public UnityResolver(IUnityContainer container)
         {
-            ////var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
-            ////container.RegisterInstance("mapper", mappingConfig.CreateMapper());
-            
+            var mappingConfig = new MapperConfiguration(cfg => 
+            {
+                cfg.CreateMap<OrderDto, OrderModel>();
+                cfg.CreateMap<OrderModel, OrderDto>();
+                cfg.CreateMap<CompleteDetailModel, CompleteDetailDto>();
+                cfg.CreateMap<CompleteDetailDto, CompleteDetailModel>();
+                cfg.CreateMap<OrderWithDetailDto, OrderWithDetailModel>();
+                cfg.CreateMap<OrderWithDetailModel, OrderWithDetailDto>();
+            });
+            container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
+
             container.RegisterType<ISapFacade, SapFacade>();
 
             if (container == null)
