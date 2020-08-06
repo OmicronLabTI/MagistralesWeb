@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { DetalleFormulaComponent } from './detalle-formula.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { MATERIAL_COMPONENTS } from 'src/app/app.material';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -8,7 +13,8 @@ describe('DetalleFormulaComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DetalleFormulaComponent ]
+      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientModule, ReactiveFormsModule, FormsModule, BrowserAnimationsModule],
+      declarations: [ DetalleFormulaComponent ],      
     })
     .compileComponents();
   }));

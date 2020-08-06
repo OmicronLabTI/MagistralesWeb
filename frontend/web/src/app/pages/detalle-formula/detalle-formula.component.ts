@@ -4,8 +4,6 @@ import {PedidosService} from "../../services/pedidos.service";
 import { IFormulaDetalleRes, IFormulaDetalleReq} from "../../model/http/detalleformula";
 import { ActivatedRoute } from "@angular/router";
 import {TooltipPosition} from "@angular/material/tooltip";
-import {MatFormFieldModule} from '@angular/material/form-field';
-
 
 const ELEMENT_DATA: IFormulaDetalleReq[] = [
   {isChecked: false, numero: "MP-0001", descripcion: "BENZOTO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},

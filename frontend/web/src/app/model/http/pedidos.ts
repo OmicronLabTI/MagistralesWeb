@@ -28,3 +28,8 @@ export class ParamsPedidos {
     offset: number;
     limit: number;
 }
+
+export class ProcessOrders {
+    user: string;
+    listIds: number[];
+}

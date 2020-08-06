@@ -6,7 +6,7 @@ import { DataService } from '../../services/data.service';
 import { CONST_STRING} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {IPedidoReq, IPedidosListRes, ParamsPedidos} from '../../model/http/pedidos';
+import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {DatePipe} from '@angular/common';
@@ -19,6 +19,7 @@ import {DatePipe} from '@angular/common';
 export class PedidosComponent implements OnInit {
   allComplete = false;
   params = new ParamsPedidos();
+  ordersToProcess: ProcessOrders;
   // tslint:disable-next-line:max-line-length
   displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
@@ -36,7 +37,7 @@ export class PedidosComponent implements OnInit {
     private errorService: ErrorService
   ) {
     this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
-    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.params.fini = `01/${this.fullDate[1]}/07-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
     //this.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
@@ -97,7 +98,9 @@ export class PedidosComponent implements OnInit {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
-        this.pedidosService.processOrders(this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])).subscribe(
+        this.ordersToProcess.listIds = this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])
+        this.ordersToProcess.user = this.dataService.getUserId();
+        this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           () => {
             this.dataService.presentToastCustom(Messages.success, 'success', CONST_STRING.empty, false, false)
             this.getPedidos();
