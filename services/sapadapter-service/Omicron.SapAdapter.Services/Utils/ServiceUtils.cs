@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Utils
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
@@ -52,8 +53,16 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (filter.ContainsKey(ServiceConstants.FechaInicio))
             {
-                DateTime.TryParse(filter[ServiceConstants.FechaInicio], out var fechaInit);
-                dictToReturn.Add(ServiceConstants.FechaInicio, fechaInit);
+                var dateArrayNum = new List<int>();
+                var dateArray = filter[ServiceConstants.FechaInicio].Split("/");
+                dateArray.ToList().ForEach(x =>
+                {
+                    int.TryParse(x, out int result);
+                    dateArrayNum.Add(result);
+                });
+
+                var date = new DateTime(dateArrayNum[2], dateArrayNum[1], dateArrayNum[0]);
+                dictToReturn.Add(ServiceConstants.FechaInicio, date);
             }
             else
             {
@@ -62,8 +71,16 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (filter.ContainsKey(ServiceConstants.FechaFin))
             {
-                DateTime.TryParse(filter[ServiceConstants.FechaFin], out var fechaInit);
-                dictToReturn.Add(ServiceConstants.FechaFin, fechaInit);
+                var dateArrayNum = new List<int>();
+                var dateArray = filter[ServiceConstants.FechaFin].Split("/");
+                dateArray.ToList().ForEach(x =>
+                {
+                    int.TryParse(x, out int result);
+                    dateArrayNum.Add(result);
+                });
+
+                var date = new DateTime(dateArrayNum[2], dateArrayNum[1], dateArrayNum[0]);
+                dictToReturn.Add(ServiceConstants.FechaFin, date);
             }
             else
             {
