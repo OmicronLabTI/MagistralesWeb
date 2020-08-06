@@ -49,6 +49,22 @@ export class DataService {
     sessionStorage.removeItem('token');
   }
 
+  setUserId(userId: string) {
+    sessionStorage.setItem('userId', userId);
+  }
+
+  getUserId(){
+    return sessionStorage.getItem('userId');
+  }
+
+  setUserName(userName: string) {
+    sessionStorage.setItem('userName', userName);
+  }
+
+  getUserName(){
+    return sessionStorage.getItem('userName');
+  }
+
 
   userIsAuthenticated(): boolean {
     return !!sessionStorage.getItem('token');

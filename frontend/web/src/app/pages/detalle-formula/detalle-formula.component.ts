@@ -22,8 +22,7 @@ const ELEMENT_DATA: IFormulaDetalleReq[] = [
 export class DetalleFormulaComponent implements OnInit {
   allComplete: boolean = false;
   actualPage: number = 0;
-  docNum: string;
-  docStatus: string;
+  ordenFabricacionId: string;
   displayedColumns: string[] = [
     'seleccion',
     'cons',
@@ -44,12 +43,15 @@ export class DetalleFormulaComponent implements OnInit {
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      this.ordenFabricacionId = params.get("ordenid")
+    })
     this.dataSource.data = ELEMENT_DATA;
-    console.log(this.dataSource.data);
+    this.getDetalleFormula();
   }
 
-  getDetallePedido() {
-    
+  getDetalleFormula() {
+    console.log("detalle formula");
   }
 
   updateAllComplete() {

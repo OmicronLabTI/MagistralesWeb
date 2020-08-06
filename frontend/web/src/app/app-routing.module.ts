@@ -31,7 +31,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'ordenfabricacion/:id/:status',
+    path: 'ordenfabricacion/:ordenid',
     component: DetalleFormulaComponent,
     canActivate: [GuardService]
   },
