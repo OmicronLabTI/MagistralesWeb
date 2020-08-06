@@ -11,11 +11,15 @@ export class PedidosService {
   constructor(private consumeService: ConsumeService) { }
 
   getPedidos(params: ParamsPedidos) {
-    const queryString = `?fini=${params.fini}&ffin=${params.ffin}&offset=${params.offset}&limit=${params.limit}`;
+    const queryString = `?fini=${params.fini}&offset=${params.offset}&limit=${params.limit}`;
     return this.consumeService.httpGet(`${Endpoints.pedidos.getPedidos}${queryString}`);
   }
 
   getDetallePedido(docNum: string) {
     return this.consumeService.httpGet(Endpoints.pedidos.getDetallePedido + docNum);
+  }
+
+  processOrders(docNum: number[]){
+    return this.consumeService.httpPost(Endpoints.pedidos.processOrders,docNum);
   }
 }

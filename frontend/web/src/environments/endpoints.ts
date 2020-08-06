@@ -13,6 +13,7 @@ export const Endpoints = {
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
+    processOrders: `${environment.baseUrl}/api/sapadapter/process/`
   }
 };
 
