@@ -159,6 +159,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
+                    IsChecked = false,
                     ProductionOrderId = o.OrdenId,
                     Code = o.ProductoId,
                     ProductDescription = o.ProdName,
