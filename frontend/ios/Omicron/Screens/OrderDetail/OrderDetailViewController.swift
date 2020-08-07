@@ -43,8 +43,40 @@ class OrderDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.initComponents()
         // Do any additional setup after loading the view.
+    }
+    
+    func initComponents() -> Void {
+
+        UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton, title: StatusNameConstants.addComponent, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        self.backButton.setImage(UIImage(named: ImageButtonNames.assigned), for: .normal)
+        //UtilsManager.shared.changeIconButton(button: self.backButton, iconName: ImageButtonNames.backAssigned)
+        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: "Asignado", fontSize: 46)
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes", fontSize: 19)
+        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "Código:", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.codeDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.documentBaseLabel, text: "Documento Base", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.documentBaseDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.containerLabel, text: "Envase", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.containerDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.tagLabel, text: "Componentes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.tagDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.sumFormulaLabel, text: "Sumatoria de la fórmula", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.sumFormulaDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.quantityPlannedLabel, text: "Cantidad planificada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.quantityPlannedDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.startDateLabel, text: "Fecha orden de fabricación", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.startDateDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.finishedDateLabel, text: "Fecha de finalización", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.finishedDateDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.productLabel, text: "Descripción del producto", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.productDescritionLabel, text: "", fontSize: 15)
     }
     
 

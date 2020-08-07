@@ -100,15 +100,15 @@ class InboxViewController: UIViewController {
     func changepropertiesOfCard(cell: CardCollectionViewCell) {
         switch self.typeCard {
         case 0:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.assignedStatus, iconName: ButtonNameOfCards.assigned)
+            self.propertyCard(cell: cell, borderColor: OmicronColors.assignedStatus, iconName: ImageButtonNames.assigned)
         case 1:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.processStatus, iconName: ButtonNameOfCards.inProcess)
+            self.propertyCard(cell: cell, borderColor: OmicronColors.processStatus, iconName: ImageButtonNames.inProcess)
         case 2:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.pendingStatus, iconName: ButtonNameOfCards.pendding)
+            self.propertyCard(cell: cell, borderColor: OmicronColors.pendingStatus, iconName: ImageButtonNames.pendding)
         case 3:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.finishedStatus, iconName: ButtonNameOfCards.finished)
+            self.propertyCard(cell: cell, borderColor: OmicronColors.finishedStatus, iconName: ImageButtonNames.finished)
         case 4:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.reassignedStatus, iconName: ButtonNameOfCards.reasigned)
+            self.propertyCard(cell: cell, borderColor: OmicronColors.reassignedStatus, iconName: ImageButtonNames.reasigned)
         default:
             print("")
         }
@@ -116,24 +116,15 @@ class InboxViewController: UIViewController {
     
     func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
         cell.assignedStyleCard(color: borderColor.cgColor)
-        cell.changeIconButton(iconName: iconName)
+        UtilsManager.shared.changeIconButton(button: cell.showDetail, iconName: iconName)
     }
     
     func initComponents() -> Void {
         self.statusNameLabel.text = StatusNameConstants.assignedStatus
         self.statusNameLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 39)
-        self.setStyleButton(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus)
-        self.setStyleButton(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus)
-        self.setStyleButton(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus)
-    }
-    
-    func setStyleButton( button: UIButton ,title: String, color: UIColor) {
-        button.setTitle(title, for: .normal)
-        button.setTitleColor(color, for: .normal)
-        button.layer.borderWidth = 1
-        button.layer.cornerRadius = 10
-        button.layer.borderColor = color.cgColor
-        button.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
+        UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
     }
     
     func chageStatusName(index: Int) -> Void {

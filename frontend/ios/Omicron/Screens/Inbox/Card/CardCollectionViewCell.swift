@@ -40,32 +40,23 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     func initLabels() -> Void {
-        self.labelsStyle(label: numberLabel, text: "No:")
-        self.labelsStyle(label: numberDescriptionLabel, text: " ")
-        self.labelsStyle(label: baseDocumentLabel, text: "Documento Base:")
-        self.labelsStyle(label: baseDocumentDescriptionLabel, text: "")
-        self.labelsStyle(label: containerLabel, text: "Envase:")
-        self.labelsStyle(label: containerDescriptionLabel, text: "")
-        self.labelsStyle(label: tagLabel, text: "Etiqueta:")
-        self.labelsStyle(label: tagDescriptionLabel, text: "")
-        self.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:")
-        self.labelsStyle(label: plannedQuantityDescriptionLabel, text: "")
-        self.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:")
-        self.labelsStyle(label: startDateDescriptionLabel, text: "")
-        self.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:")
-        self.labelsStyle(label: finishDateDescriptionLabel, text: "")
-        self.labelsStyle(label: productLabel, text: "Descripción del producto:")
-        self.labelsStyle(label: productDescriptionLabel, text: "")
-        changeIconButton(iconName: "showAssignedDetailButton.png")
-    }
-    
-    func changeIconButton(iconName: String) -> Void{
-        self.showDetail.setImage(UIImage(named: iconName), for: .normal)
-    }
-    
-    func labelsStyle(label: UILabel, text: String) -> Void {
-        label.text = text
-        label.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 13)
+        UtilsManager.shared.labelsStyle(label: numberLabel, text: "No:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: baseDocumentLabel, text: "Documento Base:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: baseDocumentDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: containerLabel, text: "Envase:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: containerDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: tagLabel, text: "Etiqueta:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: tagDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: plannedQuantityDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: startDateDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: finishDateDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: productLabel, text: "Descripción del producto:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: productDescriptionLabel, text: "", fontSize: 13)
+        UtilsManager.shared.changeIconButton(button: self.showDetail, iconName: ImageButtonNames.assigned)
     }
     
     func assignedStyleCard(color: CGColor)  -> Void{
