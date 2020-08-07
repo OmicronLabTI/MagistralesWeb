@@ -51,6 +51,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// the abierto status.
+        /// </summary>
+        public const string Abierto = "Abierto";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
