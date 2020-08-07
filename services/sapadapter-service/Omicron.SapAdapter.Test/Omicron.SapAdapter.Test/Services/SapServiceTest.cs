@@ -52,6 +52,9 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.OrderModel.AddRange(this.GetOrderModel());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.Users.AddRange(this.GetSapUsers());
+            this.context.DetalleFormulaModel.AddRange(this.GetDetalleFormula());
+            this.context.ItemWarehouseModel.AddRange(this.GetItemWareHouse());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -213,10 +216,27 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetOrderFormula()
         {
             // arrange
-            var listIds = new List<int> { 1000 };
+            var listIds = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetOrderFormula(listIds);
+            var result = await this.sapService.GetOrderFormula(listIds, true);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrderFormulaList()
+        {
+            // arrange
+            var listIds = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetOrderFormula(listIds, false);
 
             // assert
             Assert.IsNotNull(result);
