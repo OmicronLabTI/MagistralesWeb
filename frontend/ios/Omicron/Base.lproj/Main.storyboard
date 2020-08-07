@@ -279,6 +279,7 @@
                         <outlet property="pendingButton" destination="Jev-kI-Spn" id="KEe-ko-tuK"/>
                         <outlet property="processButton" destination="7P0-go-amH" id="Dpc-G5-zPv"/>
                         <outlet property="statusNameLabel" destination="R2N-ae-Jk2" id="u8L-q2-Hc2"/>
+                        <segue destination="Dvp-ad-RrX" kind="show" id="Wlv-14-Wdl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i1x-Wy-ajX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -443,6 +444,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zuD-Dg-SbE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2512.7697841726617" y="-195.68345323741008"/>
+        </scene>
+        <!--Order Detail View Controller-->
+        <scene sceneID="BAP-3r-Vdj">
+            <objects>
+                <viewController id="Dvp-ad-RrX" customClass="OrderDetailViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mbS-m8-5F7">
+                        <rect key="frame" x="0.0" y="0.0" width="791.5" height="834"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="Kox-WP-4MF"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="hLo-Lv-JLe"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2513" y="452"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="THk-VW-Nl3">
