@@ -233,7 +233,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userId = order == null ? string.Empty : order.Userid;
                 var user = users.FirstOrDefault(y => y.Id.Equals(userId));
 
-                x.PedidoStatus = order == null ? string.Empty : order.Status;
+                if (x.PedidoStatus == "O")
+                {
+                    x.PedidoStatus = ServiceConstants.Abierto;
+                }
+
+                x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
                 x.Qfb = user == null ? string.Empty : user.FirstName;
             });
 
