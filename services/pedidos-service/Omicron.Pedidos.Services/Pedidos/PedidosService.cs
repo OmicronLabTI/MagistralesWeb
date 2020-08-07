@@ -64,14 +64,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderToInsert = ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, listOrders);
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
-            try
-            {
-                await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-            }
-            catch (Exception ex)
-            {
-            }
-
+            await this.pedidosDao.InsertOrderLog(listOrderToInsert);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders.Response), null);
         }
 

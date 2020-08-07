@@ -14,6 +14,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula.component';
+import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula
     PedidosComponent,
     PedidoDetalleComponent,
     DetalleFormulaComponent,
+    FindOrdersDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -37,6 +39,7 @@ import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula
   providers: [
     APP_PROVIDERS
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+    entryComponents: [FindOrdersDialogComponent]
 })
 export class AppModule { }

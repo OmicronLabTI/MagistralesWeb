@@ -85,7 +85,7 @@ body {
 }
 .no-users-registered{
   width: 100%;
-  height: 100%;
+  height: 8%;
   display: flex;
   justify-content: center;
   color: #5f606c;
@@ -119,6 +119,9 @@ body {
   width: 50%;
   float: right;
   text-align: right;
+  color: #3b3f5c;
+  font-size: 1.25rem;
+  font-weight: 800;
 }
 
 .filter-select .select-button{
@@ -132,6 +135,7 @@ body {
   min-width: 115px;
   text-align: inherit;
   color: #3b3f5c;
+  font-size: 1.25rem;
   box-shadow: none;
   font-weight: 600;
   letter-spacing: 0;
@@ -221,7 +225,6 @@ th.centered {
   -webkit-hyphens: auto !important;
   hyphens: auto !important;
 }
-
 .tdcell-center{
   text-align: center;
 }
@@ -247,7 +250,15 @@ th.centered {
   display: flex;
   flex-direction: row-reverse;
 }
-
+.custom-field {
+  width: 100%;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.height-input{
+  height: 2rem;
+}
 
 /*@media(min-width: 769px){
   .cont-center{
