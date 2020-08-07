@@ -450,7 +450,7 @@
             <objects>
                 <viewController storyboardIdentifier="OrderDetailViewController" id="Dvp-ad-RrX" customClass="OrderDetailViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mbS-m8-5F7">
-                        <rect key="frame" x="0.0" y="0.0" width="791.5" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="791" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d03-k0-ISy">
@@ -471,16 +471,20 @@
                                                 <rect key="frame" x="0.0" y="70" width="751.5" height="85"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2qy-Y1-EUI">
-                                                        <rect key="frame" x="0.0" y="0.0" width="151.5" height="85"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="72" height="85"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iD9-gn-WE6">
-                                                        <rect key="frame" x="171.5" y="0.0" width="100" height="85"/>
+                                                        <rect key="frame" x="92" y="0.0" width="100" height="85"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="100" id="ui6-Fy-zPl"/>
                                                         </constraints>
+                                                        <state key="normal" title="Button"/>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uJ5-Eh-TJb">
+                                                        <rect key="frame" x="212" y="0.0" width="59.5" height="85"/>
                                                         <state key="normal" title="Button"/>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cFf-8a-iD9">
@@ -554,8 +558,36 @@
                                     <constraint firstAttribute="trailing" secondItem="9dJ-jS-q73" secondAttribute="trailing" constant="20" id="pJZ-AS-UUW"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ufc-mY-frU">
+                                <rect key="frame" x="20" y="205" width="751.5" height="50"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yOe-Ae-WFL">
+                                        <rect key="frame" x="0.0" y="20" width="751.5" height="30"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nV4-RO-meX">
+                                                <rect key="frame" x="0.0" y="0.0" width="42" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DaT-Dn-GM6">
+                                                <rect key="frame" x="42" y="0.0" width="709.5" height="30"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="yOe-Ae-WFL" secondAttribute="trailing" id="Fvn-og-BIx"/>
+                                    <constraint firstAttribute="bottom" secondItem="yOe-Ae-WFL" secondAttribute="bottom" id="J49-0X-ljw"/>
+                                    <constraint firstItem="yOe-Ae-WFL" firstAttribute="leading" secondItem="ufc-mY-frU" secondAttribute="leading" id="jPV-jG-G5P"/>
+                                    <constraint firstAttribute="height" constant="50" id="tSO-iL-DVX"/>
+                                    <constraint firstItem="yOe-Ae-WFL" firstAttribute="top" secondItem="ufc-mY-frU" secondAttribute="top" constant="20" symbolic="YES" id="yLA-Pi-2Rn"/>
+                                </constraints>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DQS-uU-8O0">
-                                <rect key="frame" x="0.0" y="205" width="791.5" height="250"/>
+                                <rect key="frame" x="0.0" y="255" width="791.5" height="250"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="mvw-Yg-rd8">
                                         <rect key="frame" x="20" y="0.0" width="751.5" height="250"/>
@@ -705,17 +737,49 @@
                         <constraints>
                             <constraint firstItem="0w5-Us-kdk" firstAttribute="top" secondItem="d03-k0-ISy" secondAttribute="bottom" id="2um-RE-t8J"/>
                             <constraint firstItem="Kox-WP-4MF" firstAttribute="trailing" secondItem="0w5-Us-kdk" secondAttribute="trailing" id="DyT-xl-WcE"/>
-                            <constraint firstItem="DQS-uU-8O0" firstAttribute="top" secondItem="0w5-Us-kdk" secondAttribute="bottom" id="EeQ-RI-hLf"/>
                             <constraint firstItem="Kox-WP-4MF" firstAttribute="trailing" secondItem="DQS-uU-8O0" secondAttribute="trailing" id="FTQ-4s-1bI"/>
                             <constraint firstItem="d03-k0-ISy" firstAttribute="leading" secondItem="Kox-WP-4MF" secondAttribute="leading" id="GT7-a2-PPD"/>
                             <constraint firstItem="d03-k0-ISy" firstAttribute="top" secondItem="Kox-WP-4MF" secondAttribute="top" id="QHs-lS-eQc"/>
+                            <constraint firstItem="ufc-mY-frU" firstAttribute="top" secondItem="0w5-Us-kdk" secondAttribute="bottom" id="QSL-2i-6y5"/>
                             <constraint firstItem="Kox-WP-4MF" firstAttribute="trailing" secondItem="d03-k0-ISy" secondAttribute="trailing" id="X6r-8f-W4H"/>
+                            <constraint firstItem="Kox-WP-4MF" firstAttribute="trailing" secondItem="ufc-mY-frU" secondAttribute="trailing" constant="20" id="e4U-sN-7k3"/>
                             <constraint firstItem="0w5-Us-kdk" firstAttribute="leading" secondItem="Kox-WP-4MF" secondAttribute="leading" id="ggv-HD-0nj"/>
+                            <constraint firstItem="DQS-uU-8O0" firstAttribute="top" secondItem="ufc-mY-frU" secondAttribute="bottom" id="gnq-mV-ezK"/>
+                            <constraint firstItem="ufc-mY-frU" firstAttribute="leading" secondItem="Kox-WP-4MF" secondAttribute="leading" constant="20" id="i3x-8n-ftk"/>
                             <constraint firstItem="DQS-uU-8O0" firstAttribute="leading" secondItem="Kox-WP-4MF" secondAttribute="leading" id="r5F-ov-q7r"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Kox-WP-4MF"/>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="faT-53-a6d"/>
+                    <connections>
+                        <outlet property="addComponentButton" destination="XSw-KT-xCB" id="ULb-qD-NIQ"/>
+                        <outlet property="backButton" destination="smv-wx-I4r" id="Tgx-Gr-vRq"/>
+                        <outlet property="codeDescriptionLabel" destination="giw-yr-4rg" id="9MY-8c-NiT"/>
+                        <outlet property="codeLabel" destination="Bkt-I6-pJ5" id="iJG-yF-yRj"/>
+                        <outlet property="containerDescriptionLabel" destination="TfK-KM-hd3" id="h6m-yt-ev2"/>
+                        <outlet property="containerLabel" destination="GDi-bg-jJg" id="Lfd-vd-8fz"/>
+                        <outlet property="documentBaseDescriptionLabel" destination="caY-km-sbd" id="EJz-1v-alG"/>
+                        <outlet property="documentBaseLabel" destination="es2-YE-49k" id="SfV-2R-NUt"/>
+                        <outlet property="finishedButton" destination="uJ5-Eh-TJb" id="Fyb-HU-RVs"/>
+                        <outlet property="finishedDateDescriptionLabel" destination="i9x-Gb-Ung" id="ymE-TE-P2b"/>
+                        <outlet property="finishedDateLabel" destination="0AN-vL-EF2" id="Adk-rE-Hll"/>
+                        <outlet property="nameStatusLabel" destination="2qy-Y1-EUI" id="35u-Fg-rBU"/>
+                        <outlet property="penddingButton" destination="cFf-8a-iD9" id="G5n-Hl-Teh"/>
+                        <outlet property="processButton" destination="iD9-gn-WE6" id="Ajr-Ef-SPI"/>
+                        <outlet property="productDescritionLabel" destination="tSS-Kq-EYI" id="007-SJ-YeE"/>
+                        <outlet property="productLabel" destination="N9U-t4-XQH" id="LRA-11-e31"/>
+                        <outlet property="quantityPlannedDescriptionLabel" destination="MG2-fY-uBV" id="7Qq-6q-J7d"/>
+                        <outlet property="quantityPlannedLabel" destination="xtl-PK-6zg" id="05e-RG-yGZ"/>
+                        <outlet property="saveButton" destination="bxy-vc-962" id="kOg-BM-3ya"/>
+                        <outlet property="seeLotsButton" destination="7UC-W6-Jf3" id="yDk-Kr-aas"/>
+                        <outlet property="startDateDescriptionLabel" destination="2pk-QQ-gCG" id="MOp-KF-oXL"/>
+                        <outlet property="startDateLabel" destination="ROZ-ky-OEA" id="NFa-FC-qcq"/>
+                        <outlet property="sumFormulaDescriptionLabel" destination="fQS-ht-amT" id="XXp-K2-NZU"/>
+                        <outlet property="sumFormulaLabel" destination="jGK-Z4-JL6" id="sfr-um-bQ6"/>
+                        <outlet property="tagDescriptionLabel" destination="jpX-o8-gIz" id="o3b-wQ-VfY"/>
+                        <outlet property="tagLabel" destination="m4i-ID-D7w" id="AuZ-hL-B8T"/>
+                        <outlet property="titleLabel" destination="nV4-RO-meX" id="9ev-mY-Idh"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
