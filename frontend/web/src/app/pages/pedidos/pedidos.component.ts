@@ -43,9 +43,9 @@ export class PedidosComponent implements OnInit {
   ) {
     this.fullDate = this.getFormatDate(new Date());
     // tslint:disable-next-line:max-line-length
-    this.queryString = `?fini=${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=${this.offset}&limit=${this.limit}`;
+    this.queryString = `?fini=01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=${this.offset}&limit=${this.limit}`;
     this.rangeDate =
-        `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+        `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
   ngOnInit() {
