@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
 
     /// <summary>
     /// Interface IDataBaseContext.
@@ -55,5 +56,29 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<DetalleFormulaModel> DetalleFormulaModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<ItemWarehouseModel> ItemWarehouseModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<Users> Users { get; set; }
     }
 }

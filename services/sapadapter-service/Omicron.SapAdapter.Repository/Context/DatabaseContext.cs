@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
 
     /// <summary>
     /// Class DBcontext.
@@ -66,6 +67,30 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<DetalleFormulaModel> DetalleFormulaModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<ItemWarehouseModel> ItemWarehouseModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<Users> Users { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>
@@ -75,6 +100,18 @@ namespace Omicron.SapAdapter.Entities.Context
             {
                 table.PedidoId,
                 table.DetalleId,
+            });
+
+            modelBuilder.Entity<DetalleFormulaModel>().HasKey(table => new
+            {
+                table.OrderFabId,
+                table.LineNum,
+            });
+
+            modelBuilder.Entity<ItemWarehouseModel>().HasKey(table => new
+            {
+                table.ItemCode,
+                table.WhsCode,
             });
         }
     }
