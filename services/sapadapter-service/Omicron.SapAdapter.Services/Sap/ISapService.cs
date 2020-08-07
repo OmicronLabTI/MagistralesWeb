@@ -44,5 +44,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosIds">list ids each elemente is orderId-producId.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetProdOrderByOrderItem(List<string> pedidosIds);
+
+        /// <summary>
+        /// Gets the formula of the orden de fabricaion.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <param name="returnFirst">if it returns only the first.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst);
     }
 }

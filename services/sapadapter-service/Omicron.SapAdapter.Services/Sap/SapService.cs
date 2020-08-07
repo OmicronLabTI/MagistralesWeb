@@ -138,6 +138,62 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the formula of the orden de fabricaion.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <param name="returnFirst">if it returns only the first.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst)
+        {
+            var ordenFab = (await this.sapDao.GetFabOrderById(listIds)).ToList();
+            var listToReturn = new List<CompleteFormulaWithDetalle>();
+            var dictUser = new Dictionary<int, string>();
+
+            foreach (var o in ordenFab)
+            {
+                if (!dictUser.ContainsKey(o.User))
+                {
+                    var user = await this.sapDao.GetSapUserById(o.User);
+                    dictUser.Add(user.UserId, user.UserName);
+                }
+
+                var formulaDetalle = new CompleteFormulaWithDetalle
+                {
+                    ProductionOrderId = o.OrdenId,
+                    Code = o.ProductoId,
+                    ProductDescription = o.ProdName,
+                    Type = ServiceConstants.DictStatusType.ContainsKey(o.Type) ? ServiceConstants.DictStatusType[o.Type] : o.Type,
+                    Status = ServiceConstants.DictStatus.ContainsKey(o.Status) ? ServiceConstants.DictStatus[o.Status] : o.Status,
+                    PlannedQuantity = (int)o.Quantity,
+                    Unit = o.Unit,
+                    Warehouse = o.Wharehouse,
+                    Number = o.PedidoId,
+                    DueDate = o.DueDate.ToString("dd/MM/yyyy"),
+                    StartDate = o.StartDate.ToString("dd/MM/yyyy"),
+                    EndDate = o.PostDate.ToString("dd/MM/yyyy"),
+                    User = dictUser[o.User],
+                    Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
+                    BaseDocument = o.PedidoId,
+                    Client = o.CardCode,
+                    CompleteQuantity = (int)o.CompleteQuantity,
+                    RealEndDate = o.PostDate.ToString("dd/MM/yyyy"),
+                    ProductLabel = string.Empty,
+                    Container = string.Empty,
+                    Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
+                };
+
+                listToReturn.Add(formulaDetalle);
+            }
+
+            if (returnFirst)
+            {
+                return ServiceUtils.CreateResult(true, 200, null, listToReturn.FirstOrDefault(), null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, listToReturn.Count);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
@@ -185,14 +241,12 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
                 var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
-                var listToReturn = new List<CompleteOrderModel> { ordersById };
-                return listToReturn;
+                return new List<CompleteOrderModel> { ordersById };
             }
 
             if (parameters.ContainsKey(ServiceConstants.Status))
             {
-                var status = parameters[ServiceConstants.Status];
-                orderModels = orderModels.Where(x => x.PedidoStatus == status).ToList();
+                orderModels = orderModels.Where(x => x.PedidoStatus == parameters[ServiceConstants.Status]).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
