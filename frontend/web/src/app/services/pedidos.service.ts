@@ -19,7 +19,7 @@ export class PedidosService {
   }
 
   processOrders(ordersToProcess){
-    return this.consumeService.httpPost(Endpoints.pedidos.processOrders,ordersToProcess);
+    return this.consumeService.httpPost(Endpoints.pedidos.processOrders, ordersToProcess);
   }
   getQfbs() {
     return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.qfbs}/2`);
