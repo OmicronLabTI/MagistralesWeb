@@ -63,5 +63,27 @@ namespace Omicron.SapAdapter.Services.Constants
             { "C", "Cancelado" },
             { "R", "Liberado" },
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictStatusType { get; } = new Dictionary<string, string>
+        {
+            { "S", "Estandar" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictStatusOrigin { get; } = new Dictionary<string, string>
+        {
+            { "M", "Manual" },
+        };
     }
 }

@@ -16,6 +16,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
 
     /// <summary>
     /// Class for the dao.
@@ -139,7 +140,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                where d.PedidoId == pedidoId && p.IsMagistral == "Y"
                                select new CompleteDetailOrderModel
                                {
-                                   OrdenFabricacionId = d.PedidoId,
+                                   OrdenFabricacionId = dp.OrdenId,
                                    CodigoProducto = d.ProductoId,
                                    DescripcionProducto = d.Description,
                                    QtyPlanned = (int)dp.Quantity,
@@ -174,6 +175,71 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O").ToListAsync();
             return query.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// gets the orders by product and item.
+        /// </summary>
+        /// <param name="listOrders">the product id.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> listOrders)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => listOrders.Contains(x.OrdenId)).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
+        /// gets the realtion between WOR1, OITM ans OITW.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId)
+        {
+            var query = await (from w in this.databaseContext.DetalleFormulaModel
+                                join i in this.databaseContext.ItemWarehouseModel on
+                                new
+                                {
+                                    w.ItemCode,
+                                    Wharehouse = w.Almacen
+                                }
+                                equals
+                                new
+                                {
+                                    i.ItemCode,
+                                    Wharehouse = i.WhsCode
+                                }
+                                into DetallePedido
+                                from dp in DetallePedido
+                                join p in this.databaseContext.ProductoModel on w.ItemCode equals p.ProductoId
+                                where w.OrderFabId == orderId
+                                select new CompleteDetalleFormulaModel
+                                {
+                                    OrderFabId = w.OrderFabId,
+                                    ProductId = w.ItemCode,
+                                    Description = p.ProductoName,
+                                    BaseQuantity = w.BaseQuantity,
+                                    RequiredQuantity = w.RequiredQty,
+                                    Consumed = (int)w.ConsumidoQty,
+                                    Available = dp.OnHand - dp.IsCommited + dp.OnOrder,
+                                    Unit = w.UnidadCode,
+                                    Warehouse = w.Almacen,
+                                    PendingQuantity = w.RequiredQty,
+                                    Stock = p.OnHand,
+                                    WarehouseQuantity = dp.OnHand
+                                }).ToListAsync();
+
+            return query;
+        }
+
+        /// <summary>
+        /// gets the sap user.
+        /// </summary>
+        /// <param name="userId">the user id.</param>
+        /// <returns>the data.</returns>
+        public async Task<Users> GetSapUserById(int userId)
+        {
+            var query = await this.databaseContext.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+            return query;
         }
     }
 }
