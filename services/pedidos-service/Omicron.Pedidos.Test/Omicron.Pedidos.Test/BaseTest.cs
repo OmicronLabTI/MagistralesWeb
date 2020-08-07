@@ -10,8 +10,10 @@ namespace Omicron.Pedidos.Test
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
 
     /// <summary>
     /// Class Base Test.
@@ -46,6 +48,81 @@ namespace Omicron.Pedidos.Test
                 LastName = "Morales",
                 Email = "test@test.com",
                 Birthdate = DateTime.Now,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public UserOrderModel GetUserOrderModel()
+        {
+            return new UserOrderModel
+            {
+                Id = 1,
+                Productionorderid = "123",
+                Salesorderid = "122",
+                Status = "Planificado",
+                Userid = "111",
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public OrderLogModel GetOrderLogModel()
+        {
+            return new OrderLogModel
+            {
+                Userid = "111",
+                Id = 1,
+                Description = "description",
+                Logdatetime = DateTime.Now,
+                Noid = "112",
+                Type = "OF",
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultModelGetFabricacionModel()
+        {
+            var listOrders = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { DataSource = "O", OrdenId = 100, PedidoId = 100, PostDate = DateTime.Now, ProductoId = "Aspirina", Quantity = 10, Status = "R" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultCreateOrder()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-Aspirina", ServiceConstants.Ok },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
             };
         }
     }

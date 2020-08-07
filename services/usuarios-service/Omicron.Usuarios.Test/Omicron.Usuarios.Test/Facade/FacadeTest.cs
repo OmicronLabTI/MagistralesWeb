@@ -311,7 +311,7 @@ namespace Omicron.Usuarios.Test.Facade
             var listIds = new List<string>();
 
             // act
-            var response = this.userFacade.GetUsersById(listIds);
+            var response = await this.userFacade.GetUsersById(listIds);
 
             // Assert
             Assert.IsNotNull(response);
