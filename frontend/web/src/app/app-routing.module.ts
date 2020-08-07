@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { GuardService } from './services/guard.service';
 import { PedidosComponent } from './pages/pedidos/pedidos.component';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
+import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
   {
     path: 'pdetalle/:id/:status',
     component: PedidoDetalleComponent,
+    canActivate: [GuardService]
+  },
+  {
+    path: 'ordenfabricacion/:ordenid',
+    component: DetalleFormulaComponent,
     canActivate: [GuardService]
   },
   {

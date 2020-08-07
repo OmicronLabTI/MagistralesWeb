@@ -1,16 +1,17 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { SecurityService } from './security.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { DataService } from './data.service';
 import { ConsumeService } from './consume.service';
-import { ILoginReq } from '../model/http/security.model';
+import { ILoginReq, ILoginRes } from '../model/http/security.model';
 import { Observable } from 'rxjs';
+import { Endpoints } from 'src/environments/endpoints';
 
 describe('SecurityService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
-      HttpClientModule
+      HttpClientTestingModule
     ],
     providers: [
       DataService,
@@ -25,7 +26,32 @@ describe('SecurityService', () => {
 
   it('should create login observable', () => {
     const service: ConsumeService = TestBed.get(ConsumeService);
-    const obs = service.httpGet<ILoginReq>('http://google.com');
+    const obs = service.httpGet<ILoginReq>(Endpoints.security.login);
     expect(obs instanceof Observable).toBeTruthy();
   });
+
+  it('should login',
+    inject([HttpTestingController, SecurityService], (httpMock: HttpTestingController, service: SecurityService) => {
+      const data = {
+        user: 'admin',
+        password: '12345'
+      } as ILoginReq;
+      service.login(data).subscribe(response => {
+        expect(response).toBeDefined();
+        // tslint:disable-next-line: max-line-length
+        expect(response.access_token).toBe('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY3MzM1NTgsInVzZXIiOiJzZXJnaW8ifQ.W9kstVRF9qm_s2diVt-Ki0xb4FwkXIA0QtEFSDAlXCM');
+        // tslint:disable-next-line: max-line-length
+        expect(response.refresh_token).toBe('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGllbnRJZCI6IiIsInByb2ZpbGUiOiJhZG1pbiIsImV4cCI6MTU5NjgyNjU2MiwidXNlciI6Imd1eiJ9.2O4TsKp1uGqBRJ5dobk7xZHsSe5TvXVhxRTPu0oviYY');
+        expect(response.token_type).toBe('Bearer');
+        expect(response.expires_in).toEqual(3600);
+        expect(response.scope).toBe('');
+      });
+
+      const req = httpMock.expectOne(Endpoints.security.login);
+      expect(req.request.method).toEqual('POST');
+
+      const res: any = require('../../mocks/login.json');
+      req.flush(res);
+    })
+  );
 });

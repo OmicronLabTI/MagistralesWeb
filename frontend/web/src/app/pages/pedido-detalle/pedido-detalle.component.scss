@@ -6,34 +6,6 @@ div.docbase-status{
     font-size: 12px !important;
 }
 
-div.breadcrumb{
-    font-size: 12px !important;
-    padding: 0.65rem .95rem;
-    border: 1px solid #e0e6ed;
-    border-radius: 8px;
-    transform: none;
-    line-height: 17px;
-    background-color: #e9ecef;
-    width: 300px;
-    text-align: inherit;
-    color: #3b3f5c;
-    box-shadow: none;
-    font-weight: 600;
-    letter-spacing: 0;
-}
-
-a.breadcrumblink{
-    text-decoration: none;
-    color: #3b3f5c !important;
-}
-
-a.breadcrumblink:visited{
-    color: #3b3f5c !important;
-}
-a.breadcrumblink:hover{
-    color: #3b3f5c !important;
-}
-
 .seleccion{
     width: 3% !important;
 }
@@ -81,7 +53,7 @@ a.breadcrumblink:hover{
 ::ng-deep .mat-focused .mat-form-field-label {
     /*change color of label  */
     color: #6C90B3 !important;
-  }
+}
   ::ng-deep.mat-form-field-underline {
     /*change color of underline*/
     background-color: #6C90B3 !important;

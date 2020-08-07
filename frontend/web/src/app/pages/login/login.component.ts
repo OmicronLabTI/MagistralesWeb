@@ -4,6 +4,7 @@ import { SecurityService } from 'src/app/services/security.service';
 import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
+import { IUserRes } from 'src/app/model/http/users';
 
 @Component({
   selector: 'app-login',
@@ -34,11 +35,15 @@ export class LoginComponent implements OnInit {
       redirectUri: 'asdad',
       clientId2: ''
     } as ILoginReq;
-    console.log('to req user: ', userLoginReq);
     this.securityService.login(userLoginReq).subscribe(res => {
-      console.log('acces token: ', res);
       this.dataService.setToken(res.access_token);
       this.dataService.setIsLogin(true);
+      this.dataService.setUserName(userLoginReq.user);
+      this.securityService.getUser(this.dataService.getUserName()).subscribe(
+        (userRes: IUserRes) => {
+          this.dataService.setUserId(userRes.response['id']);
+        }
+      )
       this.router.navigate(['pedidos']);
     }, err => {
       console.log('error  login: ', err);
