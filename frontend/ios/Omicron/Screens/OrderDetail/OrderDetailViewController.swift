@@ -40,6 +40,19 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var productLabel: UILabel!
     @IBOutlet weak var productDescritionLabel: UILabel!
     
+    // MARK: Outlets from table header
+    @IBOutlet weak var htCode: UILabel!
+    @IBOutlet weak var htBaseQuantity: UILabel!
+    @IBOutlet weak var htrequiredQuantity: UILabel!
+    @IBOutlet weak var htConsumed: UILabel!
+    @IBOutlet weak var htAvailable: UILabel!
+    @IBOutlet weak var htUnit: UILabel!
+    @IBOutlet weak var htWerehouse: UILabel!
+    @IBOutlet weak var htAmountPendingLabel: UILabel!
+    @IBOutlet weak var htStockLabel: UILabel!
+    @IBOutlet weak var htQuantityInStockLabel: UILabel!
+    @IBOutlet weak var htSpaceLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +90,18 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.finishedDateDescriptionLabel, text: "", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.productLabel, text: "Descripción del producto", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.productDescritionLabel, text: "", fontSize: 15)
+        
+        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacen", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacen", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.htSpaceLabel, text: "", fontSize: 12)
     }
     
 
