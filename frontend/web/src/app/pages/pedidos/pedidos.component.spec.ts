@@ -5,6 +5,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {MatTableModule, MatMenuModule} from '@angular/material';
 import {HttpClientModule} from "@angular/common/http";
 import {DatePipe} from '@angular/common';
+import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -13,7 +14,7 @@ describe('PedidosComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PedidosComponent ],
-      imports: [RouterTestingModule, MatTableModule, MatMenuModule, HttpClientModule],
+      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientModule],
       providers: [
         DatePipe
       ],
