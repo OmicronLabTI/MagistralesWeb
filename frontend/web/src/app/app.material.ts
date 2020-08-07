@@ -26,7 +26,6 @@ import {
 } from '@angular/material';
 
 export const MATERIAL_COMPONENTS = [
-  MatCheckboxModule,
   MatToolbarModule,
   MatInputModule,
   MatButtonModule,
@@ -40,7 +39,7 @@ export const MATERIAL_COMPONENTS = [
   MatSelectModule,
   MatExpansionModule,
   MatPaginatorModule,
-  MatTableModule,
+  MatTableModule, 
   MatSlideToggleModule,
   MatDialogModule,
   MatTabsModule,
