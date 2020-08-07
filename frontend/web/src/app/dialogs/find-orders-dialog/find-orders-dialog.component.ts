@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
+import {MatDialogRef} from '@angular/material/dialog';
+import {PedidosService} from '../../services/pedidos.service';
+import {ErrorService} from '../../services/error.service';
+import {QfbSelect} from '../../model/http/users';
 
 
 @Component({
@@ -12,8 +16,12 @@ import {MODAL_FIND_ORDERS} from '../../constants/const';
 export class FindOrdersDialogComponent implements OnInit {
   findOrdersForm: FormGroup;
   startDate = new Date();
+  qfbsSelect: QfbSelect[] = [];
   constructor(private formBuilder: FormBuilder,
-              private datePipe: DatePipe) {
+              private datePipe: DatePipe,
+              private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
+              private ordersServices: PedidosService,
+              private errorService: ErrorService) {
     this.findOrdersForm = this.formBuilder.group({
       docNum: ['', [Validators.required, Validators.maxLength(60)]],
       dateType: ['', Validators.required],
@@ -26,20 +34,27 @@ export class FindOrdersDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.ordersServices.getQfbs().subscribe(resQfbs => {
+      this.qfbsSelect = resQfbs.response.map( qfb => {
+        return {
+                qfbId: qfb.id,
+                qfbName: qfb.firstName
+              };
+      });
+    }, error => this.errorService.httpError(error));
+
     this.findOrdersForm.get('ffin').setValue(new Date());
     this.startDate.setTime(this.startDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
     this.findOrdersForm.get('fini').setValue(this.startDate);
 
     this.findOrdersForm.valueChanges.subscribe(formData => {
       if (formData.docNum !== '' && formData.docNum) {
-
         this.findOrdersForm.get('dateType').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('fini').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
       } else {
-
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
       }
     });
@@ -47,8 +62,8 @@ export class FindOrdersDialogComponent implements OnInit {
   }
 
   searchOrders() {
-    console.log('data: ', this.findOrdersForm.value);
-    console.log('date init; ', this.datePipe.transform(this.findOrdersForm.get('fini').value, 'dd-MM-yyyy'));
-    console.log('date finish: ', this.datePipe.transform(this.findOrdersForm.get('ffin').value, 'dd-MM-yyyy'));
+    // console.log('ini', new Date(this.findOrdersForm.get('fini').value).getTime());
+    // console.log('ffin', new Date(this.findOrdersForm.get('ffin').value).getTime());
+    this.dialogRef.close(this.findOrdersForm.value);
   }
 }

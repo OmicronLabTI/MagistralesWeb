@@ -52,7 +52,7 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha hasta</mat-label>
-                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly>
+                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly [min]="findOrdersForm.get('fini').value">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
@@ -77,9 +77,7 @@
                         <mat-form-field appearance="fill" class="custom-field-full">
                             <mat-label>QFB Asignado</mat-label>
                             <mat-select formControlName="qfb">
-                                <mat-option value="0">Juan</mat-option>
-                                <mat-option value="1">Irma</mat-option>
-                                <mat-option value="1">Ricardo</mat-option>
+                                <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>

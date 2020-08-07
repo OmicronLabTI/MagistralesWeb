@@ -20,11 +20,12 @@ export class IPedidosListRes extends BaseResponseHttp {
     response: IPedidoReq[];
 }
 export class ParamsPedidos {
+    dateType?: string;
     docNum: number;
-    fini: string;
-    ffin: string;
+    fini: Date;
+    ffin: Date;
     status: string;
     qfb: string;
-    offset: number;
-    limit: number;
+    offset?: number;
+    limit?: number;
 }

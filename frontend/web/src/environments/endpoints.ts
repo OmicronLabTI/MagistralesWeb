@@ -9,6 +9,8 @@ export const Endpoints = {
     getUsers: `${environment.baseUrl}/api/usuarios/getUsers`,
     delete: `${environment.baseUrl}/api/usuarios/deactivateUser`,
     update: `${environment.baseUrl}/api/usuarios/updateUser`,
+    qfbs: `${environment.baseUrl}/api/usuarios/role`,
+
   },
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,

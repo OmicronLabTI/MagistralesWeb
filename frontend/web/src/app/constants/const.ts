@@ -21,6 +21,7 @@ export const MODAL_NAMES =  {
     editUser: 'editModal'
 };
 export const MODAL_FIND_ORDERS = {
-    thirtyDays: (24 * 60 * 60 * 1000) * 30
+    thirtyDays: (24 * 60 * 60 * 1000) * 30,
+    threeMonths: (24 * 60 * 60 * 1000) * 90
 };
 

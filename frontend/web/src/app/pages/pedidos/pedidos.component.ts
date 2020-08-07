@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { createElementCssSelector } from '@angular/compiler';
 import { DataService } from '../../services/data.service';
 import { CONST_STRING} from '../../constants/const';
 import {Messages} from '../../constants/messages';
@@ -31,6 +30,7 @@ export class PedidosComponent implements OnInit {
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   fullDate: string[] = [];
+  queryString = '';
   constructor(
     private pedidosService: PedidosService,
     private datePipe: DatePipe,
@@ -38,9 +38,10 @@ export class PedidosComponent implements OnInit {
     private errorService: ErrorService,
     private dialog: MatDialog
   ) {
-    this.fullDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy').split('-');
-    this.params.fini = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
-    // his.params.ffin = `${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.fullDate = this.getFormatDate(new Date());
+    this.queryString = `?fini=${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}-
+                        ${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=
+                        ${this.offset}&limit=${this.limit}`;
   }
 
   ngOnInit() {
@@ -49,9 +50,7 @@ export class PedidosComponent implements OnInit {
   }
 
   getPedidos() {
-    this.params.offset = this.offset;
-    this.params.limit = this.limit;
-    this.pedidosService.getPedidos(this.params).subscribe(
+    this.pedidosService.getPedidos(this.queryString).subscribe(
       (pedidoRes: IPedidosListRes) => {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
@@ -86,14 +85,14 @@ export class PedidosComponent implements OnInit {
     this.dataSource.data.forEach(t => t.isChecked = completed);
   }
 
-  setSpanTitle(menuValue: any, title: string) {
+/*  setSpanTitle(menuValue: any, title: string) {
     menuValue.textContent = title;
     this.params.offset = this.offset;
     this.params.limit = this.limit;
     this.dataSource.data = [];
     this.dataSource._updateChangeSubscription();
     this.getPedidos();
-  }
+  }*/
 
   processOrders() {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
@@ -124,5 +123,36 @@ export class PedidosComponent implements OnInit {
         modalType: 'orders',
       }
     });
+    dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
+      if (result.docNum) {
+        this.queryString = `?docNum=${result.docNum}`;
+      } else {
+        if (result.dateType) {
+          const dateInit: string[] = this.getFormatDate(result.fini);
+          const dateFinish: string[] = this.getFormatDate(result.ffin);
+          if ( result.dateType === '0') {
+
+            this.queryString = `?fini=${dateInit[0]}/${dateInit[1]}/${dateInit[2]}-${dateFinish[0]}/${dateFinish[1]}/${dateFinish[2]}`;
+          } else {
+            this.queryString = `?ffin=${dateInit[0]}/${dateInit[1]}/${dateInit[2]}-${dateFinish[0]}/${dateFinish[1]}/${dateFinish[2]}`;
+          }
+        }
+        if (result.status !== '') {
+          this.queryString = `${this.queryString}&status=${result.status}`;
+        }
+        if (result.qfb !== '') {
+          this.queryString = `${this.queryString}&qfb=${result.qfb}`;
+        }
+      }
+      this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+      console.log('query: ', this.queryString);
+      if (result) {
+        this.getPedidos();
+      }
+    });
+  }
+
+  getFormatDate(date: Date) {
+      return this.datePipe.transform(date, 'dd-MM-yyyy').split('-');
   }
 }
