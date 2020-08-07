@@ -13,12 +13,14 @@ import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PedidosComponent,
     PedidoDetalleComponent,
+      FindOrdersDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -35,6 +37,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
   providers: [
     APP_PROVIDERS
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+    entryComponents: [FindOrdersDialogComponent]
 })
 export class AppModule { }

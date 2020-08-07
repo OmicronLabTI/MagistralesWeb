@@ -22,7 +22,7 @@ const routes: Routes = [
   {
     path: 'pedidos',
     component: PedidosComponent,
-    canActivate: [GuardService]
+   // canActivate: [GuardService]
   },
   {
     path: 'pdetalle/:id/:status',

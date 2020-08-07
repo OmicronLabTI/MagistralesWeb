@@ -37,9 +37,8 @@ export class UserListComponent implements OnInit {
     getUsers() {
 
         this.usersService.getUsers(this.offset, this.limit).subscribe((userRes: IUserListRes) => {
-                this.lengthPaginator = 21;
+                this.lengthPaginator = userRes.comments;
                 this.dataSource.data = userRes.response;
-                console.log('res user: ', userRes);
                 this.dataSource.data.map( user => {
                     user.isChecked = false;
                 });
@@ -100,7 +99,7 @@ export class UserListComponent implements OnInit {
 
     changeDataEvent(event: PageEvent) {
         this.offset = (event.pageSize * (event.pageIndex));
-        this.limit = (event.pageSize * (event.pageIndex + 1));
+        this.limit = event.pageSize;
         this.getUsers();
         return event;
     }

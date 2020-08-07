@@ -20,4 +20,9 @@ export const MODAL_NAMES =  {
     addUserModal: 'addModal',
     editUser: 'editModal'
 };
+export const MODAL_FIND_ORDERS = {
+    thirtyDays: (24 * 60 * 60 * 1000) * 30,
+    perDay: 1000 * 3600 * 24,
+    ninetyDaysDifference: 90
+};
 
