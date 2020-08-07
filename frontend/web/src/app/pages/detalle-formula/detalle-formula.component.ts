@@ -6,9 +6,9 @@ import { ActivatedRoute } from "@angular/router";
 import {TooltipPosition} from "@angular/material/tooltip";
 
 const ELEMENT_DATA: IFormulaDetalleReq[] = [
-  {isChecked: false, numero: "MP-0001", descripcion: "BENZOTO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
-  {isChecked: false, numero: "MP-0002", descripcion: "CLORATO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
-  {isChecked: false, numero: "MP-0003", descripcion: "CLORIDRATO DE POTASIO 150 ML 0.3%", cantidadBase: 0.0013, cantidadRequerida: 0.0003, consumido: 0, disponible: 2.089, unidad: 'GR', almacen: 'MG', cantidadPendiente: 0.0013, stock: 3.99, cantidadAlmacen: 10.09},
+  {isChecked: false, productId: "MP-0001", description: "BENZOTO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
+  {isChecked: false, productId: "MP-0002", description: "CLORATO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
+  {isChecked: false, productId: "MP-0003", description: "CLORIDRATO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
 ];
 
 @Component({
@@ -49,7 +49,16 @@ export class DetalleFormulaComponent implements OnInit {
   }
 
   getDetalleFormula() {
-    console.log("detalle formula");
+    this.pedidosService.getDetallePedido(this.docNum).subscribe(
+      (formulaDetalleRes: IFormulaDetalleRes) => {
+        formulaDetalleRes.response.forEach(element => {
+          element.fechaOf = element.fechaOf == null ? "----------" : element.fechaOf.substring(10, 0);
+          element.fechaOfFin = element.fechaOfFin == null ? "----------" : element.fechaOfFin.substring(10, 0);
+          this.dataSource.data.push(element);
+        })
+        this.dataSource._updateChangeSubscription();
+      }
+    );
   }
 
   updateAllComplete() {

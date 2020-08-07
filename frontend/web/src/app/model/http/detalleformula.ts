@@ -1,38 +1,42 @@
 import {BaseResponseHttp} from "./commons";
 
 export class IFormulaReq {
-    formula: string;
-    tipo: string;
-    estatus: string;
-    cantidadPlanificada: number;
-    unidad: string;
-    almacen: string;
-    numero: number;
-    fechaVencimiento: string;
-    fechaInicio: string;
-    fechaFinalizacion: string;
-    usuario: string;
-    origen: string;
-    pedidoCliente: number;
-    cliente: string;
-    cantidadCompletada: number;
-    fechaCierreReal: string;
-    detalle: IFormulaDetalleReq[];
+    productionOrderId: string;
+    code: string;
+    productionDescription: string;
+    type: string;
+    status: string;
+    plannedQuantity: number;
+    unit: string;
+    warehouse: string;
+    number: number;
+    dueDate: string;
+    startDate: string;
+    endDate: string;
+    user: string;
+    origin: string;
+    baseDocument: number;
+    client: string;
+    completedQuantity: number;
+    realEndDate: string;
+    productLabel?: string;
+    container?: string;
+    details: IFormulaDetalleReq[];
 }
 
 export class IFormulaDetalleReq {
     isChecked: boolean;
-    numero: string;
-    descripcion: string;
-    cantidadBase: number;
-    cantidadRequerida: number;
-    consumido: number;
-    disponible: number;
-    unidad: string;
-    almacen: string;
-    cantidadPendiente: number;
+    productId: string;
+    description: string;
+    baseQuantity: number;
+    requiredQuantity: number;
+    consumed: number;
+    available: number;
+    unit: string;
+    warehouse: string;
+    pendingQuantity: number;
     stock: number;
-    cantidadAlmacen: number;
+    warehouseQuantity: number;
 }
 
 export class IFormulaRes extends BaseResponseHttp{
