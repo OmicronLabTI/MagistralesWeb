@@ -36,9 +36,19 @@ class InboxViewController: UIViewController {
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
     }
-    
+        
     // MARK: Functions
     func viewModelBinding() -> Void {
+
+        collectionView.rx.itemSelected.subscribe(onNext:{ _ in
+            print("Se ejecutó")
+
+            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+//                let vc  = UIStoryboard.init(name: ViewControllerIdentifiers.storieboardName, bundle: Bundle.main).instantiateViewController(identifier: ViewControllerIdentifiers.orderDetailViewController) as! OrderDetailViewController
+//                self.navigationController?.pushViewController(vc, animated: true)
+            }).disposed(by: disposeBag)
+
+        
         [
             finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTab),
             pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTab),
@@ -166,6 +176,14 @@ class InboxViewController: UIViewController {
         self.pendingButton.isHidden = pendingButtonIsHidden
     }
 }
+
+//func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//   if segue.identifier == "segueToNext" {
+//       if let destination = segue.destination as? OrderDetailViewController {
+//           destination.nomb = nombres // you can pass value to destination view controller
+//       }
+//   }
+//}
 
 extension UICollectionView {
 

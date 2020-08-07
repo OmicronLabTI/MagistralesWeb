@@ -34,6 +34,7 @@ class  InboxViewModel {
         // Funcionalidad para el botón de pendiente
         pendingDidTab.subscribe(onNext: {
             print("Boton pendiente")
+            // orderDetail
         }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de En Proceso
