@@ -14,7 +14,7 @@ describe('DetalleFormulaComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientModule, ReactiveFormsModule, FormsModule, BrowserAnimationsModule],
-      declarations: [ DetalleFormulaComponent ],      
+      declarations: [ DetalleFormulaComponent ]
     })
     .compileComponents();
   }));
