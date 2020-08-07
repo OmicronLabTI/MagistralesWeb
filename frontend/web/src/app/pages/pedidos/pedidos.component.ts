@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
-import { CONST_STRING} from '../../constants/const';
+import {CONST_STRING, MODAL_FIND_ORDERS} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
@@ -19,8 +19,7 @@ import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-o
 })
 export class PedidosComponent implements OnInit {
   allComplete = false;
-  params = new ParamsPedidos();
-  ordersToProcess: ProcessOrders;
+  ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
   displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
@@ -35,6 +34,7 @@ export class PedidosComponent implements OnInit {
   rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   isSearchWithFilter = false;
+  todayDate = new Date();
   constructor(
     private pedidosService: PedidosService,
     private datePipe: DatePipe,
@@ -42,10 +42,11 @@ export class PedidosComponent implements OnInit {
     private errorService: ErrorService,
     private dialog: MatDialog
   ) {
-    this.fullDate = this.getFormatDate(new Date());
+    // console.log('date formated: ', this.getFormatDate(this.todayDate.setTime( this.getTime() - MODAL_FIND_ORDERS.thirtyDays)));
+     this.fullDate = this.getFormatDate(new Date());
     // tslint:disable-next-line:max-line-length
-    this.queryString = `?fini=01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=${this.offset}&limit=${this.limit}`;
-    this.rangeDate = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+     this.queryString = `?fini=01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=${this.offset}&limit=${this.limit}`;
+     this.rangeDate = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
   }
 
   ngOnInit() {
@@ -56,10 +57,12 @@ export class PedidosComponent implements OnInit {
   getPedidos() {
     this.pedidosService.getPedidos(this.queryString).subscribe(
       (pedidoRes: IPedidosListRes) => {
+        console.log('pedidos new: ', pedidoRes.response)
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
+          // element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
+
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       },
@@ -89,19 +92,12 @@ export class PedidosComponent implements OnInit {
     this.dataSource.data.forEach(t => t.isChecked = completed);
   }
 
-/*  setSpanTitle(menuValue: any, title: string) {
-    menuValue.textContent = title;
-    this.params.offset = this.offset;
-    this.params.limit = this.limit;
-    this.dataSource.data = [];
-    this.dataSource._updateChangeSubscription();
-    this.getPedidos();
-  }*/
-
   processOrders() {
+    console.log('ordersProcess: ', this.ordersToProcess)
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
+        console.log('dataSource: ', this.dataSource.data.filter( order => order.isChecked))
         this.ordersToProcess.listIds = this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
@@ -135,10 +131,10 @@ export class PedidosComponent implements OnInit {
         this.queryString = `?docNum=${result.docNum}`;
       } else {
         if (result.dateType) {
-          const dateInit: string[] = this.getFormatDate(result.fini);
-          const dateFinish: string[] = this.getFormatDate(result.ffin);
-          this.rangeDate = `${dateInit[0]}/${dateInit[1]}/${dateInit[2]}-${dateFinish[0]}/${dateFinish[1]}/${dateFinish[2]}`;
-          if ( result.dateType === '0') {
+           const dateInit: string[] = this.getFormatDate(result.fini);
+           const dateFinish: string[] = this.getFormatDate(result.ffin);
+           this.rangeDate = `${dateInit[0]}/${dateInit[1]}/${dateInit[2]}-${dateFinish[0]}/${dateFinish[1]}/${dateFinish[2]}`;
+           if ( result.dateType === '0') {
             this.isDateInit = true;
             this.queryString = `?fini=${this.rangeDate}`;
           } else {
@@ -154,6 +150,7 @@ export class PedidosComponent implements OnInit {
         }
       }
       this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+      console.log('string: ', this.queryString)
       if (result) {
         this.getPedidos();
       }
@@ -161,6 +158,8 @@ export class PedidosComponent implements OnInit {
   }
 
   getFormatDate(date: Date) {
-      return this.datePipe.transform(date, 'dd-MM-yyyy').split('-');
+    return this.datePipe.transform(date, 'dd-MM-yyyy').split('-');
+    // return this.datePipe.transform(date, 'dd-MM-yyyy').replace('-', '/');
+    //return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }
