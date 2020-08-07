@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockSapServices
-                .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>()))
+                .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(response));
 
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);

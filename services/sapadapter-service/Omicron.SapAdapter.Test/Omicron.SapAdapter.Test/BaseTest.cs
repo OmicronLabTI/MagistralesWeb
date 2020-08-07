@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Test
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
@@ -76,6 +77,42 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// returns the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<Users> GetSapUsers()
+        {
+            return new List<Users>
+            {
+                new Users { UserId = 1, UserName = "Gus" },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<DetalleFormulaModel> GetDetalleFormula()
+        {
+            return new List<DetalleFormulaModel>
+            {
+                new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 100, RequiredQty = 100, UnidadCode = "KG" },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<ItemWarehouseModel> GetItemWareHouse()
+        {
+            return new List<ItemWarehouseModel>
+            {
+                new ItemWarehouseModel { IsCommited = 10, ItemCode = "Abc Aspirina", OnHand = 10, OnOrder = 10, WhsCode = "MN" },
+            };
+        }
+
+        /// <summary>
         /// get the product.
         /// </summary>
         /// <returns>the product.</returns>
@@ -95,7 +132,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrdenFabricacionModel>
             {
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100 },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
             };
         }
 
