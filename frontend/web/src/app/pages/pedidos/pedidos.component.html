@@ -4,13 +4,22 @@
             <span>Pedidos</span>
         </div>
         <div class="filter-select">
-            <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span #menuValue>Mensuales</span></button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="setSpanTitle(menuValue, 'Mensuales', 'month')">Mensuales</button>
-                <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Diarios</button>
-                <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'week')">Semanales</button>
-                <button mat-menu-item (click)="setSpanTitle(menuValue, 'Quincenales', 'twoweeks')">Quincenales</button>
-            </mat-menu>
+            <span class="dateType" *ngIf="isDateInit">
+                Fecha inicio:
+            </span>
+            <span class="dateType" *ngIf="!isDateInit">
+                Fecha finalización:
+            </span>
+            <span class="date-selected">
+             {{ rangeDate}}
+            </span>
+            <!--    <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span #menuValue>Mensuales</span></button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Mensuales', 'month')">Mensuales</button>
+                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Diarios</button>
+                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'week')">Semanales</button>
+                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Quincenales', 'twoweeks')">Quincenales</button>
+                </mat-menu>-->
         </div>
     </div>
 
@@ -42,6 +51,8 @@
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >
+                <mat-icon *ngIf="isSearchWithFilter">filter_tilt_shift
+                </mat-icon>
                 &nbsp; Buscar &nbsp;
             </button>
         </div>

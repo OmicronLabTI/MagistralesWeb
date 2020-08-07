@@ -48,22 +48,30 @@ export class FindOrdersDialogComponent implements OnInit {
     this.findOrdersForm.get('fini').setValue(this.startDate);
 
     this.findOrdersForm.valueChanges.subscribe(formData => {
-      if (formData.docNum !== '' && formData.docNum) {
+     if (formData.docNum !== '' && formData.docNum) {
         this.findOrdersForm.get('dateType').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('fini').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
-      } else {
+
+      } else if (formData.docNum !== '') {
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
-      }
+      } else if (formData.docNum === '' && (formData.dateType !== '' && formData.dateType  || formData.fini !== '' && formData.fini ||
+         formData.ffin !== '' && formData.ffin  ||
+         formData.status !== '' && formData.status || formData.qfb !== '' && formData.qfb )) {
+         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
+
+     }
     });
 
   }
 
   searchOrders() {
-    // console.log('ini', new Date(this.findOrdersForm.get('fini').value).getTime());
-    // console.log('ffin', new Date(this.findOrdersForm.get('ffin').value).getTime());
-    this.dialogRef.close(this.findOrdersForm.value);
+    const difference = (((new Date(this.findOrdersForm.get('ffin').value).getTime()) -
+        (new Date(this.findOrdersForm.get('fini').value).getTime())) / (MODAL_FIND_ORDERS.perDay));
+    if (difference < MODAL_FIND_ORDERS.ninetyDaysDifference) {
+      this.dialogRef.close(this.findOrdersForm.value);
+    }
   }
 }

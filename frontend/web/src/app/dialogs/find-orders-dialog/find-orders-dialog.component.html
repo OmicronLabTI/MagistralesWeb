@@ -86,7 +86,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
+            <button mat-button class="btn-add-modal btn--modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
                 <span>Buscar</span>
                 <!--<span *ngIf="isForEditModal">Guardar</span>  [disabled]="addUserForm.invalid"-->
             </button>
