@@ -19,5 +19,11 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// </summary>
         /// <returns>the result.</returns>
         Task<ResultDto> CreateFabOrder(List<OrderWithDetailDto> orderWithDetailDto);
+
+        /// <summary>
+        /// connecto to sap.
+        /// </summary>
+        /// <returns>connects.</returns>
+        Task<ResultDto> Connect();
     }
 }

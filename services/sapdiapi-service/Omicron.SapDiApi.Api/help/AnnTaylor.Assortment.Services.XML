@@ -178,6 +178,12 @@
             <param name="orderWithDetailDto">the detial.</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
+            <summary>
+            the ping pong.
+            </summary>
+            <returns>rturn pong.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.Get">
             <summary>
             the ping pong.

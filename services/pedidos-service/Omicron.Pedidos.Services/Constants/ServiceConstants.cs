@@ -52,5 +52,15 @@ namespace Omicron.Pedidos.Services.Constants
         /// gets the order by product item and product order.
         /// </summary>
         public const string GetProdOrderByOrderItem = "getProductionOrderItem";
+
+        /// <summary>
+        /// const for error whne inserting fab orde.
+        /// </summary>
+        public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
+
+        /// <summary>
+        /// if there were error while inserting.
+        /// </summary>
+        public const string ErrorAlInsertar = "Error al insertar";
     }
 }
