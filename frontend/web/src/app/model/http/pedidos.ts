@@ -28,6 +28,7 @@ export class ParamsPedidos {
     qfb: string;
     offset?: number;
     limit?: number;
+    dateFull: string;
 }
 
 export class ProcessOrders {

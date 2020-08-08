@@ -29,24 +29,22 @@ export class PedidosComponent implements OnInit {
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
-  fullDate: string[] = [];
   queryString = CONST_STRING.empty;
   rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   isSearchWithFilter = false;
-  todayDate = new Date();
+  filterDataOrders = new ParamsPedidos();
   constructor(
     private pedidosService: PedidosService,
-    private datePipe: DatePipe,
     private dataService: DataService,
     private errorService: ErrorService,
     private dialog: MatDialog
   ) {
-    // console.log('date formated: ', this.getFormatDate(this.todayDate.setTime( this.getTime() - MODAL_FIND_ORDERS.thirtyDays)));
-     this.fullDate = this.getFormatDate(new Date());
-    // tslint:disable-next-line:max-line-length
-     this.queryString = `?fini=01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}&offset=${this.offset}&limit=${this.limit}`;
-     this.rangeDate = `01/${this.fullDate[1]}/${this.fullDate[2]}-${this.fullDate[0]}/${this.fullDate[1]}/${this.fullDate[2]}`;
+    this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
+    this.filterDataOrders.dateType = 'fini';
+    this.filterDataOrders.dateFull = this.rangeDate;
+    this.queryString = `?${this.filterDataOrders.dateType}=${this.rangeDate}&offset=${this.offset}&limit=${this.limit}`;
+    console.log('initFilter: ', this.filterDataOrders);
   }
 
   ngOnInit() {
@@ -55,14 +53,14 @@ export class PedidosComponent implements OnInit {
   }
 
   getPedidos() {
+    console.log('query: ', this.queryString);
     this.pedidosService.getPedidos(this.queryString).subscribe(
       (pedidoRes: IPedidosListRes) => {
-        console.log('pedidos new: ', pedidoRes.response)
+        console.log('pedidos new: ', pedidoRes.response);
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
           // element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
-
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       },
@@ -93,7 +91,6 @@ export class PedidosComponent implements OnInit {
   }
 
   processOrders() {
-    console.log('ordersProcess: ', this.ordersToProcess)
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
@@ -124,42 +121,53 @@ export class PedidosComponent implements OnInit {
       panelClass: 'custom-dialog-container',
       data: {
         modalType: 'orders',
+        filterOrdersData: this.filterDataOrders
       }
     });
     dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
+      if (result) {
+        console.log('resultPedidos: ', result)
+        this.filterDataOrders = new  ParamsPedidos();
+      }
       if (result.docNum) {
+        this.filterDataOrders.docNum = result.docNum;
+        this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
         this.queryString = `?docNum=${result.docNum}`;
       } else {
         if (result.dateType) {
-           const dateInit: string[] = this.getFormatDate(result.fini);
-           const dateFinish: string[] = this.getFormatDate(result.ffin);
-           this.rangeDate = `${dateInit[0]}/${dateInit[1]}/${dateInit[2]}-${dateFinish[0]}/${dateFinish[1]}/${dateFinish[2]}`;
-           if ( result.dateType === '0') {
+          this.filterDataOrders.dateType = result.dateType;
+          this.rangeDate = this.getDateFormatted(result.fini, result.ffin, false);
+          if ( result.dateType === '0') {
             this.isDateInit = true;
             this.queryString = `?fini=${this.rangeDate}`;
           } else {
             this.isDateInit = false;
             this.queryString = `?ffin=${this.rangeDate}`;
           }
-        }
-        if (result.status !== '') {
+          this.filterDataOrders.dateFull = this.rangeDate;
+       }
+        if (result.status !== '' && result.status) {
           this.queryString = `${this.queryString}&status=${result.status}`;
+          this.filterDataOrders.status = result.status;
         }
-        if (result.qfb !== '') {
+        if (result.qfb !== '' && result.qfb) {
           this.queryString = `${this.queryString}&qfb=${result.qfb}`;
+          this.filterDataOrders.qfb = result.qfb;
         }
       }
       this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
-      console.log('string: ', this.queryString)
+      console.log('string: ', this.queryString);
+      console.log('filterData: ', this.filterDataOrders);
       if (result) {
         this.getPedidos();
       }
     });
   }
-
-  getFormatDate(date: Date) {
-    return this.datePipe.transform(date, 'dd-MM-yyyy').split('-');
-    // return this.datePipe.transform(date, 'dd-MM-yyyy').replace('-', '/');
-    //return this.datePipe.transform(date, 'dd/MM/yyyy');
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
+    if (isBeginDate) {
+      initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+    }
+    return `${this.dataService.transformDate(initDate)}-${this.dataService.transformDate(finishDate)}`;
   }
+
 }

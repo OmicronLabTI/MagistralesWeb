@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
@@ -15,14 +15,18 @@ import {QfbSelect} from '../../model/http/users';
 })
 export class FindOrdersDialogComponent implements OnInit {
   findOrdersForm: FormGroup;
-  startDate = new Date();
+  fullDate: string [] = [];
   qfbsSelect: QfbSelect[] = [];
+  maxDate = new Date();
   constructor(private formBuilder: FormBuilder,
+              @Inject(MAT_DIALOG_DATA) public filterData: any,
               private datePipe: DatePipe,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
               private errorService: ErrorService) {
-    this.findOrdersForm = this.formBuilder.group({
+      this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
+      console.log('dataReceive: ', this.filterData);
+      this.findOrdersForm = this.formBuilder.group({
       docNum: ['', [Validators.required, Validators.maxLength(60)]],
       dateType: ['', Validators.required],
       fini: ['', [Validators.required]],
@@ -42,36 +46,49 @@ export class FindOrdersDialogComponent implements OnInit {
               };
       });
     }, error => this.errorService.httpError(error));
-
-    this.findOrdersForm.get('ffin').setValue(new Date());
-    this.startDate.setTime(this.startDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
-    this.findOrdersForm.get('fini').setValue(this.startDate);
-
+    this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '' );
+    this.findOrdersForm.get('ffin').setValue(new Date(this.fullDate[0]));
+    this.findOrdersForm.get('fini').setValue(new Date(this.fullDate[1]));
+    this.findOrdersForm.get('dateType').setValue(this.filterData.filterOrdersData.dateType ? this.filterData.filterOrdersData.dateType : '' );
+    this.findOrdersForm.get('status').setValue(this.filterData.filterOrdersData.status ? this.filterData.filterOrdersData.status : '' );
+    this.getMaxDate();
+    if (this.filterData.filterOrdersData.docNum
+        || this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status) {
+        this.getDisableForDocNum();
+        this.getDisableOnlyForDocNum();
+    }
     this.findOrdersForm.valueChanges.subscribe(formData => {
      if (formData.docNum !== '' && formData.docNum) {
-        this.findOrdersForm.get('dateType').disable({onlySelf: true, emitEvent: false});
-        this.findOrdersForm.get('fini').disable({onlySelf: true, emitEvent: false});
-        this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
-        this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
-        this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
-
+         this.getDisableForDocNum();
       } else if (formData.docNum !== '') {
-        this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
+        this.getDisableOnlyForDocNum();
       } else if (formData.docNum === '' && (formData.dateType !== '' && formData.dateType  || formData.fini !== '' && formData.fini ||
          formData.ffin !== '' && formData.ffin  ||
          formData.status !== '' && formData.status || formData.qfb !== '' && formData.qfb )) {
-         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
+         this.getDisableOnlyForDocNum();
 
      }
+     this.getMaxDate();
     });
 
   }
 
   searchOrders() {
-    const difference = (((new Date(this.findOrdersForm.get('ffin').value).getTime()) -
-        (new Date(this.findOrdersForm.get('fini').value).getTime())) / (MODAL_FIND_ORDERS.perDay));
-    if (difference < MODAL_FIND_ORDERS.ninetyDaysDifference) {
+      console.log('data to send', this.findOrdersForm.value)
       this.dialogRef.close(this.findOrdersForm.value);
-    }
+  }
+
+  getMaxDate() {
+      this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
+  }
+  getDisableForDocNum() {
+      this.findOrdersForm.get('dateType').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('fini').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
+  }
+  getDisableOnlyForDocNum() {
+      this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
   }
 }

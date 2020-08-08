@@ -52,7 +52,8 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha hasta</mat-label>
-                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly [min]="findOrdersForm.get('fini').value">
+                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly
+                                           [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
