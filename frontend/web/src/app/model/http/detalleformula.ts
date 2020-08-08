@@ -1,6 +1,7 @@
-import {BaseResponseHttp} from "./commons";
+import {BaseResponseHttp} from './commons';
 
 export class IFormulaReq {
+    fabDate: string;
     productionOrderId: string;
     code: string;
     productionDescription: string;
@@ -17,7 +18,7 @@ export class IFormulaReq {
     origin: string;
     baseDocument: number;
     client: string;
-    completedQuantity: number;
+    completeQuantity: number;
     realEndDate: string;
     productLabel?: string;
     container?: string;
@@ -39,10 +40,12 @@ export class IFormulaDetalleReq {
     warehouseQuantity: number;
 }
 
+/*
 export class IFormulaRes extends BaseResponseHttp{
     response: any;
 }
+*/
 
-export class IFormulaDetalleRes extends BaseResponseHttp{
+export class IFormulaRes extends BaseResponseHttp {
     response: IFormulaReq;
 }

@@ -1,15 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from "../../services/pedidos.service";
-import { IFormulaDetalleRes, IFormulaDetalleReq} from "../../model/http/detalleformula";
+import {IFormulaRes, IFormulaDetalleReq, IFormulaReq} from "../../model/http/detalleformula";
 import { ActivatedRoute } from "@angular/router";
-import {TooltipPosition} from "@angular/material/tooltip";
-
-const ELEMENT_DATA: IFormulaDetalleReq[] = [
-  {isChecked: false, productId: "MP-0001", description: "BENZOTO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
-  {isChecked: false, productId: "MP-0002", description: "CLORATO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
-  {isChecked: false, productId: "MP-0003", description: "CLORIDRATO DE POTASIO 150 ML 0.3%", baseQuantity: 0.0013, requiredQuantity: 0.0003, consumed: 0, available: 2.089, unit: 'GR', warehouse: 'MG', pendingQuantity: 0.0013, stock: 3.99, warehouseQuantity: 10.09},
-];
+import {ErrorService} from "../../services/error.service";
 
 @Component({
   selector: 'app-detalle-formula',
@@ -18,8 +12,8 @@ const ELEMENT_DATA: IFormulaDetalleReq[] = [
 })
 
 export class DetalleFormulaComponent implements OnInit {
-  allComplete: boolean = false;
-  actualPage: number = 0;
+  allComplete = false;
+  dataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
   displayedColumns: string[] = [
     'seleccion',
@@ -36,29 +30,31 @@ export class DetalleFormulaComponent implements OnInit {
     'enstock',
     'cantalmacen'
   ]
-  dataSource = new MatTableDataSource();
+  dataSource = new MatTableDataSource<IFormulaDetalleReq>();
 
-  constructor(private pedidosService: PedidosService, private route: ActivatedRoute) { }
+  constructor(private pedidosService: PedidosService, private route: ActivatedRoute, private errorService: ErrorService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.ordenFabricacionId = params.get("ordenid")
-    })
-    this.dataSource.data = ELEMENT_DATA;
+      this.ordenFabricacionId = params.get('ordenid');
+    });
+    // this.dataSource.data = ELEMENT_DATA;
     this.getDetalleFormula();
   }
 
   getDetalleFormula() {
-    this.pedidosService.getDetallePedido(this.docNum).subscribe(
-      (formulaDetalleRes: IFormulaDetalleRes) => {
-        formulaDetalleRes.response.forEach(element => {
-          element.fechaOf = element.fechaOf == null ? "----------" : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? "----------" : element.fechaOfFin.substring(10, 0);
+    this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
+      (formulaRes: IFormulaRes) => {
+        this.dataFormulaDetail = formulaRes.response;
+        this.dataSource.data = this.dataFormulaDetail.details;
+        this.dataSource.data.forEach(detail => {detail.isChecked = false; });
+/*        this.dataFormulaDetail.details.forEach(element => {
+      /!*    element.fechaOf = element.fechaOf == null ? "----------" : element.fechaOf.substring(10, 0);
+          element.fechaOfFin = element.fechaOfFin == null ? "----------" : element.fechaOfFin.substring(10, 0);*!/
           this.dataSource.data.push(element);
         })
-        this.dataSource._updateChangeSubscription();
-      }
-    );
+        this.dataSource._updateChangeSubscription();*/
+      }, error => this.errorService.httpError(error));
   }
 
   updateAllComplete() {
