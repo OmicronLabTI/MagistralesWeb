@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="dictResult">the dict.</param>
         /// <param name="correctValue">the correct value.</param>
         /// <returns>the list.</returns>
-        public static List<string> GetListFabOrders(Dictionary<string, string> dictResult, string correctValue)
+        public static List<string> GetValuesByExactValue(Dictionary<string, string> dictResult, string correctValue)
         {
             var listToReturn = new List<string>();
             foreach (var k in dictResult.Keys)
@@ -116,6 +116,44 @@ namespace Omicron.Pedidos.Services.Utils
                     listToReturn.Add(k);
                 }
             }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the list of keys by a value.
+        /// </summary>
+        /// <param name="dictResult">the dict.</param>
+        /// <param name="correctValue">the correct value.</param>
+        /// <returns>the list.</returns>
+        public static List<string> GetValuesContains(Dictionary<string, string> dictResult, string correctValue)
+        {
+            var listToReturn = new List<string>();
+            foreach (var k in dictResult.Keys)
+            {
+                if (dictResult[k].Contains(correctValue))
+                {
+                    listToReturn.Add(k);
+                }
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// gets the products Id to return.
+        /// </summary>
+        /// <param name="listWithError">the error list.</param>
+        /// <returns>the list of values.</returns>
+        public static List<string> GetErrorsWhileInserting(List<string> listWithError)
+        {
+            var listToReturn = new List<string>();
+
+            listWithError.ForEach(x =>
+            {
+                var order = x.Split("-");
+                listToReturn.Add(order[1]);
+            });
 
             return listToReturn;
         }

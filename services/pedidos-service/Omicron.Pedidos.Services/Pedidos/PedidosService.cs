@@ -55,7 +55,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var resultSap = await this.sapDiApi.CreateFabOrder(orders.Response);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listToLook = ServiceUtils.GetListFabOrders(dictResult, ServiceConstants.Ok);
+            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
+            var listErrorId = ServiceUtils.GetErrorsWhileInserting(listWithError);
 
             var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
             var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
@@ -65,7 +67,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders.Response), null);
+
+            var userError = listErrorId.Any() ? ServiceConstants.ErrorAlInsertar : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
         /// <summary>

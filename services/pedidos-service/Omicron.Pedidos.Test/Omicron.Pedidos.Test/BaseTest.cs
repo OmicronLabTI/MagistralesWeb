@@ -114,6 +114,7 @@ namespace Omicron.Pedidos.Test
             var listOrders = new Dictionary<string, string>
             {
                 { "100-Aspirina", ServiceConstants.Ok },
+                { "200-Aspirina", ServiceConstants.ErrorCreateFabOrd },
             };
 
             return new ResultModel

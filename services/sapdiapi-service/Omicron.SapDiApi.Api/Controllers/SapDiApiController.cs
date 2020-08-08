@@ -51,6 +51,18 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// </summary>
         /// <returns>rturn pong.</returns>
         [HttpGet]
+        [Route("connect")]
+        public async Task<IHttpActionResult> GetConnection()
+        {
+            var result = await this.sapFacade.Connect();
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// the ping pong.
+        /// </summary>
+        /// <returns>rturn pong.</returns>
+        [HttpGet]
         [Route("ping")]
         public async Task<IHttpActionResult> Get()
         {

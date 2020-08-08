@@ -31,6 +31,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             this.company = Connection.Company;
         }
+
+        /// <summary>
+        /// Connects to SAP.
+        /// </summary>
+        /// <returns>the connection.</returns>
+        public async Task<ResultModel> Connect()
+        {
+            var connected = this.company.Connected;
+            return ServiceUtils.CreateResult(true, 200, null, connected, null);
+        }
+
         /// <summary>
         /// the insert.
         /// </summary>
@@ -59,7 +70,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if(inserted != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
-                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("Error-{0}-{1}", errorCode.ToString(), errMsg));
+                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("ErrorCreateFabOrd-{0}-{1}", errorCode.ToString(), errMsg));
                     }
                     else
                     {
@@ -68,8 +79,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
             }
 
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictResult), null);
-            
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictResult), null);            
         }
     }
 }
