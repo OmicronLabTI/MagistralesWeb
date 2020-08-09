@@ -8,7 +8,6 @@ import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
-import {DatePipe} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 
@@ -41,10 +40,9 @@ export class PedidosComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
-    this.filterDataOrders.dateType = 'fini';
+    this.filterDataOrders.dateType = '0';
     this.filterDataOrders.dateFull = this.rangeDate;
-    this.queryString = `?${this.filterDataOrders.dateType}=${this.rangeDate}&offset=${this.offset}&limit=${this.limit}`;
-    console.log('initFilter: ', this.filterDataOrders);
+    this.queryString = `?fini=${this.rangeDate}&offset=${this.offset}&limit=${this.limit}`;
   }
 
   ngOnInit() {
@@ -53,10 +51,8 @@ export class PedidosComponent implements OnInit {
   }
 
   getPedidos() {
-    console.log('query: ', this.queryString);
     this.pedidosService.getPedidos(this.queryString).subscribe(
       (pedidoRes: IPedidosListRes) => {
-        console.log('pedidos new: ', pedidoRes.response);
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
@@ -94,7 +90,6 @@ export class PedidosComponent implements OnInit {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
-        console.log('dataSource: ', this.dataSource.data.filter( order => order.isChecked))
         this.ordersToProcess.listIds = this.dataSource.data.filter(t => (t['isChecked'] && t['pedidoStatus']=='Abierto')).map(t => t['docNum'])
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
@@ -116,7 +111,6 @@ export class PedidosComponent implements OnInit {
     return event;
   }
   openFindOrdersDialog() {
-    this.isSearchWithFilter = true;
     const dialogRef = this.dialog.open(FindOrdersDialogComponent, {
       panelClass: 'custom-dialog-container',
       data: {
@@ -126,7 +120,6 @@ export class PedidosComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
       if (result) {
-        console.log('resultPedidos: ', result)
         this.filterDataOrders = new  ParamsPedidos();
       }
       if (result.docNum) {
@@ -155,9 +148,8 @@ export class PedidosComponent implements OnInit {
           this.filterDataOrders.qfb = result.qfb;
         }
       }
+      this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
       this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
-      console.log('string: ', this.queryString);
-      console.log('filterData: ', this.filterDataOrders);
       if (result) {
         this.getPedidos();
       }

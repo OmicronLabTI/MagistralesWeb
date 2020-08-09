@@ -53,7 +53,7 @@ export class DataService {
     sessionStorage.setItem('userId', userId);
   }
 
-  getUserId(){
+  getUserId() {
     return sessionStorage.getItem('userId');
   }
 
@@ -61,7 +61,7 @@ export class DataService {
     sessionStorage.setItem('userName', userName);
   }
 
-  getUserName(){
+  getUserName() {
     return sessionStorage.getItem('userName');
   }
 
@@ -91,7 +91,11 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  transformDate(date: Date) {
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  transformDate(date: Date, isForAmericanDateType = false) {
+    if (!isForAmericanDateType) {
+      return this.datePipe.transform(date, 'dd/MM/yyyy');
+    } else {
+      return this.datePipe.transform(date, 'MM/dd/yyyy');
+    }
   }
 }

@@ -3,7 +3,7 @@
         <div class="title-list-container">
             <span>Pedidos</span>
         </div>
-        <div class="filter-select">
+        <div class="filter-select" *ngIf="!filterDataOrders.docNum || filterDataOrders.docNum === 0">
             <span class="dateType" *ngIf="isDateInit">
                 Fecha inicio:
             </span>
@@ -13,13 +13,14 @@
             <span class="date-selected">
              {{ rangeDate}}
             </span>
-            <!--    <button mat-button [matMenuTriggerFor]="menu" class="select-button">Mostrar pedidos: <span #menuValue>Mensuales</span></button>
-                <mat-menu #menu="matMenu">
-                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Mensuales', 'month')">Mensuales</button>
-                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Del día', 'today')">Diarios</button>
-                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Semanales', 'week')">Semanales</button>
-                    <button mat-menu-item (click)="setSpanTitle(menuValue, 'Quincenales', 'twoweeks')">Quincenales</button>
-                </mat-menu>-->
+        </div>
+        <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
+            <span class="dateType">
+                Número de pedido buscado:
+            </span>
+            <span class="date-selected">
+             {{ filterDataOrders.docNum}}
+            </span>
         </div>
     </div>
 
