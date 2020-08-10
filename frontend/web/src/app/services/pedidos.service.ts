@@ -17,8 +17,11 @@ export class PedidosService {
   getDetallePedido(docNum: string) {
     return this.consumeService.httpGet(Endpoints.pedidos.getDetallePedido + docNum);
   }
+  getFormulaDetail(orderNum: string) {
+    return this.consumeService.httpGet(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
+  }
 
-  processOrders(ordersToProcess){
+  processOrders(ordersToProcess) {
     return this.consumeService.httpPost(Endpoints.pedidos.processOrders, ordersToProcess);
   }
   getQfbs() {

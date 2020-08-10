@@ -10,7 +10,7 @@
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
-                            <input matInput placeholder="Ingresar pedido"
+                            <input matInput placeholder="Ingresar pedido" type="number"
                                    maxlength="60"
                                    class="height-input"
                                     formControlName="docNum">
@@ -52,7 +52,8 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha hasta</mat-label>
-                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly [min]="findOrdersForm.get('fini').value">
+                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly
+                                           [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
@@ -85,7 +86,8 @@
             </form>
         </mat-card-content>
         <mat-card-actions class="options-footer">
-            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parametros</button>
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal with-button-cancel">Cancelar</button>
             <button mat-button class="btn-add-modal btn--modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
                 <span>Buscar</span>
                 <!--<span *ngIf="isForEditModal">Guardar</span>  [disabled]="addUserForm.invalid"-->

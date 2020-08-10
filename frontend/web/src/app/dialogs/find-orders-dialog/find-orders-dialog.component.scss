@@ -78,8 +78,6 @@
   justify-content: flex-end;
 }
 .btn-cancel-modal{
-  width: 7rem;
-  height: 3rem;
   font-size: 1em;
   background-color: #fff;
   font-weight: 500;
@@ -91,6 +89,14 @@
   margin: 5px;
   transition: all 0.35s ease;
 
+}
+.with-button-cancel {
+  width: 7rem;
+  height: 3rem;
+}
+.with-button-reset {
+  width: 12rem;
+  height: 3rem;
 }
 .btn-add-modal{
   width: 7rem;
