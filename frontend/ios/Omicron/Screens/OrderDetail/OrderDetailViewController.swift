@@ -52,8 +52,10 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var htStockLabel: UILabel!
     @IBOutlet weak var htQuantityInStockLabel: UILabel!
     @IBOutlet weak var htSpaceLabel: UILabel!
+    @IBOutlet weak var detailTable: UITableView!
     
-    
+    // MARK: Variables
+    var orderDetailViewModel = OrderDetailViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
@@ -102,6 +104,8 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 12)
         UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacen", fontSize: 12)
         UtilsManager.shared.labelsStyle(label: self.htSpaceLabel, text: "", fontSize: 12)
+        
+        self.detailTable.tableFooterView = UIView()
     }
     
 

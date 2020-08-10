@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
     <device id="ipad10_5" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
@@ -448,10 +448,9 @@
         <!--Title-->
         <scene sceneID="BAP-3r-Vdj">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="OrderDetailViewController" id="Dvp-ad-RrX" customClass="OrderDetailViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mbS-m8-5F7">
-                        <rect key="frame" x="0.0" y="0.0" width="791" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="791.5" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d03-k0-ISy">
@@ -854,6 +853,7 @@
                         <outlet property="codeLabel" destination="Bkt-I6-pJ5" id="iJG-yF-yRj"/>
                         <outlet property="containerDescriptionLabel" destination="TfK-KM-hd3" id="h6m-yt-ev2"/>
                         <outlet property="containerLabel" destination="GDi-bg-jJg" id="Lfd-vd-8fz"/>
+                        <outlet property="detailTable" destination="Pz7-of-sCi" id="b0L-bA-4Ac"/>
                         <outlet property="documentBaseDescriptionLabel" destination="caY-km-sbd" id="EJz-1v-alG"/>
                         <outlet property="documentBaseLabel" destination="es2-YE-49k" id="SfV-2R-NUt"/>
                         <outlet property="finishedButton" destination="uJ5-Eh-TJb" id="Fyb-HU-RVs"/>
@@ -888,6 +888,7 @@
                         <outlet property="titleLabel" destination="nV4-RO-meX" id="9ev-mY-Idh"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2512.7697841726617" y="451.79856115107918"/>
         </scene>

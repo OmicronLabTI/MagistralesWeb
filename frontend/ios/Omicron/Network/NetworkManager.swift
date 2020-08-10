@@ -83,6 +83,12 @@ class NetworkManager {
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
+    
+    func getOrdenDetail(orderId: Int) -> Observable<OrderDetailResponse> {
+        let req: ApiService = ApiService.getOrdenDetail(orderId: orderId)
+        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        return res
+    }
 
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {

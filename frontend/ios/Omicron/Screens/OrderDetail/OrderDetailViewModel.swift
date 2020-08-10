@@ -7,3 +7,14 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
+
+class OrderDetailViewModel {
+    var disposeBag: DisposeBag = DisposeBag()
+    init() {
+        NetworkManager.shared.getOrdenDetail(orderId: 1).subscribe(onNext: {res in
+            print("Respuesta: \(res)")
+        }).disposed(by: self.disposeBag)
+    }
+}

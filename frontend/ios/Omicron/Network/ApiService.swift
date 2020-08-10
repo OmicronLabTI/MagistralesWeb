@@ -14,6 +14,7 @@ enum ApiService {
     case getInfoUser(userId: String)
     case getStatusList(qfbId: StatusRequest)
     case renew(data: Renew)
+    case getOrdenDetail(orderId: Int)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -37,6 +38,8 @@ extension ApiService: AuthorizedTargetType {
             return "/statusList"
         case .renew:
             return "/oauth/oauthrs/renew"
+        case .getOrdenDetail(let ordenId):
+            return "/pedidos/formula/\(ordenId)"
         }
     }
     
@@ -44,7 +47,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login, .renew:
             return .post
-        case .getInfoUser, .getStatusList:
+        case .getInfoUser, .getStatusList, .getOrdenDetail:
             return .get
         }
     }
@@ -58,6 +61,8 @@ extension ApiService: AuthorizedTargetType {
         case .getStatusList(let qfbId):
             return .requestJSONEncodable(qfbId)
         case .renew(let data):
+            return .requestJSONEncodable(data)
+        case .getOrdenDetail(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -78,6 +83,12 @@ extension ApiService: AuthorizedTargetType {
             return "".utf8Encoded
         case .renew:
             guard let url = Bundle.main.url(forResource: "refresh_token", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getOrdenDetail:
+            guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
