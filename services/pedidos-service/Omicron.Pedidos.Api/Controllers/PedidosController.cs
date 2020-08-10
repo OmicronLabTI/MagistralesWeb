@@ -47,7 +47,7 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// the list ids.
+        /// the list userIds ids.
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <returns>the data.</returns>
@@ -56,6 +56,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetUserOrderBySalesOrder(List<int> listIds)
         {
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// the list userIds ids.
+        /// </summary>
+        /// <param name="userId">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/qfbOrders/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetQfbOrders(string userId)
+        {
+            var response = await this.pedidoFacade.GetFabOrderByUserID(userId);
             return this.Ok(response);
         }
     }

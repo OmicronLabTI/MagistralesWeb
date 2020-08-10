@@ -49,7 +49,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.UserOrderModel.Add(this.GetUserOrderModel());
+            this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.OrderLogModel.Add(this.GetOrderLogModel());
             this.context.SaveChanges();
 
@@ -57,6 +57,10 @@ namespace Omicron.Pedidos.Test.Services
             mockSapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
+
+            mockSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFormulaDetalle()));
 
             var mockSaDiApi = new Mock<ISapDiApi>();
             mockSaDiApi
@@ -100,6 +104,23 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrderBySalesOrder(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetFabOrderByUserID()
+        {
+            // arrange
+            var id = "abc";
+
+            // act
+            var response = await this.pedidosService.GetFabOrderByUserID(id);
 
             // assert
             Assert.IsNotNull(response);

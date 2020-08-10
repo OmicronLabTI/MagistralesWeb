@@ -58,5 +58,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderBySalesOrder(listIds));
         }
+
+        /// <summary>
+        /// Gets the orders of a specific QFB (ipad).
+        /// </summary>
+        /// <param name="userId">the user id.</param>
+        /// <returns>the list to returns.</returns>
+        public async Task<ResultDto> GetFabOrderByUserID(string userId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetFabOrderByUserID(userId));
+        }
     }
 }

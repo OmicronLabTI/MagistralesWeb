@@ -76,6 +76,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetUserOrderBySalesOrder(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.GetFabOrderByUserID(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -162,6 +166,28 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetFabOrderByUserID()
+        {
+            // arrange
+            var ids = "1";
+
+            // act
+            var response = await this.pedidoFacade.GetFabOrderByUserID(ids);
 
             // Assert
             Assert.IsNotNull(response);
