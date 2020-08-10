@@ -22,7 +22,9 @@ import {
   MatRadioModule,
   MatAutocompleteModule,
   MatCheckboxModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatTooltipModule
+
 } from '@angular/material';
 
 
@@ -40,7 +42,7 @@ export const MATERIAL_COMPONENTS = [
   MatSelectModule,
   MatExpansionModule,
   MatPaginatorModule,
-  MatTableModule, 
+  MatTableModule,
   MatSlideToggleModule,
   MatDialogModule,
   MatTabsModule,
@@ -50,5 +52,6 @@ export const MATERIAL_COMPONENTS = [
   MatRadioModule,
   MatAutocompleteModule,
   MatCheckboxModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatTooltipModule
 ];

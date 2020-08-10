@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
-import {PedidosService} from "../../services/pedidos.service";
-import { IPedidoDetalleListRes} from "../../model/http/detallepedidos.model";
-import { ActivatedRoute } from "@angular/router";
-import {TooltipPosition} from "@angular/material/tooltip";
-import {FormControl} from '@angular/forms';
+import {PedidosService} from '../../services/pedidos.service';
+import {IPedidoDetalleListRes, IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -12,8 +10,7 @@ import {FormControl} from '@angular/forms';
   styleUrls: ['./pedido-detalle.component.scss']
 })
 export class PedidoDetalleComponent implements OnInit {
-  allComplete: boolean = false;
-  actualPage: number = 0;
+  allComplete = false;
   docNum: string;
   docStatus: string;
   displayedColumns: string[] = [
@@ -28,16 +25,16 @@ export class PedidoDetalleComponent implements OnInit {
     'qfb',
     'statusOF',
     'actions'
-  ]
-  dataSource = new MatTableDataSource()
+  ];
+  dataSource = new MatTableDataSource<IPedidoDetalleReq>();
 
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.docNum = params.get("id")
-      this.docStatus = params.get("status")
-    })
+      this.docNum = params.get('id');
+      this.docStatus = params.get('status');
+    });
     this.getDetallePedido();
   }
 
@@ -45,24 +42,24 @@ export class PedidoDetalleComponent implements OnInit {
     this.pedidosService.getDetallePedido(this.docNum).subscribe(
       (pedidoDetalleRes: IPedidoDetalleListRes) => {
         pedidoDetalleRes.response.forEach(element => {
-          element.fechaOf = element.fechaOf == null ? "----------" : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? "----------" : element.fechaOfFin.substring(10, 0);
+          element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
+          element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           this.dataSource.data.push(element);
-        })
+        });
         this.dataSource._updateChangeSubscription();
       }
     );
   }
 
   updateAllComplete() {
-    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t['isChecked']);
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
   }
 
   someComplete(): boolean {
     if (this.dataSource.data == null) {
       return false;
     }
-    return this.dataSource.data.filter(t => t['isChecked']).length > 0 && !this.allComplete;
+    return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
   }
 
   setAll(completed: boolean) {
@@ -70,7 +67,7 @@ export class PedidoDetalleComponent implements OnInit {
     if (this.dataSource.data == null) {
       return;
     }
-    this.dataSource.data.forEach(t => t['isChecked'] = completed);
+    this.dataSource.data.forEach(t => t.isChecked = completed);
   }
 
 }

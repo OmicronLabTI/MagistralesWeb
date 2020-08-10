@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DatePipe} from '@angular/common';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
@@ -23,7 +22,6 @@ export class FindOrdersDialogComponent implements OnInit {
   isToResetData = false;
   constructor(private formBuilder: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public filterData: any,
-              private datePipe: DatePipe,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
               private errorService: ErrorService,

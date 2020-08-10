@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GuardService } from './services/guard.service';
-import { PedidosComponent } from './pages/pedidos/pedidos.component';
-import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
-import { DetalleFormulaComponent } from './pages/detalle-formula/detalle-formula.component';
 
 const routes: Routes = [
   {
@@ -22,17 +19,17 @@ const routes: Routes = [
   },
   {
     path: 'pedidos',
-    component: PedidosComponent,
-   // canActivate: [GuardService]
+    loadChildren: () => import('./pages/pedidos/pedidos.module').then(m => m.PedidosModule),
+    canActivate: [GuardService]
   },
   {
     path: 'pdetalle/:id/:status',
-    component: PedidoDetalleComponent,
+    loadChildren: () => import('./pages/pedido-detalle/pedido-detalle.module').then(m => m.PedidoDetalleModule),
     canActivate: [GuardService]
   },
   {
     path: 'ordenfabricacion/:ordenid',
-    component: DetalleFormulaComponent,
+    loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },
   {
