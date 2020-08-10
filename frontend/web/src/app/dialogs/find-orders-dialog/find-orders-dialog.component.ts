@@ -50,8 +50,14 @@ export class FindOrdersDialogComponent implements OnInit {
           this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
       }).catch(error => this.errorService.httpError(error));
       this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
-      this.findOrdersForm.get('ffin').setValue(new Date(this.dataService.transformDate(new Date(this.fullDate[1]))));
-      this.findOrdersForm.get('fini').setValue(new Date(this.dataService.transformDate(new Date(this.fullDate[0]))));
+      const initDateInput = this.dataService.transformDate(new Date(this.fullDate[0]));
+      const finishDate = this.dataService.transformDate(new Date(this.fullDate[1]));
+      this.findOrdersForm.get('ffin').setValue(new Date(finishDate));
+      this.findOrdersForm.get('fini').setValue(new Date(initDateInput));
+      // console.log('date find: ', this.fullDate[0])
+      // const initDateInput = this.dataService.transformDate(new Date());
+      // const finishDate = this.dataService.transformDate(new Date());
+
       this.findOrdersForm.get('dateType').setValue(this.filterData.filterOrdersData.dateType ?
           this.filterData.filterOrdersData.dateType : '0');
       this.findOrdersForm.get('status').setValue(this.filterData.filterOrdersData.status ? this.filterData.filterOrdersData.status : '');
