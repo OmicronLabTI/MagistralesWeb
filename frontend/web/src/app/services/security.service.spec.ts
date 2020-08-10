@@ -7,7 +7,7 @@ import { ConsumeService } from './consume.service';
 import { ILoginReq, ILoginRes } from '../model/http/security.model';
 import { Observable } from 'rxjs';
 import { Endpoints } from 'src/environments/endpoints';
-
+import {DatePipe} from '@angular/common';
 describe('SecurityService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
@@ -15,7 +15,8 @@ describe('SecurityService', () => {
     ],
     providers: [
       DataService,
-      ConsumeService
+      ConsumeService,
+        DatePipe
     ]
   }));
 

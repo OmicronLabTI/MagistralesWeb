@@ -8,6 +8,7 @@ import { IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {DatePipe} from '@angular/common';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -21,7 +22,8 @@ describe('PedidoDetalleComponent', () => {
         RouterTestingModule,
         FormsModule,
         BrowserAnimationsModule],
-      declarations: [ PedidoDetalleComponent ]
+      declarations: [ PedidoDetalleComponent ],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));

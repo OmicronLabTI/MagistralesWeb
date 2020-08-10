@@ -8,7 +8,7 @@ import { SecurityService } from 'src/app/services/security.service';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import {DatePipe} from '@angular/common';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -25,7 +25,8 @@ describe('LoginComponent', () => {
       ],
       providers: [
         SecurityService,
-        DataService
+        DataService,
+        DatePipe
       ]
     })
     .compileComponents();
