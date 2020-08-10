@@ -23,7 +23,8 @@ class RootViewModel {
     
     init() {
         NetworkManager.shared.getStatusList(qfbId: StatusRequest.init(qfbId: 1)).subscribe(onNext: { res in
-            for status in res.status! {
+            
+            for status in res.response!.status! {
                 switch status.statusId {
                 case 1:
                     self.assignedOrders = status.orders!

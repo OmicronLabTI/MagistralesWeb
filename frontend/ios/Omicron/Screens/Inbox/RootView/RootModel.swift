@@ -48,7 +48,7 @@ extension User: Mappable {
 
 // MARK: StatusModel
 class StatusResponse: HttpResponse {
-    var status: [Status]?
+    var response: Status?
     
     required init?(map: Map) {
         super.init(map: map)
@@ -56,11 +56,24 @@ class StatusResponse: HttpResponse {
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        status <- map["status"]
+        response <- map["response"]
     }
 }
 
 class Status {
+    var status: [StatusDetail]?
+    required init?(map: Map) {}
+}
+
+extension Status: Mappable {
+    func mapping(map: Map) {
+        self.status <- map["status"]
+    }
+}
+
+
+
+class StatusDetail {
     var statusId: Int?
     var statusName: String?
     var orders: [Order]?
@@ -68,7 +81,7 @@ class Status {
     required init?(map: Map) {}
 }
 
-extension Status: Mappable {
+extension StatusDetail: Mappable {
     func mapping(map: Map) {
         self.statusId <- map["statusId"]
         self.statusName <- map["statusName"]
