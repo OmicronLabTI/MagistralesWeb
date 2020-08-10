@@ -6,6 +6,7 @@ import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {DatePipe} from '@angular/common';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -14,7 +15,8 @@ describe('DetalleFormulaComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientModule, ReactiveFormsModule, FormsModule, BrowserAnimationsModule],
-      declarations: [ DetalleFormulaComponent ]
+      declarations: [ DetalleFormulaComponent ],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));
