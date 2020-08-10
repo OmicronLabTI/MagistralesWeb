@@ -43,6 +43,7 @@ extension OrderDetail: Mappable {
     func mapping(map: Map) {
         self.productionOrderID <- map["productionOrderId"]
         self.code <- map["code"]
+        self.productDescription <- map["productDescription"]
         self.type <- map["type"]
         self.status <- map["status"]
         self.plannedQuantity <- map["plannedQuantity"]

@@ -28,6 +28,7 @@ struct ViewControllerIdentifiers {
     static let cardReuseIdentifier = "card"
     static let rootTableViewCell = "RootTableViewCell"
     static let orderDetailViewController = "OrderDetailViewController"
+    static let detailTableViewCell = "DetailTableViewCell"
 }
 
 struct OmicronColors {

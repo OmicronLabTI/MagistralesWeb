@@ -31,6 +31,7 @@
 		7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */; };
 		7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332524DDCBE70055425C /* OrderDetailModel.swift */; };
 		7CB6332824DDEE3F0055425C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332724DDEE3F0055425C /* Utils.swift */; };
+		7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6735E24E1D51D0072F2F6 /* DetailTableViewCell.swift */; };
 		7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */; };
 		7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */; };
 		7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D124CB9553005A7FED /* InboxViewController.swift */; };
@@ -101,6 +102,7 @@
 		7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
 		7CB6332524DDCBE70055425C /* OrderDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailModel.swift; sourceTree = "<group>"; };
 		7CB6332724DDEE3F0055425C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		7CB6735E24E1D51D0072F2F6 /* DetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewCell.swift; sourceTree = "<group>"; };
 		7CBA553A24CF8E9B00918C38 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardCollectionViewCell.xib; sourceTree = "<group>"; };
 		7CE216D124CB9553005A7FED /* InboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -204,11 +206,20 @@
 		7CB6332024DDCB6D0055425C /* OrderDetail */ = {
 			isa = PBXGroup;
 			children = (
+				7CB6735D24E1D4D60072F2F6 /* CustomCell */,
 				7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */,
 				7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */,
 				7CB6332524DDCBE70055425C /* OrderDetailModel.swift */,
 			);
 			path = OrderDetail;
+			sourceTree = "<group>";
+		};
+		7CB6735D24E1D4D60072F2F6 /* CustomCell */ = {
+			isa = PBXGroup;
+			children = (
+				7CB6735E24E1D51D0072F2F6 /* DetailTableViewCell.swift */,
+			);
+			path = CustomCell;
 			sourceTree = "<group>";
 		};
 		7CBA553924CF8E5400918C38 /* Card */ = {
@@ -639,6 +650,7 @@
 			files = (
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
+				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */,
 				98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */,
