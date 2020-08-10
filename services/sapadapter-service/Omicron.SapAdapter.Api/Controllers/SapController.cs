@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Obtiene la orden de fabricacion en base al orderitem-productid.
+        /// Obtiene la orden de fabricacion en base al orderitem-productid para el insert de ordenes de fabricacion.
         /// </summary>
         /// <param name="pedidosId">the ids.</param>
         /// <returns>the result.</returns>

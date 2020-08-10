@@ -27,5 +27,8 @@ namespace Omicron.Usuarios.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<UserModel> Usuarios { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<RoleModel> RoleModel { get; set; }
     }
 }

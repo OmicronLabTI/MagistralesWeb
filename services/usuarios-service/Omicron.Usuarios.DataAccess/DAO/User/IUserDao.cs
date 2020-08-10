@@ -78,5 +78,11 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <param name="listIds">the list.</param>
         /// <returns>the user.</returns>
         Task<IEnumerable<UserModel>> GetUsersById(List<string> listIds);
+
+        /// <summary>
+        /// Get all the roles
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<RoleModel>> GetAllRoles();
     }
 }

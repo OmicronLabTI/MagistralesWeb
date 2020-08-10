@@ -125,5 +125,22 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetUserOrdersByUserId()
+        {
+            // arrange
+            var id = new List<string> { "abc" };
+
+            // act
+            var response = await this.pedidosService.GetUserOrdersByUserId(id);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

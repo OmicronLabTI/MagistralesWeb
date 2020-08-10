@@ -100,6 +100,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Gets the list of user orders by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUserOrdersByUserId(List<string> listIds)
+        {
+            var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
+            return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
