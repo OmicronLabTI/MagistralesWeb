@@ -22,10 +22,17 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet weak var quantityPendingLabel: UILabel!
     @IBOutlet weak var stockLabel: UILabel!
     @IBOutlet weak var storedQuantity: UILabel!
-        
+    @IBOutlet weak var editButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        //editButton.setImage(UIImage(systemName: ), for: .normal)
+        editButton.setTitle("", for: .normal)
+        editButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
+        deleteButton.setTitle("", for: .normal)
+        deleteButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
