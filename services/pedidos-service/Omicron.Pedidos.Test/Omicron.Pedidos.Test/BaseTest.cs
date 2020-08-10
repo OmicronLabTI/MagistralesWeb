@@ -55,15 +55,14 @@ namespace Omicron.Pedidos.Test
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
-        public UserOrderModel GetUserOrderModel()
+        public List<UserOrderModel> GetUserOrderModel()
         {
-            return new UserOrderModel
+            return new List<UserOrderModel>
             {
-                Id = 1,
-                Productionorderid = "123",
-                Salesorderid = "122",
-                Status = "Planificado",
-                Userid = "111",
+                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc" },
+                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc" },
+                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc" },
+                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
             };
         }
 
@@ -122,6 +121,24 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// the values for the formulas.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetFormulaDetalle()
+        {
+            var listFormula = new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN" };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listFormula,
                 Success = true,
                 UserError = string.Empty,
             };

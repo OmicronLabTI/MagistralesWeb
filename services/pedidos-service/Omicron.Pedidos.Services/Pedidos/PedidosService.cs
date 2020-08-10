@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -82,6 +83,102 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listIdString = listIds.Select(x => x.ToString()).ToList();
             var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders), null);
+        }
+
+        /// <summary>
+        /// Gets the QFB orders (ipad).
+        /// </summary>
+        /// <param name="userId">the user id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrderByUserID(string userId)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).ToList();
+            var resultFormula = await this.GetSapOrders(userOrders);
+
+            var groups = this.GroupUserOrder(resultFormula, userOrders);
+            return ServiceUtils.CreateResult(true, 200, null, groups, null);
+        }
+
+        /// <summary>
+        /// gets the order from sap.
+        /// </summary>
+        /// <param name="userOrders">the user orders.</param>
+        /// <returns>tje data.</returns>
+        private async Task<List<CompleteFormulaWithDetalle>> GetSapOrders(List<UserOrderModel> userOrders)
+        {
+            var resultFormula = new List<CompleteFormulaWithDetalle>();
+
+            await Task.WhenAll(userOrders.Select(async x =>
+            {
+                var route = $"{ServiceConstants.GetFormula}{x.Productionorderid}";
+                var result = await this.sapAdapter.GetSapAdapter(route);
+
+                lock (resultFormula)
+                {
+                    var formula = JsonConvert.DeserializeObject<CompleteFormulaWithDetalle>(JsonConvert.SerializeObject(result.Response));
+                    resultFormula.Add(formula);
+                }
+            }));
+
+            return resultFormula;
+        }
+
+        /// <summary>
+        /// Groups the data for the front by status.
+        /// </summary>
+        /// <param name="sapOrders">the sap ordrs.</param>
+        /// <param name="userOrders">the user ordes.</param>
+        /// <returns>the data froupted.</returns>
+        private QfbOrderModel GroupUserOrder(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders)
+        {
+            var result = new QfbOrderModel
+            {
+                Status = new List<QfbOrderDetail>(),
+            };
+
+            foreach (var status in Enum.GetValues(typeof(ServiceEnums.Status)))
+            {
+                var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
+                var orders = new QfbOrderDetail
+                {
+                    StatusName = statusId == (int)ServiceEnums.Status.Proceso ? ServiceConstants.ProcesoStatus : status.ToString(),
+                    StatusId = statusId,
+                    Orders = new List<FabOrderDetail>(),
+                };
+
+                var ordersDetail = new List<FabOrderDetail>();
+
+                userOrders
+                    .Where(x => x.Status.Equals(status.ToString()))
+                    .Select(y => y.Productionorderid)
+                    .ToList()
+                    .ForEach(o =>
+                    {
+                        int.TryParse(o, out int orderId);
+                        var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
+
+                        if (sapOrder != null)
+                        {
+                            var order = new FabOrderDetail
+                            {
+                                BaseDocument = sapOrder.BaseDocument,
+                                Container = sapOrder.Container,
+                                DescriptionProduct = sapOrder.ProductDescription,
+                                FinishDate = sapOrder.EndDate,
+                                PlannedQuantity = sapOrder.PlannedQuantity,
+                                ProductionOrderId = sapOrder.ProductionOrderId,
+                                StartDate = sapOrder.StartDate,
+                            };
+
+                            ordersDetail.Add(order);
+                        }
+                    });
+
+                orders.Orders = ordersDetail;
+                result.Status.Add(orders);
+            }
+
+            return result;
         }
     }
 }

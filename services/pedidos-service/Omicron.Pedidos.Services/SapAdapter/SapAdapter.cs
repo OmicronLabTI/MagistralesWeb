@@ -60,5 +60,30 @@ namespace Omicron.Pedidos.Services.SapAdapter
 
             return result;
         }
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetSapAdapter(string route)
+        {
+            ResultModel result;
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
+                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
     }
 }
