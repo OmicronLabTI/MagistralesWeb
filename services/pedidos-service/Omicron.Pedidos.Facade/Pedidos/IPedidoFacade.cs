@@ -37,5 +37,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="userId">the user id.</param>
         /// <returns>the list to returns.</returns>
         Task<ResultDto> GetFabOrderByUserID(string userId);
+
+        /// <summary>
+        /// Gets the user orders by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrdersByUserId(List<string> listIds);
     }
 }

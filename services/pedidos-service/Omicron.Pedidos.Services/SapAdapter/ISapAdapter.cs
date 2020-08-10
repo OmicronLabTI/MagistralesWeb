@@ -8,7 +8,6 @@
 
 namespace Omicron.Pedidos.Services.SapAdapter
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model;
 

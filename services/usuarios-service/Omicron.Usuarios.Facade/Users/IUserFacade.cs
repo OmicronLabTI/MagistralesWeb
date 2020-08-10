@@ -93,5 +93,11 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// <param name="listIds">the users.</param>
         /// <returns>the users.</returns>
         Task<ResultDto> GetUsersById(List<string> listIds);
+
+        /// <summary>
+        /// Gets the QFB with the total count of orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetQfbWithOrderCount();
     }
 }
