@@ -33,6 +33,16 @@ class DetailTableViewCell: UITableViewCell {
         editButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
         deleteButton.setTitle("", for: .normal)
         deleteButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
+        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.requiredQuantityLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: 12)
+        UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: 12)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
