@@ -127,6 +127,28 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultUpdateOrder()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-100", ServiceConstants.Ok },
+                { "200-200", ServiceConstants.ErrorUpdateFavOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// the values for the formulas.
         /// </summary>
         /// <returns>the data.</returns>
@@ -139,6 +161,27 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = listFormula,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the result from detail orde rmodel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetListCompleteDetailOrderModel()
+        {
+            var listDetails = new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "CA", DescripcionProducto = "desc", FechaOf = "20/01/2020", FechaOfFin = "01/01/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 100, QtyPlannedDetalle = 100, Status = "Planificado" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listDetails),
                 Success = true,
                 UserError = string.Empty,
             };

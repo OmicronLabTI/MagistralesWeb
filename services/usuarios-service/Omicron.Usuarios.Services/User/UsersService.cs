@@ -20,6 +20,7 @@ namespace Omicron.Usuarios.Services.User
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Constants;
+    using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.Utils;
 
     /// <summary>
@@ -31,15 +32,19 @@ namespace Omicron.Usuarios.Services.User
 
         private readonly IUserDao userDao;
 
+        private readonly IPedidosService pedidoService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
         /// <param name="mapper">Object to mapper.</param>
         /// <param name="userDao">Object to userDao.</param>
-        public UsersService(IMapper mapper, IUserDao userDao)
+        /// <param name="pedidoService">The pedido service.</param>
+        public UsersService(IMapper mapper, IUserDao userDao, IPedidosService pedidoService)
         {
             this.mapper = mapper;
             this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
+            this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
         }
 
         /// <inheritdoc/>
@@ -211,6 +216,54 @@ namespace Omicron.Usuarios.Services.User
         {
             var users = await this.userDao.GetUsersById(listIds);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(users), null, null);
+        }
+
+        /// <summary>
+        /// Gets the user with the count of orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetActiveQfbWithOrcerCount()
+        {
+            var roles = (await this.userDao.GetAllRoles()).FirstOrDefault(x => x.Description.ToLower().Contains(ServiceConstants.Qfb));
+            var rolId = roles == null ? 0 : roles.Id;
+            var users = (await this.userDao.GetUsersByRole(rolId)).Where(x => x.Activo == 1).ToList();
+
+            var userIdList = users.Select(x => x.Id);
+            var pedidosResponse = await this.pedidoService.PostPedidos(userIdList, ServiceConstants.QfbOrders);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
+            var userWithCount = this.GroupUserWithOrderCount(users, userOrders);
+
+            return ServiceUtils.CreateResult(true, 200, null, userWithCount, null, null);
+        }
+
+        /// <summary>
+        /// gets the relation between orders and the user.
+        /// </summary>
+        /// <param name="users">the users.</param>
+        /// <param name="orders">the orders.</param>
+        /// <returns>the relationship.</returns>
+        private List<UserWithOrderCountModel> GroupUserWithOrderCount(List<UserModel> users, List<UserOrderModel> orders)
+        {
+            var listToReturn = new List<UserWithOrderCountModel>();
+
+            orders.GroupBy(x => x.Userid).ToList().ForEach(k =>
+            {
+                var user = users.FirstOrDefault(x => x.Id.Equals(k.Key));
+
+                if (user != null)
+                {
+                    var count = k.Where(y => !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
+
+                    listToReturn.Add(new UserWithOrderCountModel
+                    {
+                        UserId = user.Id,
+                        UserName = $"{user.FirstName} {user.LastName}",
+                        CountTotal = count,
+                    });
+                }
+            });
+
+            return listToReturn;
         }
     }
 }

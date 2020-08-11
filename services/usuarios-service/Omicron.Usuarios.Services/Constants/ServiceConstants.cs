@@ -8,6 +8,8 @@
 
 namespace Omicron.Usuarios.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Class for constants.
     /// </summary>
@@ -57,5 +59,29 @@ namespace Omicron.Usuarios.Services.Constants
         /// the qfb role.
         /// </summary>
         public const int RoleQfb = 2;
+
+        /// <summary>
+        /// gets the roles from catalogservice.
+        /// </summary>
+        public const string QfbOrders = "qfbOrders";
+
+        /// <summary>
+        /// the qfb role.
+        /// </summary>
+        public const string Qfb = "qfb";
+
+        /// <summary>
+        /// Gets list of thw status for the orders.
+        /// </summary>
+        /// <value>
+        /// List of thw status for the orders.
+        /// </value>
+        public static List<string> ListStatusOrdenes { get; } = new List<string>
+        {
+            "Asignado",
+            "Proceso",
+            "Pendiente",
+            "Terminado",
+        };
     }
 }
