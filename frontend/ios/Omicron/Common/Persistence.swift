@@ -11,25 +11,66 @@ import Foundation
 class Persistence {
     static let shared: Persistence = Persistence()
     
-    func saveUserData(data: LoginResponse) {
+    func saveLoginData(data: LoginResponse) {
         let userDefaults = UserDefaults.standard
         do {
-            try userDefaults.setObject(data, forKey: UsersDefaultsConstants.userData)
+            try userDefaults.setObject(data, forKey: UsersDefaultsConstants.loginData)
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    func getUserData() -> LoginResponse? {
+    func getLoginData() -> LoginResponse? {
         let userDefaults = UserDefaults.standard
         do {
-            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.userData, castTo: LoginResponse.self)
+            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.loginData, castTo: LoginResponse.self)
             return data
         } catch {
             print(error.localizedDescription)
             return nil
         }
     }
+    
+    func saveUserName(username: String) {
+        let userDefaults = UserDefaults.standard
+        do {
+            try userDefaults.setObject(username, forKey: UsersDefaultsConstants.username)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func getUserName() -> String {
+        let userDefaults = UserDefaults.standard
+        do {
+            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.username, castTo: String.self)
+            return data
+        } catch {
+            print(error.localizedDescription)
+            return ""
+        }
+    }
+    
+    func saveUserData(user: User) -> Void {
+        let userDefaults = UserDefaults.standard
+        do {
+            try userDefaults.setObject(user, forKey: UsersDefaultsConstants.userData)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func getUserData() -> User? {
+        let userDefaults = UserDefaults.standard
+        do {
+            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.userData, castTo: User.self)
+            return data
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
 }
 
 protocol ObjectSavable {

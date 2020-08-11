@@ -22,7 +22,7 @@ class UserInfoResponse: HttpResponse {
     }
 }
 
-class User {
+class User: Codable {
     var id: String?
     var userName: String?
     var firstName: String?

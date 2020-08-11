@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if scene is UIWindowScene {
             // Verifica cuando un usuario ya inició sesión o no, Si inició sesión la mantiene activa y se redirije a Inbox, en caso contrario se redirije a Login
-            if let _ = Persistence.shared.getUserData() {
+            if let _ = Persistence.shared.getLoginData() {
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
                 let initialViewController = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.splitViewController)
                 self.window?.rootViewController = initialViewController

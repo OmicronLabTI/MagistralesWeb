@@ -26,6 +26,7 @@
 		7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */; };
 		7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAF24D2A0FC00D26B96 /* RootModel.swift */; };
 		7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BB124D3BA5800D26B96 /* SplitViewController.swift */; };
+		7C980E0624E3245000D58A85 /* UserInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C980E0524E3244F00D58A85 /* UserInfo.json */; };
 		7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CA3058924DB0ACF00A7D2B5 /* Status.json */; };
 		7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */; };
 		7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */; };
@@ -97,6 +98,7 @@
 		7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTableViewCell.swift; sourceTree = "<group>"; };
 		7C844BAF24D2A0FC00D26B96 /* RootModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootModel.swift; sourceTree = "<group>"; };
 		7C844BB124D3BA5800D26B96 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		7C980E0524E3244F00D58A85 /* UserInfo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserInfo.json; sourceTree = "<group>"; };
 		7CA3058924DB0ACF00A7D2B5 /* Status.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Status.json; sourceTree = "<group>"; };
 		7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewController.swift; sourceTree = "<group>"; };
 		7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				980F234424DA11AE0073E2C8 /* login.json */,
 				7CA3058924DB0ACF00A7D2B5 /* Status.json */,
 				7C41E6D424E1B61700B9033F /* orderDetail.json */,
+				7C980E0524E3244F00D58A85 /* UserInfo.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -509,6 +512,7 @@
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
+				7C980E0624E3245000D58A85 /* UserInfo.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
 				7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */,

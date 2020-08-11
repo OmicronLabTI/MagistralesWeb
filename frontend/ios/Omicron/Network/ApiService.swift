@@ -80,7 +80,9 @@ extension ApiService: AuthorizedTargetType {
                 let data = try? Data(contentsOf: url)  else { return Data() }
             return data
         case .getInfoUser:
-            return "".utf8Encoded
+            guard let url = Bundle.main.url(forResource: "UserInfo", withExtension: "json"),
+                let data = try? Data(contentsOf: url)  else { return Data() }
+            return data
         case .renew:
             guard let url = Bundle.main.url(forResource: "refresh_token", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {

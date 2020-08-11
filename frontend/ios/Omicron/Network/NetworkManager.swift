@@ -55,7 +55,7 @@ class NetworkManager {
     private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getUserData()?.access_token })
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
     ])) {
         self.provider = provider
     }

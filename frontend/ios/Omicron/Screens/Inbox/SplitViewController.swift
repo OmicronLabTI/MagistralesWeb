@@ -7,23 +7,17 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class SplitViewController: UISplitViewController {
 
+    let disposeBag: DisposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        let username = Persistence.shared.getUserName()
+        NetworkManager.shared.getInfoUser(userId: username).subscribe(onNext: { res in
+            Persistence.shared.saveUserData(user: res.response!)
+        }).disposed(by: self.disposeBag)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -1,0 +1,16 @@
+{
+    "code": 200,
+    "userError": null,
+    "exceptionMessage": null,
+    "success": true,
+    "response": {
+        "id": "9f62d826-7d9d-4e93-ad75-618ffdd24872",
+        "userName": "serch",
+        "firstName": "Sergio",
+        "lastName": "Flores",
+        "role": 2,
+        "password": "UGFzc3cwcmQ=",
+        "activo": 0
+    },
+    "comments": null
+}

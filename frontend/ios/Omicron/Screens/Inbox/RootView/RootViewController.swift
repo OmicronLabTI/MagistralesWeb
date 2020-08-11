@@ -26,16 +26,7 @@ class RootViewController: UIViewController {
         super.viewDidLoad()
         self.initComponents()
         self.viewModelBinding()
-        //          NO Borrar  ++++++++++++
-        //        NetworkManager.shared.getInfoUser(userId: "sergio").subscribe(onNext: { [weak self] res in
-        //            print("--------------------> \(res)")
-        //
-        //            }, onError: { errorService in
-        //                print("Error: \(errorService)")
-        //        }).disposed(by: self.disposeBag)
-        
-        
-        self.title = "Sergio Flores"
+        self.title = self.getUserInfo()
     }
     
     // MARK: Functions
@@ -77,5 +68,10 @@ class RootViewController: UIViewController {
             return vc.inboxViewModel
         }
         return nil
+    }
+    
+    private func getUserInfo() -> String {
+        guard let userInfo =  Persistence.shared.getUserData() else { return "" }
+        return "\(userInfo.firstName!) \(userInfo.lastName!)"
     }
 }

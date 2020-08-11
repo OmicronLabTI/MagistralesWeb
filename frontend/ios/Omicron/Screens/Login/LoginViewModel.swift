@@ -39,7 +39,8 @@ class LoginViewModel {
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
                     self?.loading.onNext(false)
-                    Persistence.shared.saveUserData(data: res)
+                    Persistence.shared.saveUserName(username: data.user)
+                    Persistence.shared.saveLoginData(data: res)
                     self?.loginResponse.onNext(res)
                     }, onError: { [weak self] err in
                         self?.loading.onNext(false)
