@@ -58,10 +58,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-
-            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs);
-            var listUsers = JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+            var listUsers = await this.GetUsers(userOrders);
 
             orders = this.FilterList(orders, parameters, userOrders, listUsers);
 
@@ -85,9 +82,19 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(docId);
 
+            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId });
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
+
+            var listUsers = await this.GetUsers(userOrders);
+
             details.ToList().ForEach(x =>
             {
                 x.Status = !string.IsNullOrEmpty(x.Status) && ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status;
+
+                var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
+                var userId = userOrder == null ? string.Empty : userOrder.Userid;
+                var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -241,7 +248,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-                x.Qfb = user == null ? string.Empty : user.FirstName;
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -262,6 +269,18 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return orderModels;
+        }
+
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <param name="userOrders">the user order model.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
+        {
+            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
+            var users = await this.usersService.GetUsersById(userIDs);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
     }
 }
