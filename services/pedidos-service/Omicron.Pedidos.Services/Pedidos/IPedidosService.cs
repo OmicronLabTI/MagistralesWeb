@@ -25,10 +25,24 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId);
 
         /// <summary>
-        /// returns the orders.
+        /// returns the orders ids.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds);
+
+        /// <summary>
+        /// Gets the QFB orders (ipad).
+        /// </summary>
+        /// <param name="userId">the user id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrderByUserID(string userId);
+
+        /// <summary>
+        /// Gets the list of user orders by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrdersByUserId(List<string> listIds);
     }
 }

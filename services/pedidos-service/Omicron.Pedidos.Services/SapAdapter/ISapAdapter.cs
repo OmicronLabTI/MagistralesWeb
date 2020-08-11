@@ -8,7 +8,6 @@
 
 namespace Omicron.Pedidos.Services.SapAdapter
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model;
 
@@ -24,5 +23,12 @@ namespace Omicron.Pedidos.Services.SapAdapter
         /// <param name="route">route to send.</param>
         /// <returns>the return.</returns>
         Task<ResultModel> PostSapAdapter(object dataToSend, string route);
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetSapAdapter(string route);
     }
 }

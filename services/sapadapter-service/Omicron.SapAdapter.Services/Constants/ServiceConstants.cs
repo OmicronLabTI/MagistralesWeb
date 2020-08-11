@@ -51,6 +51,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// the abierto status.
+        /// </summary>
+        public const string Abierto = "Abierto";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -62,6 +67,28 @@ namespace Omicron.SapAdapter.Services.Constants
             { "L", "Cerrado" },
             { "C", "Cancelado" },
             { "R", "Liberado" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictStatusType { get; } = new Dictionary<string, string>
+        {
+            { "S", "Estandar" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictStatusOrigin { get; } = new Dictionary<string, string>
+        {
+            { "M", "Manual" },
         };
     }
 }

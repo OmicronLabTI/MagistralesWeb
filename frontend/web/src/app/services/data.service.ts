@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-// const Swal = require('sweetalert2');
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {CONST_NUMBER, CONST_STRING} from '../constants/const';
+import {DatePipe} from '@angular/common';
 
 
 @Injectable({
@@ -13,7 +13,7 @@ export class DataService {
   private generalNotificationMessage = new Subject<string>();
   private isLogin = new Subject<boolean>();
   // private isCallToUsersList = new Subject()
-  constructor() { }
+  constructor(private datePipe: DatePipe) { }
 
   setIsLogin(isLogin: boolean) {
     this.isLogin.next(isLogin);
@@ -49,6 +49,22 @@ export class DataService {
     sessionStorage.removeItem('token');
   }
 
+  setUserId(userId: string) {
+    sessionStorage.setItem('userId', userId);
+  }
+
+  getUserId() {
+    return sessionStorage.getItem('userId');
+  }
+
+  setUserName(userName: string) {
+    sessionStorage.setItem('userName', userName);
+  }
+
+  getUserName() {
+    return sessionStorage.getItem('userName');
+  }
+
 
   userIsAuthenticated(): boolean {
     return !!sessionStorage.getItem('token');
@@ -74,5 +90,12 @@ export class DataService {
         }
       }).then((result) => resolve(result));
     });
+  }
+  transformDate(date: Date, isForAmericanDateType = false) {
+    if (!isForAmericanDateType) {
+      return this.datePipe.transform(date, 'dd/MM/yyyy');
+    } else {
+      return this.datePipe.transform(date, 'MM/dd/yyyy');
+    }
   }
 }

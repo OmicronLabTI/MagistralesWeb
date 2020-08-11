@@ -17,11 +17,8 @@
         </div>
     </div>
     <div class="list-users-container">
-        <div class="no-users-registered" *ngIf="dataSource.data.length === 0">
-            <span>No hay usuarios registrados</span>
-        </div>
-        <div *ngIf="dataSource.data.length !== 0" class="table-container">
-            <table  mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <div class="table-container">
+            <table  mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
 
                 <!-- Position Column -->
                 <ng-container matColumnDef="delete">
@@ -107,10 +104,13 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
+                <span>No hay usuarios registrados</span>
+            </div>
         </div>
         <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
             <mat-paginator
-                    [pageSizeOptions]="[5, 10, 15]"
+                    [pageSizeOptions]="[5, 10, 15, 20]"
                     [pageSize]="pageSize"
                     [length]="lengthPaginator"
                     (page)="pageEvent = changeDataEvent($event)"

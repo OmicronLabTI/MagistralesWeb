@@ -10,8 +10,10 @@ namespace Omicron.Pedidos.Test
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
 
     /// <summary>
     /// Class Base Test.
@@ -46,6 +48,99 @@ namespace Omicron.Pedidos.Test
                 LastName = "Morales",
                 Email = "test@test.com",
                 Birthdate = DateTime.Now,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<UserOrderModel> GetUserOrderModel()
+        {
+            return new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc" },
+                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc" },
+                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc" },
+                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public OrderLogModel GetOrderLogModel()
+        {
+            return new OrderLogModel
+            {
+                Userid = "111",
+                Id = 1,
+                Description = "description",
+                Logdatetime = DateTime.Now,
+                Noid = "112",
+                Type = "OF",
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultModelGetFabricacionModel()
+        {
+            var listOrders = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { DataSource = "O", OrdenId = 100, PedidoId = 100, PostDate = DateTime.Now, ProductoId = "Aspirina", Quantity = 10, Status = "R" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultCreateOrder()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-Aspirina", ServiceConstants.Ok },
+                { "200-Aspirina", ServiceConstants.ErrorCreateFabOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// the values for the formulas.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetFormulaDetalle()
+        {
+            var listFormula = new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN" };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listFormula,
+                Success = true,
+                UserError = string.Empty,
             };
         }
     }

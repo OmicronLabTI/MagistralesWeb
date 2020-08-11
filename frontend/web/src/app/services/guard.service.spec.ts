@@ -4,14 +4,15 @@ import { GuardService } from './guard.service';
 import { DataService } from './data.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
+import {DatePipe} from '@angular/common';
 describe('GuardService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
       RouterTestingModule
     ],
     providers: [
-      DataService
+      DataService,
+        DatePipe
     ]
   }));
 

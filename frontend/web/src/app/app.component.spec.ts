@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { MATERIAL_COMPONENTS } from './app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import {DatePipe} from '@angular/common';
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -15,6 +15,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [DatePipe]
     }).compileComponents();
   }));
 

@@ -21,6 +21,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Mapping;
+    using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -34,6 +35,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         private IMapper mapper;
 
         private IUserDao userDao;
+
+        private IPedidosService pedidosService;
 
         private DatabaseContext context;
 
@@ -52,10 +55,16 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             this.context = new DatabaseContext(options);
             this.context.Usuarios.AddRange(this.GetAllUsers());
+            this.context.RoleModel.AddRange(this.GetRoles());
             this.context.SaveChanges();
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object);
         }
 
         /// <summary>
@@ -220,7 +229,12 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(x => x.InsertUser(It.IsAny<UserModel>()))
                 .Returns(Task.FromResult(false));
 
-            var userServiceMock = new UsersService(this.mapper, mockUser.Object);
+            var mockPedidoService = new Mock<IPedidosService>();
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
@@ -322,6 +336,20 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // act
             var response = await this.userServices.GetUsersByRole(roleId);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetActiveQfb()
+        {
+            // act
+            var response = await this.userServices.GetActiveQfbWithOrcerCount();
 
             // assert
             Assert.IsNotNull(response);

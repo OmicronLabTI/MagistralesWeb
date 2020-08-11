@@ -7,12 +7,13 @@
 // </summary>
 
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
-{
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
+{    
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// the IsapDao.
@@ -58,5 +59,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         Task<OrdenFabricacionModel> GetProdOrderByOrderProduct(int pedidoId, string productId);
 
+        /// <summary>
+        /// gets the orders by orderid.
+        /// </summary>
+        /// <param name="pedidoId">the product id.</param>        
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
+
+        /// <summary>
+        /// gets the realtion between WOR1, OITM ans OITW.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
+
+        /// <summary>
+        /// gets the sap user.
+        /// </summary>
+        /// <param name="userId">the user id.</param>
+        /// <returns>the data.</returns>
+        Task<Users> GetSapUserById(int userId);
     }
 }

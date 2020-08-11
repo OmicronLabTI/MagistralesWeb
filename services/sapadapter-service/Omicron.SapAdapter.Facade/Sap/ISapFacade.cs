@@ -44,5 +44,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="pedidosId">list ids each elemente is orderId-producId.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetProdOrderByOrderItem(List<string> pedidosId);
+
+        /// <summary>
+        /// gets the formula.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrderFormula(int orderId);
     }
 }

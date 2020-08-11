@@ -75,5 +75,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetProdOrderByOrderItem(pedidosId));
         }
+
+        /// <summary>
+        /// gets the formula.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetOrderFormula(int orderId)
+        {
+            var listToSend = new List<int> { orderId };
+            return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(listToSend, true));
+        }
     }
 }

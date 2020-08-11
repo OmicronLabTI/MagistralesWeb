@@ -85,7 +85,7 @@ body {
 }
 .no-users-registered{
   width: 100%;
-  height: 100%;
+  height: 8%;
   display: flex;
   justify-content: center;
   color: #5f606c;
@@ -119,6 +119,9 @@ body {
   width: 50%;
   float: right;
   text-align: right;
+  color: #3b3f5c;
+  font-size: 1.25rem;
+  font-weight: 800;
 }
 
 .filter-select .select-button{
@@ -132,6 +135,7 @@ body {
   min-width: 115px;
   text-align: inherit;
   color: #3b3f5c;
+  font-size: 1.25rem;
   box-shadow: none;
   font-weight: 600;
   letter-spacing: 0;
@@ -156,12 +160,12 @@ body {
 }
 
 .table-toolbar .table-toolbar-search{
-  width: 30%;
+  width: 10%;
   float: left;
 }
 
 .table-toolbar .table-toolbar-buttons{
-  width: 70%;
+  width: 90%;
   float: right;
   text-align: right;
 }
@@ -221,7 +225,6 @@ th.centered {
   -webkit-hyphens: auto !important;
   hyphens: auto !important;
 }
-
 .tdcell-center{
   text-align: center;
 }
@@ -247,7 +250,15 @@ th.centered {
   display: flex;
   flex-direction: row-reverse;
 }
-
+.custom-field {
+  width: 100%;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.height-input{
+  height: 2rem;
+}
 
 /*@media(min-width: 769px){
   .cont-center{
@@ -333,4 +344,117 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 .mat-stroked-button.green {
   color: #8dbf42 !important;
   border: 1px solid #8dbf42 !important;
+}
+
+table .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: rgba(108, 144, 179, 1);
+}
+
+.mat-input-element {
+  caret-color: rgba(108, 144, 179, 1) !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: rgba(108, 144, 179, 1) !important;
+}
+
+table .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+}
+
+table td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+  padding: 0 3px !important;
+}
+
+table .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #fff;
+}
+
+table .mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 .75em 0 .75em !important;
+}
+
+table .mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+  transform: translateY(0%) !important;
+}
+
+mat-form-field{
+  font-family: "Quicksand", serif !important;
+}
+
+mat-form-field.generalinput{
+  margin: 0 5px;
+  font-size: 12px;
+  color: #6C90B3 !important;
+  font-weight: bold !important;
+}
+
+.mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button, .mat-fab, .mat-mini-fab {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #6C90B3;
+}
+
+div.breadcrumb{
+  font-size: 12px !important;
+  padding: 0.65rem .95rem;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  transform: none;
+  line-height: 17px;
+  background-color: #e9ecef;
+  width: 300px;
+  text-align: inherit;
+  color: #3b3f5c;
+  box-shadow: none;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+a.breadcrumblink{
+  text-decoration: none;
+  color: #3b3f5c !important;
+}
+
+a.breadcrumblink:visited{
+  color: #3b3f5c !important;
+}
+a.breadcrumblink:hover{
+  color: #3b3f5c !important;
+}
+
+.mat-form-field-label {
+  color: #6C90B3 !important;
+}
+
+.mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+  color: #6C90B3 !important;
+}
+
+.mat-input-element:disabled, .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after {
+  color: #6C90B3;
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-start {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-gap {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-disabled.mat-form-field-appearance-outline .mat-form-field-outline-end {
+  background-color:rgba(128, 128, 128, 0.09) !important
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0.7em 0 0.7em 0 !important;
 }

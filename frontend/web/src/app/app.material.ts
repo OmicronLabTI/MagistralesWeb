@@ -21,11 +21,14 @@ import {
   MatNativeDateModule,
   MatRadioModule,
   MatAutocompleteModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatTooltipModule
+
 } from '@angular/material';
 
+
 export const MATERIAL_COMPONENTS = [
-  MatCheckboxModule,
   MatToolbarModule,
   MatInputModule,
   MatButtonModule,
@@ -48,5 +51,7 @@ export const MATERIAL_COMPONENTS = [
   MatNativeDateModule,
   MatRadioModule,
   MatAutocompleteModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatTooltipModule
 ];

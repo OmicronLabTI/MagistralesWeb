@@ -33,6 +33,15 @@ namespace Omicron.SapDiApi.Facade.Sap
         }
 
         /// <summary>
+        /// connecto to sap.
+        /// </summary>
+        /// <returns>connects.</returns>
+        public async Task<ResultDto> Connect()
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.Connect());
+        }
+
+        /// <summary>
         /// creates order.
         /// </summary>
         /// <returns>the result.</returns>

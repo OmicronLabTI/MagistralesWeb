@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {DatePipe} from '@angular/common';
 
 import { HomeComponent } from './home.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
@@ -10,7 +11,8 @@ describe('HomeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ HomeComponent],
-      schemas:[CUSTOM_ELEMENTS_SCHEMA]
+      schemas:[CUSTOM_ELEMENTS_SCHEMA],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));

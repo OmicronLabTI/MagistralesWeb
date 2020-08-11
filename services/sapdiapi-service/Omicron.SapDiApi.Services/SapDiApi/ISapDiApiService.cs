@@ -23,5 +23,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="orderWithDetail">the list of data.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> InsertOrdenFab(List<OrderWithDetailModel> orderWithDetail);
+
+        /// <summary>
+        /// Connects to SAP.
+        /// </summary>
+        /// <returns>the connection.</returns>
+        Task<ResultModel> Connect();
     }
 }

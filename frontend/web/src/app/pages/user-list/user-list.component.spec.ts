@@ -16,6 +16,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import { HttpClientModule } from '@angular/common/http';
+import {DatePipe} from '@angular/common';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -38,7 +39,8 @@ describe('UserListComponent', () => {
         MatInputModule,
         MatSelectModule],
       declarations: [ UserListComponent ],
-      schemas:[CUSTOM_ELEMENTS_SCHEMA]
+      schemas:[CUSTOM_ELEMENTS_SCHEMA],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));

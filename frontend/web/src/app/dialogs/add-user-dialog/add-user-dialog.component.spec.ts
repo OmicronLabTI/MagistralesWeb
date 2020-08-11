@@ -11,6 +11,7 @@ import {
   MatSelectModule
 } from '@angular/material';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {DatePipe} from '@angular/common';
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
@@ -18,14 +19,17 @@ describe('AddUserDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports:[FormsModule,HttpClientModule,MatCardModule,ReactiveFormsModule, MatDialogModule,BrowserAnimationsModule,
+      imports:[FormsModule, HttpClientModule, MatCardModule, ReactiveFormsModule,
+        MatDialogModule,
+        BrowserAnimationsModule,
         MatFormFieldModule,
           MatSelectModule,
         MatInputModule],
       declarations: [ AddUserDialogComponent ],
       schemas:[CUSTOM_ELEMENTS_SCHEMA],
       providers:[
-          { provide: MAT_DIALOG_DATA, useValue: {} }
+          { provide: MAT_DIALOG_DATA, useValue: {} },
+          DatePipe
       ]
     })
     .compileComponents();

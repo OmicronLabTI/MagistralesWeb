@@ -10,29 +10,18 @@ namespace Omicron.SapAdapter.Test
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// Class Base Test.
     /// </summary>
     public abstract class BaseTest
     {
-        /// <summary>
-        /// List of Users.
-        /// </summary>
-        /// <returns>IEnumerable Users.</returns>
-        public IEnumerable<UserModel> GetAllUsers()
-        {
-            return new List<UserModel>()
-            {
-                new UserModel { Id = 1, FirstName = "Alejandro", LastName = "Ojeda", Email = "alejandro.ojeda@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 2, FirstName = "Jorge", LastName = "Morales", Email = "jorge.morales@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 3, FirstName = "Arturo", LastName = "Miranda", Email = "arturo.miranda@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 4, FirstName = "Benjamin", LastName = "Galindo", Email = "benjamin.galindo@axity.com", Birthdate = DateTime.Now },
-            };
-        }
-
         /// <summary>
         /// Gets user Dto.
         /// </summary>
@@ -88,6 +77,42 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// returns the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<Users> GetSapUsers()
+        {
+            return new List<Users>
+            {
+                new Users { UserId = 1, UserName = "Gus" },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<DetalleFormulaModel> GetDetalleFormula()
+        {
+            return new List<DetalleFormulaModel>
+            {
+                new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 100, RequiredQty = 100, UnidadCode = "KG" },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<ItemWarehouseModel> GetItemWareHouse()
+        {
+            return new List<ItemWarehouseModel>
+            {
+                new ItemWarehouseModel { IsCommited = 10, ItemCode = "Abc Aspirina", OnHand = 10, OnOrder = 10, WhsCode = "MN" },
+            };
+        }
+
+        /// <summary>
         /// get the product.
         /// </summary>
         /// <returns>the product.</returns>
@@ -107,7 +132,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrdenFabricacionModel>
             {
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100 },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
             };
         }
 
@@ -121,6 +146,50 @@ namespace Omicron.SapAdapter.Test
             {
                 new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
                 new CompleteDetailOrderModel { CodigoProducto = "Buscapina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 101, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultGetUserPedidos()
+        {
+            var listUsers = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1, Productionorderid = "12", Salesorderid = "12", Status = "Abierto", Userid = "123" },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(listUsers),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultDtoGetUsersById()
+        {
+            var users = new List<UserModel>
+            {
+                new UserModel { Id = "123", Activo = 1, FirstName = "Gus", LastName = "Ramirez", Password = "asd", Role = 1, UserName = "asdf" },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(users),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
             };
         }
     }

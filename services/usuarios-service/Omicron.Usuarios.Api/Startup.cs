@@ -18,10 +18,12 @@ namespace Omicron.Usuarios.Api
     using Microsoft.Extensions.Logging;
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
+    using Omicron.Usuarios.Services.Pedidos;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
     using StackExchange.Redis;
+    using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
 
     /// <summary>
@@ -30,6 +32,8 @@ namespace Omicron.Usuarios.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
+
+        private const string PedidosUrl = "http://pedidosservice";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -97,6 +101,13 @@ namespace Omicron.Usuarios.Api
                     },
                 });
             });
+
+            services.AddHttpClient("pedidoservice", c =>
+            {
+                c.BaseAddress = new Uri(PedidosUrl);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IPedidosService, PedidosService>();
 
             this.AddRedis(services, Log.Logger);
 

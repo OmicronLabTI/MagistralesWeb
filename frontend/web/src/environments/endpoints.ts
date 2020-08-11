@@ -9,11 +9,15 @@ export const Endpoints = {
     getUsers: `${environment.baseUrl}/api/usuarios/getUsers`,
     delete: `${environment.baseUrl}/api/usuarios/deactivateUser`,
     update: `${environment.baseUrl}/api/usuarios/updateUser`,
+    getUser: `${environment.baseUrl}/api/usuarios/user/`,
+    qfbs: `${environment.baseUrl}/api/usuarios/role`,
+
   },
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
-    processOrders: `${environment.baseUrl}/api/sapadapter/process/`
+    processOrders: `${environment.baseUrl}/api/sapadapter/process/`,
+    getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`
   }
 };
 
