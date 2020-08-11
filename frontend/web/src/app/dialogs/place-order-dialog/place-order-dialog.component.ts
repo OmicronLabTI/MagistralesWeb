@@ -34,7 +34,8 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   placeOrder(userId: string, userName: string) {
-    this.dataService.setQbfToPlace({userId, userName});
+    this.dataService.setQbfToPlace({userId, userName,
+      modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list});
     this.dialogRef.close();
   }
 }

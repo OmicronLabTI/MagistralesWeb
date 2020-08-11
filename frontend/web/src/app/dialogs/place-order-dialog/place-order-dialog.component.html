@@ -1,7 +1,11 @@
 <div class="place-order-container">
     <mat-card class="add-user-card">
         <mat-card-header class="card-header-container">
-            <mat-card-title >Asigna el pedido
+            <mat-card-title >
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">Asigna el pedido</span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">Asigna los pedidos</span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length === 1">Asigna la orden</span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length > 1">Asigna las ordenes</span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>

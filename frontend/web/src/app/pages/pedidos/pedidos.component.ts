@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
-import {CONST_STRING, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
@@ -10,9 +10,6 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
-import {PlaceOrderDialogComponent} from '../../dialogs/place-order-dialog/place-order-dialog.component';
-import {Subscription} from 'rxjs';
-import {IPlaceOrdersReq, QfbWithNumber} from '../../model/http/users';
 
 @Component({
   selector: 'app-pedidos',
@@ -37,7 +34,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
   isThereOrdersToProcess = false;
-  subscriptionQfbToPlace = new Subscription();
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -53,7 +49,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getPedidos();
     this.dataSource.paginator = this.paginator;
-    this.subscriptionQfbToPlace = this.dataService.getQfbToPlace().subscribe(qfbTOPlace => this.onSuccessPlaceToOrder(qfbTOPlace));
   }
 
   getPedidos() {
@@ -171,43 +166,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   openPlaceOrdersDialog() {
-    this.createPlaceOrderDialog('');
-  }
-  onSuccessPlaceToOrder(qfbToPlace: QfbWithNumber) {
-    this.dataService.presentToastCustom(`${Messages.placeOrder} ${qfbToPlace.userName} ?`,
-        'warning',
-        CONST_STRING.empty,
-        true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            const placeOrder = new IPlaceOrdersReq();
-            placeOrder.userLogistic = this.dataService.getUserId();
-            placeOrder.userId = qfbToPlace.userId;
-            placeOrder.list = [0, 1, 2];
-            placeOrder.orderType = 'Pedido';
-            this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
-              console.log('placeOrderResult: ', resultPlaceOrder);
-            }, error => this.errorService.httpError(error));
-          } else {
-            this.createPlaceOrderDialog(qfbToPlace);
-          }
-        });
-  }
-
-  createPlaceOrderDialog(dataToDialog: any) {
-    this.dialog.open(PlaceOrderDialogComponent, {
-      panelClass: 'custom-dialog-container',
-      data: {
-        modalType: 'placeOrders',
-        placeOrdersData: dataToDialog
-      }
-    });
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders, list: [1]});
   }
   getThereOrdersToProcess() {
     this.isThereOrdersToProcess = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Abierto')).length > 0;
   }
 
   ngOnDestroy() {
-    this.subscriptionQfbToPlace.unsubscribe();
   }
 }

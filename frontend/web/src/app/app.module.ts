@@ -10,10 +10,11 @@ import { HttpClientModule} from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent, PlaceOrderDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -31,5 +32,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     APP_PROVIDERS
   ],
   bootstrap: [AppComponent],
+    entryComponents: [PlaceOrderDialogComponent]
 })
 export class AppModule { }

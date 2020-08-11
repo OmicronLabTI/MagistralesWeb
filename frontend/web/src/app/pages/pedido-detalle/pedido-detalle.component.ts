@@ -3,6 +3,8 @@ import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {IPedidoDetalleListRes, IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
+import {DataService} from '../../services/data.service';
+import {MODAL_NAMES} from '../../constants/const';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -28,7 +30,8 @@ export class PedidoDetalleComponent implements OnInit {
   ];
   dataSource = new MatTableDataSource<IPedidoDetalleReq>();
 
-  constructor(private pedidosService: PedidosService, private route: ActivatedRoute) { }
+  constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
+              private dataService: DataService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -70,4 +73,7 @@ export class PedidoDetalleComponent implements OnInit {
     this.dataSource.data.forEach(t => t.isChecked = completed);
   }
 
+  openPlaceOrderDialog() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail, list: [9999, 888]});
+  }
 }
