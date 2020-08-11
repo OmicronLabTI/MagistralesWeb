@@ -25,6 +25,7 @@ class InboxViewController: UIViewController {
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     private var typeCard: Int = 0
     let rootViewModel = RootViewModel();
+    var orderId:Int = -1
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -40,13 +41,13 @@ class InboxViewController: UIViewController {
     // MARK: Functions
     func viewModelBinding() -> Void {
 
-        collectionView.rx.itemSelected.subscribe(onNext:{ _ in
-            print("Se ejecutó")
-
+        collectionView.rx.itemSelected.subscribe(onNext:{ data in
+            self.inboxViewModel.statusData.subscribe(onNext: { res in
+                self.orderId = res[data.row].productionOrderId!
+            }).disposed(by: self.disposeBag)
+            
             self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
-//                let vc  = UIStoryboard.init(name: ViewControllerIdentifiers.storieboardName, bundle: Bundle.main).instantiateViewController(identifier: ViewControllerIdentifiers.orderDetailViewController) as! OrderDetailViewController
-//                self.navigationController?.pushViewController(vc, animated: true)
-            }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
 
         
         [
@@ -65,14 +66,14 @@ class InboxViewController: UIViewController {
         
         inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { row, data, cell in
             self.changepropertiesOfCard(cell: cell)
-            cell.numberDescriptionLabel.text = "\(data.no!)"
-            cell.baseDocumentDescriptionLabel.text = data.baseDocument!
-            cell.containerDescriptionLabel.text = data.container!
-            cell.tagDescriptionLabel.text = data.tag!
-            cell.plannedQuantityDescriptionLabel.text = data.plannedQuantity!
-            cell.startDateDescriptionLabel.text = data.startDate!
-            cell.finishDateDescriptionLabel.text = data.finishDate!
-            cell.productDescriptionLabel.text = data.descriptionProduct!
+            cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
+            cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
+            cell.containerDescriptionLabel.text = data.container ?? ""
+            cell.tagDescriptionLabel.text = data.tag ?? ""
+            cell.plannedQuantityDescriptionLabel.text = "\(data.plannedQuantity ?? 0)"
+            cell.startDateDescriptionLabel.text = data.startDate ?? ""
+            cell.finishDateDescriptionLabel.text = data.finishDate ?? ""
+            cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
         }.disposed(by: disposeBag)
         
         inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
@@ -166,16 +167,17 @@ class InboxViewController: UIViewController {
         self.finishedButton.isHidden = finishedButtonIsHidden
         self.pendingButton.isHidden = pendingButtonIsHidden
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       if segue.identifier == ViewControllerIdentifiers.orderDetailViewController {
+           if let destination = segue.destination as? OrderDetailViewController {
+            destination.userId = self.orderId // you can pass value to destination view controller
+           }
+       }
+    }
 }
 
-//func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//   if segue.identifier == "segueToNext" {
-//       if let destination = segue.destination as? OrderDetailViewController {
-//           destination.nomb = nombres // you can pass value to destination view controller
-//       }
-//   }
-//}
-
+// MARK: Extencions
 extension UICollectionView {
 
     func setEmptyMessage(_ message: String) {
@@ -184,7 +186,7 @@ extension UICollectionView {
         messageLabel.textColor = .black
         messageLabel.numberOfLines = 0;
         messageLabel.textAlignment = .center;
-        messageLabel.font = UIFont(name: "TrebuchetMS", size: 15)
+        messageLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
         messageLabel.sizeToFit()
 
         self.backgroundView = messageLabel;

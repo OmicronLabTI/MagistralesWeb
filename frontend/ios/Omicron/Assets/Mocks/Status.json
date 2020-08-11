@@ -7,211 +7,125 @@
         "status": [
             {
                 "statusId": 1,
-                "statusName": "Asignadas",
-                "orders": [{
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                }
+                "statusName": "Asignado",
+                "orders": [
+                    {
+                        "productionOrderId": 89009,
+                        "baseDocument": 59997,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 5,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
+                    },
+                    {
+                        "productionOrderId": 89010,
+                        "baseDocument": 59996,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 5,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
+                    }
                 ]
             },
             {
                 "statusId": 2,
-                "statusName": "En proceso",
-                "orders": [{
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                }
+                "statusName": "En Proceso",
+                "orders": [
+                    {
+                        "productionOrderId": 89012,
+                        "baseDocument": 59993,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 5,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
+                    },
+                    {
+                        "productionOrderId": 89007,
+                        "baseDocument": 59998,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 4,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "HIDROQUINONA 5%  RETINOICO 0.05%  HIDROC"
+                    }
                 ]
             },
             {
                 "statusId": 3,
-                "statusName": "Pendientes",
-                "orders": [{
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                }
+                "statusName": "Pendiente",
+                "orders": [
+                    {
+                        "productionOrderId": 89013,
+                        "baseDocument": 59992,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 5,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
+                    },
+                    {
+                        "productionOrderId": 89004,
+                        "baseDocument": 59998,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 2,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "ALFA BISABOLOL 0.02%  HIDROQUINONA 2%  R"
+                    }
                 ]
             },
             {
                 "statusId": 4,
                 "statusName": "Terminado",
-                "orders": [{
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                },
-                {
-                    "no": 1,
-                    "baseDocument": "Documento base 1",
-                    "container": "Contenedor 1",
-                    "tag": "Tag 1",
-                    "plannedQuantity": "cantidad planeada 1",
-                    "startDate": "27/03/2020",
-                    "finishDate": "24/04/2020",
-                    "descriptionProduct": "Descripción del producto 1"
-                }
+                "orders": [
+                    {
+                        "productionOrderId": 89005,
+                        "baseDocument": 59998,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 1,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "LOCION CAPILARIUM GREEN 100ML"
+                    },
+                    {
+                        "productionOrderId": 89014,
+                        "baseDocument": 59991,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 5,
+                        "startDate": "23/07/2020",
+                        "finishDate": "07/08/2020",
+                        "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
+                    }
                 ]
             },
             {
                 "statusId": 5,
                 "statusName": "Reasignado",
                 "orders": [
+                    {
+                        "productionOrderId": 89006,
+                        "baseDocument": 59998,
+                        "container": "",
+                        "tag": null,
+                        "plannedQuantity": 1,
+                        "startDate": "23/07/2020",
+                        "finishDate": "06/08/2020",
+                        "descriptionProduct": "LOCION CAPILARIUM RED 100ML"
+                    }
                 ]
             }
         ]
-    },
-    "comments": null
+    }
 }
+

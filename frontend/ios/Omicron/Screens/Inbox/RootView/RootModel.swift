@@ -90,11 +90,11 @@ extension StatusDetail: Mappable {
 }
 
 class Order {
-    var no: Int?
-    var baseDocument: String?
+    var productionOrderId: Int?
+    var baseDocument: Int?
     var container: String?
     var tag: String?
-    var plannedQuantity: String?
+    var plannedQuantity: Int?
     var startDate: String?
     var finishDate: String?
     var descriptionProduct: String?
@@ -103,7 +103,7 @@ class Order {
 
 extension Order: Mappable {
     func mapping(map: Map) {
-        no <- map["no"]
+        productionOrderId <- map["productionOrderId"]
         baseDocument <- map["baseDocument"]
         container <- map["container"]
         tag <- map["tag"]

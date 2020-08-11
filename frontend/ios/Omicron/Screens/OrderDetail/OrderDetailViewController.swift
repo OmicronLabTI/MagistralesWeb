@@ -47,11 +47,21 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: Variables
-    var orderDetailViewModel = OrderDetailViewModel()
     var disposeBag: DisposeBag = DisposeBag()
+    var userId: Int = -1
+   // var orderDetailViewModel = OrderDetailViewModel()
+    var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
+    var tableData: BehaviorRelay<[Detail]> = BehaviorRelay<[Detail]>(value: [])
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        NetworkManager.shared.getOrdenDetail(orderId: userId).subscribe(onNext: {res in
+            self.orderDetailData.accept([res.response!])
+            self.tableData.accept(res.response!.details!)
+        }).disposed(by: self.disposeBag)
+        
         self.initComponents()
         self.viewModelBinding()
         splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
@@ -59,7 +69,7 @@ class OrderDetailViewController: UIViewController {
     
     //MARK: Functions
     func viewModelBinding() {
-        orderDetailViewModel.orderDetailData.subscribe(onNext: { res in
+        self.orderDetailData.subscribe(onNext: { res in
             
             self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código: \(res[0].code!)", textToBold: "Código:")
             
@@ -73,7 +83,7 @@ class OrderDetailViewController: UIViewController {
             self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
         }).disposed(by: self.disposeBag)
         
-        orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
+        self.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
             cell.baseQuantityLabel.text = "\(data.baseQuantity!)"
             cell.requiredQuantityLabel.text = "\(data.requiredQuantity!)"
