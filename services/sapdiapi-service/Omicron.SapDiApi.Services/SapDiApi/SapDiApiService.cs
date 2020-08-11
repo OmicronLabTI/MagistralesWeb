@@ -104,11 +104,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if (updated != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
-                        dictResult.Add(string.Format("{0}", order.OrderFabId), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, errorCode.ToString(), errMsg));
+                        dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, errorCode.ToString(), errMsg));
                     }
                     else
                     {
-                        dictResult.Add(string.Format("{0}", order.OrderFabId), "Ok");
+                        dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), "Ok");
                     }
                 }
                 else

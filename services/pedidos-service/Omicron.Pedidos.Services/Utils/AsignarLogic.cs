@@ -44,15 +44,6 @@ namespace Omicron.Pedidos.Services.Utils
                 orders.AddRange(JsonConvert.DeserializeObject<List<CompleteDetailOrderModel>>(sapResponse.Response.ToString()));
             }
 
-            orders.ForEach(o =>
-            {
-                listToUpdate.Add(new UpdateFabOrderModel
-                {
-                    OrderFabId = o.OrdenFabricacionId,
-                    Status = ServiceConstants.StatusSapLiberado,
-                });
-            });
-
             orders.Where(x => x.Status.Equals(ServiceConstants.Planificado)).ToList().ForEach(o =>
             {
                 listToUpdate.Add(new UpdateFabOrderModel
