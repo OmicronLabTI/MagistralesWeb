@@ -5,8 +5,10 @@ import {PedidosComponent} from './pedidos.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import { ReactiveFormsModule , FormsModule} from '@angular/forms';
+import {PlaceOrderDialogComponent} from '../../dialogs/place-order-dialog/place-order-dialog.component';
+
 @NgModule({
-  declarations: [PedidosComponent, FindOrdersDialogComponent],
+  declarations: [PedidosComponent, FindOrdersDialogComponent, PlaceOrderDialogComponent],
   imports: [
     CommonModule,
     PedidosRoutingModule,
@@ -15,6 +17,6 @@ import { ReactiveFormsModule , FormsModule} from '@angular/forms';
       FormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [FindOrdersDialogComponent]
+  entryComponents: [FindOrdersDialogComponent, PlaceOrderDialogComponent]
 })
 export class PedidosModule { }

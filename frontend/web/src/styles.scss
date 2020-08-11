@@ -96,6 +96,18 @@ body {
   height: 88%;
   overflow-y: scroll;
 }
+.scroll-custom {
+  overflow-y: scroll;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scroll-custom::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scroll-custom {
+  -ms-overflow-style: none;  /* IE and Edge */
+}
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .table-container::-webkit-scrollbar {
@@ -260,6 +272,59 @@ th.centered {
   height: 2rem;
 }
 
+.add-user-card{
+  width: 100%;
+  height: 100%;
+}
+.card-header-container{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: #3b3f5c solid 1px;
+}
+.content-card-container{
+  width: 100%;
+  height: 75%;
+}
+.btn-add-modal{
+  width: 7rem;
+  height: 3rem;
+  font-size: 1em;
+  color: #fff !important;
+  background-color: #6C90B3!important;
+  border: .1px solid #6C90B3;
+  padding: 0 10px;
+  text-shadow: none;
+  font-weight: 300;
+  word-wrap: break-word;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  border-radius: .25rem;
+  transition: all 0.35s ease;
+}
+.btn-cancel-modal{
+  width: 7rem;
+  height: 3rem;
+  font-size: 1em;
+  background-color: #fff;
+  font-weight: 500;
+  border: 1px solid #e8e8e8;
+  color: #3b3f5c;
+  padding: 0 10px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  margin: 5px;
+  transition: all 0.35s ease;
+
+}
+.margin-left-options{
+  margin-left: 15px;
+}
+.color-omicron {
+  background-color: #6C90B3!important;
+}
 /*@media(min-width: 769px){
   .cont-center{
       margin-left: 10%;

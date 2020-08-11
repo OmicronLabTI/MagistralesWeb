@@ -27,4 +27,7 @@ export class PedidosService {
   getQfbs() {
     return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.qfbs}/2`);
   }
+  getQfbsWithOrders() {
+    return this.consumeService.httpGet(`${Endpoints.users.qfbsWithOrders}`);
+  }
 }

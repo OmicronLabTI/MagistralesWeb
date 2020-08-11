@@ -11,7 +11,7 @@ export const Endpoints = {
     update: `${environment.baseUrl}/api/usuarios/updateUser`,
     getUser: `${environment.baseUrl}/api/usuarios/user/`,
     qfbs: `${environment.baseUrl}/api/usuarios/role`,
-
+    qfbsWithOrders: `${environment.baseUrl}/api/usuarios/qfb/countOrders`
   },
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,

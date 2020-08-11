@@ -28,12 +28,12 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue " (click)="processOrders()">
+            <button [disabled]="!isThereOrdersToProcess" mat-raised-button class="button-blue " (click)="processOrders()">
                 &nbsp; Procesar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue ">
+            <button mat-raised-button class="button-blue " (click)="openPlaceOrdersDialog()">
                 &nbsp; Asignar &nbsp;
             </button>
             &nbsp;

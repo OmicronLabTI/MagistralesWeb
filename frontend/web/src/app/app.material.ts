@@ -23,12 +23,14 @@ import {
   MatAutocompleteModule,
   MatCheckboxModule,
   MatFormFieldModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatBadgeModule
 
 } from '@angular/material';
 
 
 export const MATERIAL_COMPONENTS = [
+  MatBadgeModule,
   MatToolbarModule,
   MatInputModule,
   MatButtonModule,

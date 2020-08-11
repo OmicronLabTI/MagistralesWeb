@@ -33,3 +33,8 @@ export class QfbSelect {
     qfbId: string;
     qfbName: string;
 }
+export  class QfbWithNumber {
+    userId: string;
+    userName: string;
+    countTotal?: number;
+}
