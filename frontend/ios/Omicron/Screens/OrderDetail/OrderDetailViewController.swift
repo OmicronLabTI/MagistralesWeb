@@ -63,7 +63,7 @@ class OrderDetailViewController: UIViewController {
             
             self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código: \(res[0].code!)", textToBold: "Código:")
             
-            self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Contenendor: \(res[0].container!)", textToBold: "Contenendor:")
+            self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
             self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
             self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
             self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: ", textToBold: "Sumatoria de la fórmula:")
@@ -105,7 +105,7 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacen", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
