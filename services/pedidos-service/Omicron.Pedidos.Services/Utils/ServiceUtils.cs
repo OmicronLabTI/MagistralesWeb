@@ -52,7 +52,7 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 var userOrder = new UserOrderModel
                 {
-                    Status = ServiceConstants.Planificada,
+                    Status = ServiceConstants.Planificado,
                     Salesorderid = x.PedidoId.ToString(),
                     Productionorderid = x.OrdenId.ToString(),
                 };
@@ -64,7 +64,7 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 listToReturn.Add(new UserOrderModel
                 {
-                    Status = ServiceConstants.Planificada,
+                    Status = ServiceConstants.Planificado,
                     Salesorderid = p.ToString(),
                 });
             });
@@ -77,9 +77,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="user">the user.</param>
         /// <param name="pedidosId">pedidos seleccionados.</param>
-        /// <param name="ordenesFabId">ordenes creadas.</param>
+        /// <param name="description">the description.</param>
+        /// <param name="type">The type.</param>
         /// <returns>the list to insert.</returns>
-        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, List<FabricacionOrderModel> ordenesFabId)
+        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, string description, string type)
         {
             var listToReturn = new List<OrderLogModel>();
 
@@ -87,22 +88,10 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 listToReturn.Add(new OrderLogModel
                 {
-                    Description = ServiceConstants.OrdenVentaPlan,
+                    Description = description,
                     Logdatetime = DateTime.Now,
                     Noid = x.ToString(),
-                    Type = ServiceConstants.OrdenVenta,
-                    Userid = user,
-                });
-            });
-
-            ordenesFabId.ForEach(x =>
-            {
-                listToReturn.Add(new OrderLogModel
-                {
-                    Description = ServiceConstants.OrdenFabricacionPlan,
-                    Logdatetime = DateTime.Now,
-                    Noid = x.OrdenId.ToString(),
-                    Type = ServiceConstants.OrdenFab,
+                    Type = type,
                     Userid = user,
                 });
             });

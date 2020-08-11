@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId.ListIds, ServiceConstants.GetOrderWithDetail);
 
-            var resultSap = await this.sapDiApi.CreateFabOrder(orders.Response);
+            var resultSap = await this.sapDiApi.PostToSapDiApi(orders.Response, ServiceConstants.CreateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
@@ -64,7 +64,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
 
             var listToInsert = ServiceUtils.CreateUserOrder(listOrders);
-            var listOrderToInsert = ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, listOrders);
+            var listOrderToInsert = new List<OrderLogModel>();
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
@@ -108,6 +110,23 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
             return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
+        }
+
+        /// <summary>
+        /// Assign the orders.
+        /// </summary>
+        /// <param name="manualAssign">the manual assign.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> AssignOrder(ManualAssignModel manualAssign)
+        {
+            if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
+            {
+                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi);
+            }
+            else
+            {
+                return new ResultModel();
+            }
         }
 
         /// <summary>

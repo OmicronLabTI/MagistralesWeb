@@ -14,6 +14,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using Newtonsoft.Json;
     using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Services.Constants;
     using Omicron.SapDiApi.Services.Utils;
     using SAPbobsCOM;
 
@@ -70,7 +71,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if(inserted != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
-                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("ErrorCreateFabOrd-{0}-{1}", errorCode.ToString(), errMsg));
+                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
                     }
                     else
                     {
@@ -79,7 +80,62 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
             }
 
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictResult), null);            
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictResult), null);
+        }
+
+        /// <summary>
+        /// Updates the fabrication orders.
+        /// </summary>
+        /// <param name="orderModels">the models to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateFabOrders(List<UpdateFabOrderModel> orderModels)
+        {
+            var dictResult = new Dictionary<string, string>();
+            foreach (var order in orderModels)
+            {
+                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                var orderFab = productionOrderObj.GetByKey(order.OrderFabId);
+
+                if (orderFab)
+                {
+                    productionOrderObj = this.UpdateEntry(order, productionOrderObj);
+                    var updated = productionOrderObj.Update();
+
+                    if (updated != 0)
+                    {
+                        company.GetLastError(out int errorCode, out string errMsg);
+                        dictResult.Add(string.Format("{0}", order.OrderFabId), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, errorCode.ToString(), errMsg));
+                    }
+                    else
+                    {
+                        dictResult.Add(string.Format("{0}", order.OrderFabId), "Ok");
+                    }
+                }
+                else
+                {
+                    dictResult.Add(string.Format("{0}", order.OrderFabId), string.Format("{0}-{1}", ServiceConstants.ErrorUpdateFabOrd, ServiceConstants.OrderNotFound));
+                }
+
+                
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
+        /// sets the data to update.
+        /// </summary>
+        /// <param name="model">the model from controller.</param>
+        /// <param name="prodOrder">the data from sap.</param>
+        /// <returns>the data to update.</returns>
+        private ProductionOrders UpdateEntry(UpdateFabOrderModel model, ProductionOrders prodOrder)
+        {
+            if (model.Status.Equals(ServiceConstants.StatusLiberado))
+            {
+                prodOrder.ProductionOrderStatus = BoProductionOrderStatusEnum.boposReleased;
+            }
+
+            return prodOrder;
         }
     }
 }

@@ -42,6 +42,8 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<CompleteDetailDto, CompleteDetailModel>();
                 cfg.CreateMap<OrderWithDetailDto, OrderWithDetailModel>();
                 cfg.CreateMap<OrderWithDetailModel, OrderWithDetailDto>();
+                cfg.CreateMap<UpdateFabOrderDto, UpdateFabOrderModel>();
+                cfg.CreateMap<UpdateFabOrderModel, UpdateFabOrderDto>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 

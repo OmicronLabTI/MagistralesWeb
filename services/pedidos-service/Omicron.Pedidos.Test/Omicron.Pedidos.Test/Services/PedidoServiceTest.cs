@@ -64,7 +64,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSaDiApi = new Mock<ISapDiApi>();
             mockSaDiApi
-                .Setup(x => x.CreateFabOrder(It.IsAny<object>()))
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             this.pedidosDao = new PedidosDao(this.context);
@@ -138,6 +138,52 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrdersByUserId(id);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrderPedido()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            // act
+            var response = await this.pedidosService.AssignOrder(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrder()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Orden",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            // act
+            var response = await this.pedidosService.AssignOrder(assign);
 
             // assert
             Assert.IsNotNull(response);

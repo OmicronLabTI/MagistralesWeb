@@ -44,5 +44,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrdersByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Assign the orders.
+        /// </summary>
+        /// <param name="manualAssign">the manual assign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AssignOrder(ManualAssignModel manualAssign);
     }
 }
