@@ -44,5 +44,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrdersByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Assigns the order.
+        /// </summary>
+        /// <param name="manualAssign">the dto to assign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AssignHeader(ManualAssignDto manualAssign);
     }
 }

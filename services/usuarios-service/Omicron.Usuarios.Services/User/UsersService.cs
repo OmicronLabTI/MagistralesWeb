@@ -252,7 +252,7 @@ namespace Omicron.Usuarios.Services.User
 
                 if (user != null)
                 {
-                    var count = k.Where(y => ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
+                    var count = k.Where(y => !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
 
                     listToReturn.Add(new UserWithOrderCountModel
                     {

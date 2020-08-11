@@ -47,7 +47,7 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// the list userIds ids.
+        /// Get the user order by Pedido id.
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <returns>the data.</returns>
@@ -82,6 +82,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetAllQfbOrders(List<string> listIds)
         {
             var response = await this.pedidoFacade.GetUserOrdersByUserId(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="manualAssign">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/asignar/manual")]
+        [HttpPost]
+        public async Task<IActionResult> AsignarManual(ManualAssignDto manualAssign)
+        {
+            var response = await this.pedidoFacade.AssignHeader(manualAssign);
             return this.Ok(response);
         }
     }

@@ -84,6 +84,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetUserOrdersByUserId(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -214,6 +218,34 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetUserOrdersByUserId(ids);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task AsignarManual()
+        {
+            // arrange
+            var asignar = new ManualAssignDto
+            {
+                DocEntry = new List<int> { 200 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            // act
+            var response = await this.pedidoFacade.AssignHeader(asignar);
 
             // Assert
             Assert.IsNotNull(response);

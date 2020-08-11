@@ -32,7 +32,7 @@ namespace Omicron.Pedidos.Test.Services
 
         private IPedidosDao pedidosDao;
 
-        private ISapAdapter sapAdapter;
+        private Mock<ISapAdapter> sapAdapter;
 
         private ISapDiApi sapDiApi;
 
@@ -53,22 +53,22 @@ namespace Omicron.Pedidos.Test.Services
             this.context.OrderLogModel.Add(this.GetOrderLogModel());
             this.context.SaveChanges();
 
-            var mockSapAdapter = new Mock<ISapAdapter>();
-            mockSapAdapter
+            this.sapAdapter = new Mock<ISapAdapter>();
+            this.sapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
 
-            mockSapAdapter
+            this.sapAdapter
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetFormulaDetalle()));
 
             var mockSaDiApi = new Mock<ISapDiApi>();
             mockSaDiApi
-                .Setup(x => x.CreateFabOrder(It.IsAny<object>()))
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
         }
 
         /// <summary>
@@ -119,8 +119,19 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var id = "abc";
 
+            this.sapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFormulaDetalle()));
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+
             // act
-            var response = await this.pedidosService.GetFabOrderByUserID(id);
+            var response = await pedidosServiceLocal.GetFabOrderByUserID(id);
 
             // assert
             Assert.IsNotNull(response);
@@ -138,6 +149,63 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrdersByUserId(id);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrderPedido()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
+            this.sapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
+
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+
+            // act
+            var response = await pedidosServiceLocal.AssignOrder(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrder()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Orden",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            // act
+            var response = await this.pedidosService.AssignOrder(assign);
 
             // assert
             Assert.IsNotNull(response);

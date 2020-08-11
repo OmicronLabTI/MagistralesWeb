@@ -37,12 +37,13 @@ namespace Omicron.Pedidos.Services.SapDiApi
         /// get orders with the data.
         /// </summary>
         /// <param name="pedidos">the orders.</param>
+        /// <param name="route">the route to send.</param>
         /// <returns>the return.</returns>
-        public async Task<ResultModel> CreateFabOrder(object pedidos)
+        public async Task<ResultModel> PostToSapDiApi(object pedidos, string route)
         {
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(pedidos), UnicodeEncoding.UTF8, "application/json");
-            var url = this.httpClient.BaseAddress + "createFabOrder";
+            var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
