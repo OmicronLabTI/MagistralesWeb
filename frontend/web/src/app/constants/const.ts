@@ -18,7 +18,9 @@ export const CONST_USER_DIALOG = {
 
 export const MODAL_NAMES =  {
     addUserModal: 'addModal',
-    editUser: 'editModal'
+    editUser: 'editModal',
+    placeOrders: 'placeOrders',
+    searchOrders: 'searchOrders'
 };
 export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,

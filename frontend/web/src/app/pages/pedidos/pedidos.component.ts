@@ -12,7 +12,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import {PlaceOrderDialogComponent} from '../../dialogs/place-order-dialog/place-order-dialog.component';
 import {Subscription} from 'rxjs';
-import {QfbWithNumber} from '../../model/http/users';
+import {IPlaceOrdersReq, QfbWithNumber} from '../../model/http/users';
 
 @Component({
   selector: 'app-pedidos',
@@ -180,7 +180,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
         true, true)
         .then((result: any) => {
           if (result.isConfirmed) {
-            console.log('sendQfbToPlace: ');
+            const placeOrder = new IPlaceOrdersReq();
+            placeOrder.userLogistic = this.dataService.getUserId();
+            placeOrder.userId = qfbToPlace.userId;
+            placeOrder.list = [0, 1, 2];
+            placeOrder.orderType = 'Pedido';
+            this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
+              console.log('placeOrderResult: ', resultPlaceOrder);
+            }, error => this.errorService.httpError(error));
           } else {
             this.createPlaceOrderDialog(qfbToPlace);
           }

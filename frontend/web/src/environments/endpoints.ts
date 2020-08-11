@@ -17,8 +17,10 @@ export const Endpoints = {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
     processOrders: `${environment.baseUrl}/api/sapadapter/process/`,
-    getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`
-  }
+    getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
+    placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
+
+}
 };
 
 export const TokenExcludedEndpoints = [

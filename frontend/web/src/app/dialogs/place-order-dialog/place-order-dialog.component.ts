@@ -17,6 +17,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public placeData: any, private dataService: DataService) {
+    console.log('dataReceipt: ', this.placeData)
     if (this.placeData.placeOrdersData !== '') {
       this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
       this.isPlaceManual = true;
@@ -24,20 +25,8 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => console.log('resultQfbs: ', resultQfbs))
+    await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => this.qfbs = resultQfbs.response)
         .catch(error => this.errorService.httpError(error));
-    this.qfbs = [
-      {
-        userId: '47e8eaba-0dd4-42f6-93d9-071890e3c51',
-        userName: 'Gustavo Ramirez',
-        countTotal: 8
-      },
-      {
-        userId: '47e8eaba-0dd4-42f6-93d9-071890e3c512',
-        userName: 'Irma Hernandez',
-        countTotal: 12
-      }
-    ];
   }
 
   changePlaceManual() {
