@@ -121,13 +121,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await Task.WhenAll(userOrders.Select(async x =>
             {
-                var route = $"{ServiceConstants.GetFormula}{x.Productionorderid}";
-                var result = await this.sapAdapter.GetSapAdapter(route);
-
-                lock (resultFormula)
+                if (!string.IsNullOrEmpty(x.Productionorderid))
                 {
-                    var formula = JsonConvert.DeserializeObject<CompleteFormulaWithDetalle>(JsonConvert.SerializeObject(result.Response));
-                    resultFormula.Add(formula);
+                    var route = $"{ServiceConstants.GetFormula}{x.Productionorderid}";
+                    var result = await this.sapAdapter.GetSapAdapter(route);
+
+                    lock (resultFormula)
+                    {
+                        var formula = JsonConvert.DeserializeObject<CompleteFormulaWithDetalle>(JsonConvert.SerializeObject(result.Response));
+                        resultFormula.Add(formula);
+                    }
                 }
             }));
 

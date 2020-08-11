@@ -238,4 +238,7 @@
   <changeSet author="gramirez" id="changelog-1.28">
     <dropNotNullConstraint tableName="usersorders" columnName="userid" columnDataType="varchar(50)"/>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.29">
+    <dropNotNullConstraint tableName="usersorders" columnName="productionorderid" columnDataType="varchar(50)"/>
+  </changeSet>
 </databaseChangeLog> 

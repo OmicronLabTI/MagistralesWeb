@@ -231,7 +231,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             orderModels.ForEach(x =>
             {
-                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString());
+                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
                 var userId = order == null ? string.Empty : order.Userid;
                 var user = users.FirstOrDefault(y => y.Id.Equals(userId));
 

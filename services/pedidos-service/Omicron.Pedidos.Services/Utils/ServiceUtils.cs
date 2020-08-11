@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.Utils
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
@@ -57,6 +58,15 @@ namespace Omicron.Pedidos.Services.Utils
                 };
 
                 listToReturn.Add(userOrder);
+            });
+
+            ordenFabId.Select(x => x.PedidoId).Distinct().ToList().ForEach(p =>
+            {
+                listToReturn.Add(new UserOrderModel
+                {
+                    Status = ServiceConstants.Planificada,
+                    Salesorderid = p.ToString(),
+                });
             });
 
             return listToReturn;
