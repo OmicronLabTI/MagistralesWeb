@@ -54,6 +54,7 @@ class OrderDetailViewController: UIViewController {
         super.viewDidLoad()
         self.initComponents()
         self.viewModelBinding()
+        splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
     }
     
     //MARK: Functions
@@ -95,19 +96,19 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         self.backButton.setImage(UIImage(named: ImageButtonNames.assigned), for: .normal)
-        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: "Asignado", fontSize: 46)
-        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes", fontSize: 19)
-        UtilsManager.shared.labelsStyle(label: self.codeDescriptionLabel, text: "", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacen", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 12, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 12, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: "Asignado", fontSize: 39)
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes", fontSize: 20)
+//        UtilsManager.shared.labelsStyle(label: self.codeDescriptionLabel, text: "", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacen", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
         
         self.detailTable.tableFooterView = UIView()
     }
