@@ -19,6 +19,8 @@ class RootViewModel {
     var reassignedOrders: [Order] = []
     
     public var dataStatus: BehaviorRelay<[Section]> = BehaviorRelay(value: [])
+    var loading: BehaviorRelay<Bool> = BehaviorRelay(value: false)
+    var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
     
     init() {
@@ -36,6 +38,7 @@ class RootViewModel {
     }).disposed(by: self.disposeBag)
         
         
+        loading.accept(true)
         //let id = Persistence.shared.getUserData()?.id
         NetworkManager.shared.getStatusList(qfbId:"9f62d826-7d9d-4e93-ad75-618ffdd24872").subscribe(onNext: { res in
             
@@ -63,8 +66,11 @@ class RootViewModel {
                 Section(statusName: StatusNameConstants.reassignedStatus, numberTask: self.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self.reassignedOrders)
             ]
             self.dataStatus.accept(data)
+            self.loading.accept(false)
         }, onError: { err in
             print(err)
+            self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
+            self.loading.accept(false)
         }).disposed(by: disposeBag)
     }
 }

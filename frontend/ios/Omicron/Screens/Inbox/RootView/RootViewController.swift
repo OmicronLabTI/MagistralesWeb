@@ -48,12 +48,26 @@ class RootViewController: UIViewController {
             cell.indicatorStatusNumber.text = String(data.numberTask)
         }.disposed(by: disposeBag)
         
+        rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { loadingResponse in
+            if (loadingResponse) {
+                LottieManager.shared.showLoading()
+            } else {
+                LottieManager.shared.hideLoading()
+            }
+        }).disposed(by: self.disposeBag)
+        
+        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: {error in
+            AlertManager.shared.showAlert(message: error, view: self)
+        }).disposed(by: self.disposeBag)
+        
         // Detecta el evento cuando se selecciona un status de la tabla
 //        let index = NSIndexPath(row: 0, section: 0)
 //        viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
             self.inboxViewModel?.setSelection(index: indexPath.row, orders: self.dataStatusOfService[indexPath.row].orders)
         }).disposed(by: disposeBag)
+        
+        
     }
     
     func initComponents() {
