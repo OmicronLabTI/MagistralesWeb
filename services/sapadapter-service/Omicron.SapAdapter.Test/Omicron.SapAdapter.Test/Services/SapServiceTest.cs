@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Constants;
@@ -240,6 +241,68 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetComponents()
+        {
+            // arrange
+            var paramsDict = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { "chips", "Abc,pirina" },
+            };
+
+            // act
+            var result = await this.sapService.GetComponents(paramsDict);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetComponentsNoData()
+        {
+            // arrange
+            var paramsDict = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { "chips", "qwerty" },
+            };
+
+            // act
+            var result = await this.sapService.GetComponents(paramsDict);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetComponentsNoChips()
+        {
+            // arrange
+            var paramsDict = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+            };
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.GetComponents(paramsDict));
         }
     }
 }

@@ -86,5 +86,15 @@ namespace Omicron.SapAdapter.Facade.Sap
             var listToSend = new List<int> { orderId };
             return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(listToSend, true));
         }
+
+        /// <summary>
+        /// Gets the componenets based in the dic.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetComponents(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetComponents(parameters));
+        }
     }
 }

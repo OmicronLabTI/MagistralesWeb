@@ -75,6 +75,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetComponents(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
         }
 
@@ -173,6 +177,28 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetOrderFormula(ordenId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetComponente()
+        {
+            // arrange
+            var component = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetComponents(component);
 
             // Assert
             Assert.IsNotNull(response);

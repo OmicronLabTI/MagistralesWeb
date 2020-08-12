@@ -96,5 +96,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var result = await this.sapFacade.GetProdOrderByOrderItem(pedidosId);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="parameters">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/componentes")]
+        [HttpGet]
+        public async Task<IActionResult> GetComponentes([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetComponents(parameters);
+            return this.Ok(result);
+        }
     }
 }
