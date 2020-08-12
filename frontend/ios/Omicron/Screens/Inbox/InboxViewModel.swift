@@ -42,10 +42,11 @@ class  InboxViewModel {
             print("Botón de proceso")
             }).disposed(by: disposeBag)
         rootViewModel.dataStatus.subscribe(onNext: { data in
-            let assignedData = data[0].orders
-            self.statusData.accept(assignedData)
-            self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
-            }).disposed(by: disposeBag)
+            if let assignedData = data.first?.orders {
+                self.statusData.accept(assignedData)
+                self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
+            }
+        }).disposed(by: disposeBag)
     }
     
     func setSelection(index: Int, orders: [Order]) -> Void {

@@ -49,8 +49,8 @@ class RootViewController: UIViewController {
         }.disposed(by: disposeBag)
         
         // Detecta el evento cuando se selecciona un status de la tabla
-        let index = NSIndexPath(row: 0, section: 0)
-        viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
+//        let index = NSIndexPath(row: 0, section: 0)
+//        viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
             self.inboxViewModel?.setSelection(index: indexPath.row, orders: self.dataStatusOfService[indexPath.row].orders)
         }).disposed(by: disposeBag)
