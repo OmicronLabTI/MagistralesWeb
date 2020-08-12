@@ -93,5 +93,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="value">the value to look.</param>
         /// <returns>the value.</returns>
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value);
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="pedidoId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId);
     }
 }
