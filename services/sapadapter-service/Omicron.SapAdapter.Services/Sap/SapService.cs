@@ -165,6 +165,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
                     IsChecked = false,
@@ -187,8 +189,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = o.CardCode,
                     CompleteQuantity = (int)o.CompleteQuantity,
                     RealEndDate = o.PostDate.ToString("dd/MM/yyyy"),
-                    ProductLabel = string.Empty,
-                    Container = string.Empty,
+                    ProductLabel = pedido == null ? string.Empty : pedido.Label,
+                    Container = pedido == null ? string.Empty : pedido.Container,
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
