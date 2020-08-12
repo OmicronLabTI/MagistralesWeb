@@ -37,7 +37,8 @@ class RootViewModel {
         
         
         //let id = Persistence.shared.getUserData()?.id
-        NetworkManager.shared.getStatusList(qfbId:"9f62d826-7d9d-4e93-ad75-618ffdd24872").subscribe(onNext: { res in
+        let managerMock = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+        managerMock.getStatusList(qfbId:"9f62d826-7d9d-4e93-ad75-618ffdd24872").subscribe(onNext: { res in
             
             for status in res.response!.status! {
                 switch status.statusId {
