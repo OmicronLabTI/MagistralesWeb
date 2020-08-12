@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'OmicronDev'
+        label 'OmicronQA'
     }
     tools {
         maven 'M3'
@@ -16,10 +16,10 @@ pipeline {
         COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
         SLACK_CHANNEL = "#omicron_notifications"
-        ENVIRONMENT = "Dev"
+        ENVIRONMENT = "QA"
 
 		// General configurations		
-		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
+		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_QA";
 		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
 		SONAR_TOKEN = "d54f4f0b0ecc98ca94c88640833783fe52216269";
         COMMITER_EMAIL = sh (
