@@ -1,6 +1,6 @@
 import {BaseResponseHttp} from './commons';
 export class IUserRes extends BaseResponseHttp {
-    response: any;
+    response: UserRes;
 }
 export class IUserListRes extends BaseResponseHttp {
     response: IUserReq[];
@@ -26,6 +26,14 @@ export class IUserReq {
     password: string;
     activo: number;
     isChecked?: boolean = false;
+}
+export class UserRes {
+    activo: number;
+    firstName: string;
+    id: string;
+    lastName: string;
+    role: number;
+    userName: string;
 }
 export class IPlaceOrdersReq {
     userLogistic: string;

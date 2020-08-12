@@ -26,12 +26,18 @@ export class AppComponent implements OnDestroy , OnInit {
   isLoading: Observable<boolean>;
   isLogin = false;
   subscriptionQfbToPlace = new Subscription();
+  fullName = '';
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService) {
+    this.getFullName();
     this.isLoading = this.dataService.getIsLoading();
     this.isLogin = this.dataService.userIsAuthenticated();
-    this.dataService.getIsLogin().subscribe( isLoginS => this.isLogin = isLoginS);
+    this.dataService.getIsLogin().subscribe( isLoginS => {
+      console.log(' user name:_', this.dataService.getUserName())
+      this.getFullName();
+      this.isLogin = isLoginS;
+    });
 
     this.dataService
       .getGeneralNotificationMessage()
@@ -71,7 +77,6 @@ export class AppComponent implements OnDestroy , OnInit {
               placeOrder.list = qfbToPlace.list;
               placeOrder.orderType = qfbToPlace.modalType;
               this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
-                console.log('placeOrderResult: ', resultPlaceOrder);
               }, error => this.errorService.httpError(error));
             } else {
               this.createPlaceOrderDialog(qfbToPlace);
@@ -88,6 +93,9 @@ export class AppComponent implements OnDestroy , OnInit {
         placeOrdersData
       }
     });
+  }
+  getFullName() {
+    this.fullName = this.dataService.getUserName();
   }
 
   ngOnDestroy() {

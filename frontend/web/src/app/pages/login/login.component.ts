@@ -20,7 +20,6 @@ export class LoginComponent implements OnInit {
     private dataService: DataService,
     private router: Router
   ) {
-    console.log('login constructor', this.dataService.userIsAuthenticated())
     if (this.dataService.userIsAuthenticated()) {
       this.goToPedidos();
     }
@@ -32,29 +31,28 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() { }
 
-  login() {
+  async login() {
     const userLoginReq = {
       user: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
       redirectUri: 'asdad',
       clientId2: ''
     } as ILoginReq;
-    this.securityService.login(userLoginReq).subscribe(res => {
+    await this.securityService.login(userLoginReq).toPromise().then(res => {
       this.dataService.setToken(res.access_token);
-      this.dataService.setIsLogin(true);
-      this.dataService.setUserName(userLoginReq.user);
-      this.securityService.getUser(this.dataService.getUserName()).subscribe(
-        (userRes: IUserRes) => {
-          console.log('userRes: ', userRes)
-          this.dataService.setUserId(userRes.response['id']);
-        }
+      this.securityService.getUser(userLoginReq.user).subscribe(
+          userRes => {
+            console.log('userRes: ', userRes)
+            this.dataService.setUserId(userRes.response.id);
+            this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
+          }
       );
+      this.dataService.setIsLogin(true);
       this.goToPedidos();
-    }, err => {
+    }).catch(err => {
       console.log('error  login: ', err);
       this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
-    }
-    );
+    })
   }
   goToPedidos() {
     this.router.navigate(['pedidos']);
