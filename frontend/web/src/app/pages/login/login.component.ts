@@ -20,6 +20,10 @@ export class LoginComponent implements OnInit {
     private dataService: DataService,
     private router: Router
   ) {
+    console.log('login constructor', this.dataService.userIsAuthenticated())
+    if (this.dataService.userIsAuthenticated()) {
+      this.goToPedidos();
+    }
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -41,15 +45,18 @@ export class LoginComponent implements OnInit {
       this.dataService.setUserName(userLoginReq.user);
       this.securityService.getUser(this.dataService.getUserName()).subscribe(
         (userRes: IUserRes) => {
+          console.log('userRes: ', userRes)
           this.dataService.setUserId(userRes.response['id']);
         }
-      )
-      this.router.navigate(['pedidos']);
+      );
+      this.goToPedidos();
     }, err => {
       console.log('error  login: ', err);
       this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
     }
     );
   }
-
+  goToPedidos() {
+    this.router.navigate(['pedidos']);
+  }
 }
