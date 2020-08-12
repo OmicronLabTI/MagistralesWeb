@@ -91,39 +91,42 @@ class NetworkManager: SessionProtocol {
                                 .refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: self!)
             
             let _ = r?.asObservable().subscribe(onNext: { response in
-                let statusCode = response.statusCode
                 let json = try? response.mapJSON()
                 
-                switch statusCode {
-                case 200...299:
-                    let res = Mapper<T>().map(JSONObject: json)
-                    if (res != nil) {
-                        observer.onNext(res!)
-                    } else {
-                        observer.onError(RequestError.invalidResponse)
-                    }
-                    break
-                case 400:
-                    let err = Mapper<HttpError>().map(JSONObject: json)
-                    observer.onError(RequestError.invalidRequest(error: err))
-                    break
-                case 401:
-                    let err = Mapper<HttpError>().map(JSONObject: json)
-                    observer.onError(RequestError.unauthorized(error: err))
-                    break
-                case 404:
-                    observer.onError(RequestError.notFound)
-                    break
-                case 500...:
-                    let err = Mapper<HttpError>().map(JSONObject: json)
-                    observer.onError(RequestError.serverError(error: err))
-                    break
-                default:
-                    observer.onError(RequestError.unknownError)
-                    break
+                let res = Mapper<T>().map(JSONObject: json)
+                if (res != nil) {
+                    observer.onNext(res!)
+                } else {
+                    observer.onError(RequestError.invalidResponse)
                 }
             }, onError: { error in
-                    observer.onError(RequestError.serverUnavailable)
+                if let moyaError: MoyaError = error as? MoyaError, let res = moyaError.response {
+                    let statusCode = res.statusCode
+                    let json = try? res.mapJSON()
+
+                    switch statusCode {
+                    case 400:
+                        let err = Mapper<HttpError>().map(JSONObject: json)
+                        observer.onError(RequestError.invalidRequest(error: err))
+                        break
+                    case 401:
+                        let err = Mapper<HttpError>().map(JSONObject: json)
+                        observer.onError(RequestError.unauthorized(error: err))
+                        break
+                    case 404:
+                        observer.onError(RequestError.notFound)
+                        break
+                    case 500...:
+                        let err = Mapper<HttpError>().map(JSONObject: json)
+                        observer.onError(RequestError.serverError(error: err))
+                        break
+                    default:
+                        observer.onError(RequestError.unknownError)
+                        break
+                    }
+                    return
+                }
+                observer.onError(RequestError.serverUnavailable)
             })
             
             return Disposables.create()
