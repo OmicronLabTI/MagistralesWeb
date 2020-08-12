@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Omicron.SapAdapter.DataAccess\Omicron.SapAdapter.DataAccess.csproj" />
     <ProjectReference Include="..\Omicron.SapAdapter.Dtos\Omicron.SapAdapter.Dtos.csproj" />
     <ProjectReference Include="..\Omicron.SapAdapter.Repository\Omicron.SapAdapter.Entities.csproj" />
+    <ProjectReference Include="..\Omicron.SapAdapter.Resources\Omicron.SapAdapter.Resources.csproj" />
   </ItemGroup>
 
 </Project>

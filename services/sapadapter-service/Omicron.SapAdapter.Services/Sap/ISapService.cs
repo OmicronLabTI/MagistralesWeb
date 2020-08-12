@@ -52,5 +52,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="returnFirst">if it returns only the first.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst);
+
+        /// <summary>
+        /// gets the items from the dict.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetComponents(Dictionary<string, string> parameters);
     }
 }

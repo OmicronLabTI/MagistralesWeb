@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Net;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -203,6 +204,39 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// gets the items from the dict.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetComponents(Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                throw new CustomServiceException(ServiceConstants.NoChipsError);
+            }
+
+            var listValues = new List<CompleteDetalleFormulaModel>();
+            var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            foreach (var v in chipValues)
+            {
+                listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(v)).ToList());
+                listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(v)).ToList());
+            }
+
+            listValues = this.MakeDistincList(listValues);
+
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
+            var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
@@ -281,6 +315,27 @@ namespace Omicron.SapAdapter.Services.Sap
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
             var users = await this.usersService.GetUsersById(userIDs);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        /// <summary>
+        /// makes the distinc for  the list.
+        /// </summary>
+        /// <param name="formulas">the values.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteDetalleFormulaModel> MakeDistincList(List<CompleteDetalleFormulaModel> formulas)
+        {
+            var lisToReturn = new List<CompleteDetalleFormulaModel>();
+            var dictIds = new Dictionary<string, string>();
+            formulas.ForEach(f =>
+            {
+                if (!dictIds.ContainsKey(f.ProductId))
+                {
+                    dictIds.Add(f.ProductId, f.Description);
+                    lisToReturn.Add(f);
+                }
+            });
+
+            return lisToReturn;
         }
     }
 }
