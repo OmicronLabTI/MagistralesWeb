@@ -54,7 +54,13 @@ class NetworkManager {
 
     private var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
+//    ])) {
+//        self.provider = provider
+//    }
+    
+    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
         AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
     ])) {
         self.provider = provider
@@ -72,7 +78,7 @@ class NetworkManager {
         return res
     }
     
-    func getStatusList(qfbId: StatusRequest) -> Observable<StatusResponse> {
+    func getStatusList(qfbId: String) -> Observable<StatusResponse> {
         let req: ApiService = ApiService.getStatusList(qfbId: qfbId)
             let res: Observable<StatusResponse> = makeRequest(request: req)
             return res

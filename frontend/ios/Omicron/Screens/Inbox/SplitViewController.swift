@@ -15,9 +15,5 @@ class SplitViewController: UISplitViewController {
     let disposeBag: DisposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
-        let username = Persistence.shared.getUserName()
-        NetworkManager.shared.getInfoUser(userId: username).subscribe(onNext: { res in
-            Persistence.shared.saveUserData(user: res.response!)
-        }).disposed(by: self.disposeBag)
     }
 }

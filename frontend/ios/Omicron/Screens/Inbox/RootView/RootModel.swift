@@ -22,7 +22,7 @@ class UserInfoResponse: HttpResponse {
     }
 }
 
-class User: Codable {
+class User {
     var id: String?
     var userName: String?
     var firstName: String?
@@ -114,13 +114,6 @@ extension Order: Mappable {
     }
 }
 
-class StatusRequest: Codable {
-    var qfbId: Int
-    
-    init(qfbId: Int) {
-        self.qfbId = qfbId
-    }
-}
 
 struct Section {
     var statusName: String

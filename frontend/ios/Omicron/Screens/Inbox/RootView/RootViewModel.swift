@@ -22,7 +22,22 @@ class RootViewModel {
     let disposeBag = DisposeBag()
     
     init() {
-        NetworkManager.shared.getStatusList(qfbId: StatusRequest.init(qfbId: 1)).subscribe(onNext: { res in
+        
+    let username = Persistence.shared.getUserName()
+    NetworkManager.shared.getInfoUser(userId: username).subscribe(onNext: { [weak self] res in
+
+        print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+                    print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+                    print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+                    print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+       // Persistence.shared.saveUserData(user: res.response!)
+        }, onError: {res in
+            print("Error")
+    }).disposed(by: self.disposeBag)
+        
+        
+        //let id = Persistence.shared.getUserData()?.id
+        NetworkManager.shared.getStatusList(qfbId:"9f62d826-7d9d-4e93-ad75-618ffdd24872").subscribe(onNext: { res in
             
             for status in res.response!.status! {
                 switch status.statusId {

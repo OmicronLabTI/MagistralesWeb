@@ -12,7 +12,7 @@ import Moya
 enum ApiService {
     case login(data: Login)
     case getInfoUser(userId: String)
-    case getStatusList(qfbId: StatusRequest)
+    case getStatusList(qfbId: String)
     case renew(data: Renew)
     case getOrdenDetail(orderId: Int)
 }
@@ -32,10 +32,10 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(_):
             return "/oauth/oauthrs/authorize"
-        case.getInfoUser(let userId):
+        case .getInfoUser(let userId):
             return "/usuarios/user/\(userId)"
-        case.getStatusList:
-            return "/statusList"
+        case .getStatusList(let userId):
+            return "/statusList\(userId)"
         case .renew:
             return "/oauth/oauthrs/renew"
         case .getOrdenDetail(let ordenId):
