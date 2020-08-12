@@ -44,6 +44,7 @@ export class PedidoDetalleComponent implements OnInit {
   getDetallePedido() {
     this.pedidosService.getDetallePedido(this.docNum).subscribe(
       (pedidoDetalleRes: IPedidoDetalleListRes) => {
+        console.log('resDetail: ', pedidoDetalleRes)
         pedidoDetalleRes.response.forEach(element => {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);

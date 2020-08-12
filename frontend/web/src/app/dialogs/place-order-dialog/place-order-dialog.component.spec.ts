@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
+import {MATERIAL_COMPONENTS} from '../../app.material';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -8,7 +10,9 @@ describe('PlaceOrderDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceOrderDialogComponent ]
+      declarations: [ PlaceOrderDialogComponent ],
+      imports: [MATERIAL_COMPONENTS],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));

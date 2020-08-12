@@ -20,8 +20,8 @@ export class PlaceOrderDialogComponent implements OnInit {
     console.log('dataReceipt: ', this.placeData)
     if (this.placeData.placeOrdersData !== '') {
       this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
-      this.isPlaceManual = true;
     }
+    this.isPlaceManual = this.idQfbSelected !== '';
   }
 
   async ngOnInit() {
