@@ -8,9 +8,23 @@
         <mat-card-content class="content-card-container">
             <div class="row-form">
                 <div class="form-field-full">
-                    <mat-form-field appearance="outline" class="custom-field-full generalinput">
-                        <input matInput placeholder="Buscar componente" maxlength="60">
+                    <mat-form-field appearance="outline" class="custom-field-full generalinput example-chip-list">
+                        <mat-chip-list #chipList aria-label="Fruit selection">
+                          <mat-chip *ngFor="let word of keywords" [selectable]="selectable"
+                                   [removable]="removable" (removed)="removeChip(word)">
+                            {{word}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Búsqueda de componentes..."
+                                 [matChipInputFor]="chipList"
+                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                 [matChipInputAddOnBlur]="addOnBlur"
+                                 (matChipInputTokenEnd)="addChip($event)">
+                        </mat-chip-list>
                     </mat-form-field>
+                    <!--<mat-form-field appearance="outline" class="custom-field-full generalinput">
+                        <input matInput placeholder="Buscar componente" maxlength="60">
+                    </mat-form-field>-->
                     <div class="table-container-component">
                         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">                        
                             <ng-container matColumnDef="numero">

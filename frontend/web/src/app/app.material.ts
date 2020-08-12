@@ -23,7 +23,8 @@ import {
   MatAutocompleteModule,
   MatCheckboxModule,
   MatFormFieldModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatChipsModule
 
 } from '@angular/material';
 
@@ -53,5 +54,6 @@ export const MATERIAL_COMPONENTS = [
   MatAutocompleteModule,
   MatCheckboxModule,
   MatFormFieldModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatChipsModule
 ];
