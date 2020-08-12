@@ -34,8 +34,8 @@ extension ApiService: AuthorizedTargetType {
             return "/oauth/oauthrs/authorize"
         case .getInfoUser(let userId):
             return "/usuarios/user/\(userId)"
-        case .getStatusList(let userId):
-            return "/statusList\(userId)"
+        case .getStatusList(let qfbId):
+            return "/pedidos/qfbOrders/\(qfbId)"
         case .renew:
             return "/oauth/oauthrs/renew"
         case .getOrdenDetail(let ordenId):
@@ -58,8 +58,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .getInfoUser:
             return .requestPlain
-        case .getStatusList(let qfbId):
-            return .requestJSONEncodable(qfbId)
+        case .getStatusList:
+            return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
         case .getOrdenDetail(let data):
