@@ -153,6 +153,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         productionOrderObj.Lines.SetCurrentLine(lineNum);
 
                         var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
+
+                        if (component == null)
+                        {
+                            continue;
+                        }
+
                         double.TryParse(component.BaseQuantity.ToString(), out double baseQuantity);
                         double.TryParse(component.RequiredQuantity.ToString(), out double issuedQuantity);
                         productionOrderObj.Lines.BaseQuantity = baseQuantity;
@@ -161,7 +167,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                         listIdsUpdated.Add(sapItemCode);
                         components.MoveNext();
-                    }                    
+                    }
                 }
 
                 var listNotInserted = updateFormula.Components.Where(x => !listIdsUpdated.Contains(x.ProductId));

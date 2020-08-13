@@ -36,8 +36,6 @@ namespace Omicron.Pedidos.Api
 
         private const string SapAdapterUrl = "http://sapadapterservice/";
 
-        private const string SapDiApiUrl = "http://172.30.5.49/OmicronDIApi/SapDiApi/";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -105,6 +103,7 @@ namespace Omicron.Pedidos.Api
                 });
             });
 
+            var sapDiApiUrl = this.Configuration["DiApiAddress"];
             services.AddHttpClient("sapadapter", c =>
             {
                 c.BaseAddress = new Uri(SapAdapterUrl);
@@ -114,7 +113,7 @@ namespace Omicron.Pedidos.Api
 
             services.AddHttpClient("sapdiapi", c =>
             {
-                c.BaseAddress = new Uri(SapDiApiUrl);
+                c.BaseAddress = new Uri(sapDiApiUrl);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapDiApi, SapDiApi>();
