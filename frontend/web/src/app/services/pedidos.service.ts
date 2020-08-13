@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
-import {IComponentsRes} from '../model/http/detalleformula';
+import {IComponentsRes, IFormulaRes} from '../model/http/detalleformula';
+import {IPedidosListRes, IProcessOrdersRes} from '../model/http/pedidos';
+import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,18 +14,18 @@ export class PedidosService {
   constructor(private consumeService: ConsumeService) { }
 
   getPedidos(queryString: string) {
-    return this.consumeService.httpGet(`${Endpoints.pedidos.getPedidos}${queryString}`);
+    return this.consumeService.httpGet<IPedidosListRes>(`${Endpoints.pedidos.getPedidos}${queryString}`);
   }
 
   getDetallePedido(docNum: string) {
-    return this.consumeService.httpGet(Endpoints.pedidos.getDetallePedido + docNum);
+    return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.getDetallePedido + docNum);
   }
   getFormulaDetail(orderNum: string) {
-    return this.consumeService.httpGet(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
+    return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
   }
 
   processOrders(ordersToProcess) {
-    return this.consumeService.httpPost(Endpoints.pedidos.processOrders, ordersToProcess);
+    return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrders, ordersToProcess);
   }
   getQfbs() {
     return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.qfbs}/2`);

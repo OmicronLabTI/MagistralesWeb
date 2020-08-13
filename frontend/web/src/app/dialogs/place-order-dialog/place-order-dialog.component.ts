@@ -4,6 +4,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbWithNumber} from '../../model/http/users';
 import {DataService} from '../../services/data.service';
+import {PlaceOrders} from '../../model/device/orders';
 
 @Component({
   selector: 'app-place-order-dialog',
@@ -16,9 +17,8 @@ export class PlaceOrderDialogComponent implements OnInit {
     qfbs: QfbWithNumber[] =  [];
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
-              @Inject(MAT_DIALOG_DATA) public placeData: any, private dataService: DataService) {
-    console.log('dataReceipt: ', this.placeData)
-    if (this.placeData.placeOrdersData !== '') {
+              @Inject(MAT_DIALOG_DATA) public placeData: PlaceOrders, private dataService: DataService) {
+    if (this.placeData.placeOrdersData) {
       this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
     }
     this.isPlaceManual = this.idQfbSelected !== '';
@@ -34,8 +34,8 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   placeOrder(userId: string, userName: string) {
-    this.dataService.setQbfToPlace({userId, userName,
+   this.dataService.setQbfToPlace({userId, userName,
       modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list});
-    this.dialogRef.close();
+   this.dialogRef.close();
   }
 }

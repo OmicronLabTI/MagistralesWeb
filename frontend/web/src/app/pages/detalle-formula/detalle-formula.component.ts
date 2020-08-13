@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {IFormulaRes, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
+import { IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
 import { ActivatedRoute } from '@angular/router';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -46,7 +46,7 @@ export class DetalleFormulaComponent implements OnInit {
 
   getDetalleFormula() {
     this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
-      (formulaRes: IFormulaRes) => {
+      (formulaRes) => {
         this.dataFormulaDetail = formulaRes.response;
         this.dataSource.data = this.dataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {detail.isChecked = false; });

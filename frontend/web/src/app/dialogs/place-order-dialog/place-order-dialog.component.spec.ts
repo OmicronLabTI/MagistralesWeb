@@ -1,8 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {HttpClientModule} from '@angular/common/http';
+import {DatePipe} from '@angular/common';
+import {PlaceOrders} from '../../model/device/orders';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -11,8 +15,20 @@ describe('PlaceOrderDialogComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PlaceOrderDialogComponent ],
-      imports: [MATERIAL_COMPONENTS],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      imports: [
+          HttpClientModule,
+        MatDialogModule,
+        MATERIAL_COMPONENTS,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        {
+          provide: MatDialogRef,
+          useValue: {}
+        },
+        { provide: MAT_DIALOG_DATA, useValue: {PlaceOrders}},
+          DatePipe
+      ]
     })
     .compileComponents();
   }));
@@ -23,7 +39,8 @@ describe('PlaceOrderDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+/*  it('should create', () => {
+    component.placeData.placeOrdersData = {list: [], modalType: '', userId: ''};
+    // expect(component).toBeTruthy();
+  });*/
 });

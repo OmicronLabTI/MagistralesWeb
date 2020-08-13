@@ -5,7 +5,7 @@ import { DataService } from '../../services/data.service';
 import {CONST_STRING, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
@@ -29,11 +29,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
+  fullQueryString = CONST_STRING.empty;
   rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
-  isThereOrdersToProcess = false;
+  isThereOrdersToPlan = false;
+  isThereOrdersToPlace = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -43,7 +45,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
     this.filterDataOrders.dateFull = this.rangeDate;
-    this.queryString = `?fini=${this.rangeDate}&offset=${this.offset}&limit=${this.limit}`;
+    this.queryString = `?fini=${this.rangeDate}`;
+    this.getFullQueryString();
   }
 
   ngOnInit() {
@@ -52,12 +55,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   getPedidos() {
-    this.pedidosService.getPedidos(this.queryString).subscribe(
-      (pedidoRes: IPedidosListRes) => {
+    this.pedidosService.getPedidos(this.fullQueryString).subscribe(
+      pedidoRes => {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          // element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       },
@@ -70,7 +72,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
-    this.getThereOrdersToProcess();
+    this.getButtonsToUnLooked();
   }
 
   someComplete(): boolean {
@@ -86,7 +88,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
-    this.getThereOrdersToProcess();
+    this.getButtonsToUnLooked();
   }
 
   processOrders() {
@@ -110,6 +112,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   changeDataEvent(event: PageEvent) {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
+    this.getFullQueryString();
     this.getPedidos();
     return event;
   }
@@ -152,7 +155,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         }
       }
       this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
-      this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+      this.getFullQueryString();
       if (result) {
         this.getPedidos();
       }
@@ -166,10 +169,21 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   openPlaceOrdersDialog() {
-    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders, list: [1]});
+    this.dataService.setQbfToPlace(
+        {
+          modalType: MODAL_NAMES.placeOrders,
+          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Planificado')).map(t => t.docNum)
+        });
   }
-  getThereOrdersToProcess() {
-    this.isThereOrdersToProcess = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Abierto')).length > 0;
+  getButtonsToUnLooked() {
+    this.isThereOrdersToPlan = this.getIsThereOnData('Abierto');
+    this.isThereOrdersToPlace = this.getIsThereOnData('Planificado');
+  }
+  getIsThereOnData(status: string) {
+    return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+  }
+  getFullQueryString() {
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
   }
 
   ngOnDestroy() {

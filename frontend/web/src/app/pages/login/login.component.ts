@@ -41,8 +41,8 @@ export class LoginComponent implements OnInit {
       this.dataService.setToken(res.access_token);
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
-            this.dataService.setUserId(userRes.response.id);
-            this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
+              this.dataService.setUserId(userRes.response.id);
+              this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
           }
       ).catch(() => {
         this.dataService.setGeneralNotificationMessage('Error al obtener usuario');

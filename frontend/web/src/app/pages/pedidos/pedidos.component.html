@@ -28,12 +28,12 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
-            <button [disabled]="!isThereOrdersToProcess" mat-raised-button class="button-blue " (click)="processOrders()">
-                &nbsp; Procesar &nbsp;
+            <button [disabled]="!isThereOrdersToPlan" mat-raised-button class="button-blue " (click)="processOrders()">
+                &nbsp; Planificar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue " (click)="openPlaceOrdersDialog()">
+            <button [disabled]="!isThereOrdersToPlace" mat-raised-button class="button-blue " (click)="openPlaceOrdersDialog()">
                 &nbsp; Asignar &nbsp;
             </button>
             &nbsp;
@@ -57,7 +57,7 @@
     </div>
 
     <div class="list-users-container">
-        <div  class="table-container">
+        <div  class="table-container scroll-custom">
             <table mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
                 <ng-container matColumnDef="seleccion">&nbsp;
                     <th mat-header-cell *matHeaderCellDef>

@@ -34,7 +34,6 @@ export class AppComponent implements OnDestroy , OnInit {
     this.isLoading = this.dataService.getIsLoading();
     this.isLogin = this.dataService.userIsAuthenticated();
     this.dataService.getIsLogin().subscribe( isLoginS => {
-      console.log(' user name:_', this.dataService.getUserName())
       this.getFullName();
       this.isLogin = isLoginS;
     });
@@ -77,6 +76,7 @@ export class AppComponent implements OnDestroy , OnInit {
               placeOrder.list = qfbToPlace.list;
               placeOrder.orderType = qfbToPlace.modalType;
               this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
+                console.log('resultPlaceOrder: ', resultPlaceOrder);
               }, error => this.errorService.httpError(error));
             } else {
               this.createPlaceOrderDialog(qfbToPlace);

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {IPedidoDetalleListRes, IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {MODAL_NAMES} from '../../constants/const';
@@ -29,7 +29,8 @@ export class PedidoDetalleComponent implements OnInit {
     'actions'
   ];
   dataSource = new MatTableDataSource<IPedidoDetalleReq>();
-
+  isThereOrdersDetailToPlan = false;
+  isThereOrdersDetailToPlace = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService) { }
 
@@ -43,11 +44,11 @@ export class PedidoDetalleComponent implements OnInit {
 
   getDetallePedido() {
     this.pedidosService.getDetallePedido(this.docNum).subscribe(
-      (pedidoDetalleRes: IPedidoDetalleListRes) => {
-        console.log('resDetail: ', pedidoDetalleRes)
+      (pedidoDetalleRes) => {
         pedidoDetalleRes.response.forEach(element => {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
+          element.status = element.status === '' ? 'Abierto' : element.status;
           this.dataSource.data.push(element);
         });
         this.dataSource._updateChangeSubscription();
@@ -57,6 +58,7 @@ export class PedidoDetalleComponent implements OnInit {
 
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.getButtonsToUnLooked();
   }
 
   someComplete(): boolean {
@@ -72,9 +74,19 @@ export class PedidoDetalleComponent implements OnInit {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.getButtonsToUnLooked();
   }
 
   openPlaceOrderDialog() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail, list: [9999, 888]});
   }
+
+  getButtonsToUnLooked() {
+    this.isThereOrdersDetailToPlan = this.getIsThereOnData('Abierto');
+    this.isThereOrdersDetailToPlace = this.getIsThereOnData('Planificado');
+  }
+  getIsThereOnData(status: string) {
+    return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+  }
+
 }

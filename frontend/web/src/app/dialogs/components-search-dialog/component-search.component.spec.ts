@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import { ComponentSearchComponent } from './component-search.component';
 import { HttpClientModule } from '@angular/common/http';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -20,10 +20,16 @@ describe('ComponentSearchComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule, MatTableModule,
+        MatDialogModule,
         MatCheckboxModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatChipsModule],
       declarations: [ ComponentSearchComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [DatePipe]
+      providers: [DatePipe,
+        {
+          provide: MatDialogRef,
+          useValue: {}
+        },
+        { provide: MAT_DIALOG_DATA, useValue: {} }]
     })
     .compileComponents();
   }));
