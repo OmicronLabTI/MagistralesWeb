@@ -51,25 +51,25 @@ class Persistence {
         }
     }
     
-//    func saveUserData(user: User) -> Void {
-//        let userDefaults = UserDefaults.standard
-//        do {
-//            try userDefaults.setObject(user, forKey: UsersDefaultsConstants.userData)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
-//    
-//    func getUserData() -> User? {
-//        let userDefaults = UserDefaults.standard
-//        do {
-//            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.userData, castTo: User.self)
-//            return data
-//        } catch {
-//            print(error.localizedDescription)
-//            return nil
-//        }
-//    }
+    func saveUserData(user: User) -> Void {
+        let userDefaults = UserDefaults.standard
+        do {
+            try userDefaults.setObject(user, forKey: UsersDefaultsConstants.userData)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func getUserData() -> User? {
+        let userDefaults = UserDefaults.standard
+        do {
+            let data = try userDefaults.getObject(forKey: UsersDefaultsConstants.userData, castTo: User.self)
+            return data
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
     
 }
 
