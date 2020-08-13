@@ -24,21 +24,6 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: web-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.83
-  selector:
-    app: web
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -130,7 +115,7 @@ spec:
         - name: TZ
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
-          value: Development
+          value: Staging
         ports:
         - containerPort: 9010
 ---
@@ -158,9 +143,37 @@ spec:
         - name: TZ
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
-          value: Development
+          value: Staging
         ports:
         - containerPort: 5101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logs-deployment
+  labels:
+    app: logs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logs
+  template:
+    metadata:
+      labels:
+        app: logs
+    spec:
+      containers:
+      - name: logs
+        image: omicron-logs-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5104
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -186,34 +199,55 @@ spec:
         - name: TZ
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
-          value: Development
+          value: Staging
         ports:
         - containerPort: 5102
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pedidos-deployment
+  name: postgres-deployment
   labels:
-    app: pedidos
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pedidos
+      app: postgres
   template:
     metadata:
       labels:
-        app: pedidos
+        app: postgres
     spec:
       containers:
-      - name: pedidos
-        image: omicron-pedidos-repository
+      - name: postgres
+        image: postgres
         imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
+        - name: POSTGRES_PASSWORD
+          value: Axity2020
+        - name: POSTGRES_USER
+          value: omicronuser
+        - name: POSTGRES_DB
+          value: omicrondev
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
         ports:
-        - containerPort: 5103
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.83
+  selector:
+    app: postgres

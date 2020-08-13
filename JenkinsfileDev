@@ -16,6 +16,7 @@ pipeline {
         COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
         SLACK_CHANNEL = "#omicron_notifications"
+        ENVIRONMENT = "Dev"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
@@ -100,8 +101,8 @@ pipeline {
             steps {
                 dir ('frontend/web/'){
                     sh 'npm run test-ci'
-                    sh '/opt/sonar-scanner/bin/sonar-scanner \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
+                    sh "/opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_${ENVIRONMENT} \
                         -Dsonar.sources=src/ \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN} \
@@ -110,7 +111,7 @@ pipeline {
                         -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts \
                         -Dsonar.tests=src \
                         -Dsonar.test.inclusions=**/*.spec.ts \
-                        -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info'
+                        -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info"
                 }
             }
         }
@@ -118,16 +119,16 @@ pipeline {
             steps { 
                 dir ('services/apimanager/'){
                     sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
                         -Dsonar.sources=src/main \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN}"
                 }
                 dir ('services/oauthserver/'){
                     sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
                         -Dsonar.sources=src/main \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN}"
@@ -137,14 +138,14 @@ pipeline {
         stage('Sonar Micro Services') {
             steps { 
                 dir ('services/catalogos-service/'){
-                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_catalogos_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Catalogos.Test/Omicron.Catalogos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Catalogos.Api/**'"
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_catalogos_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Catalogos.Test/Omicron.Catalogos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Catalogos.Api/**'"
                     sh 'dotnet build Omicron.Catalogos.Microservice.sln'
 					sh 'dotnet test Omicron.Catalogos.Test/Omicron.Catalogos.Test/Omicron.Catalogos.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
 				dir ('services/usuarios-service/'){
-                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_usuarios_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Usuarios.Test/Omicron.Usuarios.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Usuarios.Api/**'"
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_usuarios_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Usuarios.Test/Omicron.Usuarios.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Usuarios.Api/**'"
                     sh 'dotnet build Omicron.Usuarios.Microservice.sln'
 					sh 'dotnet test Omicron.Usuarios.Test/Omicron.Usuarios.Test/Omicron.Usuarios.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
@@ -158,7 +159,7 @@ pipeline {
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
 				dir ('services/sapadapter-service/'){
-                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_sapadapter_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.SapAdapter.Test/Omicron.SapAdapter.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.SapAdapter.Api/**'"
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_sapadapter_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.SapAdapter.Test/Omicron.SapAdapter.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.SapAdapter.Api/**'"
                     sh 'dotnet build Omicron.SapAdapter.Microservice.sln'
 					sh 'dotnet test Omicron.SapAdapter.Test/Omicron.SapAdapter.Test/Omicron.SapAdapter.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
