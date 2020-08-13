@@ -61,7 +61,7 @@ class RootViewController: UIViewController {
 //        let index = NSIndexPath(row: 0, section: 0)
 //        viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
-            self.inboxViewModel?.setSelection(index: indexPath.row, orders: self.dataStatusOfService[indexPath.row].orders)
+            self.inboxViewModel?.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
         }).disposed(by: disposeBag)
         
         

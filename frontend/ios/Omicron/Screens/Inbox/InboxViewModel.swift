@@ -17,6 +17,7 @@ class  InboxViewModel {
     var processDidTab = PublishSubject<Void>();
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
+    var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
     var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
     let rootViewModel = RootViewModel()
 //    var finishedButtonIsHidden: Driver<Bool>
@@ -43,15 +44,17 @@ class  InboxViewModel {
             }).disposed(by: disposeBag)
         rootViewModel.dataStatus.subscribe(onNext: { data in
             if let assignedData = data.first?.orders {
+        
                 self.statusData.accept(assignedData)
                 self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
             }
         }).disposed(by: disposeBag)
     }
     
-    func setSelection(index: Int, orders: [Order]) -> Void {
+    func setSelection(index: Int, section: Section) -> Void {
         self.indexSelectedOfTable.onNext(index)
-        self.statusData.accept(orders)
-        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: orders))
+        self.statusData.accept(section.orders)
+        self.nameStatus.accept(section.statusName)
+        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: section.orders))
     }
 }

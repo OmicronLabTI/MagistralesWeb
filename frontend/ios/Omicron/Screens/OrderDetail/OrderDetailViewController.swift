@@ -49,12 +49,14 @@ class OrderDetailViewController: UIViewController {
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
+    var statusType: String = ""
     var orderDetailViewModel = OrderDetailViewModel()
 
     
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.showButtonsByStatusType(statusType: statusType)
         orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
@@ -115,7 +117,7 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         self.backButton.setImage(UIImage(named: ImageButtonNames.assigned), for: .normal)
-        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: "Asignado", fontSize: 39)
+        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: self.statusType, fontSize: 39)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 15, typeFont: "bold")
@@ -136,8 +138,35 @@ class OrderDetailViewController: UIViewController {
         self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
         self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación:", textToBold: "Fecha orden de fabricación:")
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
-        self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto:", textToBold: "Descripción del producto:")
+        self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto:", textToBold: "Descripción ®del producto:")
         self.detailTable.tableFooterView = UIView()
     }
+    
+    func showButtonsByStatusType(statusType: String) -> Void {
+        switch statusType {
+        case StatusNameConstants.assignedStatus:
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
+        case StatusNameConstants.inProcessStatus:
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
+        case StatusNameConstants.penddingStatus:
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: false, hideSeeLotsBtn: false)
+        case StatusNameConstants.finishedStatus:
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+        case StatusNameConstants.reassignedStatus:
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: false, hideSeeLotsBtn: false)
+        default:
+            print("")
+        }
+    }
+    
+    func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,hideAddCompBtn: Bool,hideSaveBtn: Bool,hideSeeLotsBtn: Bool) -> Void {
+        self.processButton.isHidden = hideProcessBtn
+        self.finishedButton.isHidden = hideFinishedBtn
+        self.penddingButton.isHidden = hidePendinBtn
+        self.addComponentButton.isHidden = hideAddCompBtn
+        self.saveButton.isHidden = hideSaveBtn
+        self.seeLotsButton.isHidden = hideSeeLotsBtn
+    }
+    
     
 }

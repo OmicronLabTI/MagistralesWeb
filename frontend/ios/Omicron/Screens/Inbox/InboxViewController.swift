@@ -26,6 +26,7 @@ class InboxViewController: UIViewController {
     private var typeCard: Int = 0
     let rootViewModel = RootViewModel();
     var orderId:Int = -1
+    var statusType: String = ""
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -42,11 +43,17 @@ class InboxViewController: UIViewController {
     func viewModelBinding() -> Void {
 
         collectionView.rx.itemSelected.subscribe(onNext:{ data in
+            
             self.inboxViewModel.statusData.subscribe(onNext: { res in
                 self.orderId = res[data.row].productionOrderId!
             }).disposed(by: self.disposeBag)
             
+            self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
+                self.statusType = statusName
+            }).disposed(by: self.disposeBag)
+            
             self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+            
         }).disposed(by: disposeBag)
 
         
@@ -172,6 +179,7 @@ class InboxViewController: UIViewController {
        if segue.identifier == ViewControllerIdentifiers.orderDetailViewController {
            if let destination = segue.destination as? OrderDetailViewController {
             destination.orderId = self.orderId // you can pass value to destination view controller
+            destination.statusType = self.statusType
            }
        }
     }
