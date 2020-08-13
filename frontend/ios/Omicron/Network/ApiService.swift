@@ -39,7 +39,7 @@ extension ApiService: AuthorizedTargetType {
         case .renew:
             return "/oauth/oauthrs/renew"
         case .getOrdenDetail(let ordenId):
-            return "/pedidos/formula/\(ordenId)"
+            return "/sapadapter/formula/\(ordenId)"
         }
     }
     
@@ -47,7 +47,9 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login, .renew:
             return .post
-        case .getInfoUser, .getStatusList, .getOrdenDetail:
+        case .getInfoUser,
+             .getStatusList,
+             .getOrdenDetail:
             return .get
         }
     }
@@ -56,13 +58,11 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(let data):
             return .requestJSONEncodable(data)
-        case .getInfoUser:
-            return .requestPlain
-        case .getStatusList:
+        case .getInfoUser,
+             .getStatusList,
+             .getOrdenDetail:
             return .requestPlain
         case .renew(let data):
-            return .requestJSONEncodable(data)
-        case .getOrdenDetail(let data):
             return .requestJSONEncodable(data)
         }
     }

@@ -24,7 +24,7 @@ class RootViewController: UIViewController {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.title = getUserInfo()
         self.initComponents()
         self.viewModelBinding()
         self.rootViewModel.getOrders()
@@ -85,8 +85,8 @@ class RootViewController: UIViewController {
         return nil
     }
     
-//    private func getUserInfo() -> String {
-//        guard let userInfo =  Persistence.shared.getUserData() else { return "" }
-//        return "\(userInfo.firstName!) \(userInfo.lastName!)"
-//    }
+    private func getUserInfo() -> String {
+        guard let userInfo =  Persistence.shared.getUserData() else { return "" }
+        return "\(userInfo.firstName!) \(userInfo.lastName!)"
+    }
 }

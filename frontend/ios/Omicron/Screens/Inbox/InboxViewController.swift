@@ -171,7 +171,7 @@ class InboxViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
        if segue.identifier == ViewControllerIdentifiers.orderDetailViewController {
            if let destination = segue.destination as? OrderDetailViewController {
-            destination.userId = self.orderId // you can pass value to destination view controller
+            destination.orderId = self.orderId // you can pass value to destination view controller
            }
        }
     }
