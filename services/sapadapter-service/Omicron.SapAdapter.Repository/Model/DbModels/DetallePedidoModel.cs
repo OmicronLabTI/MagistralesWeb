@@ -53,5 +53,19 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("Quantity")]
         public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_ETIQUETA")]
+        public string Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_ENVASE")]
+        public string Container { get; set; }
     }
 }

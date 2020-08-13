@@ -316,5 +316,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 
             return new List<CompleteDetalleFormulaModel>();
         }
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="pedidoId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId)
+        {
+            return await this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId).ToListAsync();
+        }
     }
 }

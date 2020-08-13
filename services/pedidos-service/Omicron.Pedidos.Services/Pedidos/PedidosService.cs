@@ -196,6 +196,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                             {
                                 BaseDocument = sapOrder.BaseDocument,
                                 Container = sapOrder.Container,
+                                Tag = sapOrder.ProductLabel,
                                 DescriptionProduct = sapOrder.ProductDescription,
                                 FinishDate = sapOrder.EndDate,
                                 PlannedQuantity = sapOrder.PlannedQuantity,
