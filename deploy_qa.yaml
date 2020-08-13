@@ -1,0 +1,253 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: omicron-web-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apimanager-deployment
+  labels:
+    app: apimanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apimanager
+  template:
+    metadata:
+      labels:
+        app: apimanager
+    spec:
+      containers:
+      - name: apimanager
+        image: omicron-apimanager-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apimanager-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.101
+  selector:
+    app: apimanager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauthserver-deployment
+  labels:
+    app: oauthserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauthserver
+  template:
+    metadata:
+      labels:
+        app: oauthserver
+    spec:
+      containers:
+      - name: oauthserver
+        image: omicron-oauthserver-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        ports:
+        - containerPort: 8090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogos-deployment
+  labels:
+    app: catalogos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogos
+  template:
+    metadata:
+      labels:
+        app: catalogos
+    spec:
+      containers:
+      - name: catalogos
+        image: omicron-catalogos-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 9010
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  labels:
+    app: usuarios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+      - name: usuarios
+        image: omicron-usuarios-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logs-deployment
+  labels:
+    app: logs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logs
+  template:
+    metadata:
+      labels:
+        app: logs
+    spec:
+      containers:
+      - name: logs
+        image: omicron-logs-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5104
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+      - name: sapadapter
+        image: omicron-sapadapter-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5102
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: POSTGRES_PASSWORD
+          value: Axity2020
+        - name: POSTGRES_USER
+          value: omicronuser
+        - name: POSTGRES_DB
+          value: omicrondev
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        ports:
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.101
+  selector:
+    app: postgres
