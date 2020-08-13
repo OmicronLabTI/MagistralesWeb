@@ -93,5 +93,11 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="listIds">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUsersById(List<string> listIds);
+
+        /// <summary>
+        /// Gets the user with the count of orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetActiveQfbWithOrcerCount();
     }
 }

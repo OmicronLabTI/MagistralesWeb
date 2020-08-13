@@ -137,5 +137,14 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetUsersById(listIds));
         }
+
+        /// <summary>
+        /// Gets the QFB with the total count of orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetQfbWithOrderCount()
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetActiveQfbWithOrcerCount());
+        }
     }
 }

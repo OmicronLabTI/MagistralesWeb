@@ -150,34 +150,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: logs-deployment
-  labels:
-    app: logs
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: logs
-  template:
-    metadata:
-      labels:
-        app: logs
-    spec:
-      containers:
-      - name: logs
-        image: omicron-logs-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5104
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: sapadapter-deployment
   labels:
     app: sapadapter
@@ -206,48 +178,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: pedidos-deployment
   labels:
-    app: postgres
+    app: pedidos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: pedidos
   template:
     metadata:
       labels:
-        app: postgres
+        app: pedidos
     spec:
       containers:
-      - name: postgres
-        image: postgres
+      - name: pedidos
+        image: omicron-pedidos-repository
         imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: America/Mexico_City
-        - name: POSTGRES_PASSWORD
-          value: Axity2020
-        - name: POSTGRES_USER
-          value: omicronuser
-        - name: POSTGRES_DB
-          value: omicrondev
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: trust
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
         ports:
-        - containerPort: 5432
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 5432
-    targetPort: 5432
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: postgres
+        - containerPort: 5103

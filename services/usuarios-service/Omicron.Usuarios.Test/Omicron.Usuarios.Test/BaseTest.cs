@@ -10,6 +10,7 @@ namespace Omicron.Usuarios.Test
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
 
@@ -27,9 +28,9 @@ namespace Omicron.Usuarios.Test
             return new List<UserModel>()
             {
                 new UserModel { Id = "1", FirstName = "Alejandro", LastName = "Ojeda", UserName = "Alex", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1 },
-                new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1 },
-                new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1 },
-                new UserModel { Id = "4", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1 },
+                new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1 },
+                new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1 },
+                new UserModel { Id = "4", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1 },
                 new UserModel { Id = "5", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1 },
             };
         }
@@ -67,6 +68,39 @@ namespace Omicron.Usuarios.Test
                 Password = "abc",
                 Role = 1,
                 Activo = 1,
+            };
+        }
+
+        /// <summary>
+        /// gets the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        public List<RoleModel> GetRoles()
+        {
+            return new List<RoleModel>
+            {
+                new RoleModel { Description = "qfb", Id = 2 },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultCreateOrder()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 2, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "2" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                UserError = string.Empty,
             };
         }
     }

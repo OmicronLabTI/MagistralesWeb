@@ -116,5 +116,14 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         {
             return await this.databaseContext.Usuarios.Where(x => listIds.Contains(x.Id)).ToListAsync();
         }
+
+        /// <summary>
+        /// GEts all the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        public async Task<IEnumerable<RoleModel>> GetAllRoles()
+        {
+            return await this.databaseContext.RoleModel.ToListAsync();
+        }
     }
 }

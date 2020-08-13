@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
+import {IComponentsRes} from '../model/http/detalleformula';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +33,8 @@ export class PedidosService {
   }
   postPlaceOrders(placeOrder: IPlaceOrdersReq) {
     return this.consumeService.httpPost(Endpoints.pedidos.placeOrders, placeOrder);
+  }
+  getComponents(queryStringComponents: string) {
+    return this.consumeService.httpGet<IComponentsRes>(`${Endpoints.pedidos.getComponents}${queryStringComponents}`);
   }
 }

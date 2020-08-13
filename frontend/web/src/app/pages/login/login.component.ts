@@ -4,7 +4,6 @@ import { SecurityService } from 'src/app/services/security.service';
 import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
-import { IUserRes } from 'src/app/model/http/users';
 
 @Component({
   selector: 'app-login',
@@ -31,28 +30,28 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() { }
 
-  async login() {
+   login() {
     const userLoginReq = {
       user: this.formLogin.get('username').value,
       password: this.formLogin.get('password').value,
       redirectUri: 'asdad',
       clientId2: ''
     } as ILoginReq;
-    await this.securityService.login(userLoginReq).toPromise().then(res => {
+    this.securityService.login(userLoginReq).toPromise().then(async res => {
       this.dataService.setToken(res.access_token);
-      this.securityService.getUser(userLoginReq.user).subscribe(
+      await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
-            console.log('userRes: ', userRes)
             this.dataService.setUserId(userRes.response.id);
             this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
           }
-      );
+      ).catch(() => {
+        this.dataService.setGeneralNotificationMessage('Error al obtener usuario');
+      });
       this.dataService.setIsLogin(true);
       this.goToPedidos();
-    }).catch(err => {
-      console.log('error  login: ', err);
+    }).catch(() => {
       this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
-    })
+    });
   }
   goToPedidos() {
     this.router.navigate(['pedidos']);

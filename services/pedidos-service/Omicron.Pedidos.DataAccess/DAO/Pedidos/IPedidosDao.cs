@@ -41,5 +41,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Updates the entries.
+        /// </summary>
+        /// <param name="userOrderModels">the user model.</param>
+        /// <returns>the data.</returns>
+        Task<bool> UpdateUserOrders(List<UserOrderModel> userOrderModels);
     }
 }

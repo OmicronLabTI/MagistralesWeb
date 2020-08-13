@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Obtiene la orden de fabricacion en base al orderitem-productid.
+        /// Obtiene la orden de fabricacion en base al orderitem-productid para el insert de ordenes de fabricacion.
         /// </summary>
         /// <param name="pedidosId">the ids.</param>
         /// <returns>the result.</returns>
@@ -94,6 +94,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetProdOrderByOrderItem(List<string> pedidosId)
         {
             var result = await this.sapFacade.GetProdOrderByOrderItem(pedidosId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="parameters">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/componentes")]
+        [HttpGet]
+        public async Task<IActionResult> GetComponentes([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetComponents(parameters);
             return this.Ok(result);
         }
     }

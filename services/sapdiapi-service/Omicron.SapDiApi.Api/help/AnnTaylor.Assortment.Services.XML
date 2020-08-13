@@ -178,6 +178,13 @@
             <param name="orderWithDetailDto">the detial.</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateFabOrder(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.UpdateFabOrderDto})">
+            <summary>
+            updates a fabrication order.
+            </summary>
+            <param name="updateFabOrderDto">the list of fabrication orders..</param>
+            <returns>the reult.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

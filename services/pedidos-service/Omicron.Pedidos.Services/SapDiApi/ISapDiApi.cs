@@ -19,8 +19,9 @@ namespace Omicron.Pedidos.Services.SapDiApi
         /// <summary>
         /// get orders with the data.
         /// </summary>
-        /// <param name="pedidos">the orders.</param>
+        /// <param name="dataToSend">the orders.</param>
+        /// <param name="route">the route to send.</param>
         /// <returns>the return.</returns>
-        Task<ResultModel> CreateFabOrder(object pedidos);
+        Task<ResultModel> PostToSapDiApi(object dataToSend, string route);
     }
 }

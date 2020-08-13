@@ -23,5 +23,13 @@ namespace Omicron.Usuarios.Entities.Context
         /// Object UserModel CatUser.
         /// </value>
         DbSet<UserModel> Usuarios { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatUser.
+        /// </summary>
+        /// <value>
+        /// Object UserModel CatUser.
+        /// </value>
+        DbSet<RoleModel> RoleModel { get; set; }
     }
 }

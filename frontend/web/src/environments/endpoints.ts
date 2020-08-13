@@ -19,7 +19,7 @@ export const Endpoints = {
     processOrders: `${environment.baseUrl}/api/sapadapter/process/`,
     getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
-
+    getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
 }
 };
 

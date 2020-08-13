@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Net;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -58,10 +59,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-
-            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs);
-            var listUsers = JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+            var listUsers = await this.GetUsers(userOrders);
 
             orders = this.FilterList(orders, parameters, userOrders, listUsers);
 
@@ -85,9 +83,19 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(docId);
 
+            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId });
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
+
+            var listUsers = await this.GetUsers(userOrders);
+
             details.ToList().ForEach(x =>
             {
-                x.Status = !string.IsNullOrEmpty(x.Status) && ServiceConstants.DictStatus.ContainsKey(x.Status) ? ServiceConstants.DictStatus[x.Status] : x.Status;
+                var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
+                var userId = userOrder == null ? string.Empty : userOrder.Userid;
+                var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+
+                x.Status = userOrder == null ? string.Empty : userOrder.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -196,6 +204,39 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// gets the items from the dict.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetComponents(Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                throw new CustomServiceException(ServiceConstants.NoChipsError);
+            }
+
+            var listValues = new List<CompleteDetalleFormulaModel>();
+            var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            foreach (var v in chipValues)
+            {
+                listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(v)).ToList());
+                listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(v)).ToList());
+            }
+
+            listValues = this.MakeDistincList(listValues);
+
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
+            var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
@@ -231,7 +272,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             orderModels.ForEach(x =>
             {
-                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString());
+                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
                 var userId = order == null ? string.Empty : order.Userid;
                 var user = users.FirstOrDefault(y => y.Id.Equals(userId));
 
@@ -241,7 +282,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-                x.Qfb = user == null ? string.Empty : user.FirstName;
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -262,6 +303,39 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return orderModels;
+        }
+
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <param name="userOrders">the user order model.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
+        {
+            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
+            var users = await this.usersService.GetUsersById(userIDs);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        /// <summary>
+        /// makes the distinc for  the list.
+        /// </summary>
+        /// <param name="formulas">the values.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteDetalleFormulaModel> MakeDistincList(List<CompleteDetalleFormulaModel> formulas)
+        {
+            var lisToReturn = new List<CompleteDetalleFormulaModel>();
+            var dictIds = new Dictionary<string, string>();
+            formulas.ForEach(f =>
+            {
+                if (!dictIds.ContainsKey(f.ProductId))
+                {
+                    dictIds.Add(f.ProductId, f.Description);
+                    lisToReturn.Add(f);
+                }
+            });
+
+            return lisToReturn;
         }
     }
 }

@@ -45,5 +45,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("OnHand")]
         public decimal OnHand { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("InvntryUom")]
+        public string Unit { get; set; }
     }
 }

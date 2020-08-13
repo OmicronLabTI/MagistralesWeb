@@ -1,4 +1,10 @@
 import {BaseResponseHttp} from './commons';
+export class IFormulaRes extends BaseResponseHttp {
+    response: IFormulaReq;
+}
+export class IComponentsRes extends BaseResponseHttp {
+    response: IFormulaDetalleReq[];
+}
 
 export class IFormulaReq {
     fabDate: string;
@@ -27,6 +33,7 @@ export class IFormulaReq {
 
 export class IFormulaDetalleReq {
     isChecked: boolean;
+    orderFabId?: number;
     productId: string;
     description: string;
     baseQuantity: number;
@@ -40,12 +47,5 @@ export class IFormulaDetalleReq {
     warehouseQuantity: number;
 }
 
-/*
-export class IFormulaRes extends BaseResponseHttp{
-    response: any;
-}
-*/
 
-export class IFormulaRes extends BaseResponseHttp {
-    response: IFormulaReq;
-}
+

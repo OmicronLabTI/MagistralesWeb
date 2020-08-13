@@ -4,6 +4,8 @@ import {PedidosService} from '../../services/pedidos.service';
 import {IFormulaRes, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
 import { ActivatedRoute } from '@angular/router';
 import {ErrorService} from '../../services/error.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -32,7 +34,8 @@ export class DetalleFormulaComponent implements OnInit {
   ];
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
 
-  constructor(private pedidosService: PedidosService, private route: ActivatedRoute, private errorService: ErrorService) { }
+  constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
+              private errorService: ErrorService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -67,6 +70,23 @@ export class DetalleFormulaComponent implements OnInit {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+  }
+
+  openDialog(modalTypeOpen: string) {
+    const dialogRef = this.dialog.open(ComponentSearchComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+        modalType: modalTypeOpen
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
+      if (resultComponents) {
+        const oldDataSource = this.dataSource.data;
+        oldDataSource.push(resultComponents);
+        this.dataSource.data = oldDataSource;
+      }
+    });
   }
 
 }

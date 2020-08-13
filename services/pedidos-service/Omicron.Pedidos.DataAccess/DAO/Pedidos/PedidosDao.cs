@@ -49,7 +49,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             this.databaseContext.OrderLogModel.AddRange(orderLog);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-
             return true;
         }
 
@@ -71,6 +70,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Updates the entries.
+        /// </summary>
+        /// <param name="userOrderModels">the user model.</param>
+        /// <returns>the data.</returns>
+        public async Task<bool> UpdateUserOrders(List<UserOrderModel> userOrderModels)
+        {
+            this.databaseContext.UserOrderModel.UpdateRange(userOrderModels);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
     }
 }

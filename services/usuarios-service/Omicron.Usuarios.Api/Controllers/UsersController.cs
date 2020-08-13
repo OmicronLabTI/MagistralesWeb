@@ -119,7 +119,7 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
-        /// gets the users by  id.
+        /// gets the users by id.
         /// </summary>
         /// <param name="listIds">the list.</param>
         /// <returns>the usrse.</returns>
@@ -134,13 +134,25 @@ namespace Omicron.Usuarios.Api.Controllers
         /// <summary>
         /// Method to get user By Id.
         /// </summary>
-        /// <param name="userId">User Id.</param>
+        /// <param name="userName">User Id.</param>
         /// <returns>User Model.</returns>
-        [Route("/user/{userId}")]
+        [Route("/user/{userName}")]
         [HttpGet]
-        public async Task<IActionResult> Get(string userId)
+        public async Task<IActionResult> Get(string userName)
         {
-            var result = await this.userFacade.GetUser(userId.ToString());
+            var result = await this.userFacade.GetUser(userName.ToString());
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Gets the the QFB with the count of orders.
+        /// </summary>
+        /// <returns>User Model.</returns>
+        [Route("/qfb/countOrders")]
+        [HttpGet]
+        public async Task<IActionResult> GetQfbWithOrderCount()
+        {
+            var result = await this.userFacade.GetQfbWithOrderCount();
             return this.Ok(result);
         }
 

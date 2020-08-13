@@ -30,6 +30,8 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<ProcessOrderModel, ProcessOrderDto>();
             this.CreateMap<ProcessOrderDto, ProcessOrderModel>();
+            this.CreateMap<ManualAssignDto, ManualAssignModel>();
+            this.CreateMap<ManualAssignModel, ManualAssignDto>();
         }
     }
 }

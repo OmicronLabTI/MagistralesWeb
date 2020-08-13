@@ -97,6 +97,10 @@ namespace Omicron.Usuarios.Test.Facade
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(result));
 
+            mockServices
+                .Setup(m => m.GetActiveQfbWithOrcerCount())
+                .Returns(Task.FromResult(result));
+
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
         }
 
@@ -312,6 +316,25 @@ namespace Omicron.Usuarios.Test.Facade
 
             // act
             var response = await this.userFacade.GetUsersById(listIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// tet test.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetQfbWithOrderCount()
+        {
+            // act
+            var response = await this.userFacade.GetQfbWithOrderCount();
 
             // Assert
             Assert.IsNotNull(response);

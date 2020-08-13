@@ -93,7 +93,7 @@ body {
 }
 .table-container {
   width: 100%;
-  height: 88%;
+  height: 90%;
   overflow-y: scroll;
 }
 .scroll-custom {
@@ -522,4 +522,17 @@ a.breadcrumblink:hover{
 
 .mat-form-field-appearance-outline .mat-form-field-infix {
   padding: 0.7em 0 0.7em 0 !important;
+}
+
+.table-container-component {
+  width: 100%;
+  //overflow-y: scroll;
+}
+
+.table-container-component {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+}
+
+.table-container-component::-webkit-scrollbar {
+  display: none;
 }

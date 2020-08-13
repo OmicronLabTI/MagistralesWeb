@@ -51,5 +51,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrderFormula(int orderId);
+
+        /// <summary>
+        /// Gets the componenets based in the dic.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetComponents(Dictionary<string, string> parameters);
     }
 }
