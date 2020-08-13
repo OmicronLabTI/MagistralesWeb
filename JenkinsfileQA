@@ -52,7 +52,7 @@ pipeline {
                     }
                 }
                 dir ('services/oauthserver/'){
-                    sh 'sed -i "192.168.0.101:8000/192.168.0.83:8000/g" ./oauth-web/src/main/resources/application.yml'
+                    sh 'sed -i "s/192.168.0.101:8000/192.168.0.83:8000/g" ./oauth-web/src/main/resources/application.yml'
                     sh 'mvn clean package'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
@@ -80,12 +80,12 @@ pipeline {
                         sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-usuarios-repository ."
                     }
                 }
-                echo 'Building Logs'
-                dir ('services/logs-service/'){
-                    sh 'dotnet publish Omicron.Logs.Api/Omicron.Logs.Api.csproj -c Release -o app/'
+                echo 'Building Pedidos'
+                dir ('services/pedidos-service/'){
+                    sh 'dotnet publish Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj -c Release -o app/'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
-                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-logs-repository ."
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-pedidos-repository ."
                     }
                 }
 				echo 'Building SapAdapter'
@@ -152,10 +152,10 @@ pipeline {
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
-				dir ('services/logs-service/'){
-                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_logs_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Logs.Test/Omicron.Logs.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Logs.Api/**'"
-                    sh 'dotnet build Omicron.Logs.Microservice.sln'
-					sh 'dotnet test Omicron.Logs.Test/Omicron.Logs.Test/Omicron.Logs.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+				dir ('services/pedidos-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_pedidos_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Pedidos.Test/Omicron.Pedidos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Pedidos.Api/**'"
+                    sh 'dotnet build Omicron.Pedidos.Microservice.sln'
+					sh 'dotnet test Omicron.Pedidos.Test/Omicron.Pedidos.Test/Omicron.Pedidos.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
@@ -179,7 +179,7 @@ pipeline {
             steps {
                 dir ('database/'){
                     sh '/opt/liquibase/liquibase --version'
-                    sh 'sed -i "192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
+                    sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
 					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
                     echo 'Applying Db changes'
                 }
