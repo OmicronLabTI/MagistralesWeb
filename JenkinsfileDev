@@ -169,9 +169,9 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl delete -f deploy_dev.yaml'
+                //sh 'sudo kubectl delete -f deploy_dev.yaml'
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
-				sh 'sudo kubectl rollout status Deployment/postgres-deployment --timeout 0s'
+				//sh 'sudo kubectl rollout status Deployment/postgres-deployment --timeout 0s'
             }
         }
         stage('Database') {
