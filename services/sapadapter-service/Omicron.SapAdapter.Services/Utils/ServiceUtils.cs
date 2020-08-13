@@ -65,6 +65,26 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// gets the distinc by.
+        /// </summary>
+        /// <typeparam name="Tsource">the list source.</typeparam>
+        /// <typeparam name="TKey">the key to look.</typeparam>
+        /// <param name="source">the sourec.</param>
+        /// <param name="keyselector">the key.</param>
+        /// <returns>the list distinc.</returns>
+        public static IEnumerable<Tsource> DistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (Tsource element in source)
+            {
+                if (seenKeys.Add(keyselector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

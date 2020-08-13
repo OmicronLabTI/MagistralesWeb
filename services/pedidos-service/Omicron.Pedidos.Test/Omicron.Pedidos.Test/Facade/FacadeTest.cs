@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Test.Facade
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -86,6 +87,10 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.UpdateComponents(It.IsAny<UpdateFormulaModel>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
@@ -246,6 +251,40 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.AssignHeader(asignar);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task UpdateComponents()
+        {
+            // arrange
+            var components = new List<CompleteDetalleFormulaDto>
+            {
+                new CompleteDetalleFormulaDto { Available = 1, BaseQuantity = 1, Consumed = 1, Description = "Des", OrderFabId = 2, PendingQuantity = 1, ProductId = "Aspirina", RequiredQuantity = 1, Stock = 1, Unit = "Unit", Warehouse = "wh", WarehouseQuantity = 1 },
+            };
+
+            var asignar = new UpdateFormulaDto
+            {
+                Comments = "Comments",
+                Components = components,
+                FabOrderId = 1,
+                FechaFin = DateTime.Now,
+                PlannedQuantity = 1,
+            };
+
+            // act
+            var response = await this.pedidoFacade.UpdateComponents(asignar);
 
             // Assert
             Assert.IsNotNull(response);

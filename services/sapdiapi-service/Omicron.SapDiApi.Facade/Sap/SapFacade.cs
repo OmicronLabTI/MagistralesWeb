@@ -60,5 +60,15 @@ namespace Omicron.SapDiApi.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateFabOrders(this.mapper.Map<List<UpdateFabOrderModel>>(updateFabOrderDtos)));
         }
+
+        /// <summary>
+        /// Updates the formula.
+        /// </summary>
+        /// <param name="updateFormula">the object to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateFormula(this.mapper.Map<UpdateFormulaModel>(updateFormula)));
+        }
     }
 }

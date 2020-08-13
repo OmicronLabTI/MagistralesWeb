@@ -63,10 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CompleteDetailDto.cs" />
+    <Compile Include="Models\CompleteDetalleFormulaDto.cs" />
     <Compile Include="Models\OrderDto.cs" />
     <Compile Include="Models\OrderWithDetailDto.cs" />
     <Compile Include="Models\ResultDto.cs" />
     <Compile Include="Models\UpdateFabOrderDto.cs" />
+    <Compile Include="Models\UpdateFormulaDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

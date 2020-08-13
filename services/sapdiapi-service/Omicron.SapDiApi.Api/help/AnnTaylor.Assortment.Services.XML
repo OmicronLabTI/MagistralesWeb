@@ -185,6 +185,13 @@
             <param name="updateFabOrderDto">the list of fabrication orders..</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateFormula(Omicron.SapDiApi.Dtos.Models.UpdateFormulaDto)">
+            <summary>
+            updates a fabrication order.
+            </summary>
+            <param name="updateFormula">the list of fabrication orders..</param>
+            <returns>the reult.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

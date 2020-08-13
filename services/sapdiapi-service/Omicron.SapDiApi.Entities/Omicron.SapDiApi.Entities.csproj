@@ -65,11 +65,13 @@
     <Compile Include="Context\Connection.cs" />
     <Compile Include="Context\IConnection.cs" />
     <Compile Include="Models\CompleteDetailModel.cs" />
+    <Compile Include="Models\CompleteDetalleFormulaModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderWithDetailModel.cs" />
     <Compile Include="Models\ResultModel.cs" />
     <Compile Include="Models\SapConnectModel.cs" />
     <Compile Include="Models\UpdateFabOrderModel.cs" />
+    <Compile Include="Models\UpdateFormulaModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

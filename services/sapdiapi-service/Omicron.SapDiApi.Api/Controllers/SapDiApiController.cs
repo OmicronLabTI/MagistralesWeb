@@ -60,6 +60,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// updates a fabrication order.
+        /// </summary>
+        /// <param name="updateFormula">the list of fabrication orders..</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("updateFormula")]
+        public async Task<IHttpActionResult> UpdateFormula([FromBody] UpdateFormulaDto updateFormula)
+        {
+            var result = await this.sapFacade.UpdateFormula(updateFormula);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>
