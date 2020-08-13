@@ -65,9 +65,9 @@ class LoginViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.loginResponse
+        viewModel.finishedLogin
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { res in
+            .subscribe(onNext: {
                 let splitVC = self.getViewController(storyBoardName: ViewControllerIdentifiers.storieboardName, viewControllerName: ViewControllerIdentifiers.splitViewController) as! UISplitViewController
                 self.view.addSubview(splitVC.view)
                 self.view.bounds = splitVC.view.bounds

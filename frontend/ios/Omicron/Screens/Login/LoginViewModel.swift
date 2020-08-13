@@ -12,7 +12,7 @@ import RxCocoa
 import CryptoKit
 
 class LoginViewModel {
-    public let loginResponse : PublishSubject<LoginResponse> = PublishSubject()
+    public let finishedLogin : PublishSubject<Void> = PublishSubject()
     public let loading: PublishSubject<Bool> = PublishSubject()
     public let error : PublishSubject<String> = PublishSubject()
     
@@ -37,22 +37,29 @@ class LoginViewModel {
             })
             .subscribe(onNext: { data in
                 self.loading.onNext(true)
-                NetworkManager.shared.login(data: data).subscribe(onNext: { [weak self] res in
-                    self?.loading.onNext(false)
-                    Persistence.shared.saveUserName(username: data.user)
-                    Persistence.shared.saveLoginData(data: res)
-                    self?.loginResponse.onNext(res)
-                    }, onError: { [weak self] err in
+                NetworkManager.shared.login(data: data)
+                    .flatMap({ res -> Observable<UserInfoResponse> in
+                        Persistence.shared.saveLoginData(data: res)
+                        return NetworkManager.shared.getInfoUser(userId: data.user)
+                    }).subscribe(onNext: { [weak self] info  in
                         self?.loading.onNext(false)
-                        switch (err) {
-                        case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
-                            self?.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
-                        case RequestError.unauthorized(let httpError):
-                            self?.error.onNext(httpError?.userError ?? Constants.Errors.unauthorized.rawValue)
-                        default:
+                        if let user = info.response {
+                            Persistence.shared.saveUserData(user: user)
+                            self?.finishedLogin.onNext(())
+                        } else {
                             self?.error.onNext(Constants.Errors.serverError.rawValue)
                         }
-                }).disposed(by: self.disposeBag)
+                        }, onError: { [weak self] err in
+                            self?.loading.onNext(false)
+                            switch (err) {
+                            case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
+                                self?.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
+                            case RequestError.unauthorized(let httpError):
+                                self?.error.onNext(httpError?.userError ?? Constants.Errors.unauthorized.rawValue)
+                            default:
+                                self?.error.onNext(Constants.Errors.serverError.rawValue)
+                            }
+                    }).disposed(by: self.disposeBag)
             }).disposed(by: disposeBag)
     }
 }

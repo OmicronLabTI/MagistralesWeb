@@ -25,12 +25,9 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
-        
         self.initComponents()
         self.viewModelBinding()
-        //self.title = self.getUserInfo()
+        self.rootViewModel.getOrders()
     }
     
     // MARK: Functions
