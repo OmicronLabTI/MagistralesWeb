@@ -8,14 +8,14 @@ import { DataService } from '../services/data.service';
 import { TokenExcludedEndpoints } from 'src/environments/endpoints';
 import { AppConfig } from '../constants/app-config';
 
-let DEFAULT_TIMEOUT = 30000;
+const DEFAULT_TIMEOUT = 40000;
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private _dataService: DataService) { }
+  constructor(private dataService: DataService) { }
 
   private applyCredentials = (req: HttpRequest<any>) => {
-    const token = this._dataService.getToken();
+    const token = this.dataService.getToken();
 
     if (token && !this.endpointExcluded(req.url)) {
       req = req.clone({
@@ -26,7 +26,7 @@ export class TokenInterceptor implements HttpInterceptor {
         }
       });
     }
-    console.log('req: ', req)
+    console.log('req: ', req);
     return req;
   }
 

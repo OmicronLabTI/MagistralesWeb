@@ -1,4 +1,4 @@
 export const AppConfig = {
-  httpTimeout: 30000,
+  httpTimeout: 40000,
   generalMessageTimeout: 3000
-}
+};

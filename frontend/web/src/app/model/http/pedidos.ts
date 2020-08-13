@@ -19,6 +19,9 @@ export class IPedidosRes extends BaseResponseHttp {
 export class IPedidosListRes extends BaseResponseHttp {
     response: IPedidoReq[];
 }
+export class IProcessOrdersRes extends BaseResponseHttp {
+    response: string[];
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum: number;
