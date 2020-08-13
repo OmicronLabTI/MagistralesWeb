@@ -52,7 +52,7 @@ pipeline {
                     }
                 }
                 dir ('services/oauthserver/'){
-                    sh 'sed -i "192.168.0.101:8000/192.168.0.83:8000/g" ./oauth-web/src/main/resources/application.yml'
+                    sh 'sed -i "s/192.168.0.101:8000/192.168.0.83:8000/g" ./oauth-web/src/main/resources/application.yml'
                     sh 'mvn clean package'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
@@ -179,7 +179,7 @@ pipeline {
             steps {
                 dir ('database/'){
                     sh '/opt/liquibase/liquibase --version'
-                    sh 'sed -i "192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
+                    sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
 					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
                     echo 'Applying Db changes'
                 }
