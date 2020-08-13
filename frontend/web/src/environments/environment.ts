@@ -9,6 +9,9 @@ export const environment = {
     baseUrlLogin: 'http://localhost:8090', // dev
     baseUrlUsers: 'http://localhost:5101', // dev
     baseUrlCatalogs: 'http://localhost:9010', // dev
+    apiLogin: '/api/oauth/oauthrs',
+    apiCatalogs: '/api/catalogos',
+    apiUsers: '/api/usuarios',
 };
 
 /*
