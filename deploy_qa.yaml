@@ -146,34 +146,34 @@ spec:
           value: Staging
         ports:
         - containerPort: 5101
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: logs-deployment
-  labels:
-    app: logs
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: logs
-  template:
-    metadata:
-      labels:
-        app: logs
-    spec:
-      containers:
-      - name: logs
-        image: omicron-logs-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5104
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: logs-deployment
+#  labels:
+#    app: logs
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: logs
+#  template:
+#    metadata:
+#      labels:
+#        app: logs
+#    spec:
+#      containers:
+#      - name: logs
+#        image: omicron-logs-repository
+#        imagePullPolicy: IfNotPresent
+#        env:
+#        - name: TZ
+#          value: America/Mexico_City
+#        - name: ASPNETCORE_ENVIRONMENT
+#          value: Staging
+#        ports:
+#        - containerPort: 5104
 ---
 apiVersion: apps/v1
 kind: Deployment
