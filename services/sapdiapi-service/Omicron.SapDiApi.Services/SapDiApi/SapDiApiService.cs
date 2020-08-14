@@ -153,7 +153,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 for (var i = 0; i < components.RecordCount; i++)
                 {
                     var sapItemCode = components.Fields.Item("ItemCode").Value;
-                    var lineNum = components.Fields.Item("LineNum").Value;
+                    var lineNum = components.Fields.Item("VisOrder").Value;
+
                     productionOrderObj.Lines.SetCurrentLine(lineNum);
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
