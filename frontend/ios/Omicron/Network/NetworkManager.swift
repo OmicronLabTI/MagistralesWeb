@@ -81,6 +81,13 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
+    
+    func deleteItemOfOrdenDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<OrderDetailResponse> {
+        let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
+        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        return res
+    }
+
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?

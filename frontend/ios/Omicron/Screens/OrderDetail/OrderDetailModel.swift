@@ -92,3 +92,42 @@ extension Detail: Mappable {
         self.warehouseQuantity <- map["warehouseQuantity"]
     }
 }
+
+class OrderDetailRequest: Codable {
+    let fabOrderID, plannedQuantity: Int
+    let fechaFin, comments: String
+    let components: [Component]
+    
+    init(fabOrderID: Int, plannedQuantity: Int, fechaFin: String, comments: String, components:[Component]) {
+        self.fabOrderID = fabOrderID
+        self.plannedQuantity = plannedQuantity
+        self.fechaFin = fechaFin
+        self.comments = comments
+        self.components = components
+    }
+}
+
+class Component: Codable {
+    let orderFabId: Int
+    let productId, componentDescription: String
+    let baseQuantity, requiredQuantity, consumed, available: Int
+    let unit, warehouse: String
+    let pendingQuantity, stock, warehouseQuantity: Int
+    let action: String
+    
+    init(orderFabID: Int, productId: String, componentDescription: String,  baseQuantity: Int, requiredQuantity: Int, consumed: Int, available: Int, unit: String, warehouse: String, pendingQuantity: Int, stock: Int, warehouseQuantity: Int, action: String) {
+        self.orderFabId = orderFabID
+        self.productId = productId
+        self.componentDescription = componentDescription
+        self.baseQuantity = baseQuantity
+        self.requiredQuantity = requiredQuantity
+        self.consumed = consumed
+        self.available = available
+        self.unit = unit
+        self.warehouse = warehouse
+        self.pendingQuantity = pendingQuantity
+        self.stock = stock
+        self.warehouseQuantity = warehouseQuantity
+        self.action = action
+    }
+}

@@ -15,9 +15,11 @@ class OrderDetailViewModel {
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
+    var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorRelay<[Detail]> = BehaviorRelay<[Detail]>(value: [])
-    var error: PublishSubject<String> = PublishSubject()
+    var showAlert: PublishSubject<String> = PublishSubject()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
+    var auxTabledata:[Detail] = []
     
     // MARK: Init
     init() {
@@ -30,10 +32,41 @@ class OrderDetailViewModel {
         NetworkManager.shared.getOrdenDetail(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
             self.orderDetailData.accept([res.response!])
             self.tableData.accept(res.response!.details!)
+            self.auxTabledata = res.response!.details!
+            self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
         }, onError: { error in
             self.loading.onNext(false)
-            self.error.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+            self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+
+    func deleteItemFromTable(index: Int) {
+        let itemToDelete = auxTabledata[index]
+        let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!, componentDescription: itemToDelete.detailDescription!, baseQuantity: itemToDelete.baseQuantity!, requiredQuantity: itemToDelete.requiredQuantity!, consumed: itemToDelete.consumed!, available: itemToDelete.available!, unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!, pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!, warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
+
+        let fechaFinFormated = self.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
+        let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
+
+        NetworkManager.shared.deleteItemOfOrdenDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
+            self.loading.onNext(false)
+                self.tempOrderDetailData?.details?.remove(at: index)
+            self.tableData.accept((self.tempOrderDetailData?.details)!)
+        }, onError: {  error in
+            self.loading.onNext(false)
+            self.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
+
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "dd/MM/yyyy"
+        if let date = inputFormatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+          outputFormatter.dateFormat = format
+            return outputFormatter.string(from: date)
+        }
+        return nil
     }
 }

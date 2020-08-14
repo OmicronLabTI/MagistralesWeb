@@ -18,4 +18,15 @@ class AlertManager {
         alert.addAction(okAction)
         view.present(alert, animated: true, completion: nil)
     }
+    
+//    func showAlertConfirmation(message: String, view: UIViewController) -> Int {
+//        var response = -1
+//        let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+//        let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {action in response = 0})
+//        let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {action in response = 1})
+//        alert.addAction(cancelAction)
+//        alert.addAction(okAction)
+//        view.present(alert, animated: true, completion: nil)
+//        return response
+//    }
 }

@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class OrderDetailViewController: UIViewController {
+class OrderDetailViewController: UIViewController, UITableViewDelegate {
 
     // Outlets
     @IBOutlet weak var nameStatusLabel: UILabel!
@@ -57,7 +57,7 @@ class OrderDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showButtonsByStatusType(statusType: statusType)
-        orderDetailViewModel.getOrdenDetail(orderId: orderId)
+        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
         //splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
@@ -68,13 +68,7 @@ class OrderDetailViewController: UIViewController {
     
     //MARK: Functions
     func viewModelBinding() {
-        
-        tableView.rx.itemSelected.subscribe(onNext: {  [weak self] indexPath in
-            guard let self = self else { return }
-            //Do delete he
-            AlertManager.shared.showAlert(message: "Desea eliminar ", view: self)
-        }).disposed(by: disposeBag)
-        
+                
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
             
             if((res.first) != nil) {
@@ -104,8 +98,8 @@ class OrderDetailViewController: UIViewController {
             cell.storedQuantity.text = "\(data.warehouseQuantity!)"
         }.disposed(by: disposeBag)
         
-        orderDetailViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { errorMenssage in
-            AlertManager.shared.showAlert(message: "Hubo un error al cargar el detalle de la ordem de fabricación, intentar de nuevo", view: self)
+        orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
         orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
@@ -178,24 +172,29 @@ class OrderDetailViewController: UIViewController {
     }
     
     
-}
-
-extension OrderDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
             //Code I want to do
-            AlertManager.shared.showAlert(message: "Editar \(indexPath.row)", view: self)
+            AlertManager.shared.showAlert(message: "Funcionalidad no implementada \(indexPath.row)", view: self)
         }
         
+        // Logica para borrar un elemento de la tabla
         let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
-            //Code I want to do here
-            AlertManager.shared.showAlert(message: "eliminar elemento \(indexPath.row)", view: self)
+            let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
         }
-        
-        
         let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
-
         return swipeActions
     }
+    
+    func sendIndexToDelete(index: Int) -> Void  {
+        orderDetailViewModel.deleteItemFromTable(index: index)
+    }
 }
+
+
