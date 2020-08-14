@@ -60,11 +60,20 @@ class OrderDetailViewController: UIViewController {
         orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
-        splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
+        //splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
+        self.tableView.allowsMultipleSelectionDuringEditing = false
+        tableView.delegate = self
+        tableView.setEditing(false, animated: true)
     }
     
     //MARK: Functions
     func viewModelBinding() {
+        
+        tableView.rx.itemSelected.subscribe(onNext: {  [weak self] indexPath in
+            guard let self = self else { return }
+            //Do delete he
+            AlertManager.shared.showAlert(message: "Desea eliminar ", view: self)
+        }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
             
@@ -169,4 +178,24 @@ class OrderDetailViewController: UIViewController {
     }
     
     
+}
+
+extension OrderDetailViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
+            //Code I want to do
+            AlertManager.shared.showAlert(message: "Editar \(indexPath.row)", view: self)
+        }
+        
+        let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
+            //Code I want to do here
+            AlertManager.shared.showAlert(message: "eliminar elemento \(indexPath.row)", view: self)
+        }
+        
+        
+        let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
+
+        return swipeActions
+    }
 }
