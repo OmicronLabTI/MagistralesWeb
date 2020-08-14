@@ -58,5 +58,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="updateFormula">upddates the formula.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula);
+
+        /// <summary>
+        /// Updates the status.
+        /// </summary>
+        /// <param name="updateStatusOrder">the status model.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
     }
 }
