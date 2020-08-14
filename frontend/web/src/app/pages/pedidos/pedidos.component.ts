@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
-import {CONST_STRING, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {IPedidoReq, IPedidosListRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-o
   templateUrl: './pedidos.component.html',
   styleUrls: ['./pedidos.component.scss']
 })
-export class PedidosComponent implements OnInit {
+export class PedidosComponent implements OnInit, OnDestroy {
   allComplete = false;
   ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
@@ -29,10 +29,13 @@ export class PedidosComponent implements OnInit {
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
+  fullQueryString = CONST_STRING.empty;
   rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
+  isThereOrdersToPlan = false;
+  isThereOrdersToPlace = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -42,7 +45,8 @@ export class PedidosComponent implements OnInit {
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
     this.filterDataOrders.dateFull = this.rangeDate;
-    this.queryString = `?fini=${this.rangeDate}&offset=${this.offset}&limit=${this.limit}`;
+    this.queryString = `?fini=${this.rangeDate}`;
+    this.getFullQueryString();
   }
 
   ngOnInit() {
@@ -51,12 +55,11 @@ export class PedidosComponent implements OnInit {
   }
 
   getPedidos() {
-    this.pedidosService.getPedidos(this.queryString).subscribe(
-      (pedidoRes: IPedidosListRes) => {
+    this.pedidosService.getPedidos(this.fullQueryString).subscribe(
+      pedidoRes => {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          // element.pedidoStatus = element.pedidoStatus === 'O' ? 'Abierto' : 'Cerrado';
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       },
@@ -69,6 +72,7 @@ export class PedidosComponent implements OnInit {
 
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.getButtonsToUnLooked();
   }
 
   someComplete(): boolean {
@@ -84,6 +88,7 @@ export class PedidosComponent implements OnInit {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.getButtonsToUnLooked();
   }
 
   processOrders() {
@@ -107,6 +112,7 @@ export class PedidosComponent implements OnInit {
   changeDataEvent(event: PageEvent) {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
+    this.getFullQueryString();
     this.getPedidos();
     return event;
   }
@@ -149,7 +155,7 @@ export class PedidosComponent implements OnInit {
         }
       }
       this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
-      this.queryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+      this.getFullQueryString();
       if (result) {
         this.getPedidos();
       }
@@ -162,4 +168,24 @@ export class PedidosComponent implements OnInit {
     return `${this.dataService.transformDate(initDate)}-${this.dataService.transformDate(finishDate)}`;
   }
 
+  openPlaceOrdersDialog() {
+    this.dataService.setQbfToPlace(
+        {
+          modalType: MODAL_NAMES.placeOrders,
+          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Planificado')).map(t => t.docNum)
+        });
+  }
+  getButtonsToUnLooked() {
+    this.isThereOrdersToPlan = this.getIsThereOnData('Abierto');
+    this.isThereOrdersToPlace = this.getIsThereOnData('Planificado');
+  }
+  getIsThereOnData(status: string) {
+    return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+  }
+  getFullQueryString() {
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+  }
+
+  ngOnDestroy() {
+  }
 }

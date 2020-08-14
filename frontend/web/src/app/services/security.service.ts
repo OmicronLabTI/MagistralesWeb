@@ -3,7 +3,7 @@ import { Endpoints } from 'src/environments/endpoints';
 import { ILoginRes, ILoginReq } from '../model/http/security.model';
 import { Observable } from 'rxjs';
 import { ConsumeService } from './consume.service';
-import { IUserReq } from '../model/http/users';
+import {IUserReq, IUserRes} from '../model/http/users';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,6 @@ export class SecurityService {
   }
 
   getUser(userName: string){
-    return this.consumeService.httpGet(Endpoints.users.getUser + userName);
+    return this.consumeService.httpGet<IUserRes>(Endpoints.users.getUser + userName);
   }
 }

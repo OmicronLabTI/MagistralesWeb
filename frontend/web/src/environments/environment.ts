@@ -5,10 +5,13 @@
 export const environment = {
     production: false,
     // baseUrl: 'http://localhost:8000', // prod
-    baseUrl: 'https://1ef76799b763.ngrok.io', // dev
+    baseUrl: 'https://30062a3026d6.ngrok.io', // dev
     baseUrlLogin: 'http://localhost:8090', // dev
     baseUrlUsers: 'http://localhost:5101', // dev
     baseUrlCatalogs: 'http://localhost:9010', // dev
+    apiLogin: '/api/oauth/oauthrs',
+    apiCatalogs: '/api/catalogos',
+    apiUsers: '/api/usuarios',
 };
 
 /*

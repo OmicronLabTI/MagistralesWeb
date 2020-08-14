@@ -79,9 +79,7 @@
   background: #6C90B3;
   height: 100%;
 }
-.margin-left-options{
-  margin-left: 15px;
-}
+
 .menu-options-container{
   display: flex;
   width: 100%;
@@ -123,5 +121,5 @@
 }
 
 .mat-toolbar-multiple-rows {
-  min-height: 0px !important;
+  min-height: 0 !important;
 }

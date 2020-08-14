@@ -3,6 +3,7 @@ export const CONST_NUMBER = {
     one: 1,
     two: 2,
     three: 3,
+    five: 5,
     ten: 10,
     timeToast: 2000
 
@@ -18,7 +19,9 @@ export const CONST_USER_DIALOG = {
 
 export const MODAL_NAMES =  {
     addUserModal: 'addModal',
-    editUser: 'editModal'
+    editUser: 'editModal',
+    placeOrders: 'Pedido',
+    placeOrdersDetail: 'Orden'
 };
 export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
