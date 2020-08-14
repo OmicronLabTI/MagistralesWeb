@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PedidosComponent } from './pedidos.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {MatTableModule, MatMenuModule} from '@angular/material';
-import {HttpClientModule} from "@angular/common/http";
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {HttpClientModule} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -14,7 +14,7 @@ describe('PedidosComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PedidosComponent ],
-      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientModule],
+      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule],
       providers: [
         DatePipe
       ],

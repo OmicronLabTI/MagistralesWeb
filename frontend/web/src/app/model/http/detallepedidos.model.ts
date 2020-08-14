@@ -1,8 +1,8 @@
-import {BaseResponseHttp} from "./commons";
+import {BaseResponseHttp} from './commons';
 
 export class IPedidoDetalleReq {
     isChecked: boolean;
-    ordenFabricacionId: string;
+    ordenFabricacionId: number;
     codigoProducto: string;
     descripcionProducto: string;
     qtyPlanned: number;
@@ -11,9 +11,9 @@ export class IPedidoDetalleReq {
     qfb: string;
     status: string;
 }
-export class IPedidoDetalleRes extends BaseResponseHttp{
+export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
 }
-export class IPedidoDetalleListRes extends BaseResponseHttp{
+export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
 }

@@ -9,6 +9,7 @@ import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DatePipe} from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -18,7 +19,7 @@ describe('PedidoDetalleComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         MATERIAL_COMPONENTS,
-        HttpClientModule,
+        HttpClientTestingModule,
         RouterTestingModule,
         FormsModule,
         BrowserAnimationsModule],

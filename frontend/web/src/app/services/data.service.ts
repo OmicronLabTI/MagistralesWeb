@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {CONST_NUMBER, CONST_STRING} from '../constants/const';
 import {DatePipe} from '@angular/common';
+import {QfbWithNumber} from '../model/http/users';
 
 
 @Injectable({
@@ -12,6 +13,7 @@ export class DataService {
   private isLoading = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
   private isLogin = new Subject<boolean>();
+  private qfbTOPlace = new Subject<QfbWithNumber>();
   // private isCallToUsersList = new Subject()
   constructor(private datePipe: DatePipe) { }
 
@@ -33,7 +35,12 @@ export class DataService {
   getGeneralNotificationMessage() {
     return this.generalNotificationMessage.asObservable();
   }
-
+  setQbfToPlace(qfb: QfbWithNumber) {
+    this.qfbTOPlace.next(qfb);
+  }
+  getQfbToPlace() {
+    return this.qfbTOPlace.asObservable();
+  }
   setGeneralNotificationMessage(msg: string) {
     this.generalNotificationMessage.next(msg);
   }

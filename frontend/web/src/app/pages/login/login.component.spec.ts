@@ -9,6 +9,7 @@ import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DatePipe} from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -20,7 +21,7 @@ describe('LoginComponent', () => {
         BrowserAnimationsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        HttpClientModule,
+        HttpClientTestingModule,
         MATERIAL_COMPONENTS
       ],
       providers: [

@@ -35,7 +35,6 @@ export class AddUserDialogComponent implements OnInit {
   ngOnInit() {
     this.usersService.getRoles().subscribe((rolesRes: IRolesRes) => {
      this.userRoles = rolesRes.response;
-     console.log('roles: ', rolesRes.response);
      this.addUserForm.get('userTypeR').
         setValue(!this.isForEditModal ? this.userRoles.
         filter(user =>
@@ -44,9 +43,7 @@ export class AddUserDialogComponent implements OnInit {
     }, error => this.errorService.httpError(error));
 
     if (!this.isForEditModal) {
-      console.log('new:::');
       this.addUserForm.get('activo').setValue(1);
-      console.log('data add: ', this.addUserForm.value);
     } else {
       console.log('edit data: ', this.userToEdit);
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
@@ -70,9 +67,8 @@ export class AddUserDialogComponent implements OnInit {
         password: this.addUserForm.get('password').value,
         activo: Number(this.addUserForm.get('activo').value)
       };
-      console.log('value user: ', user);
-      this.usersService.createUser(user).subscribe( resUser => console.log('resUser: ', resUser),
-          error => console.log('error create: ', error));
+      this.usersService.createUser(user).subscribe( () => {},
+          error => this.errorService.httpError(error));
     } else {
       const user: IUserReq = {
         id: this.userToEdit.id,
@@ -84,8 +80,8 @@ export class AddUserDialogComponent implements OnInit {
         activo: Number(this.addUserForm.get('activo').value)
       };
       console.log('value user edit: ', user);
-      this.usersService.updateUser(user).subscribe( resUser => console.log('resUserEdit: ', resUser),
-          error => console.log('error edit: ', error));
+      this.usersService.updateUser(user).subscribe( () => {},
+          error => this.errorService.httpError(error));
     }
 
   }

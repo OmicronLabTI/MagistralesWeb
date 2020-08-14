@@ -9,6 +9,7 @@
 namespace Omicron.SapDiApi.Entities.Context
 {
     using SAPbobsCOM;
+    using System.Configuration;
 
     /// <summary>
     /// The connetion to Sap
@@ -41,13 +42,13 @@ namespace Omicron.SapDiApi.Entities.Context
         {
             Company oCompany = new Company
             {
-                Server = "OMICRON-PQRNL0E", 
+                Server = ConfigurationManager.AppSettings["SapServer"],
                 DbServerType = BoDataServerTypes.dst_MSSQL2016,
-                CompanyDB = "Omicron_ProduccionTest",
+                CompanyDB = ConfigurationManager.AppSettings["SapDb"],
                 language = BoSuppLangs.ln_Spanish_La,
-                UserName = "manager",
-                Password = "0m1cr0nl4b",
-                SLDServer = "OMICRON-PQRNL0E:40000",
+                UserName = ConfigurationManager.AppSettings["Usuario"],
+                Password = ConfigurationManager.AppSettings["UserPwd"],
+                SLDServer = ConfigurationManager.AppSettings["SldServer"],
             };
 
             oCompany.Connect();

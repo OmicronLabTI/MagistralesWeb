@@ -61,6 +61,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
 
+            orders = orders.DistinctBy(x => x.DocNum).ToList();
             orders = this.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
@@ -191,6 +192,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     RealEndDate = o.PostDate.ToString("dd/MM/yyyy"),
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
+                    Comments = o.Comments,
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
@@ -225,7 +227,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(v)).ToList());
             }
 
-            listValues = this.MakeDistincList(listValues);
+            listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -317,27 +319,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
             var users = await this.usersService.GetUsersById(userIDs);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
-        }
-
-        /// <summary>
-        /// makes the distinc for  the list.
-        /// </summary>
-        /// <param name="formulas">the values.</param>
-        /// <returns>the data.</returns>
-        private List<CompleteDetalleFormulaModel> MakeDistincList(List<CompleteDetalleFormulaModel> formulas)
-        {
-            var lisToReturn = new List<CompleteDetalleFormulaModel>();
-            var dictIds = new Dictionary<string, string>();
-            formulas.ForEach(f =>
-            {
-                if (!dictIds.ContainsKey(f.ProductId))
-                {
-                    dictIds.Add(f.ProductId, f.Description);
-                    lisToReturn.Add(f);
-                }
-            });
-
-            return lisToReturn;
         }
     }
 }

@@ -97,5 +97,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.AssignHeader(manualAssign);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="updateFormula">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/formula")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFormula(UpdateFormulaDto updateFormula)
+        {
+            var response = await this.pedidoFacade.UpdateComponents(updateFormula);
+            return this.Ok(response);
+        }
     }
 }
