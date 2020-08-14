@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
-            var listErrorId = ServiceUtils.GetErrorsWhileInserting(listWithError);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
@@ -77,6 +77,83 @@ namespace Omicron.Pedidos.Services.Utils
             await pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// the logic to assign a order.
+        /// </summary>
+        /// <param name="assignModel">the assign model.</param>
+        /// <param name="pedidosDao">the pedido dao.</param>
+        /// <param name="sapDiApi">the di api.</param>
+        /// <returns>the data.</returns>
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi)
+        {
+            var listToUpdate = new List<UpdateFabOrderModel>();
+            var listProdOrders = new List<string>();
+
+            assignModel.DocEntry.ForEach(x =>
+            {
+                listToUpdate.Add(new UpdateFabOrderModel
+                {
+                    OrderFabId = x,
+                    Status = ServiceConstants.StatusSapLiberado,
+                });
+
+                listProdOrders.Add(x.ToString());
+            });
+
+            var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
+
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+
+            var userOrdersByProd = (await pedidosDao.GetUserOrderByProducionOrder(listProdOrders)).ToList();
+            var listSales = userOrdersByProd.Select(x => x.Salesorderid).Distinct().ToList();
+            var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
+
+            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, assignModel.UserId);
+
+            var listOrderToInsert = new List<OrderLogModel>();
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, listToUpdate.Select(x => x.OrderFabId).ToList(), string.Format(ServiceConstants.AsignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
+
+            await pedidosDao.UpdateUserOrders(userOrdersByProd);
+            await pedidosDao.InsertOrderLog(listOrderToInsert);
+
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// Place the status for the orders.
+        /// </summary>
+        /// <param name="listFromOrders">the list sent from front.</param>
+        /// <param name="listFromSales">list from DB.</param>
+        /// <param name="user">the user to update.</param>
+        /// <returns>the data.</returns>
+        private static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, string user)
+        {
+            var currentOrders = listFromOrders.Select(x => x.Productionorderid).ToList();
+            var missing = listFromSales.Any(y => y.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(y.Productionorderid) && !currentOrders.Contains(y.Productionorderid));
+
+            var listPedidos = new List<UserOrderModel>();
+
+            listFromOrders.ForEach(o =>
+            {
+                o.Userid = user;
+                o.Status = ServiceConstants.Asignado;
+
+                var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
+                pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
+                pedido.Userid = user;
+                listPedidos.Add(pedido);
+            });
+
+            listFromOrders.AddRange(listPedidos);
+
+            return listFromOrders;
         }
     }
 }

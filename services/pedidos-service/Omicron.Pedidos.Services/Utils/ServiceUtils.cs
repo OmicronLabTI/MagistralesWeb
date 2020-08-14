@@ -145,7 +145,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="listWithError">the error list.</param>
         /// <returns>the list of values.</returns>
-        public static List<string> GetErrorsWhileInserting(List<string> listWithError)
+        public static List<string> GetErrorsFromSapDiDic(List<string> listWithError)
         {
             var listToReturn = new List<string>();
 
