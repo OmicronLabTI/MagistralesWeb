@@ -134,64 +134,70 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             var orderFab = productionOrderObj.GetByKey(updateFormula.FabOrderId);
 
-            if (orderFab)
+            if (!orderFab)
             {
-                double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
-                productionOrderObj.DueDate = updateFormula.FechaFin;
-                productionOrderObj.PlannedQuantity = plannedQuantity;
+                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
+                return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+            }
 
-                var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
-                components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId.ToString()));
-                var listIdsUpdated = new List<string>();
+            double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
+            productionOrderObj.DueDate = updateFormula.FechaFin;
+            productionOrderObj.PlannedQuantity = plannedQuantity;
 
-                if (components.RecordCount != 0)
+            var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+            components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId.ToString()));
+            var listIdsUpdated = new List<string>();
+
+            if (components.RecordCount != 0)
+            {
+                for (var i = 0; i < components.RecordCount; i++)
                 {
-                    for (var i = 0; i < components.RecordCount; i++)
+                    var sapItemCode = components.Fields.Item("ItemCode").Value;
+                    var lineNum = components.Fields.Item("LineNum").Value;
+                    productionOrderObj.Lines.SetCurrentLine(lineNum);
+
+                    var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
+
+                    if (component == null)
                     {
-                        var sapItemCode = components.Fields.Item("ItemCode").Value;
-                        var lineNum = components.Fields.Item("LineNum").Value;
-                        productionOrderObj.Lines.SetCurrentLine(lineNum);
+                        components.MoveNext();
+                        continue;
+                    }
 
-                        var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
-
-                        if (component == null)
-                        {
-                            components.MoveNext();
-                            continue;
-                        }
-
-                        double.TryParse(component.BaseQuantity.ToString(), out double baseQuantity);
-                        double.TryParse(component.RequiredQuantity.ToString(), out double issuedQuantity);
-                        productionOrderObj.Lines.BaseQuantity = baseQuantity;
-                        productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
-                        productionOrderObj.Lines.Warehouse = component.Warehouse;
-
+                    if (component.Action.Equals(ServiceConstants.DeleteComponent))
+                    {
+                        productionOrderObj.Lines.Delete();
                         listIdsUpdated.Add(sapItemCode);
                         components.MoveNext();
+                        continue;
                     }
-                }
 
-                var listNotInserted = updateFormula.Components.Where(x => !listIdsUpdated.Contains(x.ProductId));
-                foreach(var line in listNotInserted)
-                {
-                    double.TryParse(line.BaseQuantity.ToString(), out double baseQuantity);
-                    double.TryParse(line.RequiredQuantity.ToString(), out double issuedQuantity);
-
-                    productionOrderObj.Lines.Add();
-                    productionOrderObj.Lines.ItemNo = line.ProductId;
-                    productionOrderObj.Lines.Warehouse = line.Warehouse;
+                    double.TryParse(component.BaseQuantity.ToString(), out double baseQuantity);
+                    double.TryParse(component.RequiredQuantity.ToString(), out double issuedQuantity);
                     productionOrderObj.Lines.BaseQuantity = baseQuantity;
                     productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
+                    productionOrderObj.Lines.Warehouse = component.Warehouse;
+
+                    listIdsUpdated.Add(sapItemCode);
+                    components.MoveNext();
                 }
-
-                var updated = productionOrderObj.Update();
-                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             }
-            else
+
+            var listNotInserted = updateFormula.Components.Where(x => !listIdsUpdated.Contains(x.ProductId));
+            foreach (var line in listNotInserted)
             {
-                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);                
+                double.TryParse(line.BaseQuantity.ToString(), out double baseQuantity);
+                double.TryParse(line.RequiredQuantity.ToString(), out double issuedQuantity);
+
+                productionOrderObj.Lines.Add();
+                productionOrderObj.Lines.ItemNo = line.ProductId;
+                productionOrderObj.Lines.Warehouse = line.Warehouse;
+                productionOrderObj.Lines.BaseQuantity = baseQuantity;
+                productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
             }
 
+            var updated = productionOrderObj.Update();
+            dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
 
@@ -211,6 +217,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             return prodOrder;
         }
 
+        /// <summary>
+        /// makes the dict resutl.
+        /// </summary>
+        /// <param name="key">the key.</param>
+        /// <param name="value">the value.</param>
+        /// <param name="status">the status of the action.</param>
+        /// <param name="company">the object company.</param>
+        /// <param name="dictResult">the dic to return.</param>
+        /// <returns>the result.</returns>
         private Dictionary<string, string> AddResult(string key, string value, int status, Company company, Dictionary<string, string> dictResult)
         {
             if(status != 0)

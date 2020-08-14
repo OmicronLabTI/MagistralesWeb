@@ -84,5 +84,11 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public decimal WarehouseQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Action { get; set; }
     }
 }
