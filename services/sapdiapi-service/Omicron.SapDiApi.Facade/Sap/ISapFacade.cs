@@ -28,6 +28,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateFabOrder(List<UpdateFabOrderDto> updateFabOrderDtos);
 
         /// <summary>
+        /// Updates the formula.
+        /// </summary>
+        /// <param name="updateFormula">the object to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -46,6 +47,13 @@ namespace Omicron.Pedidos.Services.SapDiApi
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode > 200)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
             }
 

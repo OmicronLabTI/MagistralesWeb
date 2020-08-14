@@ -32,6 +32,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> UpdateFabOrders(List<UpdateFabOrderModel> orderModels);
 
         /// <summary>
+        /// Updates the formula.
+        /// </summary>
+        /// <param name="updateFormula">the formula.</param>
+        /// <returns></returns>
+        Task<ResultModel> UpdateFormula(UpdateFormulaModel updateFormula);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

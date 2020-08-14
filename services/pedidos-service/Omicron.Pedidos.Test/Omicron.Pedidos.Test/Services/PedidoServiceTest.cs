@@ -210,5 +210,41 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateComponents()
+        {
+            // arrange
+            var components = new List<CompleteDetalleFormulaModel>
+            {
+                new CompleteDetalleFormulaModel { Available = 1, BaseQuantity = 1, Consumed = 1, Description = "Des", OrderFabId = 2, PendingQuantity = 1, ProductId = "Aspirina", RequiredQuantity = 1, Stock = 1, Unit = "Unit", Warehouse = "wh", WarehouseQuantity = 1 },
+            };
+
+            var asignar = new UpdateFormulaModel
+            {
+                Comments = "Comments",
+                Components = components,
+                FabOrderId = 1,
+                FechaFin = DateTime.Now,
+                PlannedQuantity = 1,
+            };
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+
+            // act
+            var response = await pedidosServiceLocal.UpdateComponents(asignar);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }
