@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
+import {IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
 import { ActivatedRoute } from '@angular/router';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
+import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -15,7 +16,7 @@ import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/c
 
 export class DetalleFormulaComponent implements OnInit {
   allComplete = false;
-  dataFormulaDetail = new IFormulaReq();
+  oldDataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
   displayedColumns: string[] = [
     'seleccion',
@@ -35,9 +36,10 @@ export class DetalleFormulaComponent implements OnInit {
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   comments = '';
   baseQuantity = 0.0;
-
+  endDateGeneral = new Date();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              private errorService: ErrorService, private dialog: MatDialog) { }
+              private errorService: ErrorService, private dialog: MatDialog,
+              private dataService: DataService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -49,8 +51,12 @@ export class DetalleFormulaComponent implements OnInit {
   getDetalleFormula() {
     this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
       (formulaRes) => {
-        this.dataFormulaDetail = formulaRes.response;
-        this.dataSource.data = this.dataFormulaDetail.details;
+        console.log('formula res: ', formulaRes);
+        this.oldDataFormulaDetail = formulaRes.response;
+        this.comments = this.oldDataFormulaDetail.comments || '';
+        const endDate = this.oldDataFormulaDetail.endDate.split('/');
+        this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
+        this.dataSource.data = this.oldDataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {detail.isChecked = false; });
       }, error => this.errorService.httpError(error));
   }
@@ -84,19 +90,34 @@ export class DetalleFormulaComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
       if (resultComponents) {
-        const oldDataSource = this.dataSource.data;
-        oldDataSource.push(resultComponents);
-        this.dataSource.data = oldDataSource;
+        this.oldDataFormulaDetail.details.push(resultComponents);
+        this.dataSource.data = this.oldDataFormulaDetail.details;
       }
     });
   }
 
-  onCommentChange(event) {
-    console.log('on comments', event);
+
+  onBaseQuantityChange(baseQuantity: any, index: number) {
+    console.log('on baseQuantity', baseQuantity, 'id: ', index);
+    console.log('indexArray: ', this.oldDataFormulaDetail.details[index]);
+    this.oldDataFormulaDetail.details[index].requiredQuantity = (this.oldDataFormulaDetail.plannedQuantity * baseQuantity);
+    console.log('indexArray 2: ', this.oldDataFormulaDetail.details[index]);
   }
 
-  onBaseQuantityChange(event, id) {
-    console.log('on baseQuantity', event, 'id: ', id);
+  onRequiredQuantityChange(requiredQuantity: any, index: number) {
+    console.log('on requiredQuantity', requiredQuantity, 'id: ', index);
   }
+  saveFormulaDetail() {
+    const detailComponentsTOSave = new IComponentsSaveReq();
+    detailComponentsTOSave.fabOrderId = Number(this.ordenFabricacionId);
+    detailComponentsTOSave.plannedQuantity = this.oldDataFormulaDetail.plannedQuantity;
+
+    const endDateToString = this.dataService.transformDate(this.endDateGeneral).split('/');
+    detailComponentsTOSave.fechaFin = `${endDateToString[2]}/${endDateToString[1]}/${endDateToString[0]}`;
+    detailComponentsTOSave.comments = this.comments;
+    console.log('endDateToSave: ', endDateToString, this.oldDataFormulaDetail.endDate)
+    console.log('componentstosave: ', detailComponentsTOSave)
+  }
+
 }
 
