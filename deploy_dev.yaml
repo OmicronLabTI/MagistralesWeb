@@ -267,6 +267,8 @@ spec:
     port: 5341
     targetPort: 5341
     protocol: TCP
+  externalIPs:
+    - 192.168.0.101
   selector:
     app: seqlog
 ---
