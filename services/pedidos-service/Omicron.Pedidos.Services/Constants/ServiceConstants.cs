@@ -29,6 +29,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Asignado = "Asignado";
 
         /// <summary>
+        /// the proceso status.
+        /// </summary>
+        public const string Proceso = "Proceso";
+
+        /// <summary>
         /// the en proceso status.
         /// </summary>
         public const string ProcesoStatus = "En Proceso";
@@ -37,6 +42,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
+
+        /// <summary>
+        /// when the order goes to Proceso.
+        /// </summary>
+        public const string OrdenProceso = "La orden {0} paso a Proceso";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -132,5 +142,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// route to updates orders.
         /// </summary>
         public const string UpdateFormula = "updateFormula";
+
+        /// <summary>
+        /// the connect to sap di api.
+        /// </summary>
+        public const string ConnectSapDiApi = "connect";
     }
 }
