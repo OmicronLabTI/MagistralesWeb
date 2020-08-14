@@ -79,9 +79,14 @@ class RootViewController: UIViewController {
     }
     
     private func getInboxViewModel() -> InboxViewModel? {
-        if let vc = self.splitViewController?.viewControllers.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
+        let childrenVC = self.splitViewController?.viewControllers.map({
+            return (($0 as? UINavigationController)?.viewControllers ?? [])
+        }).reduce([], +)
+        
+        if let vc = childrenVC?.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
             return vc.inboxViewModel
         }
+        
         return nil
     }
     
