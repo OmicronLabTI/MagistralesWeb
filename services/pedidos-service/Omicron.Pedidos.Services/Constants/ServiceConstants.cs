@@ -142,5 +142,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// route to updates orders.
         /// </summary>
         public const string UpdateFormula = "updateFormula";
+
+        /// <summary>
+        /// the connect to sap di api.
+        /// </summary>
+        public const string ConnectSapDiApi = "connect";
     }
 }
