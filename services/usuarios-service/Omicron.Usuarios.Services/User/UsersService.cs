@@ -128,7 +128,7 @@ namespace Omicron.Usuarios.Services.User
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ToList();
+            var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
             listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
