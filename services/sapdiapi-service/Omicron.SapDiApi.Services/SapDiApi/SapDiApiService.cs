@@ -156,6 +156,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                         if (component == null)
                         {
+                            components.MoveNext();
                             continue;
                         }
 
