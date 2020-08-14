@@ -65,5 +65,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="updateStatus">the status object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus);
+
+        /// <summary>
+        /// gets the connection to DI api.
+        /// </summary>
+        /// <returns>the connectin.</returns>
+        Task<ResultDto> ConnectDiApi();
     }
 }

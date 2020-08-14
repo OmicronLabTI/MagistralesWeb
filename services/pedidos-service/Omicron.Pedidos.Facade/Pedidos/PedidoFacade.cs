@@ -108,5 +108,14 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateStatusOrder(this.mapper.Map<List<UpdateStatusOrderModel>>(updateStatus)));
         }
+
+        /// <summary>
+        /// gets the connection to DI api.
+        /// </summary>
+        /// <returns>the connectin.</returns>
+        public async Task<ResultDto> ConnectDiApi()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ConnectDiApi());
+        }
     }
 }
