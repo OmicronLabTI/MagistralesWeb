@@ -33,6 +33,8 @@ export class DetalleFormulaComponent implements OnInit {
     'cantalmacen'
   ];
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
+  comments = '';
+  baseQuantity = 0.0;
 
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog) { }
@@ -89,5 +91,12 @@ export class DetalleFormulaComponent implements OnInit {
     });
   }
 
+  onCommentChange(event) {
+    console.log('on comments', event);
+  }
+
+  onBaseQuantityChange(event, id) {
+    console.log('on baseQuantity', event, 'id: ', id);
+  }
 }
 
