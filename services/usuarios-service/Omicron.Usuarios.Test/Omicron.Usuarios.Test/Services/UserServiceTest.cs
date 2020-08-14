@@ -267,7 +267,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         public async Task DeleteUser()
         {
             // arrange
-            var listIds = new List<string> { "1", };
+            var listIds = new List<string> { "6" };
 
             // act
             var response = await this.userServices.DeleteUser(listIds);
