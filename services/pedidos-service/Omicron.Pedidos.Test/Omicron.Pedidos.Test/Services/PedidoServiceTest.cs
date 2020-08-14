@@ -204,8 +204,15 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abd",
             };
 
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+
             // act
-            var response = await this.pedidosService.AssignOrder(assign);
+            var response = await pedidosServiceLocal.AssignOrder(assign);
 
             // assert
             Assert.IsNotNull(response);

@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
-            var listErrorId = ServiceUtils.GetErrorsWhileInserting(listWithError);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
 
             var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
             var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
@@ -125,7 +125,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
             else
             {
-                return new ResultModel();
+                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi);
             }
         }
 
