@@ -12,6 +12,7 @@ import {
   MatInputModule,
 } from '@angular/material';
 import {DatePipe} from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
@@ -19,7 +20,7 @@ describe('ComponentSearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, MatTableModule,
+      imports: [HttpClientTestingModule, MatTableModule,
         MatDialogModule,
         MatCheckboxModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatChipsModule],
       declarations: [ ComponentSearchComponent ],
