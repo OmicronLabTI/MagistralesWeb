@@ -217,3 +217,56 @@ spec:
           value: Development
         ports:
         - containerPort: 5103
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seqlog-deployment
+  labels:
+    app: seqlog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seqlog
+  template:
+    metadata:
+      labels:
+        app: seqlog
+    spec:
+      containers:
+      - name: seqlog
+        image: datalust/seq:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 80
+          name: intra
+        - containerPort: 5341
+          name: extra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seqlog-svc
+  labels:
+    app: seqlog
+spec:
+  type: LoadBalancer
+  ports:
+  - name: default
+    port: 81
+    targetPort: 80
+    protocol: TCP
+  - name: alt
+    port: 5341
+    targetPort: 5341
+    protocol: TCP
+  selector:
+    app: seqlog
+---
