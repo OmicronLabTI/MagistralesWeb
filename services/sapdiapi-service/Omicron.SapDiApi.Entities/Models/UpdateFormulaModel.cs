@@ -44,6 +44,12 @@ namespace Omicron.SapDiApi.Entities.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public List<CompleteDetalleFormulaModel> Components { get; set; }
     }
 }

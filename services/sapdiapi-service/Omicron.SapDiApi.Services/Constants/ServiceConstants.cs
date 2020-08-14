@@ -37,5 +37,10 @@ namespace Omicron.SapDiApi.Services.Constants
         /// selects data from WOR1 by DocEntry.
         /// </summary>
         public const string FindWor1ByDocEntry = "SELECT DocEntry, LineNum, BaseQty, IssuedQty, wareHouse, ItemCode FROM WOR1 WHERE DocEntry = {0}";
+
+        /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string DeleteComponent = "delete";
     }
 }
