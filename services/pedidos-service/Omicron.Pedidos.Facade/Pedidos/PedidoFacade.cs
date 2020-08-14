@@ -98,5 +98,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateComponents(this.mapper.Map<UpdateFormulaModel>(updateFormula)));
         }
+
+        /// <summary>
+        /// updates the status of the orders.
+        /// </summary>
+        /// <param name="updateStatus">the status object.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateStatusOrder(this.mapper.Map<List<UpdateStatusOrderModel>>(updateStatus)));
+        }
     }
 }

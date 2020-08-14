@@ -141,6 +141,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Updates the status.
+        /// </summary>
+        /// <param name="updateStatusOrder">the status model.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
+        {
+            var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
+            var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
+
+            var listOrderLogs = new List<OrderLogModel>();
+
+            ordersList.ForEach(x =>
+            {
+                var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
+                x.Status = order == null ? x.Status : order.Status;
+                x.Userid = order == null ? x.Userid : order.UserId;
+                listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
+            });
+
+            await this.pedidosDao.UpdateUserOrders(ordersList);
+            await this.pedidosDao.InsertOrderLog(listOrderLogs);
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(ordersList), null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

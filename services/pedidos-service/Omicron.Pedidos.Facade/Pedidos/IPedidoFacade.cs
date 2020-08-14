@@ -58,5 +58,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="updateFormula">the update object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateComponents(UpdateFormulaDto updateFormula);
+
+        /// <summary>
+        /// updates the status of the orders.
+        /// </summary>
+        /// <param name="updateStatus">the status object.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus);
     }
 }
