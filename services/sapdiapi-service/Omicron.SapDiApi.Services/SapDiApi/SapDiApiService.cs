@@ -146,7 +146,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
             components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId.ToString()));
+            
             var listIdsUpdated = new List<string>();
+            var listToDelete = new List<int>();
 
             if (components.RecordCount != 0)
             {
@@ -154,8 +156,14 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     var sapItemCode = components.Fields.Item("ItemCode").Value;
                     var lineNum = components.Fields.Item("VisOrder").Value;
-
-                    productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    var itemCode = components.Fields.Item("ItemCode").Value;
+                    try
+                    {
+                        productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    }
+                    catch(Exception ex)
+                    {
+                    }
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
 
@@ -167,7 +175,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                     if (component.Action.Equals(ServiceConstants.DeleteComponent))
                     {
-                        productionOrderObj.Lines.Delete();
+                        listToDelete.Add(lineNum);
                         listIdsUpdated.Add(sapItemCode);
                         components.MoveNext();
                         continue;
@@ -195,6 +203,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 productionOrderObj.Lines.Warehouse = line.Warehouse;
                 productionOrderObj.Lines.BaseQuantity = baseQuantity;
                 productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
+            }
+
+            foreach (var lineDel in listToDelete.OrderByDescending(x => x))
+            {
+                productionOrderObj.Lines.SetCurrentLine(lineDel);
+                productionOrderObj.Lines.Delete();
             }
 
             var updated = productionOrderObj.Update();
