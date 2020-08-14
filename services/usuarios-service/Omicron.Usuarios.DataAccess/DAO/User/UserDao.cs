@@ -76,6 +76,19 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         }
 
         /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="id">the list of ids.</param>
+        /// <returns>the user.</returns>
+        public async Task<bool> DeleteUsers(List<string> id)
+        {
+            var users = (await this.databaseContext.Usuarios.Where(x => id.Contains(x.Id)).ToListAsync()).ToList();
+            this.databaseContext.Usuarios.RemoveRange(users);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// Method for get user by id from db.
         /// </summary>
         /// <param name="userId">User Id.</param>
