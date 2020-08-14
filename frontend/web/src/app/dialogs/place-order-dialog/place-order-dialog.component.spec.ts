@@ -7,6 +7,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
 import {PlaceOrders} from '../../model/device/orders';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -16,7 +17,7 @@ describe('PlaceOrderDialogComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ PlaceOrderDialogComponent ],
       imports: [
-          HttpClientModule,
+        HttpClientTestingModule,
         MatDialogModule,
         MATERIAL_COMPONENTS,
       ],

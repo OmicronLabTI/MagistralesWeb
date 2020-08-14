@@ -51,5 +51,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="manualAssign">the manual assign.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> AssignOrder(ManualAssignModel manualAssign);
+
+        /// <summary>
+        /// Updates the formula for an order.
+        /// </summary>
+        /// <param name="updateFormula">upddates the formula.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula);
+
+        /// <summary>
+        /// Updates the status.
+        /// </summary>
+        /// <param name="updateStatusOrder">the status model.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
     }
 }

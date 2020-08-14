@@ -63,6 +63,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByProducionOrder(List<string> listIDs)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.Productionorderid)).ToListAsync();
+        }
+
+        /// <summary>
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listIds">the list of users.</param>

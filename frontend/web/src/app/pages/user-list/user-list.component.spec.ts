@@ -17,6 +17,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import { HttpClientModule } from '@angular/common/http';
 import {DatePipe} from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -25,7 +26,7 @@ describe('UserListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports:[        CommonModule,
-          HttpClientModule,
+        HttpClientTestingModule,
         UserListRoutingModule,
         MatTableModule,
         MatCheckboxModule,

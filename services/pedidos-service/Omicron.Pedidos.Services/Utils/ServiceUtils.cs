@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Collections.Generic;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Entities.Enums;
 
     /// <summary>
     /// the class for utils.
@@ -144,7 +145,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="listWithError">the error list.</param>
         /// <returns>the list of values.</returns>
-        public static List<string> GetErrorsWhileInserting(List<string> listWithError)
+        public static List<string> GetErrorsFromSapDiDic(List<string> listWithError)
         {
             var listToReturn = new List<string>();
 
@@ -155,6 +156,65 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Groups the data for the front by status.
+        /// </summary>
+        /// <param name="sapOrders">the sap ordrs.</param>
+        /// <param name="userOrders">the user ordes.</param>
+        /// <returns>the data froupted.</returns>
+        public static QfbOrderModel GroupUserOrder(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders)
+        {
+            var result = new QfbOrderModel
+            {
+                Status = new List<QfbOrderDetail>(),
+            };
+
+            foreach (var status in Enum.GetValues(typeof(ServiceEnums.Status)))
+            {
+                var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
+                var orders = new QfbOrderDetail
+                {
+                    StatusName = statusId == (int)ServiceEnums.Status.Proceso ? ServiceConstants.ProcesoStatus : status.ToString(),
+                    StatusId = statusId,
+                    Orders = new List<FabOrderDetail>(),
+                };
+
+                var ordersDetail = new List<FabOrderDetail>();
+
+                userOrders
+                    .Where(x => x.Status.Equals(status.ToString()))
+                    .Select(y => y.Productionorderid)
+                    .ToList()
+                    .ForEach(o =>
+                    {
+                        int.TryParse(o, out int orderId);
+                        var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
+
+                        if (sapOrder != null)
+                        {
+                            var order = new FabOrderDetail
+                            {
+                                BaseDocument = sapOrder.BaseDocument,
+                                Container = sapOrder.Container,
+                                Tag = sapOrder.ProductLabel,
+                                DescriptionProduct = sapOrder.ProductDescription,
+                                FinishDate = sapOrder.EndDate,
+                                PlannedQuantity = sapOrder.PlannedQuantity,
+                                ProductionOrderId = sapOrder.ProductionOrderId,
+                                StartDate = sapOrder.StartDate,
+                            };
+
+                            ordersDetail.Add(order);
+                        }
+                    });
+
+                orders.Orders = ordersDetail;
+                result.Status.Add(orders);
+            }
+
+            return result;
         }
     }
 }

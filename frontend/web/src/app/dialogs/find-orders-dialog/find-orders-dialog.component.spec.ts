@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
@@ -16,7 +17,7 @@ describe('FindOrdersDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
-        HttpClientModule,
+        HttpClientTestingModule,
         MATERIAL_COMPONENTS,
         ReactiveFormsModule
       ],

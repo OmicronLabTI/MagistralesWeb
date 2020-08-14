@@ -29,9 +29,24 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Asignado = "Asignado";
 
         /// <summary>
+        /// the proceso status.
+        /// </summary>
+        public const string Proceso = "Proceso";
+
+        /// <summary>
+        /// the en proceso status.
+        /// </summary>
+        public const string ProcesoStatus = "En Proceso";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
+
+        /// <summary>
+        /// when the order goes to Proceso.
+        /// </summary>
+        public const string OrdenProceso = "La orden {0} paso a Proceso";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -64,26 +79,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
-        /// the get with orders.
-        /// </summary>
-        public const string GetOrderWithDetail = "getDetails";
-
-        /// <summary>
-        /// gets the order by product item and product order.
-        /// </summary>
-        public const string GetProdOrderByOrderItem = "getProductionOrderItem";
-
-        /// <summary>
-        /// gets the formula for each order.
-        /// </summary>
-        public const string GetFormula = "formula/";
-
-        /// <summary>
-        /// the route to call the details for the details.
-        /// </summary>
-        public const string GetFabOrdersByPedidoId = "detail/{0}";
-
-        /// <summary>
         /// const for error whne inserting fab orde.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
@@ -104,11 +99,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErroAlAsignar = "Error al asignar";
 
         /// <summary>
-        /// the en proceso status.
-        /// </summary>
-        public const string ProcesoStatus = "En Proceso";
-
-        /// <summary>
         /// if the type is pedido.
         /// </summary>
         public const string TypePedido = "Pedido";
@@ -119,6 +109,26 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StatusSapLiberado = "R";
 
         /// <summary>
+        /// the get with orders.
+        /// </summary>
+        public const string GetOrderWithDetail = "getDetails";
+
+        /// <summary>
+        /// gets the order by product item and product order.
+        /// </summary>
+        public const string GetProdOrderByOrderItem = "getProductionOrderItem";
+
+        /// <summary>
+        /// gets the formula for each order.
+        /// </summary>
+        public const string GetFormula = "formula/";
+
+        /// <summary>
+        /// the route to call the details for the details.
+        /// </summary>
+        public const string GetFabOrdersByPedidoId = "detail/{0}";
+
+        /// <summary>
         /// route to create orders.
         /// </summary>
         public const string CreateFabOrder = "createFabOrder";
@@ -127,5 +137,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// route to update faborder.
         /// </summary>
         public const string UpdateFabOrder = "updateFabOrder";
+
+        /// <summary>
+        /// route to updates orders.
+        /// </summary>
+        public const string UpdateFormula = "updateFormula";
     }
 }
