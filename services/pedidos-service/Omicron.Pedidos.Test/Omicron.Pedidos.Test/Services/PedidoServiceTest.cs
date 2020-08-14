@@ -67,6 +67,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
+            mockSaDiApi
+                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ResultModel()));
+
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
         }
@@ -249,6 +253,40 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await pedidosServiceLocal.UpdateComponents(asignar);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateUserOrderStatus()
+        {
+            // arrange
+            var components = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 100, Status = "Proceso" },
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateStatusOrder(components);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task ConnectDiApi()
+        {
+            // act
+            var response = await this.pedidosService.ConnectDiApi();
 
             // assert
             Assert.IsNotNull(response);

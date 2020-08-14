@@ -23,5 +23,12 @@ namespace Omicron.Pedidos.Services.SapDiApi
         /// <param name="route">the route to send.</param>
         /// <returns>the return.</returns>
         Task<ResultModel> PostToSapDiApi(object dataToSend, string route);
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetSapDiApi(string route);
     }
 }
