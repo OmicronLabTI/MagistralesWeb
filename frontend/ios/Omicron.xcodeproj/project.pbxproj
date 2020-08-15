@@ -14,6 +14,7 @@
 		7C2401E124D4980500E2D56C /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */; };
 		7C2401E224D4981500E2D56C /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B424D489F500FF2E0E /* SF-Pro-Display-Regular.otf */; };
 		7C2401E324D4981500E2D56C /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B424D489F500FF2E0E /* SF-Pro-Display-Regular.otf */; };
+		7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3A55CB24E76E0C001B627E /* CommentsViewController.swift */; };
 		7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C41E6D424E1B61700B9033F /* orderDetail.json */; };
 		7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C55E5C224D4A498008F7AED /* SF-Pro-Display-Medium.otf */; };
 		7C55E5C424D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C55E5C224D4A498008F7AED /* SF-Pro-Display-Medium.otf */; };
@@ -28,6 +29,8 @@
 		7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BB124D3BA5800D26B96 /* SplitViewController.swift */; };
 		7C980E0624E3245000D58A85 /* UserInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C980E0524E3244F00D58A85 /* UserInfo.json */; };
 		7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CA3058924DB0ACF00A7D2B5 /* Status.json */; };
+		7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB218D924E79E870015951C /* CommentsViewModel.swift */; };
+		7CB218DC24E79EC00015951C /* CommentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB218DB24E79EC00015951C /* CommentsModel.swift */; };
 		7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */; };
 		7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */; };
 		7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332524DDCBE70055425C /* OrderDetailModel.swift */; };
@@ -88,6 +91,7 @@
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		7C3074B424D489F500FF2E0E /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
+		7C3A55CB24E76E0C001B627E /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
 		7C41E6D424E1B61700B9033F /* orderDetail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = orderDetail.json; sourceTree = "<group>"; };
 		7C55E5C224D4A498008F7AED /* SF-Pro-Display-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Medium.otf"; sourceTree = "<group>"; };
 		7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTest.swift; sourceTree = "<group>"; };
@@ -100,6 +104,8 @@
 		7C844BB124D3BA5800D26B96 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		7C980E0524E3244F00D58A85 /* UserInfo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserInfo.json; sourceTree = "<group>"; };
 		7CA3058924DB0ACF00A7D2B5 /* Status.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Status.json; sourceTree = "<group>"; };
+		7CB218D924E79E870015951C /* CommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
+		7CB218DB24E79EC00015951C /* CommentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsModel.swift; sourceTree = "<group>"; };
 		7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewController.swift; sourceTree = "<group>"; };
 		7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
 		7CB6332524DDCBE70055425C /* OrderDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailModel.swift; sourceTree = "<group>"; };
@@ -182,6 +188,16 @@
 				E9A40823AC4FB25AE1D8601D /* Pods-OmicronTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		7C3A55CA24E76DC2001B627E /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				7C3A55CB24E76E0C001B627E /* CommentsViewController.swift */,
+				7CB218D924E79E870015951C /* CommentsViewModel.swift */,
+				7CB218DB24E79EC00015951C /* CommentsModel.swift */,
+			);
+			path = Comments;
 			sourceTree = "<group>";
 		};
 		7C52115F24D4816D0052B2F5 /* Fonts */ = {
@@ -360,6 +376,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				7C3A55CA24E76DC2001B627E /* Comments */,
 				7CB6332024DDCB6D0055425C /* OrderDetail */,
 				7CE2C2A924CA03ED00517BD7 /* Inbox */,
 				98C8C02F24AFBD3000018A88 /* Login */,
@@ -652,6 +669,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */,
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
 				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
@@ -671,6 +689,7 @@
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
+				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
 				98C8C03E24AFCC9200018A88 /* Config.swift in Sources */,
 				7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */,
@@ -678,6 +697,7 @@
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
+				7CB218DC24E79EC00015951C /* CommentsModel.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
 				7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */,
 			);
