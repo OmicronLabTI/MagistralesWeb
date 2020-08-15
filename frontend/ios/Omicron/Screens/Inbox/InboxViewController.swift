@@ -38,6 +38,12 @@ class InboxViewController: UIViewController {
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
+    }
+
         
     // MARK: Functions
     func viewModelBinding() -> Void {
@@ -53,7 +59,6 @@ class InboxViewController: UIViewController {
             }).disposed(by: self.disposeBag)
             
             self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
-            
         }).disposed(by: disposeBag)
 
         

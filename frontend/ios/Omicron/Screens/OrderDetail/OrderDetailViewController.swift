@@ -13,14 +13,12 @@ import RxCocoa
 class OrderDetailViewController: UIViewController, UITableViewDelegate {
 
     // Outlets
-    @IBOutlet weak var nameStatusLabel: UILabel!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var addComponentButton: UIButton!
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var seeLotsButton: UIButton!
     @IBOutlet weak var penddingButton: UIButton!
-    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var codeDescriptionLabel: UILabel!
     @IBOutlet weak var documentBaseDescriptionLabel: UILabel!
@@ -60,17 +58,40 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Life Cycles
     override func viewDidLoad() {
+//        super.viewDidLoad()
+//        self.title = "Detallé de la fórmula"
+//        splitViewController!.preferredDisplayMode = .allVisible
+//        self.showButtonsByStatusType(statusType: statusType)
+//        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+//        self.initComponents()
+//        self.viewModelBinding()
+//        self.tableView.allowsMultipleSelectionDuringEditing = false
+//        tableView.delegate = self
+//        tableView.setEditing(false, animated: true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         super.viewDidLoad()
-        //self.navigationController?.navigationBar.isHidden = true
+        self.title = "Detallé de la fórmula"
+        splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
-        //splitViewController?.preferredPrimaryColumnWidthFraction = 0.08
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.delegate = self
         tableView.setEditing(false, animated: true)
     }
+        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
+    }
+
+    
+
+ 
     
     //MARK: Functions
     func viewModelBinding() {
@@ -130,8 +151,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton, title: StatusNameConstants.addComponent, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
-        self.backButton.setImage(UIImage(named: ImageButtonNames.assigned), for: .normal)
-        UtilsManager.shared.labelsStyle(label: self.nameStatusLabel, text: self.statusType, fontSize: 39)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 15, typeFont: "bold")
@@ -207,5 +226,4 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
 }
-
 
