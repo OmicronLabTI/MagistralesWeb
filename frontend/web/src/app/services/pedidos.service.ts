@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
-import {IComponentsRes, IFormulaRes} from '../model/http/detalleformula';
+import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
 import {IPedidosListRes, IProcessOrdersRes} from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
@@ -38,5 +38,8 @@ export class PedidosService {
   }
   getComponents(queryStringComponents: string) {
     return this.consumeService.httpGet<IComponentsRes>(`${Endpoints.pedidos.getComponents}${queryStringComponents}`);
+  }
+  updateFormula(formulaTOSave: IComponentsSaveReq) {
+    return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
   }
 }

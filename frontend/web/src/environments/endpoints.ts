@@ -16,10 +16,11 @@ export const Endpoints = {
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
-    processOrders: `${environment.baseUrl}/api/sapadapter/process/`,
+    processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
     getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
+    updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
 }
 };
 
