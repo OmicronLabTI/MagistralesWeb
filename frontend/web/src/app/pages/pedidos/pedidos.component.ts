@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
-import {CONST_STRING, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
+import {CONST_STRING, HttpServiceTOCall, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
@@ -10,6 +10,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-pedidos',
@@ -36,6 +37,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   filterDataOrders = new ParamsPedidos();
   isThereOrdersToPlan = false;
   isThereOrdersToPlace = false;
+  subscriptionCallHttp = new Subscription();
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -50,6 +52,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.subscriptionCallHttp = this.dataService.getCallHttpService().subscribe(callHttpService => {
+      if (callHttpService === HttpServiceTOCall.ORDERS) {
+        this.getPedidos();
+      }
+    });
     this.getPedidos();
     this.dataSource.paginator = this.paginator;
   }
@@ -187,5 +194,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.subscriptionCallHttp.unsubscribe();
   }
 }

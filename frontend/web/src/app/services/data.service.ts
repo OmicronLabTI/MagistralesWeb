@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 
@@ -14,9 +14,14 @@ export class DataService {
   private generalNotificationMessage = new Subject<string>();
   private isLogin = new Subject<boolean>();
   private qfbTOPlace = new Subject<QfbWithNumber>();
-  // private isCallToUsersList = new Subject()
+  private callHttpService = new Subject<HttpServiceTOCall>();
   constructor(private datePipe: DatePipe) { }
-
+  setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
+    this.callHttpService.next(numberServiceToCall);
+  }
+  getCallHttpService() {
+    return this.callHttpService.asObservable();
+  }
   setIsLogin(isLogin: boolean) {
     this.isLogin.next(isLogin);
   }
