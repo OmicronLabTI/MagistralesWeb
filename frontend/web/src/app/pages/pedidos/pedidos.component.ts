@@ -134,6 +134,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
       if (result) {
         this.filterDataOrders = new  ParamsPedidos();
+        this.offset = 0;
+        this.limit = 10;
       }
       if (result.docNum) {
         this.filterDataOrders.docNum = result.docNum;
@@ -160,8 +162,23 @@ export class PedidosComponent implements OnInit, OnDestroy {
           this.queryString = `${this.queryString}&qfb=${result.qfb}`;
           this.filterDataOrders.qfb = result.qfb;
         }
+        // this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
       }
-      this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
+      if ((result && result.dateType === '0') && (result && result.status === '' || result.qfb === '')) {
+        this.isSearchWithFilter = false;
+      }
+      if ((result && result.dateType === '0') && (result && result.status !== '' || result.qfb !== '')) {
+         this.isSearchWithFilter = true;
+      }
+      if ((result && result.dateType === '1') && (result && result.status !== '' || result.qfb !== '')) {
+        this.isSearchWithFilter = true;
+      }
+      if ((result && result.dateType === '1') && (result && result.status === '' || result.qfb === '')) {
+        this.isSearchWithFilter = true;
+      }
+      if (result && result.docNum !== '') {
+        this.isSearchWithFilter = true;
+      }
       this.getFullQueryString();
       if (result) {
         this.getPedidos();

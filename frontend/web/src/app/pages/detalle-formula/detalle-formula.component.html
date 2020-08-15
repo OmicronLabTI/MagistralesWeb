@@ -91,7 +91,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                             <mat-label>Fecha de finalización</mat-label>
-                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" disabled>
+                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" readonly>
                             <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                             <mat-datepicker #dp3 disabled="false"></mat-datepicker>
                         <!--<input matInput placeholder="Fecha de finalización" value="{{oldDataFormulaDetail.endDate}}">-->
