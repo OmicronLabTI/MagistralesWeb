@@ -4,6 +4,7 @@ import { SecurityService } from 'src/app/services/security.service';
 import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private securityService: SecurityService,
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) {
     if (this.dataService.userIsAuthenticated()) {
       this.goToPedidos();
@@ -28,7 +30,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.titleService.setTitle("OmicronLab - Login")
+  }
 
    login() {
     const userLoginReq = {
