@@ -117,5 +117,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.ConnectDiApi());
         }
+
+        /// <summary>
+        /// Process by order.
+        /// </summary>
+        /// <param name="processByOrder">process by order dto.</param>
+        /// <returns>the order.</returns>
+        public async Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));
+        }
     }
 }

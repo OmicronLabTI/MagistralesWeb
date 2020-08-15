@@ -74,6 +74,27 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// creates the user model from fabrication.
+        /// </summary>
+        /// <param name="dataToCreate">the data to create.</param>
+        /// <returns>the data.</returns>
+        public static List<UserOrderModel> CreateUserModel(List<FabricacionOrderModel> dataToCreate)
+        {
+            var listToReturn = new List<UserOrderModel>();
+            dataToCreate.ForEach(x =>
+            {
+                listToReturn.Add(new UserOrderModel
+                {
+                    Productionorderid = x.OrdenId.ToString(),
+                    Salesorderid = x.PedidoId.ToString(),
+                    Status = ServiceConstants.Planificado,
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// Creates the order logs mode.
         /// </summary>
         /// <param name="user">the user.</param>
@@ -215,6 +236,26 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// creates the order detail.
+        /// </summary>
+        /// <param name="order">the order.</param>
+        /// <param name="listToSend">list to send.</param>
+        /// <returns>the data.</returns>
+        public static OrderWithDetailModel CreateOrderWithDetail(OrderWithDetailModel order, List<CompleteDetailOrderModel> listToSend)
+        {
+            return new OrderWithDetailModel
+            {
+                Order = new OrderModel
+                {
+                    PedidoId = order.Order.PedidoId,
+                    FechaInicio = order.Order.FechaInicio,
+                    FechaFin = order.Order.FechaFin,
+                },
+                Detalle = new List<CompleteDetailOrderModel>(listToSend),
+            };
         }
     }
 }
