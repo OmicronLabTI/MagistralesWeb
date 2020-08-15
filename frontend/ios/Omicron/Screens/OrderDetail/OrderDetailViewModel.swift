@@ -19,6 +19,7 @@ class OrderDetailViewModel {
     var tableData: BehaviorRelay<[Detail]> = BehaviorRelay<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
+    var sumFormula: BehaviorRelay<Int> = BehaviorRelay<Int>(value: 0)
     var auxTabledata:[Detail] = []
     
     // MARK: Init
@@ -35,13 +36,26 @@ class OrderDetailViewModel {
             self.auxTabledata = res.response!.details!
             self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
+            self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
         }, onError: { error in
             self.loading.onNext(false)
             self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }
+    
+    func sum(tableDetails: [Detail]) -> Int {
+        var sum = 0
+        if(tableDetails.count > 0) {
+            for detail in tableDetails {
+                sum = sum + detail.requiredQuantity!
+            }
+            return sum
+        }
+        return sum
+    }
 
     func deleteItemFromTable(index: Int) {
+        self.loading.onNext(true)
         let itemToDelete = auxTabledata[index]
         let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!, componentDescription: itemToDelete.detailDescription!, baseQuantity: itemToDelete.baseQuantity!, requiredQuantity: itemToDelete.requiredQuantity!, consumed: itemToDelete.consumed!, available: itemToDelete.available!, unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!, pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!, warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
 
@@ -52,6 +66,7 @@ class OrderDetailViewModel {
             self.loading.onNext(false)
                 self.tempOrderDetailData?.details?.remove(at: index)
             self.tableData.accept((self.tempOrderDetailData?.details)!)
+            self.sumFormula.accept(self.sum(tableDetails: (self.tempOrderDetailData?.details)!))
         }, onError: {  error in
             self.loading.onNext(false)
             self.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")

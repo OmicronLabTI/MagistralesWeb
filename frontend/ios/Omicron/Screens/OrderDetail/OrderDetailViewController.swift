@@ -56,6 +56,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        //self.navigationController?.navigationBar.isHidden = true
         self.showButtonsByStatusType(statusType: statusType)
         self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
@@ -68,6 +69,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     //MARK: Functions
     func viewModelBinding() {
+        
+        self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { sum in
+
+            self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(sum)", textToBold: "Sumatoria de la fórmula: ")
+        }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
             
@@ -76,7 +82,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
-                self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: ", textToBold: "Sumatoria de la fórmula:")
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].endDate!)", textToBold: "Fecha de finalización:")
@@ -96,6 +101,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.quantityPendingLabel.text = "\(data.pendingQuantity!)"
             cell.stockLabel.text = "\(data.stock!)"
             cell.storedQuantity.text = "\(data.warehouseQuantity!)"
+            
         }.disposed(by: disposeBag)
         
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
