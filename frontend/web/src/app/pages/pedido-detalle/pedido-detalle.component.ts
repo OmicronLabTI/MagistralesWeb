@@ -5,6 +5,7 @@ import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {MODAL_NAMES} from '../../constants/const';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -32,12 +33,14 @@ export class PedidoDetalleComponent implements OnInit {
   isThereOrdersDetailToPlan = false;
   isThereOrdersDetailToPlace = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              private dataService: DataService) { }
+              private dataService: DataService,
+              private titleService: Title) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get('id');
       this.docStatus = params.get('status');
+      this.titleService.setTitle("Pedido "+ this.docNum);
     });
     this.getDetallePedido();
   }

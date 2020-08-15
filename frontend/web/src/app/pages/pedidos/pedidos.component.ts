@@ -10,6 +10,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pedidos',
@@ -40,7 +41,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private pedidosService: PedidosService,
     private dataService: DataService,
     private errorService: ErrorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private titleService: Title
   ) {
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
@@ -50,6 +52,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleService.setTitle("OmicronLab - Pedidos");
     this.getPedidos();
     this.dataSource.paginator = this.paginator;
   }
