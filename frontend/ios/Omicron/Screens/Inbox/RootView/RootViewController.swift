@@ -27,7 +27,12 @@ class RootViewController: UIViewController {
         self.title = getUserInfo()
         self.initComponents()
         self.viewModelBinding()
+            }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         self.rootViewModel.getOrders()
+
     }
     
     // MARK: Functions
