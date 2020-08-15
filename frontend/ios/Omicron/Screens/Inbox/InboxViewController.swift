@@ -13,7 +13,6 @@ import RxCocoa
 class InboxViewController: UIViewController {
     
     // MARK: Outlets
-    @IBOutlet weak var statusNameLabel: UILabel!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -32,7 +31,7 @@ class InboxViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-       // self.navigationController?.navigationBar.isHidden = true
+        self.title = StatusNameConstants.assignedStatus
         viewModelBinding()
         self.initComponents()
         collectionView.register(UINib(nibName:
@@ -129,8 +128,6 @@ class InboxViewController: UIViewController {
     }
     
     func initComponents() -> Void {
-        self.statusNameLabel.text = StatusNameConstants.assignedStatus
-        self.statusNameLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 39)
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -139,15 +136,15 @@ class InboxViewController: UIViewController {
     func chageStatusName(index: Int) -> Void {
         switch index {
         case 0:
-            self.statusNameLabel.text = StatusNameConstants.assignedStatus
+            self.title = StatusNameConstants.assignedStatus
         case 1:
-            self.statusNameLabel.text = StatusNameConstants.inProcessStatus
+             self.title = StatusNameConstants.inProcessStatus
         case 2:
-            self.statusNameLabel.text = StatusNameConstants.penddingStatus
+             self.title = StatusNameConstants.penddingStatus
         case 3:
-            self.statusNameLabel.text = StatusNameConstants.finishedStatus
+             self.title = StatusNameConstants.finishedStatus
         case 4:
-            self.statusNameLabel.text = StatusNameConstants.reassignedStatus
+             self.title = StatusNameConstants.reassignedStatus
         default:
             print("")
         }
