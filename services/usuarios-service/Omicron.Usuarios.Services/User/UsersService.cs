@@ -128,7 +128,7 @@ namespace Omicron.Usuarios.Services.User
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ToList();
+            var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
             listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
@@ -143,19 +143,7 @@ namespace Omicron.Usuarios.Services.User
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> DeleteUser(List<string> listIds)
         {
-            var listUserToUpdate = new List<UserModel>();
-            foreach (var i in listIds)
-            {
-                var user = await this.userDao.GetUserById(i);
-
-                if (user != null)
-                {
-                    user.Activo = 0;
-                    listUserToUpdate.Add(user);
-                }
-            }
-
-            var response = await this.userDao.UpdateUsers(listUserToUpdate);
+            var response = await this.userDao.DeleteUsers(listIds);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
         }
 

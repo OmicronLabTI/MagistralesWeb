@@ -59,6 +59,13 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         Task<UserModel> GetUserById(string userId);
 
         /// <summary>
+        /// deletes the user.
+        /// </summary>
+        /// <param name="id">the list of ids.</param>
+        /// <returns>the user.</returns>
+        Task<bool> DeleteUsers(List<string> id);
+
+        /// <summary>
         /// Updates a single user.
         /// </summary>
         /// <param name="user">the user to update.</param>

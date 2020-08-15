@@ -123,5 +123,17 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.UpdateStatusOrder(updateStatus);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// connects the DI api.
+        /// </summary>
+        /// <returns>the connection.</returns>
+        [Route("/connectDiApi")]
+        [HttpGet]
+        public async Task<IActionResult> ConnectDiApi()
+        {
+            var response = await this.pedidoFacade.ConnectDiApi();
+            return this.Ok(response);
+        }
     }
 }

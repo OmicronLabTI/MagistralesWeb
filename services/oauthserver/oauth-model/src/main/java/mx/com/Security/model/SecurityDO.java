@@ -21,6 +21,17 @@ public class SecurityDO {
     @Column(name = "password")
     private String password;
 
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
+    }
+
+    @Column(name = "activo")
+    private int activo;
+
     public String getId() {
         return id;
     }

@@ -65,5 +65,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="updateStatusOrder">the status model.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
+
+        /// <summary>
+        /// Gets the connection to sap di api.
+        /// </summary>
+        /// <returns>the conection.</returns>
+        Task<ResultModel> ConnectDiApi();
     }
 }
