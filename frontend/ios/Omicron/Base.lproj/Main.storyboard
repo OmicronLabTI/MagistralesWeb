@@ -546,6 +546,9 @@
                                                     <constraint firstAttribute="width" constant="50" id="5RL-yc-MOO"/>
                                                 </constraints>
                                                 <state key="normal" title="Button"/>
+                                                <connections>
+                                                    <action selector="backToInboxView:" destination="Dvp-ad-RrX" eventType="touchUpInside" id="TKE-gH-RCi"/>
+                                                </connections>
                                             </button>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hVp-fJ-6Ia">
                                                 <rect key="frame" x="50" y="0.0" width="701.5" height="50"/>

@@ -46,6 +46,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBAction func backToInboxView(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
