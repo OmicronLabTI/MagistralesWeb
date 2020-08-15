@@ -1,4 +1,5 @@
 import {BaseResponseHttp} from './commons';
+
 export class IFormulaRes extends BaseResponseHttp {
     response: IFormulaReq;
 }
@@ -6,8 +7,17 @@ export class IComponentsRes extends BaseResponseHttp {
     response: IFormulaDetalleReq[];
 }
 
+export class IComponentsSaveReq {
+    fabOrderId: number;
+    plannedQuantity: number;
+    fechaFin: string;
+    comments: string;
+    components: IFormulaDetalleReq[];
+}
+
 export class IFormulaReq {
     fabDate: string;
+    comments: string;
     productionOrderId: string;
     code: string;
     productionDescription: string;
@@ -45,6 +55,7 @@ export class IFormulaDetalleReq {
     pendingQuantity: number;
     stock: number;
     warehouseQuantity: number;
+    action?: string;
 }
 
 

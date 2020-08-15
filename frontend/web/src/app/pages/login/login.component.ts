@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
     } as ILoginReq;
     this.securityService.login(userLoginReq).toPromise().then(async res => {
       this.dataService.setToken(res.access_token);
+      console.log('token: ', res.access_token);
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
               this.dataService.setUserId(userRes.response.id);

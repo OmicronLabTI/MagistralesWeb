@@ -30,7 +30,7 @@ const routes: Routes = [
   {
     path: 'ordenfabricacion/:ordenid',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
-    canActivate: [GuardService]
+    // canActivate: [GuardService]
   },
   {
     path: '**',

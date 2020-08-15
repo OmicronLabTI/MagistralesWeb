@@ -29,4 +29,9 @@ export const MODAL_FIND_ORDERS = {
     ninetyDays: (24 * 60 * 60 * 1000) * 90,
     ninetyDaysDifference: 90
 };
+export const CONST_DETAIL_FORMULA = {
+    update: 'update',
+    insert: 'insert',
+    delete: 'delete'
+};
 

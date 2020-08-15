@@ -39,7 +39,7 @@ export class UserListComponent implements OnInit {
         this.usersService.getUsers(this.offset, this.limit).subscribe((userRes: IUserListRes) => {
                 this.lengthPaginator = userRes.comments;
                 this.dataSource.data = userRes.response;
-                this.dataSource.data.map( user => {
+                this.dataSource.data.forEach( user => {
                     user.isChecked = false;
                 });
             },
