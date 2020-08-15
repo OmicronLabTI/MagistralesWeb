@@ -76,6 +76,71 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Process by order.
+        /// </summary>
+        /// <param name="processByOrder">the orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder)
+        {
+            var listSalesOrder = new List<int> { processByOrder.PedidoId };
+            var sapResponse = await this.sapAdapter.PostSapAdapter(listSalesOrder, ServiceConstants.GetOrderWithDetail);
+            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
+
+            var orders = ordersSap.FirstOrDefault(x => x.Order.PedidoId == processByOrder.PedidoId);
+            var completeListOrders = orders.Detalle.Count;
+            var ordersToCreate = orders.Detalle.Where(x => processByOrder.ProductId.Contains(x.CodigoProducto)).ToList();
+
+            var objectToCreate = ServiceUtils.CreateOrderWithDetail(orders, ordersToCreate);
+            var resultSap = await this.sapDiApi.PostToSapDiApi(new List<OrderWithDetailModel> { objectToCreate }, ServiceConstants.CreateFabOrder);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+
+            var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
+            var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
+
+            var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
+
+            // buscar las que no tengo y crearlas si no todas estan planificadas no se libera.
+            var dataToInsert = ServiceUtils.CreateUserModel(listOrders);
+
+            var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
+            bool insertUserOrdersale = false;
+
+            if (saleOrder == null)
+            {
+                saleOrder = new UserOrderModel
+                {
+                    Salesorderid = processByOrder.PedidoId.ToString(),
+                };
+
+                insertUserOrdersale = true;
+            }
+
+            saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Liberado : ServiceConstants.Planificado;
+
+            if (insertUserOrdersale)
+            {
+                dataToInsert.Add(saleOrder);
+            }
+            else
+            {
+                await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+            }
+
+            var listOrderToInsert = new List<OrderLogModel>();
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(processByOrder.UserId, new List<int> { processByOrder.PedidoId }, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
+            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(processByOrder.UserId, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
+
+            await this.pedidosDao.InsertUserOrder(dataToInsert);
+            await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+
+            var userError = listErrorId.Any() ? ServiceConstants.ErrorAlInsertar : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
         /// returns the orders.
         /// </summary>
         /// <param name="listIds">the list ids.</param>

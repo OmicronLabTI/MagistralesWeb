@@ -47,6 +47,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// planificar by order.
+        /// </summary>
+        /// <param name="processByOrder">process by order.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/processByOrder")]
+        [HttpPost]
+        public async Task<IActionResult> ProcessByOrder(ProcessByOrderDto processByOrder)
+        {
+            var response = await this.pedidoFacade.ProcessByOrder(processByOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Get the user order by Pedido id.
         /// </summary>
         /// <param name="listIds">the ids.</param>
