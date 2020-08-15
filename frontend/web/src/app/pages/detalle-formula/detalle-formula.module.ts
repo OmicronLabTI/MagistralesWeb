@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DetalleFormulaRoutingModule } from './detalle-formula-routing.module';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {DetalleFormulaComponent} from './detalle-formula.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
 
 
@@ -14,7 +14,8 @@ import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/c
         CommonModule,
         DetalleFormulaRoutingModule,
         MATERIAL_COMPONENTS,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ComponentSearchComponent]

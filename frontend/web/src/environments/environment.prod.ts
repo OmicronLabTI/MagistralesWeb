@@ -4,7 +4,6 @@
 
 export const environment = {
   production: true,
-  // baseUrl: 'http://localhost:8000', // prod
   baseUrl: 'http://192.168.0.101:8000', // dev
   baseUrlLogin: 'http://192.168.0.101:8090', // dev
   baseUrlUsers: 'http://192.168.0.101:5101', // dev

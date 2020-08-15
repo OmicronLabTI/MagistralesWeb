@@ -5,7 +5,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
-import {DataService} from '../../services/data.service';
 
 
 @Component({
@@ -70,14 +69,12 @@ export class FindOrdersDialogComponent implements OnInit {
                   this.isToResetData = false;
                   this.getDisableForDocNum();
               } else if (formData.docNum !== null) {
-                  this.isToResetData = false;
-                  this.getDisableOnlyForDocNum();
+                  this.changeValidatorsForDocNum();
               } else if (formData.docNum === '' && (formData.dateType !== '' && formData.dateType ||
                   formData.fini !== '' && formData.fini ||
                   formData.ffin !== '' && formData.ffin ||
                   formData.status !== '' && formData.status || formData.qfb !== '' && formData.qfb)) {
-                  this.isToResetData = false;
-                  this.getDisableOnlyForDocNum();
+                  this.changeValidatorsForDocNum();
               }
           }
           this.isBeginInitForm = false;
@@ -124,5 +121,8 @@ export class FindOrdersDialogComponent implements OnInit {
       this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});
   }
-
+  changeValidatorsForDocNum() {
+      this.isToResetData = false;
+      this.getDisableOnlyForDocNum();
+  }
 }

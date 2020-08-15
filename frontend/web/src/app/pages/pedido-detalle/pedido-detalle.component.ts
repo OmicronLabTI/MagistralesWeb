@@ -78,7 +78,8 @@ export class PedidoDetalleComponent implements OnInit {
   }
 
   openPlaceOrderDialog() {
-    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail, list: [9999, 888]});
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataSource.data.filter(t => t.status === 'Planificado').map(order => order.ordenFabricacionId)});
   }
 
   getButtonsToUnLooked() {

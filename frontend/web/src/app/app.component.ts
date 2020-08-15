@@ -73,7 +73,7 @@ export class AppComponent implements OnDestroy , OnInit {
               const placeOrder = new IPlaceOrdersReq();
               placeOrder.userLogistic = this.dataService.getUserId();
               placeOrder.userId = qfbToPlace.userId;
-              placeOrder.list = qfbToPlace.list;
+              placeOrder.docEntry = qfbToPlace.list;
               placeOrder.orderType = qfbToPlace.modalType;
               this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
                 console.log('resultPlaceOrder: ', resultPlaceOrder);
