@@ -101,6 +101,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.ConnectDiApi())
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -337,6 +341,33 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // act
             var response = await this.pedidoFacade.ConnectDiApi();
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task ProcessByOrder()
+        {
+            // arrange
+            var processOrder = new ProcessByOrderDto
+            {
+                PedidoId = 1,
+                ProductId = new List<string> { "Aspirina" },
+                UserId = "userid",
+            };
+
+            // act
+            var response = await this.pedidoFacade.ProcessByOrder(processOrder);
 
             // Assert
             Assert.IsNotNull(response);

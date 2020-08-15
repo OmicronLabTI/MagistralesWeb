@@ -234,21 +234,16 @@ namespace Omicron.Usuarios.Services.User
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            orders.GroupBy(x => x.Userid).ToList().ForEach(k =>
+            users.ForEach(x =>
             {
-                var user = users.FirstOrDefault(x => x.Id.Equals(k.Key));
+                var count = orders.Where(y => y.Userid.Equals(x.Id) && !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
 
-                if (user != null)
+                listToReturn.Add(new UserWithOrderCountModel
                 {
-                    var count = k.Where(y => !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
-
-                    listToReturn.Add(new UserWithOrderCountModel
-                    {
-                        UserId = user.Id,
-                        UserName = $"{user.FirstName} {user.LastName}",
-                        CountTotal = count,
-                    });
-                }
+                    UserId = x.Id,
+                    UserName = $"{x.FirstName} {x.LastName}",
+                    CountTotal = count,
+                });
             });
 
             return listToReturn;

@@ -71,5 +71,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the connectin.</returns>
         Task<ResultDto> ConnectDiApi();
+
+        /// <summary>
+        /// Process by order.
+        /// </summary>
+        /// <param name="processByOrder">process by order dto.</param>
+        /// <returns>the order.</returns>
+        Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder);
     }
 }
