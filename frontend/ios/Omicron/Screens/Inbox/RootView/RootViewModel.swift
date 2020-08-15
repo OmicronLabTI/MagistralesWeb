@@ -22,7 +22,7 @@ class RootViewModel {
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
     var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
-
+    
     init() {
     }
 

@@ -131,3 +131,47 @@ class Component: Codable {
         self.action = action
     }
 }
+
+class ChangeStatusRequest: Codable {
+    var userId: String
+    var orderId: Int
+    var status: String
+    
+    init(userId: String, orderId: Int, status: String) {
+        self.userId = userId
+        self.orderId = orderId
+        self.status = status
+    }
+}
+
+class ChangeStatusRespose: HttpResponse {
+    var response: ChangeStatus?
+    
+    required init?(map: Map)  {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
+}
+
+class ChangeStatus {
+    var id: Int?
+    var userId: String?
+    var salesOrderId: String?
+    var productionOrderId: String?
+    var status: String?
+    required init?(map: Map)  {    }
+}
+
+extension ChangeStatus: Mappable {
+     func mapping(map: Map) {
+        id <- map["Id"]
+        userId <- map["Userid"]
+        salesOrderId <- map["Salesorderid"]
+        productionOrderId <- map["Productionorderid"]
+        status <- map["Status"]
+    }
+}

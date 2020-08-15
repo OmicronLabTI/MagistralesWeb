@@ -81,6 +81,12 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
+    func changeStatusOrder(changeStatusRequest: [ChangeStatusRequest]) -> Observable<ChangeStatusRespose> {
+        let req: ApiService = ApiService.changeStatusOrder(changeStatusRequest: changeStatusRequest)
+        let res: Observable<ChangeStatusRespose> = makeRequest(request: req)
+        return res
+    }
+    
     
     func deleteItemOfOrdenDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)

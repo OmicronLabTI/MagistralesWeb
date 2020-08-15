@@ -18,12 +18,18 @@ class OrderDetailViewModel {
     var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorRelay<[Detail]> = BehaviorRelay<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
+    var showAlertConfirmation: PublishSubject<String> = PublishSubject()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var sumFormula: BehaviorRelay<Int> = BehaviorRelay<Int>(value: 0)
     var auxTabledata:[Detail] = []
-    
+    var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
+    let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
     // MARK: Init
     init() {
+        
+        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
+            self.showAlertConfirmation.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        }).disposed(by: self.disposeBag)
 
     }
     
@@ -53,6 +59,18 @@ class OrderDetailViewModel {
         }
         return sum
     }
+    
+    func changeStatus() {
+        self.loading.onNext(true)
+        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: "Proceso")
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: { res in
+            self.loading.onNext(false)
+            self.backToInboxView.onNext(())
+        }, onError: { error in
+            self.loading.onNext(false)
+            self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+            }).disposed(by: self.disposeBag)
+    }
 
     func deleteItemFromTable(index: Int) {
         self.loading.onNext(true)
@@ -72,6 +90,7 @@ class OrderDetailViewModel {
             self.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
         }).disposed(by: self.disposeBag)
     }
+    
     
     func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
 

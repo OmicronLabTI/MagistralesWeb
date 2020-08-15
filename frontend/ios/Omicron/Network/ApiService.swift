@@ -16,6 +16,7 @@ enum ApiService {
     case renew(data: Renew)
     case getOrdenDetail(orderId: Int)
     case deleteItemOfOrdenDetail(orderDetailRequest: OrderDetailRequest)
+    case changeStatusOrder(changeStatusRequest: [ChangeStatusRequest])
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -43,6 +44,8 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/formula/\(ordenId)"
         case .deleteItemOfOrdenDetail:
             return "/pedidos/formula"
+        case .changeStatusOrder:
+            return "/pedidos/status/fabOrder"
         }
     }
     
@@ -54,7 +57,8 @@ extension ApiService: AuthorizedTargetType {
              .getStatusList,
              .getOrdenDetail:
             return .get
-        case .deleteItemOfOrdenDetail:
+        case .deleteItemOfOrdenDetail,
+             .changeStatusOrder:
             return .put
         }
     }
@@ -70,6 +74,8 @@ extension ApiService: AuthorizedTargetType {
         case .renew(let data):
             return .requestJSONEncodable(data)
         case .deleteItemOfOrdenDetail(let data):
+            return .requestJSONEncodable(data)
+        case .changeStatusOrder(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -104,6 +110,12 @@ extension ApiService: AuthorizedTargetType {
             return data
             
         case .deleteItemOfOrdenDetail:
+            guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .changeStatusOrder:
             guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()

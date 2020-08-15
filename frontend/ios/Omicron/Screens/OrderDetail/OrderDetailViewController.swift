@@ -44,17 +44,12 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
     
-    @IBAction func backToInboxView(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType: String = ""
     var orderDetailViewModel = OrderDetailViewModel()
-
+    let rootViewModel: RootViewModel = RootViewModel()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -89,12 +84,23 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
     }
 
-    
-
- 
-    
     //MARK: Functions
     func viewModelBinding() {
+
+        self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }).disposed(by: self.disposeBag)
+        
+        processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in self.changeStatus(response: "Cancelar")})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK)})
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { sum in
 
@@ -178,7 +184,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func showButtonsByStatusType(statusType: String) -> Void {
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
         case StatusNameConstants.inProcessStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
@@ -224,6 +230,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     func sendIndexToDelete(index: Int) -> Void  {
         orderDetailViewModel.deleteItemFromTable(index: index)
+    }
+    
+    func changeStatus(response: String) -> Void  {
+        
+        if(response == "OK") {
+            orderDetailViewModel.changeStatus()
+            return
+        }
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
