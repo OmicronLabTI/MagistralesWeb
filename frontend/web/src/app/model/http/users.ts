@@ -38,7 +38,7 @@ export class UserRes {
 export class IPlaceOrdersReq {
     userLogistic: string;
     userId: string;
-    list: number[];
+    docEntry: number[];
     orderType: string;
 }
 export class RoleUser {

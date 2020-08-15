@@ -63,9 +63,6 @@
   <mat-sidenav-container fxFlexFill>
     <mat-sidenav #sidenav>
       <mat-nav-list>
-        <!--
-                <a (click)="sidenav.toggle()" href="" mat-list-item>Close</a>
-        -->
         <a mat-list-item [routerLink]="['pedidos']">Pedidos</a>
         <a mat-list-item >Órdenes de Fabricación</a>
         <a mat-list-item [routerLink]="['userList']">Usuarios</a>
@@ -78,10 +75,3 @@
   </mat-sidenav-container>
 </div>
 </div>
-<!--<mat-toolbar class="footer">
-      <router-outlet></router-outlet>
-
-  <mat-toolbar-row>
-    <span>© {{ now | date: 'yyyy' }} omicron-lab</span>
-  </mat-toolbar-row>
-</mat-toolbar>-->

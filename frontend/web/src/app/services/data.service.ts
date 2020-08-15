@@ -98,11 +98,7 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  transformDate(date: Date, isForAmericanDateType = false) {
-    if (!isForAmericanDateType) {
-      return this.datePipe.transform(date, 'dd/MM/yyyy');
-    } else {
-      return this.datePipe.transform(date, 'MM/dd/yyyy');
-    }
+  transformDate(date: Date) {
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }
