@@ -37,10 +37,6 @@ class RootViewController: UIViewController {
     
     // MARK: Functions
     func viewModelBinding() {
-
-        rootViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.rootViewModel.getOrders()
-        }).disposed(by: self.disposeBag)
         
         rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
             self.dataStatusOfService = data

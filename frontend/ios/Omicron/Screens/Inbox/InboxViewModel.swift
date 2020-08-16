@@ -23,6 +23,7 @@ class  InboxViewModel {
     var ordersTemp: [Order] = []
     var loading =  PublishSubject<Bool>()
     var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
+    var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
 
     var disposeBag = DisposeBag();
@@ -71,7 +72,7 @@ class  InboxViewModel {
         
         NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
             self.loading.onNext(false)
-            self.rootViewModel.refreshDataWhenChangeProcessIsSucces.onNext(())
+            self.refreshDataWhenChangeProcessIsSucces.onNext(())
         }, onError: { error in
             self.loading.onNext(false)
             self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
