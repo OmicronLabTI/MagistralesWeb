@@ -210,22 +210,25 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
-            //Code I want to do
-            AlertManager.shared.showAlert(message: "Funcionalidad no implementada \(indexPath.row)", view: self)
+        if (self.statusType == "En Proceso") {
+            let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
+                //Code I want to do
+                AlertManager.shared.showAlert(message: "Funcionalidad no implementada \(indexPath.row)", view: self)
+            }
+            
+            // Logica para borrar un elemento de la tabla
+            let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
+                let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
+                alert.addAction(cancelAction)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }
+            let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
+            return swipeActions
         }
-        
-        // Logica para borrar un elemento de la tabla
-        let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
-            alert.addAction(cancelAction)
-            alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
-        }
-        let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
-        return swipeActions
+        return nil
     }
     
     func sendIndexToDelete(index: Int) -> Void  {
