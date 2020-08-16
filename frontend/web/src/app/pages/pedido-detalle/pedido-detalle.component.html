@@ -18,7 +18,7 @@
         </mat-form-field>
       </div>
       <div class="table-toolbar-buttons">
-        <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button class="button-blue">
+        <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button class="button-blue" (click)="processOrdersDetail()">
           &nbsp; Planificar &nbsp;
         </button>
         &nbsp;
