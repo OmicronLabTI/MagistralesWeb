@@ -116,7 +116,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                 this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
             this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(() => {
               this.getDetallePedido();
-              this.dataService.presentToastCustom(Messages.success, 'success', CONST_STRING.empty, false, false);
+              this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
             }, () => this.dataService.presentToastCustom(Messages.generic, 'info', CONST_STRING.empty, false, false)
           );
             console.log('toProcess: ', this.detailsOrderToProcess);

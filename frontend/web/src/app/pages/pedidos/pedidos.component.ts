@@ -109,8 +109,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           () => {
-            this.dataService.presentToastCustom(Messages.success, 'success', CONST_STRING.empty, false, false);
             this.getPedidos();
+            this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
           },
           error => {
             this.errorService.httpError(error);

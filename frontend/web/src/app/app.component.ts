@@ -11,6 +11,7 @@ import {Messages} from './constants/messages';
 import {IPlaceOrdersReq, QfbWithNumber} from './model/http/users';
 import {PedidosService} from './services/pedidos.service';
 import {ErrorService} from './services/error.service';
+import {GeneralMessage} from './model/device/general';
 
 
 
@@ -47,10 +48,11 @@ export class AppComponent implements OnDestroy , OnInit {
       });
   }
   ngOnInit() {
-    this.subscriptionQfbToPlace =
-        this.dataService.getQfbToPlace().subscribe( qfbToPlace => {
-          this.onSuccessPlaceOrder(qfbToPlace);
-        });
+    this.subscriptionQfbToPlace.add(this.dataService.getQfbToPlace().subscribe( qfbToPlace => {
+      this.onSuccessPlaceOrder(qfbToPlace);
+    }));
+    this.subscriptionQfbToPlace.add(this.dataService.getMessageGeneralCalHttp()
+        .subscribe(generalMessage => this.onSuccessGeneralMessage(generalMessage)));
   }
   logoutSession() {
     this.dataService.setIsLogin(false);
@@ -78,8 +80,10 @@ export class AppComponent implements OnDestroy , OnInit {
               this.pedidosService.postPlaceOrders( placeOrder).subscribe( () => {
                 if (qfbToPlace.modalType === MODAL_NAMES.placeOrders) {
                   this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+                  this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
                 } else {
                   this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+                  this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
                 }
               }, error => this.errorService.httpError(error));
             } else {
@@ -98,11 +102,17 @@ export class AppComponent implements OnDestroy , OnInit {
       }
     });
   }
+
   getFullName() {
     this.fullName = this.dataService.getUserName();
   }
 
   ngOnDestroy() {
     this.subscriptionQfbToPlace.unsubscribe();
+  }
+  onSuccessGeneralMessage(generalMessage: GeneralMessage) {
+    this.dataService.presentToastCustom(generalMessage.title,
+        generalMessage.icon, CONST_STRING.empty, generalMessage.isButtonAccept, false);
+
   }
 }

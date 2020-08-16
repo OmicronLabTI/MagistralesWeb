@@ -4,6 +4,7 @@ import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
+import {GeneralMessage} from '../model/device/general';
 
 
 @Injectable({
@@ -15,7 +16,15 @@ export class DataService {
   private isLogin = new Subject<boolean>();
   private qfbTOPlace = new Subject<QfbWithNumber>();
   private callHttpService = new Subject<HttpServiceTOCall>();
+  private messageGenericCallHttp = new Subject<GeneralMessage>();
   constructor(private datePipe: DatePipe) { }
+
+  setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
+    this.messageGenericCallHttp.next(messageGeneral);
+  }
+  getMessageGeneralCalHttp() {
+    return this.messageGenericCallHttp.asObservable();
+  }
   setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
     this.callHttpService.next(numberServiceToCall);
   }
