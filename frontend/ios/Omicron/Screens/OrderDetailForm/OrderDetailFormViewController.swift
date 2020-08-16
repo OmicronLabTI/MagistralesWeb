@@ -8,19 +8,31 @@
 
 import UIKit
 import Eureka
+import RxSwift
+import  RxCocoa
 
 class OrderDetailFormViewController:  FormViewController {
     
+    // MARK: Variables
+    var dataOfTable: OrderDetail? = nil
+    var indexOfItemSelected: Int = -1
+    let orderDetailFormViewModel = OrderDetailFormViewModel()
+    var disposeBag = DisposeBag()
+    
+    // MARK: Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+        self.buildForm()
+        self.viewModelBinding()
+    }
+    
+    // MARK: Functions
+    func buildForm() -> Void {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
             cell.textLabel?.textColor = .white
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 13)
             cell.textLabel?.textAlignment = .right
-            
         }
         
         TextRow.defaultCellUpdate = { cell, row in
@@ -30,11 +42,12 @@ class OrderDetailFormViewController:  FormViewController {
         }
         
         form
-            
-            +++ Section(header: "More sophisticated validations UX using callbacks", footer: "")
+            +++ Section(header: "Editar elemento", footer: "")
             
             <<< IntRow() {
                 $0.title = "Cantidad base: "
+                $0.tag = "baseQuantity"
+                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].baseQuantity!
                 // Validaciones
                 let fieldNoEmpty = RuleClosure<Int> { rowValue in
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
@@ -73,7 +86,7 @@ class OrderDetailFormViewController:  FormViewController {
             
             <<< IntRow() {
                 $0.title = "Cantidad requerida: "
-                
+                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].requiredQuantity!
                 // Validaciones
                 let fieldNoEmpty = RuleClosure<Int> { rowValue in
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
@@ -110,11 +123,11 @@ class OrderDetailFormViewController:  FormViewController {
             }
             
             <<< PickerInlineRow<String>() {
-                $0.title = "Almacen"
-                $0.options = ["One","Two","Three"]
-                $0.value = "One"    // initially selected
+                $0.title = "Almacen: "
+                $0.options = ["PZ", "MG"]
+                $0.value = "PZ"
             }
-
+            
             +++ Section()
             <<< ButtonRow() {
                 $0.title = "Aceptar"
@@ -122,15 +135,32 @@ class OrderDetailFormViewController:  FormViewController {
             .onCellSelection { cell, row in
                 row.section?.form?.validate()
                 if (row.isValid) {
-                    print("Holi")
+                    let baseQuantity: IntRow? = self.form.rowBy(tag: "baseQuantity")
+                    let requiredQuantity: IntRow? = self.form.rowBy(tag: "requiredQuantity")
+                    let werehouse: PickerInlineRow<String>? = self.form.rowBy(tag: "werehouse")
+                    self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
                 }
             }
             <<< ButtonRow() {
                 $0.title = "Cancelar"
             }
             .onCellSelection { cell, row in
-                row.section?.form?.validate()
-  
+                self.navigationController?.popViewController(animated: true)
         }
+    }
+    
+    func viewModelBinding () -> Void {
+        // Muestra o oculta el loading
+        orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+            if(showLoading) {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: self.disposeBag)
+        
+        orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
+        }).disposed(by: self.disposeBag)
     }
 }

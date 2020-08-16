@@ -77,7 +77,7 @@ class OrderDetailViewModel {
         let itemToDelete = auxTabledata[index]
         let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!, componentDescription: itemToDelete.detailDescription!, baseQuantity: itemToDelete.baseQuantity!, requiredQuantity: itemToDelete.requiredQuantity!, consumed: itemToDelete.consumed!, available: itemToDelete.available!, unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!, pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!, warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
 
-        let fechaFinFormated = self.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
+        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
         let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
 
         NetworkManager.shared.deleteItemOfOrdenDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
@@ -91,16 +91,7 @@ class OrderDetailViewModel {
         }).disposed(by: self.disposeBag)
     }
     
-    
-    func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
-
-        let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "dd/MM/yyyy"
-        if let date = inputFormatter.date(from: dateString) {
-            let outputFormatter = DateFormatter()
-          outputFormatter.dateFormat = format
-            return outputFormatter.string(from: date)
-        }
-        return nil
+    func getDataTableToEdit() -> OrderDetail  {
+        return self.tempOrderDetailData!
     }
 }

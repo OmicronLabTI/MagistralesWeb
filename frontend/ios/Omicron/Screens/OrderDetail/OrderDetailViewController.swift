@@ -50,6 +50,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     var statusType: String = ""
     var orderDetailViewModel = OrderDetailViewModel()
     let rootViewModel: RootViewModel = RootViewModel()
+    var indexOfTableToEditItem: Int = -1
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -118,7 +119,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].endDate!)", textToBold: "Fecha de finalización:")
                 self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
-
             }
                 }).disposed(by: self.disposeBag)
         
@@ -211,8 +211,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         if (self.statusType == "En Proceso") {
+            // Lógica para editar un item de la tabla
             let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
-                //Code I want to do
+                self.indexOfTableToEditItem = indexPath.row
                 self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
             }
             
@@ -242,6 +243,16 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             return
         }
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       if segue.identifier == ViewControllerIdentifiers.orderDetailFormViewController {
+           if let destination = segue.destination as? OrderDetailFormViewController {
+            let orderDetailToEdit = orderDetailViewModel.getDataTableToEdit()
+            destination.dataOfTable = orderDetailToEdit
+            destination.indexOfItemSelected = self.indexOfTableToEditItem
+           }
+       }
     }
 }
 
