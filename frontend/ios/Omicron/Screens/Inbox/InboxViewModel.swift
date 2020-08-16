@@ -20,31 +20,28 @@ class  InboxViewModel {
     var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
     var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
     let rootViewModel = RootViewModel()
-//    var finishedButtonIsHidden: Driver<Bool>
-//    var pendingButtonIsHidden: Driver<Bool>
-//    var processButtonIsHidden: Driver<Bool>
-    
-    
+    var ordersTemp: [Order] = []
+    var loading =  PublishSubject<Bool>()
+    var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
+    var showAlert = PublishSubject<String>()
+
     var disposeBag = DisposeBag();
     init() {
         // Funcionalidad para el botón de Terminar
         finishedDidTab.subscribe(onNext: { () in
-            print("Se oprmió el botón de terminar")
         }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de pendiente
         pendingDidTab.subscribe(onNext: {
-            print("Boton pendiente")
-            // orderDetail
         }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de En Proceso
         processDidTab.subscribe(onNext: {
-            print("Botón de proceso")
+             self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
             }).disposed(by: disposeBag)
+        
         rootViewModel.dataStatus.subscribe(onNext: { data in
             if let assignedData = data.first?.orders {
-        
                 self.statusData.accept(assignedData)
                 self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
             }
@@ -55,6 +52,29 @@ class  InboxViewModel {
         self.indexSelectedOfTable.onNext(index)
         self.statusData.accept(section.orders)
         self.nameStatus.accept(section.statusName)
+        self.ordersTemp = section.orders
         self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: section.orders))
+    }
+    
+    func changeStatus(indexPath: [IndexPath]) -> Void {
+        self.loading.onNext(true)
+        var orders:[ChangeStatusRequest] = []
+        for index in indexPath {
+            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: ordersTemp[index.row].productionOrderId!, status: "Proceso")
+            orders.append(order)
+        }
+        
+        for index in indexPath {
+            ordersTemp.remove(at: index.row)
+        }
+        self.statusData.accept(ordersTemp)
+        
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+            self.loading.onNext(false)
+            self.rootViewModel.refreshDataWhenChangeProcessIsSucces.onNext(())
+        }, onError: { error in
+            self.loading.onNext(false)
+            self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+        }).disposed(by: self.disposeBag)
     }
 }

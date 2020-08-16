@@ -48,20 +48,39 @@ class InboxViewController: UIViewController {
         
     // MARK: Functions
     func viewModelBinding() -> Void {
+        
+        // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
+        collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ indexpath in
+            if(indexpath.row >= 0) {
+                self.processButton.isEnabled = true
+                return
+            }
+            self.processButton.isEnabled = false
+        }).disposed(by: self.disposeBag)
 
-//        collectionView.rx.itemSelected.subscribe(onNext:{ data in
-//            self.collectionView.selectItem(at: IndexPath(row: data.row, section: data.section), animated: true, scrollPosition: .bottom)
-//            self.inboxViewModel.statusData.subscribe(onNext: { res in
-//                self.orderId = res[data.row].productionOrderId!
-//            }).disposed(by: self.disposeBag)
-//
-//            self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
-//                self.statusType = statusName
-//            }).disposed(by: self.disposeBag)
-//
-//            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
-//        }).disposed(by: disposeBag)
-
+        // Muestra o oculta el loading
+        inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+            if(showLoading) {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un mensaje AlertViewController
+        inboxViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un alert para la confirmación de cambiar el status o no
+        inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.inboxViewModel.changeStatus(indexPath: self.collectionView.indexPathsForSelectedItems!) })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
+                       alert.addAction(cancelAction)
+                       alert.addAction(okAction)
+                       self.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
         
         [
             finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTab),
@@ -69,6 +88,7 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTab)
         ].forEach({ $0.disposed(by: disposeBag) })
      
+        // Lógica cuando se seleciona un item de la tabla
         inboxViewModel.indexSelectedOfTable
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
@@ -77,6 +97,7 @@ class InboxViewController: UIViewController {
                 self.typeCard = res
             }).disposed(by: disposeBag)
         
+        // Pinta la cards
         inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { row, data, cell in
             self.changepropertiesOfCard(cell: cell)
             cell.row = row
@@ -90,6 +111,7 @@ class InboxViewController: UIViewController {
             cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
         }.disposed(by: disposeBag)
         
+        // retorna mensaje si no hay card para cada status
         inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
             var message: String = ""
             if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
@@ -112,6 +134,7 @@ class InboxViewController: UIViewController {
         }).disposed(by: disposeBag)
     }
     
+    // Cambiar colores para cada tipo de estatus selecionado
     func changepropertiesOfCard(cell: CardCollectionViewCell) {
         switch self.typeCard {
         case 0:
@@ -136,6 +159,7 @@ class InboxViewController: UIViewController {
     }
     
     func initComponents() -> Void {
+        self.processButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -161,15 +185,15 @@ class InboxViewController: UIViewController {
     private func hideButtons(index: Int) {
         switch index {
         case 0:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 1:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: false, pendingButtonIsHidden: false)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 3:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 4:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: false, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         default:
             print("")
         }
