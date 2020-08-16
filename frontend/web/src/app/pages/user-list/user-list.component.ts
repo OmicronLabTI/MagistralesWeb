@@ -9,6 +9,7 @@ import {ErrorService} from '../../services/error.service';
 import {Messages} from '../../constants/messages';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-user-list',
@@ -26,11 +27,13 @@ export class UserListComponent implements OnInit {
     offset = CONST_NUMBER.zero;
     limit = CONST_NUMBER.ten;
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
-                private errorService: ErrorService) {
+                private errorService: ErrorService,
+                private titleService: Title) {
     }
 
     ngOnInit() {
         this.getUsers();
+        this.titleService.setTitle("OmicronLab - Usuarios")
         this.dataSource.paginator = this.paginator;
     }
 

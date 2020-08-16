@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
-import {CONST_STRING, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
+import {CONST_STRING, HttpServiceTOCall, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
@@ -10,6 +10,8 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
+import {Subscription} from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pedidos',
@@ -36,11 +38,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
   filterDataOrders = new ParamsPedidos();
   isThereOrdersToPlan = false;
   isThereOrdersToPlace = false;
+  subscriptionCallHttp = new Subscription();
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
     private errorService: ErrorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private titleService: Title
   ) {
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
@@ -50,6 +54,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.subscriptionCallHttp = this.dataService.getCallHttpService().subscribe(callHttpService => {
+      if (callHttpService === HttpServiceTOCall.ORDERS) {
+        this.getPedidos();
+      }
+    });
+    this.titleService.setTitle('OmicronLab - Pedidos');
     this.getPedidos();
     this.dataSource.paginator = this.paginator;
   }
@@ -127,6 +137,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
       if (result) {
         this.filterDataOrders = new  ParamsPedidos();
+        this.offset = 0;
+        this.limit = 10;
       }
       if (result.docNum) {
         this.filterDataOrders.docNum = result.docNum;
@@ -153,8 +165,23 @@ export class PedidosComponent implements OnInit, OnDestroy {
           this.queryString = `${this.queryString}&qfb=${result.qfb}`;
           this.filterDataOrders.qfb = result.qfb;
         }
+        // this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
       }
-      this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
+      if ((result && result.dateType === '0') && (result && result.status === '' || result.qfb === '')) {
+        this.isSearchWithFilter = false;
+      }
+      if ((result && result.dateType === '0') && (result && result.status !== '' || result.qfb !== '')) {
+         this.isSearchWithFilter = true;
+      }
+      if ((result && result.dateType === '1') && (result && result.status !== '' || result.qfb !== '')) {
+        this.isSearchWithFilter = true;
+      }
+      if ((result && result.dateType === '1') && (result && result.status === '' || result.qfb === '')) {
+        this.isSearchWithFilter = true;
+      }
+      if (result && result.docNum !== '') {
+        this.isSearchWithFilter = true;
+      }
       this.getFullQueryString();
       if (result) {
         this.getPedidos();
@@ -187,5 +214,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.subscriptionCallHttp.unsubscribe();
   }
 }

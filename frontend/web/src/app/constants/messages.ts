@@ -6,5 +6,6 @@ export const Messages = {
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s)?',
   placeOrder: '¿Deseas asignar el pedido a',
   deleteComponents: '¿Deseas eliminar el(los) componente seleccionado(s)?',
-  saveFormulaDetail: '¿Deseas guardar los cambios realizados?'
+  saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
+  serverError: 'Hubo un error en el servicio intentelo otra vez'
 };

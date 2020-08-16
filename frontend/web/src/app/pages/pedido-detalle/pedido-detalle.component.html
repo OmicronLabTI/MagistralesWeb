@@ -71,7 +71,7 @@
           
             <ng-container matColumnDef="descripcionProducto">
               <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
-              <td mat-cell matTooltip="EMULSION COLAGENO ELASTINA 10%, DIOXIDO DE TITANIO 5%, HIALURONICO 3%, MANTECA DE KARITE 3%, VIT C 4"
+              <td mat-cell matTooltip="{{element.descripcionProducto}}"
               matTooltipPosition="right"
               aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{element.descripcionProducto}} </td>
             </ng-container>

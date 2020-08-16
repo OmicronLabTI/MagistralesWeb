@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {MODAL_NAMES} from '../../constants/const';
+import {HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {Subscription} from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pedido-detalle',
   templateUrl: './pedido-detalle.component.html',
   styleUrls: ['./pedido-detalle.component.scss']
 })
-export class PedidoDetalleComponent implements OnInit {
+export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
   docNum: string;
   docStatus: string;
@@ -31,13 +33,21 @@ export class PedidoDetalleComponent implements OnInit {
   dataSource = new MatTableDataSource<IPedidoDetalleReq>();
   isThereOrdersDetailToPlan = false;
   isThereOrdersDetailToPlace = false;
+  subscriptionCallHttpDetail = new Subscription();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              private dataService: DataService) { }
+              private dataService: DataService,
+              private titleService: Title) { }
 
   ngOnInit() {
+    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+      if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
+        this.getDetallePedido();
+      }
+    });
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get('id');
       this.docStatus = params.get('status');
+      this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
   }
@@ -45,13 +55,12 @@ export class PedidoDetalleComponent implements OnInit {
   getDetallePedido() {
     this.pedidosService.getDetallePedido(this.docNum).subscribe(
       (pedidoDetalleRes) => {
-        pedidoDetalleRes.response.forEach(element => {
+        this.dataSource.data = pedidoDetalleRes.response;
+        this.dataSource.data.forEach(element => {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? 'Abierto' : element.status;
-          this.dataSource.data.push(element);
         });
-        this.dataSource._updateChangeSubscription();
       }
     );
   }
@@ -88,6 +97,10 @@ export class PedidoDetalleComponent implements OnInit {
   }
   getIsThereOnData(status: string) {
     return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+  }
+
+  ngOnDestroy() {
+    this.subscriptionCallHttpDetail.unsubscribe();
   }
 
 }

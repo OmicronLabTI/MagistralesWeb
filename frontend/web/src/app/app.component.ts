@@ -4,7 +4,7 @@ import {Observable, Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
 import { Router} from '@angular/router';
-import {CONST_NUMBER, CONST_STRING} from './constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -75,8 +75,12 @@ export class AppComponent implements OnDestroy , OnInit {
               placeOrder.userId = qfbToPlace.userId;
               placeOrder.docEntry = qfbToPlace.list;
               placeOrder.orderType = qfbToPlace.modalType;
-              this.pedidosService.postPlaceOrders( placeOrder).subscribe( resultPlaceOrder => {
-                console.log('resultPlaceOrder: ', resultPlaceOrder);
+              this.pedidosService.postPlaceOrders( placeOrder).subscribe( () => {
+                if (qfbToPlace.modalType === MODAL_NAMES.placeOrders) {
+                  this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+                } else {
+                  this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+                }
               }, error => this.errorService.httpError(error));
             } else {
               this.createPlaceOrderDialog(qfbToPlace);

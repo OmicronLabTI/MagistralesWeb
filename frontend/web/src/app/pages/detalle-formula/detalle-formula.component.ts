@@ -9,6 +9,7 @@ import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/c
 import {DataService} from '../../services/data.service';
 import {CONST_DETAIL_FORMULA, CONST_NUMBER} from '../../constants/const';
 import {Messages} from '../../constants/messages';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -43,11 +44,13 @@ export class DetalleFormulaComponent implements OnInit {
   componentsToDelete: IFormulaDetalleReq [] = [];
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
-              private dataService: DataService) { }
+              private dataService: DataService,
+              private titleService: Title) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.ordenFabricacionId = params.get('ordenid');
+      this.titleService.setTitle("Orden de fabricación "+ this.ordenFabricacionId)
     });
     this.getDetalleFormula();
   }

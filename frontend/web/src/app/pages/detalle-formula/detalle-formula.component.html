@@ -3,7 +3,7 @@
     <div class="header-page">
       <div class="title-list-container">
         <span>Detalle</span>
-        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle</div>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / <a class="breadcrumblink" [routerLink]="['/pdetalle', oldDataFormulaDetail.baseDocument, 'Abierto']">Detalle</a> / Formula </div>
       </div>
       <div class="filter-select">
         <div class="docbase">Documento base: {{oldDataFormulaDetail.baseDocument}} </div>
@@ -91,7 +91,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                             <mat-label>Fecha de finalización</mat-label>
-                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" disabled>
+                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" readonly>
                             <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                             <mat-datepicker #dp3 disabled="false"></mat-datepicker>
                         <!--<input matInput placeholder="Fecha de finalización" value="{{oldDataFormulaDetail.endDate}}">-->
