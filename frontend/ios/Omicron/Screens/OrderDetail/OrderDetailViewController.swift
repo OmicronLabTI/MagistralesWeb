@@ -213,7 +213,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         if (self.statusType == "En Proceso") {
             let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
                 //Code I want to do
-                AlertManager.shared.showAlert(message: "Funcionalidad no implementada \(indexPath.row)", view: self)
+                self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
             }
             
             // Logica para borrar un elemento de la tabla

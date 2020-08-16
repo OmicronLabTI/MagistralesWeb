@@ -19,7 +19,7 @@ class RootViewController: UIViewController {
     // Variables
     let disposeBag = DisposeBag()
     let rootViewModel = RootViewModel()
-    var dataStatusOfService: [Section] = []
+    var dataStatusOfService: [SectionOrder] = []
     lazy var inboxViewModel = self.getInboxViewModel()
     // MARK: Life Cycles
     override func viewDidLoad() {

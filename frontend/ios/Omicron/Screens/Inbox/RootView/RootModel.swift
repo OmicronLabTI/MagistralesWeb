@@ -115,7 +115,7 @@ extension Order: Mappable {
 }
 
 
-struct Section {
+struct SectionOrder {
     var statusName: String
     var numberTask: Int
     var imageIndicatorStatus: String

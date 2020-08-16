@@ -922,6 +922,9 @@
                         <outlet property="tableView" destination="Pz7-of-sCi" id="xWj-0B-RiS"/>
                         <outlet property="tagDescriptionLabel" destination="jpX-o8-gIz" id="o3b-wQ-VfY"/>
                         <outlet property="titleLabel" destination="nV4-RO-meX" id="9ev-mY-Idh"/>
+                        <segue destination="pSw-ye-U1M" kind="popoverPresentation" identifier="OrderDetailFormViewController" popoverAnchorView="Pz7-of-sCi" id="GJJ-xu-Vho">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -958,6 +961,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Ic-O7-9KL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4026" y="-196"/>
+        </scene>
+        <!--Order Detail Form View Controller-->
+        <scene sceneID="rag-sW-JkR">
+            <objects>
+                <viewController storyboardIdentifier="OrderDetailFormViewController" id="pSw-ye-U1M" customClass="OrderDetailFormViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="56H-lB-pVF">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="680"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="jxE-Z6-kbm"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lV6-AW-3tF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4026" y="819"/>
         </scene>
     </scenes>
     <resources>

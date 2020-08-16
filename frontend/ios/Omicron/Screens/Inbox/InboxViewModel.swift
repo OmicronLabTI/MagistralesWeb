@@ -49,7 +49,7 @@ class  InboxViewModel {
         }).disposed(by: disposeBag)
     }
     
-    func setSelection(index: Int, section: Section) -> Void {
+    func setSelection(index: Int, section: SectionOrder) -> Void {
         self.indexSelectedOfTable.onNext(index)
         self.statusData.accept(section.orders)
         self.nameStatus.accept(section.statusName)

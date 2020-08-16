@@ -11,7 +11,8 @@ target 'Omicron' do
   pod 'Moya/RxSwift', '~> 14.0'
   pod 'ObjectMapper'
   pod 'lottie-ios'
-
+  pod 'Eureka'
+  
   target 'OmicronTests' do
     inherit! :search_paths
     # Pods for testing

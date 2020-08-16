@@ -18,7 +18,7 @@ class RootViewModel {
     var finishedOrders: [Order] = []
     var reassignedOrders: [Order] = []
     
-    public var dataStatus: BehaviorSubject<[Section]> = BehaviorSubject(value: [])
+    public var dataStatus: BehaviorSubject<[SectionOrder]> = BehaviorSubject(value: [])
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
     var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
@@ -51,11 +51,11 @@ class RootViewModel {
                     }
                 }
                 let data = [
-                    Section(statusName: StatusNameConstants.assignedStatus, numberTask:  self!.assignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: self!.assignedOrders),
-                    Section(statusName: StatusNameConstants.inProcessStatus, numberTask: self!.inProcessOrdes.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: self!.inProcessOrdes),
-                    Section(statusName: StatusNameConstants.penddingStatus, numberTask: self!.penddingOrders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders:  self!.penddingOrders),
-                    Section(statusName: StatusNameConstants.finishedStatus, numberTask: self!.finishedOrders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: self!.finishedOrders),
-                    Section(statusName: StatusNameConstants.reassignedStatus, numberTask: self!.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self!.reassignedOrders)
+                    SectionOrder(statusName: StatusNameConstants.assignedStatus, numberTask:  self!.assignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: self!.assignedOrders),
+                    SectionOrder(statusName: StatusNameConstants.inProcessStatus, numberTask: self!.inProcessOrdes.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: self!.inProcessOrdes),
+                    SectionOrder(statusName: StatusNameConstants.penddingStatus, numberTask: self!.penddingOrders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders:  self!.penddingOrders),
+                    SectionOrder(statusName: StatusNameConstants.finishedStatus, numberTask: self!.finishedOrders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: self!.finishedOrders),
+                    SectionOrder(statusName: StatusNameConstants.reassignedStatus, numberTask: self!.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self!.reassignedOrders)
                 ]
                 self!.dataStatus.onNext(data)
                 self!.loading.onNext(false)
