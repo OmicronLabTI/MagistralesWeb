@@ -32,6 +32,7 @@ class InboxViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.title = StatusNameConstants.assignedStatus
+        self.collectionView.allowsMultipleSelection = true
         viewModelBinding()
         self.initComponents()
         collectionView.register(UINib(nibName:
@@ -48,18 +49,18 @@ class InboxViewController: UIViewController {
     // MARK: Functions
     func viewModelBinding() -> Void {
 
-        collectionView.rx.itemSelected.subscribe(onNext:{ data in
-            
-            self.inboxViewModel.statusData.subscribe(onNext: { res in
-                self.orderId = res[data.row].productionOrderId!
-            }).disposed(by: self.disposeBag)
-            
-            self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
-                self.statusType = statusName
-            }).disposed(by: self.disposeBag)
-            
-            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
-        }).disposed(by: disposeBag)
+//        collectionView.rx.itemSelected.subscribe(onNext:{ data in
+//            self.collectionView.selectItem(at: IndexPath(row: data.row, section: data.section), animated: true, scrollPosition: .bottom)
+//            self.inboxViewModel.statusData.subscribe(onNext: { res in
+//                self.orderId = res[data.row].productionOrderId!
+//            }).disposed(by: self.disposeBag)
+//
+//            self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
+//                self.statusType = statusName
+//            }).disposed(by: self.disposeBag)
+//
+//            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+//        }).disposed(by: disposeBag)
 
         
         [
@@ -78,6 +79,7 @@ class InboxViewController: UIViewController {
         
         inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { row, data, cell in
             self.changepropertiesOfCard(cell: cell)
+            cell.row = row
             cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
             cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
             cell.containerDescriptionLabel.text = data.container ?? ""
@@ -129,6 +131,7 @@ class InboxViewController: UIViewController {
     
     func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
         cell.assignedStyleCard(color: borderColor.cgColor)
+        cell.delegate = self
         UtilsManager.shared.changeIconButton(button: cell.showDetail, iconName: iconName)
     }
     
@@ -189,6 +192,20 @@ class InboxViewController: UIViewController {
 }
 
 // MARK: Extencions
+extension InboxViewController: CardCellDelegate {
+    func detailTapped(row: Int) {
+        self.inboxViewModel.statusData.subscribe(onNext: { res in
+            self.orderId = res[row].productionOrderId!
+        }).disposed(by: self.disposeBag)
+        
+        self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
+            self.statusType = statusName
+        }).disposed(by: self.disposeBag)
+        
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+    }
+}
+
 extension UICollectionView {
 
     func setEmptyMessage(_ message: String) {

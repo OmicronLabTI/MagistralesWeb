@@ -10,6 +10,10 @@ import UIKit
 import RxCocoa
 import RxSwift
 
+protocol CardCellDelegate: NSObjectProtocol {
+    func detailTapped(row: Int)
+}
+
 class CardCollectionViewCell: UICollectionViewCell {
 
     
@@ -31,6 +35,8 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var productLabel: UILabel!
     @IBOutlet weak var productDescriptionLabel: UILabel!
     @IBOutlet weak var showDetail: UIButton!
+    weak var delegate: CardCellDelegate?
+    var row: Int = -1
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -63,5 +69,19 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.contentCard.layer.cornerRadius = CGFloat(20)
         self.contentCard.layer.borderColor = color 
         self.contentCard.layer.borderWidth = CGFloat(1)
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                self.contentCard.layer.borderWidth = CGFloat(10)
+            } else {
+                self.contentCard.layer.borderWidth = CGFloat(1)
+            }
+        }
+    }
+    
+    @IBAction func detail() {
+        self.delegate?.detailTapped(row: self.row)
     }
 }
