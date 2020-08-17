@@ -4,9 +4,11 @@ import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
+import {ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {Messages} from '../../constants/messages';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -34,6 +36,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToPlan = false;
   isThereOrdersDetailToPlace = false;
   subscriptionCallHttpDetail = new Subscription();
+  detailsOrderToProcess = new ProcessOrdersDetailReq();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title) { }
@@ -103,4 +106,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.subscriptionCallHttpDetail.unsubscribe();
   }
 
+  processOrdersDetail() {
+    this.dataService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.detailsOrderToProcess.pedidoId = Number(this.docNum);
+            this.detailsOrderToProcess.userId = this.dataService.getUserId();
+            this.detailsOrderToProcess.productId =
+                this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
+            this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(() => {
+              this.getDetallePedido();
+              this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+            }, () => this.dataService.presentToastCustom(Messages.generic, 'info', CONST_STRING.empty, false, false)
+          );
+            console.log('toProcess: ', this.detailsOrderToProcess);
+          }
+        } );
+  }
 }

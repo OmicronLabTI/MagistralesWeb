@@ -50,7 +50,7 @@ export class DetalleFormulaComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.ordenFabricacionId = params.get('ordenid');
-      this.titleService.setTitle("Orden de fabricación "+ this.ordenFabricacionId)
+      this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
     });
     this.getDetalleFormula();
   }
@@ -134,8 +134,9 @@ export class DetalleFormulaComponent implements OnInit {
                 .filter(component => component.action === CONST_DETAIL_FORMULA.update || component.action === CONST_DETAIL_FORMULA.insert);
             componentsToDeleteFull.push(...this.componentsToDelete);
             detailComponentsTOSave.components =  componentsToDeleteFull;
-            this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( resUpdateFormula => {
+            this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
               this.getDetalleFormula();
+              this.createMessageOkHttp();
             }, error => console.log('errorFormula: ', error ));
           }
         });
@@ -155,6 +156,7 @@ export class DetalleFormulaComponent implements OnInit {
             this.oldDataFormulaDetail.details = this.dataSource.data;
             this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
             this.getIsReadyTOSave();
+            this.createMessageOkHttp();
           }
         });
 
@@ -169,7 +171,9 @@ export class DetalleFormulaComponent implements OnInit {
     return detailComponentsTOSave;
   }
   getAction(index: number) {
-    this.dataSource.data[index].action = !this.dataSource.data[index].action || (this.dataSource.data[index].action && this.dataSource.data[index].action  !== CONST_DETAIL_FORMULA.insert) ?
+    this.dataSource.data[index].action =
+        !this.dataSource.data[index].action ||
+        (this.dataSource.data[index].action && this.dataSource.data[index].action  !== CONST_DETAIL_FORMULA.insert) ?
         CONST_DETAIL_FORMULA.update : this.dataSource.data[index].action;
   }
 
@@ -179,6 +183,9 @@ export class DetalleFormulaComponent implements OnInit {
   }
   getIsReadyTOSave() {
     this.isReadyToSave = true;
+  }
+  createMessageOkHttp() {
+    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
   }
 }
 

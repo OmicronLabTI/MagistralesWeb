@@ -39,3 +39,8 @@ export class ProcessOrders {
     user: string;
     listIds: number[];
 }
+export class ProcessOrdersDetailReq {
+    pedidoId: number;
+    userId: string;
+    productId: string[];
+}

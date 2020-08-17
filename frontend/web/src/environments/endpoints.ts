@@ -21,6 +21,7 @@ export const Endpoints = {
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
+    processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
 }
 };
 

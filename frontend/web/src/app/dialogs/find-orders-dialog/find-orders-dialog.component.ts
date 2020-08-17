@@ -30,9 +30,6 @@ export class FindOrdersDialogComponent implements OnInit {
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
       docNum: ['', [Validators.maxLength(60)]],
-          /*dateType: ['', Validators.required],
-          fini: ['', [Validators.required]],
-          ffin: ['', [Validators.required]],*/
           dateType: ['', []],
           fini: ['', []],
           ffin: ['', []],
@@ -53,11 +50,9 @@ export class FindOrdersDialogComponent implements OnInit {
           });
           this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
       }).catch(error => {
-          this.errorService.httpError(error)
-          console.log('error qfbsSearch: ', error)
+          this.errorService.httpError(error);
           this.dialogRef.close();
-          this.dataService.presentToastCustom(Messages.serverError, 'info', '', true, false);
-
+          this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'info', isButtonAccept: false});
       });
       this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
       const initDateTrans = this.fullDate[0].split('/');
@@ -130,8 +125,6 @@ export class FindOrdersDialogComponent implements OnInit {
       this.getDisableOnlyForDocNum();
       this.resetParamsValue();
       this.findOrdersForm.get('dateType').enable({onlySelf: true, emitEvent: false});
-      /*this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
-      this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});*/
       this.findOrdersForm.get('status').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});

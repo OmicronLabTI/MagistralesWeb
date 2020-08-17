@@ -3,7 +3,7 @@ import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
-import {IPedidosListRes, IProcessOrdersRes} from '../model/http/pedidos';
+import {IPedidosListRes, IProcessOrdersRes, ProcessOrdersDetailReq} from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
@@ -41,5 +41,8 @@ export class PedidosService {
   }
   updateFormula(formulaTOSave: IComponentsSaveReq) {
     return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
+  }
+  postPlaceOrdersDetail(placeOrderDetail: ProcessOrdersDetailReq) {
+    return this.consumeService.httpPost(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
   }
 }
