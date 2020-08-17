@@ -10,8 +10,11 @@ import Foundation
 import UIKit
 
 class AlertManager {
+    
+    //MARK: VAriables
     static let shared = AlertManager()
     
+    // MARK: Functions
     func showAlert(message: String, view: UIViewController) {
         let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: nil)

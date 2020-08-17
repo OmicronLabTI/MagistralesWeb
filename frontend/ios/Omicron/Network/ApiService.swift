@@ -79,7 +79,7 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         }
     }
-        
+    
     var sampleData: Data {
         switch self {
         case .login:
@@ -124,8 +124,8 @@ extension ApiService: AuthorizedTargetType {
         }
     }
     var headers: [String: String]? {
-            return ["Content-type": "application/json"]
-        }
+        return ["Content-type": "application/json"]
+    }
 }
 
 // MARK: - Helpers

@@ -26,15 +26,20 @@ protocol AuthorizedTargetType: TargetType {
 }
 
 class NetworkManager: SessionProtocol {
+    
+    //MARK: Variables
     static let shared: NetworkManager = NetworkManager()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
+    // MARK: Init
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
         AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
         NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
         ])) {
         self.provider = provider
     }
+    
+    // MARK: Functions
     
     func getTokenRefreshService() -> Single<Response> {
         let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refresh_token ?? "")
@@ -51,18 +56,21 @@ class NetworkManager: SessionProtocol {
         // TODO LOGOUT USER
     }
     
+    // Realiza el login
     func login(data: Login) -> Observable<LoginResponse> {
         let req: ApiService = ApiService.login(data: data)
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
     
+    // Obtiene la información del usuario logeado
     func getInfoUser(userId: String) -> Observable<UserInfoResponse> {
         let req: ApiService = ApiService.getInfoUser(userId: userId)
         let res: Observable<UserInfoResponse> = makeRequest(request: req)
         return res
     }
     
+    // Obtiene las órdenes de fabricación en una lista de por status
     func getStatusList(qfbId: String) -> Observable<StatusResponse> {
         let req: ApiService = ApiService.getStatusList(qfbId: qfbId)
         let res: Observable<StatusResponse> = makeRequest(request: req)
@@ -75,20 +83,22 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
+    // Obtiene el detalle de la fórmula
     func getOrdenDetail(orderId: Int) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.getOrdenDetail(orderId: orderId)
         let res: Observable<OrderDetailResponse> = makeRequest(request: req)
         return res
     }
     
+    // Chambia de status una orden de fabricación
     func changeStatusOrder(changeStatusRequest: [ChangeStatusRequest]) -> Observable<ChangeStatusRespose> {
         let req: ApiService = ApiService.changeStatusOrder(changeStatusRequest: changeStatusRequest)
         let res: Observable<ChangeStatusRespose> = makeRequest(request: req)
         return res
     }
     
-    
-    func deleteItemOfOrdenDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<OrderDetailResponse> {
+    // Actualiza, elimina un elemento de la tabla en detalle de la formula
+    func updateDeleteItemOfTableInOrderDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
         let res: Observable<OrderDetailResponse> = makeRequest(request: req)
         return res

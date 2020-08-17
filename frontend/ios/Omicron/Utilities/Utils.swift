@@ -10,8 +10,10 @@ import Foundation
 import UIKit
 
 class UtilsManager {
+    //MARK: Variables
     static let shared = UtilsManager()
     
+    //MARK: Functions
     func setStyleButtonStatus( button: UIButton ,title: String, color: UIColor = OmicronColors.blue, backgroudColor: UIColor = UIColor.white, titleColor: UIColor = .white) -> Void {
         button.setTitle(title, for: .normal)
         button.setTitleColor(titleColor, for: .normal)
@@ -46,4 +48,16 @@ class UtilsManager {
         }
         return att
     }
+    
+    func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
+
+           let inputFormatter = DateFormatter()
+           inputFormatter.dateFormat = "dd/MM/yyyy"
+           if let date = inputFormatter.date(from: dateString) {
+               let outputFormatter = DateFormatter()
+             outputFormatter.dateFormat = format
+               return outputFormatter.string(from: date)
+           }
+           return nil
+       }
 }

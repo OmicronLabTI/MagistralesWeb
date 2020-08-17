@@ -9,8 +9,10 @@
 import Foundation
 
 class Persistence {
+    //MARK: Variables
     static let shared: Persistence = Persistence()
     
+    //MARK: Functions
     func saveLoginData(data: LoginResponse) {
         let userDefaults = UserDefaults.standard
         do {
