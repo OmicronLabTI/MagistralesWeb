@@ -39,4 +39,5 @@ export enum HttpServiceTOCall {
     DETAIL_ORDERS,
     USERS,
 }
+export const RoleQfbId = 2;
 

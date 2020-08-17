@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    // baseUrl: 'https://7ce4f9b67b4a.ngrok.io', // prod
-    baseUrl: 'http://192.168.0.101:8000', // dev
+    baseUrl: 'https://7ce4f9b67b4a.ngrok.io', // prod
+    // baseUrl: 'http://192.168.0.101:8000', // dev
     baseUrlLogin: 'http://192.168.0.101:8090', // dev
     baseUrlUsers: 'http://192.168.0.101:5101', // dev
     baseUrlCatalogs: 'http://192.168.0.101:9010', // dev
