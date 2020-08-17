@@ -16,7 +16,7 @@ class OrderDetailViewModel {
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
     var tempOrderDetailData: OrderDetail? = nil
-    var tableData: BehaviorRelay<[Detail]> = BehaviorRelay<[Detail]>(value: [])
+    var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation: PublishSubject<String> = PublishSubject()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
@@ -39,7 +39,7 @@ class OrderDetailViewModel {
         loading.onNext(true)
         NetworkManager.shared.getOrdenDetail(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
             self.orderDetailData.accept([res.response!])
-            self.tableData.accept(res.response!.details!)
+            self.tableData.onNext(res.response!.details!)
             self.auxTabledata = res.response!.details!
             self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
@@ -84,7 +84,7 @@ class OrderDetailViewModel {
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
                 self.tempOrderDetailData?.details?.remove(at: index)
-            self.tableData.accept((self.tempOrderDetailData?.details)!)
+            self.tableData.onNext((self.tempOrderDetailData?.details)!)
             self.sumFormula.accept(self.sum(tableDetails: (self.tempOrderDetailData?.details)!))
         }, onError: {  error in
             self.loading.onNext(false)

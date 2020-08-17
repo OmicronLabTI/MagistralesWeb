@@ -68,7 +68,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.title = "Detallé de la fórmula"
+        self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
