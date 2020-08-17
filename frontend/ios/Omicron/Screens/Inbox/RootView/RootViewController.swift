@@ -32,7 +32,6 @@ class RootViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
-
     }
     
     // MARK: Functions
@@ -41,6 +40,13 @@ class RootViewController: UIViewController {
         rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
             self.dataStatusOfService = data
         }).disposed(by: disposeBag)
+        
+        rootViewModel.refreshSelection.subscribe(onNext: {
+            if (self.dataStatusOfService.count > 0) {
+                self.viewTable.selectRow(at: IndexPath(row: self.rootViewModel.selectedRow, section: 0), animated: true, scrollPosition: .none)
+                self.inboxViewModel?.setSelection(index: self.rootViewModel.selectedRow, section: self.dataStatusOfService[self.rootViewModel.selectedRow])
+            }
+        }).disposed(by: self.disposeBag)
         
         // Muestra los datos de la sección "Mis ordenes"
         rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) {
@@ -63,13 +69,10 @@ class RootViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         
         // Detecta el evento cuando se selecciona un status de la tabla
-//        let index = NSIndexPath(row: 0, section: 0)
-//        viewTable.selectRow(at: index as IndexPath, animated: true, scrollPosition: .middle)
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
+            self.rootViewModel.selectedRow = indexPath.row
             self.inboxViewModel?.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
         }).disposed(by: disposeBag)
-        
-        
     }
     
     func initComponents() {

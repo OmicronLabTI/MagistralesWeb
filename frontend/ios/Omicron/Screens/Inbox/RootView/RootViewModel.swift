@@ -17,9 +17,11 @@ class RootViewModel {
     var penddingOrders: [Order] = []
     var finishedOrders: [Order] = []
     var reassignedOrders: [Order] = []
+    var selectedRow = 0
     
     public var dataStatus: BehaviorSubject<[SectionOrder]> = BehaviorSubject(value: [])
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
+    var refreshSelection: PublishSubject<Void> = PublishSubject()
     var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
@@ -32,7 +34,7 @@ class RootViewModel {
     func getOrders() -> Void {
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             self.loading.onNext(true)
-            NetworkManager.shared.getStatusList(qfbId: userId).subscribe(onNext: { [weak self] res in
+            NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
                 
                 for status in res.response!.status! {
                     switch status.statusId {
@@ -57,8 +59,9 @@ class RootViewModel {
                     SectionOrder(statusName: StatusNameConstants.finishedStatus, numberTask: self!.finishedOrders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: self!.finishedOrders),
                     SectionOrder(statusName: StatusNameConstants.reassignedStatus, numberTask: self!.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self!.reassignedOrders)
                 ]
-                self!.dataStatus.onNext(data)
-                self!.loading.onNext(false)
+                self?.dataStatus.onNext(data)
+                self?.refreshSelection.onNext(())
+                self?.loading.onNext(false)
             }, onError: { err in
                 print(err)
                 self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
