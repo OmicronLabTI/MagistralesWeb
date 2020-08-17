@@ -89,8 +89,25 @@ namespace Omicron.Pedidos.Test.Services
                 User = "abc",
             };
 
+            var localSapAdapter = new Mock<ISapAdapter>();
+            localSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
+                .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            mockSaDiApi
+                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ResultModel()));
+
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+
             // act
-            var response = await this.pedidosService.ProcessOrders(process);
+            var response = await pedidosServiceLocal.ProcessOrders(process);
 
             // assert
             Assert.IsNotNull(response);

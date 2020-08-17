@@ -53,8 +53,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId)
         {
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId.ListIds, ServiceConstants.GetOrderWithDetail);
+            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
 
-            var resultSap = await this.sapDiApi.PostToSapDiApi(orders.Response, ServiceConstants.CreateFabOrder);
+            ordersSap.ForEach(o =>
+            {
+                o.Detalle = o.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
+            });
+
+            var resultSap = await this.sapDiApi.PostToSapDiApi(ordersSap, ServiceConstants.CreateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
