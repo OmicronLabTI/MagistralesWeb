@@ -103,6 +103,8 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
         ports:
         - containerPort: 8090
 ---
