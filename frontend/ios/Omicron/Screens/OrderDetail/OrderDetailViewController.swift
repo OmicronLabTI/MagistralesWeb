@@ -29,6 +29,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var startDateDescriptionLabel: UILabel!
     @IBOutlet weak var finishedDateDescriptionLabel: UILabel!
     @IBOutlet weak var productDescritionLabel: UILabel!
+    @IBOutlet weak var commentsButton: UIButton!
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
@@ -149,6 +150,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     func initComponents() -> Void {
 
+        self.commentsButton.isHidden = true
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
