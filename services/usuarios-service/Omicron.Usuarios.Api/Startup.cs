@@ -73,7 +73,6 @@ namespace Omicron.Usuarios.Api
             DependencyInjector.AddDbContext(this.Configuration);
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
-                .WriteTo.RollingFile("log-{Date}.txt", LogEventLevel.Information)
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
 

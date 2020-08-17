@@ -24,7 +24,7 @@ export class IProcessOrdersRes extends BaseResponseHttp {
 }
 export class ParamsPedidos {
     dateType?: string;
-    docNum: number;
+    docNum: any;
     fini: Date;
     ffin: Date;
     status: string;
@@ -32,9 +32,15 @@ export class ParamsPedidos {
     offset?: number;
     limit?: number;
     dateFull: string;
+
 }
 
 export class ProcessOrders {
     user: string;
     listIds: number[];
+}
+export class ProcessOrdersDetailReq {
+    pedidoId: number;
+    userId: string;
+    productId: string[];
 }

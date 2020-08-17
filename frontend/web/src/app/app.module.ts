@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { MATERIAL_COMPONENTS } from './app.material';
 import { AppRoutingModule } from './app-routing.module';
@@ -29,7 +29,8 @@ import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-orde
 
     ],
   providers: [
-    APP_PROVIDERS
+    APP_PROVIDERS,
+    Title
   ],
   bootstrap: [AppComponent],
     entryComponents: [PlaceOrderDialogComponent]

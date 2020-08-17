@@ -5,6 +5,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
+import {DataService} from '../../services/data.service';
+import {Messages} from '../../constants/messages';
 
 
 @Component({
@@ -23,13 +25,14 @@ export class FindOrdersDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public filterData: any,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
-              private errorService: ErrorService) {
+              private errorService: ErrorService,
+              private dataService: DataService) {
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
-      docNum: ['', [Validators.required, Validators.maxLength(60)]],
-      dateType: ['', Validators.required],
-      fini: ['', [Validators.required]],
-      ffin: ['', [Validators.required]],
+      docNum: ['', [Validators.maxLength(60)]],
+          dateType: ['', []],
+          fini: ['', []],
+          ffin: ['', []],
       status: ['', []],
       qfb: ['', []],
     });
@@ -46,7 +49,11 @@ export class FindOrdersDialogComponent implements OnInit {
               };
           });
           this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
-      }).catch(error => this.errorService.httpError(error));
+      }).catch(error => {
+          this.errorService.httpError(error);
+          this.dialogRef.close();
+          this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'info', isButtonAccept: false});
+      });
       this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
       const initDateTrans = this.fullDate[0].split('/');
       const finishDateTrans = this.fullDate[1].split('/');
@@ -96,6 +103,8 @@ export class FindOrdersDialogComponent implements OnInit {
       this.enableAllParamsSearch();
     }
   getDisableForDocNum() {
+      this.isToResetData = true;
+      this.isBeginInitForm = true;
       this.findOrdersForm.get('dateType').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('fini').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
@@ -106,6 +115,7 @@ export class FindOrdersDialogComponent implements OnInit {
       this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
   }
   resetParamsValue() {
+      this.findOrdersForm.get('dateType').setValue('0');
       this.findOrdersForm.get('docNum').setValue('');
       this.findOrdersForm.get('qfb').setValue( '' );
       this.findOrdersForm.get('status').setValue('');
@@ -115,14 +125,13 @@ export class FindOrdersDialogComponent implements OnInit {
       this.getDisableOnlyForDocNum();
       this.resetParamsValue();
       this.findOrdersForm.get('dateType').enable({onlySelf: true, emitEvent: false});
-      this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
-      this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('status').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});
   }
   changeValidatorsForDocNum() {
-      this.isToResetData = false;
+      this.isToResetData = true;
+      this.isBeginInitForm = true;
       this.getDisableOnlyForDocNum();
   }
 }

@@ -34,4 +34,9 @@ export const CONST_DETAIL_FORMULA = {
     insert: 'insert',
     delete: 'delete'
 };
+export enum HttpServiceTOCall {
+    ORDERS,
+    DETAIL_ORDERS,
+    USERS,
+}
 
