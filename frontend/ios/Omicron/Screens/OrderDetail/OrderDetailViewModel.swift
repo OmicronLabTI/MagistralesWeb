@@ -54,7 +54,9 @@ class OrderDetailViewModel {
         var sum = 0
         if(tableDetails.count > 0) {
             for detail in tableDetails {
-                sum = sum + detail.requiredQuantity!
+                if(detail.unit  != "Pieza") {
+                    sum = sum + detail.requiredQuantity!
+                }
             }
             return sum
         }
