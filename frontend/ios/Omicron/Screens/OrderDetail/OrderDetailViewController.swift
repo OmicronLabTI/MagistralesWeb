@@ -68,7 +68,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        super.viewDidLoad()
         self.title = "Detallé de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
@@ -87,7 +86,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
 
     //MARK: Functions
     func viewModelBinding() {
-
+        
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.navigationController?.popViewController(animated: true)
         }).disposed(by: self.disposeBag)
@@ -133,7 +132,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.quantityPendingLabel.text = "\(data.pendingQuantity!)"
             cell.stockLabel.text = "\(data.stock!)"
             cell.storedQuantity.text = "\(data.warehouseQuantity!)"
-            
         }.disposed(by: disposeBag)
         
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in

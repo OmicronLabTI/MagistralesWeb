@@ -15,6 +15,7 @@ class  OrderDetailFormViewModel {
     var loading = PublishSubject<Bool>()
     var showAlert = PublishSubject<String>()
     var disposeBag = DisposeBag()
+    var success = PublishSubject<Int>()
     
     // MARK: Init
     init() {
@@ -31,11 +32,13 @@ class  OrderDetailFormViewModel {
         
         let order = OrderDetailRequest(fabOrderID: (data.productionOrderID)!, plannedQuantity: (data.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
         
-        NetworkManager.shared.deleteItemOfOrdenDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
+        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
+             self.showAlert.onNext("Se registraron los cambios correctamente")
+           self.success.onNext(data.details![index].orderFabID!)
         }, onError: {  error in
             self.loading.onNext(false)
-            self.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
+            self.showAlert.onNext("Hubo un error al editar el elemento,  intente de nuevo")
         }).disposed(by: self.disposeBag)
     }
 }

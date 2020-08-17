@@ -18,6 +18,11 @@ class OrderDetailFormViewController:  FormViewController {
     var indexOfItemSelected: Int = -1
     let orderDetailFormViewModel = OrderDetailFormViewModel()
     var disposeBag = DisposeBag()
+    lazy var orderDetailViewModel = OrderDetailViewModel()
+    
+    var baseQuantity: IntRow? = nil
+    var requiredQuantity: IntRow? = nil
+    var werehouse: PickerInlineRow<String>? = nil
     
     // MARK: Life cycles
     override func viewDidLoad() {
@@ -87,6 +92,7 @@ class OrderDetailFormViewController:  FormViewController {
             <<< IntRow() {
                 $0.title = "Cantidad requerida: "
                 $0.value = self.dataOfTable?.details![self.indexOfItemSelected].requiredQuantity!
+                $0.tag = "requiredQuantity"
                 // Validaciones
                 let fieldNoEmpty = RuleClosure<Int> { rowValue in
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
@@ -124,8 +130,9 @@ class OrderDetailFormViewController:  FormViewController {
             
             <<< PickerInlineRow<String>() {
                 $0.title = "Almacen: "
-                $0.options = ["PZ", "MG"]
-                $0.value = "PZ"
+                $0.tag = "werehouse"
+                $0.options = ["BE", "MER", "MG", "MN", "MP", "PROD", "PT"]
+                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].warehouse!
             }
             
             +++ Section()
@@ -135,18 +142,30 @@ class OrderDetailFormViewController:  FormViewController {
             .onCellSelection { cell, row in
                 row.section?.form?.validate()
                 if (row.isValid) {
-                    let baseQuantity: IntRow? = self.form.rowBy(tag: "baseQuantity")
-                    let requiredQuantity: IntRow? = self.form.rowBy(tag: "requiredQuantity")
-                    let werehouse: PickerInlineRow<String>? = self.form.rowBy(tag: "werehouse")
-                    self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
+                    
+                    self.baseQuantity = self.form.rowBy(tag: "baseQuantity")
+                    self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
+                    self.werehouse = self.form.rowBy(tag: "werehouse")
+                    
+                    let alert = UIAlertController(title: CommonStrings.Emty, message: "Deseas guardar los cambios ingresados?", preferredStyle: .alert)
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in self.dismiss(animated: true)})
+                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.saveChanges()})
+                    alert.addAction(cancelAction)
+                    alert.addAction(okAction)
+                    self.present(alert, animated: true, completion: nil)
                 }
             }
             <<< ButtonRow() {
                 $0.title = "Cancelar"
             }
             .onCellSelection { cell, row in
-                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true)
         }
+    }
+    
+    func saveChanges () {
+//        self.dismiss(animated: true)
+        self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
     }
     
     func viewModelBinding () -> Void {
@@ -160,7 +179,35 @@ class OrderDetailFormViewController:  FormViewController {
         }).disposed(by: self.disposeBag)
         
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
-            AlertManager.shared.showAlert(message: message, view: self)
+            
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {_ in self.refreshOrderDetail()})
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+            
+        }).disposed(by: self.disposeBag)
+        
+        // Aqui es en donde se hace el manda a llamar el servicio para volver a traer los datos de detalle de la fórmnula
+        orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { orderId in
+            self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+            //self.orderDetailViewModel.showAlert.onNext("Se registraron los cambios correctamente")
         }).disposed(by: self.disposeBag)
     }
+    
+    func refreshOrderDetail() {
+        self.dismiss(animated: true)
+       // self.orderDetailViewModel.refresh.onNext(())
+    }
+    
+//    private func getOrderDetailViewModel() -> OrderDetailViewModel? {
+//        let childrenVC = self.splitViewController?.viewControllers.map({
+//            return (($0 as? UINavigationController)?.viewControllers ?? [])
+//        }).reduce([], +)
+//
+//        if let vc = childrenVC?.first(where: { $0.isKind(of: OrderDetailViewController.self) }) as? OrderDetailViewController {
+//            return vc.orderDetailViewModel
+//        }
+//
+//        return nil
+//    }
 }

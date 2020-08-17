@@ -24,6 +24,7 @@ class OrderDetailViewModel {
     var auxTabledata:[Detail] = []
     var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    
     // MARK: Init
     init() {
         
@@ -80,7 +81,7 @@ class OrderDetailViewModel {
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
         let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
 
-        NetworkManager.shared.deleteItemOfOrdenDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
+        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
                 self.tempOrderDetailData?.details?.remove(at: index)
             self.tableData.accept((self.tempOrderDetailData?.details)!)
