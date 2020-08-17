@@ -64,15 +64,15 @@ class NetworkManager: SessionProtocol {
     }
     
     // Obtiene la información del usuario logeado
-    func getInfoUser(userId: String) -> Observable<UserInfoResponse> {
-        let req: ApiService = ApiService.getInfoUser(userId: userId)
+    func getInfoUser(username: String) -> Observable<UserInfoResponse> {
+        let req: ApiService = ApiService.getInfoUser(username: username)
         let res: Observable<UserInfoResponse> = makeRequest(request: req)
         return res
     }
     
     // Obtiene las órdenes de fabricación en una lista de por status
-    func getStatusList(qfbId: String) -> Observable<StatusResponse> {
-        let req: ApiService = ApiService.getStatusList(qfbId: qfbId)
+    func getStatusList(userId: String) -> Observable<StatusResponse> {
+        let req: ApiService = ApiService.getStatusList(userId: userId)
         let res: Observable<StatusResponse> = makeRequest(request: req)
         return res
     }

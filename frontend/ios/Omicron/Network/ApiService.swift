@@ -11,8 +11,8 @@ import Moya
 
 enum ApiService {
     case login(data: Login)
-    case getInfoUser(userId: String)
-    case getStatusList(qfbId: String)
+    case getInfoUser(username: String)
+    case getStatusList(userId: String)
     case renew(data: Renew)
     case getOrdenDetail(orderId: Int)
     case deleteItemOfOrdenDetail(orderDetailRequest: OrderDetailRequest)
@@ -34,14 +34,14 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(_):
             return "/oauth/oauthrs/authorize"
-        case .getInfoUser(let userId):
-            return "/usuarios/user/\(userId)"
-        case .getStatusList(let qfbId):
-            return "/pedidos/qfbOrders/\(qfbId)"
+        case .getInfoUser(let username):
+            return "/usuarios/user/\(username)"
+        case .getStatusList(let userId):
+            return "/pedidos/qfbOrders/\(userId)"
         case .renew:
             return "/oauth/oauthrs/renew"
-        case .getOrdenDetail(let ordenId):
-            return "/sapadapter/formula/\(ordenId)"
+        case .getOrdenDetail(let orderId):
+            return "/sapadapter/formula/\(orderId)"
         case .deleteItemOfOrdenDetail:
             return "/pedidos/formula"
         case .changeStatusOrder:
