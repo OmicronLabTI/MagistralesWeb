@@ -246,7 +246,7 @@ namespace Omicron.Usuarios.Services.User
                 });
             });
 
-            return listToReturn;
+            return listToReturn.OrderBy(x => x.UserName).ToList();
         }
     }
 }
