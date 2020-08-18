@@ -78,5 +78,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="processByOrder">the orders.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
+
+        /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="updateStatus">Update order info.</param>
+        /// <returns>Order with updated info.</returns>urns>
+        Task<ResultModel> CancelOrder(List<UpdateStatusOrderModel> updateStatus);
     }
 }

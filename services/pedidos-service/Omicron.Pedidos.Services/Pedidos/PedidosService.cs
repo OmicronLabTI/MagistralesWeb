@@ -241,6 +241,44 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="updateStatus">Update order info.</param>
+        /// <returns>Order with updated info.</returns>urns>
+        public async Task<ResultModel> CancelOrder(List<UpdateStatusOrderModel> updateStatus)
+        {
+            var orderIds = updateStatus.Select(x => x.OrderId.ToString()).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(orderIds)).ToList();
+            var logs = new List<OrderLogModel>();
+
+            userOrders.ForEach(x =>
+            {
+                if (!x.Status.Equals(ServiceConstants.Cancelled))
+                {
+                    var newOrderInfo = updateStatus.First(y => y.OrderId.ToString().Equals(x.Salesorderid));
+                    x.Status = ServiceConstants.Cancelled;
+                    x.Userid = newOrderInfo.UserId;
+
+                    // TODO: Update in SAP.
+                    var isUpdatedOnSAP = true;
+                    if (!isUpdatedOnSAP)
+                    {
+                        // Rollback changes
+                        throw new NotImplementedException();
+                    }
+
+                    logs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { newOrderInfo.OrderId }, string.Format(ServiceConstants.OrderCancelled, x.Salesorderid), ServiceConstants.OrdenVenta));
+                }
+            });
+
+            // Update in local data base
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(userOrders), null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

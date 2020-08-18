@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
@@ -18,6 +19,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -329,6 +331,73 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(101)]
+        [TestCase(102)]
+        public async Task CancelOrder_WithAffectRecords(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+            var initialStatus = this.context.UserOrderModel.First(x => x.Salesorderid == orderId.ToString()).Status;
+            var initialLogs = this.context.OrderLogModel.Count();
+
+            var orderToUpdate = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelOrder(orderToUpdate);
+
+            // assert
+            var finalLogs = this.context.OrderLogModel.Count();
+            var affectedItemOnResponse = JsonConvert.DeserializeObject<List<UserOrderModel>>(response.Response.ToString()).First();
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreNotEqual(initialStatus, ServiceConstants.Cancelled);
+            Assert.AreEqual(affectedItemOnResponse.Status, ServiceConstants.Cancelled);
+            Assert.Greater(finalLogs, initialLogs);
+        }
+
+        /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(103)]
+        public async Task CancelOrder_WithOutAffectRecords(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+            var initialStatus = this.context.UserOrderModel.First(x => x.Salesorderid == orderId.ToString()).Status;
+            var initialLogs = this.context.OrderLogModel.Count();
+
+            var orderToUpdate = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelOrder(orderToUpdate);
+
+            // assert
+            var finalLogs = this.context.OrderLogModel.Count();
+            var affectedItemOnResponse = JsonConvert.DeserializeObject<List<UserOrderModel>>(response.Response.ToString()).First();
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(initialStatus, ServiceConstants.Cancelled);
+            Assert.AreEqual(affectedItemOnResponse.Status, ServiceConstants.Cancelled);
+            Assert.AreEqual(finalLogs, initialLogs);
         }
     }
 }

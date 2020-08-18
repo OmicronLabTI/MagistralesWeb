@@ -377,5 +377,30 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.IsEmpty(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CancelOrder()
+        {
+            // arrange
+            var orders = new List<UpdateStatusOrderDto>
+            {
+                new UpdateStatusOrderDto { Status = "Cancelado", OrderId = 1, UserId = "mockUser" },
+            };
+
+            // act
+            var response = await this.pedidoFacade.CancelOrder(orders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }
