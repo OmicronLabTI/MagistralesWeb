@@ -28,6 +28,13 @@ pipeline {
         ).trim()
 	}
     stages {
+		stage('Kubernetes Down') {
+            steps {
+                echo 'Running Kubernetes down'
+                sh 'sudo kubectl delete all --all --grace-period=0 --force'
+				sh 'sudo docker system prune -f'
+            }
+        }
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -52,7 +59,6 @@ pipeline {
                     }
                 }
                 dir ('services/oauthserver/'){
-                    sh 'sed -i "s/192.168.0.101:8000/192.168.0.83:8000/g" ./oauth-web/src/main/resources/application.yml'
                     sh 'mvn clean package'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
@@ -171,7 +177,6 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl delete all --all --grace-period=0 --force'
                 sh 'sudo kubectl apply -f deploy_qa.yaml'
             }
         }
