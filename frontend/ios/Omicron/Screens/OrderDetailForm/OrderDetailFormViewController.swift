@@ -18,19 +18,18 @@ class OrderDetailFormViewController:  FormViewController {
     var indexOfItemSelected: Int = -1
     let orderDetailFormViewModel = OrderDetailFormViewModel()
     var disposeBag = DisposeBag()
-    lazy var orderDetailViewModel: OrderDetailViewModel? = nil
+    lazy var orderDetailViewModel = self.getOrderDetailViewModel()
     
-    var baseQuantity: IntRow? = nil
-    var requiredQuantity: IntRow? = nil
+    var baseQuantity: DecimalRow? = nil
+    var requiredQuantity: DecimalRow? = nil
     var werehouse: PickerInlineRow<String>? = nil
-    
     // MARK: Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.buildForm()
         self.viewModelBinding()
         
-        self.orderDetailViewModel = self.getOrderDetailViewModel()
+        //self.orderDetailViewModel = self.getOrderDetailViewModel()
     }
     
     // MARK: Functions
@@ -49,24 +48,52 @@ class OrderDetailFormViewController:  FormViewController {
         }
         
         form
+              
             +++ Section(header: "Editar elemento", footer: "")
             
-            <<< IntRow() {
+            <<< DecimalRow() {
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].baseQuantity!
+                $0.value = Double(self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!)
+                let formater = NumberFormatter()
+               formater.maximumFractionDigits = 8
+//                formater.minimumFractionDigits = 1
+                formater.minimumFractionDigits = 0
+                formater.numberStyle = .decimal
+                $0.formatter = formater
+                $0.cellSetup{cell, row in
+                    let formatter = NumberFormatter()
+                    formatter.minimumFractionDigits = 0
+                    formatter.maximumFractionDigits = 8
+                    row.formatter = formatter
+                }
+                $0.onCellSelection{ cell, row in
+                    let formatter = NumberFormatter()
+                      formatter.minimumFractionDigits = 0
+                      formatter.maximumFractionDigits = 8
+                      row.formatter = formatter
+                }
+                $0.onCellHighlightChanged{ cell, row in
+                    if (row.value != nil) {
+                        let ss = self.form.rowBy(tag: "requiredQuantity") as? DecimalRow
+                        let requiredQuantity  = Double((self.dataOfTable?.plannedQuantity)!) * row.value!
+                        ss?.value = requiredQuantity
+                        ss?.reload()
+                    }
+                }
+                
                 // Validaciones
-                let fieldNoEmpty = RuleClosure<Int> { rowValue in
+                let fieldNoEmpty = RuleClosure<Double> { rowValue in
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
                 }
                 
-                let fieldShouldNotNegativeNumbers = RuleClosure<Int> { rowValue in
-                    return rowValue?.signum() == -1 ? ValidationError(msg: "No debe contener números negativos") : nil
-                }
+//                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+//                    return (rowValue?.isLess(than: 0.0))!  ? ValidationError(msg: "No debe contener números negativos") : nil
+//                }
                 
                 $0.add(rule: fieldNoEmpty)
-                $0.add(rule: fieldShouldNotNegativeNumbers)
-                $0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
+                //$0.add(rule: fieldShouldNotNegativeNumbers)
+                //$0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
             }
                 
             .cellUpdate { cell, row in
@@ -91,22 +118,47 @@ class OrderDetailFormViewController:  FormViewController {
                 }
             }
             
-            <<< IntRow() {
+            <<< DecimalRow() {
                 $0.title = "Cantidad requerida: "
-                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].requiredQuantity!
+                $0.value = Double( self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity! )
                 $0.tag = "requiredQuantity"
+                let formatter =  NumberFormatter()
+//                formatter.maximumFractionDigits = 8
+//                formatter.minimumFractionDigits = 1
+                formatter.numberStyle = .decimal
+                $0.formatter = formatter
+                $0.cellSetup{cell, row in
+                    let formatter = NumberFormatter()
+                    formatter.minimumFractionDigits = 0
+                    formatter.maximumFractionDigits = 8
+                    row.formatter = formatter
+                }
+                $0.onCellSelection{ cell, row in
+                    let formatter = NumberFormatter()
+                      formatter.minimumFractionDigits = 0
+                      formatter.maximumFractionDigits = 8
+                      row.formatter = formatter
+                }
+                $0.onCellHighlightChanged{ cell, row in
+                                   if (row.value ??  1 > 0 &&  row.value != nil ) {
+                                       let baseQuantity  =  row.value! / Double((self.dataOfTable?.plannedQuantity)!)
+                                       let ss = self.form.rowBy(tag: "baseQuantity") as? DecimalRow
+                                       ss?.value = baseQuantity
+                                       ss?.reload()
+                                   }
+                               }
                 // Validaciones
-                let fieldNoEmpty = RuleClosure<Int> { rowValue in
+                let fieldNoEmpty = RuleClosure<Double> { rowValue in
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
                 }
                 
-                let fieldShouldNotNegativeNumbers = RuleClosure<Int> { rowValue in
-                    return rowValue?.signum() == -1 ? ValidationError(msg: "No debe contener números negativos") : nil
-                }
+//                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+//                    return rowValue!.isLess(than: 0.0) ? ValidationError(msg: "No debe contener números negativos") : nil
+//                }
                 
                 $0.add(rule: fieldNoEmpty)
-                $0.add(rule: fieldShouldNotNegativeNumbers)
-                $0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
+                //$0.add(rule: fieldShouldNotNegativeNumbers)
+                //$0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
             }
             .cellUpdate { cell, row in
                 if !row.isValid {
@@ -118,7 +170,7 @@ class OrderDetailFormViewController:  FormViewController {
                 while row.section!.count > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
                     row.section?.remove(at: rowIndex + 1)
                 }
-                if !row.isValid {
+                if row.isValid {
                     for (index,  message) in row.validationErrors.map({ $0.msg }).enumerated() {
                         let labelRow = LabelRow() {
                             $0.title = message
@@ -133,7 +185,7 @@ class OrderDetailFormViewController:  FormViewController {
             <<< PickerInlineRow<String>() {
                 $0.title = "Almacen: "
                 $0.tag = "werehouse"
-                $0.options = ["BE", "MER", "MG", "MN", "MP", "PROD", "PT"]
+                $0.options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN", "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
                 $0.value = self.dataOfTable?.details![self.indexOfItemSelected].warehouse!
             }
             

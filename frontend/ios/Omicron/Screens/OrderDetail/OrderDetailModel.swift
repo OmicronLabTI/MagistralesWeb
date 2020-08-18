@@ -70,7 +70,8 @@ extension OrderDetail: Mappable {
 class Detail {
     var orderFabID: Int?
     var productID, detailDescription: String?
-    var baseQuantity, requiredQuantity, consumed, available: Int?
+    var baseQuantity, requiredQuantity: Double?
+    var  consumed, available: Int?
     var unit, warehouse: String?
     var pendingQuantity, stock, warehouseQuantity: Int?
     required init?(map: Map) { }
@@ -110,12 +111,13 @@ class OrderDetailRequest: Codable {
 class Component: Codable {
     let orderFabId: Int
     let productId, componentDescription: String
-    let baseQuantity, requiredQuantity, consumed, available: Int
+    let baseQuantity, requiredQuantity: Double
+    let consumed, available: Int
     let unit, warehouse: String
     let pendingQuantity, stock, warehouseQuantity: Int
     let action: String
     
-    init(orderFabID: Int, productId: String, componentDescription: String,  baseQuantity: Int, requiredQuantity: Int, consumed: Int, available: Int, unit: String, warehouse: String, pendingQuantity: Int, stock: Int, warehouseQuantity: Int, action: String) {
+    init(orderFabID: Int, productId: String, componentDescription: String,  baseQuantity: Double, requiredQuantity: Double, consumed: Int, available: Int, unit: String, warehouse: String, pendingQuantity: Int, stock: Int, warehouseQuantity: Int, action: String) {
         self.orderFabId = orderFabID
         self.productId = productId
         self.componentDescription = componentDescription

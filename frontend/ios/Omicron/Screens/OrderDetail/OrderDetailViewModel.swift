@@ -20,7 +20,7 @@ class OrderDetailViewModel {
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation: PublishSubject<String> = PublishSubject()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
-    var sumFormula: BehaviorRelay<Int> = BehaviorRelay<Int>(value: 0)
+    var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
     var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
@@ -50,8 +50,8 @@ class OrderDetailViewModel {
         }).disposed(by: self.disposeBag)
     }
     
-    func sum(tableDetails: [Detail]) -> Int {
-        var sum = 0
+    func sum(tableDetails: [Detail]) -> Double {
+        var sum = 0.0
         if(tableDetails.count > 0) {
             for detail in tableDetails {
                 if(detail.unit  != "Pieza") {

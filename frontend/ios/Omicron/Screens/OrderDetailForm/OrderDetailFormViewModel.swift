@@ -23,7 +23,7 @@ class  OrderDetailFormViewModel {
     }
     
     //MARK: Functions
-    func editItemTable(index: Int, data: OrderDetail, baseQuantity: Int, requiredQuantity: Int, werehouse: String) -> Void {
+    func editItemTable(index: Int, data: OrderDetail, baseQuantity: Double, requiredQuantity: Double, werehouse: String) -> Void {
         self.loading.onNext(true)
         
         let componets = [Component(orderFabID: data.details![index].orderFabID!, productId: data.details![index].productID!, componentDescription: data.details![index].detailDescription!, baseQuantity: baseQuantity, requiredQuantity: requiredQuantity, consumed: data.details![index].consumed!, available: data.details![index].available!, unit: data.details![index].unit!, warehouse: werehouse, pendingQuantity: data.details![index].pendingQuantity!, stock: data.details![index].stock!, warehouseQuantity: data.details![index].warehouseQuantity!, action: "update")]
