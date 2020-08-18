@@ -29,7 +29,7 @@ export class AddUserDialogComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       userTypeR: ['', Validators.required],
-      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
+      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord), ]],
       activo: ['', Validators.required]
     });
 

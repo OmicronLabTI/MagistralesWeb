@@ -48,7 +48,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     getUsers() {
 
         this.usersService.getUsers(this.offset, this.limit).subscribe(userRes => {
-                console.log('responseUser: ', userRes);
                 this.lengthPaginator = userRes.comments;
                 this.dataSource.data = userRes.response;
                 this.dataSource.data.forEach( user => {

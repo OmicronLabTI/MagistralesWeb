@@ -39,7 +39,6 @@ export class ComponentSearchComponent implements OnInit {
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService) {
-    this.keywords.push('sulfato');
   }
 
   ngOnInit() {
