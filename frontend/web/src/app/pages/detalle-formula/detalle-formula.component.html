@@ -188,17 +188,51 @@
         
                     <ng-container matColumnDef="almacen">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> ALMACÉN </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide almacen"> {{element.warehouse}}
-             <!--           <mat-form-field appearance="fill">
-                        <mat-select>
-                          <mat-option value="MG">
-                            MG
-                          </mat-option>
-                          <mat-option value="PT">
-                            PT
-                          </mat-option>
+                    <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen">
+                       <!-- {{element.warehouse}}-->
+                        <mat-form-field appearance="fill">
+                        <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)">
+                              <mat-option value="AMP" >
+                                  AMP
+                              </mat-option>
+                              <mat-option value="BE">
+                                  BE
+                              </mat-option>
+                            <mat-option value="GENERAL">
+                                GENERAL
+                            </mat-option>
+                            <mat-option value="INCI">
+                                INCI
+                            </mat-option>
+                            <mat-option value="MER">
+                                MER
+                            </mat-option>
+                            <mat-option value="MG">
+                                MG
+                            </mat-option>
+                            <mat-option value="MN">
+                                MN
+                            </mat-option>
+                            <mat-option value="MP">
+                                MP
+                            </mat-option>
+                            <mat-option value="PROD">
+                                PROD
+                            </mat-option>
+                            <mat-option value="PRONATUR">
+                                PRONATUR
+                            </mat-option>
+                            <mat-option value="PT">
+                                PT
+                            </mat-option>
+                            <mat-option value="TALLERES">
+                                TALLERES
+                            </mat-option>
+                            <mat-option value="WEB">
+                                WEB
+                            </mat-option>
                         </mat-select>
-                      </mat-form-field>-->
+                      </mat-form-field>
                     </td>
                     </ng-container>
 
