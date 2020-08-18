@@ -14,7 +14,7 @@ export const CONST_STRING = {
 
 export const CONST_USER_DIALOG = {
     defaultDefault: 'QFB',
-    patternPassWord: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+    patternPassWord: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$/
 };
 
 export const MODAL_NAMES =  {
@@ -39,4 +39,5 @@ export enum HttpServiceTOCall {
     DETAIL_ORDERS,
     USERS,
 }
+export const RoleQfbId = 2;
 
