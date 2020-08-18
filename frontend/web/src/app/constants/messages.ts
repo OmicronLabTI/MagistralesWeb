@@ -8,5 +8,6 @@ export const Messages = {
   placeOrder: '¿Deseas asignar el pedido a',
   deleteComponents: '¿Deseas eliminar el(los) componente seleccionado(s)?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
-  serverError: 'Hubo un error en el servicio intentelo otra vez'
+  serverError: 'Hubo un error en el servicio intentelo otra vez',
+  userExist: 'El usuario ya se encuentra registrado.'
 };

@@ -48,11 +48,14 @@ export class FindOrdersDialogComponent implements OnInit {
                   qfbName: qfb.firstName
               };
           });
+          this.qfbsSelect.sort((a, b) => {
+              return a.qfbName.localeCompare(b.qfbName);
+          });
           this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
       }).catch(error => {
           this.errorService.httpError(error);
           this.dialogRef.close();
-          this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'info', isButtonAccept: false});
+          this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'info', isButtonAccept: true});
       });
       this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
       const initDateTrans = this.fullDate[0].split('/');

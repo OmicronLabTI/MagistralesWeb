@@ -28,24 +28,24 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
-            <button [disabled]="!isThereOrdersToPlan" mat-raised-button class="button-blue " (click)="processOrders()">
+            <button [disabled]="!isThereOrdersToPlan" mat-raised-button [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"  (click)="processOrders()">
                 &nbsp; Planificar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button [disabled]="!isThereOrdersToPlace" mat-raised-button class="button-blue " (click)="openPlaceOrdersDialog()">
+            <button [disabled]="!isThereOrdersToPlace" mat-raised-button [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'" (click)="openPlaceOrdersDialog()">
                 &nbsp; Asignar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue ">
+            <!--<button mat-raised-button class="button-blue ">
                 &nbsp; Finalizar &nbsp;
             </button>
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue ">
                 &nbsp; Cancelar &nbsp;
-            </button>
+            </button>-->
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >

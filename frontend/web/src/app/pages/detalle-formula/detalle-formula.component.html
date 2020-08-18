@@ -10,13 +10,15 @@
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-  
+    <div class="description-container">
+     {{dataService.detailOrderDescription}}
+    </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue">
+            <!--<button mat-raised-button class="button-blue">
             &nbsp; Lotes &nbsp; 
             </button>
             &nbsp;
@@ -28,7 +30,7 @@
             &nbsp;
             <button mat-raised-button class="button-blue">
             &nbsp; Crear lista de componentes &nbsp; 
-            </button>
+            </button>-->
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue" (click)="openDialog('searchComponent')">
@@ -36,12 +38,12 @@
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
+            <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
             &nbsp; Eliminar componente &nbsp; 
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button [disabled]="!isReadyToSave" class="button-blue" (click)="saveFormulaDetail()">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" class="button-blue" (click)="saveFormulaDetail()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>

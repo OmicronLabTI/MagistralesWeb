@@ -74,7 +74,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
       },
-      error => {
+      error => {/// checar con gus para manejar errores
         this.errorService.httpError(error);
         this.dataSource.data = [];
       }

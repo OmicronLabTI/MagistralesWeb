@@ -123,4 +123,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
         } );
   }
+
+  setDescription(descriptionProduct: string) {
+    this.dataService.setDetailOrderDescription(descriptionProduct);
+  }
 }
