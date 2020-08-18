@@ -305,13 +305,13 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
                 orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
-
-                orderModels.ForEach(x =>
-                {
-                    var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
-                    x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
-                });
             }
+
+            orderModels.ForEach(x =>
+            {
+                var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+            });
 
             return orderModels;
         }
