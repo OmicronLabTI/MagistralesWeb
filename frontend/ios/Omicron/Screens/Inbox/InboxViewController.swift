@@ -43,6 +43,7 @@ class InboxViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
          self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
+        self.splitViewController?.presentsWithGesture = false
     }
 
         
