@@ -280,8 +280,7 @@ namespace Omicron.SapAdapter.Services.Sap
             orderModels.ForEach(x =>
             {
                 var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
-                var userId = order == null ? string.Empty : order.Userid;
-                var user = users.FirstOrDefault(y => y.Id.Equals(userId));
+                x.Qfb = order == null ? string.Empty : order.Userid;
 
                 if (x.PedidoStatus == "O")
                 {
@@ -289,7 +288,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -306,7 +304,13 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
-                orderModels = orderModels.Where(x => x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
+
+                orderModels.ForEach(x =>
+                {
+                    var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                    x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                });
             }
 
             return orderModels;
