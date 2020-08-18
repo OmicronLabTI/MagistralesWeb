@@ -199,12 +199,18 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
     
     func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,hideAddCompBtn: Bool,hideSaveBtn: Bool,hideSeeLotsBtn: Bool) -> Void {
+//        self.processButton.isHidden = hideProcessBtn
+//        self.finishedButton.isHidden = hideFinishedBtn
+//        self.penddingButton.isHidden = hidePendinBtn
+//        self.addComponentButton.isHidden = hideAddCompBtn
+//        self.saveButton.isHidden = hideSaveBtn
+//        self.seeLotsButton.isHidden = hideSeeLotsBtn
         self.processButton.isHidden = hideProcessBtn
-        self.finishedButton.isHidden = hideFinishedBtn
-        self.penddingButton.isHidden = hidePendinBtn
-        self.addComponentButton.isHidden = hideAddCompBtn
-        self.saveButton.isHidden = hideSaveBtn
-        self.seeLotsButton.isHidden = hideSeeLotsBtn
+        self.finishedButton.isHidden = true
+        self.penddingButton.isHidden = true
+        self.addComponentButton.isHidden = true
+        self.saveButton.isHidden = true
+        self.seeLotsButton.isHidden = true
     }
     
     
