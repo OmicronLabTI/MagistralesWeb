@@ -50,11 +50,18 @@ class  InboxViewModel {
     }
     
     func setSelection(index: Int, section: SectionOrder) -> Void {
+        let ordering = section.orders.sorted  {
+            switch ($0, $1) {
+            // Order errors by code
+            case let (aCode, bCode):
+                return aCode.baseDocument! > bCode.baseDocument!
+            }
+        }
         self.indexSelectedOfTable.onNext(index)
-        self.statusData.accept(section.orders)
+        self.statusData.accept(ordering)
         self.nameStatus.accept(section.statusName)
-        self.ordersTemp = section.orders
-        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: section.orders))
+        self.ordersTemp = ordering
+        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: ordering))
     }
     
     func changeStatus(indexPath: [IndexPath]) -> Void {
