@@ -180,7 +180,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId,
-                    FabDate = o.StartDate.ToString("dd/MM/yyyy"),
+                    FabDate = o.CreatedDate.ToString("dd/MM/yyyy"),
                     DueDate = o.DueDate.ToString("dd/MM/yyyy"),
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = o.PostDate.ToString("dd/MM/yyyy"),

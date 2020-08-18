@@ -9,11 +9,11 @@
 namespace Omicron.Pedidos.Services.Utils
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
+    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Entities.Enums;
 
     /// <summary>
     /// the class for utils.
@@ -221,10 +221,10 @@ namespace Omicron.Pedidos.Services.Utils
                                 Container = sapOrder.Container,
                                 Tag = sapOrder.ProductLabel,
                                 DescriptionProduct = sapOrder.ProductDescription,
-                                FinishDate = sapOrder.EndDate,
+                                FinishDate = sapOrder.DueDate,
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
-                                StartDate = sapOrder.StartDate,
+                                StartDate = sapOrder.FabDate,
                             };
 
                             ordersDetail.Add(order);
