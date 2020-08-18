@@ -11,9 +11,13 @@ namespace Omicron.Pedidos.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// the class for utils.
@@ -256,6 +260,54 @@ namespace Omicron.Pedidos.Services.Utils
                 },
                 Detalle = new List<CompleteDetailOrderModel>(listToSend),
             };
+        }
+
+        /// <summary>
+        /// gets the user by role.
+        /// </summary>
+        /// <param name="userService">the user service.</param>
+        /// <param name="role">the role.</param>
+        /// <param name="active">if the return data is by active or all.</param>
+        /// <returns>the users.</returns>
+        public static async Task<List<UserModel>> GetUsersByRole(IUsersService userService, string role, bool active)
+        {
+            var resultUsers = await userService.SimpleGetUsers(string.Format(ServiceConstants.GetUsersByRole, role));
+            var allUsers = JsonConvert.DeserializeObject<List<UserModel>>(JsonConvert.SerializeObject(resultUsers.Response));
+
+            if (active)
+            {
+                return allUsers.Where(x => x.Activo == 1).ToList();
+            }
+
+            return allUsers;
+        }
+
+        /// <summary>
+        /// Gets the orders to update.
+        /// </summary>
+        /// <param name="docEntry">the list of pedidos.</param>
+        /// <param name="sapAdapter">the sap adapter.</param>
+        /// <returns>the list to update.</returns>
+        public static async Task<List<UpdateFabOrderModel>> GetOrdersToAssign(List<int> docEntry, ISapAdapter sapAdapter)
+        {
+            var orders = new List<CompleteDetailOrderModel>();
+            var listToUpdate = new List<UpdateFabOrderModel>();
+            foreach (var de in docEntry)
+            {
+                var sapResponse = await sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetFabOrdersByPedidoId, de));
+                orders.AddRange(JsonConvert.DeserializeObject<List<CompleteDetailOrderModel>>(sapResponse.Response.ToString()));
+            }
+
+            orders.Where(x => x.Status.Equals(ServiceConstants.Planificado)).ToList().ForEach(o =>
+            {
+                listToUpdate.Add(new UpdateFabOrderModel
+                {
+                    OrderFabId = o.OrdenFabricacionId,
+                    Status = ServiceConstants.StatusSapLiberado,
+                });
+            });
+
+            return listToUpdate;
         }
     }
 }

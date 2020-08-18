@@ -35,23 +35,9 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var orders = new List<CompleteDetailOrderModel>();
             var listToUpdate = new List<UpdateFabOrderModel>();
-            var listSalesOrders = new List<string>();
+            var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
-            foreach (var de in assignModel.DocEntry)
-            {
-                listSalesOrders.Add(de.ToString());
-                var sapResponse = await sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetFabOrdersByPedidoId, de));
-                orders.AddRange(JsonConvert.DeserializeObject<List<CompleteDetailOrderModel>>(sapResponse.Response.ToString()));
-            }
-
-            orders.Where(x => x.Status.Equals(ServiceConstants.Planificado)).ToList().ForEach(o =>
-            {
-                listToUpdate.Add(new UpdateFabOrderModel
-                {
-                    OrderFabId = o.OrdenFabricacionId,
-                    Status = ServiceConstants.StatusSapLiberado,
-                });
-            });
+            listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
@@ -127,6 +113,86 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Gets the valid users by total count of piezas.
+        /// </summary>
+        /// <param name="users">the list of users.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="sapAdapter">the sap adapter.</param>
+        /// <param name="maxCountPedidos">the max count of piezas.</param>
+        /// <returns>the users.</returns>
+        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter, int maxCountPedidos)
+        {
+            var validUsers = new List<AutomaticAssignUserModel>();
+
+            foreach (var user in users)
+            {
+                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id)).Select(y => y.Salesorderid).Distinct().ToList();
+                var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
+                var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+
+                var total = GetCountOfPlannedQtyByOrder(ordersSap);
+
+                if (total < maxCountPedidos)
+                {
+                    var listIds = new List<string>();
+                    ordersSap.ForEach(x =>
+                    {
+                        listIds.AddRange(x.Detalle.Select(y => y.CodigoProducto).ToList());
+                    });
+
+                    validUsers.Add(new AutomaticAssignUserModel
+                    {
+                        User = user,
+                        TotalCount = total,
+                        ItemCodes = listIds,
+                    });
+                }
+            }
+
+            return validUsers.OrderBy(x => x.TotalCount).ThenBy(y => y.User.FirstName).ToList();
+        }
+
+        /// <summary>
+        /// Gets the user available by formula.
+        /// </summary>
+        /// <param name="users">the ussers with item codes.</param>
+        /// <param name="orderDetail">the order with details.</param>
+        /// <returns>the data to return.</returns>
+        public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail)
+        {
+            var dictUserPedido = new Dictionary<int, string>();
+
+            orderDetail.ForEach(p =>
+            {
+                foreach (var d in p.Detalle)
+                {
+                    if (dictUserPedido.ContainsKey(p.Order.DocNum))
+                    {
+                        continue;
+                    }
+
+                    if (!d.CodigoProducto.Contains("   "))
+                    {
+                        dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
+                        continue;
+                    }
+
+                    var descriptionproduct = d.CodigoProducto.Split("   ")[0];
+
+                    users.ForEach(u =>
+                    {
+                        if (u.ItemCodes.Contains(descriptionproduct))
+                        {
+                            dictUserPedido.Add(p.Order.DocNum, u.User.Id);
+                        }
+                    });
+                }
+            });
+
+            return dictUserPedido;
+        }
+
+        /// <summary>
         /// Place the status for the orders.
         /// </summary>
         /// <param name="listFromOrders">the list sent from front.</param>
@@ -154,6 +220,22 @@ namespace Omicron.Pedidos.Services.Utils
             listFromOrders.AddRange(listPedidos);
 
             return listFromOrders;
+        }
+
+        /// <summary>
+        /// Gets the total of pieces by all the pedidos.
+        /// </summary>
+        /// <param name="listPedidos">the list of pedidos.</param>
+        /// <returns>the total.</returns>
+        private static int GetCountOfPlannedQtyByOrder(List<OrderWithDetailModel> listPedidos)
+        {
+            var total = 0;
+            listPedidos.ForEach(x =>
+            {
+                total += x.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value);
+            });
+
+            return total;
         }
     }
 }

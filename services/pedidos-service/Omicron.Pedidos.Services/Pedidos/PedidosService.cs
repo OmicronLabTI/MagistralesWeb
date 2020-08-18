@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
@@ -32,17 +33,21 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapDiApi sapDiApi;
 
+        private readonly IUsersService userService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi)
+        /// <param name="userService">The user service.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         /// <summary>
@@ -244,6 +249,58 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var sapResponse = await this.sapDiApi.GetSapDiApi(ServiceConstants.ConnectSapDiApi);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(sapResponse.Response), null);
+        }
+
+        /// <summary>
+        /// Makes the automatic assign.
+        /// </summary>
+        /// <param name="assignModel">the assign model.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel)
+        {
+            var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente };
+            var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
+            userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
+            var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter, 200);
+
+            var pedidosId = assignModel.DocEntry.Select(x => x.ToString()).ToList();
+            var orders = await this.sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
+            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+
+            var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap);
+
+            var listToUpdate = ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, this.sapAdapter);
+            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+
+            var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosId)).ToList();
+
+            var listOrderToInsert = new List<OrderLogModel>();
+            userOrders.ForEach(x =>
+            {
+                int.TryParse(x.Salesorderid, out int saleOrderInt);
+                int.TryParse(x.Productionorderid, out int productionId);
+
+                if (userSaleOrder.ContainsKey(saleOrderInt))
+                {
+                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
+                    x.Userid = userSaleOrder[saleOrderInt];
+
+                    var orderId = string.IsNullOrEmpty(x.Productionorderid) ? saleOrderInt : productionId;
+                    var ordenType = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.OrdenVenta : ServiceConstants.OrdenFab;
+                    var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder[saleOrderInt]);
+                    listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, new List<int> { orderId }, textAction, ordenType));
+                }
+            });
+
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+            await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
         /// <summary>

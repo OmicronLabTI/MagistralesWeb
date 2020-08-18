@@ -21,6 +21,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// class for the test.
@@ -35,6 +36,8 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<ISapAdapter> sapAdapter;
 
         private ISapDiApi sapDiApi;
+
+        private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
 
@@ -71,8 +74,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
+            this.usersService = new Mock<IUsersService>();
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
         }
 
         /// <summary>
@@ -104,7 +109,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessOrders(process);
@@ -149,7 +154,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetFabOrderByUserID(id);
@@ -200,7 +205,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -230,7 +235,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -266,7 +271,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.UpdateComponents(asignar);
@@ -339,10 +344,30 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object);
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessByOrder(process);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the automatic assign test.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AutomaticAssign()
+        {
+            var assign = new AutomaticAssingModel
+            {
+                DocEntry = new List<int> { 1, 2, 3 },
+                UserLogistic = "abc",
+            };
+
+            // act
+            var response = await this.pedidosService.AutomaticAssign(assign);
 
             // assert
             Assert.IsNotNull(response);

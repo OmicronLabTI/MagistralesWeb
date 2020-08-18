@@ -127,5 +127,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));
         }
+
+        /// <summary>
+        /// the automatic assign.
+        /// </summary>
+        /// <param name="automaticAssing">the assign object.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.AutomaticAssign(this.mapper.Map<AutomaticAssingModel>(automaticAssing)));
+        }
     }
 }

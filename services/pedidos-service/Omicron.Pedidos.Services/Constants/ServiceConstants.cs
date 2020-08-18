@@ -39,6 +39,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ProcesoStatus = "En Proceso";
 
         /// <summary>
+        /// the finalizado status.
+        /// </summary>
+        public const string Finalizado = "Finalizado";
+
+        /// <summary>
+        /// the pendiente status.
+        /// </summary>
+        public const string Pendiente = "Pendiente";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -147,5 +157,15 @@ namespace Omicron.Pedidos.Services.Constants
         /// the connect to sap di api.
         /// </summary>
         public const string ConnectSapDiApi = "connect";
+
+        /// <summary>
+        /// Gets the users by role from user service.
+        /// </summary>
+        public const string GetUsersByRole = "role/{0}";
+
+        /// <summary>
+        /// the id for qfb role.
+        /// </summary>
+        public const int QfbRoleId = 2;
     }
 }
