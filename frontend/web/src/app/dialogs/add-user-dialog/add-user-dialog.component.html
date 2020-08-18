@@ -59,10 +59,11 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field magin-top-field">
-                            <input matInput placeholder="Contraseña" formControlName="password" maxlength="16" class="height-input">
+                            <input matInput placeholder="Contraseña" formControlName="password" class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
                                 La contraseña debe contener lo siguiente:
-                                8 caracteres como mínimo
+                                8 caracteres como mínimo,
+                                máximo 20 caracteres,
                                 ,una letra mayúscula
                                 y un número
                             </mat-error>

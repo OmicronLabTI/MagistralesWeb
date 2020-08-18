@@ -128,6 +128,8 @@ export class FindOrdersDialogComponent implements OnInit {
       this.findOrdersForm.get('status').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});
   }
   changeValidatorsForDocNum() {
       this.isToResetData = true;
