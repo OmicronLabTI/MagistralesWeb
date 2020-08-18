@@ -25,13 +25,14 @@ class RootViewModel {
     var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
+    var showRefreshControl: PublishSubject<Void> = PublishSubject<Void>()
     
     init() {
     }
 
     // MARK: Functions
 
-    func getOrders() -> Void {
+    func getOrders(isUpdate: Bool = false) -> Void {
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             self.loading.onNext(true)
             NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
@@ -62,6 +63,9 @@ class RootViewModel {
                 self?.dataStatus.onNext(data)
                 self?.refreshSelection.onNext(())
                 self?.loading.onNext(false)
+                if(isUpdate) {
+                    self?.showRefreshControl.onNext(())
+                }
             }, onError: { err in
                 print(err)
                 self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
@@ -69,6 +73,7 @@ class RootViewModel {
             }).disposed(by: disposeBag)
         } else {
             self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
+            self.showRefreshControl.onNext(())
         }
     }
 }

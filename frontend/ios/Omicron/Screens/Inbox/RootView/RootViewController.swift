@@ -21,13 +21,19 @@ class RootViewController: UIViewController {
     let rootViewModel = RootViewModel()
     var dataStatusOfService: [SectionOrder] = []
     lazy var inboxViewModel = self.getInboxViewModel()
+    var refreshControl = UIRefreshControl()
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = getUserInfo()
         self.initComponents()
         self.viewModelBinding()
-            }
+       self.viewTable.refreshControl = refreshControl
+        
+        // Configure Refresh Control
+       self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -35,6 +41,12 @@ class RootViewController: UIViewController {
     }
     
     // MARK: Functions
+    
+    // Falta funcionalidad
+    @objc func refreshOrders() -> Void {
+        self.rootViewModel.getOrders(isUpdate: true)
+    }
+    
     func viewModelBinding() {
         
         rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
@@ -73,6 +85,11 @@ class RootViewController: UIViewController {
             self.rootViewModel.selectedRow = indexPath.row
             self.inboxViewModel?.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
         }).disposed(by: disposeBag)
+        
+        // Muestra u oculta el refreshControl en la tabla
+        rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.refreshControl.endRefreshing()
+        }).disposed(by: self.disposeBag)
     }
     
     func initComponents() {
@@ -84,6 +101,9 @@ class RootViewController: UIViewController {
         self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
         self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
         self.view.backgroundColor = OmicronColors.tableStatus
+        self.refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
+        
     }
     
     private func getInboxViewModel() -> InboxViewModel? {
