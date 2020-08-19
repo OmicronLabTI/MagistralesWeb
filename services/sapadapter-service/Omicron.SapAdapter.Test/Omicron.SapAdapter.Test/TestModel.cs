@@ -31,6 +31,8 @@ namespace Omicron.SapAdapter.Test
             };
 
             Assert.IsNotNull(asesor);
+            Assert.IsNotNull(asesor.AsesorId);
+            Assert.IsNotNull(asesor.AsesorName);
         }
 
         /// <summary>
