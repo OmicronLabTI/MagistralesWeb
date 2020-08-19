@@ -114,7 +114,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
 
-            // buscar las que no tengo y crearlas si no todas estan planificadas no se libera.
             var dataToInsert = ServiceUtils.CreateUserModel(listOrders);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
