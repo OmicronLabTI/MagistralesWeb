@@ -267,26 +267,27 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (!validUsers.Any())
             {
-                throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico);
+                throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, System.Net.HttpStatusCode.BadRequest);
             }
 
-            var pedidosId = assignModel.DocEntry.Select(x => x.ToString()).ToList();
+            var pedidosId = assignModel.DocEntry.Select(x => x).ToList();
+            var pedidosString = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
 
             var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders);
 
-            var listToUpdate = ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, this.sapAdapter);
+            var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersSap);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
-            var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosId)).ToList();
+            var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosString)).ToList();
 
             var listOrderToInsert = new List<OrderLogModel>();
-            userOrders.ForEach(x =>
+            userOrdersToUpdate.ForEach(x =>
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);

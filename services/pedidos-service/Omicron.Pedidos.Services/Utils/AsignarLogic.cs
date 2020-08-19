@@ -126,7 +126,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             foreach (var user in users)
             {
-                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id)).Select(y => y.Salesorderid).Distinct().ToList();
+                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id)).Select(y => int.Parse(y.Salesorderid)).Distinct().ToList();
                 var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
                 var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
 
@@ -135,9 +135,11 @@ namespace Omicron.Pedidos.Services.Utils
                 if (total < maxCountPedidos)
                 {
                     var listIds = new List<string>();
+                    var listProdIds = new List<int>();
                     ordersSap.ForEach(x =>
                     {
                         listIds.AddRange(x.Detalle.Select(y => y.CodigoProducto).ToList());
+                        listProdIds.AddRange(x.Detalle.Select(y => y.OrdenFabricacionId).ToList());
                     });
 
                     validUsers.Add(new AutomaticAssignUserModel
@@ -145,6 +147,7 @@ namespace Omicron.Pedidos.Services.Utils
                         User = user,
                         TotalCount = total,
                         ItemCodes = listIds,
+                        ProductionOrders = listProdIds,
                     });
                 }
             }
@@ -162,11 +165,12 @@ namespace Omicron.Pedidos.Services.Utils
         public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
         {
             var dictUserPedido = new Dictionary<int, string>();
-            var listOrdersAignado = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Asignado)).Select(y => y.Productionorderid).ToList();
+            var listOrdersAignado = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Asignado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+
+            var usersAvailable = users.Where(x => x.ProductionOrders.Any(y => listOrdersAignado.Contains(y))).ToList();
 
             foreach (var p in orderDetail)
             {
-                p.Detalle = p.Detalle.Where(x => listOrdersAignado.Contains(x.OrdenFabricacionId.ToString())).ToList();
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
                 {
                     dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
@@ -182,17 +186,15 @@ namespace Omicron.Pedidos.Services.Utils
 
                     var descriptionproduct = d.CodigoProducto.Split("   ")[0];
 
-                    if (users.Any(y => y.ItemCodes.Contains(descriptionproduct)))
+                    var user = usersAvailable.FirstOrDefault(y => y.ItemCodes.Any(z => z.Contains(descriptionproduct)));
+                    if (user != null)
                     {
-                        var user = users.FirstOrDefault(y => y.ItemCodes.Contains(descriptionproduct));
                         dictUserPedido.Add(p.Order.DocNum, user.User.Id);
                         continue;
                     }
-                    else
-                    {
-                        dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
-                        continue;
-                    }
+
+                    dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
+                    continue;
                 }
             }
 

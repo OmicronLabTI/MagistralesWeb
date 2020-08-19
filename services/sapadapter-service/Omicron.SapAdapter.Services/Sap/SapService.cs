@@ -116,7 +116,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var data = new OrderWithDetailModel();
                 var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
-                var detail = (await this.sapDao.GetAllDetails(x)).Where(s => string.IsNullOrEmpty(s.Status));
+                var detail = await this.sapDao.GetAllDetails(x);
 
                 data.Order = order;
                 data.Detalle = detail.ToList();

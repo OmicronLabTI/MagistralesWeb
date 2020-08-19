@@ -309,5 +309,32 @@ namespace Omicron.Pedidos.Services.Utils
 
             return listToUpdate;
         }
+
+        /// <summary>
+        /// gets the updatefaborder model from the list of orders.
+        /// </summary>
+        /// <param name="ordersWithDetail">the details.</param>
+        /// <returns>the data.</returns>
+        public static List<UpdateFabOrderModel> GetOrdersToAssign(List<OrderWithDetailModel> ordersWithDetail)
+        {
+            var orderToSend = new List<UpdateFabOrderModel>();
+
+            ordersWithDetail.ForEach(order =>
+            {
+                order.Detalle
+                .Where(d => d.Status.Equals("P"))
+                .ToList()
+                .ForEach(x =>
+                {
+                    orderToSend.Add(new UpdateFabOrderModel
+                    {
+                        OrderFabId = x.OrdenFabricacionId,
+                        Status = ServiceConstants.StatusSapLiberado,
+                    });
+                });
+            });
+
+            return orderToSend;
+        }
     }
 }

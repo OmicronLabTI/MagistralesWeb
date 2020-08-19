@@ -32,5 +32,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public List<string> ItemCodes { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<int> ProductionOrders { get; set; }
     }
 }
