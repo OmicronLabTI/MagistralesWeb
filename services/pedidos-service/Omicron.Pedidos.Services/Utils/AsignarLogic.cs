@@ -162,8 +162,14 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var dictUserPedido = new Dictionary<int, string>();
 
-            orderDetail.ForEach(p =>
+            foreach (var p in orderDetail)
             {
+                if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
+                {
+                    dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
+                    continue;
+                }
+
                 foreach (var d in p.Detalle)
                 {
                     if (dictUserPedido.ContainsKey(p.Order.DocNum))
@@ -171,23 +177,21 @@ namespace Omicron.Pedidos.Services.Utils
                         continue;
                     }
 
-                    if (!d.CodigoProducto.Contains("   "))
+                    var descriptionproduct = d.CodigoProducto.Split("   ")[0];
+
+                    if (users.Any(y => y.ItemCodes.Contains(descriptionproduct)))
+                    {
+                        var user = users.FirstOrDefault(y => y.ItemCodes.Contains(descriptionproduct));
+                        dictUserPedido.Add(p.Order.DocNum, user.User.Id);
+                        continue;
+                    }
+                    else
                     {
                         dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
                         continue;
                     }
-
-                    var descriptionproduct = d.CodigoProducto.Split("   ")[0];
-
-                    users.ForEach(u =>
-                    {
-                        if (u.ItemCodes.Contains(descriptionproduct))
-                        {
-                            dictUserPedido.Add(p.Order.DocNum, u.User.Id);
-                        }
-                    });
                 }
-            });
+            }
 
             return dictUserPedido;
         }

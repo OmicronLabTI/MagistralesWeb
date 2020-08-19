@@ -109,6 +109,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErroAlAsignar = "Error al asignar";
 
         /// <summary>
+        /// error no user available.
+        /// </summary>
+        public const string ErrorQfbAutomatico = "Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual";
+
+        /// <summary>
         /// if the type is pedido.
         /// </summary>
         public const string TypePedido = "Pedido";
