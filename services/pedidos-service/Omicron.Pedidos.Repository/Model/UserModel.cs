@@ -8,14 +8,9 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
     /// <summary>
     /// Class User Model.
     /// </summary>
-    [Table("User")]
     public class UserModel
     {
         /// <summary>
@@ -24,8 +19,15 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// Int Id.
         /// </value>
-        [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets UserName.
+        /// </summary>
+        /// <value>
+        /// String UserName.
+        /// </value>
+        public string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets FirstName.
@@ -44,19 +46,27 @@ namespace Omicron.Pedidos.Entities.Model
         public string LastName { get; set; }
 
         /// <summary>
-        /// Gets or sets Email.
+        /// Gets or sets Role.
         /// </summary>
         /// <value>
-        /// String Email.
+        /// String Role.
         /// </value>
-        public string Email { get; set; }
+        public int Role { get; set; }
 
         /// <summary>
-        /// Gets or sets Birthdate.
+        /// Gets or sets Password.
         /// </summary>
         /// <value>
-        /// String Birthdate.
+        /// String Password.
         /// </value>
-        public DateTime Birthdate { get; set; }
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets Active.
+        /// </summary>
+        /// <value>
+        /// String Active.
+        /// </value>
+        public int Activo { get; set; }
     }
 }

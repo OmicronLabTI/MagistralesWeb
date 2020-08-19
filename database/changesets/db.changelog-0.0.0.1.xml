@@ -241,4 +241,27 @@
   <changeSet author="gramirez" id="changelog-1.29">
     <dropNotNullConstraint tableName="usersorders" columnName="productionorderid" columnDataType="varchar(50)"/>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.30">
+    <createTable tableName="parameters">
+      <column name="Id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+      <column name="value" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="type" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="field" type="VARCHAR(100)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.31">
+	<insert tableName="parameters"> 
+		<column name="value" value="200"/>
+		<column name="type" value="int"/>
+		<column name="field" value="MaxUserOrders"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

@@ -8,12 +8,10 @@
 
 namespace Omicron.Pedidos.Services.User
 {
-    using System;
-    using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading.Tasks;
-    using AutoMapper;
-    using Omicron.Pedidos.DataAccess.DAO.User;
-    using Omicron.Pedidos.Dtos.User;
+    using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -21,37 +19,43 @@ namespace Omicron.Pedidos.Services.User
     /// </summary>
     public class UsersService : IUsersService
     {
-        private readonly IMapper mapper;
-
-        private readonly IUserDao userDao;
+        /// <summary>
+        /// Client Http.
+        /// </summary>
+        private readonly HttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
-        /// <param name="mapper">Object to mapper.</param>
-        /// <param name="userDao">Object to userDao.</param>
-        public UsersService(IMapper mapper, IUserDao userDao)
+        /// <param name="httpClient">Object to mapper.</param>
+        public UsersService(HttpClient httpClient)
         {
-            this.mapper = mapper;
-            this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
+            this.httpClient = httpClient;
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> SimpleGetUsers(string route)
         {
-            return this.mapper.Map<List<UserDto>>(await this.userDao.GetAllUsersAsync());
-        }
+            ResultModel result;
+            var url = this.httpClient.BaseAddress + route;
 
-        /// <inheritdoc/>
-        public async Task<UserDto> GetUserAsync(int userId)
-        {
-            return this.mapper.Map<UserDto>(await this.userDao.GetUserAsync(userId));
-        }
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
 
-        /// <inheritdoc/>
-        public async Task<bool> InsertUser(UserDto user)
-        {
-            return await this.userDao.InsertUser(this.mapper.Map<UserModel>(user));
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
+                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
         }
     }
 }
