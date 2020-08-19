@@ -135,7 +135,7 @@
         <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
             <mat-paginator
                     [pageSizeOptions]="[5, 10, 15 ,20]"
-                    [pageSize]="pageSize"
+                    [pageSize]="limit"
                     [length]="lengthPaginator"
                     (page)="pageEvent = changeDataEvent($event)"
             ></mat-paginator>

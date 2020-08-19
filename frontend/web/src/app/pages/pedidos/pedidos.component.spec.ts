@@ -42,7 +42,6 @@ describe('PedidosComponent', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns)
         .toEqual(['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions']);
-    expect(component.pageSize).toEqual(10);
     expect(component.limit).toEqual(10);
     expect(component.offset).toEqual(0);
   });
