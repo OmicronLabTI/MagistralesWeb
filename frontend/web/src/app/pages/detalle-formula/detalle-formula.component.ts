@@ -7,7 +7,7 @@ import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
 import {DataService} from '../../services/data.service';
-import {CONST_DETAIL_FORMULA, CONST_NUMBER} from '../../constants/const';
+import {CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 
@@ -42,10 +42,13 @@ export class DetalleFormulaComponent implements OnInit {
   isComponentsToDelete = false;
   isReadyToSave = false;
   componentsToDelete: IFormulaDetalleReq [] = [];
+  minDate = new Date();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
-              private titleService: Title) { }
+              private titleService: Title) {
+    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_FORMULA);
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -62,10 +65,12 @@ export class DetalleFormulaComponent implements OnInit {
         this.comments = this.oldDataFormulaDetail.comments || '';
         const endDate = this.oldDataFormulaDetail.dueDate.split('/');
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
+        // this.dataSource.data = formulaRes.response.details;
         this.dataSource.data = this.oldDataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {detail.isChecked = false; });
         this.isReadyToSave = false;
         this.componentsToDelete = [];
+        this.dataService.setIsToSaveAnything(false);
       }, error => this.errorService.httpError(error));
   }
 
@@ -114,9 +119,18 @@ export class DetalleFormulaComponent implements OnInit {
         Number(( baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
     this.getIsReadyTOSave();
     this.getAction(index);
+    // console.log('base: ', baseQuantity)
+    if (baseQuantity !== null && baseQuantity > 0) {
+
+    } else {
+        // this.dataSource.data[index].baseQuantity = this.oldDataFormulaDetail.details[index].baseQuantity;
+  //      this.dataService.setMessageGeneralCallHttp({title: Messages.onlyPositiveNumber, icon: 'info', isButtonAccept: true});
+
+    }
   }
 
   onRequiredQuantityChange(requiredQuantity: any, index: number) {
+    // console.log('required: ', requiredQuantity)
     this.dataSource.data[index].baseQuantity =
         Number(( requiredQuantity / this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
     this.getIsReadyTOSave();
@@ -133,6 +147,7 @@ export class DetalleFormulaComponent implements OnInit {
                 .filter(component => component.action === CONST_DETAIL_FORMULA.update || component.action === CONST_DETAIL_FORMULA.insert);
             componentsToDeleteFull.push(...this.componentsToDelete);
             detailComponentsTOSave.components =  componentsToDeleteFull;
+            console.log('toSave: ', detailComponentsTOSave)
             this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
               this.getDetalleFormula();
               this.createMessageOkHttp();
@@ -156,6 +171,7 @@ export class DetalleFormulaComponent implements OnInit {
             this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
             this.getIsReadyTOSave();
             this.createMessageOkHttp();
+            this.checkISComponentsToDelete();
           }
         });
 
@@ -182,6 +198,7 @@ export class DetalleFormulaComponent implements OnInit {
   }
   getIsReadyTOSave() {
     this.isReadyToSave = true;
+    this.dataService.setIsToSaveAnything(true);
   }
   createMessageOkHttp() {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});

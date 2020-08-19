@@ -38,7 +38,7 @@ describe('UserListComponent', () => {
       return of(UserListMock);
     });
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp'
+      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive'
     ]);
     dataServiceSpy.getCallHttpService.and.callFake(() => {
       const callHttpService = new Subject<HttpServiceTOCall>();

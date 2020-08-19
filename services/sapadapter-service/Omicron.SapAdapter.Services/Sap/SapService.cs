@@ -97,6 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 
                 x.Status = userOrder == null ? string.Empty : userOrder.Status;
+                x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -294,6 +295,10 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
                 var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+
+                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
+                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+
                 return new List<CompleteOrderModel> { ordersById };
             }
 
