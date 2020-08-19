@@ -64,9 +64,10 @@ class UtilsManager {
     func formatterDoublesTo8Decimals() ->  NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = NumberFormatter.Style.decimal
-        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.roundingMode = NumberFormatter.RoundingMode.down
         formatter.maximumFractionDigits = 8
         formatter.minimumFractionDigits = 0
+        
         return formatter
     }
     

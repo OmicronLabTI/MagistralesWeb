@@ -14,7 +14,7 @@ import Moya
 
 
 class RootView:  XCTestCase {
-    private let disposeBag = DisposeBag()
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -23,18 +23,18 @@ class RootView:  XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    
-    func testGetStatusListValid() {
-        let qfb = StatusRequest(qfbId: 1)
-        NetworkManager.shared.getStatusList(qfbId: qfb).subscribe(onNext: { res in
-            XCTAssert(res.status!.count > 0)
+    // MARK: - VARIABLES
+    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+    let disposeBag = DisposeBag()
+    let rootViewModel = RootViewModel()
+
+    // MARK: - TEST FUNCTIONS
+    func testGetStatusListServiceValid() -> Void {
+        self.networkManager.getStatusList(userId: "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
+            XCTAssertNotNil(res)
+            XCTAssertNotNil(res.response)
+            XCTAssertTrue(res.code == 200)
+            XCTAssertTrue((res.response?.status!.count)! > 0)
         }).disposed(by: self.disposeBag)
-    }
-    
-    func testGetStatusListArgumentsnil() {
-        let qfb = StatusRequest(qfbId: 1)
-        NetworkManager.shared.getStatusList(qfbId: qfb).subscribe(onNext: { res in
-                XCTAssertNotNil(res)
-        }).disposed(by: disposeBag)
     }
 }

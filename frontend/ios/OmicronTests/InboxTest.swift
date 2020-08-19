@@ -21,17 +21,20 @@ class InboxTest:  XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func selectSectionNotNil() {
-        let inboxViewModel = InboxViewModel()
-        
-        
-        let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY"
-        let disposeBag = DisposeBag()
-        let viewModel = LoginViewModel()
-        viewModel.username.onNext("sergio")
-        viewModel.password.onNext("Passw0rd")
-        viewModel.canLogin.asObservable().subscribe(onNext: { valid in
-            XCTAssertTrue(valid, testToken)
-            }).disposed(by: disposeBag)
-    }
+    // MARK: - VARIABLES
+    let disposeBag = DisposeBag()
+    let viewModel = LoginViewModel()
+    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+    
+    // MARK: - TEST FUNCTIONS
+    
+//    func testChangeStatus() -> Void {
+//        let changesStatusRequest: [ChangeStatusRequest] = []
+//        networkManager.changeStatusOrder(changeStatusRequest: changesStatusRequest).subscribe(onNext: { res in
+//            XCTAssertNotNil(res)
+//            XCTAssertNotNil(res.response)
+//            XCTAssertTrue(res.code == 200)
+//            XCTAssertTrue(res.response?.userId == "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb")
+//        }).disposed(by: self.disposeBag)
+//    }
 }

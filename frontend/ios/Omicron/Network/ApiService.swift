@@ -116,7 +116,7 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
         case .changeStatusOrder:
-            guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "requestChangeStatusProcess", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
