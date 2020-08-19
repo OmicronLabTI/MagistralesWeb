@@ -23,7 +23,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:max-line-length
   displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
-  pageSize = CONST_NUMBER.ten;
   pageEvent: PageEvent;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   lengthPaginator = CONST_NUMBER.zero;
@@ -67,7 +66,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getPedidos() {
     this.pedidosService.getPedidos(this.fullQueryString).subscribe(
       pedidoRes => {
-        console.log('pedidosList: ', pedidoRes)
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
@@ -75,8 +73,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
-        this.pageSize = CONST_NUMBER.ten;
-        console.log('pageSize: ', this.pageSize)
       },
       error => {/// checar con gus para manejar errores
         this.errorService.httpError(error);
