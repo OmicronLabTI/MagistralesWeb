@@ -75,6 +75,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
+        this.pageSize = CONST_NUMBER.ten;
+        console.log('pageSize: ', this.pageSize)
       },
       error => {/// checar con gus para manejar errores
         this.errorService.httpError(error);
