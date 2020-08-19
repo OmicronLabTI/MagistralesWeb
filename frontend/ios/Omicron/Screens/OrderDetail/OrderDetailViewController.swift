@@ -115,7 +115,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código: \(res[0].code!)", textToBold: "Código:")
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
-                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
+                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")

@@ -46,9 +46,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     func initLabels() -> Void {
-        UtilsManager.shared.labelsStyle(label: numberLabel, text: "No:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: numberLabel, text: "Orden de fabricación:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 13)
-        UtilsManager.shared.labelsStyle(label: baseDocumentLabel, text: "Documento Base:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: baseDocumentLabel, text: "Número de pedido:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: baseDocumentDescriptionLabel, text: "", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: containerLabel, text: "Envase:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: containerDescriptionLabel, text: "", fontSize: 13)
