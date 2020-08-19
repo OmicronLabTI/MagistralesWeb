@@ -15,8 +15,7 @@ spring:
     show-sql: true
   application:
     name: oauth-service
-  profiles:
-    active: dev
+  profiles: dev
 
 server:
   port: 8090

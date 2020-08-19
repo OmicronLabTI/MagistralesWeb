@@ -50,5 +50,25 @@ namespace Omicron.SapDiApi.Facade.Sap
             var model = this.mapper.Map<List<OrderWithDetailModel>>(orderWithDetailDto);
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.InsertOrdenFab(model));
         }
+
+        /// <summary>
+        /// updates the fabriction orders.
+        /// </summary>
+        /// <param name="updateFabOrderDtos">the orders to update.</param>
+        /// <returns>the reult.</returns>
+        public async Task<ResultDto> UpdateFabOrder(List<UpdateFabOrderDto> updateFabOrderDtos)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateFabOrders(this.mapper.Map<List<UpdateFabOrderModel>>(updateFabOrderDtos)));
+        }
+
+        /// <summary>
+        /// Updates the formula.
+        /// </summary>
+        /// <param name="updateFormula">the object to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateFormula(this.mapper.Map<UpdateFormulaModel>(updateFormula)));
+        }
     }
 }

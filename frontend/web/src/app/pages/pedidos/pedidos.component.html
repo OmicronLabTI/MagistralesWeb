@@ -28,24 +28,24 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue " (click)="processOrders()">
-                &nbsp; Procesar &nbsp;
+            <button [disabled]="!isThereOrdersToPlan" mat-raised-button [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"  (click)="processOrders()">
+                &nbsp; Planificar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue ">
+            <button [disabled]="!isThereOrdersToPlace" mat-raised-button [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'" (click)="openPlaceOrdersDialog()">
                 &nbsp; Asignar &nbsp;
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue ">
+            <!--<button mat-raised-button class="button-blue ">
                 &nbsp; Finalizar &nbsp;
             </button>
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue ">
                 &nbsp; Cancelar &nbsp;
-            </button>
+            </button>-->
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >
@@ -57,7 +57,7 @@
     </div>
 
     <div class="list-users-container">
-        <div  class="table-container">
+        <div  class="table-container scroll-custom">
             <table mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
                 <ng-container matColumnDef="seleccion">&nbsp;
                     <th mat-header-cell *matHeaderCellDef>
@@ -75,7 +75,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="codigo">
-                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> Pedido </th>
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> PEDIDO </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigocliente"> {{element.docNum}} </td>
                 </ng-container>
 
@@ -117,8 +117,10 @@
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
-                        <button mat-icon-button class="ico-col-pri" [routerLink]="['/pdetalle', element.docNum, element.pedidoStatus]">
-                            <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path d="M32 6H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM19 22H9a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm8-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2z" class="clr-i-solid clr-i-solid-path-1" fill="#626262"></path></svg></mat-icon>
+                        <button mat-icon-button class="ico-col-pri">
+                            <a target="_blank" [routerLink]="['/pdetalle', element.docNum, element.pedidoStatus]">
+                                <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path d="M32 6H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM19 22H9a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm8-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2z" class="clr-i-solid clr-i-solid-path-1" fill="#626262"></path></svg></mat-icon>
+                            </a>
                         </button>
                     </td>
                 </ng-container>

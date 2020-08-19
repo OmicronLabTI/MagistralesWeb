@@ -44,5 +44,39 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrdersByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Assign the orders.
+        /// </summary>
+        /// <param name="manualAssign">the manual assign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AssignOrder(ManualAssignModel manualAssign);
+
+        /// <summary>
+        /// Updates the formula for an order.
+        /// </summary>
+        /// <param name="updateFormula">upddates the formula.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula);
+
+        /// <summary>
+        /// Updates the status.
+        /// </summary>
+        /// <param name="updateStatusOrder">the status model.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
+
+        /// <summary>
+        /// Gets the connection to sap di api.
+        /// </summary>
+        /// <returns>the conection.</returns>
+        Task<ResultModel> ConnectDiApi();
+
+        /// <summary>
+        /// Process by order.
+        /// </summary>
+        /// <param name="processByOrder">the orders.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
     }
 }

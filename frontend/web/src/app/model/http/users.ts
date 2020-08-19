@@ -1,17 +1,6 @@
 import {BaseResponseHttp} from './commons';
-
-export class IUserReq {
-    id?: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-    role: number;
-    password: string;
-    activo: number;
-    isChecked?: boolean = false;
-}
 export class IUserRes extends BaseResponseHttp {
-    response: any;
+    response: UserRes;
 }
 export class IUserListRes extends BaseResponseHttp {
     response: IUserReq[];
@@ -23,7 +12,35 @@ export class IRolesRes extends BaseResponseHttp {
 export class IDeleteRes extends BaseResponseHttp {
     response: boolean;
 
- }
+}
+export class IQfbWithNumberRes extends BaseResponseHttp {
+    response: QfbWithNumber[];
+
+}
+export class IUserReq {
+    id?: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    role: number;
+    password: string;
+    activo: number;
+    isChecked?: boolean = false;
+}
+export class UserRes {
+    activo: number;
+    firstName: string;
+    id: string;
+    lastName: string;
+    role: number;
+    userName: string;
+}
+export class IPlaceOrdersReq {
+    userLogistic: string;
+    userId: string;
+    docEntry: number[];
+    orderType: string;
+}
 export class RoleUser {
     id: number;
     description: string;
@@ -32,4 +49,11 @@ export class RoleUser {
 export class QfbSelect {
     qfbId: string;
     qfbName: string;
+}
+export  class QfbWithNumber {
+    userId?: string;
+    userName?: string;
+    countTotal?: number;
+    modalType?: string;
+    list?: number[];
 }

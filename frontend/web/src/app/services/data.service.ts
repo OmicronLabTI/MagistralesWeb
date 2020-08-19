@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
 import {DatePipe} from '@angular/common';
+import {QfbWithNumber} from '../model/http/users';
+import {GeneralMessage} from '../model/device/general';
 
 
 @Injectable({
@@ -12,9 +14,41 @@ export class DataService {
   private isLoading = new Subject<boolean>();
   private generalNotificationMessage = new Subject<string>();
   private isLogin = new Subject<boolean>();
-  // private isCallToUsersList = new Subject()
+  private qfbTOPlace = new Subject<QfbWithNumber>();
+  private callHttpService = new Subject<HttpServiceTOCall>();
+  private messageGenericCallHttp = new Subject<GeneralMessage>();
+  detailOrderDescription = CONST_STRING.empty;
+  private isToSaVeAnything = false;
+  private urlActive = new Subject<HttpServiceTOCall>();
   constructor(private datePipe: DatePipe) { }
 
+  setIsToSaveAnything(isToSave: boolean) {
+    this.isToSaVeAnything = isToSave;
+  }
+  getIsToSaveAnything() {
+    return this.isToSaVeAnything;
+  }
+   setUrlActive(url: HttpServiceTOCall) {
+    this.urlActive.next(url);
+   }
+   getUrlActive() {
+    return this.urlActive;
+   }
+  setDetailOrderDescription(description: string) {
+    this.detailOrderDescription = description || CONST_STRING.empty;
+  }
+  setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
+    this.messageGenericCallHttp.next(messageGeneral);
+  }
+  getMessageGeneralCalHttp() {
+    return this.messageGenericCallHttp.asObservable();
+  }
+  setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
+    this.callHttpService.next(numberServiceToCall);
+  }
+  getCallHttpService() {
+    return this.callHttpService.asObservable();
+  }
   setIsLogin(isLogin: boolean) {
     this.isLogin.next(isLogin);
   }
@@ -33,7 +67,12 @@ export class DataService {
   getGeneralNotificationMessage() {
     return this.generalNotificationMessage.asObservable();
   }
-
+  setQbfToPlace(qfb: QfbWithNumber) {
+    this.qfbTOPlace.next(qfb);
+  }
+  getQfbToPlace() {
+    return this.qfbTOPlace.asObservable();
+  }
   setGeneralNotificationMessage(msg: string) {
     this.generalNotificationMessage.next(msg);
   }
@@ -91,11 +130,7 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  transformDate(date: Date, isForAmericanDateType = false) {
-    if (!isForAmericanDateType) {
-      return this.datePipe.transform(date, 'dd/MM/yyyy');
-    } else {
-      return this.datePipe.transform(date, 'MM/dd/yyyy');
-    }
+  transformDate(date: Date) {
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }

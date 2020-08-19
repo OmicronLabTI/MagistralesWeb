@@ -18,11 +18,25 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     public interface ISapDiApiService
     {
         /// <summary>
-        /// the insert.
+        /// insert the fab orders.
         /// </summary>
         /// <param name="orderWithDetail">the list of data.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> InsertOrdenFab(List<OrderWithDetailModel> orderWithDetail);
+
+        /// <summary>
+        /// Updates the fabrication orders.
+        /// </summary>
+        /// <param name="orderModels">the models to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateFabOrders(List<UpdateFabOrderModel> orderModels);
+
+        /// <summary>
+        /// Updates the formula.
+        /// </summary>
+        /// <param name="updateFormula">the formula.</param>
+        /// <returns></returns>
+        Task<ResultModel> UpdateFormula(UpdateFormulaModel updateFormula);
 
         /// <summary>
         /// Connects to SAP.

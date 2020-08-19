@@ -128,7 +128,7 @@ namespace Omicron.Usuarios.Services.User
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var usersOrdered = users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ToList();
+            var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
             listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
@@ -143,19 +143,7 @@ namespace Omicron.Usuarios.Services.User
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> DeleteUser(List<string> listIds)
         {
-            var listUserToUpdate = new List<UserModel>();
-            foreach (var i in listIds)
-            {
-                var user = await this.userDao.GetUserById(i);
-
-                if (user != null)
-                {
-                    user.Activo = 0;
-                    listUserToUpdate.Add(user);
-                }
-            }
-
-            var response = await this.userDao.UpdateUsers(listUserToUpdate);
+            var response = await this.userDao.DeleteUsers(listIds);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
         }
 
@@ -246,24 +234,19 @@ namespace Omicron.Usuarios.Services.User
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            orders.GroupBy(x => x.Userid).ToList().ForEach(k =>
+            users.ForEach(x =>
             {
-                var user = users.FirstOrDefault(x => x.Id.Equals(k.Key));
+                var count = orders.Where(y => y.Userid.Equals(x.Id) && !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
 
-                if (user != null)
+                listToReturn.Add(new UserWithOrderCountModel
                 {
-                    var count = k.Where(y => ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
-
-                    listToReturn.Add(new UserWithOrderCountModel
-                    {
-                        UserId = user.Id,
-                        UserName = $"{user.FirstName} {user.LastName}",
-                        CountTotal = count,
-                    });
-                }
+                    UserId = x.Id,
+                    UserName = $"{x.FirstName} {x.LastName}",
+                    CountTotal = count,
+                });
             });
 
-            return listToReturn;
+            return listToReturn.OrderBy(x => x.UserName).ToList();
         }
     }
 }

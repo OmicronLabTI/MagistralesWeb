@@ -71,6 +71,7 @@
                             <mat-select formControlName="status">
                                 <mat-option value="Abierto">Abierto</mat-option>
                                 <mat-option value="Planificado">Planificado</mat-option>
+                                <mat-option value="Liberado">Liberado</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -86,11 +87,10 @@
             </form>
         </mat-card-content>
         <mat-card-actions class="options-footer">
-            <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parametros</button>
+            <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parámetros</button>
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal with-button-cancel">Cancelar</button>
             <button mat-button class="btn-add-modal btn--modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
                 <span>Buscar</span>
-                <!--<span *ngIf="isForEditModal">Guardar</span>  [disabled]="addUserForm.invalid"-->
             </button>
         </mat-card-actions>
     </mat-card>

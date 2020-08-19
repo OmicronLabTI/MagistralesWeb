@@ -78,5 +78,54 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrdersByUserId(listIds));
         }
+
+        /// <summary>
+        /// Assigns the order.
+        /// </summary>
+        /// <param name="manualAssign">the dto to assign.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> AssignHeader(ManualAssignDto manualAssign)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.AssignOrder(this.mapper.Map<ManualAssignModel>(manualAssign)));
+        }
+
+        /// <summary>
+        /// updates the formulas for the order.
+        /// </summary>
+        /// <param name="updateFormula">the update object.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateComponents(UpdateFormulaDto updateFormula)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateComponents(this.mapper.Map<UpdateFormulaModel>(updateFormula)));
+        }
+
+        /// <summary>
+        /// updates the status of the orders.
+        /// </summary>
+        /// <param name="updateStatus">the status object.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateStatusOrder(this.mapper.Map<List<UpdateStatusOrderModel>>(updateStatus)));
+        }
+
+        /// <summary>
+        /// gets the connection to DI api.
+        /// </summary>
+        /// <returns>the connectin.</returns>
+        public async Task<ResultDto> ConnectDiApi()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ConnectDiApi());
+        }
+
+        /// <summary>
+        /// Process by order.
+        /// </summary>
+        /// <param name="processByOrder">process by order dto.</param>
+        /// <returns>the order.</returns>
+        public async Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));
+        }
     }
 }

@@ -63,6 +63,8 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc" },
                 new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc" },
                 new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
+                new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc" },
+                new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
             };
         }
 
@@ -108,12 +110,85 @@ namespace Omicron.Pedidos.Test
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
+        public ResultModel GetResultModelGetFabricacionModelNoSerealize()
+        {
+            var listOrders = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { DataSource = "O", OrdenId = 100, PedidoId = 100, PostDate = DateTime.Now, ProductoId = "Aspirina", Quantity = 10, Status = "R" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultModelCompleteDetailModel()
+        {
+            var listDetalles = new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L" },
+            };
+
+            var listOrders = new List<OrderWithDetailModel>
+            {
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L" },
+                },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
         public ResultModel GetResultCreateOrder()
         {
             var listOrders = new Dictionary<string, string>
             {
                 { "100-Aspirina", ServiceConstants.Ok },
                 { "200-Aspirina", ServiceConstants.ErrorCreateFabOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultUpdateOrder()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-100", ServiceConstants.Ok },
+                { "200-200", ServiceConstants.ErrorUpdateFavOrd },
             };
 
             return new ResultModel
@@ -139,6 +214,27 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = listFormula,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the result from detail orde rmodel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetListCompleteDetailOrderModel()
+        {
+            var listDetails = new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "CA", DescripcionProducto = "desc", FechaOf = "20/01/2020", FechaOfFin = "01/01/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 100, QtyPlannedDetalle = 100, Status = "Planificado" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listDetails),
                 Success = true,
                 UserError = string.Empty,
             };

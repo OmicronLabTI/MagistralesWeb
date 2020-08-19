@@ -10,6 +10,8 @@ namespace Omicron.Pedidos.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
 
@@ -51,12 +53,42 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 var userOrder = new UserOrderModel
                 {
-                    Status = ServiceConstants.Planificada,
+                    Status = ServiceConstants.Planificado,
                     Salesorderid = x.PedidoId.ToString(),
                     Productionorderid = x.OrdenId.ToString(),
                 };
 
                 listToReturn.Add(userOrder);
+            });
+
+            ordenFabId.Select(x => x.PedidoId).Distinct().ToList().ForEach(p =>
+            {
+                listToReturn.Add(new UserOrderModel
+                {
+                    Status = ServiceConstants.Planificado,
+                    Salesorderid = p.ToString(),
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// creates the user model from fabrication.
+        /// </summary>
+        /// <param name="dataToCreate">the data to create.</param>
+        /// <returns>the data.</returns>
+        public static List<UserOrderModel> CreateUserModel(List<FabricacionOrderModel> dataToCreate)
+        {
+            var listToReturn = new List<UserOrderModel>();
+            dataToCreate.ForEach(x =>
+            {
+                listToReturn.Add(new UserOrderModel
+                {
+                    Productionorderid = x.OrdenId.ToString(),
+                    Salesorderid = x.PedidoId.ToString(),
+                    Status = ServiceConstants.Planificado,
+                });
             });
 
             return listToReturn;
@@ -67,9 +99,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="user">the user.</param>
         /// <param name="pedidosId">pedidos seleccionados.</param>
-        /// <param name="ordenesFabId">ordenes creadas.</param>
+        /// <param name="description">the description.</param>
+        /// <param name="type">The type.</param>
         /// <returns>the list to insert.</returns>
-        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, List<FabricacionOrderModel> ordenesFabId)
+        public static List<OrderLogModel> CreateOrderLog(string user, List<int> pedidosId, string description, string type)
         {
             var listToReturn = new List<OrderLogModel>();
 
@@ -77,22 +110,10 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 listToReturn.Add(new OrderLogModel
                 {
-                    Description = ServiceConstants.OrdenVentaPlan,
+                    Description = description,
                     Logdatetime = DateTime.Now,
                     Noid = x.ToString(),
-                    Type = ServiceConstants.OrdenVenta,
-                    Userid = user,
-                });
-            });
-
-            ordenesFabId.ForEach(x =>
-            {
-                listToReturn.Add(new OrderLogModel
-                {
-                    Description = ServiceConstants.OrdenFabricacionPlan,
-                    Logdatetime = DateTime.Now,
-                    Noid = x.OrdenId.ToString(),
-                    Type = ServiceConstants.OrdenFab,
+                    Type = type,
                     Userid = user,
                 });
             });
@@ -145,7 +166,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="listWithError">the error list.</param>
         /// <returns>the list of values.</returns>
-        public static List<string> GetErrorsWhileInserting(List<string> listWithError)
+        public static List<string> GetErrorsFromSapDiDic(List<string> listWithError)
         {
             var listToReturn = new List<string>();
 
@@ -156,6 +177,85 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Groups the data for the front by status.
+        /// </summary>
+        /// <param name="sapOrders">the sap ordrs.</param>
+        /// <param name="userOrders">the user ordes.</param>
+        /// <returns>the data froupted.</returns>
+        public static QfbOrderModel GroupUserOrder(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders)
+        {
+            var result = new QfbOrderModel
+            {
+                Status = new List<QfbOrderDetail>(),
+            };
+
+            foreach (var status in Enum.GetValues(typeof(ServiceEnums.Status)))
+            {
+                var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
+                var orders = new QfbOrderDetail
+                {
+                    StatusName = statusId == (int)ServiceEnums.Status.Proceso ? ServiceConstants.ProcesoStatus : status.ToString(),
+                    StatusId = statusId,
+                    Orders = new List<FabOrderDetail>(),
+                };
+
+                var ordersDetail = new List<FabOrderDetail>();
+
+                userOrders
+                    .Where(x => x.Status.Equals(status.ToString()))
+                    .Select(y => y.Productionorderid)
+                    .ToList()
+                    .ForEach(o =>
+                    {
+                        int.TryParse(o, out int orderId);
+                        var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
+
+                        if (sapOrder != null)
+                        {
+                            var order = new FabOrderDetail
+                            {
+                                BaseDocument = sapOrder.BaseDocument,
+                                Container = sapOrder.Container,
+                                Tag = sapOrder.ProductLabel,
+                                DescriptionProduct = sapOrder.ProductDescription,
+                                FinishDate = sapOrder.DueDate,
+                                PlannedQuantity = sapOrder.PlannedQuantity,
+                                ProductionOrderId = sapOrder.ProductionOrderId,
+                                StartDate = sapOrder.FabDate,
+                            };
+
+                            ordersDetail.Add(order);
+                        }
+                    });
+
+                orders.Orders = ordersDetail;
+                result.Status.Add(orders);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// creates the order detail.
+        /// </summary>
+        /// <param name="order">the order.</param>
+        /// <param name="listToSend">list to send.</param>
+        /// <returns>the data.</returns>
+        public static OrderWithDetailModel CreateOrderWithDetail(OrderWithDetailModel order, List<CompleteDetailOrderModel> listToSend)
+        {
+            return new OrderWithDetailModel
+            {
+                Order = new OrderModel
+                {
+                    PedidoId = order.Order.PedidoId,
+                    FechaInicio = order.Order.FechaInicio,
+                    FechaFin = order.Order.FechaFin,
+                },
+                Detalle = new List<CompleteDetailOrderModel>(listToSend),
+            };
         }
     }
 }

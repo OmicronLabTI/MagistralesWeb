@@ -5,6 +5,7 @@ import {PedidosComponent} from './pedidos.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import { ReactiveFormsModule , FormsModule} from '@angular/forms';
+
 @NgModule({
   declarations: [PedidosComponent, FindOrdersDialogComponent],
   imports: [

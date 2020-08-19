@@ -2,9 +2,12 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
-import {IRolesRes, IUserReq, RoleUser} from '../../model/http/users';
+import { IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
-import {CONST_USER_DIALOG, MODAL_NAMES} from '../../constants/const';
+import {CONST_USER_DIALOG, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {DataService} from '../../services/data.service';
+import {Messages} from '../../constants/messages';
+import {SweetAlertIcon} from 'sweetalert2';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -17,7 +20,8 @@ export class AddUserDialogComponent implements OnInit {
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
-              private usersService: UsersService, private errorService: ErrorService) {
+              private usersService: UsersService, private errorService: ErrorService,
+              private dataService: DataService) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
 
@@ -26,16 +30,15 @@ export class AddUserDialogComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       userTypeR: ['', Validators.required],
-      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
+      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord), ]],
       activo: ['', Validators.required]
     });
 
   }
 
   ngOnInit() {
-    this.usersService.getRoles().subscribe((rolesRes: IRolesRes) => {
+    this.usersService.getRoles().subscribe(rolesRes => {
      this.userRoles = rolesRes.response;
-     console.log('roles: ', rolesRes.response);
      this.addUserForm.get('userTypeR').
         setValue(!this.isForEditModal ? this.userRoles.
         filter(user =>
@@ -44,11 +47,8 @@ export class AddUserDialogComponent implements OnInit {
     }, error => this.errorService.httpError(error));
 
     if (!this.isForEditModal) {
-      console.log('new:::');
       this.addUserForm.get('activo').setValue(1);
-      console.log('data add: ', this.addUserForm.value);
     } else {
-      console.log('edit data: ', this.userToEdit);
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
       this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
       this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
@@ -70,9 +70,13 @@ export class AddUserDialogComponent implements OnInit {
         password: this.addUserForm.get('password').value,
         activo: Number(this.addUserForm.get('activo').value)
       };
-      console.log('value user: ', user);
-      this.usersService.createUser(user).subscribe( resUser => console.log('resUser: ', resUser),
-          error => console.log('error create: ', error));
+      this.usersService.createUser(user).subscribe( () => {
+            this.createMessageOk(Messages.success, 'success', false);
+          },
+          error => {/// checar con gus para manejar errores
+            this.createMessageOk(Messages.userExist, 'info', true);
+            this.errorService.httpError(error);
+          });
     } else {
       const user: IUserReq = {
         id: this.userToEdit.id,
@@ -83,10 +87,15 @@ export class AddUserDialogComponent implements OnInit {
         password: this.addUserForm.get('password').value,
         activo: Number(this.addUserForm.get('activo').value)
       };
-      console.log('value user edit: ', user);
-      this.usersService.updateUser(user).subscribe( resUser => console.log('resUserEdit: ', resUser),
-          error => console.log('error edit: ', error));
+      this.usersService.updateUser(user).subscribe( () => {
+        this.createMessageOk(Messages.success, 'success', false);
+          },
+          error => this.errorService.httpError(error));
     }
 
+  }
+  createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
+    this.dataService.setCallHttpService(HttpServiceTOCall.USERS);
+    this.dataService.setMessageGeneralCallHttp({title, icon, isButtonAccept});
   }
 }

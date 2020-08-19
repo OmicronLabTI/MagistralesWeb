@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -37,14 +38,47 @@ namespace Omicron.Pedidos.Services.SapDiApi
         /// get orders with the data.
         /// </summary>
         /// <param name="pedidos">the orders.</param>
+        /// <param name="route">the route to send.</param>
         /// <returns>the return.</returns>
-        public async Task<ResultModel> CreateFabOrder(object pedidos)
+        public async Task<ResultModel> PostToSapDiApi(object pedidos, string route)
         {
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(pedidos), UnicodeEncoding.UTF8, "application/json");
-            var url = this.httpClient.BaseAddress + "createFabOrder";
+            var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode > 200)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
+                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetSapDiApi(string route)
+        {
+            ResultModel result;
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
             }
 

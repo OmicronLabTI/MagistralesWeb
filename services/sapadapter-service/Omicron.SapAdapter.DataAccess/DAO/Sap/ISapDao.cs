@@ -79,5 +79,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="userId">the user id.</param>
         /// <returns>the data.</returns>
         Task<Users> GetSapUserById(int userId);
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value);
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value);
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="pedidoId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId);
     }
 }

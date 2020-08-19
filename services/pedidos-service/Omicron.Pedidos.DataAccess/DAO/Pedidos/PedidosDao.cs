@@ -49,7 +49,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             this.databaseContext.OrderLogModel.AddRange(orderLog);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-
             return true;
         }
 
@@ -64,6 +63,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByProducionOrder(List<string> listIDs)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.Productionorderid)).ToListAsync();
+        }
+
+        /// <summary>
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listIds">the list of users.</param>
@@ -71,6 +80,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Updates the entries.
+        /// </summary>
+        /// <param name="userOrderModels">the user model.</param>
+        /// <returns>the data.</returns>
+        public async Task<bool> UpdateUserOrders(List<UserOrderModel> userOrderModels)
+        {
+            this.databaseContext.UserOrderModel.UpdateRange(userOrderModels);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -13,22 +13,22 @@
   
     <div class="table-toolbar">
       <div class="table-toolbar-search">
-        <mat-form-field >
+        <!--<mat-form-field >
           <input matInput placeholder="Buscar órdenes...">       
-        </mat-form-field>
+        </mat-form-field>-->
       </div>
       <div class="table-toolbar-buttons">
-        <button mat-raised-button class="button-blue">
-          &nbsp; Procesar &nbsp; 
+        <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'" (click)="processOrdersDetail()">
+          &nbsp; Planificar &nbsp;
         </button>
         &nbsp;
         &nbsp;
-        <button mat-raised-button class="button-blue">
+        <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'" (click)="openPlaceOrderDialog()">
           &nbsp; Asignar &nbsp; 
         </button>
         &nbsp;
         &nbsp;
-        <button mat-stroked-button color="primary">
+        <!--<button mat-stroked-button color="primary">
           &nbsp; Reasignar &nbsp; 
         </button>
         &nbsp;
@@ -40,7 +40,7 @@
         &nbsp;
         <button mat-raised-button class="button-blue">
           &nbsp; Cancelar &nbsp; 
-        </button>
+        </button>-->
       </div>
     </div>
   
@@ -61,7 +61,7 @@
           
             <ng-container matColumnDef="ordenFabricacionId">
                 <th mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN DE FABRICACIÓN</th>
-                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> {{element.ordenFabricacionId}} </td>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> <span *ngIf="element.ordenFabricacionId !== 0">{{element.ordenFabricacionId}}</span> </td>
               </ng-container>
 
             <ng-container matColumnDef="codigoProducto">
@@ -71,7 +71,7 @@
           
             <ng-container matColumnDef="descripcionProducto">
               <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
-              <td mat-cell matTooltip="EMULSION COLAGENO ELASTINA 10%, DIOXIDO DE TITANIO 5%, HIALURONICO 3%, MANTECA DE KARITE 3%, VIT C 4"
+              <td mat-cell matTooltip="{{element.descripcionProducto}}"
               matTooltipPosition="right"
               aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{element.descripcionProducto}} </td>
             </ng-container>
@@ -104,10 +104,7 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
               <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions"> 
-                  <button mat-icon-button class="ico-col-pri" *ngIf="element.ordenFabricacionId != null" [routerLink]="['/ordenfabricacion', element.ordenFabricacionId]">
-                    <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z" fill="#626262"></path></svg></mat-icon>
-                  </button>
-                  <button mat-icon-button class="ico-col-pri" *ngIf="element.ordenFabricacionId == null">
+                  <button mat-icon-button class="ico-col-pri" *ngIf="element.ordenFabricacionId !== 0" [routerLink]="['/ordenfabricacion', element.ordenFabricacionId]" (click)="setDescription(element.codigoProducto, element.descripcionProducto )">
                     <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z" fill="#626262"></path></svg></mat-icon>
                   </button>
               </td>
@@ -117,3 +114,4 @@
       </table>
     </div>
   </div>
+

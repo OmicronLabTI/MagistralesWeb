@@ -47,7 +47,20 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// the list userIds ids.
+        /// planificar by order.
+        /// </summary>
+        /// <param name="processByOrder">process by order.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/processByOrder")]
+        [HttpPost]
+        public async Task<IActionResult> ProcessByOrder(ProcessByOrderDto processByOrder)
+        {
+            var response = await this.pedidoFacade.ProcessByOrder(processByOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get the user order by Pedido id.
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <returns>the data.</returns>
@@ -82,6 +95,57 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetAllQfbOrders(List<string> listIds)
         {
             var response = await this.pedidoFacade.GetUserOrdersByUserId(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="manualAssign">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/asignar/manual")]
+        [HttpPost]
+        public async Task<IActionResult> AsignarManual(ManualAssignDto manualAssign)
+        {
+            var response = await this.pedidoFacade.AssignHeader(manualAssign);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="updateFormula">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/formula")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFormula(UpdateFormulaDto updateFormula)
+        {
+            var response = await this.pedidoFacade.UpdateComponents(updateFormula);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// the update status.
+        /// </summary>
+        /// <param name="updateStatus">the status object.</param>
+        /// <returns>the order.</returns>
+        [Route("/status/fabOrder")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus)
+        {
+            var response = await this.pedidoFacade.UpdateStatusOrder(updateStatus);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// connects the DI api.
+        /// </summary>
+        /// <returns>the connection.</returns>
+        [Route("/connectDiApi")]
+        [HttpGet]
+        public async Task<IActionResult> ConnectDiApi()
+        {
+            var response = await this.pedidoFacade.ConnectDiApi();
             return this.Ok(response);
         }
     }

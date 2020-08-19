@@ -3,20 +3,22 @@
     <div class="header-page">
       <div class="title-list-container">
         <span>Detalle</span>
-        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle</div>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / <a class="breadcrumblink" [routerLink]="['/pdetalle', oldDataFormulaDetail.baseDocument, 'Abierto']">Detalle</a> / Formula </div>
       </div>
       <div class="filter-select">
-        <div class="docbase">Documento base: {{docNum}} </div>
+        <div class="docbase">Documento base: {{oldDataFormulaDetail.baseDocument}} </div>
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-  
+    <div class="description-container">
+     {{dataService.detailOrderDescription}}
+    </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue">
+            <!--<button mat-raised-button class="button-blue">
             &nbsp; Lotes &nbsp; 
             </button>
             &nbsp;
@@ -28,20 +30,20 @@
             &nbsp;
             <button mat-raised-button class="button-blue">
             &nbsp; Crear lista de componentes &nbsp; 
-            </button>
+            </button>-->
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue">
+            <button mat-raised-button class="button-blue" (click)="openDialog('searchComponent')">
             &nbsp; Agregar componente &nbsp; 
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue">
+            <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
             &nbsp; Eliminar componente &nbsp; 
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
@@ -53,73 +55,75 @@
                 <div style="margin-top: 10px;">
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Tipo</mat-label>
-                        <input matInput placeholder="Tipo" disabled value="{{dataFormulaDetail.type}}">
+                        <input matInput placeholder="Tipo" disabled value="{{oldDataFormulaDetail.type}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Estado</mat-label>
-                        <input matInput placeholder="Estado" disabled value="{{dataFormulaDetail.status}}">
+                        <input matInput placeholder="Estado" disabled value="{{oldDataFormulaDetail.status}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                         <mat-label>Cantidad planificada</mat-label>
-                        <input matInput placeholder="Cantidad planificada" value="{{dataFormulaDetail.plannedQuantity}}">
+                        <input matInput placeholder="Cantidad planificada" disabled value="{{oldDataFormulaDetail.plannedQuantity}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Nombre de</mat-label>
-                        <input matInput placeholder="Nombre de" disabled value="{{dataFormulaDetail.unit}}">
+                        <input matInput placeholder="Nombre de" disabled value="{{oldDataFormulaDetail.unit}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Almacén</mat-label>
-                        <input matInput placeholder="Almacén" disabled value="{{dataFormulaDetail.warehouse}}">
+                        <input matInput placeholder="Almacén" disabled value="{{oldDataFormulaDetail.warehouse}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>N°</mat-label>
-                        <input matInput placeholder="N°" disabled value="{{dataFormulaDetail.number}}">
+                        <input matInput placeholder="N°" disabled value="{{ordenFabricacionId}}">
                     </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
                         <mat-label>Cálculo de fecha de enrutamiento</mat-label>
-                        <input matInput placeholder="Cálculo de fecha de enrutamiento" disabled value="ALGO">
+                        <input matInput placeholder="Cálculo de fecha de enrutamiento" disabled value="{{oldDataFormulaDetail.endDate}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24.1%;">
                         <mat-label>Fecha orden de fabricación</mat-label>
-                        <input matInput placeholder="Fecha orden de fabricación" disabled value="{{dataFormulaDetail.fabDate}}">
+                        <input matInput placeholder="Fecha orden de fabricación" disabled value="{{oldDataFormulaDetail.fabDate}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24.1%;">
                         <mat-label>Fecha de inicio</mat-label>
-                        <input matInput placeholder="Fecha de inicio" disabled value="{{dataFormulaDetail.startDate}}">
+                        <input matInput placeholder="Fecha de inicio" disabled value="{{oldDataFormulaDetail.startDate}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
-                        <mat-label>Fecha de finalización</mat-label>
-                        <input matInput placeholder="Fecha de finalización" value="{{dataFormulaDetail.endDate}}">
+                            <mat-label>Fecha de finalización</mat-label>
+                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" [min]="minDate" readonly>
+                            <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                            <mat-datepicker #dp3 disabled="false"></mat-datepicker>
                     </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24%;">
                         <mat-label>Usuario</mat-label>
-                        <input matInput placeholder="Usuario" disabled value="{{dataFormulaDetail.user}}">
+                        <input matInput placeholder="Usuario" disabled value="{{oldDataFormulaDetail.user}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Origen</mat-label>
-                        <input matInput placeholder="Origen" disabled value="{{dataFormulaDetail.origin}}">
+                        <input matInput placeholder="Origen" disabled value="{{oldDataFormulaDetail.origin}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24%;">
                         <mat-label>Pedido de cliente</mat-label>
-                        <input matInput placeholder="Pedido de cliente" disabled value="{{dataFormulaDetail.number}}">
+                        <input matInput placeholder="Pedido de cliente" disabled value="{{oldDataFormulaDetail.number}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.7%;">
                         <mat-label>Cliente</mat-label>
-                        <input matInput placeholder="Cliente" disabled value="{{dataFormulaDetail.client}}">
+                        <input matInput placeholder="Cliente" disabled value="{{oldDataFormulaDetail.client}}">
                     </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
                         <mat-label>Cantidad completada</mat-label>
-                        <input matInput placeholder="Cantidad completada" disabled value="{{dataFormulaDetail.completeQuantity}}">
+                        <input matInput placeholder="Cantidad completada" disabled value="{{oldDataFormulaDetail.completeQuantity}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
                         <mat-label>Fecha de cierre real</mat-label>
-                        <input matInput placeholder="Real fecha de término" disabled value="{{dataFormulaDetail.realEndDate}}">
+                        <input matInput placeholder="Real fecha de término" disabled value="{{oldDataFormulaDetail.realEndDate}}">
                     </mat-form-field>
                 </div>
             </mat-tab>
@@ -150,21 +154,21 @@
                 
                     <ng-container matColumnDef="cantbase">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide "> CANTIDAD BASE </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide cantbase"> <mat-form-field appearance="outline">
-                        
-                        <input matInput class="number" placeholder="Placeholder" value="{{element.baseQuantity}}">
-                        
-                        
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell mobile-hide cantbase"> <mat-form-field appearance="outline">
+                        <input matInput type="number"
+                               class="number" placeholder="Cantidad base"
+                               [(ngModel)]="element.baseQuantity"
+                               (ngModelChange)="onBaseQuantityChange($event, i)">
                       </mat-form-field> </td>
                     </ng-container>
             
                     <ng-container matColumnDef="cantreq">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CTD. REQUERIDA </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide cantreq"> <mat-form-field appearance="outline">
-                        
-                        <input matInput class="number" placeholder="Placeholder" value="{{element.requiredQuantity}}">
-                        
-                        
+                    <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide cantreq"> <mat-form-field appearance="outline">
+                        <input matInput type="number"
+                               class="number" placeholder="Cantidad requerida"
+                               [(ngModel)]="element.requiredQuantity"
+                               (ngModelChange)="onRequiredQuantityChange($event, i)">
                       </mat-form-field> </td>
                     </ng-container>
         
@@ -185,17 +189,51 @@
         
                     <ng-container matColumnDef="almacen">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> ALMACÉN </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide almacen"> {{element.warehouse}}
-             <!--           <mat-form-field appearance="fill">
-                        <mat-select>
-                          <mat-option value="MG">
-                            MG
-                          </mat-option>
-                          <mat-option value="PT">
-                            PT
-                          </mat-option>
+                    <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen">
+                       <!-- {{element.warehouse}}-->
+                        <mat-form-field appearance="fill">
+                        <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)">
+                              <mat-option value="AMP" >
+                                  AMP
+                              </mat-option>
+                              <mat-option value="BE">
+                                  BE
+                              </mat-option>
+                            <mat-option value="GENERAL">
+                                GENERAL
+                            </mat-option>
+                            <mat-option value="INCI">
+                                INCI
+                            </mat-option>
+                            <mat-option value="MER">
+                                MER
+                            </mat-option>
+                            <mat-option value="MG">
+                                MG
+                            </mat-option>
+                            <mat-option value="MN">
+                                MN
+                            </mat-option>
+                            <mat-option value="MP">
+                                MP
+                            </mat-option>
+                            <mat-option value="PROD">
+                                PROD
+                            </mat-option>
+                            <mat-option value="PRONATUR">
+                                PRONATUR
+                            </mat-option>
+                            <mat-option value="PT">
+                                PT
+                            </mat-option>
+                            <mat-option value="TALLERES">
+                                TALLERES
+                            </mat-option>
+                            <mat-option value="WEB">
+                                WEB
+                            </mat-option>
                         </mat-select>
-                      </mat-form-field>-->
+                      </mat-form-field>
                     </td>
                     </ng-container>
 
@@ -217,7 +255,21 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
             </mat-tab>
-            <mat-tab label="Comentarios"> Content 3 </mat-tab>
+            <mat-tab label="Comentarios">
+                         <div class="comments-container">
+                             <div class="title-comments">
+                                 <span>Comentarios</span>
+                             </div>
+                             <div class="text-area-comments">
+                                 <textarea class="text-area-formula" cols="100" rows="12"
+                                           maxlength="500"
+                                           [(ngModel)]="comments"
+                                           (ngModelChange)="changeData()"
+                                           >
+                                 </textarea>
+                             </div>
+                         </div>
+            </mat-tab>
         </mat-tab-group>
         
     </div>

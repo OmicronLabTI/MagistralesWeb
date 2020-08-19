@@ -146,7 +146,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    QtyPlanned = (int)dp.Quantity,
                                    QtyPlannedDetalle = (int)d.Quantity,
                                    FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
-                                   FechaOfFin = null,
+                                   FechaOfFin = dp.DueDate.ToString("dd/MM/yyyy"),
                                    Status = dp.Status,
                                    IsChecked = false
                                }).ToListAsync();
@@ -240,6 +240,91 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.Users.FirstOrDefaultAsync(x => x.UserId == userId);
             return query;
+        }
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value)
+        {
+            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoId.Contains(value)).ToListAsync();
+            var listIds = products.Select(x => x.ProductoId).ToList();
+            var listToReturn = new List<CompleteDetalleFormulaModel>();
+
+            if (products.Any())
+            {
+                var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
+
+                products.ForEach(p =>
+                {
+                    var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
+                    var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
+                    listToReturn.Add(new CompleteDetalleFormulaModel
+                    {
+                        ProductId = p.ProductoId,
+                        Description = p.ProductoName,
+                        Consumed = 0,
+                        Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
+                        Unit = p.Unit,
+                        Warehouse = "MN",
+                        Stock = p.OnHand,
+                        WarehouseQuantity = datoToAssign.OnHand,
+                    });
+                });
+
+                return listToReturn;
+            }
+
+            return new List<CompleteDetalleFormulaModel>();
+        }
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
+        {
+            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoName.Contains(value)).ToListAsync();
+            var listIds = products.Select(x => x.ProductoId).ToList();
+            var listToReturn = new List<CompleteDetalleFormulaModel>();
+            if (products.Any())
+            {
+                var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
+
+                products.ForEach(p =>
+                {
+                    var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
+                    var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
+                    listToReturn.Add(new CompleteDetalleFormulaModel
+                    {
+                        ProductId = p.ProductoId,
+                        Description = p.ProductoName,
+                        Consumed = 0,
+                        Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
+                        Unit = p.Unit,
+                        Warehouse = "MN",
+                        Stock = p.OnHand,
+                        WarehouseQuantity = datoToAssign.OnHand,
+                    });                    
+                });
+
+                return listToReturn;
+            }
+
+            return new List<CompleteDetalleFormulaModel>();
+        }
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="pedidoId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId)
+        {
+            return await this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId).ToListAsync();
         }
     }
 }

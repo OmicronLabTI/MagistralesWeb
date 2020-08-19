@@ -56,6 +56,31 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Abierto = "Abierto";
 
         /// <summary>
+        /// value for chips.
+        /// </summary>
+        public const string Chips = "chips";
+
+        /// <summary>
+        /// values cuando no hay chips.
+        /// </summary>
+        public const string NoChipsError = "No se encontraron filtros";
+
+        /// <summary>
+        /// get the chips.
+        /// </summary>
+        public const string ChipSeparator = ",";
+
+        /// <summary>
+        /// the proceso status.
+        /// </summary>
+        public const string Proceso = "Proceso";
+
+        /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string EnProceso = "En proceso";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

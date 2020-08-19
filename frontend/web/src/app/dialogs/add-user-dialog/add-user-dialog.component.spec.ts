@@ -12,6 +12,7 @@ import {
 } from '@angular/material';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {DatePipe} from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
@@ -19,7 +20,7 @@ describe('AddUserDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports:[FormsModule, HttpClientModule, MatCardModule, ReactiveFormsModule,
+      imports:[FormsModule, HttpClientTestingModule, MatCardModule, ReactiveFormsModule,
         MatDialogModule,
         BrowserAnimationsModule,
         MatFormFieldModule,

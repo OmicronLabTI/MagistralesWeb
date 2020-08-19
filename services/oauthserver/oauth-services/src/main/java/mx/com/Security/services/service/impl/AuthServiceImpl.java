@@ -30,6 +30,10 @@ public class AuthServiceImpl implements IAuthService {
         if(!encodedPassword.equals(securityDO.getPassword())){
             throw new UnAuthorizedException(ErrorMessages.INVALID_CREDENTIALS);
         }
+
+        if (securityDO.getActivo() == 0){
+            throw new UnAuthorizedException(ErrorMessages.USUARIO_INACTIVO);
+        }
     }
 
     @Override
