@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 class InboxViewController: UIViewController {
     
@@ -19,13 +20,14 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     // MARK:  Variables
-    lazy var inboxViewModel: InboxViewModel = InboxViewModel()
+    @Injected var inboxViewModel: InboxViewModel
+    @Injected var rootViewModel: RootViewModel
+
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     private var typeCard: Int = 0
     var orderId:Int = -1
     var statusType: String = ""
-    lazy var rootViewModel = getRootViewModel()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -51,7 +53,7 @@ class InboxViewController: UIViewController {
     func viewModelBinding() -> Void {
         
         inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.rootViewModel?.getOrders()
+            self.rootViewModel.getOrders()
         }).disposed(by: self.disposeBag)
         
         // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
@@ -217,17 +219,6 @@ class InboxViewController: UIViewController {
             destination.statusType = self.statusType
            }
        }
-    }
-    
-    private func getRootViewModel() -> RootViewModel? {
-        let childrenVC = self.splitViewController?.viewControllers.map({
-            return (($0 as? UINavigationController)?.viewControllers ?? [])
-        }).reduce([], +)
-        
-        if let vc = childrenVC?.first(where: { $0.isKind(of: RootViewController.self) }) as? RootViewController {
-            return vc.rootViewModel
-        }
-        return nil
     }
 }
 

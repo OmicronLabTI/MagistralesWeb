@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 class OrderDetailViewController: UIViewController, UITableViewDelegate {
 
@@ -46,11 +47,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: Variables
+    @Injected var orderDetailViewModel: OrderDetailViewModel
+    
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType: String = ""
-    var orderDetailViewModel = OrderDetailViewModel()
-    let rootViewModel: RootViewModel = RootViewModel()
     var indexOfTableToEditItem: Int = -1
     let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
     

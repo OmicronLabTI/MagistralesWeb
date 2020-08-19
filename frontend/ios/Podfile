@@ -12,6 +12,7 @@ target 'Omicron' do
   pod 'ObjectMapper'
   pod 'lottie-ios'
   pod 'Eureka'
+  pod 'Resolver'
   
   target 'OmicronTests' do
     inherit! :search_paths

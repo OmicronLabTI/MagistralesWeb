@@ -9,16 +9,18 @@
 import UIKit
 import Eureka
 import RxSwift
-import  RxCocoa
+import RxCocoa
+import Resolver
 
 class OrderDetailFormViewController:  FormViewController {
     
     // MARK: Variables
+    @Injected var orderDetailViewModel: OrderDetailViewModel
+    @Injected var orderDetailFormViewModel: OrderDetailFormViewModel
+
     var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
-    let orderDetailFormViewModel = OrderDetailFormViewModel()
     var disposeBag = DisposeBag()
-    lazy var orderDetailViewModel = self.getOrderDetailViewModel()
     var baseQuantity: DecimalRow? = nil
     var requiredQuantity: DecimalRow? = nil
     var werehouse: PickerInlineRow<String>? = nil
@@ -219,25 +221,11 @@ class OrderDetailFormViewController:  FormViewController {
         
         // Aqui es en donde se hace el manda a llamar el servicio para volver a traer los datos de detalle de la fórmnula
         orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { orderId in
-            self.orderDetailViewModel?.getOrdenDetail(orderId: orderId)
+            self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         }).disposed(by: self.disposeBag)
     }
     
     func refreshOrderDetail() {
         self.dismiss(animated: true)
-    }
-    
-    private func getOrderDetailViewModel() -> OrderDetailViewModel? {
-        if let splitVC = self.presentingViewController as? UISplitViewController {
-            let childrenVC = splitVC.viewControllers.map({
-                return (($0 as? UINavigationController)?.viewControllers ?? [])
-            }).reduce([], +)
-            
-            if let vc = childrenVC.first(where: { $0.isKind(of: OrderDetailViewController.self) }) as? OrderDetailViewController {
-                return vc.orderDetailViewModel
-            }
-        }
-
-        return nil
     }
 }

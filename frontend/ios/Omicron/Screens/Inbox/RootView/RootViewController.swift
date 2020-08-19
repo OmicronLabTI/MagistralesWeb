@@ -9,6 +9,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
+
 class RootViewController: UIViewController {
     
     // MARK: Outlets
@@ -18,9 +20,9 @@ class RootViewController: UIViewController {
     
     // Variables
     let disposeBag = DisposeBag()
-    let rootViewModel = RootViewModel()
+    @Injected var rootViewModel: RootViewModel
+    @Injected var inboxViewModel: InboxViewModel
     var dataStatusOfService: [SectionOrder] = []
-    lazy var inboxViewModel = self.getInboxViewModel()
     var refreshControl = UIRefreshControl()
     
     // MARK: Life Cycles
@@ -56,7 +58,7 @@ class RootViewController: UIViewController {
         rootViewModel.refreshSelection.subscribe(onNext: {
             if (self.dataStatusOfService.count > 0) {
                 self.viewTable.selectRow(at: IndexPath(row: self.rootViewModel.selectedRow, section: 0), animated: true, scrollPosition: .none)
-                self.inboxViewModel?.setSelection(index: self.rootViewModel.selectedRow, section: self.dataStatusOfService[self.rootViewModel.selectedRow])
+                self.inboxViewModel.setSelection(index: self.rootViewModel.selectedRow, section: self.dataStatusOfService[self.rootViewModel.selectedRow])
             }
         }).disposed(by: self.disposeBag)
         
@@ -83,7 +85,7 @@ class RootViewController: UIViewController {
         // Detecta el evento cuando se selecciona un status de la tabla
         viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
             self.rootViewModel.selectedRow = indexPath.row
-            self.inboxViewModel?.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
+            self.inboxViewModel.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
         }).disposed(by: disposeBag)
         
         // Muestra u oculta el refreshControl en la tabla

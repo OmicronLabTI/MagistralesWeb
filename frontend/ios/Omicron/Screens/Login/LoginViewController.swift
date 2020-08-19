@@ -9,6 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import Resolver
 
 class LoginViewController: UIViewController {
     
@@ -26,7 +27,7 @@ class LoginViewController: UIViewController {
     let button = UIButton(type: .custom)
     
     // MARK: - VARIABLES
-    lazy var viewModel: LoginViewModel = LoginViewModel()
+    @Injected var viewModel: LoginViewModel
     let disposeBag = DisposeBag()
     
     // MARK: - LIFE CYCLES
