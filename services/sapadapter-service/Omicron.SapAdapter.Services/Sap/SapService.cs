@@ -180,7 +180,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId,
-                    FabDate = o.StartDate.ToString("dd/MM/yyyy"),
+                    FabDate = o.CreatedDate.ToString("dd/MM/yyyy"),
                     DueDate = o.DueDate.ToString("dd/MM/yyyy"),
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = o.PostDate.ToString("dd/MM/yyyy"),
@@ -221,13 +221,16 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listValues = new List<CompleteDetalleFormulaModel>();
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+
+            var firstChip = chipValues.FirstOrDefault();
+            listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());
+            listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip)).ToList());
+            listValues = listValues.DistinctBy(p => p.ProductId).ToList();
+
             foreach (var v in chipValues)
             {
-                listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(v)).ToList());
-                listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(v)).ToList());
+                listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".Contains(v)).ToList();
             }
-
-            listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -277,8 +280,7 @@ namespace Omicron.SapAdapter.Services.Sap
             orderModels.ForEach(x =>
             {
                 var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
-                var userId = order == null ? string.Empty : order.Userid;
-                var user = users.FirstOrDefault(y => y.Id.Equals(userId));
+                x.Qfb = order == null ? string.Empty : order.Userid;
 
                 if (x.PedidoStatus == "O")
                 {
@@ -286,7 +288,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -303,8 +304,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
-                orderModels = orderModels.Where(x => x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
             }
+
+            orderModels.ForEach(x =>
+            {
+                var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+            });
 
             return orderModels;
         }

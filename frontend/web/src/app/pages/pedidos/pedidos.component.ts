@@ -67,6 +67,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getPedidos() {
     this.pedidosService.getPedidos(this.fullQueryString).subscribe(
       pedidoRes => {
+        console.log('pedidosList: ', pedidoRes)
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
@@ -74,8 +75,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
       },
       error => {
-        console.log(error);
         this.errorService.httpError(error);
+        this.dataSource.data = [];
       }
     );
   }

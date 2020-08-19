@@ -58,7 +58,6 @@ export class DetalleFormulaComponent implements OnInit {
   getDetalleFormula() {
     this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
       (formulaRes) => {
-        console.log('formula res: ', formulaRes);
         this.oldDataFormulaDetail = formulaRes.response;
         this.comments = this.oldDataFormulaDetail.comments || '';
         const endDate = this.oldDataFormulaDetail.dueDate.split('/');
@@ -186,6 +185,12 @@ export class DetalleFormulaComponent implements OnInit {
   }
   createMessageOkHttp() {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
+  }
+
+  onSelectWareHouseChange(value: string, index: number) {
+    this.dataSource.data[index].warehouse = value;
+    this.getAction(index);
+    this.getIsReadyTOSave();
   }
 }
 

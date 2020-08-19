@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
-import {IUserReq} from '../model/http/users';
+import {IRolesRes, IUserListRes, IUserReq} from '../model/http/users';
 import {Endpoints} from '../../environments/endpoints';
 import {HttpClient} from '@angular/common/http';
 
@@ -17,10 +17,10 @@ export class UsersService {
     return this.httpClient.post(Endpoints.users.createUser, user);
   }
   getRoles() {
-    return this.consumeService.httpGet(Endpoints.users.roles);
+    return this.consumeService.httpGet<IRolesRes>(Endpoints.users.roles);
   }
   getUsers(offset: number, limit: number) {
-    return this.consumeService.httpGet(`${Endpoints.users.getUsers}?offset=${offset}&limit=${limit}`);
+    return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.getUsers}?offset=${offset}&limit=${limit}`);
   }
   deleteUsers(idsToDelete: string[]) {
     return this.consumeService.httpPatch(Endpoints.users.delete, idsToDelete);

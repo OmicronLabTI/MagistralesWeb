@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class ErrorService {
 
   constructor() { }
-  httpError(error: any){
-    console.log('error httpService: ', error)
+  httpError(error: any) {
+    console.log('error httpService: ', error);
   }
 }
