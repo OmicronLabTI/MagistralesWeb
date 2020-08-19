@@ -179,26 +179,40 @@ namespace Omicron.Pedidos.Services.Utils
 
                 foreach (var d in p.Detalle)
                 {
-                    if (dictUserPedido.ContainsKey(p.Order.DocNum))
-                    {
-                        continue;
-                    }
-
-                    var descriptionproduct = d.CodigoProducto.Split("   ")[0];
-
-                    var user = usersAvailable.FirstOrDefault(y => y.ItemCodes.Any(z => z.Contains(descriptionproduct)));
-                    if (user != null)
-                    {
-                        dictUserPedido.Add(p.Order.DocNum, user.User.Id);
-                        continue;
-                    }
-
-                    dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
-                    continue;
+                    dictUserPedido = GetEntryUserValue(dictUserPedido, d, usersAvailable, p.Order.DocNum, users.FirstOrDefault().User.Id);
                 }
             }
 
             return dictUserPedido;
+        }
+
+        /// <summary>
+        /// populates the dict for the user pedido.
+        /// </summary>
+        /// <param name="pedidoUser">the dictionary.</param>
+        /// <param name="detailModel">the detail.</param>
+        /// <param name="availableUsers">the available users by formula.</param>
+        /// <param name="pedidoId">the pedido id.</param>
+        /// <param name="defaultUser">the default user if nothing matches.</param>
+        /// <returns>the dict.</returns>
+        private static Dictionary<int, string> GetEntryUserValue(Dictionary<int, string> pedidoUser, CompleteDetailOrderModel detailModel, List<AutomaticAssignUserModel> availableUsers, int pedidoId, string defaultUser)
+        {
+            if (pedidoUser.ContainsKey(pedidoId))
+            {
+                return pedidoUser;
+            }
+
+            var descriptionproduct = detailModel.CodigoProducto.Split("   ")[0];
+
+            var user = availableUsers.FirstOrDefault(y => y.ItemCodes.Any(z => z.Contains(descriptionproduct)));
+            if (user != null)
+            {
+                pedidoUser.Add(pedidoId, user.User.Id);
+                return pedidoUser;
+            }
+
+            pedidoUser.Add(pedidoId, defaultUser);
+            return pedidoUser;
         }
 
         /// <summary>
