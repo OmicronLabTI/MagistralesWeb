@@ -362,12 +362,29 @@ namespace Omicron.Pedidos.Test.Services
         {
             var assign = new AutomaticAssingModel
             {
-                DocEntry = new List<int> { 1, 2, 3 },
+                DocEntry = new List<int> { 100 },
                 UserLogistic = "abc",
             };
 
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersByRole()));
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            mockSaDiApiLocal
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            sapAdapterLocal
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            var pedidoServiceLocal = new PedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
             // act
-            var response = await this.pedidosService.AutomaticAssign(assign);
+            var response = await pedidoServiceLocal.AutomaticAssign(assign);
 
             // assert
             Assert.IsNotNull(response);
