@@ -78,5 +78,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="processByOrder">process by order dto.</param>
         /// <returns>the order.</returns>
         Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder);
+
+        /// <summary>
+        /// the automatic assign.
+        /// </summary>
+        /// <param name="automaticAssing">the assign object.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
     }
 }

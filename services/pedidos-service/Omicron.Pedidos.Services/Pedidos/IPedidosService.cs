@@ -78,5 +78,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="processByOrder">the orders.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
+
+        /// <summary>
+        /// Makes the automatic assign.
+        /// </summary>
+        /// <param name="assignModel">the assign model.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel);
     }
 }

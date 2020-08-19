@@ -112,6 +112,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Assignacion automatica.
+        /// </summary>
+        /// <param name="automaticAssing">the object to assign.</param>
+        /// <returns>the data.</returns>
+        [Route("/asignar/automatico")]
+        [HttpPost]
+        public async Task<IActionResult> AssignarAutomatico(AutomaticAssingDto automaticAssing)
+        {
+            var response = await this.pedidoFacade.AutomaticAssign(automaticAssing);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Asignacion manual.
         /// </summary>
         /// <param name="updateFormula">the assign model.</param>

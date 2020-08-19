@@ -8,9 +8,8 @@
 
 namespace Omicron.Pedidos.Services.User
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
     /// Interface User Service.
@@ -20,21 +19,8 @@ namespace Omicron.Pedidos.Services.User
         /// <summary>
         /// Method for get all users from db.
         /// </summary>
+        /// <param name="route">the list ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<IEnumerable<UserDto>> GetAllUsersAsync();
-
-        /// <summary>
-        /// Method for get user by id from db.
-        /// </summary>
-        /// <param name="userId">User Id.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<UserDto> GetUserAsync(int userId);
-
-        /// <summary>
-        /// Method for add user to DB.
-        /// </summary>
-        /// <param name="user">User Dto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> InsertUser(UserDto user);
+        Task<ResultModel> SimpleGetUsers(string route);
     }
 }
