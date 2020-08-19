@@ -4,7 +4,7 @@ import {Observable, Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
 import { Router} from '@angular/router';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
+import { CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -21,7 +21,7 @@ import {GeneralMessage} from './model/device/general';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnDestroy , OnInit {
-  iconMenuActive: number = CONST_NUMBER.one;
+  iconMenuActive = HttpServiceTOCall.ORDERS;
   title = 'omicron';
   now = new Date();
   isLoading: Observable<boolean>;
@@ -30,7 +30,8 @@ export class AppComponent implements OnDestroy , OnInit {
   fullName = '';
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
-              private pedidosService: PedidosService, private errorService: ErrorService) {
+              private pedidosService: PedidosService, private errorService: ErrorService,
+              ) {
     this.getFullName();
     this.isLoading = this.dataService.getIsLoading();
     this.isLogin = this.dataService.userIsAuthenticated();
@@ -48,6 +49,9 @@ export class AppComponent implements OnDestroy , OnInit {
       });
   }
   ngOnInit() {
+    this.subscriptionQfbToPlace.add(this.dataService.getUrlActive().subscribe(url => {
+      this.iconMenuActive = url;
+    }));
     this.subscriptionQfbToPlace.add(this.dataService.getQfbToPlace().subscribe( qfbToPlace => {
       this.onSuccessPlaceOrder(qfbToPlace);
     }));
@@ -60,13 +64,29 @@ export class AppComponent implements OnDestroy , OnInit {
     this.router.navigate(['/login']);
   }
 
-  changeIconActive(newMeuActive: number) {
-    this.iconMenuActive = newMeuActive;
+  goToPage(url: string[]) {
+    if (!this.dataService.getIsToSaveAnything()) {
+      this.navigatePage(url);
+    } else {
+      /*this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
+          .then((savedResult: any) => {
+            if (savedResult.isConfirmed) {
+
+            } else {
+              this.navigatePage(url)
+            }
+          });*/
+    }
+  }
+  navigatePage(url: string[]) {
+    this.router.navigate(url);
   }
 
   onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
     if (qfbToPlace.userId) {
-      this.dataService.presentToastCustom(`${Messages.placeOrder} ${qfbToPlace.userName} ?`,
+      this.dataService.presentToastCustom(
+          qfbToPlace.modalType === MODAL_NAMES.placeOrders ? `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
+              `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?`,
           'warning',
           CONST_STRING.empty,
           true, true)
