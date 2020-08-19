@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
@@ -263,6 +264,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
             userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter, 200);
+
+            if (!validUsers.Any())
+            {
+                throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico);
+            }
 
             var pedidosId = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
