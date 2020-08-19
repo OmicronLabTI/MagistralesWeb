@@ -7,6 +7,7 @@ import {ErrorService} from '../../services/error.service';
 import {CONST_USER_DIALOG, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
+import {SweetAlertIcon} from 'sweetalert2';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -70,9 +71,12 @@ export class AddUserDialogComponent implements OnInit {
         activo: Number(this.addUserForm.get('activo').value)
       };
       this.usersService.createUser(user).subscribe( () => {
-            this.createMessageOk();
+            this.createMessageOk(Messages.success, 'success', false);
           },
-          error => this.errorService.httpError(error));
+          error => {/// checar con gus para manejar errores
+            this.createMessageOk(Messages.userExist, 'info', true);
+            this.errorService.httpError(error);
+          });
     } else {
       const user: IUserReq = {
         id: this.userToEdit.id,
@@ -84,14 +88,14 @@ export class AddUserDialogComponent implements OnInit {
         activo: Number(this.addUserForm.get('activo').value)
       };
       this.usersService.updateUser(user).subscribe( () => {
-        this.createMessageOk();
+        this.createMessageOk(Messages.success, 'success', false);
           },
           error => this.errorService.httpError(error));
     }
 
   }
-  createMessageOk() {
+  createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
     this.dataService.setCallHttpService(HttpServiceTOCall.USERS);
-    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
+    this.dataService.setMessageGeneralCallHttp({title, icon, isButtonAccept});
   }
 }

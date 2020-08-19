@@ -17,8 +17,26 @@ export class DataService {
   private qfbTOPlace = new Subject<QfbWithNumber>();
   private callHttpService = new Subject<HttpServiceTOCall>();
   private messageGenericCallHttp = new Subject<GeneralMessage>();
+  detailOrderDescription = CONST_STRING.empty;
+  private isToSaVeAnything = false;
+  private urlActive = new Subject<HttpServiceTOCall>();
   constructor(private datePipe: DatePipe) { }
 
+  setIsToSaveAnything(isToSave: boolean) {
+    this.isToSaVeAnything = isToSave;
+  }
+  getIsToSaveAnything() {
+    return this.isToSaVeAnything;
+  }
+   setUrlActive(url: HttpServiceTOCall) {
+    this.urlActive.next(url);
+   }
+   getUrlActive() {
+    return this.urlActive;
+   }
+  setDetailOrderDescription(description: string) {
+    this.detailOrderDescription = description || CONST_STRING.empty;
+  }
   setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
     this.messageGenericCallHttp.next(messageGeneral);
   }
