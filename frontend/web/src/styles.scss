@@ -324,6 +324,17 @@ th.centered {
 .color-omicron {
   background-color: #6C90B3!important;
 }
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 /*@media(min-width: 769px){
   .cont-center{
       margin-left: 10%;

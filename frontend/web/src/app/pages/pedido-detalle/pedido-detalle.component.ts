@@ -39,7 +39,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   detailsOrderToProcess = new ProcessOrdersDetailReq();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
-              private titleService: Title) { }
+              private titleService: Title) {
+    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
+  }
 
   ngOnInit() {
     this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
@@ -64,6 +66,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? 'Abierto' : element.status;
         });
+        this.isThereOrdersDetailToPlan = false;
+        this.isThereOrdersDetailToPlace = false;
       }
     );
   }
@@ -124,7 +128,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         } );
   }
 
-  setDescription(descriptionProduct: string) {
-    this.dataService.setDetailOrderDescription(descriptionProduct);
+  setDescription(productCodeId: string, descriptionProduct: string) {
+    this.dataService.setDetailOrderDescription(`${productCodeId} ${descriptionProduct}`);
   }
 }

@@ -43,6 +43,14 @@
             <span *ngIf="formLogin?.controls.password?.errors?.required">Contraseña requerida</span>
           </mat-error>
         </mat-form-field>
+        <div class="sesion-active-container">
+          <div class="checkbox-container">
+            <mat-checkbox></mat-checkbox>
+            <span class="session-active-title">
+              Mantener sesión activa
+            </span>
+          </div>
+        </div>
       </mat-card-content>
       <mat-card-actions class="actions-custom">
         <button mat-button class="btn-login" [disabled]="formLogin.invalid" (click)="login()">Entrar</button>

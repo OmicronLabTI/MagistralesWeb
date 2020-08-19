@@ -43,7 +43,7 @@
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" class="button-blue" (click)="saveFormulaDetail()">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
@@ -93,10 +93,9 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                             <mat-label>Fecha de finalización</mat-label>
-                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" readonly>
+                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" [min]="minDate" readonly>
                             <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                             <mat-datepicker #dp3 disabled="false"></mat-datepicker>
-                        <!--<input matInput placeholder="Fecha de finalización" value="{{oldDataFormulaDetail.endDate}}">-->
                     </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
