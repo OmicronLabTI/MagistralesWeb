@@ -249,7 +249,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value)
         {
-            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoId.Contains(value)).ToListAsync();
+            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)).ToListAsync();
             var listIds = products.Select(x => x.ProductoId).ToList();
             var listToReturn = new List<CompleteDetalleFormulaModel>();
 
@@ -287,7 +287,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
         {
-            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoName.Contains(value)).ToListAsync();
+            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)).ToListAsync();
             var listIds = products.Select(x => x.ProductoId).ToList();
             var listToReturn = new List<CompleteDetalleFormulaModel>();
             if (products.Any())

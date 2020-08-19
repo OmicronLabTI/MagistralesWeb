@@ -223,14 +223,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var listValues = new List<CompleteDetalleFormulaModel>();
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
 
-            var firstChip = chipValues.FirstOrDefault();
+            var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip)).ToList());
             listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
             foreach (var v in chipValues)
             {
-                listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".Contains(v)).ToList();
+                listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".ToLower().Contains(v.ToLower())).ToList();
             }
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
