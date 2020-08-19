@@ -145,8 +145,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    DescripcionProducto = d.Description,
                                    QtyPlanned = (int)dp.Quantity,
                                    QtyPlannedDetalle = (int)d.Quantity,
-                                   FechaOf = dp.PostDate.ToString("dd/MM/yyyy"),
-                                   FechaOfFin = dp.DueDate.ToString("dd/MM/yyyy"),
+                                   FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                                   FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    Status = dp.Status,
                                    IsChecked = false
                                }).ToListAsync();
