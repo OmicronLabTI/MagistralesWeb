@@ -54,7 +54,7 @@ class  InboxViewModel {
             switch ($0, $1) {
             // Order errors by code
             case let (aCode, bCode):
-                return aCode.baseDocument! > bCode.baseDocument!
+                return aCode.baseDocument! < bCode.baseDocument!
             }
         }
         self.indexSelectedOfTable.onNext(index)
