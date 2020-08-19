@@ -157,13 +157,16 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="users">the ussers with item codes.</param>
         /// <param name="orderDetail">the order with details.</param>
+        /// <param name="userOrders">The user orders.</param>
         /// <returns>the data to return.</returns>
-        public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail)
+        public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
         {
             var dictUserPedido = new Dictionary<int, string>();
+            var listOrdersAignado = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Asignado)).Select(y => y.Productionorderid).ToList();
 
             foreach (var p in orderDetail)
             {
+                p.Detalle = p.Detalle.Where(x => listOrdersAignado.Contains(x.OrdenFabricacionId.ToString())).ToList();
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
                 {
                     dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
