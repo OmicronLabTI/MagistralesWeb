@@ -274,7 +274,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
 
-            var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap);
+            var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders);
 
             var listToUpdate = ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, this.sapAdapter);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
