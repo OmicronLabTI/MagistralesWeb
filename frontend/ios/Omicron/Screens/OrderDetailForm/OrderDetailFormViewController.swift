@@ -19,17 +19,16 @@ class OrderDetailFormViewController:  FormViewController {
     let orderDetailFormViewModel = OrderDetailFormViewModel()
     var disposeBag = DisposeBag()
     lazy var orderDetailViewModel = self.getOrderDetailViewModel()
-    
     var baseQuantity: DecimalRow? = nil
     var requiredQuantity: DecimalRow? = nil
     var werehouse: PickerInlineRow<String>? = nil
+    let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+   
     // MARK: Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.buildForm()
         self.viewModelBinding()
-        
-        //self.orderDetailViewModel = self.getOrderDetailViewModel()
     }
     
     // MARK: Functions
@@ -49,29 +48,18 @@ class OrderDetailFormViewController:  FormViewController {
         
         form
               
-            +++ Section(header: "Editar elemento", footer: "")
+            +++ Section(header: "Editar componente", footer: "")
             
             <<< DecimalRow() {
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
                 $0.value = Double(self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!)
-                let formater = NumberFormatter()
-               formater.maximumFractionDigits = 8
-//                formater.minimumFractionDigits = 1
-                formater.minimumFractionDigits = 0
-                formater.numberStyle = .decimal
-                $0.formatter = formater
+                $0.formatter = self.formatter
                 $0.cellSetup{cell, row in
-                    let formatter = NumberFormatter()
-                    formatter.minimumFractionDigits = 0
-                    formatter.maximumFractionDigits = 8
-                    row.formatter = formatter
+                    row.formatter = self.formatter
                 }
                 $0.onCellSelection{ cell, row in
-                    let formatter = NumberFormatter()
-                      formatter.minimumFractionDigits = 0
-                      formatter.maximumFractionDigits = 8
-                      row.formatter = formatter
+                    row.formatter = self.formatter
                 }
                 $0.onCellHighlightChanged{ cell, row in
                     if (row.value != nil) {
@@ -87,13 +75,12 @@ class OrderDetailFormViewController:  FormViewController {
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
                 }
                 
-//                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
-//                    return (rowValue?.isLess(than: 0.0))!  ? ValidationError(msg: "No debe contener números negativos") : nil
-//                }
+                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+                    return (rowValue?.isLess(than: 0.0))!  ? ValidationError(msg: "No debe contener números negativos") : nil
+             }
                 
                 $0.add(rule: fieldNoEmpty)
-                //$0.add(rule: fieldShouldNotNegativeNumbers)
-                //$0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
+                $0.add(rule: fieldShouldNotNegativeNumbers)
             }
                 
             .cellUpdate { cell, row in
@@ -122,22 +109,12 @@ class OrderDetailFormViewController:  FormViewController {
                 $0.title = "Cantidad requerida: "
                 $0.value = Double( self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity! )
                 $0.tag = "requiredQuantity"
-                let formatter =  NumberFormatter()
-//                formatter.maximumFractionDigits = 8
-//                formatter.minimumFractionDigits = 1
-                formatter.numberStyle = .decimal
-                $0.formatter = formatter
+                $0.formatter = self.formatter
                 $0.cellSetup{cell, row in
-                    let formatter = NumberFormatter()
-                    formatter.minimumFractionDigits = 0
-                    formatter.maximumFractionDigits = 8
-                    row.formatter = formatter
+                    row.formatter = self.formatter
                 }
                 $0.onCellSelection{ cell, row in
-                    let formatter = NumberFormatter()
-                      formatter.minimumFractionDigits = 0
-                      formatter.maximumFractionDigits = 8
-                      row.formatter = formatter
+                    row.formatter = self.formatter
                 }
                 $0.onCellHighlightChanged{ cell, row in
                                    if (row.value ??  1 > 0 &&  row.value != nil ) {
@@ -152,13 +129,12 @@ class OrderDetailFormViewController:  FormViewController {
                     return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
                 }
                 
-//                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
-//                    return rowValue!.isLess(than: 0.0) ? ValidationError(msg: "No debe contener números negativos") : nil
-//                }
+                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+                    return rowValue!.isLess(than: 0.0) ? ValidationError(msg: "No debe contener números negativos") : nil
+                }
                 
                 $0.add(rule: fieldNoEmpty)
-                //$0.add(rule: fieldShouldNotNegativeNumbers)
-                //$0.add(rule: RuleGreaterThan(min: 1, msg: "El campo debe tener un número mayor que 0", id: ""))
+                $0.add(rule: fieldShouldNotNegativeNumbers)
             }
             .cellUpdate { cell, row in
                 if !row.isValid {
@@ -183,7 +159,7 @@ class OrderDetailFormViewController:  FormViewController {
             }
             
             <<< PickerInlineRow<String>() {
-                $0.title = "Almacen: "
+                $0.title = "Almacén: "
                 $0.tag = "werehouse"
                 $0.options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN", "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
                 $0.value = self.dataOfTable?.details![self.indexOfItemSelected].warehouse!
@@ -218,11 +194,11 @@ class OrderDetailFormViewController:  FormViewController {
     }
     
     func saveChanges () {
-//        self.dismiss(animated: true)
         self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
     }
     
     func viewModelBinding () -> Void {
+        
         // Muestra o oculta el loading
         orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
@@ -244,13 +220,11 @@ class OrderDetailFormViewController:  FormViewController {
         // Aqui es en donde se hace el manda a llamar el servicio para volver a traer los datos de detalle de la fórmnula
         orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { orderId in
             self.orderDetailViewModel?.getOrdenDetail(orderId: orderId)
-            //self.orderDetailViewModel.showAlert.onNext("Se registraron los cambios correctamente")
         }).disposed(by: self.disposeBag)
     }
     
     func refreshOrderDetail() {
         self.dismiss(animated: true)
-       // self.orderDetailViewModel.refresh.onNext(())
     }
     
     private func getOrderDetailViewModel() -> OrderDetailViewModel? {

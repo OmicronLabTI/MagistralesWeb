@@ -52,6 +52,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     var orderDetailViewModel = OrderDetailViewModel()
     let rootViewModel: RootViewModel = RootViewModel()
     var indexOfTableToEditItem: Int = -1
+    let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -104,8 +105,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { sum in
-
-            self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(sum)", textToBold: "Sumatoria de la fórmula: ")
+            self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(self.formatter.string(from: NSNumber(value: sum)) ?? "" )", textToBold: "Sumatoria de la fórmula: ")
         }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
@@ -117,22 +117,22 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
-                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].endDate!)", textToBold: "Fecha de finalización:")
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
                 self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
             }
                 }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
-            cell.baseQuantityLabel.text = "\(data.baseQuantity!)"
-            cell.requiredQuantityLabel.text = "\(data.requiredQuantity!)"
-            cell.consumedLabel.text = "\(data.consumed!)"
-            cell.availableLabel.text = "\(data.available!)"
+            cell.baseQuantityLabel.text =  self.formatter.string(from: NSNumber(value: data.baseQuantity!))
+            cell.requiredQuantityLabel.text =   self.formatter.string(from: NSNumber(value: data.requiredQuantity!))
+            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed!))
+            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available!))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            cell.quantityPendingLabel.text = "\(data.pendingQuantity!)"
-            cell.stockLabel.text = "\(data.stock!)"
-            cell.storedQuantity.text = "\(data.warehouseQuantity!)"
+            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity!))
+            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock!))
+            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity!))
         }.disposed(by: disposeBag)
         
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
@@ -199,12 +199,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
     
     func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,hideAddCompBtn: Bool,hideSaveBtn: Bool,hideSeeLotsBtn: Bool) -> Void {
-//        self.processButton.isHidden = hideProcessBtn
-//        self.finishedButton.isHidden = hideFinishedBtn
-//        self.penddingButton.isHidden = hidePendinBtn
-//        self.addComponentButton.isHidden = hideAddCompBtn
-//        self.saveButton.isHidden = hideSaveBtn
-//        self.seeLotsButton.isHidden = hideSeeLotsBtn
         self.processButton.isHidden = hideProcessBtn
         self.finishedButton.isHidden = true
         self.penddingButton.isHidden = true

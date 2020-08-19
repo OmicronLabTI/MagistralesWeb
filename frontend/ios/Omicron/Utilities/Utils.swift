@@ -60,4 +60,14 @@ class UtilsManager {
            }
            return nil
        }
+    
+    func formatterDoublesTo8Decimals() ->  NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.decimal
+        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.maximumFractionDigits = 8
+        formatter.minimumFractionDigits = 0
+        return formatter
+    }
+    
 }
