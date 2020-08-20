@@ -18,6 +18,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using Omicron.SapDiApi.Services.Constants;
     using Omicron.SapDiApi.Services.Utils;
     using SAPbobsCOM;
+    using Omicron.SapDiApi.Log;
 
     /// <summary>
     /// clas for the data to sap.
@@ -25,13 +26,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     public class SapDiApiService : ISapDiApiService
     {
         private readonly Company company;
+        private readonly ILoggerProxy _loggerProxy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapDiApiService"/> class.
         /// </summary>   
-        public SapDiApiService()
+        public SapDiApiService(ILoggerProxy loggerProxy)
         {
             this.company = Connection.Company;
+            this._loggerProxy = loggerProxy;
         }
 
         /// <summary>
@@ -41,6 +44,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         public async Task<ResultModel> Connect()
         {
             var connected = this.company.Connected;
+            _loggerProxy.Info($"SAP connection is: {connected}");
             return ServiceUtils.CreateResult(true, 200, null, connected, null);
         }
 
@@ -214,6 +218,42 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var updated = productionOrderObj.Update();
             dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
+        /// Cancel a prodution order
+        /// </summary>
+        /// <param name="productionOrder">Production order to update</param>
+        /// <returns>the data.</returns
+        public async Task<ResultModel> CancelProductionOrder(CancelOrderModel productionOrder)
+        {
+            _loggerProxy.Debug($"Production order to cancel: {productionOrder.OrderId}.");
+            var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+
+            if (!orderReference.GetByKey(productionOrder.OrderId))
+            {
+                _loggerProxy.Debug($"The production order {productionOrder.OrderId} doesn´t exists.");
+                return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.NotFound, null);
+            }
+
+            if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposCancelled)
+            {
+                _loggerProxy.Debug($"The production order {productionOrder.OrderId} is cancelled.");
+                return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.ErrorProductionOrderCancelled, null);
+            }
+
+            // Cancel production order
+            orderReference.ProductionOrderStatus = BoProductionOrderStatusEnum.boposCancelled;
+
+            if (!orderReference.Update().Equals(0))
+            {
+                company.GetLastError(out int errorCode, out string errorMessage);
+                _loggerProxy.Debug($"The production order {productionOrder.OrderId} cancellation failed, {errorCode} - {errorMessage}.");
+                return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.UnexpectedError, $"{errorCode} - {errorMessage}");
+            }
+
+            _loggerProxy.Debug($"The production order {productionOrder.OrderId} cancelled succesfuly.");
+            return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.Ok, null);
         }
 
         /// <summary>

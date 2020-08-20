@@ -21,21 +21,6 @@ namespace Omicron.Pedidos.Test
     public abstract class BaseTest
     {
         /// <summary>
-        /// List of Users.
-        /// </summary>
-        /// <returns>IEnumerable Users.</returns>
-        public IEnumerable<UserModel> GetAllUsers()
-        {
-            return new List<UserModel>()
-            {
-                new UserModel { Id = 1, FirstName = "Alejandro", LastName = "Ojeda", Email = "alejandro.ojeda@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 2, FirstName = "Jorge", LastName = "Morales", Email = "jorge.morales@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 3, FirstName = "Arturo", LastName = "Miranda", Email = "arturo.miranda@axity.com", Birthdate = DateTime.Now },
-                new UserModel { Id = 4, FirstName = "Benjamin", LastName = "Galindo", Email = "benjamin.galindo@axity.com", Birthdate = DateTime.Now },
-            };
-        }
-
-        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
@@ -65,6 +50,13 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
                 new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc" },
                 new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc" },
+
+                // Cancelled orders.
+                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd" },
+                new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd" },
+                new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc" },
+                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "102", Status = "Proceso", Userid = "abc" },
+                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc" },
             };
         }
 
@@ -144,6 +136,11 @@ namespace Omicron.Pedidos.Test
                 {
                     Detalle = new List<CompleteDetailOrderModel>(listDetalles),
                     Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L" },
+                },
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L" },
                 },
             };
 
@@ -235,6 +232,28 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(listDetails),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <returns>the users.</returns>
+        public ResultModel GetUsersByRole()
+        {
+            var users = new List<UserModel>
+            {
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1" },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = users,
                 Success = true,
                 UserError = string.Empty,
             };

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "backAssigned.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

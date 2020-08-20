@@ -40,7 +40,7 @@ pipeline {
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
                     sh 'npm install'
-					sh 'npm run build'
+					sh 'npm run build-staging'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                         sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."    

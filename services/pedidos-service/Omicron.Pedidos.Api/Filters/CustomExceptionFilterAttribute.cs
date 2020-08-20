@@ -39,8 +39,9 @@ namespace Omicron.Pedidos.Api.Filters
             var exceptionType = context.Exception.GetType();
             if (exceptionType == typeof(CustomServiceException))
             {
-                message = "Error generico";
-                status = HttpStatusCode.Conflict;
+                var customException = (CustomServiceException)context.Exception;
+                message = customException.Message ?? "Error genérico";
+                status = customException.Status;
             }
             else
             {

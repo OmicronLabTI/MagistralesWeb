@@ -69,6 +69,7 @@
     <Compile Include="Models\ResultDto.cs" />
     <Compile Include="Models\UpdateFabOrderDto.cs" />
     <Compile Include="Models\UpdateFormulaDto.cs" />
+    <Compile Include="Models\CancelOrderDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

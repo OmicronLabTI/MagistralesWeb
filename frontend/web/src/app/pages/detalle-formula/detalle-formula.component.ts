@@ -115,66 +115,67 @@ export class DetalleFormulaComponent implements OnInit {
 
 
   onBaseQuantityChange(baseQuantity: any, index: number) {
-    this.dataSource.data[index].requiredQuantity =
-        Number(( baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
-    this.getIsReadyTOSave();
-    this.getAction(index);
-    // console.log('base: ', baseQuantity)
     if (baseQuantity !== null && baseQuantity > 0) {
-
-    } else {
-        // this.dataSource.data[index].baseQuantity = this.oldDataFormulaDetail.details[index].baseQuantity;
-  //      this.dataService.setMessageGeneralCallHttp({title: Messages.onlyPositiveNumber, icon: 'info', isButtonAccept: true});
-
+      this.dataSource.data[index].requiredQuantity =
+          Number((baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
+      this.getIsReadyTOSave();
+      this.getAction(index);
     }
   }
 
   onRequiredQuantityChange(requiredQuantity: any, index: number) {
-    // console.log('required: ', requiredQuantity)
-    this.dataSource.data[index].baseQuantity =
-        Number(( requiredQuantity / this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
-    this.getIsReadyTOSave();
-    this.getAction(index);
+    if (requiredQuantity !== null && requiredQuantity > 0) {
+      this.dataSource.data[index].baseQuantity =
+          Number((requiredQuantity / this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
+      this.getIsReadyTOSave();
+      this.getAction(index);
+    }
 
   }
   saveFormulaDetail() {
-    this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
-        .then( (resultSaveMessage: any) => {
-          if (resultSaveMessage.isConfirmed) {
-            const detailComponentsTOSave = this.createDeteailTOSave();
-            detailComponentsTOSave.comments = this.comments;
-            const componentsToDeleteFull = this.dataSource.data
-                .filter(component => component.action === CONST_DETAIL_FORMULA.update || component.action === CONST_DETAIL_FORMULA.insert);
-            componentsToDeleteFull.push(...this.componentsToDelete);
-            detailComponentsTOSave.components =  componentsToDeleteFull;
-            console.log('toSave: ', detailComponentsTOSave)
-            this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
-              this.getDetalleFormula();
-              this.createMessageOkHttp();
-            }, error => console.log('errorFormula: ', error ));
-          }
-        });
-
+    if (this.getIsThereNull()) {
+      this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
+          .then( (resultSaveMessage: any) => {
+            if (resultSaveMessage.isConfirmed) {
+              const detailComponentsTOSave = this.createDeteailTOSave();
+              detailComponentsTOSave.comments = this.comments;
+              const componentsToDeleteFull = this.dataSource.data
+                  .filter(component => component.action === CONST_DETAIL_FORMULA.update ||
+                      component.action === CONST_DETAIL_FORMULA.insert);
+              componentsToDeleteFull.push(...this.componentsToDelete);
+              detailComponentsTOSave.components =  componentsToDeleteFull;
+              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
+                this.getDetalleFormula();
+                this.createMessageOkHttp();
+              }, error => console.log('errorFormula: ', error ));
+            }
+          });
+    } else {
+      this.createMessageOnlyNumber();
+    }
 
   }
   checkISComponentsToDelete() {
     this. isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
   deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
-        .then( (resultDeleteMessage: any) => {
-          if (resultDeleteMessage.isConfirmed) {
-            this.componentsToDelete.push(...this.dataSource.data.filter( component => component.isChecked &&
-                (component.action === CONST_DETAIL_FORMULA.update || !component.action)));
-            this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
-            this.oldDataFormulaDetail.details = this.dataSource.data;
-            this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
-            this.getIsReadyTOSave();
-            this.createMessageOkHttp();
-            this.checkISComponentsToDelete();
-          }
-        });
-
+    if (this.getIsThereNull(true)) {
+      this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
+          .then( (resultDeleteMessage: any) => {
+            if (resultDeleteMessage.isConfirmed) {
+              this.componentsToDelete.push(...this.dataSource.data.filter( component => component.isChecked &&
+                  (component.action === CONST_DETAIL_FORMULA.update || !component.action)));
+              this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
+              this.oldDataFormulaDetail.details = this.dataSource.data;
+              this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+              this.getIsReadyTOSave();
+              this.createMessageOkHttp();
+              this.checkISComponentsToDelete();
+            }
+          });
+    } else {
+      this.createMessageOnlyNumber();
+    }
   }
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
@@ -203,7 +204,17 @@ export class DetalleFormulaComponent implements OnInit {
   createMessageOkHttp() {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
   }
-
+  createMessageOnlyNumber() {
+    this.dataService.setMessageGeneralCallHttp({title: Messages.onlyPositiveNumber, icon: 'info', isButtonAccept: true});
+  }
+  getIsThereNull(isFromDelete: boolean = false) {
+    if (!isFromDelete) {
+      return this.dataSource.data.filter(component => component.baseQuantity === null || component.requiredQuantity === null).length === 0;
+    } else {
+      return this.dataSource.data.filter(component => component.isChecked && (component.baseQuantity === null
+          || component.requiredQuantity === null)).length === 0;
+    }
+  }
   onSelectWareHouseChange(value: string, index: number) {
     this.dataSource.data[index].warehouse = value;
     this.getAction(index);

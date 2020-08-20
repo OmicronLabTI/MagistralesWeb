@@ -19,6 +19,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Planificado = "Planificado";
 
         /// <summary>
+        /// Cancelled status.
+        /// </summary>
+        public const string Cancelled = "Cancelado";
+
+        /// <summary>
         /// status middleware liberado.
         /// </summary>
         public const string Liberado = "Liberado";
@@ -39,6 +44,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ProcesoStatus = "En Proceso";
 
         /// <summary>
+        /// the finalizado status.
+        /// </summary>
+        public const string Finalizado = "Finalizado";
+
+        /// <summary>
+        /// the pendiente status.
+        /// </summary>
+        public const string Pendiente = "Pendiente";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -47,6 +62,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// when the order goes to Proceso.
         /// </summary>
         public const string OrdenProceso = "La orden {0} paso a Proceso";
+
+        /// <summary>
+        /// when the order goes to Cancelled.
+        /// </summary>
+        public const string OrderCancelled = "La orden {0} paso a Cancelado";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -79,6 +99,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// Error the sales order is cancelled.
+        /// </summary>
+        public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
+
+        /// <summary>
         /// const for error whne inserting fab orde.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
@@ -97,6 +122,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// error al asignar.
         /// </summary>
         public const string ErroAlAsignar = "Error al asignar";
+
+        /// <summary>
+        /// error no user available.
+        /// </summary>
+        public const string ErrorQfbAutomatico = "Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual";
 
         /// <summary>
         /// if the type is pedido.
@@ -144,8 +174,23 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
+        /// route to cancel orders.
+        /// </summary>
+        public const string CancelFabOrder = "cancelProductionOrder";
+
+        /// <summary>
         /// the connect to sap di api.
         /// </summary>
         public const string ConnectSapDiApi = "connect";
+
+        /// <summary>
+        /// Gets the users by role from user service.
+        /// </summary>
+        public const string GetUsersByRole = "role/{0}";
+
+        /// <summary>
+        /// the id for qfb role.
+        /// </summary>
+        public const int QfbRoleId = 2;
     }
 }

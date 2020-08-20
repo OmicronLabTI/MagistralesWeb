@@ -78,5 +78,26 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="processByOrder">process by order dto.</param>
         /// <returns>the order.</returns>
         Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder);
+
+        /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="cancelOrders">Update orders info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CancelFabOrder(List<CancelOrderDto> cancelOrders);
+
+        /// <summary>
+        /// the automatic assign.
+        /// </summary>
+        /// <param name="automaticAssing">the assign object.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
     }
 }

@@ -30,6 +30,9 @@ $ brew install sonar-scanner
 ```sh
 $ sudo gem install slather
 ```
+```sh
+$ sudo gem install xcpretty
+```
 
 ### Estructura
 

@@ -112,6 +112,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Assignacion automatica.
+        /// </summary>
+        /// <param name="automaticAssing">the object to assign.</param>
+        /// <returns>the data.</returns>
+        [Route("/asignar/automatico")]
+        [HttpPost]
+        public async Task<IActionResult> AssignarAutomatico(AutomaticAssingDto automaticAssing)
+        {
+            var response = await this.pedidoFacade.AutomaticAssign(automaticAssing);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Asignacion manual.
         /// </summary>
         /// <param name="updateFormula">the assign model.</param>
@@ -134,6 +147,32 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus)
         {
             var response = await this.pedidoFacade.UpdateStatusOrder(updateStatus);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="cancelOrders">Update orders info.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/salesOrder/cancel")]
+        [HttpPut]
+        public async Task<IActionResult> CancelOrder(List<CancelOrderDto> cancelOrders)
+        {
+            var response = await this.pedidoFacade.CancelOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/fabOrder/cancel")]
+        [HttpPut]
+        public async Task<IActionResult> CancelFabOrder(List<CancelOrderDto> cancelOrders)
+        {
+            var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
             return this.Ok(response);
         }
 
