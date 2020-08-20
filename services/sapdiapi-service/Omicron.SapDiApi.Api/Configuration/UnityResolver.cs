@@ -13,6 +13,7 @@ namespace Omicron.SapDiApi.Api.Configuration
     using Omicron.SapDiApi.Dtos.Models;
     using Omicron.SapDiApi.Entities.Models;
     using Omicron.SapDiApi.Facade.Sap;
+    using Omicron.SapDiApi.Log;
     using Omicron.SapDiApi.Services.SapDiApi;
     using Unity;    
 
@@ -48,11 +49,13 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<CompleteDetalleFormulaDto, CompleteDetalleFormulaModel>();
                 cfg.CreateMap<UpdateFormulaModel, UpdateFormulaDto>();
                 cfg.CreateMap<UpdateFormulaDto, UpdateFormulaModel>();
+                cfg.CreateMap<CancelOrderDto, CancelOrderModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
             container.RegisterType<ISapFacade, SapFacade>();
             container.RegisterType<ISapDiApiService, SapDiApiService>();
+            container.RegisterType<ILoggerProxy, LoggerProxy>();
 
             if (container == null)
             {

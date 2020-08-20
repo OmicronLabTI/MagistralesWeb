@@ -35,6 +35,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula);
 
         /// <summary>
+        /// Cancel a Production order
+        /// </summary>
+        /// <param name="productionOrder">Production order to update</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelProductionOrder(CancelOrderDto productionOrder);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

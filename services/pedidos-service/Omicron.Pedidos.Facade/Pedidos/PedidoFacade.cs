@@ -129,6 +129,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="cancelOrders">Update order info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelOrder(this.mapper.Map<List<CancelOrderModel>>(cancelOrders)));
+        }
+
+        /// <summary>
         /// the automatic assign.
         /// </summary>
         /// <param name="automaticAssing">the assign object.</param>

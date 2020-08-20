@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.2.1)
+  - Eureka (5.2.1)
   - lottie-ios (3.1.8)
   - Moya/Core (14.0.0):
     - Alamofire (~> 5.0)
@@ -7,6 +8,7 @@ PODS:
     - Moya/Core
     - RxSwift (~> 5.0)
   - ObjectMapper (4.2.0)
+  - Resolver (1.1.4)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -15,31 +17,37 @@ PODS:
   - RxSwift (5.1.1)
 
 DEPENDENCIES:
+  - Eureka
   - lottie-ios
   - Moya/RxSwift (~> 14.0)
   - ObjectMapper
+  - Resolver
   - RxCocoa
   - RxSwift
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Eureka
     - lottie-ios
     - Moya
     - ObjectMapper
+    - Resolver
     - RxCocoa
     - RxRelay
     - RxSwift
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
+  Eureka: c883105488e05bc65539f583246ecf9657cabbfe
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
+  Resolver: 1f4c046255cbadfa97094692e16e940d4329779f
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
 
-PODFILE CHECKSUM: b617fed0e416a4358bae8d77dc165cab7d712e87
+PODFILE CHECKSUM: 6c8c4947fe28f3a9236503b7f1e2bc0016f3241a
 
-COCOAPODS: 1.9.0
+COCOAPODS: 1.9.3

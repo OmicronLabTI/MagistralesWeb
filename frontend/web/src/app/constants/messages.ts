@@ -1,5 +1,5 @@
 export const Messages = {
-  success: 'Proceso realizado con éxito.',
+  success: 'Proceso realizado con éxito',
   generic: 'Lo sentimos, ocurrió un error inesperado',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
   deleteUsers: ' ¿Desea eliminar el(los) usuario(s) seleccionado(s)?',
@@ -11,8 +11,8 @@ export const Messages = {
   deleteComponents: '¿Deseas eliminar el(los) componente seleccionado(s)?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
-  userExist: 'El usuario ya se encuentra registrado.',
-  onlyPositiveNumber: 'Solo se aceptan números positivos.',
+  userExist: 'El usuario ya se encuentra registrado',
+  onlyPositiveNumber: 'Solo se aceptan números positivos',
   errorToAssignOrderAutomatic: 'Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual',
   errorToAssignOrderAutomaticSubtitle: 'Favor de verificar la información e intentarlo de nuevo'
 };
