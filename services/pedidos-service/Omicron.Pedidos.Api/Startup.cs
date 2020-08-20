@@ -20,6 +20,7 @@ namespace Omicron.Pedidos.Api
     using Omicron.Pedidos.DependencyInjection;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.User;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
@@ -35,6 +36,8 @@ namespace Omicron.Pedidos.Api
         private const string AXITYURL = "https://www.axity.com/";
 
         private const string SapAdapterUrl = "http://sapadapterservice/";
+
+        private const string UserUrl = "http://usuariosservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -116,6 +119,13 @@ namespace Omicron.Pedidos.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapDiApi, SapDiApi>();
+
+            services.AddHttpClient("usuariosservice", c =>
+            {
+                c.BaseAddress = new Uri(UserUrl);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IUsersService, UsersService>();
 
             this.AddRedis(services, Log.Logger);
 

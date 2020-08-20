@@ -18,7 +18,6 @@ namespace Omicron.Pedidos.Test.Facade
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Facade.Catalogs.Users;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
@@ -30,8 +29,6 @@ namespace Omicron.Pedidos.Test.Facade
     [TestFixture]
     public class FacadeTest : BaseTest
     {
-        private UserFacade userFacade;
-
         private PedidoFacade pedidoFacade;
 
         /// <summary>
@@ -55,18 +52,6 @@ namespace Omicron.Pedidos.Test.Facade
                 Response = string.Empty,
                 UserError = string.Empty,
             };
-
-            mockServices
-                .Setup(m => m.GetAllUsersAsync())
-                .Returns(Task.FromResult(listUser));
-
-            mockServices
-                .Setup(m => m.GetUserAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(user));
-
-            mockServices
-                .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
-                .Returns(Task.FromResult(true));
 
             var mockServicesPedidos = new Mock<IPedidosService>();
             mockServicesPedidos
@@ -109,61 +94,11 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
-            this.userFacade = new UserFacade(mockServices.Object);
-        }
-
-        /// <summary>
-        /// Test for selecting all users.
-        /// </summary>
-        /// <returns>nothing.</returns>
-        [Test]
-        public async Task GetAllUsersAsyncTest()
-        {
-            // arrange
-
-            // Act
-            var response = await this.userFacade.GetListUsersActive();
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
-        }
-
-        /// <summary>
-        /// gets the user.
-        /// </summary>
-        /// <returns>the user with the correct id.</returns>
-        [Test]
-        public async Task GetListUserActive()
-        {
-            // arrange
-            var id = 10;
-
-            // Act
-            var response = await this.userFacade.GetListUserActive(id);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
-        }
-
-        /// <summary>
-        /// Test for inseting users.
-        /// </summary>
-        /// <returns>the bool if it was inserted.</returns>
-        [Test]
-        public async Task InsertUser()
-        {
-            // Arrange
-            var user = new UserDto();
-
-            // Act
-            var response = await this.userFacade.InsertUser(user);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response);
         }
 
         /// <summary>
@@ -397,6 +332,32 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CancelOrder(orders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task AutomaticAssign()
+        {
+            // arrange
+            var processOrder = new AutomaticAssingDto
+            {
+                DocEntry = new List<int> { 1, 2 },
+                UserLogistic = "CDF",
+            };
+
+            // act
+            var response = await this.pedidoFacade.AutomaticAssign(processOrder);
 
             // Assert
             Assert.IsNotNull(response);

@@ -17,8 +17,28 @@ export class DataService {
   private qfbTOPlace = new Subject<QfbWithNumber>();
   private callHttpService = new Subject<HttpServiceTOCall>();
   private messageGenericCallHttp = new Subject<GeneralMessage>();
+  private isToSaVeAnything = false;
+  private urlActive = new Subject<HttpServiceTOCall>();
   constructor(private datePipe: DatePipe) { }
 
+  setIsToSaveAnything(isToSave: boolean) {
+    this.isToSaVeAnything = isToSave;
+  }
+  getIsToSaveAnything() {
+    return this.isToSaVeAnything;
+  }
+   setUrlActive(url: HttpServiceTOCall) {
+    this.urlActive.next(url);
+   }
+   getUrlActive() {
+    return this.urlActive;
+   }
+  setDetailOrderDescription(description: string) {
+    localStorage.setItem('descriptionDetail', description || CONST_STRING.empty);
+  }
+  getDetailOrderDescription(): string {
+    return localStorage.getItem('descriptionDetail');
+  }
   setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
     this.messageGenericCallHttp.next(messageGeneral);
   }
@@ -60,35 +80,35 @@ export class DataService {
   }
 
   getToken(): string {
-    return sessionStorage.getItem('token');
+    return localStorage.getItem('token-omi');
   }
 
   setToken(token: string) {
-    sessionStorage.setItem('token', token);
+    localStorage.setItem('token-omi', token);
   }
   clearToken() {
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token-omi');
   }
 
   setUserId(userId: string) {
-    sessionStorage.setItem('userId', userId);
+    localStorage.setItem('userId', userId);
   }
 
   getUserId() {
-    return sessionStorage.getItem('userId');
+    return localStorage.getItem('userId');
   }
 
   setUserName(userName: string) {
-    sessionStorage.setItem('userName', userName);
+    localStorage.setItem('userName', userName);
   }
 
   getUserName() {
-    return sessionStorage.getItem('userName');
+    return localStorage.getItem('userName');
   }
 
 
   userIsAuthenticated(): boolean {
-    return !!sessionStorage.getItem('token');
+    return !!localStorage.getItem('token-omi');
   }
   presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
                      showConfirmButton: boolean = false, showCancelButton: boolean = false) {

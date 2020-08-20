@@ -7,7 +7,7 @@ import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
 import {DataService} from '../../services/data.service';
-import {CONST_DETAIL_FORMULA, CONST_NUMBER} from '../../constants/const';
+import {CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 
@@ -42,10 +42,13 @@ export class DetalleFormulaComponent implements OnInit {
   isComponentsToDelete = false;
   isReadyToSave = false;
   componentsToDelete: IFormulaDetalleReq [] = [];
+  minDate = new Date();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
-              private titleService: Title) { }
+              private titleService: Title) {
+    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_FORMULA);
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -62,10 +65,12 @@ export class DetalleFormulaComponent implements OnInit {
         this.comments = this.oldDataFormulaDetail.comments || '';
         const endDate = this.oldDataFormulaDetail.dueDate.split('/');
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
+        // this.dataSource.data = formulaRes.response.details;
         this.dataSource.data = this.oldDataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {detail.isChecked = false; });
         this.isReadyToSave = false;
         this.componentsToDelete = [];
+        this.dataService.setIsToSaveAnything(false);
       }, error => this.errorService.httpError(error));
   }
 
@@ -110,55 +115,67 @@ export class DetalleFormulaComponent implements OnInit {
 
 
   onBaseQuantityChange(baseQuantity: any, index: number) {
-    this.dataSource.data[index].requiredQuantity =
-        Number(( baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
-    this.getIsReadyTOSave();
-    this.getAction(index);
+    if (baseQuantity !== null && baseQuantity > 0) {
+      this.dataSource.data[index].requiredQuantity =
+          Number((baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
+      this.getIsReadyTOSave();
+      this.getAction(index);
+    }
   }
 
   onRequiredQuantityChange(requiredQuantity: any, index: number) {
-    this.dataSource.data[index].baseQuantity =
-        Number(( requiredQuantity / this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
-    this.getIsReadyTOSave();
-    this.getAction(index);
+    if (requiredQuantity !== null && requiredQuantity > 0) {
+      this.dataSource.data[index].baseQuantity =
+          Number((requiredQuantity / this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten));
+      this.getIsReadyTOSave();
+      this.getAction(index);
+    }
 
   }
   saveFormulaDetail() {
-    this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
-        .then( (resultSaveMessage: any) => {
-          if (resultSaveMessage.isConfirmed) {
-            const detailComponentsTOSave = this.createDeteailTOSave();
-            detailComponentsTOSave.comments = this.comments;
-            const componentsToDeleteFull = this.dataSource.data
-                .filter(component => component.action === CONST_DETAIL_FORMULA.update || component.action === CONST_DETAIL_FORMULA.insert);
-            componentsToDeleteFull.push(...this.componentsToDelete);
-            detailComponentsTOSave.components =  componentsToDeleteFull;
-            this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
-              this.getDetalleFormula();
-              this.createMessageOkHttp();
-            }, error => console.log('errorFormula: ', error ));
-          }
-        });
-
+    if (this.getIsThereNull()) {
+      this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
+          .then( (resultSaveMessage: any) => {
+            if (resultSaveMessage.isConfirmed) {
+              const detailComponentsTOSave = this.createDeteailTOSave();
+              detailComponentsTOSave.comments = this.comments;
+              const componentsToDeleteFull = this.dataSource.data
+                  .filter(component => component.action === CONST_DETAIL_FORMULA.update ||
+                      component.action === CONST_DETAIL_FORMULA.insert);
+              componentsToDeleteFull.push(...this.componentsToDelete);
+              detailComponentsTOSave.components =  componentsToDeleteFull;
+              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
+                this.getDetalleFormula();
+                this.createMessageOkHttp();
+              }, error => console.log('errorFormula: ', error ));
+            }
+          });
+    } else {
+      this.createMessageOnlyNumber();
+    }
 
   }
   checkISComponentsToDelete() {
     this. isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
   deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
-        .then( (resultDeleteMessage: any) => {
-          if (resultDeleteMessage.isConfirmed) {
-            this.componentsToDelete.push(...this.dataSource.data.filter( component => component.isChecked &&
-                (component.action === CONST_DETAIL_FORMULA.update || !component.action)));
-            this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
-            this.oldDataFormulaDetail.details = this.dataSource.data;
-            this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
-            this.getIsReadyTOSave();
-            this.createMessageOkHttp();
-          }
-        });
-
+    if (this.getIsThereNull(true)) {
+      this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
+          .then( (resultDeleteMessage: any) => {
+            if (resultDeleteMessage.isConfirmed) {
+              this.componentsToDelete.push(...this.dataSource.data.filter( component => component.isChecked &&
+                  (component.action === CONST_DETAIL_FORMULA.update || !component.action)));
+              this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
+              this.oldDataFormulaDetail.details = this.dataSource.data;
+              this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+              this.getIsReadyTOSave();
+              this.createMessageOkHttp();
+              this.checkISComponentsToDelete();
+            }
+          });
+    } else {
+      this.createMessageOnlyNumber();
+    }
   }
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
@@ -182,11 +199,22 @@ export class DetalleFormulaComponent implements OnInit {
   }
   getIsReadyTOSave() {
     this.isReadyToSave = true;
+    this.dataService.setIsToSaveAnything(true);
   }
   createMessageOkHttp() {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
   }
-
+  createMessageOnlyNumber() {
+    this.dataService.setMessageGeneralCallHttp({title: Messages.onlyPositiveNumber, icon: 'info', isButtonAccept: true});
+  }
+  getIsThereNull(isFromDelete: boolean = false) {
+    if (!isFromDelete) {
+      return this.dataSource.data.filter(component => component.baseQuantity === null || component.requiredQuantity === null).length === 0;
+    } else {
+      return this.dataSource.data.filter(component => component.isChecked && (component.baseQuantity === null
+          || component.requiredQuantity === null)).length === 0;
+    }
+  }
   onSelectWareHouseChange(value: string, index: number) {
     this.dataSource.data[index].warehouse = value;
     this.getAction(index);

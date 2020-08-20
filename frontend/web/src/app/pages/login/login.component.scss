@@ -29,7 +29,25 @@
 }
 .login-field{
   width: 100%;
-  height: 50%;
+  height: 40%;
+}
+.sesion-active-container {
+  width: 100%;
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.checkbox-container{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.session-active-title{
+  margin-left: 15px;
+  font-size: 1em;
+  color: #acb0c3;
+  letter-spacing: 1px;
 }
 .card-content-custom{
    padding: 5% 5% 0 5%;

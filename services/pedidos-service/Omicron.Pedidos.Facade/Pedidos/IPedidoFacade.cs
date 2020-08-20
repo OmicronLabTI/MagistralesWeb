@@ -85,5 +85,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
+
+        /// the automatic assign.
+        /// </summary>
+        /// <param name="automaticAssing">the assign object.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
     }
 }

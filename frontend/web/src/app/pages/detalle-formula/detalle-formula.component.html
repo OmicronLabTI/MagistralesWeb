@@ -10,13 +10,15 @@
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-  
+    <div class="description-container">
+     {{dataService.getDetailOrderDescription()}}
+    </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue">
+            <!--<button mat-raised-button class="button-blue">
             &nbsp; Lotes &nbsp; 
             </button>
             &nbsp;
@@ -28,7 +30,7 @@
             &nbsp;
             <button mat-raised-button class="button-blue">
             &nbsp; Crear lista de componentes &nbsp; 
-            </button>
+            </button>-->
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue" (click)="openDialog('searchComponent')">
@@ -36,12 +38,12 @@
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
+            <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
             &nbsp; Eliminar componente &nbsp; 
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button [disabled]="!isReadyToSave" class="button-blue" (click)="saveFormulaDetail()">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
@@ -91,10 +93,9 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                             <mat-label>Fecha de finalización</mat-label>
-                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" readonly>
+                            <input matInput [matDatepicker]="dp3" [(ngModel)]="endDateGeneral" (ngModelChange)="changeData()" [min]="minDate" readonly>
                             <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                             <mat-datepicker #dp3 disabled="false"></mat-datepicker>
-                        <!--<input matInput placeholder="Fecha de finalización" value="{{oldDataFormulaDetail.endDate}}">-->
                     </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
@@ -127,7 +128,7 @@
                 </div>
             </mat-tab>
             <mat-tab label="Componentes">
-                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 margin-table">
                     <ng-container matColumnDef="seleccion">&nbsp;
                     <th mat-header-cell *matHeaderCellDef>
                         <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
@@ -173,17 +174,17 @@
         
                     <ng-container matColumnDef="consumido">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CONSUMIDO </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide consumido"> {{element.consumed}} </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-left mobile-hide consumido"> {{element.consumed}} </td>
                     </ng-container>
         
                     <ng-container matColumnDef="disponible">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  DISPONIBLE </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide disponible"> {{element.available}} </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-left mobile-hide disponible"> {{element.available}} </td>
                     </ng-container>
         
                     <ng-container matColumnDef="unidad">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  UNIDAD </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center mobile-hide unidad"> {{element.unit}} </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-left mobile-hide unidad"> {{element.unit}} </td>
                     </ng-container>
         
                     <ng-container matColumnDef="almacen">
@@ -243,7 +244,7 @@
 
                     <ng-container matColumnDef="enstock">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide"> EN STOCK </th>
-                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center mobile-hide enstock"> {{element.stock}} </td>
+                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-left mobile-hide enstock"> {{element.stock}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="cantalmacen">

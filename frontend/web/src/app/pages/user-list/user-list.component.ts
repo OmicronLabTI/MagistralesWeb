@@ -31,6 +31,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
                 private errorService: ErrorService,
                 private titleService: Title) {
+        this.dataService.setUrlActive(HttpServiceTOCall.USERS);
     }
 
     ngOnInit() {

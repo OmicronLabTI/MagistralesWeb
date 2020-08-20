@@ -71,6 +71,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string ChipSeparator = ",";
 
         /// <summary>
+        /// the proceso status.
+        /// </summary>
+        public const string Proceso = "Proceso";
+
+        /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string EnProceso = "En proceso";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

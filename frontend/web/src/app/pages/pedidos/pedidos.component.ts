@@ -1,17 +1,16 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatTableDataSource} from '@angular/material';
+import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { DataService } from '../../services/data.service';
-import {CONST_STRING, HttpServiceTOCall, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
+import {DataService} from '../../services/data.service';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {CONST_NUMBER} from '../../constants/const';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import {Subscription} from 'rxjs';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pedidos',
@@ -24,7 +23,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:max-line-length
   displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'status', 'qfb_asignado', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
-  pageSize = CONST_NUMBER.ten;
   pageEvent: PageEvent;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   lengthPaginator = CONST_NUMBER.zero;
@@ -46,6 +44,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private titleService: Title
   ) {
+    this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
     this.filterDataOrders.dateFull = this.rangeDate;
@@ -67,14 +66,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getPedidos() {
     this.pedidosService.getPedidos(this.fullQueryString).subscribe(
       pedidoRes => {
-        console.log('pedidosList: ', pedidoRes)
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
           element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
         });
+        this.isThereOrdersToPlan = false;
+        this.isThereOrdersToPlace = false;
       },
-      error => {
+      error => {/// checar con gus para manejar errores
         this.errorService.httpError(error);
         this.dataSource.data = [];
       }

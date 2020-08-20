@@ -97,6 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 
                 x.Status = userOrder == null ? string.Empty : userOrder.Status;
+                x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -115,7 +116,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var data = new OrderWithDetailModel();
                 var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
-                var detail = (await this.sapDao.GetAllDetails(x)).Where(s => string.IsNullOrEmpty(s.Status));
+                var detail = await this.sapDao.GetAllDetails(x);
 
                 data.Order = order;
                 data.Detalle = detail.ToList();
@@ -181,15 +182,15 @@ namespace Omicron.SapAdapter.Services.Sap
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId,
                     FabDate = o.CreatedDate.ToString("dd/MM/yyyy"),
-                    DueDate = o.DueDate.ToString("dd/MM/yyyy"),
+                    DueDate = o.DueDate.HasValue ? o.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
-                    EndDate = o.PostDate.ToString("dd/MM/yyyy"),
+                    EndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     User = dictUser[o.User],
                     Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
                     BaseDocument = o.PedidoId,
                     Client = o.CardCode,
                     CompleteQuantity = (int)o.CompleteQuantity,
-                    RealEndDate = o.PostDate.ToString("dd/MM/yyyy"),
+                    RealEndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
                     Comments = o.Comments,
@@ -222,14 +223,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var listValues = new List<CompleteDetalleFormulaModel>();
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
 
-            var firstChip = chipValues.FirstOrDefault();
+            var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip)).ToList());
             listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
             foreach (var v in chipValues)
             {
-                listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".Contains(v)).ToList();
+                listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".ToLower().Contains(v.ToLower())).ToList();
             }
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
@@ -294,6 +295,10 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
                 var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+
+                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
+                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+
                 return new List<CompleteOrderModel> { ordersById };
             }
 
