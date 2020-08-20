@@ -10,6 +10,9 @@ namespace Omicron.SapDiApi.Log
     using NLog;
     using System;
 
+    /// <summary>
+    /// Implementation of logger proxy
+    /// </summary>
     public class LoggerProxy : ILoggerProxy
     {
         /// <summary>
@@ -17,11 +20,23 @@ namespace Omicron.SapDiApi.Log
         /// </summary>
         private readonly Logger _logger;
 
+        /// <summary>
+        /// Constructo
+        /// </summary>
         public LoggerProxy()
         {
             this._logger = LogManager.GetCurrentClassLogger();
         }
-        
+
+        /// <summary>
+        /// Log message
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        public void Info(string message)
+        {
+            this._logger.Info(message);
+        }
+
         /// <summary>
         /// Log debug message
         /// </summary>

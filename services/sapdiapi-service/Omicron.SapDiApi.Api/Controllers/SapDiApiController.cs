@@ -73,6 +73,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Cancel production order by id
+        /// </summary>
+        /// <param name="productionOrder">Production order to update</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("cancelProductionOrder")]
+        public async Task<IHttpActionResult> CancelProcutionOrder([FromBody] CancelOrderDto productionOrder)
+        {
+            var result = await this.sapFacade.CancelProductionOrder(productionOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

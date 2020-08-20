@@ -8,9 +8,18 @@
 namespace Omicron.SapDiApi.Log
 {
     using System;
-    
+
+    /// <summary>
+    /// Contract of logger proxy
+    /// </summary>
     public interface ILoggerProxy
     {
+        /// <summary>
+        /// Log message
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        void Info(string message);
+
         /// <summary>
         /// Log debug message
         /// </summary>
