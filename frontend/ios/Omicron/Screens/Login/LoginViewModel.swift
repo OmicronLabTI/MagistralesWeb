@@ -45,6 +45,7 @@ class LoginViewModel {
                         self?.loading.onNext(false)
                         if let user = info.response {
                             Persistence.shared.saveUserData(user: user)
+                            Persistence.shared.saveIsLogged(isLogged: true)
                             self?.finishedLogin.onNext(())
                         } else {
                             self?.error.onNext(Constants.Errors.serverError.rawValue)

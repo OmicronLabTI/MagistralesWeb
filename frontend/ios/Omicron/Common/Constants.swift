@@ -45,7 +45,7 @@ struct OmicronColors {
 }
 
 struct UsersDefaultsConstants {
-    static let isSessionActive = "isSessionActive"
+    static let isLogged = "isLogged"
     static let accessToken = "accessToken"
     static let loginData = "loginData"
     static let username = "username"
