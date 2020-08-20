@@ -233,6 +233,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         return nil
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.selectionStyle = .none
+        if(indexPath.row%2 == 0) {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
+    }
+    
     func sendIndexToDelete(index: Int) -> Void  {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
