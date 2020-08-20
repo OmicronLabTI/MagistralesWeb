@@ -347,5 +347,22 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.GetComponents(paramsDict));
         }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetBatchesComponents()
+        {
+            // arrange
+            var ordenId = 100;
+
+            // act
+            var result = await this.sapService.GetBatchesComponents(ordenId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

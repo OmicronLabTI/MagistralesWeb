@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -242,6 +243,33 @@ namespace Omicron.SapAdapter.Services.Sap
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+        }
+
+        /// <summary>
+        /// Get the components managed by batches.
+        /// </summary>
+        /// <param name="ordenId">the ordenid.</param>
+        /// <returns>the data to return.</returns>
+        public async Task<ResultModel> GetBatchesComponents(int ordenId)
+        {
+            var componentes = (await this.sapDao.GetComponentByBatches(ordenId)).ToList();
+            var listToReturn = new List<BatchesComponentModel>();
+
+            componentes.ForEach(x =>
+            {
+                double.TryParse(x.PendingQuantity.ToString(), out double totalNecesario);
+
+                listToReturn.Add(new BatchesComponentModel
+                {
+                    Almacen = x.Warehouse,
+                    CodigoProducto = x.ProductId,
+                    DescripcionProducto = x.Description,
+                    TotalNecesario = totalNecesario,
+                    TotalSeleccionado = 0,
+                });
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
 
         /// <summary>

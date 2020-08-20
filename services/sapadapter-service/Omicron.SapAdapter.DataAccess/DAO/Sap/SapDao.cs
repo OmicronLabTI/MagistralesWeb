@@ -326,5 +326,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId).ToListAsync();
         }
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="orderId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(int orderId)
+        {
+            return await (from c in this.databaseContext.DetalleFormulaModel
+                          join p in this.databaseContext.ProductoModel on c.ItemCode equals p.ProductoId
+                          where c.OrderFabId == orderId && p.ManagedBatches == "Y"
+                          select new CompleteDetalleFormulaModel
+                          { 
+                              Warehouse = c.Almacen,
+                              PendingQuantity = c.RequiredQty,
+                              ProductId = c.ItemCode,
+                              Description = p.ProductoName,
+                              OrderFabId = c.OrderFabId,
+                          }).ToListAsync();
+        }
     }
 }

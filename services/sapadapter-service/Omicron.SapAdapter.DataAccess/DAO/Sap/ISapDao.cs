@@ -100,5 +100,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="pedidoId">the pedido id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId);
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="orderId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(int orderId);
     }
 }
