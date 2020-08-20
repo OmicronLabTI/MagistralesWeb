@@ -82,11 +82,10 @@ namespace Omicron.SapAdapter.Test.Services
         {
             // arrange
             var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dates) },
-                { ServiceConstants.Status, "O" },
-                { ServiceConstants.Qfb, "abc" },
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
             };
 
             // act
@@ -129,6 +128,28 @@ namespace Omicron.SapAdapter.Test.Services
             var dicParams = new Dictionary<string, string>
             {
                 { ServiceConstants.DocNum, "100" },
+                { ServiceConstants.Status, "O" },
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersStatus()
+        {
+            // arrange
+            var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
             };
@@ -256,6 +277,28 @@ namespace Omicron.SapAdapter.Test.Services
                 { "offset", "0" },
                 { "limit", "10" },
                 { "chips", "Abc,pirina" },
+            };
+
+            // act
+            var result = await this.sapService.GetComponents(paramsDict);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetComponentsChipDescription()
+        {
+            // arrange
+            var paramsDict = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { "chips", "pirina" },
             };
 
             // act

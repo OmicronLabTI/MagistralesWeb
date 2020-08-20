@@ -13,9 +13,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.DataAccess.DAO.User;
     using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Facade.Catalogs.Users;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
@@ -38,16 +36,12 @@ namespace Omicron.Pedidos.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
-            Services.AddTransient<IUserFacade, UserFacade>();
             Services.AddTransient<IUsersService, UsersService>();
-            Services.AddTransient<IUserDao, UserDao>();
-
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();
             Services.AddTransient<IPedidosDao, PedidosDao>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();
-
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }

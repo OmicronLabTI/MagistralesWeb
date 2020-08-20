@@ -45,7 +45,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("PostDate")]
-        public DateTime PostDate { get; set; }
+        public DateTime? PostDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -66,7 +66,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("DueDate")]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
