@@ -10,8 +10,10 @@ import UIKit
 import Lottie
 
 class LottieManager {
+    // MARK: Variables
     static let shared = LottieManager()
     
+    // MARK: Functions
     func showLoading() {
         if let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first {
             let loadingView = AnimationView(name: "loading")

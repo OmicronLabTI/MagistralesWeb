@@ -24,6 +24,15 @@ zuul:
     catalogos:
       path: /catalogos/**
       serviceId: catalogosservice
+    usuarios:
+      path: /usuarios/**
+      serviceId: usuariosservice
+    sapadapter:
+      path: /sapadapter/**
+      serviceId: sapadapterService
+    pedidos:
+      path: /pedidos/**
+      serviceId: pedidosservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 
 ribbon:

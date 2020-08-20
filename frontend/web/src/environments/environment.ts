@@ -3,8 +3,13 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  baseUrl: 'https://reqres.in/api'
+    production: false,
+    // baseUrl: 'http://201.163.179.29:8000', // prod
+    baseUrl: 'http://192.168.0.101:8000', // dev
+    apiLogin: '/api/oauth/oauthrs',
+    apiCatalogs: '/api/catalogos',
+    apiUsers: '/api/usuarios',
+
 };
 
 /*

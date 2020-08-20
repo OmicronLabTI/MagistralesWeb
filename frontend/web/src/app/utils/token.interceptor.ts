@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -8,18 +8,25 @@ import { DataService } from '../services/data.service';
 import { TokenExcludedEndpoints } from 'src/environments/endpoints';
 import { AppConfig } from '../constants/app-config';
 
-let DEFAULT_TIMEOUT = 30000;
+const DEFAULT_TIMEOUT = 40000;
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private _dataService: DataService) { }
+  constructor(private dataService: DataService) { }
 
   private applyCredentials = (req: HttpRequest<any>) => {
-    const token = this._dataService.getToken();
+    const token = this.dataService.getToken();
 
     if (token && !this.endpointExcluded(req.url)) {
-      req = req.clone({ headers: req.headers.append('token', token) });
+      req = req.clone({
+        setHeaders: {
+          Accept: 'application/json',
+          'Content-Type': `application/json`,
+          Authorization: `Bearer ${token}`
+        }
+      });
     }
+    console.log('req: ', req);
     return req;
   }
 

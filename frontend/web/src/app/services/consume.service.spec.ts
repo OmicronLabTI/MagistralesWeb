@@ -1,18 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ConsumeService } from './consume.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DataService } from './data.service';
-import { ILoginRes } from '../model/http/security.model';
 import { Observable } from 'rxjs';
-
+import {DatePipe} from '@angular/common';
 describe('ConsumeService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
-      HttpClientModule
+      HttpClientTestingModule
     ],
     providers: [
-      DataService
+      DataService,
+        DatePipe
     ]
   }));
 

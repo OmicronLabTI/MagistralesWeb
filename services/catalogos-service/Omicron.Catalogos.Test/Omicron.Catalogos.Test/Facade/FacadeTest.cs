@@ -13,10 +13,15 @@ namespace Omicron.Catalogos.Test.Facade
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Moq;
     using NUnit.Framework;
     using Omicron.Catalogos.Dtos.User;
+    using Omicron.Catalogos.Entities.Model;
+    using Omicron.Catalogos.Facade.Catalogs;
     using Omicron.Catalogos.Facade.Catalogs.Users;
+    using Omicron.Catalogos.Services.Catalogs;
+    using Omicron.Catalogos.Services.Mapping;
     using Omicron.Catalogos.Services.User;
 
     /// <summary>
@@ -27,15 +32,28 @@ namespace Omicron.Catalogos.Test.Facade
     {
         private UserFacade userFacade;
 
+        private CatalogFacade catalogFacade;
+
+        private IMapper mapper;
+
         /// <summary>
         /// The init.
         /// </summary>
         [OneTimeSetUp]
         public void Init()
         {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+
             var mockServices = new Mock<IUsersService>();
             var user = this.GetUserDto();
             IEnumerable<UserDto> listUser = new List<UserDto> { user };
+
+            var response = new ResultModel
+            {
+                Success = true,
+                Code = 200,
+            };
 
             mockServices
                 .Setup(m => m.GetAllUsersAsync())
@@ -49,6 +67,12 @@ namespace Omicron.Catalogos.Test.Facade
                 .Setup(m => m.InsertUser(It.IsAny<UserDto>()))
                 .Returns(Task.FromResult(true));
 
+            var mockServicesCat = new Mock<ICatalogService>();
+            mockServicesCat
+                .Setup(m => m.GetRoles())
+                .Returns(Task.FromResult(response));
+
+            this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
 
@@ -103,6 +127,22 @@ namespace Omicron.Catalogos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
+        }
+
+        /// <summary>
+        /// Test getting the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        [Test]
+        public async Task GetAllRoles()
+        {
+            // Arrange
+            // Act
+            var response = await this.catalogFacade.GetRoles();
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

@@ -16,6 +16,7 @@ pipeline {
         COMPANY_LOWERCASE = "omicron"
 		PROJECT_NAME = "AppiOSFormulas"
         SLACK_CHANNEL = "#omicron_notifications"
+        ENVIRONMENT = "Dev"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
@@ -27,6 +28,13 @@ pipeline {
         ).trim()
 	}
     stages {
+		stage('Kubernetes Down') {
+            steps {
+                echo 'Running Kubernetes down'
+                sh 'sudo kubectl delete all --all --grace-period=0 --force'
+				sh 'sudo docker system prune -f'
+            }
+        }
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -70,14 +78,38 @@ pipeline {
                         sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-catalogos-repository ."
                     }
                 }
+				echo 'Building Usuarios'
+                dir ('services/usuarios-service/'){
+                    sh 'dotnet publish Omicron.Usuarios.Api/Omicron.Usuarios.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-usuarios-repository ."
+                    }
+                }
+                echo 'Building Pedidos'
+                dir ('services/pedidos-service/'){
+                    sh 'dotnet publish Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-pedidos-repository ."
+                    }
+                }
+				echo 'Building SapAdapter'
+                dir ('services/sapadapter-service/'){
+                    sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-sapadapter-repository ."
+                    }
+                }
             }
         }
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
                     sh 'npm run test-ci'
-                    sh '/opt/sonar-scanner/bin/sonar-scanner \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_Dev \
+                    sh "/opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_web_${ENVIRONMENT} \
                         -Dsonar.sources=src/ \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN} \
@@ -86,7 +118,7 @@ pipeline {
                         -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts \
                         -Dsonar.tests=src \
                         -Dsonar.test.inclusions=**/*.spec.ts \
-                        -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info'
+                        -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info"
                 }
             }
         }
@@ -94,16 +126,16 @@ pipeline {
             steps { 
                 dir ('services/apimanager/'){
                     sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_Dev \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
                         -Dsonar.sources=src/main \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN}"
                 }
                 dir ('services/oauthserver/'){
                     sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_Dev \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
                         -Dsonar.sources=src/main \
                         -Dsonar.host.url=${SONAR_SERVER} \
                         -Dsonar.login=${SONAR_TOKEN}"
@@ -113,9 +145,30 @@ pipeline {
         stage('Sonar Micro Services') {
             steps { 
                 dir ('services/catalogos-service/'){
-                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_catalogos_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Catalogos.Test/Omicron.Catalogos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Catalogos.Api/**'"
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_catalogos_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Catalogos.Test/Omicron.Catalogos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Catalogos.Api/**'"
                     sh 'dotnet build Omicron.Catalogos.Microservice.sln'
 					sh 'dotnet test Omicron.Catalogos.Test/Omicron.Catalogos.Test/Omicron.Catalogos.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+                    sh 'dotnet build-server shutdown'
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+                }
+				dir ('services/usuarios-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_usuarios_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Usuarios.Test/Omicron.Usuarios.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Usuarios.Api/**'"
+                    sh 'dotnet build Omicron.Usuarios.Microservice.sln'
+					sh 'dotnet test Omicron.Usuarios.Test/Omicron.Usuarios.Test/Omicron.Usuarios.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+                    sh 'dotnet build-server shutdown'
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+                }
+				dir ('services/pedidos-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_pedidos_Dev' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Pedidos.Test/Omicron.Pedidos.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Pedidos.Api/**'"
+                    sh 'dotnet build Omicron.Pedidos.Microservice.sln'
+					sh 'dotnet test Omicron.Pedidos.Test/Omicron.Pedidos.Test/Omicron.Pedidos.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+                    sh 'dotnet build-server shutdown'
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+                }
+				dir ('services/sapadapter-service/'){
+                    sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_sapadapter_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.SapAdapter.Test/Omicron.SapAdapter.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.SapAdapter.Api/**'"
+                    sh 'dotnet build Omicron.SapAdapter.Microservice.sln'
+					sh 'dotnet test Omicron.SapAdapter.Test/Omicron.SapAdapter.Test/Omicron.SapAdapter.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
@@ -124,8 +177,6 @@ pipeline {
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl delete --all deployments'
-                sh 'sudo kubectl delete --all services'
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
             }
         }
@@ -133,6 +184,7 @@ pipeline {
             steps {
                 dir ('database/'){
                     sh '/opt/liquibase/liquibase --version'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
                     echo 'Applying Db changes'
                 }
             }

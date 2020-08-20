@@ -17,6 +17,9 @@ namespace Omicron.Catalogos.DependencyInjection
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Catalogos.Facade.Catalogs;
+    using Omicron.Catalogos.Services.Catalogs;
+    using Omicron.Catalogos.DataAccess.DAO.Catalog;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -36,6 +39,11 @@ namespace Omicron.Catalogos.DependencyInjection
             Services.AddTransient<IUserFacade, UserFacade>();
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IUserDao, UserDao>();
+
+            Services.AddTransient<ICatalogFacade, CatalogFacade>();
+            Services.AddTransient<ICatalogService, CatalogService>();
+            Services.AddTransient<ICatalogDao, CatalogDao>();
+
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }
@@ -46,7 +54,7 @@ namespace Omicron.Catalogos.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext))));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
         /// <summary>

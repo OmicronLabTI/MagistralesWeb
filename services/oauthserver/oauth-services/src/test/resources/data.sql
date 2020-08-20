@@ -1,1 +1,1 @@
-INSERT INTO Security (id, username, password) VALUES (1, 'qwe', '123');
+INSERT INTO User (Id , FirstName ,LastName, Role, Password, UserName, Activo ) VALUES (1, 'Gustavo', 'Ramirez', 1, 'QUJD', 'guz', 1);

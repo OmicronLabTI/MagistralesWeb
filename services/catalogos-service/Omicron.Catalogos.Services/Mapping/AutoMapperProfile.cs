@@ -9,6 +9,7 @@
 namespace Omicron.Catalogos.Services.Mapping
 {
     using AutoMapper;
+    using Omicron.Catalogos.Dtos.Models;
     using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Entities.Model;
 
@@ -24,6 +25,8 @@ namespace Omicron.Catalogos.Services.Mapping
         {
             this.CreateMap<UserModel, UserDto>();
             this.CreateMap<UserDto, UserModel>();
+            this.CreateMap<ResultModel, ResultDto>();
+            this.CreateMap<ResultDto, ResultModel>();
         }
     }
 }

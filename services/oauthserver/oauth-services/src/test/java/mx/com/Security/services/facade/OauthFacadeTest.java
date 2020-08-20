@@ -25,8 +25,8 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("123");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("ABC");
+        loginRequestTO.setUser("guz");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
@@ -34,7 +34,8 @@ public class OauthFacadeTest extends BaseTest {
         Assert.assertTrue(tokenResponseTO.getAccess_token().length() > 30);
         Assert.assertEquals(ttl, tokenResponseTO.getExpires_in());
         Assert.assertEquals("Bearer", tokenResponseTO.getToken_type());
-        Assert.assertEquals("", tokenResponseTO.getScope());
+        Assert.assertNotNull("", tokenResponseTO.getRefresh_token());
+        Assert.assertTrue(tokenResponseTO.getRefresh_token().length() > 30);
     }
 
     @Test(expected = UnAuthorizedException.class)
@@ -42,8 +43,8 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("321");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("guz");
 
         oauthFacade.authorize(loginRequestTO);
     }
@@ -53,14 +54,14 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("123");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("ABC");
+        loginRequestTO.setUser("guz");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
         ValidTokenRequestTO validTokenRequestTO = new ValidTokenRequestTO();
         validTokenRequestTO.setToken(tokenResponseTO.getAccess_token());
-        validTokenRequestTO.setUser("qwe");
+        validTokenRequestTO.setUser("guz");
 
         oauthFacade.validate(validTokenRequestTO);
 
@@ -72,8 +73,8 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("123");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("ABC");
+        loginRequestTO.setUser("guz");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
@@ -89,17 +90,24 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("123");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("ABC");
+        loginRequestTO.setUser("guz");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
         TokenRenewRequestTO tokenRenewRequestTO = new TokenRenewRequestTO();
         tokenRenewRequestTO.setGrant_type("");
-        tokenRenewRequestTO.setRefresh_token(tokenResponseTO.getAccess_token());
+        tokenRenewRequestTO.setRefresh_token(tokenResponseTO.getRefresh_token());
         tokenRenewRequestTO.setScope("");
 
-        oauthFacade.renew(tokenRenewRequestTO);
+        TokenResponseTO tokenRenewedResponseTO = oauthFacade.renew(tokenRenewRequestTO);
+
+        Assert.assertNotNull(tokenRenewedResponseTO.getAccess_token());
+        Assert.assertTrue(tokenRenewedResponseTO.getAccess_token().length() > 30);
+        Assert.assertEquals(ttl, tokenRenewedResponseTO.getExpires_in());
+        Assert.assertEquals("Bearer", tokenRenewedResponseTO.getToken_type());
+        Assert.assertNotNull("", tokenRenewedResponseTO.getRefresh_token());
+        Assert.assertTrue(tokenRenewedResponseTO.getRefresh_token().length() > 30);
     }
 
     @Test(expected = UnAuthorizedException.class)
@@ -107,8 +115,8 @@ public class OauthFacadeTest extends BaseTest {
 
         LoginRequestTO loginRequestTO = new LoginRequestTO();
         loginRequestTO.setClientId("1");
-        loginRequestTO.setPassword("123");
-        loginRequestTO.setUser("qwe");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("guz");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 

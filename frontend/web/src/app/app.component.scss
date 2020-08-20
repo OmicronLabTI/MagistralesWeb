@@ -1,3 +1,115 @@
+.nav-bar-container-header{
+  width: 90%;
+  height: auto !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+.toolbars-container{
+  width: 100%;
+  height: 16%;
+}
+.mat-container-custom-login{
+  width: 100%;
+  height: 100%;
+}
+.mat-container-custom-home{
+  width: 100%;
+  height: 84%;
+}
+.toolbar-first{
+  width: 100%;
+  height: 52%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 0;
+  background-color: transparent;
+}
+.menu-spacer {
+  flex: 1 1 auto;
+}
+.user-logged-container{
+  width: 90%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.logo-omi-container{
+  width: 10%;
+  height: 100%;
+}
+.logo-nav-bar{
+  width: 100%;
+  height: 100%;
+}
+
+.user-title-container{
+  margin-right: 2%;
+}
+.hello-text{
+  color: #888ea8;
+  font-size: 0.7em;
+  font-weight: 500;
+}
+.user-title{
+  color: #6C90B3;
+  font-size: 0.7em;
+}
+.option-logout-container{
+  width: 8rem;
+  padding: 10px;
+  height: 3rem;
+}
+.option-logout-container button svg{
+  width: 17px;
+  height: 17px;
+  color: #6C90B3;
+  fill: rgba(25, 30, 58, 0.19);
+}
+
+.nav-bar-menu-container{
+  width: 100%;
+  height: 48%;
+}
+.row-options-container{
+  width: 100%;
+  border-radius: 8px;
+  background: #6C90B3;
+  height: 100%;
+}
+
+.menu-options-container{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+.menu-option-button{
+  font-size: 1em;
+  font-weight: 400;
+  vertical-align: text-bottom;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #515365;
+}
+
+.menu-option-button svg{
+  width: 25px;
+  height: 25px;
+  vertical-align: bottom;
+  margin-right: 6px;
+  stroke-width: 1.3px;/* to see select option*/
+  cursor: pointer;
+}
+
+.menu-active-color{
+  color: #04151F;
+}
+.menu-no-active-color{
+  color: #fafafa;
+}
 .footer {
   position: fixed;
   bottom: 0;
@@ -6,4 +118,8 @@
     font-size: smaller;
     font-weight: lighter;
   }
+}
+
+.mat-toolbar-multiple-rows {
+  min-height: 0 !important;
 }

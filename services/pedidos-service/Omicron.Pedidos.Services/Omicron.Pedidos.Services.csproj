@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCop\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omicron.Pedidos.DataAccess\Omicron.Pedidos.DataAccess.csproj" />
+    <ProjectReference Include="..\Omicron.Pedidos.Dtos\Omicron.Pedidos.Dtos.csproj" />
+    <ProjectReference Include="..\Omicron.Pedidos.Repository\Omicron.Pedidos.Entities.csproj" />
+    <ProjectReference Include="..\Omicron.Pedidos.Resources\Omicron.Pedidos.Resources.csproj" />
+  </ItemGroup>
+
+</Project>

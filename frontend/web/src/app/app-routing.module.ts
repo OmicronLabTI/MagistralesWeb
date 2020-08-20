@@ -1,23 +1,41 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/login/login.component';
 import { GuardService } from './services/guard.service';
-
 
 const routes: Routes = [
   {
     path: 'login',
-    component: LoginComponent
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
   },
   {
     path: 'home',
-    component: HomeComponent,
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'userList',
+    loadChildren: () => import('./pages/user-list/user-list.module').then(m => m.UserListModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'pedidos',
+    loadChildren: () => import('./pages/pedidos/pedidos.module').then(m => m.PedidosModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'pdetalle/:id/:status',
+    loadChildren: () => import('./pages/pedido-detalle/pedido-detalle.module').then(m => m.PedidoDetalleModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'ordenfabricacion/:ordenid',
+    loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },
   {
     path: '**',
     redirectTo: '/login'
+
   }
 ];
 

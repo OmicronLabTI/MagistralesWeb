@@ -37,7 +37,7 @@ spec:
   externalIPs:
     - 192.168.0.101
   selector:
-    app: web 
+    app: web
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -103,23 +103,10 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: dev
         ports:
         - containerPort: 8090
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: oauthserver-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 8090
-    targetPort: 8090
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: oauthserver 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -144,17 +131,185 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
         ports:
         - containerPort: 9010
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  labels:
+    app: usuarios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+      - name: usuarios
+        image: omicron-usuarios-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+      - name: sapadapter
+        image: omicron-sapadapter-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5102
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedidos-deployment
+  labels:
+    app: pedidos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pedidos
+  template:
+    metadata:
+      labels:
+        app: pedidos
+    spec:
+      containers:
+      - name: pedidos
+        image: omicron-pedidos-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5103
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seqlog-deployment
+  labels:
+    app: seqlog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seqlog
+  template:
+    metadata:
+      labels:
+        app: seqlog
+    spec:
+      containers:
+      - name: seqlog
+        image: datalust/seq:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 80
+          name: intra
+        - containerPort: 5341
+          name: extra
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogos-svc
+  name: seqlog-svc
+  labels:
+    app: seqlog
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
-  - port: 9010
+  - name: default
+    port: 81
+    targetPort: 80
     protocol: TCP
+  - name: alt
+    port: 5341
+    targetPort: 5341
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.101
   selector:
-    app: catalogos 
+    app: seqlog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redisdata-deployment
+  labels:
+    app: redisdata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redisdata
+  template:
+    metadata:
+      labels:
+        app: redisdata
+    spec:
+      containers:
+      - name: redisdata
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisdata-svc
+  labels:
+    app: redisdata
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.101
+  selector:
+    app: redisdata
+---
