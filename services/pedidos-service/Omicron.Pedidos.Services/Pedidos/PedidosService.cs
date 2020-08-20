@@ -252,6 +252,55 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="cancelOrders">Update orders info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders)
+        {
+            var orderIds = cancelOrders.Select(x => x.OrderId.ToString()).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(orderIds)).ToList();
+            var logs = new List<OrderLogModel>();
+
+            var successfuly = new List<CancelOrderModel>();
+            var failed = new List<CancelOrderModel>();
+
+            foreach (var order in userOrders)
+            {
+                if (!order.Status.Equals(ServiceConstants.Cancelled))
+                {
+                    // Update fabrication order in SAP.
+                    var payload = new { OrderId = order.Productionorderid };
+                    var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                    var newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Salesorderid));
+
+                    if (result.Success && result.Response.ToString().Equals(ServiceConstants.Ok))
+                    {
+                        // Update local db.
+                        order.Status = ServiceConstants.Cancelled;
+                        successfuly.Add(newOrderInfo);
+                        logs.AddRange(ServiceUtils.CreateOrderLog(newOrderInfo.UserId, new List<int> { newOrderInfo.OrderId }, string.Format(ServiceConstants.OrderCancelled, order.Salesorderid), ServiceConstants.OrdenVenta));
+                    }
+                    else
+                    {
+                        failed.Add(newOrderInfo);
+                    }
+                }
+            }
+
+            // Update in local data base
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            var results = new
+            {
+                success = successfuly,
+                failed,
+            };
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(results), null);
+        }
+
+        /// <summary>
         /// Makes the automatic assign.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>

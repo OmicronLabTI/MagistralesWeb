@@ -29,9 +29,34 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
+        /// error while cancel sales order.
+        /// </summary>
+        public const string ErrorCancelSalesOrder = "ErrorCancelOrd";
+
+        /// <summary>
+        /// error the sales order is closed.
+        /// </summary>
+        public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
+
+        /// <summary>
         /// the order was not found.
         /// </summary>
         public const string OrderNotFound = "OrderNotFound";
+
+        /// <summary>
+        /// the resource was not found.
+        /// </summary>
+        public const string NotFound = "NotFound";
+
+        /// <summary>
+        /// Unexpected error.
+        /// </summary>
+        public const string UnexpectedError = "UnexpectedError";
+
+        /// <summary>
+        /// Ok.
+        /// </summary>
+        public const string Ok = "Ok";
 
         /// <summary>
         /// selects data from WOR1 by DocEntry.

@@ -149,3 +149,4 @@ iOSInjectionProject/
 .history
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
+services/sapdiapi-service/Omicron.SapDiApi.Api/logs/

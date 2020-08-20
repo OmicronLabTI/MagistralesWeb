@@ -80,6 +80,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder);
 
         /// <summary>
+        /// Change order status to cancel.
+        /// </summary>
+        /// <param name="cancelOrders">Update orders info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
+
         /// the automatic assign.
         /// </summary>
         /// <param name="automaticAssing">the assign object.</param>

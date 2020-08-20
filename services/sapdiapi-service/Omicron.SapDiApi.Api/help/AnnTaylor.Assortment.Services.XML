@@ -192,6 +192,13 @@
             <param name="updateFormula">the list of fabrication orders..</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CancelProcutionOrder(Omicron.SapDiApi.Dtos.Models.CancelOrderDto)">
+            <summary>
+            Cancel production order by id
+            </summary>
+            <param name="productionOrder">Production order to update</param>
+            <returns>the reult.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

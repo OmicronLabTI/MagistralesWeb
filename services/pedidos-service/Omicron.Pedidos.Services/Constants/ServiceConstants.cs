@@ -19,6 +19,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Planificado = "Planificado";
 
         /// <summary>
+        /// Cancelled status.
+        /// </summary>
+        public const string Cancelled = "Cancelado";
+
+        /// <summary>
         /// status middleware liberado.
         /// </summary>
         public const string Liberado = "Liberado";
@@ -57,6 +62,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// when the order goes to Proceso.
         /// </summary>
         public const string OrdenProceso = "La orden {0} paso a Proceso";
+
+        /// <summary>
+        /// when the order goes to Cancelled.
+        /// </summary>
+        public const string OrderCancelled = "La orden {0} paso a Cancelado";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -157,6 +167,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// route to updates orders.
         /// </summary>
         public const string UpdateFormula = "updateFormula";
+
+        /// <summary>
+        /// route to cancel orders.
+        /// </summary>
+        public const string CancelFabOrder = "cancelProductionOrder";
 
         /// <summary>
         /// the connect to sap di api.

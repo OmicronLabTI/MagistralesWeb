@@ -87,6 +87,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
+                .Setup(m => m.CancelOrder(It.IsAny<List<CancelOrderModel>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
                 .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
                 .Returns(Task.FromResult(response));
 
@@ -303,6 +307,31 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.ProcessByOrder(processOrder);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CancelOrder()
+        {
+            // arrange
+            var orders = new List<CancelOrderDto>
+            {
+                new CancelOrderDto { OrderId = 1, UserId = "mockUser" },
+            };
+
+            // act
+            var response = await this.pedidoFacade.CancelOrder(orders);
 
             // Assert
             Assert.IsNotNull(response);

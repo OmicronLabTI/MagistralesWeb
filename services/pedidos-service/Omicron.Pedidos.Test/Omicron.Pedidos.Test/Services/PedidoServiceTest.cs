@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
@@ -18,6 +19,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -351,6 +353,57 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(101)]
+        [TestCase(102)]
+        public async Task CancelOrder_WithAffectRecords(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+
+            var orderToUpdate = new List<CancelOrderModel>
+            {
+                new CancelOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelOrder(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(103)]
+        public async Task CancelOrder_WithOutAffectRecords(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+
+            var orderToUpdate = new List<CancelOrderModel>
+            {
+                new CancelOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelOrder(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
 
         /// <summary>
