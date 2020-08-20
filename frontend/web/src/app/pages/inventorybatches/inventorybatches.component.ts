@@ -9,7 +9,7 @@ const ELEMENT_DATA: ILotesFormulaReq[] = [
   {codigoProducto: "MP   001", descripcionProducto: 'Hidrogeno', almacen: 'MG', totalNecesario: 21, totalSeleccionado: 0, lotesSeleccionados:[]},
   {codigoProducto: "MP   321", descripcionProducto: 'Helio', almacen: 'MG', totalNecesario: 22, totalSeleccionado: 0, lotesSeleccionados: []},
   {codigoProducto: "MP   421", descripcionProducto: 'Azucar', almacen: 'MG', totalNecesario: 23, totalSeleccionado: 0, lotesSeleccionados: []},
-  {codigoProducto: "MP   999", descripcionProducto: 'Hidrogeno', almacen: 'MG', totalNecesario: 21, totalSeleccionado: 0, lotesSeleccionados:[]},
+  {codigoProducto: "MP   999", descripcionProducto: 'Hidrogeno', almacen: 'MG', totalNecesario: 21, totalSeleccionado: 0, lotesSeleccionados:[], selected: true},
 ];
 
 const LOTES_DATA: ILotesReq[] = [
@@ -66,8 +66,8 @@ export class InventorybatchesComponent implements OnInit {
     this.dataSourceLotesSelected.data = SELECTED_DATA;
   }
 
-  setSelectedTr(event){
-    console.log(event);
+  setSelectedTr(element: ILotesFormulaReq){
+    element.selected = !element.selected;
   }
 
 }

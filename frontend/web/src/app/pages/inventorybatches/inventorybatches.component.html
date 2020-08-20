@@ -49,7 +49,7 @@
                 <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide cantseleccionada"> {{element.totalSeleccionado}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="detailsColumns" class="color-text-intables"></tr>
-            <tr mat-row *matRowDef="let row; columns: detailsColumns;" class="clickable" (click)="setSelectedTr(row)"></tr>
+            <tr mat-row *matRowDef="let row; columns: detailsColumns;" class="clickable" [ngClass]="row.selected ? 'selected' : ''" (click)="setSelectedTr(row)"></tr>
         </table>
     </div>
     <div class="seleccion-lotes">
