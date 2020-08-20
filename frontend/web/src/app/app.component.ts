@@ -4,7 +4,7 @@ import {Observable, Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AppConfig } from './constants/app-config';
 import { Router} from '@angular/router';
-import { CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -12,6 +12,7 @@ import {IPlaceOrdersReq, QfbWithNumber} from './model/http/users';
 import {PedidosService} from './services/pedidos.service';
 import {ErrorService} from './services/error.service';
 import {GeneralMessage} from './model/device/general';
+import {IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes} from './model/http/pedidos';
 
 
 
@@ -87,31 +88,56 @@ export class AppComponent implements OnDestroy , OnInit {
       this.dataService.presentToastCustom(
           qfbToPlace.modalType === MODAL_NAMES.placeOrders ? `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
               `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?`,
-          'warning',
+          'question',
           CONST_STRING.empty,
           true, true)
           .then((result: any) => {
             if (result.isConfirmed) {
-              const placeOrder = new IPlaceOrdersReq();
-              placeOrder.userLogistic = this.dataService.getUserId();
-              placeOrder.userId = qfbToPlace.userId;
-              placeOrder.docEntry = qfbToPlace.list;
-              placeOrder.orderType = qfbToPlace.modalType;
-              this.pedidosService.postPlaceOrders( placeOrder).subscribe( () => {
-                if (qfbToPlace.modalType === MODAL_NAMES.placeOrders) {
-                  this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
-                  this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
-                } else {
-                  this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
-                  this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
-                }
-              }, error => this.errorService.httpError(error));
+                const placeOrder = new IPlaceOrdersReq();
+                placeOrder.userLogistic = this.dataService.getUserId();
+                placeOrder.userId = qfbToPlace.userId;
+                placeOrder.docEntry = qfbToPlace.list;
+                placeOrder.orderType = qfbToPlace.modalType;
+                this.pedidosService.postPlaceOrders( placeOrder).subscribe( resPlaceManual => {
+                    this.onSuccessPlaceOrdersHttp(resPlaceManual, qfbToPlace.modalType);
+                    }, error => this.errorService.httpError(error));
             } else {
               this.createPlaceOrderDialog(qfbToPlace);
             }
           });
-    } else {
+    } else if (qfbToPlace.assignType === MODAL_NAMES.assignAutomatic) {
+      this.dataService.presentToastCustom(
+          Messages.placeOrderAutomatic,
+          'question',
+          CONST_STRING.empty,
+          true, true)
+          .then((result: any) => {
+            if (result.isConfirmed) {
+              const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
+              placeOrdersAutomaticReq.userLogistic = this.dataService.getUserId();
+              placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
+              this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe( resultAutomatic => {
+                  this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType);
+              }, error => {
+                this.errorService.httpError(error);
+                this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'info', isButtonAccept: true});
+              });
+            } else {
+              this.createPlaceOrderDialog(qfbToPlace);
+            }
+          });
+
+    }  else {
       this.createPlaceOrderDialog(qfbToPlace);
+    }
+  }
+  createDialogHttpOhAboutTypePlace(modalType: string) {
+    if (modalType === MODAL_NAMES.placeOrders) {
+      this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+      this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
+    } else {
+      this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+      this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
     }
   }
   createPlaceOrderDialog(placeOrdersData: any) {
@@ -134,5 +160,22 @@ export class AppComponent implements OnDestroy , OnInit {
     this.dataService.presentToastCustom(generalMessage.title,
         generalMessage.icon, CONST_STRING.empty, generalMessage.isButtonAccept, false);
 
+  }
+  onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string) {
+      if (resPlaceOrders.success && resPlaceOrders.response.length > CONST_NUMBER.zero) {
+          const titleItemsWithError = this.getMessageTitle(resPlaceOrders.response);
+          this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+          this.dataService.presentToastCustom(titleItemsWithError, 'info',
+              Messages.errorToAssignOrderAutomaticSubtitle , true, false);
+      } else {
+          this.createDialogHttpOhAboutTypePlace(modalType);
+      }
+  }
+  getMessageTitle(itemsWithError: string[]): string {
+      let errorOrders = '';
+      itemsWithError.forEach(order => {
+          errorOrders += `La orden de fabricación ${order} no pudo ser asignada \n`;
+      });
+      return errorOrders;
   }
 }

@@ -1,18 +1,5 @@
 import {BaseResponseHttp} from './commons';
 
-export class IPedidoReq {
-    isChecked: boolean;
-    docNum: number;
-    codigo: string;
-    cliente: string;
-    medico: string;
-    asesorName: string;
-    fechaInicio: string;
-    fechaFin: string;
-    pedidoStatus: string;
-    qfb?: string;
-    class?: string;
-}
 export class IPedidosRes extends BaseResponseHttp {
     response: any;
 }
@@ -20,6 +7,9 @@ export class IPedidosListRes extends BaseResponseHttp {
     response: IPedidoReq[];
 }
 export class IProcessOrdersRes extends BaseResponseHttp {
+    response: string[];
+}
+export class IPlaceOrdersAutomaticRes extends BaseResponseHttp {
     response: string[];
 }
 export class ParamsPedidos {
@@ -43,4 +33,21 @@ export class ProcessOrdersDetailReq {
     pedidoId: number;
     userId: string;
     productId: string[];
+}
+export class IPlaceOrdersAutomaticReq {
+    userLogistic: string;
+    docEntry: number[];
+}
+export class IPedidoReq {
+    isChecked: boolean;
+    docNum: number;
+    codigo: string;
+    cliente: string;
+    medico: string;
+    asesorName: string;
+    fechaInicio: string;
+    fechaFin: string;
+    pedidoStatus: string;
+    qfb?: string;
+    class?: string;
 }

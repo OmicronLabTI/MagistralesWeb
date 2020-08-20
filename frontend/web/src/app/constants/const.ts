@@ -14,14 +14,16 @@ export const CONST_STRING = {
 
 export const CONST_USER_DIALOG = {
     defaultDefault: 'QFB',
-    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!?¿"%#&/]){0})\S{8,50}$/
+    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/
 };
 
 export const MODAL_NAMES =  {
     addUserModal: 'addModal',
     editUser: 'editModal',
     placeOrders: 'Pedido',
-    placeOrdersDetail: 'Orden'
+    placeOrdersDetail: 'Orden',
+    assignManual: 'manual',
+    assignAutomatic: 'automatic'
 };
 export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,

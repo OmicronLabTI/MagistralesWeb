@@ -3,7 +3,12 @@ import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
-import {IPedidosListRes, IProcessOrdersRes, ProcessOrdersDetailReq} from '../model/http/pedidos';
+import {
+  IPedidosListRes,
+  IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
+  IProcessOrdersRes,
+  ProcessOrdersDetailReq
+} from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 import {RoleQfbId} from '../constants/const';
 
@@ -35,7 +40,7 @@ export class PedidosService {
     return this.consumeService.httpGet<IQfbWithNumberRes>(`${Endpoints.users.qfbsWithOrders}`);
   }
   postPlaceOrders(placeOrder: IPlaceOrdersReq) {
-    return this.consumeService.httpPost(Endpoints.pedidos.placeOrders, placeOrder);
+    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrders, placeOrder);
   }
   getComponents(queryStringComponents: string) {
     return this.consumeService.httpGet<IComponentsRes>(`${Endpoints.pedidos.getComponents}${queryStringComponents}`);
@@ -45,5 +50,8 @@ export class PedidosService {
   }
   postPlaceOrdersDetail(placeOrderDetail: ProcessOrdersDetailReq) {
     return this.consumeService.httpPost(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
+  }
+  postPlaceOrderAutomatic(placeOrderAutomatic: IPlaceOrdersAutomaticReq) {
+    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrdersAutomatic, placeOrderAutomatic);
   }
 }
