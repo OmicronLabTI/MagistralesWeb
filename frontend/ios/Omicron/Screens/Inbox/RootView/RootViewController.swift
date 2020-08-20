@@ -54,10 +54,12 @@ class RootViewController: UIViewController {
         
         self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
         
+        // Cuando se presiona el botón de cerrar sesión  se redirije a Login
         self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
-            let rootVC = self.storyboard?.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
-            let nav = UINavigationController(rootViewController: rootVC)
-            self.present(nav, animated: true, completion: nil)
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let loginViewController = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
+            UIApplication.shared.windows.first?.rootViewController = loginViewController
+            UIApplication.shared.windows.first?.makeKeyAndVisible()
         }).disposed(by: self.disposeBag)
         
         rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
@@ -106,17 +108,25 @@ class RootViewController: UIViewController {
     func initComponents() {
         self.viewTable.tableFooterView = UIView()
         self.viewTable.backgroundColor = OmicronColors.tableStatus
+        
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
+        
         self.searchOrdesSearchBar.text = CommonStrings.searchOrden
         self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
         self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
+        
         self.view.backgroundColor = OmicronColors.tableStatus
+       
         self.refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
         self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
+       
         self.logoutButton.setTitle("Cerrar sesión", for: .normal)
+        self.logoutButton.tintColor = .darkGray
         self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
-        self.logoutButton.imageEdgeInsets.left = -50
+        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 20)
+        self.logoutButton.titleEdgeInsets.left = 35
+        self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
     }
     
     private func getInboxViewModel() -> InboxViewModel? {

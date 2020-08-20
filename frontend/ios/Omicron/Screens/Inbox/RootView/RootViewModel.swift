@@ -29,11 +29,14 @@ class RootViewModel {
     var logoutDidTap = PublishSubject<Void>()
     var goToLoginViewController = PublishSubject<Void>()
     init() {
+        
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.loading.onNext(true)
-            Persistence.shared.removePersistenceData()
-            self.goToLoginViewController.onNext(())
-            self.loading.onNext(false)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                Persistence.shared.removePersistenceData()
+                 self.goToLoginViewController.onNext(())
+                 self.loading.onNext(false)
+            }
         }).disposed(by: self.disposeBag)
         
     }
