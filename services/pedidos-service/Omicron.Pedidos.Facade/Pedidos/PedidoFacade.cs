@@ -131,11 +131,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Change order status to cancel.
         /// </summary>
-        /// <param name="updateStatus">Update order info.</param>
-        /// <returns>Order with updated info.</returns>urns>
-        public async Task<ResultDto> CancelOrder(List<UpdateStatusOrderDto> updateStatus)
+        /// <param name="cancelOrders">Update order info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateStatusOrder(this.mapper.Map<List<UpdateStatusOrderModel>>(updateStatus)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelOrder(this.mapper.Map<List<CancelOrderModel>>(cancelOrders)));
         }
     }
 }

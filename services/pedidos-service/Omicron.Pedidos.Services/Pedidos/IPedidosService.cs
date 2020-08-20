@@ -82,8 +82,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Change order status to cancel.
         /// </summary>
-        /// <param name="updateStatus">Update order info.</param>
-        /// <returns>Order with updated info.</returns>urns>
-        Task<ResultModel> CancelOrder(List<UpdateStatusOrderModel> updateStatus);
+        /// <param name="cancelOrders">Update orders info.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders);
     }
 }

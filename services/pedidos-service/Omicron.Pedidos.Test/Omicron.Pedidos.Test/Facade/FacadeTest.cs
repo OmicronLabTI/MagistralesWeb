@@ -102,6 +102,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
+                .Setup(m => m.CancelOrder(It.IsAny<List<CancelOrderModel>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
                 .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
                 .Returns(Task.FromResult(response));
 
@@ -386,9 +390,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CancelOrder()
         {
             // arrange
-            var orders = new List<UpdateStatusOrderDto>
+            var orders = new List<CancelOrderDto>
             {
-                new UpdateStatusOrderDto { Status = "Cancelado", OrderId = 1, UserId = "mockUser" },
+                new CancelOrderDto { OrderId = 1, UserId = "mockUser" },
             };
 
             // act

@@ -154,6 +154,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
+        /// route to cancel orders.
+        /// </summary>
+        public const string CancelFabOrder = "cancelProductionOrder";
+
+        /// <summary>
         /// the connect to sap di api.
         /// </summary>
         public const string ConnectSapDiApi = "connect";

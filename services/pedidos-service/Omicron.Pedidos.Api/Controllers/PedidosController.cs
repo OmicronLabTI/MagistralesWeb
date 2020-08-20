@@ -140,13 +140,13 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Change order status to cancel.
         /// </summary>
-        /// <param name="updateStatus">Update order info.</param>
+        /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Order with updated info.</returns>
-        [Route("/status/cancel")]
+        [Route("/salesOrder/cancel")]
         [HttpPut]
-        public async Task<IActionResult> CancelOrder(List<UpdateStatusOrderDto> updateStatus)
+        public async Task<IActionResult> CancelOrder(List<CancelOrderDto> cancelOrders)
         {
-            var response = await this.pedidoFacade.CancelOrder(updateStatus);
+            var response = await this.pedidoFacade.CancelOrder(cancelOrders);
             return this.Ok(response);
         }
 
