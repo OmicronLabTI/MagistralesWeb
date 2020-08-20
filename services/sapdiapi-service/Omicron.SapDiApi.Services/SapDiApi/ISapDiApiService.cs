@@ -39,6 +39,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> UpdateFormula(UpdateFormulaModel updateFormula);
 
         /// <summary>
+        /// Cancel a prodution order
+        /// </summary>
+        /// <param name="productionOrder">Production order to update</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CancelProductionOrder(CancelOrderModel productionOrder);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

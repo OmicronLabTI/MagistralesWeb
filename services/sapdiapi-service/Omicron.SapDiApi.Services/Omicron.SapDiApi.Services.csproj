@@ -58,9 +58,16 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\Omicron.SapDiApi.Api\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\Omicron.SapDiApi.Api\packages\NLog.4.7.3\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +90,10 @@
     <ProjectReference Include="..\Omicron.SapDiApi.Entities\Omicron.SapDiApi.Entities.csproj">
       <Project>{34b8298c-a3ce-49c1-a9b4-e991a897fc5e}</Project>
       <Name>Omicron.SapDiApi.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Omicron.SapDiApi.Log\Omicron.SapDiApi.Log.csproj">
+      <Project>{C7CCD836-3F30-4BC6-8034-16DE484D2A44}</Project>
+      <Name>Omicron.SapDiApi.Log</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
