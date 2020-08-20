@@ -30,6 +30,7 @@ struct ViewControllerIdentifiers {
     static let orderDetailViewController = "OrderDetailViewController"
     static let detailTableViewCell = "DetailTableViewCell"
     static let orderDetailFormViewController = "OrderDetailFormViewController"
+    static let loginViewController = "LoginViewController"
 }
 
 struct OmicronColors {
@@ -96,6 +97,7 @@ struct ImageButtonNames {
     static let backFinished = "backFinished.png"
     static let backReassigned = "backReassigned.png"
     static let backPendding = "backPendding.png"
+    static let logout = "logout.png"
 }
 
 struct IndicatorImageStatus {

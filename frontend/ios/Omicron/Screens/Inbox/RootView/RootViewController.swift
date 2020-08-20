@@ -17,6 +17,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var viewTable: UITableView!
     @IBOutlet weak var myOrdesLabel: UILabel!
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
+    @IBOutlet weak var logoutButton: UIButton!
     
     // Variables
     let disposeBag = DisposeBag()
@@ -50,6 +51,14 @@ class RootViewController: UIViewController {
     }
     
     func viewModelBinding() {
+        
+        self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
+        
+        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+            let rootVC = self.storyboard?.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
+            let nav = UINavigationController(rootViewController: rootVC)
+            self.present(nav, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
         
         rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
             self.dataStatusOfService = data
@@ -105,7 +114,9 @@ class RootViewController: UIViewController {
         self.view.backgroundColor = OmicronColors.tableStatus
         self.refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
         self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
-        
+        self.logoutButton.setTitle("Cerrar sesión", for: .normal)
+        self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
+        self.logoutButton.imageEdgeInsets.left = -50
     }
     
     private func getInboxViewModel() -> InboxViewModel? {
