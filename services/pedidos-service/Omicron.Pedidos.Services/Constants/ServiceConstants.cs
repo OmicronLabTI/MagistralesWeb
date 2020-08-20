@@ -99,6 +99,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// Error the sales order is cancelled.
+        /// </summary>
+        public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
+
+        /// <summary>
         /// const for error whne inserting fab orde.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";

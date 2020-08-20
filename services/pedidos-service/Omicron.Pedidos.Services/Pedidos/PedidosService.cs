@@ -274,7 +274,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
                     var newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Salesorderid));
 
-                    if (result.Success && result.Response.ToString().Equals(ServiceConstants.Ok))
+                    if (result.Success &&
+                       (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled)))
                     {
                         // Update local db.
                         order.Status = ServiceConstants.Cancelled;
@@ -294,8 +295,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var results = new
             {
-                success = successfuly,
-                failed,
+                success = successfuly.Distinct(),
+                failed = failed.Distinct(),
             };
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(results), null);
         }
