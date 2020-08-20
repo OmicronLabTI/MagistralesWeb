@@ -50,7 +50,7 @@ class OrderDetailFormViewController:  FormViewController {
         
         form
               
-            +++ Section(header: "Editar componente", footer: "")
+            +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
             
             <<< DecimalRow() {
                 $0.title = "Cantidad base: "
