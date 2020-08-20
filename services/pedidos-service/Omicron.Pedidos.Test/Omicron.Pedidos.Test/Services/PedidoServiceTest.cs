@@ -407,6 +407,31 @@ namespace Omicron.Pedidos.Test.Services
         }
 
         /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(104)]
+        public async Task CancelFabOrder(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+
+            var orderToUpdate = new List<CancelOrderModel>
+            {
+                new CancelOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelFabOrder(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
         /// the automatic assign test.
         /// </summary>
         /// <returns>return nothing.</returns>

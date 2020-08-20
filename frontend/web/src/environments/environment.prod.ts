@@ -5,9 +5,6 @@
 export const environment = {
   production: true,
   baseUrl: 'http://192.168.0.101:8000', // dev
-  baseUrlLogin: 'http://192.168.0.101:8090', // dev
-  baseUrlUsers: 'http://192.168.0.101:5101', // dev
-  baseUrlCatalogs: 'http://192.168.0.101:9010', // dev
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',
