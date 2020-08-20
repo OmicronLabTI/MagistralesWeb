@@ -133,6 +133,8 @@ class LoginViewController: UIViewController {
         self.button.addTarget(self, action: #selector(self.btnPasswordVisibilityClicked), for: .touchUpInside)
         self.passwordTextField.rightView = button
         self.passwordTextField.rightViewMode = .always
+        
+         button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
     }
         
     @objc func keyBoardActions(notification: Notification) {
