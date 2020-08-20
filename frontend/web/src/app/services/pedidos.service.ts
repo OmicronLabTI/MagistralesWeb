@@ -4,6 +4,7 @@ import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
 import {
+  CancelOrderReq, ICancelOrdersRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
   IProcessOrdersRes,
@@ -53,5 +54,8 @@ export class PedidosService {
   }
   postPlaceOrderAutomatic(placeOrderAutomatic: IPlaceOrdersAutomaticReq) {
     return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrdersAutomatic, placeOrderAutomatic);
+  }
+  putCancelOrders(cancelOrders: CancelOrderReq[]) {
+    return this.consumeService.httpPost<ICancelOrdersRes>(Endpoints.pedidos.cancelOrders, cancelOrders);
   }
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
@@ -134,5 +134,29 @@ export class DataService {
   }
   transformDate(date: Date) {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+  getMessageTitle(itemsWithError: string[], messageType: MessageType): string {
+    let errorOrders = '';
+    let firstMessage = '';
+    let finishMessaje = '';
+    switch (messageType) {
+      case MessageType.processOrder:
+        firstMessage = 'El producto ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.placeOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Asignada \n';
+        break;
+      case MessageType.cancelOrder:
+        firstMessage = 'El producto ';
+        finishMessaje = 'no pudo ser Cancelado \n';
+        break;
+    }
+
+    itemsWithError.forEach(order => {
+      errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
+    });
+    return errorOrders;
   }
 }

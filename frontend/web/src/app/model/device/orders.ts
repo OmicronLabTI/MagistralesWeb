@@ -5,4 +5,7 @@ export class PlaceOrders {
         userId: '',
      };
 }
+export class CancelOrders {
+
+}
 

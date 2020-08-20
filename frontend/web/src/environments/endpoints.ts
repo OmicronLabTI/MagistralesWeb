@@ -22,7 +22,8 @@ export const Endpoints = {
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
-    placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`
+    placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
+    cancelOrders: `${environment.baseUrl}/api/pedidos/salesOrder/cancel`
 }
 };
 

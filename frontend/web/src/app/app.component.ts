@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { DataService } from './services/data.service';
+import {DataService} from './services/data.service';
 import {Observable, Subscription} from 'rxjs';
-import { MatSnackBar } from '@angular/material';
-import { AppConfig } from './constants/app-config';
-import { Router} from '@angular/router';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from './constants/const';
+import {MatSnackBar} from '@angular/material';
+import {AppConfig} from './constants/app-config';
+import {Router} from '@angular/router';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -13,7 +13,6 @@ import {PedidosService} from './services/pedidos.service';
 import {ErrorService} from './services/error.service';
 import {GeneralMessage} from './model/device/general';
 import {IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes} from './model/http/pedidos';
-
 
 
 @Component({
@@ -118,7 +117,7 @@ export class AppComponent implements OnDestroy , OnInit {
               placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
               this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe( resultAutomatic => {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType);
-              }, error => {
+              }, error => { // checar con gus objeto de error
                 this.errorService.httpError(error);
                 this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'info', isButtonAccept: true});
               });
@@ -163,19 +162,17 @@ export class AppComponent implements OnDestroy , OnInit {
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string) {
       if (resPlaceOrders.success && resPlaceOrders.response.length > CONST_NUMBER.zero) {
-          const titleItemsWithError = this.getMessageTitle(resPlaceOrders.response);
-          this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+          const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
+          if (modalType === MODAL_NAMES.placeOrders) {
+              this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+          } else {
+              this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+          }
           this.dataService.presentToastCustom(titleItemsWithError, 'info',
               Messages.errorToAssignOrderAutomaticSubtitle , true, false);
       } else {
           this.createDialogHttpOhAboutTypePlace(modalType);
       }
   }
-  getMessageTitle(itemsWithError: string[]): string {
-      let errorOrders = '';
-      itemsWithError.forEach(order => {
-          errorOrders += `La orden de fabricación ${order} no pudo ser asignada \n`;
-      });
-      return errorOrders;
-  }
+
 }

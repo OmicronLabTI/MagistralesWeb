@@ -42,6 +42,14 @@ export enum HttpServiceTOCall {
     USERS,
     DETAIL_FORMULA
 }
+export enum MessageType {
+    processOrder,
+    processDetailOrder,
+    placeOrder,
+    placeDetailOrder,
+    cancelOrder,
+    cancelDetailOrder
+}
 
 export const RoleQfbId = 2;
 

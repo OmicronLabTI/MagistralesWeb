@@ -12,6 +12,9 @@ export class IProcessOrdersRes extends BaseResponseHttp {
 export class IPlaceOrdersAutomaticRes extends BaseResponseHttp {
     response: string[];
 }
+export class ICancelOrdersRes extends BaseResponseHttp {
+    response: ResponseCancel;
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum: any;
@@ -50,4 +53,12 @@ export class IPedidoReq {
     pedidoStatus: string;
     qfb?: string;
     class?: string;
+}
+
+export class CancelOrderReq {
+    userId: string;
+    orderId: number;
+}
+export class ResponseCancel {
+    failed: CancelOrderReq[];
 }

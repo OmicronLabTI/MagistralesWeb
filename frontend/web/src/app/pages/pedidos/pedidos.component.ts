@@ -2,10 +2,17 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MODAL_FIND_ORDERS, MODAL_NAMES} from '../../constants/const';
+import {
+  CONST_NUMBER,
+  CONST_STRING,
+  HttpServiceTOCall,
+  MessageType,
+  MODAL_FIND_ORDERS,
+  MODAL_NAMES
+} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
@@ -37,6 +44,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToPlan = false;
   isThereOrdersToPlace = false;
   subscriptionCallHttp = new Subscription();
+  isThereOrdersToCancel = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -110,8 +118,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           () => {
-            this.getPedidos();
-            this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+            this.onSuccessHttp();
           },
           error => {
             this.errorService.httpError(error);
@@ -206,9 +213,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getButtonsToUnLooked() {
     this.isThereOrdersToPlan = this.getIsThereOnData('Abierto');
     this.isThereOrdersToPlace = this.getIsThereOnData('Planificado');
+    this.isThereOrdersToCancel = this.getIsThereOnData('Finalizado', true);
   }
-  getIsThereOnData(status: string) {
-    return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+  getIsThereOnData(status: string, isFromCancelOrder = false) {
+    if (!isFromCancelOrder) {
+      return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+    } else { // status Cancelado add to filter para que no haga bug de que un cancelado se mande a cancelar
+      return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== status)).length > 0;
+    }
   }
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
@@ -216,5 +228,33 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptionCallHttp.unsubscribe();
+  }
+
+  cancelOrders() {
+    this.dataService.presentToastCustom(Messages.cancelOrders, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            const deleteOrders: CancelOrderReq [] = [];
+            this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== 'Finalizado')).forEach( order =>
+                deleteOrders.push({userId: this.dataService.getUserId(), orderId: order.docNum}));
+            console.log('cancelOrders', deleteOrders);
+            this.pedidosService.putCancelOrders(deleteOrders).subscribe( resultCancel => {
+                if (resultCancel.success && resultCancel.response.failed.length > 0) {
+                  const titleCancelWithError = this.dataService.getMessageTitle(
+                                                          resultCancel.response.failed.map( cancelFail => cancelFail.orderId.toString())
+                      , MessageType.cancelOrder);
+                  this.dataService.presentToastCustom(titleCancelWithError, 'info',
+                      Messages.errorToAssignOrderAutomaticSubtitle , true, false);
+                } else {
+                  this.onSuccessHttp();
+                }
+            }, error => this.errorService.httpError(error));
+          }
+        });
+
+  }
+  onSuccessHttp() {
+    this.getPedidos();
+    this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
   }
 }

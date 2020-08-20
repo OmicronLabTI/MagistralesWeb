@@ -41,11 +41,10 @@
             <!--<button mat-raised-button class="button-blue ">
                 &nbsp; Finalizar &nbsp;
             </button>
-            &nbsp;
-            &nbsp;
-            <button mat-raised-button class="button-blue ">
-                &nbsp; Cancelar &nbsp;
-            </button>-->
+            -->
+            <button [disabled]="!isThereOrdersToCancel" [ngClass]="isThereOrdersToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()" mat-raised-button>
+                Cancelar
+            </button>
             &nbsp;
             &nbsp;
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >
