@@ -258,8 +258,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders)
         {
-            var successfuly = new List<CancelOrderModel>();
-            var failed = new List<CancelOrderModel>();
             return await this.CancelFabOrders(ServiceConstants.OrdenVenta, cancelOrders);
         }
 
