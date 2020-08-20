@@ -48,6 +48,16 @@ class OrderDetailFormViewController:  FormViewController {
             }
         }
         
+        let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+            let range = NSRange(location: 0, length: rowValue?.description.utf16.count ?? 0)
+            let regex = try! NSRegularExpression(pattern: "[-][0-9]{1,9}(?:.[0-9]{1,9})?$")
+            return (regex.firstMatch(in: rowValue?.description ?? "", options: [], range: range) != nil) ? ValidationError(msg: "No debe contener números negativos") : nil
+        }
+        
+        let fieldNoEmpty = RuleClosure<Double> { rowValue in
+            return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
+        }
+        
         form
               
             +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
@@ -73,22 +83,16 @@ class OrderDetailFormViewController:  FormViewController {
                 }
                 
                 // Validaciones
-                let fieldNoEmpty = RuleClosure<Double> { rowValue in
-                    return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
-                }
-                
-                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
-                    return (rowValue?.isLess(than: 0.0))!  ? ValidationError(msg: "No debe contener números negativos") : nil
-             }
-                
-                $0.add(rule: fieldNoEmpty)
-                $0.add(rule: fieldShouldNotNegativeNumbers)
+                var rules = RuleSet<Double>()
+                rules.add(rule: fieldNoEmpty)
+                rules.add(rule: fieldShouldNotNegativeNumbers)
+                $0.add(ruleSet: rules)
+                $0.validationOptions = .validatesOnChangeAfterBlurred
             }
-                
             .cellUpdate { cell, row in
-                if !row.isValid {
-                    cell.titleLabel?.textColor = .red
-                }
+                 if !row.isValid {
+                     cell.titleLabel?.textColor = .red
+                 }
             }
             .onRowValidationChanged { cell, row in
                 let rowIndex = row.indexPath!.row
@@ -104,6 +108,8 @@ class OrderDetailFormViewController:  FormViewController {
                         let indexPath = row.indexPath!.row + index + 1
                         row.section?.insert(labelRow, at: indexPath)
                     }
+                } else {
+                    row.cleanValidationErrors()
                 }
             }
             
@@ -127,16 +133,11 @@ class OrderDetailFormViewController:  FormViewController {
                                    }
                                }
                 // Validaciones
-                let fieldNoEmpty = RuleClosure<Double> { rowValue in
-                    return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
-                }
-                
-                let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
-                    return rowValue!.isLess(than: 0.0) ? ValidationError(msg: "No debe contener números negativos") : nil
-                }
-                
-                $0.add(rule: fieldNoEmpty)
-                $0.add(rule: fieldShouldNotNegativeNumbers)
+                var rules = RuleSet<Double>()
+                rules.add(rule: fieldNoEmpty)
+                rules.add(rule: fieldShouldNotNegativeNumbers)
+                $0.add(ruleSet: rules)
+                $0.validationOptions = .validatesOnChangeAfterBlurred
             }
             .cellUpdate { cell, row in
                 if !row.isValid {
@@ -170,6 +171,9 @@ class OrderDetailFormViewController:  FormViewController {
             +++ Section()
             <<< ButtonRow() {
                 $0.title = "Aceptar"
+                $0.disabled = Condition.function(
+                    form.allRows.compactMap { $0.tag },
+                { !$0.validate().isEmpty })
             }
             .onCellSelection { cell, row in
                 row.section?.form?.validate()
@@ -189,6 +193,9 @@ class OrderDetailFormViewController:  FormViewController {
             }
             <<< ButtonRow() {
                 $0.title = "Cancelar"
+            }
+            .cellSetup{cell, row in
+                cell.tintColor = .red
             }
             .onCellSelection { cell, row in
                 self.dismiss(animated: true)
