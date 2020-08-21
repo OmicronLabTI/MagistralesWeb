@@ -44,10 +44,11 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
       await this.ordersServices.getQfbs().toPromise().then(resQfbs => {
+
           this.qfbsSelect = resQfbs.response.map(qfb => {
               return {
                   qfbId: qfb.id,
-                  qfbName: qfb.firstName
+                  qfbName: qfb.firstName + ' ' + qfb.lastName
               };
           });
           this.qfbsSelect.sort((a, b) => {
