@@ -43,7 +43,7 @@ struct OmicronColors {
     static let finishedStatus = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
-    static let tableColorRow = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
+    static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
 }
 
 struct UsersDefaultsConstants {

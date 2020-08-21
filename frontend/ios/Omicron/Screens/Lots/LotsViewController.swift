@@ -57,14 +57,14 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "Total Seleccionado", fontSize: 15)
         
         UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 20)
-        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Total Lotes", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad requerida", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad Seleccionada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Lotes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad diaponible", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad seleccionada", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
         
         UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad disponible", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         
