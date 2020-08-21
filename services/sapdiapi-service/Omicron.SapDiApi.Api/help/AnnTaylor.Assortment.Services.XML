@@ -199,6 +199,12 @@
             <param name="productionOrder">Production order to update</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateBatches">
+            <summary>
+            Cancel production order by id
+            </summary>
+            <returns>the reult.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.
