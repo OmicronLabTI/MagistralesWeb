@@ -13,6 +13,7 @@ import {PedidosService} from './services/pedidos.service';
 import {ErrorService} from './services/error.service';
 import {GeneralMessage} from './model/device/general';
 import {IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes} from './model/http/pedidos';
+import {CancelOrders} from './model/device/orders';
 
 
 @Component({
@@ -26,7 +27,7 @@ export class AppComponent implements OnDestroy , OnInit {
   now = new Date();
   isLoading: Observable<boolean>;
   isLogin = false;
-  subscriptionQfbToPlace = new Subscription();
+  subscriptionObservables = new Subscription();
   fullName = '';
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
@@ -49,14 +50,17 @@ export class AppComponent implements OnDestroy , OnInit {
       });
   }
   ngOnInit() {
-    this.subscriptionQfbToPlace.add(this.dataService.getUrlActive().subscribe(url => {
+    this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => {
       this.iconMenuActive = url;
     }));
-    this.subscriptionQfbToPlace.add(this.dataService.getQfbToPlace().subscribe( qfbToPlace => {
+    this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace => {
       this.onSuccessPlaceOrder(qfbToPlace);
     }));
-    this.subscriptionQfbToPlace.add(this.dataService.getMessageGeneralCalHttp()
+    this.subscriptionObservables.add(this.dataService.getMessageGeneralCalHttp()
         .subscribe(generalMessage => this.onSuccessGeneralMessage(generalMessage)));
+    this.subscriptionObservables.add(this.dataService.getCancelOrder().subscribe(resultCancel =>
+        this.onSuccessCancelOrder(resultCancel)
+    ));
   }
   logoutSession() {
     this.dataService.setIsLogin(false);
@@ -153,7 +157,7 @@ export class AppComponent implements OnDestroy , OnInit {
   }
 
   ngOnDestroy() {
-    this.subscriptionQfbToPlace.unsubscribe();
+    this.subscriptionObservables.unsubscribe();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
     this.dataService.presentToastCustom(generalMessage.title,
@@ -163,11 +167,7 @@ export class AppComponent implements OnDestroy , OnInit {
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string) {
       if (resPlaceOrders.success && resPlaceOrders.response.length > CONST_NUMBER.zero) {
           const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
-          if (modalType === MODAL_NAMES.placeOrders) {
-              this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
-          } else {
-              this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
-          }
+          this.callHttpAboutModalFrom(modalType);
           this.dataService.presentToastCustom(titleItemsWithError, 'info',
               Messages.errorToAssignOrderAutomaticSubtitle , true, false);
       } else {
@@ -175,4 +175,35 @@ export class AppComponent implements OnDestroy , OnInit {
       }
   }
 
+    private onSuccessCancelOrder(resultCancel: CancelOrders) {
+        this.dataService.presentToastCustom(resultCancel.cancelType === MODAL_NAMES.placeOrders ?
+            Messages.cancelOrders : Messages.placeOrderDetail,
+            'question', CONST_STRING.empty, true, true)
+            .then((result: any) => {
+                if (result.isConfirmed) {
+                    const cancelOrders = [...resultCancel.list];
+                    cancelOrders.forEach(order => order.userId = this.dataService.getUserId());
+                    this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
+                        .subscribe(resultCancelHttp => {
+                        if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
+                            const titleCancelWithError = this.dataService.getMessageTitle(
+                                resultCancelHttp.response.failed.map(cancelFail => cancelFail.orderId.toString())
+                                , MessageType.cancelDetailOrder);
+                            this.callHttpAboutModalFrom(resultCancel.cancelType);
+                            this.dataService.presentToastCustom(titleCancelWithError, 'info',
+                                Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+                        } else {
+                            this.createDialogHttpOhAboutTypePlace(resultCancel.cancelType);
+                        }
+                    }, error => this.errorService.httpError(error));
+                }
+            });
+    }
+    callHttpAboutModalFrom(modalType: string) {
+        if (modalType === MODAL_NAMES.placeOrders) {
+            this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+        } else {
+            this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+        }
+    }
 }
