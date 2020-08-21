@@ -258,7 +258,144 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders)
         {
-            return await this.CancelFabOrders(ServiceConstants.OrdenVenta, cancelOrders);
+            var missingOrders = new List<CancelOrderModel>();
+            var missingSalesOrders = new List<OrderWithDetailModel>();
+            var logs = new List<OrderLogModel>();
+            var successfuly = new List<object>();
+            var failed = new List<object>();
+
+            // User ordes to update
+            var userOrdersToUpdate = new List<UserOrderModel>();
+            var userOrdersToInsert = new List<UserOrderModel>();
+
+            // Process existing orders
+            foreach (var orderToCancel in cancelOrders)
+            {
+                // Get related fabrication orders
+                var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orderToCancel.OrderId.ToString() })).ToList();
+                if (!relatedOrders.Any())
+                {
+                    missingOrders.Add(orderToCancel);
+                    continue;
+                }
+
+                // Validate non finished production orders
+                var salesOrder = relatedOrders.First(x => string.IsNullOrEmpty(x.Productionorderid));
+
+                if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                    continue;
+                }
+
+                // Validate non finished production orders
+                if (relatedOrders.Any(x => x.Status.Equals(ServiceConstants.Finalizado)))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                    continue;
+                }
+
+                foreach (var order in relatedOrders)
+                {
+                    var cancelledOnSap = true;
+                    var docType = ServiceConstants.OrdenVenta;
+
+                    // Process to cancel a fabrication order in SAP.
+                    if (!string.IsNullOrEmpty(order.Productionorderid))
+                    {
+                        docType = ServiceConstants.OrdenFab;
+                        var payload = new { OrderId = order.Productionorderid };
+                        var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                        cancelledOnSap = result.Success && (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled));
+                    }
+
+                    // Process to cancel on local db
+                    if (cancelledOnSap)
+                    {
+                        order.Status = ServiceConstants.Cancelled;
+                        userOrdersToUpdate.Add(order);
+                        successfuly.Add(orderToCancel);
+
+                        if (docType.Equals(ServiceConstants.OrdenVenta))
+                        {
+                            logs.AddRange(ServiceUtils.CreateOrderLog(orderToCancel.UserId, new List<int> { orderToCancel.OrderId }, string.Format(ServiceConstants.OrderCancelled, orderToCancel.OrderId), ServiceConstants.OrdenVenta));
+                        }
+
+                        continue;
+                    }
+
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonSapError));
+                }
+            }
+
+            // Update in local data base
+            await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            // Process missing sales orders
+            if (missingOrders.Any())
+            {
+                var orders = await this.sapAdapter.PostSapAdapter(missingOrders.Select(x => x.OrderId).ToList(), ServiceConstants.GetOrderWithDetail);
+                var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+                sapOrders = sapOrders.Where(x => x.Order != null).ToList();
+                sapOrders.ForEach(o =>
+                {
+                    o.Detalle = o.Detalle.Where(x => !string.IsNullOrEmpty(x.Status)).ToList();
+                });
+                missingSalesOrders = sapOrders;
+
+                var newLogs = new List<OrderLogModel>();
+                foreach (var order in missingSalesOrders)
+                {
+                    var orderToCancel = cancelOrders.First(x => x.OrderId.Equals(order.Order.DocNum));
+
+                    if (order.Order.PedidoStatus.Equals("C"))
+                    {
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                        continue;
+                    }
+
+                    if (order.Detalle.Any(x => x.Status.Equals("L")))
+                    {
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                        continue;
+                    }
+
+                    var missingUserOrdersToValidate = order.Detalle.Select(x => new UserOrderModel
+                    {
+                        Status = ServiceConstants.Cancelled,
+                        Salesorderid = order.Order.DocNum.ToString(),
+                        Productionorderid = x.OrdenFabricacionId.ToString(),
+                    }).ToList();
+
+                    foreach (var orderToUpdate in missingUserOrdersToValidate)
+                    {
+                        var payload = new { OrderId = orderToUpdate.Productionorderid };
+                        var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                    }
+
+                    missingUserOrdersToValidate.Add(new UserOrderModel
+                    {
+                        Status = ServiceConstants.Cancelled,
+                        Salesorderid = order.Order.DocNum.ToString(),
+                    });
+
+                    userOrdersToInsert.AddRange(missingUserOrdersToValidate);
+                    successfuly.Add(orderToCancel);
+
+                    newLogs.AddRange(ServiceUtils.CreateOrderLog(orderToCancel.UserId, new List<int> { orderToCancel.OrderId }, string.Format(ServiceConstants.OrderCancelled, orderToCancel.OrderId), ServiceConstants.OrdenVenta));
+                }
+
+                await this.pedidosDao.InsertUserOrder(userOrdersToInsert);
+                await this.pedidosDao.InsertOrderLog(logs);
+            }
+
+            var results = new
+            {
+                success = successfuly.Distinct(),
+                failed = failed.Distinct(),
+            };
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
         /// <summary>
@@ -268,7 +405,83 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CancelFabOrder(List<CancelOrderModel> cancelOrders)
         {
-            return await this.CancelFabOrders(ServiceConstants.OrdenFab, cancelOrders);
+            var logs = new List<OrderLogModel>();
+            var successfuly = new List<object>();
+            var failed = new List<object>();
+
+            // Get related fabrication orders
+            var orderIds = cancelOrders.Select(x => x.OrderId.ToString()).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(orderIds)).ToList();
+
+            foreach (var missing in cancelOrders.Where(x => !userOrders.Any(y => y.Productionorderid.Equals(x.OrderId.ToString()))))
+            {
+                failed.Add(ServiceUtils.CreateCancellationFail(missing, ServiceConstants.ReasonNotExistsOrder));
+            }
+
+            // Process existing orders
+            foreach (var order in userOrders)
+            {
+                var newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Productionorderid));
+
+                // Dircarp cancelled orders
+                if (order.Status.Equals(ServiceConstants.Cancelled))
+                {
+                    successfuly.Add(newOrderInfo);
+                    continue;
+                }
+
+                // Dircarp finalized orders
+                if (order.Status.Equals(ServiceConstants.Finalizado))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(newOrderInfo, ServiceConstants.ReasonOrderFinished));
+                    continue;
+                }
+
+                var payload = new { OrderId = order.Productionorderid };
+                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                var cancelledOnSap = result.Success && (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled));
+
+                // Process to cancel on local db
+                if (cancelledOnSap)
+                {
+                    order.Status = ServiceConstants.Cancelled;
+                    successfuly.Add(newOrderInfo);
+                    logs.AddRange(ServiceUtils.CreateOrderLog(newOrderInfo.UserId, new List<int> { newOrderInfo.OrderId }, string.Format(ServiceConstants.OrderCancelled, newOrderInfo.OrderId), ServiceConstants.OrdenFab));
+                    continue;
+                }
+
+                failed.Add(ServiceUtils.CreateCancellationFail(newOrderInfo, ServiceConstants.ReasonSapError));
+            }
+
+            // Update in local data base
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+
+            // Cancel orders with complete cancellations
+            var salesOrdersToUpdate = new List<UserOrderModel>();
+            foreach (var order in userOrders)
+            {
+                var newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Productionorderid));
+                var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { order.Salesorderid })).ToList();
+                var productionOrders = relatedOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                var salesOrder = relatedOrders.First(x => string.IsNullOrEmpty(x.Productionorderid));
+
+                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Cancelled)) && !salesOrder.Status.Equals(ServiceConstants.Finalizado))
+                {
+                    salesOrder.Status = ServiceConstants.Cancelled;
+                    salesOrdersToUpdate.Add(salesOrder);
+                    logs.AddRange(ServiceUtils.CreateOrderLog(newOrderInfo.UserId, new List<int> { int.Parse(salesOrder.Salesorderid) }, string.Format(ServiceConstants.OrderCancelled, newOrderInfo.OrderId), ServiceConstants.OrdenVenta));
+                }
+            }
+
+            await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            var results = new
+            {
+                success = successfuly.Distinct(),
+                failed = failed.Distinct(),
+            };
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
         /// <summary>
@@ -354,89 +567,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             }));
 
             return resultFormula;
-        }
-
-        /// <summary>
-        /// Cancel fabrication orders by level.
-        /// </summary>
-        /// <param name="level">The level cancellation  => Sales orders or fabrication order.</param>
-        /// <param name="cancelOrders">Orders to cancel.</param>
-        /// <returns>Orders with updated info.</returns>urns>
-        private async Task<ResultModel> CancelFabOrders(string level, List<CancelOrderModel> cancelOrders)
-        {
-            var orderIds = cancelOrders.Select(x => x.OrderId.ToString()).ToList();
-            var userOrders = new List<UserOrderModel>();
-            var logs = new List<OrderLogModel>();
-            var successfuly = new List<CancelOrderModel>();
-            var failed = new List<CancelOrderModel>();
-
-            // Get related fabrication orders
-            if (level.Equals(ServiceConstants.OrdenVenta))
-            {
-                userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(orderIds)).ToList();
-            }
-            else if (level.Equals(ServiceConstants.OrdenFab))
-            {
-                userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(orderIds)).ToList();
-            }
-
-            foreach (var order in userOrders)
-            {
-                var newOrderInfo = new CancelOrderModel();
-                if (level.Equals(ServiceConstants.OrdenVenta))
-                {
-                    newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Salesorderid));
-                }
-                else if (level.Equals(ServiceConstants.OrdenFab))
-                {
-                    newOrderInfo = cancelOrders.First(y => y.OrderId.ToString().Equals(order.Productionorderid));
-                }
-
-                // Dircarp cancelled orders
-                if (order.Status.Equals(ServiceConstants.Cancelled))
-                {
-                    successfuly.Add(newOrderInfo);
-                    continue;
-                }
-
-                // Dircarp finalized orders
-                if (order.Status.Equals(ServiceConstants.Finalizado))
-                {
-                    continue;
-                }
-
-                var cancelledOnSap = true;
-
-                // Process to cancel a fabrication order in SAP.
-                if (!string.IsNullOrEmpty(order.Productionorderid))
-                {
-                    var payload = new { OrderId = order.Productionorderid };
-                    var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
-                    cancelledOnSap = result.Success && (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled));
-                }
-
-                // Process to cancel on local db
-                if (cancelledOnSap)
-                {
-                    order.Status = ServiceConstants.Cancelled;
-                    successfuly.Add(newOrderInfo);
-                    logs.AddRange(ServiceUtils.CreateOrderLog(newOrderInfo.UserId, new List<int> { newOrderInfo.OrderId }, string.Format(ServiceConstants.OrderCancelled, newOrderInfo.OrderId), level));
-                    continue;
-                }
-
-                failed.Add(newOrderInfo);
-            }
-
-            // Update in local data base
-            await this.pedidosDao.UpdateUserOrders(userOrders);
-            await this.pedidosDao.InsertOrderLog(logs);
-
-            var results = new
-            {
-                success = successfuly.Distinct(),
-                failed = failed.Distinct(),
-            };
-            return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
     }
 }

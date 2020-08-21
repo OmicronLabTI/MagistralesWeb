@@ -362,7 +362,7 @@ namespace Omicron.Pedidos.Test.Services
         /// <returns>Nothing.</returns>
         [Test]
         [TestCase(101)]
-        [TestCase(102)]
+        [TestCase(100)]
         public async Task CancelOrder_WithAffectRecords(int orderId)
         {
             // arrange

@@ -134,6 +134,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string TypePedido = "Pedido";
 
         /// <summary>
+        /// if the type is fabrication order.
+        /// </summary>
+        public const string TypeFabOrder = "Orden de Fabricación";
+
+        /// <summary>
         /// Status liberado.
         /// </summary>
         public const string StatusSapLiberado = "R";
@@ -192,5 +197,25 @@ namespace Omicron.Pedidos.Services.Constants
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
+
+        /// <summary>
+        /// Reason not found.
+        /// </summary>
+        public const string ReasonNotExistsOrder = "No existe la orden.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonOrderFinished = "La orden ya esta finalizada.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonProductionOrderFinished = "Una orden de fabricación se encuentra finalizada.";
+
+        /// <summary>
+        /// Reason SAP error.
+        /// </summary>
+        public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
     }
 }
