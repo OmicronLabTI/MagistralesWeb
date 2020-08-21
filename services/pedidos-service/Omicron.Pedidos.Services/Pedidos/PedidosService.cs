@@ -436,7 +436,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 success = successfuly.Distinct(),
                 failed = failed.Distinct(),
             };
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(results), null);
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
     }
 }
