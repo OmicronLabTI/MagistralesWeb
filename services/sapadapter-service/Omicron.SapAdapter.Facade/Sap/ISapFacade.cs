@@ -58,5 +58,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the filters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetComponents(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the componentes managed by batches.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the components.</returns>
+        Task<ResultDto> GetBatchesComponents(int ordenId);
     }
 }

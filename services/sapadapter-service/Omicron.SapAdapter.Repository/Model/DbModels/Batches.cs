@@ -1,63 +1,49 @@
 ﻿// <summary>
-// <copyright file="ProductoModel.cs" company="Axity">
+// <copyright file="Batches.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model
+namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// The item.
+    /// the batches.
     /// </summary>
-    [Table("OITM")]
-    public class ProductoModel
+    [Table("OBTN")]
+    public class Batches
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("AbsEntry")]
         [Key]
+        public int AbsEntry { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [Column("ItemCode")]
-        public string ProductoId { get; set; }
+        public string ItemCode { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ItemName")]
-        public string ProductoName { get; set; }
+        [Column("SysNumber")]
+        public int SysNumber { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("QryGroup32")]
-        public string IsMagistral { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("OnHand")]
-        public decimal OnHand { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("InvntryUom")]
-        public string Unit { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("ManBtchNum")]
-        public string ManagedBatches { get; set; }
+        [Column("DistNumber")]
+        public string DistNumber { get; set; }
     }
 }
