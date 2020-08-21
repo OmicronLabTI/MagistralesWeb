@@ -346,5 +346,45 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               OrderFabId = c.OrderFabId,
                           }).ToListAsync();
         }
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
+        {
+            return await this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode).ToListAsync();
+        }
+
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse)
+        {
+            var listToReturn = new List<CompleteBatchesJoinModel>();
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => x.ItemCode == itemCode && x.WhsCode == warehouse && x.Quantity > 0).ToListAsync()).ToList();
+
+            var validBatches = querybatches.Select(x => x.SysNumber);
+
+            var batches = (await this.databaseContext.Batches.Where(x => x.ItemCode == itemCode && validBatches.Contains(x.SysNumber)).ToListAsync()).ToList();
+
+            querybatches.ForEach(x =>
+            {
+                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
+                listToReturn.Add(new CompleteBatchesJoinModel
+                {
+                    CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
+                    Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
+                    DistNumber = batch == null ? string.Empty : batch.DistNumber,
+                    SysNumber = x.SysNumber,
+                });
+            });
+
+            return listToReturn;
+        }
     }
 }

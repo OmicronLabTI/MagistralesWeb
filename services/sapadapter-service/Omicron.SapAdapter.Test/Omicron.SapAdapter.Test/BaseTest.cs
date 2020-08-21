@@ -115,6 +115,30 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<Batches> GetBatches()
+        {
+            return new List<Batches>
+            {
+                new Batches { AbsEntry = 1, DistNumber = "Lote1", ItemCode = "Abc Aspirina", SysNumber = 1 },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<BatchesQuantity> GetBatchesQuantity()
+        {
+            return new List<BatchesQuantity>
+            {
+                new BatchesQuantity { AbsEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1, CommitQty = 10, Quantity = 10, WhsCode = "MN" },
+            };
+        }
+
+        /// <summary>
         /// get the product.
         /// </summary>
         /// <returns>the product.</returns>
@@ -122,7 +146,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ" },
             };
         }
 

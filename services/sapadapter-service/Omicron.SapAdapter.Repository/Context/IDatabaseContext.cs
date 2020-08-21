@@ -80,5 +80,21 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<Users> Users { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<BatchesQuantity> BatchesQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<Batches> Batches { get; set; }
     }
 }

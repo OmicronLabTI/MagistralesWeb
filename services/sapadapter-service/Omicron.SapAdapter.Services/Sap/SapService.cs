@@ -255,9 +255,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var componentes = (await this.sapDao.GetComponentByBatches(ordenId)).ToList();
             var listToReturn = new List<BatchesComponentModel>();
 
-            componentes.ForEach(x =>
+            //// ToDo place the total seleccionado from relation de lotes asignados
+            foreach (var x in componentes)
             {
                 double.TryParse(x.PendingQuantity.ToString(), out double totalNecesario);
+
+                var lotes = await this.GetValidBatches(x.ProductId, x.Warehouse);
 
                 listToReturn.Add(new BatchesComponentModel
                 {
@@ -266,8 +269,10 @@ namespace Omicron.SapAdapter.Services.Sap
                     DescripcionProducto = x.Description,
                     TotalNecesario = totalNecesario,
                     TotalSeleccionado = 0,
+                    Lotes = lotes,
+                    LotesAsignados = new List<AssignedBatches>(),
                 });
-            });
+            }
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -359,6 +364,32 @@ namespace Omicron.SapAdapter.Services.Sap
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
             var users = await this.usersService.GetUsersById(userIDs);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        /// <summary>
+        /// Get the valid batches by component.
+        /// </summary>
+        /// <param name="item">the item.</param>
+        /// <param name="almacen">the almacen.</param>
+        /// <returns>the value.</returns>
+        private async Task<List<ValidBatches>> GetValidBatches(string item, string almacen)
+        {
+            var listToReturn = new List<ValidBatches>();
+            var product = (await this.sapDao.GetProductById(item)).FirstOrDefault();
+            var batches = (await this.sapDao.GetValidBatches(product.ProductoId, almacen)).ToList();
+
+            batches.ForEach(x =>
+            {
+                listToReturn.Add(new ValidBatches
+                {
+                    SysNumber = x.SysNumber,
+                    NumeroLote = x.DistNumber,
+                    CantidadAsignada = x.CommitQty,
+                    CantidadDisponible = x.Quantity,
+                });
+            });
+
+            return listToReturn;
         }
     }
 }

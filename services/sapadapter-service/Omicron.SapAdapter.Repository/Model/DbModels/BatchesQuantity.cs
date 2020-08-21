@@ -1,60 +1,63 @@
 ﻿// <summary>
-// <copyright file="BatchesComponentModel.cs" company="Axity">
+// <copyright file="BatchesQuantity.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.BusinessModels
+namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
-    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// The batch component.
+    /// the OBTQ table.
     /// </summary>
-    public class BatchesComponentModel
+    [Table("OBTQ")]
+    public class BatchesQuantity
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string CodigoProducto { get; set; }
+        [Column("AbsEntry")]
+        [Key]
+        public int AbsEntry { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string DescripcionProducto { get; set; }
+        [Column("ItemCode")]
+        public string ItemCode { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Almacen { get; set; }
+        [Column("SysNumber")]
+        public int SysNumber { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public double TotalNecesario { get; set; }
+        [Column("WhsCode")]
+        public string WhsCode { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public double TotalSeleccionado { get; set; }
+        [Column("Quantity")]
+        public decimal? Quantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<ValidBatches> Lotes { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public List<AssignedBatches> LotesAsignados { get; set; }
+        [Column("CommitQty")]
+        public decimal? CommitQty { get; set; }
     }
 }

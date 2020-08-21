@@ -107,5 +107,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="orderId">the pedido id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(int orderId);
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductById(string itemCode);
+
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse);
     }
 }

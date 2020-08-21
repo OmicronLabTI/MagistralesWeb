@@ -91,6 +91,22 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<Users> Users { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<BatchesQuantity> BatchesQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<Batches> Batches { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>
