@@ -336,5 +336,21 @@ namespace Omicron.Pedidos.Services.Utils
 
             return orderToSend;
         }
+
+        /// <summary>
+        /// Create a cancellation order fail object.
+        /// </summary>
+        /// <param name="cancellationModel">Model with data.</param>
+        /// <param name="reason">Fail reason.</param>
+        /// <returns>Formated object.</returns>
+        public static object CreateCancellationFail(CancelOrderModel cancellationModel, string reason)
+        {
+            return new
+            {
+                cancellationModel.OrderId,
+                cancellationModel.UserId,
+                reason,
+            };
+        }
     }
 }
