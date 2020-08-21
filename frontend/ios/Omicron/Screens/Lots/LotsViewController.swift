@@ -34,6 +34,11 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var lotsAvailable: UIView!
     @IBOutlet weak var lotsSelected: UIView!
     
+    @IBOutlet weak var saveButton: UIButton!
+    
+    @IBOutlet weak var lineDocumentosTable: UITableView!
+    @IBOutlet weak var lotsAvailablesTable: UITableView!
+    @IBOutlet weak var lotsSelectedTable: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,22 +56,32 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: "Total necesario", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "Total Seleccionado", fontSize: 15)
         
-        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Total Lotes", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad requerida", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad Seleccionada", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
         
-        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad disponible", fontSize: 15)
         
-        self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
-        self.removeLotButton.setImage(UIImage(named: ImageButtonNames.removeLot), for: .normal)
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         
+        self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
+        self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
+        self.addLotButton.setTitle("", for: .normal)
+        
+        self.removeLotButton.setImage(UIImage(named: ImageButtonNames.removeLot), for: .normal)
+        self.removeLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
+        self.removeLotButton.setTitle("", for: .normal)
         self.setStyleView(view: self.lineOfDocumentsView)
         self.setStyleView(view: self.lotsAvailable)
         self.setStyleView(view: self.lotsSelected)
+        
+        self.lineDocumentosTable.delegate = self
+        self.lotsAvailablesTable.delegate = self
+        self.lotsSelectedTable.delegate = self
     }
     
     func setStyleView(view: UIView) {
@@ -76,4 +91,18 @@ class LotsViewController: UIViewController {
         view.layer.shadowRadius = 5
         view.layer.cornerRadius = 10
     }
+}
+
+extension LotsViewController: UITableViewDelegate {
+    
+    // Pinta una fila o otra no en la tabla
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.selectionStyle = .none
+        if(indexPath.row%2 == 0) {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
+    }
+    
 }
