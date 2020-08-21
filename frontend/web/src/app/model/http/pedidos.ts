@@ -58,6 +58,7 @@ export class IPedidoReq {
 export class CancelOrderReq {
     userId?: string;
     orderId: number;
+    reason?: string;
 }
 export class ResponseCancel {
     failed: CancelOrderReq[];

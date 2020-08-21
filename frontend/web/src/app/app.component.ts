@@ -185,11 +185,9 @@ export class AppComponent implements OnDestroy , OnInit {
                     cancelOrders.forEach(order => order.userId = this.dataService.getUserId());
                     this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultCancelHttp => {
-                            console.log('resultCancel: ', resultCancelHttp)
                         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
                             const titleCancelWithError = this.dataService.getMessageTitle(
-                                resultCancelHttp.response.failed.map(cancelFail => cancelFail.orderId.toString())
-                                , MessageType.cancelOrder);
+                                resultCancelHttp.response.failed, MessageType.cancelOrder, true);
                             this.callHttpAboutModalFrom(resultCancel.cancelType);
                             this.dataService.presentToastCustom(titleCancelWithError, 'info',
                                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);

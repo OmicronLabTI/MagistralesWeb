@@ -6,6 +6,7 @@ import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders} from '../model/device/orders';
+import {CancelOrderReq} from '../model/http/pedidos';
 
 
 @Injectable({
@@ -145,7 +146,7 @@ export class DataService {
   transformDate(date: Date) {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
-  getMessageTitle(itemsWithError: string[], messageType: MessageType): string {
+  getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
     let firstMessage = '';
     let finishMessaje = '';
@@ -164,13 +165,17 @@ export class DataService {
         break;
       case MessageType.cancelOrder:
         firstMessage = 'La orden de fabricación ';
-        finishMessaje = 'no pudo ser Cancelado \n';
         break;
     }
-
-    itemsWithError.forEach(order => {
-      errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
-    });
+    if (!isFromCancel) {
+      itemsWithError.forEach(order => {
+        errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
+      });
+    } else {
+      itemsWithError.forEach((order: CancelOrderReq) => {
+        errorOrders += `${firstMessage} ${order.orderId} ${order.reason} \n`;
+      });
+    }
     return errorOrders;
   }
 }
