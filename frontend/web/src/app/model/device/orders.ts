@@ -1,3 +1,5 @@
+import {CancelOrderReq} from '../http/pedidos';
+
 export class PlaceOrders {
     placeOrdersData: {
         list: [],
@@ -6,6 +8,7 @@ export class PlaceOrders {
      };
 }
 export class CancelOrders {
-
+    list: CancelOrderReq[];
+    cancelType: string;
 }
 

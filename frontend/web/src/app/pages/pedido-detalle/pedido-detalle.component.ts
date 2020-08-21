@@ -7,7 +7,7 @@ import {DataService} from '../../services/data.service';
 import {CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import {ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 
 @Component({
@@ -37,6 +37,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToPlace = false;
   subscriptionCallHttpDetail = new Subscription();
   detailsOrderToProcess = new ProcessOrdersDetailReq();
+  isThereOrdersDetailToCancel = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title) {
@@ -68,6 +69,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
+        this.isThereOrdersDetailToCancel = false;
       }
     );
   }
@@ -101,9 +103,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   getButtonsToUnLooked() {
     this.isThereOrdersDetailToPlan = this.getIsThereOnData('Abierto');
     this.isThereOrdersDetailToPlace = this.getIsThereOnData('Planificado');
+    this.isThereOrdersDetailToCancel = this.getIsThereOnData('Finalizado', true);
   }
-  getIsThereOnData(status: string) {
-    return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+  getIsThereOnData(status: string, isFromCancelOrder = false) {
+    if (!isFromCancelOrder) {
+      return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+    } else {
+      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status)).length > 0;
+    }
   }
 
   ngOnDestroy() {
@@ -130,5 +137,15 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   setDescription(productCodeId: string, descriptionProduct: string) {
     this.dataService.setDetailOrderDescription(`${productCodeId} ${descriptionProduct}`);
+  }
+
+  cancelOrders() {
+    this.dataService.setCancelOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.status !== 'Finalizado')).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      }),
+      cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 }

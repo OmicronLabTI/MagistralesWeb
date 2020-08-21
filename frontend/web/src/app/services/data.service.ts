@@ -5,6 +5,7 @@ import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../con
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
+import {CancelOrders} from '../model/device/orders';
 
 
 @Injectable({
@@ -19,8 +20,15 @@ export class DataService {
   private messageGenericCallHttp = new Subject<GeneralMessage>();
   private isToSaVeAnything = false;
   private urlActive = new Subject<HttpServiceTOCall>();
+  private cancelOrders = new Subject<CancelOrders>();
   constructor(private datePipe: DatePipe) { }
 
+  setCancelOrders(cancelOrder: CancelOrders) {
+    this.cancelOrders.next(cancelOrder);
+  }
+  getCancelOrder() {
+    return this.cancelOrders.asObservable();
+  }
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
   }
@@ -140,16 +148,12 @@ export class DataService {
     let firstMessage = '';
     let finishMessaje = '';
     switch (messageType) {
-      case MessageType.processOrder:
-        firstMessage = 'El producto ';
-        finishMessaje = 'no pudo ser Planificado \n';
-        break;
       case MessageType.placeOrder:
         firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Asignada \n';
         break;
-      case MessageType.cancelOrder:
-        firstMessage = 'El producto ';
+      case MessageType.cancelDetailOrder:
+        firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Cancelado \n';
         break;
     }

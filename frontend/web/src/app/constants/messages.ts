@@ -15,5 +15,6 @@ export const Messages = {
   onlyPositiveNumber: 'Solo se aceptan números positivos',
   errorToAssignOrderAutomatic: 'Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual',
   errorToAssignOrderAutomaticSubtitle: 'Favor de verificar la información e intentarlo de nuevo',
-  cancelOrders: '¿Deseas cancelar el(los) pedido(s) seleccionado(s)?'
+  cancelOrders: '¿Deseas cancelar el(los) pedido(s) seleccionado(s)?',
+  cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s)? '
 };

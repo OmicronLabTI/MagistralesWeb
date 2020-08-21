@@ -56,7 +56,7 @@ export class IPedidoReq {
 }
 
 export class CancelOrderReq {
-    userId: string;
+    userId?: string;
     orderId: number;
 }
 export class ResponseCancel {

@@ -6,7 +6,6 @@ import {
   CONST_NUMBER,
   CONST_STRING,
   HttpServiceTOCall,
-  MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
@@ -81,6 +80,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
+        this.isThereOrdersToCancel = false;
       },
       error => {/// checar con gus para manejar errores
         this.errorService.httpError(error);
@@ -118,7 +118,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           () => {
-            this.onSuccessHttp();
+            this.getPedidos();
+            this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
           },
           error => {
             this.errorService.httpError(error);
@@ -231,30 +232,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.presentToastCustom(Messages.cancelOrders, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            const deleteOrders: CancelOrderReq [] = [];
-            this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== 'Finalizado')).forEach( order =>
-                deleteOrders.push({userId: this.dataService.getUserId(), orderId: order.docNum}));
-            console.log('cancelOrders', deleteOrders);
-            this.pedidosService.putCancelOrders(deleteOrders).subscribe( resultCancel => {
-                if (resultCancel.success && resultCancel.response.failed.length > 0) {
-                  const titleCancelWithError = this.dataService.getMessageTitle(
-                                                          resultCancel.response.failed.map( cancelFail => cancelFail.orderId.toString())
-                      , MessageType.cancelOrder);
-                  this.dataService.presentToastCustom(titleCancelWithError, 'info',
-                      Messages.errorToAssignOrderAutomaticSubtitle , true, false);
-                } else {
-                  this.onSuccessHttp();
-                }
-            }, error => this.errorService.httpError(error));
-          }
-        });
-
-  }
-  onSuccessHttp() {
-    this.getPedidos();
-    this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+    this.dataService.setCancelOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.pedidoStatus !== 'Finalizado')).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.docNum;
+        return cancelOrder;
+      }),
+        cancelType: MODAL_NAMES.placeOrders});
   }
 }

@@ -55,7 +55,8 @@ export class PedidosService {
   postPlaceOrderAutomatic(placeOrderAutomatic: IPlaceOrdersAutomaticReq) {
     return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrdersAutomatic, placeOrderAutomatic);
   }
-  putCancelOrders(cancelOrders: CancelOrderReq[]) {
-    return this.consumeService.httpPost<ICancelOrdersRes>(Endpoints.pedidos.cancelOrders, cancelOrders);
+  putCancelOrders(cancelOrders: CancelOrderReq[] , isCancelOrder: boolean) {
+    return this.consumeService.httpPut<ICancelOrdersRes>(isCancelOrder ? Endpoints.pedidos.cancelOrders :
+        Endpoints.pedidos.cancelOrdersDetail, cancelOrders);
   }
 }
