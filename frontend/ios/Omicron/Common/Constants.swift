@@ -99,6 +99,8 @@ struct ImageButtonNames {
     static let backReassigned = "backReassigned.png"
     static let backPendding = "backPendding.png"
     static let logout = "logout.png"
+    static let addLot = "proximo.png"
+    static let removeLot = "espalda.png"
 }
 
 struct IndicatorImageStatus {

@@ -18,7 +18,21 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var warehouseCodeLabel: UILabel!
     @IBOutlet weak var totalNeededLabel: UILabel!
     @IBOutlet weak var totalSelectedLabel: UILabel!
+    
+    @IBOutlet weak var lotsAvailableLabel: UILabel!
+    @IBOutlet weak var laLotsLabel: UILabel!
+    @IBOutlet weak var laQuantityAvailableLabel: UILabel!
+    @IBOutlet weak var laQuantitySelectedLabel: UILabel!
+    @IBOutlet weak var laQuantityAssignedLabel: UILabel!
+    @IBOutlet weak var lotsSelectedLabel: UILabel!
+    @IBOutlet weak var lsLotsLabel: UILabel!
+    @IBOutlet weak var lsQuantityAvailableLabel: UILabel!
+    @IBOutlet weak var addLotButton: UIButton!
+    @IBOutlet weak var removeLotButton: UIButton!
+    
     @IBOutlet weak var lineOfDocumentsView: UIView!
+    @IBOutlet weak var lotsAvailable: UIView!
+    @IBOutlet weak var lotsSelected: UIView!
     
     
     override func viewDidLoad() {
@@ -37,21 +51,29 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: "Total necesario", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "Total Seleccionado", fontSize: 15)
         
-        self.lineOfDocumentsView.layer.shadowColor = UIColor.black.cgColor
-        self.lineOfDocumentsView.layer.shadowOpacity = 0.2
-        self.lineOfDocumentsView.layer.shadowOffset  = CGSize(width: 0.1, height: 0.1)
-        self.lineOfDocumentsView.layer.shadowRadius = 5
-        self.lineOfDocumentsView.layer.cornerRadius = 10
+        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Total Lotes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad requerida", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad Seleccionada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
+        
+        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad disponible", fontSize: 15)
+        
+        self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
+        self.removeLotButton.setImage(UIImage(named: ImageButtonNames.removeLot), for: .normal)
+        
+        self.setStyleView(view: self.lineOfDocumentsView)
+        self.setStyleView(view: self.lotsAvailable)
+        self.setStyleView(view: self.lotsSelected)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func setStyleView(view: UIView) {
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowOffset  = CGSize(width: 0.1, height: 0.1)
+        view.layer.shadowRadius = 5
+        view.layer.cornerRadius = 10
     }
-    */
-
 }
