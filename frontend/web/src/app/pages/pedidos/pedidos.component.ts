@@ -5,7 +5,7 @@ import {DataService} from '../../services/data.service';
 import {
   CONST_NUMBER,
   CONST_STRING,
-  HttpServiceTOCall,
+  HttpServiceTOCall, MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
@@ -117,9 +117,17 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.ordersToProcess.listIds = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Abierto')).map(t => t.docNum);
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
-          () => {
-            this.getPedidos();
-            this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+          resProcessOrder => {
+            if (resProcessOrder.success && resProcessOrder.response.length > 0) {
+              const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
+              this.getPedidos();
+              this.dataService.presentToastCustom(titleProcessWithError, 'info',
+                  Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+            } else {
+              console.log('processOrder: ', resProcessOrder)
+              this.getPedidos();
+              this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+            }
           },
           error => {
             this.errorService.httpError(error);
@@ -174,7 +182,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
           this.queryString = `${this.queryString}&qfb=${result.qfb}`;
           this.filterDataOrders.qfb = result.qfb;
         }
-        // this.isSearchWithFilter = !!(result.docNum || (result.status && result.status !== '') || (result.qfb && result.qfb !== ''));
       }
       if ((result && result.dateType === '0') && (result && result.status === '' || result.qfb === '')) {
         this.isSearchWithFilter = false;

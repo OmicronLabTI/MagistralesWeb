@@ -132,6 +132,7 @@ export class DataService {
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
         buttonsStyling: false,
+
         customClass: {
           container: 'swal2-actions',
           confirmButton: 'confirm-button-class',
@@ -148,11 +149,19 @@ export class DataService {
     let firstMessage = '';
     let finishMessaje = '';
     switch (messageType) {
+      case MessageType.processOrder:
+        firstMessage = 'El producto ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.processDetailOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
       case MessageType.placeOrder:
         firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Asignada \n';
         break;
-      case MessageType.cancelDetailOrder:
+      case MessageType.cancelOrder:
         firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Cancelado \n';
         break;

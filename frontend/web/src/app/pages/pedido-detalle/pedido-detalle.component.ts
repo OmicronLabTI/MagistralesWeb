@@ -4,7 +4,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
@@ -125,12 +125,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             this.detailsOrderToProcess.userId = this.dataService.getUserId();
             this.detailsOrderToProcess.productId =
                 this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
-            this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(() => {
-              this.getDetallePedido();
-              this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+            this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
+              // console.log('process detail: ', resultProcessDetail)
+              // resultProcessDetail.response = ['Aspirina'];
+              if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
+                const titleProcessDetailWithError = this.dataService.getMessageTitle(
+                    resultProcessDetail.response, MessageType.processDetailOrder);
+                this.getDetallePedido();
+                this.dataService.presentToastCustom(titleProcessDetailWithError, 'info',
+                    Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+              } else {
+                this.getDetallePedido();
+                this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+              }
             }, () => this.dataService.presentToastCustom(Messages.generic, 'info', CONST_STRING.empty, false, false)
           );
-            console.log('toProcess: ', this.detailsOrderToProcess);
           }
         } );
   }

@@ -164,6 +164,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/fabOrder/cancel")]
+        [HttpPut]
+        public async Task<IActionResult> CancelFabOrder(List<CancelOrderDto> cancelOrders)
+        {
+            var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// connects the DI api.
         /// </summary>
         /// <returns>the connection.</returns>

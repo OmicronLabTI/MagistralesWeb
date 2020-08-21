@@ -50,7 +50,7 @@ export class PedidosService {
     return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
   }
   postPlaceOrdersDetail(placeOrderDetail: ProcessOrdersDetailReq) {
-    return this.consumeService.httpPost(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
+    return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
   }
   postPlaceOrderAutomatic(placeOrderAutomatic: IPlaceOrdersAutomaticReq) {
     return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrdersAutomatic, placeOrderAutomatic);
