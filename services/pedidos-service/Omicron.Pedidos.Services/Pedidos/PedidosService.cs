@@ -405,14 +405,19 @@ namespace Omicron.Pedidos.Services.Pedidos
                     continue;
                 }
 
-                // Update fabrication order in SAP.
-                var payload = new { OrderId = order.Productionorderid };
-                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                var cancelledOnSap = true;
 
-                if (result.Success &&
-                    (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled)))
+                // Process to cancel a fabrication order in SAP.
+                if (!string.IsNullOrEmpty(order.Productionorderid))
                 {
-                    // Update local db.
+                    var payload = new { OrderId = order.Productionorderid };
+                    var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
+                    cancelledOnSap = result.Success && (result.Response.ToString().Equals(ServiceConstants.Ok) || result.Response.ToString().Equals(ServiceConstants.ErrorProductionOrderCancelled));
+                }
+
+                // Process to cancel on local db
+                if (cancelledOnSap)
+                {
                     order.Status = ServiceConstants.Cancelled;
                     successfuly.Add(newOrderInfo);
                     logs.AddRange(ServiceUtils.CreateOrderLog(newOrderInfo.UserId, new List<int> { newOrderInfo.OrderId }, string.Format(ServiceConstants.OrderCancelled, newOrderInfo.OrderId), level));
@@ -431,7 +436,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 success = successfuly.Distinct(),
                 failed = failed.Distinct(),
             };
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(results), null);
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
     }
 }
