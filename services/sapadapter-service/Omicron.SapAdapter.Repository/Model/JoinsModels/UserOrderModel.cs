@@ -50,5 +50,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// <value>
         /// String status.
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comments.
+        /// </summary>
+        /// <value>
+        /// String comments.
+        public string Comments { get; set; }
     }
 }

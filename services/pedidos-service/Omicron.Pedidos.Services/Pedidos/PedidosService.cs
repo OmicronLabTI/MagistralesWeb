@@ -164,6 +164,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderByProducionOrder(listIdString);
+            return ServiceUtils.CreateResult(true, 200, null, orders, null);
+        }
+
+        /// <summary>
         /// Gets the QFB orders (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -213,6 +225,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
+            if (resultSapApi.Success)
+            {
+                var resultMessages = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
+                if (resultMessages.Any(x => x.Value.Equals("Ok")))
+                {
+                    await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
+                }
+            }
+
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }
 
@@ -239,6 +260,54 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(ordersList), null);
+        }
+
+        /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments)
+        {
+            var successfuly = new List<UserOrderModel>();
+            var failed = new List<UpdateOrderCommentsModel>();
+
+            foreach (var item in updateComments)
+            {
+                var result = await this.UpdateFabOrderComments(item.OrderId, item.Comments);
+                if (result != null)
+                {
+                    successfuly.Add(result);
+                }
+                else
+                {
+                    failed.Add(item);
+                }
+            }
+
+            var resultContent = new { successfuly, failed };
+            return ServiceUtils.CreateResult(true, 200, null, resultContent, null);
+        }
+
+        /// <summary>
+        ///  Update order comments.
+        /// </summary>
+        /// <param name="fabOrderId">Order to update.</param>
+        /// <param name="comments">Comment to set.</param>
+        /// <returns>Updated order. </returns>
+        public async Task<UserOrderModel> UpdateFabOrderComments(int fabOrderId, string comments)
+        {
+            var fabOrderToUpdate = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { fabOrderId.ToString() })).FirstOrDefault();
+
+            if (fabOrderToUpdate == null)
+            {
+                return null;
+            }
+
+            var listOrderLogs = new List<OrderLogModel>();
+            fabOrderToUpdate.Comments = comments;
+            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { fabOrderToUpdate });
+            return fabOrderToUpdate;
         }
 
         /// <summary>

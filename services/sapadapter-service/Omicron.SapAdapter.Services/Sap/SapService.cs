@@ -159,6 +159,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
+            var result = await this.pedidosService.GetFabricationOrders(ordenFab.Select(x => x.OrdenId).ToList());
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+
             foreach (var o in ordenFab)
             {
                 if (!dictUser.ContainsKey(o.User))
@@ -168,6 +171,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+
+                var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
+                var comments = userOrder != null ? userOrder.Comments : string.Empty;
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
@@ -193,7 +199,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     RealEndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
-                    Comments = o.Comments,
+                    Comments = comments,
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 

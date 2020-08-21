@@ -264,4 +264,11 @@
 		<column name="field" value="MaxUserOrders"/>
 	</insert>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.32">
+	<addColumn tableName="usersorders" >
+    <column name="comments" type="varchar(500)"> 
+      <constraints nullable="true" />  
+		</column>
+	</addColumn>
+  </changeSet>
 </databaseChangeLog> 
