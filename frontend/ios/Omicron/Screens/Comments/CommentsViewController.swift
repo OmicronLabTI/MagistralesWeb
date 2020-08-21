@@ -7,12 +7,57 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
+import Resolver
 
 class CommentsViewController: UIViewController {
-
+    
+    // MARK: -Outlets
+    @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var labelView: UIView!
+    @IBOutlet weak var buttonsView: UIView!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var aceptButton: UIButton!
+    
+    // MARK: -Variables
+    @Injected var commentsViewModel: CommentsViewModel
+    var disposeBag = DisposeBag()
+    
+    // MARK: - LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        self.initComponents()
+        self.viewModelBinding()
+    }
+    
+    //MARK: - Functions
+    func viewModelBinding() -> Void {
+        self.cancelButton.rx.tap.bind(to: commentsViewModel.cancelDidTap).disposed(by: self.disposeBag)
+        self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)
+    }
+    
+    func initComponents() -> Void {
+        self.mainView.layer.cornerRadius = 50
+        self.labelView.backgroundColor = OmicronColors.comments
+        self.buttonsView.backgroundColor = OmicronColors.comments
+        
+        self.titleLabel.text = "Comentarios"
+        self.titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        
+        self.cancelButton.setTitle("Cancelar", for: .normal)
+        self.cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        self.cancelButton.setTitleColor(.red, for: .normal)
+        
+        self.aceptButton.setTitle("Aceptar", for: .normal)
+        self.aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        
+        self.textView.text = ""
+        self.textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 18)
     }
     
 
@@ -27,3 +72,5 @@ class CommentsViewController: UIViewController {
     */
 
 }
+
+

@@ -30,7 +30,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var startDateDescriptionLabel: UILabel!
     @IBOutlet weak var finishedDateDescriptionLabel: UILabel!
     @IBOutlet weak var productDescritionLabel: UILabel!
-    @IBOutlet weak var commentsButton: UIButton!
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
@@ -48,7 +47,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
-    
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType: String = ""
@@ -88,6 +86,14 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
 
     //MARK: Functions
+    @objc func goToCommentsViewController() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
+        commentsVC.modalPresentationStyle = .overCurrentContext
+        self.present(commentsVC, animated: true, completion: nil)
+    
+    }
+    
     func viewModelBinding() {
         
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
@@ -156,8 +162,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
     
     func initComponents() -> Void {
-
-        self.commentsButton.isHidden = true
+        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
+        self.navigationItem.rightBarButtonItem = comments
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)

@@ -32,6 +32,7 @@ struct ViewControllerIdentifiers {
     static let orderDetailFormViewController = "OrderDetailFormViewController"
     static let loginViewController = "LoginViewController"
     static let lotsViewController = "LotsViewController"
+    static let commentsViewController = "CommentsViewController"
 }
 
 struct OmicronColors {
@@ -44,6 +45,7 @@ struct OmicronColors {
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
+    static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
 }
 
 struct UsersDefaultsConstants {

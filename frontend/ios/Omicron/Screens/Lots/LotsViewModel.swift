@@ -6,4 +6,10 @@
 //  Copyright © 2020 Diego Cárcamo. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import RxCocoa
+import RxSwift
+
+class LotsViewModel {
+
+}

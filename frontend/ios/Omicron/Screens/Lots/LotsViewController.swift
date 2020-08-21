@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+
 
 class LotsViewController: UIViewController {
     
@@ -40,12 +43,14 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var lotsAvailablesTable: UITableView!
     @IBOutlet weak var lotsSelectedTable: UITableView!
     
+    // MARK: -Variables
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
         
     }
     
+    // MARK: - Functions
     func initComponents() {
         self.title = "Lotes"
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
