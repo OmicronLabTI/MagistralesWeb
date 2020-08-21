@@ -58,6 +58,8 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.ItemWarehouseModel.AddRange(this.GetItemWareHouse());
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
+            this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
+            this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();

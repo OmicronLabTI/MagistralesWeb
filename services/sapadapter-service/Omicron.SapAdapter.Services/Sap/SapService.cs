@@ -357,7 +357,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (lastTransaction == null)
             {
-                return null;
+                return new List<AssignedBatches>();
             }
 
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(lastTransaction.LogEntry)).ToList();

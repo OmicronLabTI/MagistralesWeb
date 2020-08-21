@@ -139,6 +139,30 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// returns  data.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<BatchTransacitions> GetBatchTransacitions()
+        {
+            return new List<BatchTransacitions>
+            {
+                new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+            };
+        }
+
+        /// <summary>
+        /// gets the transaction qty model.
+        /// </summary>
+        /// <returns>the model.</returns>
+        public List<BatchesTransactionQtyModel> GetBatchesTransactionQtyModel()
+        {
+            return new List<BatchesTransactionQtyModel>
+            {
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+            };
+        }
+
+        /// <summary>
         /// get the product.
         /// </summary>
         /// <returns>the product.</returns>
