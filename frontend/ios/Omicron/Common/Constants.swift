@@ -31,6 +31,7 @@ struct ViewControllerIdentifiers {
     static let detailTableViewCell = "DetailTableViewCell"
     static let orderDetailFormViewController = "OrderDetailFormViewController"
     static let loginViewController = "LoginViewController"
+    static let lotsViewController = "LotsViewController"
 }
 
 struct OmicronColors {

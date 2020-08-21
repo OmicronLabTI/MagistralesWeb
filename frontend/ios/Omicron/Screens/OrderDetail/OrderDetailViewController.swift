@@ -57,29 +57,29 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Life Cycles
     override func viewDidLoad() {
-//        super.viewDidLoad()
-//        self.title = "Detallé de la fórmula"
-//        splitViewController!.preferredDisplayMode = .allVisible
-//        self.showButtonsByStatusType(statusType: statusType)
-//        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
-//        self.initComponents()
-//        self.viewModelBinding()
-//        self.tableView.allowsMultipleSelectionDuringEditing = false
-//        tableView.delegate = self
-//        tableView.setEditing(false, animated: true)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        self.title = "Detalle de la fórmula"
+        super.viewDidLoad()
+        self.title = "Detallé de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
-        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+        //self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.delegate = self
         tableView.setEditing(false, animated: true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        //self.title = "Detalle de la fórmula"
+        splitViewController!.preferredDisplayMode = .allVisible
+        //self.showButtonsByStatusType(statusType: statusType)
+        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+//        self.initComponents()
+//        self.viewModelBinding()
+//        self.tableView.allowsMultipleSelectionDuringEditing = false
+//        tableView.delegate = self
+//        tableView.setEditing(false, animated: true)
     }
         
     override func viewDidAppear(_ animated: Bool) {
@@ -94,8 +94,14 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             self.navigationController?.popViewController(animated: true)
         }).disposed(by: self.disposeBag)
         
-        processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
+        self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
+            self.navigationController?.pushViewController(lotsVC, animated: true)
+        }).disposed(by: self.disposeBag)
         
+        self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
+        self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
         self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in self.changeStatus(response: "Cancelar")})
@@ -185,15 +191,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func showButtonsByStatusType(statusType: String) -> Void {
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: false, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: false, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: false, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
             print("")
         }
@@ -201,11 +207,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,hideAddCompBtn: Bool,hideSaveBtn: Bool,hideSeeLotsBtn: Bool) -> Void {
         self.processButton.isHidden = hideProcessBtn
-        self.finishedButton.isHidden = true
-        self.penddingButton.isHidden = true
-        self.addComponentButton.isHidden = true
-        self.saveButton.isHidden = true
-        self.seeLotsButton.isHidden = true
+        self.finishedButton.isHidden = hideFinishedBtn
+        self.penddingButton.isHidden = hidePendinBtn
+        self.addComponentButton.isHidden = hideAddCompBtn
+        self.saveButton.isHidden = hideSaveBtn
+        self.seeLotsButton.isHidden = hideSeeLotsBtn
     }
     
     

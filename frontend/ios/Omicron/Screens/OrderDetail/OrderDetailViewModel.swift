@@ -23,13 +23,20 @@ class OrderDetailViewModel {
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
     var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
+    var seeLotsButtonDidTap = PublishSubject<Void>()
+    var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    
     
     // MARK: Init
     init() {
         
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
             self.showAlertConfirmation.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        }).disposed(by: self.disposeBag)
+        
+        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
+            self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
 
     }
