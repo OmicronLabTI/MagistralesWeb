@@ -386,5 +386,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 
             return listToReturn;
         }
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId)
+        {
+            return await this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry)
+        {
+            return await this.databaseContext.BatchesTransactionQtyModel.Where(x => x.LogEntry == logEntry).ToListAsync();
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public double CantidadSeleccionada { get; set; }
+        public decimal CantidadSeleccionada { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

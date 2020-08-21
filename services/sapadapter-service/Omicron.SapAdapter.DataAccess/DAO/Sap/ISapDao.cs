@@ -122,5 +122,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse);
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId);
+
+        /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry);
     }
 }
