@@ -86,6 +86,18 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Cancel production order by id
+        /// </summary>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("batches")]
+        public async Task<IHttpActionResult> UpdateBatches()
+        {
+            var result = await this.sapFacade.UpdateBatches();
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>
