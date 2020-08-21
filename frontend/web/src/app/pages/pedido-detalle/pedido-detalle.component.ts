@@ -4,7 +4,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from '../../constants/const';
+import {ClassNames, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
@@ -97,7 +97,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   openPlaceOrderDialog() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.status === 'Planificado').map(order => order.ordenFabricacionId)});
+      list: this.dataSource.data.filter(t => t.isChecked && t.status === 'Planificado').map(order => order.ordenFabricacionId)});
   }
 
   getButtonsToUnLooked() {
@@ -109,7 +109,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     if (!isFromCancelOrder) {
       return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
     } else {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status)).length > 0;
+      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== 'Cancelado'
+          && t.status !== 'Abierto')).length > 0;
     }
   }
 
@@ -126,14 +127,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             this.detailsOrderToProcess.productId =
                 this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
             this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
-              // console.log('process detail: ', resultProcessDetail)
-              // resultProcessDetail.response = ['Aspirina'];
               if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
                 const titleProcessDetailWithError = this.dataService.getMessageTitle(
                     resultProcessDetail.response, MessageType.processDetailOrder);
                 this.getDetallePedido();
                 this.dataService.presentToastCustom(titleProcessDetailWithError, 'info',
-                    Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+                    Messages.errorToAssignOrderAutomaticSubtitle, true, false,  ClassNames.popupCustom);
               } else {
                 this.getDetallePedido();
                 this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });

@@ -4,7 +4,7 @@ import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material';
 import {AppConfig} from './constants/app-config';
 import {Router} from '@angular/router';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from './constants/const';
+import {ClassNames, CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -165,12 +165,11 @@ export class AppComponent implements OnDestroy , OnInit {
 
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string) {
-      console.log('placeOrders: ', resPlaceOrders, ' modalType: ', modalType)
       if (resPlaceOrders.success && resPlaceOrders.response.length > CONST_NUMBER.zero) {
           const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
           this.callHttpAboutModalFrom(modalType);
           this.dataService.presentToastCustom(titleItemsWithError, 'info',
-              Messages.errorToAssignOrderAutomaticSubtitle , true, false);
+              Messages.errorToAssignOrderAutomaticSubtitle , true, false, ClassNames.popupCustom);
       } else {
           this.createDialogHttpOhAboutTypePlace(modalType);
       }
@@ -193,7 +192,7 @@ export class AppComponent implements OnDestroy , OnInit {
                                 , MessageType.cancelOrder);
                             this.callHttpAboutModalFrom(resultCancel.cancelType);
                             this.dataService.presentToastCustom(titleCancelWithError, 'info',
-                                Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+                                Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
                         } else {
                             this.createDialogHttpOhAboutTypePlace(resultCancel.cancelType);
                         }

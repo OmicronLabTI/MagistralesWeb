@@ -119,7 +119,7 @@ export class DataService {
     return !!localStorage.getItem('token-omi');
   }
   presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
-                     showConfirmButton: boolean = false, showCancelButton: boolean = false) {
+                     showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
     return new Promise (resolve => {
       Swal.fire({
         title,
@@ -135,6 +135,7 @@ export class DataService {
 
         customClass: {
           container: 'swal2-actions',
+          popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
         }

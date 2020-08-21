@@ -3,6 +3,7 @@ import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
 import {
+  ClassNames,
   CONST_NUMBER,
   CONST_STRING,
   HttpServiceTOCall, MessageType,
@@ -122,9 +123,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
               const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
               this.getPedidos();
               this.dataService.presentToastCustom(titleProcessWithError, 'info',
-                  Messages.errorToAssignOrderAutomaticSubtitle, true, false);
+                  Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
-              console.log('processOrder: ', resProcessOrder)
               this.getPedidos();
               this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
             }

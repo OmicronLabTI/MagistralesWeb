@@ -50,6 +50,9 @@ export enum MessageType {
     cancelOrder,
     cancelDetailOrder
 }
+export const ClassNames = {
+    popupCustom: 'popup-custom'
+};
 
 export const RoleQfbId = 2;
 
