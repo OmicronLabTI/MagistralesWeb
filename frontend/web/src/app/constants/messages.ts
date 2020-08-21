@@ -8,7 +8,7 @@ export const Messages = {
   placeOrder: '¿Deseas asignar el(los) pedido(s) seleccionado(s) a',
   placeOrderAutomatic: '¿Deseas asignar el(los) pedido(s) de forma automática?',
   placeOrderDetail: '¿Deseas asignar la(las) orden(es) seleccionada(s) a',
-  deleteComponents: '¿Deseas eliminar el(los) componente seleccionado(s)?',
+  deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s)?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
