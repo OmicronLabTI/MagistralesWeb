@@ -164,6 +164,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderByProducionOrder(listIdString);
+            return ServiceUtils.CreateResult(true, 200, null, orders, null);
+        }
+
+        /// <summary>
         /// Gets the QFB orders (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -239,6 +251,29 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(ordersList), null);
+        }
+
+        /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments)
+        {
+            var fabOrders = updateComments.Select(x => x.OrderId.ToString()).ToList();
+            var fabOrdersToUpdate = (await this.pedidosDao.GetUserOrderByProducionOrder(fabOrders)).ToList();
+
+            var listOrderLogs = new List<OrderLogModel>();
+
+            fabOrdersToUpdate.ForEach(x =>
+            {
+                var newInfo = updateComments.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
+                x.Comments = newInfo.Comments;
+            });
+
+            await this.pedidosDao.UpdateUserOrders(fabOrdersToUpdate);
+
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(fabOrdersToUpdate), null);
         }
 
         /// <summary>

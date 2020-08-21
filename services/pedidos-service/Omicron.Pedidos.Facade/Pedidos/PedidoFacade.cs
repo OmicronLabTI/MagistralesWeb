@@ -60,6 +60,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderByFabOrder(listIds));
+        }
+
+        /// <summary>
         /// Gets the orders of a specific QFB (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -107,6 +117,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateStatusOrder(this.mapper.Map<List<UpdateStatusOrderModel>>(updateStatus)));
+        }
+
+        /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateFabOrderComments(this.mapper.Map<List<UpdateOrderCommentsModel>>(updateComments)));
         }
 
         /// <summary>

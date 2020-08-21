@@ -32,6 +32,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetUserOrderBySalesOrder(List<int> listIds);
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds);
+
+        /// <summary>
         /// Gets the orders of a specific QFB (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -65,6 +72,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="updateStatus">the status object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus);
+
+        /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments);
 
         /// <summary>
         /// gets the connection to DI api.

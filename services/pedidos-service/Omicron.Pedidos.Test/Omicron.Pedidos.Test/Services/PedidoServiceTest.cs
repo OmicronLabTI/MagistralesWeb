@@ -142,6 +142,23 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task GetUserOrderByFabOrder()
+        {
+            // arrange
+            var listIds = new List<int> { 100, 101, 102 };
+
+            // act
+            var response = await this.pedidosService.GetUserOrderByFabOrder(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task GetFabOrderByUserID()
         {
             // arrange
@@ -441,6 +458,31 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Update fabrication order comments.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(103)]
+        public async Task UpdateFabOrderComments(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+
+            var orderToUpdate = new List<UpdateOrderCommentsModel>
+            {
+                new UpdateOrderCommentsModel { UserId = userId, OrderId = orderId, Comments = "Hello" },
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateFabOrderComments(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

@@ -44,6 +44,8 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<CancelOrderModel, CancelOrderDto>();
             this.CreateMap<AutomaticAssingDto, AutomaticAssingModel>();
             this.CreateMap<AutomaticAssingModel, AutomaticAssingDto>();
+            this.CreateMap<UpdateOrderCommentsDto, UpdateOrderCommentsModel>();
+            this.CreateMap<UpdateOrderCommentsModel, UpdateOrderCommentsDto>();
         }
     }
 }

@@ -73,6 +73,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/fabOrder")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            var response = await this.pedidoFacade.GetUserOrderByFabOrder(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// gets the user order for Ipad cards.
         /// </summary>
         /// <param name="userId">the ids.</param>
@@ -160,6 +173,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> CancelOrder(List<CancelOrderDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Change fabrication order comments.
+        /// </summary>
+        /// <param name="updateComments">the order info.</param>
+        /// <returns>the order.</returns>
+        [Route("/fabOrder/comments")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments)
+        {
+            var response = await this.pedidoFacade.UpdateFabOrderComments(updateComments);
             return this.Ok(response);
         }
 
