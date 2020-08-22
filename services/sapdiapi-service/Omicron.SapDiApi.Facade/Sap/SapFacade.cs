@@ -84,10 +84,11 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <summary>
         /// Upfate the batches.
         /// </summary>
+        /// <param name="assginBatches">The assign batches.</param>
         /// <returns>the batches.</returns>
-        public async Task<ResultDto> UpdateBatches()
+        public async Task<ResultDto> UpdateBatches(List<AssginBatchDto> assginBatches)
         {
-            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateBatches(new List<UpdateBatches>()));
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assginBatches)));
         }
     }
 }

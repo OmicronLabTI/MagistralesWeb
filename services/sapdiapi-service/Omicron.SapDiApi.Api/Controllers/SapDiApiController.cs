@@ -91,9 +91,9 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// <returns>the reult.</returns>
         [HttpPost]
         [Route("batches")]
-        public async Task<IHttpActionResult> UpdateBatches()
+        public async Task<IHttpActionResult> UpdateBatches(List<AssginBatchDto> assginBatches)
         {
-            var result = await this.sapFacade.UpdateBatches();
+            var result = await this.sapFacade.UpdateBatches(assginBatches);
             return this.Ok(result);
         }
 

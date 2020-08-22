@@ -50,7 +50,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="updateBatches">the update batches.</param>
         /// <returns>the batches updated.</returns>
-        Task<ResultModel> UpdateBatches(List<UpdateBatches> updateBatches);
+        Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches);
 
         /// <summary>
         /// Connects to SAP.
