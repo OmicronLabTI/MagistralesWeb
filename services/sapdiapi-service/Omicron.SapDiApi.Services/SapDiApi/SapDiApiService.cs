@@ -262,41 +262,55 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="updateBatches">the update batches.</param>
         /// <returns>the batches updated.</returns>
-        public async Task<ResultModel> UpdateBatches(List<UpdateBatches> updateBatches)
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches)
         {
-            var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
-            var orderFab = productionOrderObj.GetByKey(89111);
+            var dictResult = new Dictionary<string, string>();
+            var listyGrouped = updateBatches.GroupBy(x => x.OrderId).ToList();
 
-            var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
-            
-            components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, 89111));
-            for (var i = 0; i < components.RecordCount; i++)
+            foreach (var group in listyGrouped)
             {
-                var lineNum = components.Fields.Item("VisOrder").Value;
-                productionOrderObj.Lines.SetCurrentLine(lineNum);
-                var aca = productionOrderObj.Lines.BatchNumbers.Count;
+                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                var orderFab = productionOrderObj.GetByKey(group.Key);
 
-                for (var j = 0; j < aca; j++)
+                if (!orderFab)
                 {
-                    productionOrderObj.Lines.BatchNumbers.SetCurrentLine(j);
-                    var algo = productionOrderObj.Lines.BatchNumbers.Quantity;
-                    var a = productionOrderObj.Lines.BatchNumbers.AddmisionDate;
-                    var b = productionOrderObj.Lines.BatchNumbers.BaseLineNumber;
-                    var c = productionOrderObj.Lines.BatchNumbers.BatchNumber;
-                    var d = productionOrderObj.Lines.BatchNumbers.InternalSerialNumber;
-                    var e = productionOrderObj.Lines.BatchNumbers.ManufacturerSerialNumber;
-                    var f = productionOrderObj.Lines.BatchNumbers.TrackingNote;
+                    dictResult = this.AddResult($"{group.Key}-{group.Key}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
+                    continue;
                 }
+
+                var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, group.Key));
+
+                for (var i = 0; i < components.RecordCount; i++)
+                {
+                    var lineNum = components.Fields.Item("VisOrder").Value;
+                    var itemCode = components.Fields.Item("ItemCode").Value;
+
+                    if (!group.Any(x => x.ItemCode == itemCode))
+                    {
+                        continue;
+                    }
+
+                    var batchToAssign = group.FirstOrDefault(x => x.ItemCode == itemCode);
+                    productionOrderObj.Lines.SetCurrentLine(lineNum);
+
+                    if (batchToAssign.Action.Equals(ServiceConstants.UpdateBatch) || batchToAssign.Action.Equals(ServiceConstants.InsertBatch))
+                    {
+                        productionOrderObj.Lines.BatchNumbers.Add();
+                        productionOrderObj.Lines.BatchNumbers.Quantity = batchToAssign.AssignedQty;
+                        productionOrderObj.Lines.BatchNumbers.BatchNumber = batchToAssign.BatchNumber;
+                    }
+                    else if (batchToAssign.Action.Equals(ServiceConstants.DeleteBatch))
+                    {
+                        productionOrderObj.Lines.BatchNumbers.Add();
+                    }
+                }
+
+                var updated = productionOrderObj.Update();
+                dictResult = this.AddResult($"{group.Key}-{group.Key}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             }
 
-            productionOrderObj.Lines.BatchNumbers.Add();
-            productionOrderObj.Lines.BatchNumbers.Quantity = 0.009;
-            productionOrderObj.Lines.BatchNumbers.BatchNumber = "P1907291";
-
-            var updated = productionOrderObj.Update();
-
-            return new ResultModel();
-
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
 
         /// <summary>

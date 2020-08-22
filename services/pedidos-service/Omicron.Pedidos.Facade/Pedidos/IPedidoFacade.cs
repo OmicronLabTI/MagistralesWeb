@@ -99,5 +99,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="automaticAssing">the assign object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
+
+        /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
     }
 }

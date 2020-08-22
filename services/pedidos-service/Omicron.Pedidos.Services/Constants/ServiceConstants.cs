@@ -179,6 +179,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
+        /// the update batches.
+        /// </summary>
+        public const string UpdateBatches = "batches";
+
+        /// <summary>
         /// route to cancel orders.
         /// </summary>
         public const string CancelFabOrder = "cancelProductionOrder";

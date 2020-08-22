@@ -187,5 +187,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.ConnectDiApi();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="assignBatches">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/assignBatches")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateBatches(List<AssignBatchDto> assignBatches)
+        {
+            var response = await this.pedidoFacade.UpdateBatches(assignBatches);
+            return this.Ok(response);
+        }
     }
 }

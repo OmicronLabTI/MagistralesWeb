@@ -543,6 +543,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Makes the call to assign batches.
+        /// </summary>
+        /// <param name="assignBatches">the batches.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
+        {
+            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

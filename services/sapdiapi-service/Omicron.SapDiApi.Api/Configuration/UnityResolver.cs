@@ -50,6 +50,7 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<UpdateFormulaModel, UpdateFormulaDto>();
                 cfg.CreateMap<UpdateFormulaDto, UpdateFormulaModel>();
                 cfg.CreateMap<CancelOrderDto, CancelOrderModel>();
+                cfg.CreateMap<AssginBatchDto, AssignBatchModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 

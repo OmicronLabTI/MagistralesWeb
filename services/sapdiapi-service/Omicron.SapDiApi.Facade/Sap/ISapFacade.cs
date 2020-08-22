@@ -44,8 +44,9 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <summary>
         /// Upfate the batches.
         /// </summary>
+        /// <param name="assginBatches">Assign batches.</param>
         /// <returns>the batches.</returns>
-        Task<ResultDto> UpdateBatches();
+        Task<ResultDto> UpdateBatches(List<AssginBatchDto> assginBatches);
 
         /// <summary>
         /// connecto to sap.

@@ -157,5 +157,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.AutomaticAssign(this.mapper.Map<AutomaticAssingModel>(automaticAssing)));
         }
+
+        /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assignBatch)));
+        }
     }
 }
