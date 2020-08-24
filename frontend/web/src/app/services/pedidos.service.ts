@@ -3,7 +3,13 @@ import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
-import {IPedidosListRes, IProcessOrdersRes, ProcessOrdersDetailReq} from '../model/http/pedidos';
+import {
+  CancelOrderReq, ICancelOrdersRes,
+  IPedidosListRes,
+  IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
+  IProcessOrdersRes,
+  ProcessOrdersDetailReq
+} from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 import {RoleQfbId} from '../constants/const';
 
@@ -35,7 +41,7 @@ export class PedidosService {
     return this.consumeService.httpGet<IQfbWithNumberRes>(`${Endpoints.users.qfbsWithOrders}`);
   }
   postPlaceOrders(placeOrder: IPlaceOrdersReq) {
-    return this.consumeService.httpPost(Endpoints.pedidos.placeOrders, placeOrder);
+    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrders, placeOrder);
   }
   getComponents(queryStringComponents: string) {
     return this.consumeService.httpGet<IComponentsRes>(`${Endpoints.pedidos.getComponents}${queryStringComponents}`);
@@ -44,6 +50,13 @@ export class PedidosService {
     return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
   }
   postPlaceOrdersDetail(placeOrderDetail: ProcessOrdersDetailReq) {
-    return this.consumeService.httpPost(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
+    return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);
+  }
+  postPlaceOrderAutomatic(placeOrderAutomatic: IPlaceOrdersAutomaticReq) {
+    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrdersAutomatic, placeOrderAutomatic);
+  }
+  putCancelOrders(cancelOrders: CancelOrderReq[] , isCancelOrder: boolean) {
+    return this.consumeService.httpPut<ICancelOrdersRes>(isCancelOrder ? Endpoints.pedidos.cancelOrders :
+        Endpoints.pedidos.cancelOrdersDetail, cancelOrders);
   }
 }
