@@ -98,6 +98,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder == null ? string.Empty : userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
+                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? string.Empty : string.Empty;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
