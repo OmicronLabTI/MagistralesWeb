@@ -55,8 +55,10 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd" },
                 new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd" },
                 new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc" },
-                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "102", Status = "Proceso", Userid = "abc" },
-                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc" },
+                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "101", Status = "Proceso", Userid = "abc" },
+                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "101", Status = "Cancelado", Userid = "abc" },
+                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc" },
+                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc" },
             };
         }
 

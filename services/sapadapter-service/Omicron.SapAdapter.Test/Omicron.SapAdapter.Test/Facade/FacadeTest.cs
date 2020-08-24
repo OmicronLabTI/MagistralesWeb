@@ -79,6 +79,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetComponents(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetBatchesComponents(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
         }
 
@@ -199,6 +203,28 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetComponents(component);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetBatchesComponents()
+        {
+            // arrange
+            var ordenId = 1;
+
+            // act
+            var response = await this.sapFacade.GetBatchesComponents(ordenId);
 
             // Assert
             Assert.IsNotNull(response);

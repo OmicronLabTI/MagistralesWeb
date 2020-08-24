@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
 
     /// <summary>
@@ -82,6 +83,59 @@ namespace Omicron.SapAdapter.Services.Utils
                     yield return element;
                 }
             }
+        }
+
+        /// <summary>
+        /// filters the list by the params.
+        /// </summary>
+        /// <param name="orderModels">the list of data.</param>
+        /// <param name="parameters">the params.</param>
+        /// <param name="userOrder">the usr orders.</param>
+        /// <param name="users">the users.</param>
+        /// <returns>the data.</returns>
+        public static List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters, List<UserOrderModel> userOrder, List<UserModel> users)
+        {
+            orderModels.ForEach(x =>
+            {
+                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
+                x.Qfb = order == null ? string.Empty : order.Userid;
+
+                if (x.PedidoStatus == "O")
+                {
+                    x.PedidoStatus = ServiceConstants.Abierto;
+                }
+
+                x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
+            });
+
+            if (parameters.ContainsKey(ServiceConstants.DocNum))
+            {
+                int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
+                var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+
+                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
+                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+
+                return new List<CompleteOrderModel> { ordersById };
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.Status))
+            {
+                orderModels = orderModels.Where(x => x.PedidoStatus == parameters[ServiceConstants.Status]).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.Qfb))
+            {
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
+            }
+
+            orderModels.ForEach(x =>
+            {
+                var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+            });
+
+            return orderModels;
         }
 
         /// <summary>

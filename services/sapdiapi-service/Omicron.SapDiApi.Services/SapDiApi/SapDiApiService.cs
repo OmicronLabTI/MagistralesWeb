@@ -101,6 +101,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
                 var orderFab = productionOrderObj.GetByKey(order.OrderFabId);
 
+
                 if (orderFab)
                 {
                     productionOrderObj = this.UpdateEntry(order, productionOrderObj);
@@ -254,6 +255,48 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             _loggerProxy.Debug($"The production order {productionOrder.OrderId} cancelled succesfuly.");
             return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.Ok, null);
+        }
+
+        /// <summary>
+        /// The method to update batches.
+        /// </summary>
+        /// <param name="updateBatches">the update batches.</param>
+        /// <returns>the batches updated.</returns>
+        public async Task<ResultModel> UpdateBatches(List<UpdateBatches> updateBatches)
+        {
+            var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+            var orderFab = productionOrderObj.GetByKey(89111);
+
+            var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+            
+            components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, 89111));
+            for (var i = 0; i < components.RecordCount; i++)
+            {
+                var lineNum = components.Fields.Item("VisOrder").Value;
+                productionOrderObj.Lines.SetCurrentLine(lineNum);
+                var aca = productionOrderObj.Lines.BatchNumbers.Count;
+
+                for (var j = 0; j < aca; j++)
+                {
+                    productionOrderObj.Lines.BatchNumbers.SetCurrentLine(j);
+                    var algo = productionOrderObj.Lines.BatchNumbers.Quantity;
+                    var a = productionOrderObj.Lines.BatchNumbers.AddmisionDate;
+                    var b = productionOrderObj.Lines.BatchNumbers.BaseLineNumber;
+                    var c = productionOrderObj.Lines.BatchNumbers.BatchNumber;
+                    var d = productionOrderObj.Lines.BatchNumbers.InternalSerialNumber;
+                    var e = productionOrderObj.Lines.BatchNumbers.ManufacturerSerialNumber;
+                    var f = productionOrderObj.Lines.BatchNumbers.TrackingNote;
+                }
+            }
+
+            productionOrderObj.Lines.BatchNumbers.Add();
+            productionOrderObj.Lines.BatchNumbers.Quantity = 0.009;
+            productionOrderObj.Lines.BatchNumbers.BatchNumber = "P1907291";
+
+            var updated = productionOrderObj.Update();
+
+            return new ResultModel();
+
         }
 
         /// <summary>

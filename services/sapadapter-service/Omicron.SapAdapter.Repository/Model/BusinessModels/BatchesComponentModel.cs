@@ -1,63 +1,60 @@
 ﻿// <summary>
-// <copyright file="ProductoModel.cs" company="Axity">
+// <copyright file="BatchesComponentModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model
+namespace Omicron.SapAdapter.Entities.Model.BusinessModels
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// The item.
+    /// The batch component.
     /// </summary>
-    [Table("OITM")]
-    public class ProductoModel
+    public class BatchesComponentModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("ItemCode")]
-        public string ProductoId { get; set; }
+        public string CodigoProducto { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ItemName")]
-        public string ProductoName { get; set; }
+        public string DescripcionProducto { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("QryGroup32")]
-        public string IsMagistral { get; set; }
+        public string Almacen { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("OnHand")]
-        public decimal OnHand { get; set; }
+        public double TotalNecesario { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("InvntryUom")]
-        public string Unit { get; set; }
+        public double TotalSeleccionado { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ManBtchNum")]
-        public string ManagedBatches { get; set; }
+        public List<ValidBatches> Lotes { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<AssignedBatches> LotesAsignados { get; set; }
     }
 }

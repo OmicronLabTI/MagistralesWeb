@@ -42,6 +42,12 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> CancelProductionOrder(CancelOrderDto productionOrder);
 
         /// <summary>
+        /// Upfate the batches.
+        /// </summary>
+        /// <returns>the batches.</returns>
+        Task<ResultDto> UpdateBatches();
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>
