@@ -285,14 +285,20 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonSalesOrderFinished));
                     continue;
                 }
 
                 // Validate non finished production orders
-                if (relatedOrders.Any(x => x.Status.Equals(ServiceConstants.Finalizado)))
+                var finishedOrders = relatedOrders.Where(x => x.Status.Equals(ServiceConstants.Finalizado)).ToList();
+                if (finishedOrders.Any())
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                    foreach (var finishedOrder in finishedOrders)
+                    {
+                        var message = string.Format(ServiceConstants.ReasonProductionOrderFinished, finishedOrder.Productionorderid);
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, message));
+                    }
+
                     continue;
                 }
 
@@ -352,13 +358,19 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     if (order.Order.PedidoStatus.Equals("C"))
                     {
-                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonSalesOrderFinished));
                         continue;
                     }
 
-                    if (order.Detalle.Any(x => x.Status.Equals("L")))
+                    var finishedOrders = order.Detalle.Where(x => x.Status.Equals("L")).ToList();
+                    if (finishedOrders.Any())
                     {
-                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                        foreach (var finishedOrder in finishedOrders)
+                        {
+                            var message = string.Format(ServiceConstants.ReasonProductionOrderFinished, finishedOrder.OrdenFabricacionId);
+                            failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, message));
+                        }
+
                         continue;
                     }
 
