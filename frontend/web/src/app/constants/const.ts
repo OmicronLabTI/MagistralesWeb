@@ -53,6 +53,17 @@ export enum MessageType {
 export const ClassNames = {
     popupCustom: 'popup-custom'
 };
-
+export const ConstStatus = {
+    abierto: 'Abierto',
+    planificado: 'Planificado',
+    finalizado: 'Finalizado',
+    cancelado: 'Cancelado',
+    liberado: 'Liberado',
+    enProceso: 'En proceso',
+    pendiente: 'Pendiente',
+    asignado: 'Asignado',
+    terminado: 'Terminado',
+    reasingado: 'Reasingado',
+};
 export const RoleQfbId = 2;
 

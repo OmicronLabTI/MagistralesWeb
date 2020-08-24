@@ -5,7 +5,7 @@ import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_NUMBER,
-  CONST_STRING,
+  CONST_STRING, ConstStatus,
   HttpServiceTOCall, MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES
@@ -115,7 +115,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
-        this.ordersToProcess.listIds = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Abierto')).map(t => t.docNum);
+        this.ordersToProcess.listIds = this.dataSource.data.filter(t =>
+            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           resProcessOrder => {
@@ -215,19 +216,20 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.setQbfToPlace(
         {
           modalType: MODAL_NAMES.placeOrders,
-          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === 'Planificado')).map(t => t.docNum)
+          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum)
         });
   }
   getButtonsToUnLooked() {
-    this.isThereOrdersToPlan = this.getIsThereOnData('Abierto');
-    this.isThereOrdersToPlace = this.getIsThereOnData('Planificado');
-    this.isThereOrdersToCancel = this.getIsThereOnData('Finalizado', true);
+    this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
+    this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
+    this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
       return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
-    } else { // status Cancelado add to filter para que no haga bug de que un cancelado se mande a cancelar
-      return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== status)).length > 0;
+    } else {
+      return this.dataSource.data.filter(t => (t.isChecked &&
+          (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
     }
   }
   getFullQueryString() {
@@ -240,7 +242,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.pedidoStatus !== 'Finalizado')).map(order => {
+      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = order.docNum;
         return cancelOrder;

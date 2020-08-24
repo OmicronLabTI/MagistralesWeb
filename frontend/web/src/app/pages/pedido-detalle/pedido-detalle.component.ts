@@ -4,7 +4,14 @@ import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {ClassNames, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from '../../constants/const';
+import {
+  ClassNames,
+  CONST_STRING,
+  ConstStatus,
+  HttpServiceTOCall,
+  MessageType,
+  MODAL_NAMES
+} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
@@ -65,7 +72,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
-          element.status = element.status === '' ? 'Abierto' : element.status;
+          element.status = element.status === '' ? ConstStatus.abierto : element.status;
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -97,20 +104,20 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   openPlaceOrderDialog() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.isChecked && t.status === 'Planificado').map(order => order.ordenFabricacionId)});
+      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId)});
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToPlan = this.getIsThereOnData('Abierto');
-    this.isThereOrdersDetailToPlace = this.getIsThereOnData('Planificado');
-    this.isThereOrdersDetailToCancel = this.getIsThereOnData('Finalizado', true);
+    this.isThereOrdersDetailToPlan = this.getIsThereOnData(ConstStatus.abierto);
+    this.isThereOrdersDetailToPlace = this.getIsThereOnData(ConstStatus.planificado);
+    this.isThereOrdersDetailToCancel = this.getIsThereOnData(ConstStatus.finalizado, true);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
       return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
     } else {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== 'Cancelado'
-          && t.status !== 'Abierto')).length > 0;
+      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.cancelado
+          && t.status !== ConstStatus.abierto)).length > 0;
     }
   }
 
@@ -125,7 +132,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             this.detailsOrderToProcess.pedidoId = Number(this.docNum);
             this.detailsOrderToProcess.userId = this.dataService.getUserId();
             this.detailsOrderToProcess.productId =
-                this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
+                this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
             this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
               if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
                 const titleProcessDetailWithError = this.dataService.getMessageTitle(
@@ -149,7 +156,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== 'Finalizado')).map(order => {
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = order.ordenFabricacionId;
         return cancelOrder;
