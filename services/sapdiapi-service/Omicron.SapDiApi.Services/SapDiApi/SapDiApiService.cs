@@ -168,6 +168,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     catch(Exception ex)
                     {
+                        continue;
                     }
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
@@ -274,6 +275,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 if (!orderFab)
                 {
+                    _loggerProxy.Info($"The production order {group.Key} was not found.");
                     dictResult = this.AddResult($"{group.Key}-{group.Key}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
                     continue;
                 }
@@ -288,26 +290,27 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                     if (!group.Any(x => x.ItemCode == itemCode))
                     {
+                        components.MoveNext();
                         continue;
                     }
 
-                    var batchToAssign = group.FirstOrDefault(x => x.ItemCode == itemCode);
                     productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    var updated = 0;
+                    group
+                        .Where(x => x.ItemCode == itemCode)
+                        .ToList()
+                        .ForEach(y =>
+                        {
+                            productionOrderObj.Lines.BatchNumbers.Add();
+                            productionOrderObj.Lines.BatchNumbers.Quantity = y.Action.Equals(ServiceConstants.DeleteBatch) ? -y.AssignedQty : y.AssignedQty;
+                            productionOrderObj.Lines.BatchNumbers.BatchNumber = y.BatchNumber;
+                            updated = productionOrderObj.Update();
+                            _loggerProxy.Info($"The next Batch is going to be assign- {group.Key}-{JsonConvert.SerializeObject(y)}");
+                        });
 
-                    if (batchToAssign.Action.Equals(ServiceConstants.UpdateBatch) || batchToAssign.Action.Equals(ServiceConstants.InsertBatch))
-                    {
-                        productionOrderObj.Lines.BatchNumbers.Add();
-                        productionOrderObj.Lines.BatchNumbers.Quantity = batchToAssign.AssignedQty;
-                        productionOrderObj.Lines.BatchNumbers.BatchNumber = batchToAssign.BatchNumber;
-                    }
-                    else if (batchToAssign.Action.Equals(ServiceConstants.DeleteBatch))
-                    {
-                        productionOrderObj.Lines.BatchNumbers.Add();
-                    }
+                    components.MoveNext();
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
                 }
-
-                var updated = productionOrderObj.Update();
-                dictResult = this.AddResult($"{group.Key}-{group.Key}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
@@ -344,7 +347,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 company.GetLastError(out int errorCode, out string errMsg);
                 errMsg = string.IsNullOrEmpty(errMsg) ? string.Empty : errMsg;
-                dictResult.Add(key, string.Format(value, $"{value}-{errorCode.ToString()}-{errMsg}", errMsg));
+                dictResult.Add(key, $"{value}-{errorCode.ToString()}-{errMsg}");
             }
             else
             {
