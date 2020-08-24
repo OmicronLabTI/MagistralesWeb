@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using AutoMapper;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -159,6 +160,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+
         /// Updates the batches.
         /// </summary>
         /// <param name="assignBatch">the objecto to update.</param>
@@ -166,6 +168,25 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assignBatch)));
+
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateOrderSignature(signatureType, this.mapper.Map<UpdateOrderSignatureModel>(signatureModel)));
+        }
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> GetOrderSignatures(int productionOrderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrderSignatures(productionOrderId));
         }
     }
 }

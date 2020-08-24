@@ -56,4 +56,5 @@ export  class QfbWithNumber {
     countTotal?: number;
     modalType?: string;
     list?: number[];
+    assignType?: string;
 }

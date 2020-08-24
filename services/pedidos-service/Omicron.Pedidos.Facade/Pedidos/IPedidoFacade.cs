@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// interfaces for the pedidos.
@@ -106,5 +107,19 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="assignBatch">the objecto to update.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
+
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel);
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> GetOrderSignatures(int productionOrderId);
     }
 }
