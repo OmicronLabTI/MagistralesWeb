@@ -129,7 +129,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 insertUserOrdersale = true;
             }
 
-            saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Liberado : ServiceConstants.Planificado;
+            saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
 
             if (insertUserOrdersale)
             {
