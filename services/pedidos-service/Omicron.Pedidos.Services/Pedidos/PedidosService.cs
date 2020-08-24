@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -540,6 +541,82 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel)
+        {
+            var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };
+            var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+
+            if (productionOrder != null)
+            {
+                var orderSignatures = await this.pedidosDao.GetSignaturesByUserOrderId(productionOrder.Id);
+                var isNew = false;
+                if (orderSignatures == null)
+                {
+                    orderSignatures = new UserOrderSignatureModel();
+                    orderSignatures.UserOrderId = productionOrder.Id;
+                    isNew = true;
+                }
+
+                // Convert Base64 Encoded string to Byte Array.
+                byte[] newSignatureAsByte = Convert.FromBase64String(signatureModel.Signature);
+
+                switch (signatureType)
+                {
+                    case SignatureTypeEnum.LOGISTICS:
+                        orderSignatures.LogisticSignature = newSignatureAsByte;
+                        break;
+                    case SignatureTypeEnum.TECHNICAL:
+                        orderSignatures.TechnicalSignature = newSignatureAsByte;
+                        break;
+                }
+
+                if (isNew)
+                {
+                    await this.pedidosDao.InsertOrderSignatures(orderSignatures);
+                }
+                else
+                {
+                    await this.pedidosDao.SaveOrderSignatures(orderSignatures);
+                }
+
+                return ServiceUtils.CreateResult(true, 200, null, orderSignatures, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
+        }
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> GetOrderSignatures(int productionOrderId)
+        {
+            var ids = new List<string> { productionOrderId.ToString() };
+            var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+
+            if (productionOrder != null)
+            {
+                var orderSignatures = await this.pedidosDao.GetSignaturesByUserOrderId(productionOrder.Id);
+
+                if (orderSignatures == null)
+                {
+                    orderSignatures = new UserOrderSignatureModel();
+                    orderSignatures.UserOrderId = productionOrder.Id;
+                }
+
+                return ServiceUtils.CreateResult(true, 200, null, orderSignatures, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
         }
 
         /// <summary>
