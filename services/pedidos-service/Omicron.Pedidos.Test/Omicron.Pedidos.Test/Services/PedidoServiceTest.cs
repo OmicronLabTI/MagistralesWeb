@@ -475,10 +475,27 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task UpdateBatches()
         {
-            // arrange 
+            // arrange
+            var update = new AssignBatchModel
+            {
+                Action = "insert",
+                AssignedQty = 10,
+                BatchNumber = "ABC",
+                ItemCode = "102",
+                OrderId = 10,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultAssignBatch()));
+
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
-            var response = await this.pedidosService.UpdateBatches();
+            var response = await pedidoServiceLocal.UpdateBatches(new List<AssignBatchModel> { update });
 
             // assert
             Assert.IsNotNull(response);

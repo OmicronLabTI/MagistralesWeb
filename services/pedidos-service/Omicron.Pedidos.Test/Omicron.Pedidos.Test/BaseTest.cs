@@ -182,12 +182,34 @@ namespace Omicron.Pedidos.Test
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
+        public ResultModel GetResultAssignBatch()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-Aspirina-101", ServiceConstants.Ok },
+                { "200-Aspirina-023", ServiceConstants.ErrorUpdateFabOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
         public ResultModel GetResultUpdateOrder()
         {
             var listOrders = new Dictionary<string, string>
             {
                 { "100-100", ServiceConstants.Ok },
-                { "200-200", ServiceConstants.ErrorUpdateFavOrd },
+                { "200-200", ServiceConstants.ErrorUpdateFabOrd },
             };
 
             return new ResultModel

@@ -294,22 +294,32 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         continue;
                     }
 
+                    var lastError = 0;
                     productionOrderObj.Lines.SetCurrentLine(lineNum);
-                    var updated = 0;
                     group
                         .Where(x => x.ItemCode == itemCode)
+                        .GroupBy(z => z.Action)
+                        .OrderBy(a => a.Key)
                         .ToList()
-                        .ForEach(y =>
+                        .ForEach(sg => 
                         {
-                            productionOrderObj.Lines.BatchNumbers.Add();
-                            productionOrderObj.Lines.BatchNumbers.Quantity = y.Action.Equals(ServiceConstants.DeleteBatch) ? -y.AssignedQty : y.AssignedQty;
-                            productionOrderObj.Lines.BatchNumbers.BatchNumber = y.BatchNumber;
-                            updated = productionOrderObj.Update();
-                            _loggerProxy.Info($"The next Batch is going to be assign- {group.Key}-{JsonConvert.SerializeObject(y)}");
+                            sg
+                            .ToList()
+                            .ForEach(z =>
+                            {
+                                productionOrderObj.Lines.BatchNumbers.Add();
+                                productionOrderObj.Lines.BatchNumbers.Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty;
+                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
+                            });
+                            
+                            var updated = productionOrderObj.Update();                            
+                            lastError = updated != 0 ? updated : lastError;
+                            _loggerProxy.Info($"The next Batch was tried to be assign with status {lastError}- {group.Key}-{JsonConvert.SerializeObject(sg)}");
                         });
 
-                    components.MoveNext();
-                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
+
+                    components.MoveNext();                    
                 }
             }
 

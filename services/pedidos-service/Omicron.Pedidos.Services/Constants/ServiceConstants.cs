@@ -111,7 +111,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the error when update a order fab.
         /// </summary>
-        public const string ErrorUpdateFavOrd = "ErrorUpdateFabOrd";
+        public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
         /// if there were error while inserting.
