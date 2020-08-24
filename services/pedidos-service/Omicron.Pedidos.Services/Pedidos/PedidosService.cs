@@ -556,13 +556,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
-            }
-            
-        /// Save signatures.
+        }
+
+        /// <summary>
+        /// the signatures.
         /// </summary>
-        /// <param name="signatureType">The signature type.</param>
-        /// <param name="signatureModel">The signature info.</param>
-        /// <returns>Operation result.</returns>
+        /// <param name="signatureType">the type.</param>
+        /// <param name="signatureModel">the model.</param>
+        /// <returns>the value.</returns>
         public async Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel)
         {
             var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };

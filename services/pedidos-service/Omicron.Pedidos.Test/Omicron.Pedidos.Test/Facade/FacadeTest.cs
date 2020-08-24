@@ -104,18 +104,18 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
                 .Returns(Task.FromResult(response));
 
-mockServicesPedidos
-                .Setup(m => m.UpdateBatches(It.IsAny<List<AssignBatchModel>>()))
-                .Returns(Task.FromResult(response));
+            mockServicesPedidos
+                            .Setup(m => m.UpdateBatches(It.IsAny<List<AssignBatchModel>>()))
+                            .Returns(Task.FromResult(response));
 
-                mockServicesPedidos
-                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
-                .Returns(Task.FromResult(response));
+            mockServicesPedidos
+            .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+            .Returns(Task.FromResult(response));
 
             mockServicesPedidos
                 .Setup(m => m.GetOrderSignatures(It.IsAny<int>()))
                 .Returns(Task.FromResult(response));
-                
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
         }
 
