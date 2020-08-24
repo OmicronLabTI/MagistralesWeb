@@ -52,6 +52,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     var statusType: String = ""
     var indexOfTableToEditItem: Int = -1
     let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    var orderDetail: [OrderDetail] = []
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -65,6 +66,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.delegate = self
         tableView.setEditing(false, animated: true)
+        self.orderDetailViewModel.orderId = self.orderId
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,7 +74,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         //self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         //self.showButtonsByStatusType(statusType: statusType)
-        self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+        self.orderDetailViewModel.getOrdenDetail()
 //        self.initComponents()
 //        self.viewModelBinding()
 //        self.tableView.allowsMultipleSelectionDuringEditing = false
@@ -89,6 +91,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
+        commentsVC.orderDetail = self.orderDetail
         commentsVC.modalPresentationStyle = .overCurrentContext
         self.present(commentsVC, animated: true, completion: nil)
     
@@ -124,6 +127,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
             
             if((res.first) != nil) {
+                self.orderDetail = res
                 self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código: \(res[0].code!)", textToBold: "Código:")
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")

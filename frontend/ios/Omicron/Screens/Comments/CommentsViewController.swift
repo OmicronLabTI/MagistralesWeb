@@ -24,6 +24,8 @@ class CommentsViewController: UIViewController {
     
     // MARK: -Variables
     @Injected var commentsViewModel: CommentsViewModel
+    @Injected var orderDetailVC: OrderDetailViewModel
+    var orderDetail: [OrderDetail] = []
     var disposeBag = DisposeBag()
     
     // MARK: - LifeCycles
@@ -33,12 +35,42 @@ class CommentsViewController: UIViewController {
         
         self.initComponents()
         self.viewModelBinding()
+        self.commentsViewModel.orderDetail = self.orderDetail
+        self.textView.text = self.orderDetail[0].comments != nil ? self.orderDetail[0].comments: ""
     }
     
     //MARK: - Functions
+    
+    @IBAction func cancelButtonAction(_ sender: Any) {
+        self.backToOrderDetail()
+    }
+    
+    func backToOrderDetail() -> Void {
+        self.dismiss(animated: true)
+    }
+    
+    
     func viewModelBinding() -> Void {
-        self.cancelButton.rx.tap.bind(to: commentsViewModel.cancelDidTap).disposed(by: self.disposeBag)
+        self.commentsViewModel.backToOrderDetail.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            // TODO: chechar para actualizar
+            // self.orderDetailVC.getOrdenDetail()
+            self.backToOrderDetail()
+        }).disposed(by: self.disposeBag)
+        
         self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)
+        self.textView.rx.text.orEmpty.bind(to: commentsViewModel.textView).disposed(by: self.disposeBag)
+        
+        self.commentsViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
+        }).disposed(by: self.disposeBag)
+        
+        self.commentsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+            if(showLoading) {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: self.disposeBag)
     }
     
     func initComponents() -> Void {
