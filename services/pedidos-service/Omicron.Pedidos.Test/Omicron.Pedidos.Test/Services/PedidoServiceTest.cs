@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -466,6 +468,49 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Update order signatures.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task UpdateOrderSignature()
+        {
+            // arrange
+            var imageData = File.ReadAllText("SignatureBase64.txt");
+
+            var signatures = new UpdateOrderSignatureModel
+            {
+                UserId = "abc",
+                FabricationOrderId = 101,
+                Signature = imageData,
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, signatures);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Get order signatures.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task GetOrderSignatures()
+        {
+            // arrange
+            int productionOrderId = 102;
+
+            // act
+            var response = await this.pedidosService.GetOrderSignatures(productionOrderId);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

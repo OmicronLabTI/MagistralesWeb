@@ -35,4 +35,10 @@
     <ProjectReference Include="..\..\Omicron.Pedidos.Services\Omicron.Pedidos.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SignatureBase64.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
