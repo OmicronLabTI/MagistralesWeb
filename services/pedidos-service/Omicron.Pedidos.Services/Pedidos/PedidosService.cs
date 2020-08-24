@@ -513,7 +513,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersSap);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
@@ -544,11 +544,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
-        /// Save signatures.
+        /// Makes the call to assign batches.
         /// </summary>
-        /// <param name="signatureType">The signature type.</param>
-        /// <param name="signatureModel">The signature info.</param>
-        /// <returns>Operation result.</returns>
+        /// <param name="assignBatches">the batches.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
+        {
+            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// the signatures.
+        /// </summary>
+        /// <param name="signatureType">the type.</param>
+        /// <param name="signatureModel">the model.</param>
+        /// <returns>the value.</returns>
         public async Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel)
         {
             var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };

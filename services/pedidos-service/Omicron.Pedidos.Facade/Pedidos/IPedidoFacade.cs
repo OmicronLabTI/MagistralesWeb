@@ -102,6 +102,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
 
         /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
+
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>

@@ -168,6 +168,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     catch(Exception ex)
                     {
+                        continue;
                     }
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
@@ -274,6 +275,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 if (!orderFab)
                 {
+                    _loggerProxy.Info($"The production order {group.Key} was not found.");
                     dictResult = this.AddResult($"{group.Key}-{group.Key}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
                     continue;
                 }
@@ -288,26 +290,37 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                     if (!group.Any(x => x.ItemCode == itemCode))
                     {
+                        components.MoveNext();
                         continue;
                     }
 
-                    var batchToAssign = group.FirstOrDefault(x => x.ItemCode == itemCode);
+                    var lastError = 0;
                     productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    group
+                        .Where(x => x.ItemCode == itemCode)
+                        .GroupBy(z => z.Action)
+                        .OrderBy(a => a.Key)
+                        .ToList()
+                        .ForEach(sg => 
+                        {
+                            sg
+                            .ToList()
+                            .ForEach(z =>
+                            {
+                                productionOrderObj.Lines.BatchNumbers.Add();
+                                productionOrderObj.Lines.BatchNumbers.Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty;
+                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
+                            });
+                            
+                            var updated = productionOrderObj.Update();                            
+                            lastError = updated != 0 ? updated : lastError;
+                            _loggerProxy.Info($"The next Batch was tried to be assign with status {lastError}- {group.Key}-{JsonConvert.SerializeObject(sg)}");
+                        });
 
-                    if (batchToAssign.Action.Equals(ServiceConstants.UpdateBatch) || batchToAssign.Action.Equals(ServiceConstants.InsertBatch))
-                    {
-                        productionOrderObj.Lines.BatchNumbers.Add();
-                        productionOrderObj.Lines.BatchNumbers.Quantity = batchToAssign.AssignedQty;
-                        productionOrderObj.Lines.BatchNumbers.BatchNumber = batchToAssign.BatchNumber;
-                    }
-                    else if (batchToAssign.Action.Equals(ServiceConstants.DeleteBatch))
-                    {
-                        productionOrderObj.Lines.BatchNumbers.Add();
-                    }
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
+
+                    components.MoveNext();                    
                 }
-
-                var updated = productionOrderObj.Update();
-                dictResult = this.AddResult($"{group.Key}-{group.Key}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
@@ -344,7 +357,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 company.GetLastError(out int errorCode, out string errMsg);
                 errMsg = string.IsNullOrEmpty(errMsg) ? string.Empty : errMsg;
-                dictResult.Add(key, string.Format(value, $"{value}-{errorCode.ToString()}-{errMsg}", errMsg));
+                dictResult.Add(key, $"{value}-{errorCode.ToString()}-{errMsg}");
             }
             else
             {

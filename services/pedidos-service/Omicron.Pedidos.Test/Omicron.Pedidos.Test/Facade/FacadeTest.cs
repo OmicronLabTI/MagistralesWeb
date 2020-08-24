@@ -105,8 +105,12 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
-                .Returns(Task.FromResult(response));
+                            .Setup(m => m.UpdateBatches(It.IsAny<List<AssignBatchModel>>()))
+                            .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+            .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+            .Returns(Task.FromResult(response));
 
             mockServicesPedidos
                 .Setup(m => m.GetOrderSignatures(It.IsAny<int>()))
@@ -446,6 +450,31 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetOrderSignatures(fabricationOrder);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+/// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task UpdateBatches()
+        {
+            // arrange
+            var updateBatches = new List<AssignBatchDto>
+            {
+                new AssignBatchDto { Action = "Update", AssignedQty = 10, BatchNumber = "P123", OrderId = 100 },
+            };
+
+            // act
+            var response = await this.pedidoFacade.UpdateBatches(updateBatches);
 
             // Assert
             Assert.IsNotNull(response);

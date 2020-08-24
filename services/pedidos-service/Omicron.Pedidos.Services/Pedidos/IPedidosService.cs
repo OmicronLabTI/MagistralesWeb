@@ -102,6 +102,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel);
 
         /// <summary>
+        /// Makes the call to assign batches.
+        /// </summary>
+        /// <param name="assignBatches">the batches.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
+
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>

@@ -160,6 +160,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assignBatch)));
+        }
+
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>
