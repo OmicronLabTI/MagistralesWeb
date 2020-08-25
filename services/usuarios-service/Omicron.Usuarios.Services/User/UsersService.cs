@@ -161,6 +161,13 @@ namespace Omicron.Usuarios.Services.User
                 throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
             }
 
+            var userExist = await this.userDao.GetUserByUserName(user.UserName);
+
+            if (userExist != null && userExist.Id != user.Id)
+            {
+                throw new CustomServiceException(ServiceConstants.UserAlreadyExist, HttpStatusCode.BadRequest);
+            }
+
             usertoUpdate.UserName = user.UserName;
             usertoUpdate.FirstName = user.FirstName;
             usertoUpdate.LastName = user.LastName;
