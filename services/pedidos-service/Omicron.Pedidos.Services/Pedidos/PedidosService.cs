@@ -727,7 +727,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
-            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(updateOrderSignature.FabricationOrderId);            
+            orders = orders == null ? new UserOrderModel() : orders;
+
+            var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
+            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
             var newSignatureAsByte = Convert.FromBase64String(updateOrderSignature.Signature);
 
             if (orderSignature == null)
@@ -735,7 +738,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var newSignature = new UserOrderSignatureModel
                 {
                     TechnicalSignature = newSignatureAsByte,
-                    UserOrderId = updateOrderSignature.FabricationOrderId,
+                    UserOrderId = orders.Id,
                 };
 
                 await this.pedidosDao.InsertOrderSignatures(newSignature);
@@ -748,15 +751,17 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             orders.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
             orders.Status = ServiceConstants.Terminado;
-            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { orders });
 
-            var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
+            var listToUpdate = new List<UserOrderModel> { orders };
+
             var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
+            saleOrder.Status = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
 
-            var statusSaleOrder = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
-            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+            listToUpdate.Add(saleOrder);
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
 
-            ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
+            var orderLogs = ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
+            await this.pedidosDao.InsertOrderLog(orderLogs);
 
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
