@@ -216,7 +216,12 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// Reason finsihed order.
         /// </summary>
-        public const string ReasonProductionOrderFinished = "Una orden de fabricación se encuentra finalizada.";
+        public const string ReasonSalesOrderFinished = "El pedido ya esta finalizado.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonProductionOrderFinished = "La orden de fabricación {0} se encuentra finalizada.";
 
         /// <summary>
         /// Reason SAP error.
