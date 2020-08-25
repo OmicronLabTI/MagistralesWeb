@@ -77,6 +77,12 @@ class Persistence {
         self.userDefaults.set(isLogged, forKey: UsersDefaultsConstants.isLogged)
     }
     
+    func removePersistenceData() -> Void {
+        let domain = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: domain)
+        UserDefaults.standard.synchronize()
+    }
+    
 }
 
 protocol ObjectSavable {
