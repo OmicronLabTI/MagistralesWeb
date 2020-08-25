@@ -22,11 +22,15 @@ export const Endpoints = {
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
-},
+    placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
+    cancelOrders: `${environment.baseUrl}/api/pedidos/salesOrder/cancel`,
+    cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`
+  },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   }
+
 };
 
 export const TokenExcludedEndpoints = [

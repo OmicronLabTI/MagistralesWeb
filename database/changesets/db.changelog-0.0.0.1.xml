@@ -264,4 +264,35 @@
 		<column name="field" value="MaxUserOrders"/>
 	</insert>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.32">
+    <addColumn tableName="usersorders" >
+      <column name="comments" type="varchar(500)"> 
+        <constraints nullable="true" />  
+      </column>
+    </addColumn>
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.33">
+    <createTable tableName="userorderssignatures">
+      <column name="id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+      <column name="userorderid" type="INT">
+      </column>	  
+	    <column name="technicalsignature" type="BYTEA">
+        <constraints nullable="true" />  
+      </column>
+      <column name="logisticsignature" type="BYTEA">
+        <constraints nullable="true" />  
+      </column>
+    </createTable>
+    <addForeignKeyConstraint baseColumnNames="userorderid" baseTableName="userorderssignatures" constraintName="fk_userorderssignatures_userorders_id" referencedColumnNames="id" referencedTableName="usersorders"/>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.34">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="finishdate"
+			type="VARCHAR(20)">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

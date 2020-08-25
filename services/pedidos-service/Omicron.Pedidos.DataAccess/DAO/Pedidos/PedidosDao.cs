@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// dao for pedidos
@@ -92,6 +93,40 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             this.databaseContext.UserOrderModel.UpdateRange(userOrderModels);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Method for add order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to add.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> InsertOrderSignatures(UserOrderSignatureModel orderSignature)
+        {
+            this.databaseContext.UserOrderSignatureModel.AddRange(orderSignature);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Method for save order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to save.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> SaveOrderSignatures(UserOrderSignatureModel orderSignature)
+        {
+            this.databaseContext.UserOrderSignatureModel.UpdateRange(orderSignature);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+         
+        /// <summary>
+        /// Get order signature by user order id.
+        /// </summary>
+        /// <param name="userOrderId">User order to find.</param>
+        /// <returns>Operation result</returns>
+        public async Task<UserOrderSignatureModel> GetSignaturesByUserOrderId(int userOrderId)
+        {
+            return await this.databaseContext.UserOrderSignatureModel.FirstOrDefaultAsync(x => x.UserOrderId.Equals(userOrderId));
         }
     }
 }

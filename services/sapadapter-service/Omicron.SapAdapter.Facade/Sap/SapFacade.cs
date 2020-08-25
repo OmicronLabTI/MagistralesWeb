@@ -96,5 +96,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetComponents(parameters));
         }
+
+        /// <summary>
+        /// Gets the componentes managed by batches.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the components.</returns>
+        public async Task<ResultDto> GetBatchesComponents(int ordenId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetBatchesComponents(ordenId));
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// interfaces for the pedidos.
@@ -30,6 +31,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="listIds">the list of ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrderBySalesOrder(List<int> listIds);
+
+        /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds);
 
         /// <summary>
         /// Gets the orders of a specific QFB (ipad).
@@ -67,6 +75,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus);
 
         /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments);
+
+        /// <summary>
         /// gets the connection to DI api.
         /// </summary>
         /// <returns>the connectin.</returns>
@@ -99,5 +114,34 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="automaticAssing">the assign object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
+
+        /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
+
+        /// <summary>
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel);
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> GetOrderSignatures(int productionOrderId);
+
+        /// <summary>
+        /// finish the order by the qfb.
+        /// </summary>
+        /// <param name="updateOrderSignature">the signature dto.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
     }
 }

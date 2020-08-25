@@ -8,10 +8,12 @@
 
 namespace Omicron.Pedidos.Api.Filters
 {
+    using System.IO;
     using System.Net;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using System.Text;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Serilog;
 
     /// <summary>

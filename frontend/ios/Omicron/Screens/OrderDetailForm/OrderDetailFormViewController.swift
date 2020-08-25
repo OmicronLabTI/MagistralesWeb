@@ -228,7 +228,7 @@ class OrderDetailFormViewController:  FormViewController {
         
         // Aqui es en donde se hace el manda a llamar el servicio para volver a traer los datos de detalle de la fórmnula
         orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { orderId in
-            self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
+            self.orderDetailViewModel.getOrdenDetail()
         }).disposed(by: self.disposeBag)
     }
     

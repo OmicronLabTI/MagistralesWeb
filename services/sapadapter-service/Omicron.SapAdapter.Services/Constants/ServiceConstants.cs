@@ -81,6 +81,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string EnProceso = "En proceso";
 
         /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string Terminado = "Terminado";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

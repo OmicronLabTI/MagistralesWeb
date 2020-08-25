@@ -38,7 +38,11 @@ public class SimpleFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
 
-        if(request.getRequestURI().contains("/api/oauth/oauthrs") || request.getRequestURI().contains("/index.html")) {
+        if(request.getRequestURI().contains("/api/oauth/oauthrs") || 
+           request.getRequestURI().contains("/index.html") ||
+           request.getRequestURI().contains("/metrics") ||
+           request.getRequestURI().contains("/swagger") ||
+           request.getRequestURI().contains("/favicon-")) {
             return null;
         }
 
