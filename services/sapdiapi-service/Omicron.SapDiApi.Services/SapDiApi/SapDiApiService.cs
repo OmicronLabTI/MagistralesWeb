@@ -327,6 +327,78 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders)
+        {
+            var results = new Dictionary<int, string>();
+
+            foreach (var productionOrder in productionOrders)
+            {
+                var productionOrderId = productionOrder.OrderId;
+
+                _loggerProxy.Debug($"Production order to finish: { productionOrderId }.");
+                var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+
+                if (!orderReference.GetByKey( productionOrder.OrderId ))
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } doesn´t exists.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
+                }
+                
+                if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
+                }
+
+                // Production orders
+                _loggerProxy.Debug($"Data production order { productionOrderId }.");
+                _loggerProxy.Debug($"DocumentNumber: { orderReference.DocumentNumber }.");
+                _loggerProxy.Debug($"PlannedQuantity: { orderReference.PlannedQuantity }.");
+                _loggerProxy.Debug($"Warehouse: { orderReference.Warehouse }.");
+
+                // Create a new receipt production order
+                var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
+                receiptProduction.Lines.BaseEntry = orderReference.DocumentNumber;
+                receiptProduction.Lines.BaseType = 202;
+                receiptProduction.Lines.Quantity = orderReference.PlannedQuantity;
+                receiptProduction.Lines.TransactionType = BoTransactionTypeEnum.botrntComplete;
+                receiptProduction.Lines.WarehouseCode = orderReference.Warehouse;
+                receiptProduction.Lines.Add();
+
+                // Save receipt production
+                if (receiptProduction.Add() > 0)
+                {
+                    this.company.GetLastError(out int errorCode, out string errorMessage);
+                    _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
+                    continue;
+                }
+
+                // Set closed status 
+                orderReference.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
+
+                if (orderReference.Update() > 0)
+                {
+                    this.company.GetLastError(out int errorCode, out string errorMessage);
+                    _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrderId ));
+                    continue;
+                }
+            }
+
+            if (!results.Any())
+            {
+                results.Add(0, ServiceConstants.Ok);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
         /// sets the data to update.
         /// </summary>
         /// <param name="model">the model from controller.</param>
