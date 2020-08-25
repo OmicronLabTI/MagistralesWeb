@@ -16,6 +16,7 @@ namespace Omicron.SapAdapter.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -95,13 +96,15 @@ namespace Omicron.SapAdapter.Api
                 {
                     Version = "v1",
                     Title = "Api Users",
-                    Description = "Api para información de usuarios",
+                    Description = "Api para información de Sap Adapter",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
                         Url = new System.Uri(AXITYURL),
                     },
                 });
+
+                c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
             services.AddHttpClient("pedidos", c =>
@@ -131,11 +134,26 @@ namespace Omicron.SapAdapter.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                var basepath = this.Configuration["SwaggerAddress"];
+
+                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    var paths = new OpenApiPaths();
+                    foreach (var path in swaggerDoc.Paths)
+                    {
+                        paths.Add(basepath + path.Key, path.Value);
+                    }
+
+                    swaggerDoc.Paths = paths;
+                });
+            });
+
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Users");
+                c.SwaggerEndpoint($"{this.Configuration["SwaggerAddress"]}/swagger/v1/swagger.json", "Api SapAdapter");
                 c.RoutePrefix = string.Empty;
             });
             app.UseResponseCompression();
