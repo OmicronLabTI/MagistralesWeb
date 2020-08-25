@@ -22,7 +22,11 @@ export const Endpoints = {
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
-}
+},
+  inventoryBatches: {
+    getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
+    assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
+  }
 };
 
 export const TokenExcludedEndpoints = [

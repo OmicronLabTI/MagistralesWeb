@@ -11,7 +11,7 @@
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="isReadyToSave" (click)="buildObjectToSap()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
@@ -57,12 +57,12 @@
             <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8">
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center lotesconsecutivo"> {{i+1}} </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center lotesconsecutivo"> {{element.numeroLote}} </td>
                 </ng-container>
         
                 <ng-container matColumnDef="disponible">
                 <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD DISPONIBLE </th>
-                <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide disponible"> {{element.numeroLote}} </td>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide disponible"> {{element.cantidadDisponible}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="seleccionada">
@@ -71,7 +71,7 @@
                         <mat-form-field appearance="outline" class="generalinput" style="width: 70%;">
                             <input matInput type="number"
                                 class="number" placeholder="Cantidad seleccionada"
-                                [(ngModel)]="element.cantidadDisponible "
+                                [(ngModel)]="element.cantidadSeleccionada "
                             >
                         </mat-form-field>
                     </td>
@@ -79,22 +79,38 @@
 
                 <ng-container matColumnDef="asignada">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD ASIGNADA </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesasignado"> 0 </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesasignados"> 0 </td>
+                </ng-container>
+
+                <ng-container matColumnDef="opciones">
+                    <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
+                        <button mat-icon-button class="ico-col-pri" (click)="addLotes(element)">
+                            <mat-icon >arrow_forward_ios</mat-icon>
+                        </button>
+                    </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="lotesColumns" class="color-text-intables"></tr>
                 <tr mat-row *matRowDef="let row; columns: lotesColumns;"></tr>
             </table>
         </div>
         <div class="column-b">
-            <table mat-table [dataSource]="dataSourceLotesSelected" class="mat-elevation-z8">
-                <ng-container matColumnDef="lote">
+            <table mat-table [dataSource]="dataSourceLotesAsignados" class="mat-elevation-z8 table-pl">
+                <ng-container matColumnDef="lote" [style.display]="element.action == 'delete' ? 'none' : 'true'">
                     <th mat-header-cell *matHeaderCellDef class="centered">Lote</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center pllote"> {{element.numeroLote}} </td>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center pllote" [style.display]="element.action == 'delete' ? 'none' : 'true'"> {{element.numeroLote}} </td>
                 </ng-container>
-
-                <ng-container matColumnDef="seleccionada">
+                <ng-container matColumnDef="seleccionada" [style.display]="element.action == 'delete' ? 'none' : 'true'">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD SELECCIONADA </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide plseleccionada"> {{element.cantidadSeleccionada}} </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide plseleccionada" [style.display]="element.action == 'delete' ? 'none' : 'true'"> {{element.cantidadSeleccionada}} </td>
+                </ng-container>
+                <ng-container matColumnDef="opciones" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                    <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                        <button mat-icon-button class="ico-col-pri" (click)="deleteLotes(element)">
+                            <mat-icon >arrow_back_ios</mat-icon>
+                        </button>
+                    </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="lotesSelectedColumns" class="color-text-intables"></tr>
                 <tr mat-row *matRowDef="let row; columns: lotesSelectedColumns;"></tr>

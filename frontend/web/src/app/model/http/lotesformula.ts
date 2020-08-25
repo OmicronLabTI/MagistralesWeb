@@ -10,21 +10,41 @@ export class ILotesFormulaReq {
     almacen: string;
     totalNecesario: number;
     totalSeleccionado: number;
-    lotesSeleccionados: ILotesSelectedReq[];
+    lotesSeleccionados?: ILotesSelectedReq[];
     selected?: boolean;
-}
+    lotes: ILotesReq[];
+    lotesAsignados: ILotesAsignadosReq[];
 
-export class ILotesReq {
-    numeroLote: number;
-    cantidadDisponible: number;
-}
-
-export class ILotesRes extends BaseResponseHttp {
-    response: ILotesReq[];
 }
 
 export class ILotesSelectedReq {
-    numeroLote: number;
+    numeroLote: string;
     cantidadSeleccionada: number;
+    sysNumber: number;
+    action?: string;
+    noidb?: boolean;
 }
 
+export class ILotesReq {
+    numeroLote: string;
+    cantidadDisponible: number;
+    cantidadAsignada: number;
+    cantidadSeleccionada?: number;
+    sysNumber: number;
+}
+
+export class ILotesAsignadosReq {
+    numeroLote: string;
+    cantidadSeleccionada: number;
+    sysNumber: number;
+    action?: string;
+    noidb?: boolean;
+}
+
+export class ILotesToSaveReq {
+    orderId: number;
+    assignedQty: number;
+    batchNumber: string;
+    itemCode: string;
+    action: string;
+}
