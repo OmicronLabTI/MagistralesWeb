@@ -23,6 +23,7 @@ namespace Omicron.Catalogos.Api
     using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Discovery.Client;
+    using Microsoft.OpenApi.Models;
 
     /// <summary>
     /// Class Startup.
@@ -88,13 +89,15 @@ namespace Omicron.Catalogos.Api
                 {
                     Version = "v1",
                     Title = "Api Users",
-                    Description = "Api para información de usuarios",
+                    Description = "Api para información de catalogos",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
                         Url = new System.Uri(AXITYURL),
                     },
                 });
+
+                c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
             this.AddRedis(services, Log.Logger);
@@ -110,11 +113,26 @@ namespace Omicron.Catalogos.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                var basepath = this.Configuration["SwaggerAddress"];
+
+                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    var paths = new OpenApiPaths();
+                    foreach (var path in swaggerDoc.Paths)
+                    {
+                        paths.Add(basepath + path.Key, path.Value);
+                    }
+
+                    swaggerDoc.Paths = paths;
+                });
+            });
+
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Users");
+                c.SwaggerEndpoint($"{this.Configuration["SwaggerAddress"]}/swagger/v1/swagger.json", "Api Catalogos");
                 c.RoutePrefix = string.Empty;
             });
             app.UseResponseCompression();

@@ -267,6 +267,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var dictResult = new Dictionary<string, string>();
             var listyGrouped = updateBatches.GroupBy(x => x.OrderId).ToList();
+            _loggerProxy.Info($"The next object is going to be updated {JsonConvert.SerializeObject(updateBatches)}");
 
             foreach (var group in listyGrouped)
             {
