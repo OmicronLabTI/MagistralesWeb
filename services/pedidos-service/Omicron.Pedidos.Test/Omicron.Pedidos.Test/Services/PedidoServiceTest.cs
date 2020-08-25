@@ -506,11 +506,13 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, signatures);
+
             // assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
 
+        /// <summary>
         /// Update fabrication order comments.
         /// </summary>
         /// <param name="orderId">Order to update.</param>

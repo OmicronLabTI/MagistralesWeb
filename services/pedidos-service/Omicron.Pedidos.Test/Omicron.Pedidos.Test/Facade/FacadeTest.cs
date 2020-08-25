@@ -505,7 +505,7 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.UpdateBatches(updateBatches);
-            
+
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);

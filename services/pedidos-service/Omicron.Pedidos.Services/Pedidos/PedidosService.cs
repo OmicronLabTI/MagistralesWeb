@@ -226,13 +226,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
-            if (resultSapApi.Success)
+            if (resultSapApi.Success && !string.IsNullOrEmpty(updateFormula.Comments))
             {
-                var resultMessages = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
-                if (resultMessages.Any(x => x.Value.Equals("Ok")))
-                {
-                    await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
-                }
+                await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
