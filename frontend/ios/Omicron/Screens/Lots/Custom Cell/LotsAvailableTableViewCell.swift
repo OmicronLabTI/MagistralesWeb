@@ -14,7 +14,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     
     @IBOutlet weak var lotsLabel: UILabel!
     @IBOutlet weak var quantityAvailableLabel: UILabel!
-    @IBOutlet weak var quantitySelectedLabel: UILabel!
+    @IBOutlet weak var quantitySelected: UITextField!
     @IBOutlet weak var quantityAssignedLabel: UILabel!
     
     override func awakeFromNib() {
@@ -22,7 +22,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
         // Initialization code
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAvailableLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.quantitySelectedLabel, text: "", fontSize: 14)
+        self.quantitySelected.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAssignedLabel, text: "", fontSize: 14)
     }
 

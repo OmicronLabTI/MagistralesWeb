@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-
+import Resolver
 
 class LotsViewController: UIViewController {
     
@@ -39,18 +39,71 @@ class LotsViewController: UIViewController {
     
     @IBOutlet weak var saveButton: UIButton!
     
-    @IBOutlet weak var lineDocumentosTable: UITableView!
+    
+    @IBOutlet weak var lineDocTable: UITableView!
     @IBOutlet weak var lotsAvailablesTable: UITableView!
     @IBOutlet weak var lotsSelectedTable: UITableView!
     
     // MARK: -Variables
+    @Injected var lotsViewModel: LotsViewModel
+    let disposeBag = DisposeBag()
+    var orderId = -1
+    var countItemsOfLineDocuments = 0
+    var countLotsAvailables = 0
+    var countLotsSelected = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
+        self.viewModelBinding()
+        self.lotsViewModel.orderId = self.orderId
+        self.lotsViewModel.getLots()
+    }
         
+    // MARK: - Functions
+    func viewModelBinding() -> Void {
+        
+        // Muestra los datos en la tabla Linea de documentos
+        self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
+            self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
+            cell.numberLabel.text = "\(self.countItemsOfLineDocuments)"
+            cell.codeLabel.text = data.codigoProducto
+            cell.descriptionLabel.text = data.descripcionProducto
+            cell.warehouseCodeLabel.text = data.almacen
+            cell.totalNeededLabel.text = "\(data.totalNecesario!)"
+            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!)"
+        }.disposed(by: self.disposeBag)
+        
+        // Muestra los datos en la tabla de lotes disponibles
+        self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
+            self.countLotsSelected = self.countLotsSelected + 1
+            cell.lotsLabel.text = "\(self.countLotsSelected)"
+            cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
+            //cell.quantitySelected.text = ""
+            cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
+        }.disposed(by: self.disposeBag)
+        
+        //Muestra los datos en la tabla de Lotes Selecionados
+        self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) {row, data, cell in
+            self.countLotsSelected = self.countLotsSelected + 1
+            cell.lotsLabel.text = "\(self.countLotsSelected)"
+        }.disposed(by: self.disposeBag)
+        
+        // Muestra o coulta el loading
+        self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+            if(showLoading) {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un AlertMessage
+        self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
+        }).disposed(by: self.disposeBag)
     }
     
-    // MARK: - Functions
     func initComponents() {
         self.title = "Lotes"
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
@@ -84,9 +137,12 @@ class LotsViewController: UIViewController {
         self.setStyleView(view: self.lotsAvailable)
         self.setStyleView(view: self.lotsSelected)
         
-        self.lineDocumentosTable.delegate = self
+        self.lineDocTable.delegate = self
         self.lotsAvailablesTable.delegate = self
         self.lotsSelectedTable.delegate = self
+        self.lineDocTable.tableFooterView = UIView()
+        self.lotsAvailablesTable.tableFooterView = UIView()
+        self.lotsSelectedTable.tableFooterView = UIView()
     }
     
     func setStyleView(view: UIView) {

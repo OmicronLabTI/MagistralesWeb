@@ -30,6 +30,7 @@
 		7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */; };
 		7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */; };
 		7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32F24DC77C800CBA3C3 /* RootView.swift */; };
+		7C8284A024F46FA30043ACE8 /* getLots.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C82849F24F46FA30043ACE8 /* getLots.json */; };
 		7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */; };
 		7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA924D27E5800D26B96 /* RootViewController.swift */; };
 		7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAB24D2839400D26B96 /* RootViewModel.swift */; };
@@ -117,6 +118,7 @@
 		7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormModel.swift; sourceTree = "<group>"; };
 		7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTest.swift; sourceTree = "<group>"; };
 		7C75C32F24DC77C800CBA3C3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		7C82849F24F46FA30043ACE8 /* getLots.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getLots.json; sourceTree = "<group>"; };
 		7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewModel.swift; sourceTree = "<group>"; };
 		7C844BA924D27E5800D26B96 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		7C844BAB24D2839400D26B96 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				7C41E6D424E1B61700B9033F /* orderDetail.json */,
 				7C980E0524E3244F00D58A85 /* UserInfo.json */,
 				7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */,
+				7C82849F24F46FA30043ACE8 /* getLots.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -597,6 +600,7 @@
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
+				7C8284A024F46FA30043ACE8 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

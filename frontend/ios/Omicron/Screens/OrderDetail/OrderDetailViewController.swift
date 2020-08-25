@@ -57,7 +57,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Detallé de la fórmula"
+        self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         //self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
@@ -106,6 +106,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
+            lotsVC.orderId = self.orderId
             self.navigationController?.pushViewController(lotsVC, animated: true)
         }).disposed(by: self.disposeBag)
         
