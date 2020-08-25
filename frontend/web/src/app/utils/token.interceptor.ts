@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -52,12 +52,15 @@ export class TokenInterceptor implements HttpInterceptor {
       catchError((error) => {
         if (error instanceof TimeoutError) {
           return throwError(Messages.timeout);
-        }
-        if (error instanceof HttpErrorResponse) {
-          return throwError(error.error.message || error.message || Messages.generic);
-        } else {
+        } else { // add refresh token
           return throwError(error);
         }
+        /*if (error instanceof HttpErrorResponse) {
+          // return throwError(error.error.message || error.message || Messages.generic);
+          return throwError(error);
+        } else {
+          return throwError(error);
+        }*/
       })
     );
   }

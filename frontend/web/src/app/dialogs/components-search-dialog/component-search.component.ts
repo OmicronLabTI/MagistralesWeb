@@ -8,7 +8,6 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {PedidosService} from '../../services/pedidos.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
-import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-component-search',

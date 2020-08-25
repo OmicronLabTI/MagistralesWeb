@@ -10,6 +10,7 @@ export const Messages = {
   placeOrderDetail: '¿Deseas asignar la(las) orden(es) seleccionada(s) a',
   deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s) ?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados ?',
+  leftWithoutSave: 'Existen cambios sin guardar, ¿Deseas salir sin guardar los cambios?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
   onlyPositiveNumber: 'Solo se aceptan números positivos',

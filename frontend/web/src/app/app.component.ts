@@ -50,19 +50,17 @@ export class AppComponent implements OnDestroy , OnInit {
       });
   }
   ngOnInit() {
-    this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => {
-      this.iconMenuActive = url;
-    }));
-    this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace => {
-      this.onSuccessPlaceOrder(qfbToPlace);
-    }));
+    this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => this.iconMenuActive = url));
+    this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace =>
+      this.onSuccessPlaceOrder(qfbToPlace)));
     this.subscriptionObservables.add(this.dataService.getMessageGeneralCalHttp()
         .subscribe(generalMessage => this.onSuccessGeneralMessage(generalMessage)));
     this.subscriptionObservables.add(this.dataService.getCancelOrder().subscribe(resultCancel =>
-        this.onSuccessCancelOrder(resultCancel)
-    ));
+        this.onSuccessCancelOrder(resultCancel)));
     this.subscriptionObservables.add(this.dataService.getFinalizeOrders().subscribe(resultFinalize =>
         this.onSuccessFinalizeOrders(resultFinalize)));
+    this.subscriptionObservables.add(this.dataService.getPathUrl().subscribe(resultPath =>
+        this.goToPageEvaluate(resultPath)));
   }
   logoutSession() {
     this.dataService.setIsLogin(false);
@@ -71,21 +69,33 @@ export class AppComponent implements OnDestroy , OnInit {
   }
 
   goToPage(url: string[]) {
-    if (!this.dataService.getIsToSaveAnything()) {
+      this.goToPageEvaluate(url);
+    /*if (!this.dataService.getIsToSaveAnything()) {
       this.navigatePage(url);
     } else {
         console.log('there anything to save');
-      /*this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
+        this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
           .then((savedResult: any) => {
             if (savedResult.isConfirmed) {
-
-            } else {
-              this.navigatePage(url)
+                this.navigatePage(url);
             }
-          });*/
-    }
+          });
+    }*/
   }
-  navigatePage(url: string[]) {
+  goToPageEvaluate(url: any[]) {
+      if (!this.dataService.getIsToSaveAnything()) {
+          this.navigatePage(url);
+      } else {
+          console.log('there anything to save');
+          this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
+              .then((savedResult: any) => {
+                  if (savedResult.isConfirmed) {
+                      this.navigatePage(url);
+                  }
+              });
+      }
+  }
+  navigatePage(url: any[]) {
     this.router.navigate(url);
   }
 

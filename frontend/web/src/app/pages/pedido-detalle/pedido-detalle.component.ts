@@ -16,6 +16,7 @@ import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -48,7 +49,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
-              private titleService: Title) {
+              private titleService: Title, private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -79,8 +80,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
         this.isThereOrdersDetailToFinalize = false;
-      }
-    );
+      }, error => this.errorService.httpError(error));
   }
 
   updateAllComplete() {
@@ -147,8 +147,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                 this.getDetallePedido();
                 this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
               }
-            }, () => this.dataService.presentToastCustom(Messages.generic, 'info', CONST_STRING.empty, false, false)
-          );
+            }, error => this.errorService.httpError(error));
           }
         } );
   }

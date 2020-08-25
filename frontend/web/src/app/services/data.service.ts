@@ -23,8 +23,15 @@ export class DataService {
   private urlActive = new Subject<HttpServiceTOCall>();
   private cancelOrders = new Subject<CancelOrders>();
   private finalizeOrders = new Subject<CancelOrders>();
+  private pathUrl = new Subject<any[]>();
   constructor(private datePipe: DatePipe) { }
 
+  setPathUrl(pathUrl: any[]) {
+    this.pathUrl.next(pathUrl);
+  }
+  getPathUrl() {
+    return this.pathUrl.asObservable();
+  }
   setFinalizeOrders(finalizeOrders: CancelOrders) {
     this.finalizeOrders.next(finalizeOrders);
   }

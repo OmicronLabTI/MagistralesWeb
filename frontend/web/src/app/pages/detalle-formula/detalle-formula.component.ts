@@ -226,5 +226,16 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.dataService.setIsToSaveAnything(false);
   }
+
+  goToOrders(urlPath: string[]) {
+    this.setPathUrlService(urlPath);
+  }
+
+  goToDetailOrder(urlPath: (string | number)[]) {
+    this.setPathUrlService(urlPath);
+  }
+  setPathUrlService(urlPath: any[]) {
+    this.dataService.setPathUrl(urlPath);
+  }
 }
 

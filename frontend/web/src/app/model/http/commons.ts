@@ -5,3 +5,13 @@ export class BaseResponseHttp {
     success: boolean;
     comments?: number;
 }
+
+export class ErrorHttp {
+    error: string;
+    message: string;
+    name: string;
+    ok: boolean;
+    status: number;
+    statusText: string;
+    url: string;
+}

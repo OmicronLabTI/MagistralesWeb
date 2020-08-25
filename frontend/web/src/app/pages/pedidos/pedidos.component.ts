@@ -85,7 +85,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
       },
-      error => { // checar con gus para manejar errores
+        (error) => {
         this.errorService.httpError(error);
         this.dataSource.data = [];
       }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {isString} from 'util';
 import {DataService} from './data.service';
 import {Messages} from '../constants/messages';
+import {ErrorHttp} from '../model/http/commons';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,8 @@ import {Messages} from '../constants/messages';
 export class ErrorService {
 
   constructor(private dataService: DataService) { }
-  httpError(error: any) {
+  httpError(error: ErrorHttp) {
     this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});
-    console.log('error httpService: ', error, 'isString: ', isString(error));
+    console.log('error httpService: ', error);
   }
 }
