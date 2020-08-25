@@ -136,5 +136,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> GetOrderSignatures(int productionOrderId);
+
+        /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature);
     }
 }

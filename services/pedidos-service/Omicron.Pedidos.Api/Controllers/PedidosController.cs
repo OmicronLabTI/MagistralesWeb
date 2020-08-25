@@ -263,5 +263,29 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.UpdateBatches(assignBatches);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Finish the order by the qfb.
+        /// </summary>
+        /// <param name="orderSignature">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/finishOrder")]
+        [HttpPost]
+        public async Task<IActionResult> FinishOrder(UpdateOrderSignatureDto orderSignature)
+        {
+            var response = await this.pedidoFacade.FinishOrder(orderSignature);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/ping")]
+        [HttpGet]
+        public async Task<IActionResult> Ping()
+        {
+            return this.Ok("Pong");
+        }
     }
 }

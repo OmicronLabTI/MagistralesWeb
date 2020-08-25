@@ -39,6 +39,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Proceso = "Proceso";
 
         /// <summary>
+        /// The terminado status.
+        /// </summary>
+        public const string Terminado = "Terminado";
+
+        /// <summary>
         /// the en proceso status.
         /// </summary>
         public const string ProcesoStatus = "En Proceso";
@@ -82,6 +87,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// se asigna la orden.
         /// </summary>
         public const string AsignarOrden = "Se asigno la orden a {0}";
+
+        /// <summary>
+        /// se termino la orden.
+        /// </summary>
+        public const string OrdenTerminada = "Se termino la orden por el usuario";
 
         /// <summary>
         /// orde fab plani.
@@ -204,6 +214,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetUsersByRole = "role/{0}";
 
         /// <summary>
+        /// Gets the components with the data.
+        /// </summary>
+        public const string GetComponentsWithBatches = "componentes/lotes/{0}";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
@@ -232,5 +247,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// Reason SAP error.
         /// </summary>
         public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string BatchesAreMissingError = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado";
     }
 }

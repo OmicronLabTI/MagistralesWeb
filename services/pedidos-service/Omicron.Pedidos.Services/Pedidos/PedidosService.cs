@@ -712,6 +712,61 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        public async Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature)
+        {
+            var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, updateOrderSignature.FabricationOrderId));
+            var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
+
+            if (components.Any(x => !x.LotesAsignados.Any()))
+            {
+                throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
+            orders = orders == null ? new UserOrderModel() : orders;
+
+            var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
+            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
+            var newSignatureAsByte = Convert.FromBase64String(updateOrderSignature.Signature);
+
+            if (orderSignature == null)
+            {
+                var newSignature = new UserOrderSignatureModel
+                {
+                    TechnicalSignature = newSignatureAsByte,
+                    UserOrderId = orders.Id,
+                };
+
+                await this.pedidosDao.InsertOrderSignatures(newSignature);
+            }
+            else
+            {
+                orderSignature.TechnicalSignature = newSignatureAsByte;
+                await this.pedidosDao.SaveOrderSignatures(orderSignature);
+            }
+
+            orders.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
+            orders.Status = ServiceConstants.Terminado;
+
+            var listToUpdate = new List<UserOrderModel> { orders };
+
+            var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
+            saleOrder.Status = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
+
+            listToUpdate.Add(saleOrder);
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+
+            var orderLogs = ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
+            await this.pedidosDao.InsertOrderLog(orderLogs);
+
+            return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
