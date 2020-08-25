@@ -276,5 +276,16 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidoFacade.FinishOrder(orderSignature);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/ping")]
+        [HttpGet]
+        public async Task<IActionResult> Ping()
+        {
+            return this.Ok("Pong");
+        }
     }
 }

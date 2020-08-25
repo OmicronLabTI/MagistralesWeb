@@ -96,14 +96,16 @@ namespace Omicron.Pedidos.Api
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Api Users",
-                    Description = "Api para información de usuarios",
+                    Title = "Api Pedidos",
+                    Description = "Api para información de pedidos",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
                         Url = new System.Uri(AXITYURL),
                     },
                 });
+
+                c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
             var sapDiApiUrl = this.Configuration["DiApiAddress"];

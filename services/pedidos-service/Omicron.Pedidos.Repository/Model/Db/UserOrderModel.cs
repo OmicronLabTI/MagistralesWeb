@@ -62,13 +62,14 @@ namespace Omicron.Pedidos.Entities.Model
         [Column("status")]
         public string Status { get; set; }
 
-         /// Gets or sets comments.
+        /// <summary>
+        /// Gets or sets comments.
         /// </summary>
         /// <value>
         /// String comments.
         [Column("comments")]
         public string Comments { get; set; }
-        
+
         /// <summary>
         /// Gets or sets status.
         /// </summary>
@@ -76,6 +77,5 @@ namespace Omicron.Pedidos.Entities.Model
         /// String status.
         [Column("finishdate")]
         public string FinishDate { get; set; }
-
     }
 }

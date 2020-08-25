@@ -89,6 +89,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AsignarOrden = "Se asigno la orden a {0}";
 
         /// <summary>
+        /// se termino la orden.
+        /// </summary>
+        public const string OrdenTerminada = "Se termino la orden por el usuario";
+
+        /// <summary>
         /// orde fab plani.
         /// </summary>
         public const string OrdenFabricacionPlan = "Orden de fabricación planificada";
