@@ -89,6 +89,11 @@ class LotsViewController: UIViewController {
             cell.lotsLabel.text = "\(self.countLotsSelected)"
         }.disposed(by: self.disposeBag)
         
+        // Detecta que item de la tabla linea de documentos fué seleccionada
+        self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
+            self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
+        }).disposed(by: self.disposeBag)
+        
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
@@ -158,12 +163,11 @@ extension LotsViewController: UITableViewDelegate {
     
     // Pinta una fila o otra no en la tabla
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.selectionStyle = .none
+        cell.selectionStyle = .blue
         if(indexPath.row%2 == 0) {
             cell.backgroundColor = OmicronColors.tableColorRow
         } else {
             cell.backgroundColor = .white
         }
-    }
-    
+    }    
 }
