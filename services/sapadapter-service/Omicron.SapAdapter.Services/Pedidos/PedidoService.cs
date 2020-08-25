@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Pedidos
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
@@ -46,6 +47,26 @@ namespace Omicron.SapAdapter.Services.Pedidos
             var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");
 
             var url = this.httpClient.BaseAddress + "getUserOrder/salesOrder";
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
+            {
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the fabrication order by ids.
+        /// </summary>
+        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <returns>Result object.</returns>
+        public async Task<ResultDto> GetFabricationOrders(List<int> fabricationOrderIds)
+        {
+            ResultDto result;
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(fabricationOrderIds), UnicodeEncoding.UTF8, "application/json");
+
+            var url = this.httpClient.BaseAddress + "getUserOrder/fabOrder";
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
