@@ -177,7 +177,14 @@ namespace Omicron.Pedidos.Services.Utils
             listWithError.ForEach(x =>
             {
                 var order = x.Split("-");
-                listToReturn.Add(order[1]);
+                if (order.Count() > 2)
+                {
+                    listToReturn.Add($"{order[1]}-{order[2]}");
+                }
+                else
+                {
+                    listToReturn.Add(order[1]);
+                }
             });
 
             return listToReturn;
@@ -335,6 +342,22 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return orderToSend;
+        }
+
+        /// <summary>
+        /// Create a cancellation order fail object.
+        /// </summary>
+        /// <param name="cancellationModel">Model with data.</param>
+        /// <param name="reason">Fail reason.</param>
+        /// <returns>Formated object.</returns>
+        public static object CreateCancellationFail(CancelOrderModel cancellationModel, string reason)
+        {
+            return new
+            {
+                cancellationModel.OrderId,
+                cancellationModel.UserId,
+                reason,
+            };
         }
     }
 }

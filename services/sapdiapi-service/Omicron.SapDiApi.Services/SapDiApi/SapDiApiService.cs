@@ -101,6 +101,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
                 var orderFab = productionOrderObj.GetByKey(order.OrderFabId);
 
+
                 if (orderFab)
                 {
                     productionOrderObj = this.UpdateEntry(order, productionOrderObj);
@@ -167,6 +168,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     catch(Exception ex)
                     {
+                        continue;
                     }
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
@@ -257,6 +259,74 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// The method to update batches.
+        /// </summary>
+        /// <param name="updateBatches">the update batches.</param>
+        /// <returns>the batches updated.</returns>
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches)
+        {
+            var dictResult = new Dictionary<string, string>();
+            var listyGrouped = updateBatches.GroupBy(x => x.OrderId).ToList();
+
+            foreach (var group in listyGrouped)
+            {
+                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                var orderFab = productionOrderObj.GetByKey(group.Key);
+
+                if (!orderFab)
+                {
+                    _loggerProxy.Info($"The production order {group.Key} was not found.");
+                    dictResult = this.AddResult($"{group.Key}-{group.Key}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
+                    continue;
+                }
+
+                var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, group.Key));
+
+                for (var i = 0; i < components.RecordCount; i++)
+                {
+                    var lineNum = components.Fields.Item("VisOrder").Value;
+                    var itemCode = components.Fields.Item("ItemCode").Value;
+
+                    if (!group.Any(x => x.ItemCode == itemCode))
+                    {
+                        components.MoveNext();
+                        continue;
+                    }
+
+                    var lastError = 0;
+                    productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    group
+                        .Where(x => x.ItemCode == itemCode)
+                        .GroupBy(z => z.Action)
+                        .OrderBy(a => a.Key)
+                        .ToList()
+                        .ForEach(sg => 
+                        {
+                            sg
+                            .ToList()
+                            .ForEach(z =>
+                            {
+                                productionOrderObj.Lines.BatchNumbers.Add();
+                                productionOrderObj.Lines.BatchNumbers.Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty;
+                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
+                            });
+                            
+                            var updated = productionOrderObj.Update();                            
+                            lastError = updated != 0 ? updated : lastError;
+                            _loggerProxy.Info($"The next Batch was tried to be assign with status {lastError}- {group.Key}-{JsonConvert.SerializeObject(sg)}");
+                        });
+
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
+
+                    components.MoveNext();                    
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
         /// sets the data to update.
         /// </summary>
         /// <param name="model">the model from controller.</param>
@@ -287,7 +357,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 company.GetLastError(out int errorCode, out string errMsg);
                 errMsg = string.IsNullOrEmpty(errMsg) ? string.Empty : errMsg;
-                dictResult.Add(key, string.Format(value, $"{value}-{errorCode.ToString()}-{errMsg}", errMsg));
+                dictResult.Add(key, $"{value}-{errorCode.ToString()}-{errMsg}");
             }
             else
             {

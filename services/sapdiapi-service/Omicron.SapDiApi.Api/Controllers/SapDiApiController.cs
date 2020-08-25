@@ -86,6 +86,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Cancel production order by id
+        /// </summary>
+        /// <param name="assginBatches">The assign batches mnodel.</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("batches")]
+        public async Task<IHttpActionResult> UpdateBatches(List<AssginBatchDto> assginBatches)
+        {
+            var result = await this.sapFacade.UpdateBatches(assginBatches);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

@@ -30,6 +30,12 @@ struct ViewControllerIdentifiers {
     static let orderDetailViewController = "OrderDetailViewController"
     static let detailTableViewCell = "DetailTableViewCell"
     static let orderDetailFormViewController = "OrderDetailFormViewController"
+    static let loginViewController = "LoginViewController"
+    static let lotsViewController = "LotsViewController"
+    static let commentsViewController = "CommentsViewController"
+    static let lotsTableViewCell = "LotsTableViewCell"
+    static let lotsSelectedTableViewCell = "LotsSelectedTableViewCell"
+    static let lotsAvailableTableViewCell = "LotsAvailableTableViewCell"
 }
 
 struct OmicronColors {
@@ -41,7 +47,8 @@ struct OmicronColors {
     static let finishedStatus = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
-    static let tableColorRow = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
+    static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
+    static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
 }
 
 struct UsersDefaultsConstants {
@@ -96,6 +103,9 @@ struct ImageButtonNames {
     static let backFinished = "backFinished.png"
     static let backReassigned = "backReassigned.png"
     static let backPendding = "backPendding.png"
+    static let logout = "logout.png"
+    static let addLot = "proximo.png"
+    static let removeLot = "espalda.png"
 }
 
 struct IndicatorImageStatus {

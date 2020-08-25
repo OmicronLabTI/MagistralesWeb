@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Context\Connection.cs" />
     <Compile Include="Context\IConnection.cs" />
+    <Compile Include="Models\AssignBatchModel.cs" />
     <Compile Include="Models\CompleteDetailModel.cs" />
     <Compile Include="Models\CompleteDetalleFormulaModel.cs" />
     <Compile Include="Models\OrderModel.cs" />

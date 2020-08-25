@@ -209,10 +209,12 @@ export class DetalleFormulaComponent implements OnInit {
   }
   getIsThereNull(isFromDelete: boolean = false) {
     if (!isFromDelete) {
-      return this.dataSource.data.filter(component => component.baseQuantity === null || component.requiredQuantity === null).length === 0;
+      return this.dataSource.data.filter(component => ((component.baseQuantity === null || component.baseQuantity <= 0)
+          && (component.requiredQuantity === null || component.baseQuantity <= 0))).length === 0;
     } else {
-      return this.dataSource.data.filter(component => component.isChecked && (component.baseQuantity === null
-          || component.requiredQuantity === null)).length === 0;
+      return this.dataSource.data.filter(component => component.isChecked &&
+          ((component.baseQuantity === null || component.baseQuantity <= 0)
+          && (component.requiredQuantity === null || component.baseQuantity <= 0))).length === 0;
     }
   }
   onSelectWareHouseChange(value: string, index: number) {

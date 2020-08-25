@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0BB57A4257C6A72E4D3CF5A4 /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C723D74196413AA0F7F3D7FE /* Pods_Omicron.framework */; };
+		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
+		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
+		7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */; };
 		7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */; };
 		7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B424D489F500FF2E0E /* SF-Pro-Display-Regular.otf */; };
 		7C2401E024D497F800E2D56C /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */; };
@@ -27,12 +30,16 @@
 		7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */; };
 		7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */; };
 		7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32F24DC77C800CBA3C3 /* RootView.swift */; };
+		7C8284A024F46FA30043ACE8 /* getLots.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C82849F24F46FA30043ACE8 /* getLots.json */; };
 		7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */; };
 		7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BA924D27E5800D26B96 /* RootViewController.swift */; };
 		7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAB24D2839400D26B96 /* RootViewModel.swift */; };
 		7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */; };
 		7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BAF24D2A0FC00D26B96 /* RootModel.swift */; };
 		7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C844BB124D3BA5800D26B96 /* SplitViewController.swift */; };
+		7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9118FA24EF1C8B00E2571A /* LotsViewController.swift */; };
+		7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */; };
+		7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9118FE24EF1CF200E2571A /* LotsModel.swift */; };
 		7C980E0624E3245000D58A85 /* UserInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C980E0524E3244F00D58A85 /* UserInfo.json */; };
 		7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CA3058924DB0ACF00A7D2B5 /* Status.json */; };
 		7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB218D924E79E870015951C /* CommentsViewModel.swift */; };
@@ -95,6 +102,9 @@
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsTableViewCell.swift; sourceTree = "<group>"; };
+		7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsAvailableTableViewCell.swift; sourceTree = "<group>"; };
+		7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsSelectedTableViewCell.swift; sourceTree = "<group>"; };
 		7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		7C3074B424D489F500FF2E0E /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
 		7C3A55CB24E76E0C001B627E /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -108,12 +118,16 @@
 		7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormModel.swift; sourceTree = "<group>"; };
 		7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTest.swift; sourceTree = "<group>"; };
 		7C75C32F24DC77C800CBA3C3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		7C82849F24F46FA30043ACE8 /* getLots.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getLots.json; sourceTree = "<group>"; };
 		7C844BA424D0C3BB00D26B96 /* CardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewModel.swift; sourceTree = "<group>"; };
 		7C844BA924D27E5800D26B96 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		7C844BAB24D2839400D26B96 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
 		7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTableViewCell.swift; sourceTree = "<group>"; };
 		7C844BAF24D2A0FC00D26B96 /* RootModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootModel.swift; sourceTree = "<group>"; };
 		7C844BB124D3BA5800D26B96 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		7C9118FA24EF1C8B00E2571A /* LotsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsViewController.swift; sourceTree = "<group>"; };
+		7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsViewModel.swift; sourceTree = "<group>"; };
+		7C9118FE24EF1CF200E2571A /* LotsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsModel.swift; sourceTree = "<group>"; };
 		7C980E0524E3244F00D58A85 /* UserInfo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserInfo.json; sourceTree = "<group>"; };
 		7CA3058924DB0ACF00A7D2B5 /* Status.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Status.json; sourceTree = "<group>"; };
 		7CB218D924E79E870015951C /* CommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
@@ -202,6 +216,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		7C0017A624EF4CE30025B17D /* Custom Cell */ = {
+			isa = PBXGroup;
+			children = (
+				7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */,
+				7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */,
+				7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */,
+			);
+			path = "Custom Cell";
+			sourceTree = "<group>";
+		};
 		7C3A55CA24E76DC2001B627E /* Comments */ = {
 			isa = PBXGroup;
 			children = (
@@ -241,6 +265,17 @@
 				7C844BAF24D2A0FC00D26B96 /* RootModel.swift */,
 			);
 			path = RootView;
+			sourceTree = "<group>";
+		};
+		7C9118F924EF1C5300E2571A /* Lots */ = {
+			isa = PBXGroup;
+			children = (
+				7C0017A624EF4CE30025B17D /* Custom Cell */,
+				7C9118FA24EF1C8B00E2571A /* LotsViewController.swift */,
+				7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */,
+				7C9118FE24EF1CF200E2571A /* LotsModel.swift */,
+			);
+			path = Lots;
 			sourceTree = "<group>";
 		};
 		7CB6332024DDCB6D0055425C /* OrderDetail */ = {
@@ -355,6 +390,7 @@
 				7C41E6D424E1B61700B9033F /* orderDetail.json */,
 				7C980E0524E3244F00D58A85 /* UserInfo.json */,
 				7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */,
+				7C82849F24F46FA30043ACE8 /* getLots.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -401,6 +437,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				7C9118F924EF1C5300E2571A /* Lots */,
 				7C5C6D9F24E8F43700662508 /* OrderDetailForm */,
 				7C3A55CA24E76DC2001B627E /* Comments */,
 				7CB6332024DDCB6D0055425C /* OrderDetail */,
@@ -563,6 +600,7 @@
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
+				7C8284A024F46FA30043ACE8 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,6 +734,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
 				7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */,
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
@@ -711,6 +750,8 @@
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
+				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
+				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
@@ -725,7 +766,10 @@
 				7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */,
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
+				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
+				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
+				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				7CB218DC24E79EC00015951C /* CommentsModel.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
@@ -917,7 +961,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -936,7 +980,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

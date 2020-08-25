@@ -26,12 +26,23 @@ class RootViewModel {
     let disposeBag = DisposeBag()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showRefreshControl: PublishSubject<Void> = PublishSubject<Void>()
-    
+    var logoutDidTap = PublishSubject<Void>()
+    var goToLoginViewController = PublishSubject<Void>()
     init() {
+        
+        self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.loading.onNext(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                Persistence.shared.removePersistenceData()
+                 self.goToLoginViewController.onNext(())
+                 self.loading.onNext(false)
+            }
+        }).disposed(by: self.disposeBag)
+        
     }
 
     // MARK: Functions
-
+    
     func getOrders(isUpdate: Bool = false) -> Void {
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             self.loading.onNext(true)

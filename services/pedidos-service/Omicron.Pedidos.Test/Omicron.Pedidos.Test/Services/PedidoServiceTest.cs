@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -379,7 +381,7 @@ namespace Omicron.Pedidos.Test.Services
         /// <returns>Nothing.</returns>
         [Test]
         [TestCase(101)]
-        [TestCase(102)]
+        [TestCase(100)]
         public async Task CancelOrder_WithAffectRecords(int orderId)
         {
             // arrange
@@ -424,6 +426,31 @@ namespace Omicron.Pedidos.Test.Services
         }
 
         /// <summary>
+        /// Update status to cancelled.
+        /// </summary>
+        /// <param name="orderId">Order to update.</param>
+        /// <returns>Nothing.</returns>
+        [Test]
+        [TestCase(104)]
+        public async Task CancelFabOrder(int orderId)
+        {
+            // arrange
+            var userId = "abc";
+
+            var orderToUpdate = new List<CancelOrderModel>
+            {
+                new CancelOrderModel { UserId = userId, OrderId = orderId },
+            };
+
+            // act
+            var response = await this.pedidosService.CancelFabOrder(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
         /// the automatic assign test.
         /// </summary>
         /// <returns>return nothing.</returns>
@@ -461,6 +488,31 @@ namespace Omicron.Pedidos.Test.Services
         }
 
         /// <summary>
+        /// Update order signatures.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task UpdateOrderSignature()
+        {
+            // arrange
+            var imageData = File.ReadAllText("SignatureBase64.txt");
+
+            var signatures = new UpdateOrderSignatureModel
+            {
+                UserId = "abc",
+                FabricationOrderId = 101,
+                Signature = imageData,
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, signatures);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
         /// Update fabrication order comments.
         /// </summary>
         /// <param name="orderId">Order to update.</param>
@@ -483,6 +535,57 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Get order signatures.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task GetOrderSignatures()
+        {
+            // arrange
+            int productionOrderId = 102;
+
+            // act
+            var response = await this.pedidosService.GetOrderSignatures(productionOrderId);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateBatches()
+        {
+            // arrange
+            var update = new AssignBatchModel
+            {
+                Action = "insert",
+                AssignedQty = 10,
+                BatchNumber = "ABC",
+                ItemCode = "102",
+                OrderId = 10,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultAssignBatch()));
+
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.UpdateBatches(new List<AssignBatchModel> { update });
+
+            // assert
+            Assert.IsNotNull(response);
         }
     }
 }

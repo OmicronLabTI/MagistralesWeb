@@ -67,5 +67,20 @@ namespace Omicron.SapDiApi.Services.Constants
         /// the value to delete the conmponent.
         /// </summary>
         public const string DeleteComponent = "delete";
+
+        /// <summary>
+        /// the update value.
+        /// </summary>
+        public const string UpdateBatch = "update";
+
+        /// <summary>
+        /// Insert batch.
+        /// </summary>
+        public const string InsertBatch = "insert";
+
+        /// <summary>
+        /// deletes the batch.
+        /// </summary>
+        public const string DeleteBatch = "delete";
     }
 }

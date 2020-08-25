@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// interfaces for the pedidos.
@@ -100,10 +101,40 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
 
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CancelFabOrder(List<CancelOrderDto> cancelOrders);
+
+        /// <summary>
         /// the automatic assign.
         /// </summary>
         /// <param name="automaticAssing">the assign object.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing);
+
+        /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
+
+        /// <summary>
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel);
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> GetOrderSignatures(int productionOrderId);
     }
 }

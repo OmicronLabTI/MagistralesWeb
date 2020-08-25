@@ -4,10 +4,17 @@ import {PedidosService} from '../../services/pedidos.service';
 import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import { ActivatedRoute } from '@angular/router';
 import {DataService} from '../../services/data.service';
-import {CONST_STRING, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {
+  ClassNames,
+  CONST_STRING,
+  ConstStatus,
+  HttpServiceTOCall,
+  MessageType,
+  MODAL_NAMES
+} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import {ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 
 @Component({
@@ -37,6 +44,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToPlace = false;
   subscriptionCallHttpDetail = new Subscription();
   detailsOrderToProcess = new ProcessOrdersDetailReq();
+  isThereOrdersDetailToCancel = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title) {
@@ -64,10 +72,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
-          element.status = element.status === '' ? 'Abierto' : element.status;
+          element.status = element.status === '' ? ConstStatus.abierto : element.status;
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
+        this.isThereOrdersDetailToCancel = false;
       }
     );
   }
@@ -95,15 +104,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   openPlaceOrderDialog() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.status === 'Planificado').map(order => order.ordenFabricacionId)});
+      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId)});
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToPlan = this.getIsThereOnData('Abierto');
-    this.isThereOrdersDetailToPlace = this.getIsThereOnData('Planificado');
+    this.isThereOrdersDetailToPlan = this.getIsThereOnData(ConstStatus.abierto);
+    this.isThereOrdersDetailToPlace = this.getIsThereOnData(ConstStatus.planificado);
+    this.isThereOrdersDetailToCancel = this.getIsThereOnData(ConstStatus.finalizado, true);
   }
-  getIsThereOnData(status: string) {
-    return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+  getIsThereOnData(status: string, isFromCancelOrder = false) {
+    if (!isFromCancelOrder) {
+      return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
+    } else {
+      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.cancelado
+          && t.status !== ConstStatus.abierto)).length > 0;
+    }
   }
 
   ngOnDestroy() {
@@ -117,18 +132,35 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             this.detailsOrderToProcess.pedidoId = Number(this.docNum);
             this.detailsOrderToProcess.userId = this.dataService.getUserId();
             this.detailsOrderToProcess.productId =
-                this.dataSource.data.filter(t => (t.isChecked && t.status === 'Abierto')).map(detail => detail.codigoProducto);
-            this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(() => {
-              this.getDetallePedido();
-              this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+                this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
+            this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
+              if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
+                const titleProcessDetailWithError = this.dataService.getMessageTitle(
+                    resultProcessDetail.response, MessageType.processDetailOrder);
+                this.getDetallePedido();
+                this.dataService.presentToastCustom(titleProcessDetailWithError, 'info',
+                    Messages.errorToAssignOrderAutomaticSubtitle, true, false,  ClassNames.popupCustom);
+              } else {
+                this.getDetallePedido();
+                this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+              }
             }, () => this.dataService.presentToastCustom(Messages.generic, 'info', CONST_STRING.empty, false, false)
           );
-            console.log('toProcess: ', this.detailsOrderToProcess);
           }
         } );
   }
 
   setDescription(productCodeId: string, descriptionProduct: string) {
     this.dataService.setDetailOrderDescription(`${productCodeId} ${descriptionProduct}`);
+  }
+
+  cancelOrders() {
+    this.dataService.setCancelOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      }),
+      cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 }

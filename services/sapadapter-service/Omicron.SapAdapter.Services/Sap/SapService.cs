@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -62,7 +63,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listUsers = await this.GetUsers(userOrders);
 
             orders = orders.DistinctBy(x => x.DocNum).ToList();
-            orders = this.FilterList(orders, parameters, userOrders, listUsers);
+            orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -252,6 +253,41 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Get the components managed by batches.
+        /// </summary>
+        /// <param name="ordenId">the ordenid.</param>
+        /// <returns>the data to return.</returns>
+        public async Task<ResultModel> GetBatchesComponents(int ordenId)
+        {
+            var componentes = (await this.sapDao.GetComponentByBatches(ordenId)).ToList();
+            var listToReturn = new List<BatchesComponentModel>();
+
+            foreach (var x in componentes)
+            {
+                double.TryParse(x.PendingQuantity.ToString(), out double totalNecesario);
+
+                var lotes = await this.GetValidBatches(x.ProductId, x.Warehouse);
+                var batches = await this.GetTransacitionBatches(ordenId, x.ProductId, lotes);
+
+                var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
+                double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
+
+                listToReturn.Add(new BatchesComponentModel
+                {
+                    Almacen = x.Warehouse,
+                    CodigoProducto = x.ProductId,
+                    DescripcionProducto = x.Description,
+                    TotalNecesario = totalNecesario - doubleTotalBathches,
+                    TotalSeleccionado = doubleTotalBathches,
+                    Lotes = lotes,
+                    LotesAsignados = batches,
+                });
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
@@ -276,59 +312,6 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// filters the list by the params.
-        /// </summary>
-        /// <param name="orderModels">the list of data.</param>
-        /// <param name="parameters">the params.</param>
-        /// <param name="userOrder">the usr orders.</param>
-        /// <param name="users">the users.</param>
-        /// <returns>the data.</returns>
-        private List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters, List<UserOrderModel> userOrder, List<UserModel> users)
-        {
-            orderModels.ForEach(x =>
-            {
-                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
-                x.Qfb = order == null ? string.Empty : order.Userid;
-
-                if (x.PedidoStatus == "O")
-                {
-                    x.PedidoStatus = ServiceConstants.Abierto;
-                }
-
-                x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-            });
-
-            if (parameters.ContainsKey(ServiceConstants.DocNum))
-            {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
-                var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
-
-                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
-                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
-
-                return new List<CompleteOrderModel> { ordersById };
-            }
-
-            if (parameters.ContainsKey(ServiceConstants.Status))
-            {
-                orderModels = orderModels.Where(x => x.PedidoStatus == parameters[ServiceConstants.Status]).ToList();
-            }
-
-            if (parameters.ContainsKey(ServiceConstants.Qfb))
-            {
-                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
-            }
-
-            orderModels.ForEach(x =>
-            {
-                var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
-                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
-            });
-
-            return orderModels;
-        }
-
-        /// <summary>
         /// Gets the users.
         /// </summary>
         /// <param name="userOrders">the user order model.</param>
@@ -338,6 +321,66 @@ namespace Omicron.SapAdapter.Services.Sap
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
             var users = await this.usersService.GetUsersById(userIDs);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        /// <summary>
+        /// Get the valid batches by component.
+        /// </summary>
+        /// <param name="item">the item.</param>
+        /// <param name="almacen">the almacen.</param>
+        /// <returns>the value.</returns>
+        private async Task<List<ValidBatches>> GetValidBatches(string item, string almacen)
+        {
+            var listToReturn = new List<ValidBatches>();
+            var product = (await this.sapDao.GetProductById(item)).FirstOrDefault();
+            var batches = (await this.sapDao.GetValidBatches(product.ProductoId, almacen)).ToList();
+
+            batches.ForEach(x =>
+            {
+                listToReturn.Add(new ValidBatches
+                {
+                    SysNumber = x.SysNumber,
+                    NumeroLote = x.DistNumber,
+                    CantidadAsignada = x.CommitQty,
+                    CantidadDisponible = x.Quantity - x.CommitQty,
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the batches assigned.
+        /// </summary>
+        /// <param name="orderId">the orde id.</param>
+        /// <param name="itemCode">the item cide.</param>
+        /// <param name="validBatches">The valid batches.</param>
+        /// <returns>the batches.</returns>
+        private async Task<List<AssignedBatches>> GetTransacitionBatches(int orderId, string itemCode, List<ValidBatches> validBatches)
+        {
+            var listToReturn = new List<AssignedBatches>();
+            var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
+            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Where(y => y.DocQuantity > 0).Last();
+
+            if (lastTransaction == null)
+            {
+                return new List<AssignedBatches>();
+            }
+
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(lastTransaction.LogEntry)).ToList();
+
+            batchesQty.ForEach(x =>
+            {
+                var batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber);
+                listToReturn.Add(new AssignedBatches
+                {
+                    CantidadSeleccionada = x.AllocQty,
+                    NumeroLote = batch == null ? string.Empty : batch.NumeroLote,
+                    SysNumber = x.SysNumber,
+                });
+            });
+
+            return listToReturn;
         }
     }
 }

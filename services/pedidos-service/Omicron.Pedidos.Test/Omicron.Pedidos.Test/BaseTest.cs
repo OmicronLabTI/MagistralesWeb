@@ -55,8 +55,10 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd", Comments = "Hello" },
                 new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd", Comments = "Hello" },
                 new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc", Comments = "Hello" },
-                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "102", Status = "Proceso", Userid = "abc", Comments = "Hello" },
+                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "103", Status = "Proceso", Userid = "abc", Comments = "Hello" },
                 new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc", Comments = "Hello" },
+                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc" },
+                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc" },
             };
         }
 
@@ -180,12 +182,34 @@ namespace Omicron.Pedidos.Test
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
+        public ResultModel GetResultAssignBatch()
+        {
+            var listOrders = new Dictionary<string, string>
+            {
+                { "100-Aspirina-101", ServiceConstants.Ok },
+                { "200-Aspirina-023", ServiceConstants.ErrorUpdateFabOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
         public ResultModel GetResultUpdateOrder()
         {
             var listOrders = new Dictionary<string, string>
             {
                 { "100-100", ServiceConstants.Ok },
-                { "200-200", ServiceConstants.ErrorUpdateFavOrd },
+                { "200-200", ServiceConstants.ErrorUpdateFabOrd },
             };
 
             return new ResultModel

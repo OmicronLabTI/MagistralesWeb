@@ -326,5 +326,86 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId).ToListAsync();
         }
+
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="orderId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(int orderId)
+        {
+            return await (from c in this.databaseContext.DetalleFormulaModel
+                          join p in this.databaseContext.ProductoModel on c.ItemCode equals p.ProductoId
+                          where c.OrderFabId == orderId && p.ManagedBatches == "Y"
+                          select new CompleteDetalleFormulaModel
+                          { 
+                              Warehouse = c.Almacen,
+                              PendingQuantity = c.RequiredQty,
+                              ProductId = c.ItemCode,
+                              Description = p.ProductoName,
+                              OrderFabId = c.OrderFabId,
+                          }).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
+        {
+            return await this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode).ToListAsync();
+        }
+
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse)
+        {
+            var listToReturn = new List<CompleteBatchesJoinModel>();
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => x.ItemCode == itemCode && x.WhsCode == warehouse && x.Quantity > 0).ToListAsync()).ToList();
+
+            var validBatches = querybatches.Select(x => x.SysNumber);
+
+            var batches = (await this.databaseContext.Batches.Where(x => x.ItemCode == itemCode && validBatches.Contains(x.SysNumber)).ToListAsync()).ToList();
+
+            querybatches.ForEach(x =>
+            {
+                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
+                listToReturn.Add(new CompleteBatchesJoinModel
+                {
+                    CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
+                    Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
+                    DistNumber = batch == null ? string.Empty : batch.DistNumber,
+                    SysNumber = x.SysNumber,
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId)
+        {
+            return await this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry)
+        {
+            return await this.databaseContext.BatchesTransactionQtyModel.Where(x => x.LogEntry == logEntry).ToListAsync();
+        }
     }
 }
