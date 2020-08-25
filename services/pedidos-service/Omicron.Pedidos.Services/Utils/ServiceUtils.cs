@@ -350,7 +350,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="cancellationModel">Model with data.</param>
         /// <param name="reason">Fail reason.</param>
         /// <returns>Formated object.</returns>
-        public static object CreateCancellationFail(CancelOrderModel cancellationModel, string reason)
+        public static object CreateCancellationFail(OrderIdModel cancellationModel, string reason)
         {
             return new
             {

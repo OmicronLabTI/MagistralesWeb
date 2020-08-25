@@ -99,21 +99,21 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
+        Task<ResultDto> CancelOrder(List<OrderIdDto> cancelOrders);
 
         /// <summary>
         /// Change order status to finish.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> FinishOrder(List<CancelOrderDto> finishOrders);
+        Task<ResultDto> FinishBySalesOrder(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> CancelFabOrder(List<CancelOrderDto> cancelOrders);
+        Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders);
 
         /// <summary>
         /// the automatic assign.

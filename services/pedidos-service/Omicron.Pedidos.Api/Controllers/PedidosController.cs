@@ -171,7 +171,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/cancel")]
         [HttpPut]
-        public async Task<IActionResult> CancelOrder(List<CancelOrderDto> cancelOrders)
+        public async Task<IActionResult> CancelOrder(List<OrderIdDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelOrder(cancelOrders);
             return this.Ok(response);
@@ -184,9 +184,9 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/finish")]
         [HttpPut]
-        public async Task<IActionResult> FinishOrder(List<CancelOrderDto> finishOrders)
+        public async Task<IActionResult> FinishBySalesOrder(List<OrderIdDto> finishOrders)
         {
-            var response = await this.pedidoFacade.FinishOrder(finishOrders);
+            var response = await this.pedidoFacade.FinishBySalesOrder(finishOrders);
             return this.Ok(response);
         }
 
@@ -197,7 +197,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/fabOrder/cancel")]
         [HttpPut]
-        public async Task<IActionResult> CancelFabOrder(List<CancelOrderDto> cancelOrders)
+        public async Task<IActionResult> CancelFabOrder(List<OrderIdDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
             return this.Ok(response);

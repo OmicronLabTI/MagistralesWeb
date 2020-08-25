@@ -322,9 +322,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders)
+        public async Task<ResultModel> CancelOrder(List<OrderIdModel> cancelOrders)
         {
-            var missingOrders = new List<CancelOrderModel>();
+            var missingOrders = new List<OrderIdModel>();
             var missingSalesOrders = new List<OrderWithDetailModel>();
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
@@ -481,7 +481,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> FinishOrder(List<CancelOrderModel> finishOrders)
+        public async Task<ResultModel> FinishBySalesOrder(List<OrderIdModel> finishOrders)
         {
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
@@ -574,7 +574,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> CancelFabOrder(List<CancelOrderModel> cancelOrders)
+        public async Task<ResultModel> CancelFabOrder(List<OrderIdModel> cancelOrders)
         {
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
