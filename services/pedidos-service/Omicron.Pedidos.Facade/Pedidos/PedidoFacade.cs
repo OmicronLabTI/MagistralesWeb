@@ -189,5 +189,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrderSignatures(productionOrderId));
         }
+
+        /// <summary>
+        /// finish the order by the qfb.
+        /// </summary>
+        /// <param name="updateOrderSignature">the signature dto.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishOrder(this.mapper.Map<UpdateOrderSignatureModel>(updateOrderSignature)));
+        }
     }
 }

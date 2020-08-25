@@ -143,7 +143,7 @@ namespace Omicron.Pedidos.Api
         {
             app.UseSwagger(c =>
             {
-                var basepath = "/api/pedidos";
+                var basepath = string.Empty;
 
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
@@ -160,7 +160,7 @@ namespace Omicron.Pedidos.Api
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/pedidos/swagger/v1/swagger.json", "Api Pedidos");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Pedidos");
                 c.RoutePrefix = string.Empty;
             });
 

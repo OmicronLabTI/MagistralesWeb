@@ -108,6 +108,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
 
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>
@@ -121,5 +122,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> GetOrderSignatures(int productionOrderId);
+
+        /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature);
     }
 }

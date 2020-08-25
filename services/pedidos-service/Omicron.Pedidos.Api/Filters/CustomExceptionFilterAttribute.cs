@@ -8,10 +8,12 @@
 
 namespace Omicron.Pedidos.Api.Filters
 {
+    using System.IO;
     using System.Net;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using System.Text;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Serilog;
 
     /// <summary>
@@ -35,6 +37,7 @@ namespace Omicron.Pedidos.Api.Filters
         {
             HttpStatusCode status = HttpStatusCode.OK;
             string message = string.Empty;
+            MemoryStream stream = new MemoryStream();
 
             var exceptionType = context.Exception.GetType();
             if (exceptionType == typeof(CustomServiceException))
@@ -42,6 +45,10 @@ namespace Omicron.Pedidos.Api.Filters
                 var customException = (CustomServiceException)context.Exception;
                 message = customException.Message ?? "Error genérico";
                 status = customException.Status;
+                var body = customException.ResponseBody;
+
+                byte[] byteArray = Encoding.UTF8.GetBytes(body.ToString());
+                stream = new MemoryStream(byteArray);
             }
             else
             {
@@ -55,6 +62,7 @@ namespace Omicron.Pedidos.Api.Filters
             response.StatusCode = (int)status;
             response.ContentType = "application/json";
             response.WriteAsync(message);
+            response.Body = stream;
 
             var logMessage = $"ErrorType: {context.Exception.GetType()} Message: {context.Exception.Message}";
             this.logger.Error(logMessage);

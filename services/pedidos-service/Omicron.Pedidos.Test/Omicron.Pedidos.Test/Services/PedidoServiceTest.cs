@@ -545,5 +545,32 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishOrder()
+        {
+            // arrange
+            var update = new UpdateOrderSignatureModel
+            {
+                FabricationOrderId = 100,
+                Signature = "asdf",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.FinishOrder(update);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

@@ -647,6 +647,29 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        public async Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature)
+        {
+            var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, updateOrderSignature.FabricationOrderId));
+            var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
+
+            if (components.Any(x => !x.LotesAsignados.Any()))
+            {
+                var errorResult = ServiceUtils.CreateResult(false, 300, ServiceConstants.BatchesAreMissingError, null, null);
+                throw new CustomServiceException("Error", System.Net.HttpStatusCode.BadRequest, errorResult);
+            }
+
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
+            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(updateOrderSignature.FabricationOrderId)
+            orders.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
+
+            return new ResultModel();
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
