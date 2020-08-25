@@ -1,0 +1,173 @@
+//
+//  LotsViewController.swift
+//  Omicron
+//
+//  Created by Axity on 20/08/20.
+//  Copyright © 2020 Diego Cárcamo. All rights reserved.
+//
+
+import UIKit
+import RxSwift
+import RxCocoa
+import Resolver
+
+class LotsViewController: UIViewController {
+    
+    // MARK: -OUTLEST
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var hashtagLabel: UILabel!
+    @IBOutlet weak var codeLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var warehouseCodeLabel: UILabel!
+    @IBOutlet weak var totalNeededLabel: UILabel!
+    @IBOutlet weak var totalSelectedLabel: UILabel!
+    
+    @IBOutlet weak var lotsAvailableLabel: UILabel!
+    @IBOutlet weak var laLotsLabel: UILabel!
+    @IBOutlet weak var laQuantityAvailableLabel: UILabel!
+    @IBOutlet weak var laQuantitySelectedLabel: UILabel!
+    @IBOutlet weak var laQuantityAssignedLabel: UILabel!
+    @IBOutlet weak var lotsSelectedLabel: UILabel!
+    @IBOutlet weak var lsLotsLabel: UILabel!
+    @IBOutlet weak var lsQuantityAvailableLabel: UILabel!
+    @IBOutlet weak var addLotButton: UIButton!
+    @IBOutlet weak var removeLotButton: UIButton!
+    
+    @IBOutlet weak var lineOfDocumentsView: UIView!
+    @IBOutlet weak var lotsAvailable: UIView!
+    @IBOutlet weak var lotsSelected: UIView!
+    
+    @IBOutlet weak var saveButton: UIButton!
+    
+    
+    @IBOutlet weak var lineDocTable: UITableView!
+    @IBOutlet weak var lotsAvailablesTable: UITableView!
+    @IBOutlet weak var lotsSelectedTable: UITableView!
+    
+    // MARK: -Variables
+    @Injected var lotsViewModel: LotsViewModel
+    let disposeBag = DisposeBag()
+    var orderId = -1
+    var countItemsOfLineDocuments = 0
+    var countLotsAvailables = 0
+    var countLotsSelected = 0
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.initComponents()
+        self.viewModelBinding()
+        self.lotsViewModel.orderId = self.orderId
+        self.lotsViewModel.getLots()
+    }
+        
+    // MARK: - Functions
+    func viewModelBinding() -> Void {
+        
+        // Muestra los datos en la tabla Linea de documentos
+        self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
+            self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
+            cell.numberLabel.text = "\(self.countItemsOfLineDocuments)"
+            cell.codeLabel.text = data.codigoProducto
+            cell.descriptionLabel.text = data.descripcionProducto
+            cell.warehouseCodeLabel.text = data.almacen
+            cell.totalNeededLabel.text = "\(data.totalNecesario!)"
+            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!)"
+        }.disposed(by: self.disposeBag)
+        
+        // Muestra los datos en la tabla de lotes disponibles
+        self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
+            self.countLotsSelected = self.countLotsSelected + 1
+            cell.lotsLabel.text = "\(self.countLotsSelected)"
+            cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
+            //cell.quantitySelected.text = ""
+            cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
+        }.disposed(by: self.disposeBag)
+        
+        //Muestra los datos en la tabla de Lotes Selecionados
+        self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) {row, data, cell in
+            self.countLotsSelected = self.countLotsSelected + 1
+            cell.lotsLabel.text = "\(self.countLotsSelected)"
+        }.disposed(by: self.disposeBag)
+        
+        // Detecta que item de la tabla linea de documentos fué seleccionada
+        self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
+            self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra o coulta el loading
+        self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+            if(showLoading) {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un AlertMessage
+        self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            AlertManager.shared.showAlert(message: message, view: self)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func initComponents() {
+        self.title = "Lotes"
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: "#", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "Código", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "Descripción del artículo", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.warehouseCodeLabel, text: "Código de almacén", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: "Total necesario", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "Total Seleccionado", fontSize: 15)
+        
+        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Lotes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad diaponible", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad seleccionada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
+        
+        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
+        
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        
+        self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
+        self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
+        self.addLotButton.setTitle("", for: .normal)
+        
+        self.removeLotButton.setImage(UIImage(named: ImageButtonNames.removeLot), for: .normal)
+        self.removeLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
+        self.removeLotButton.setTitle("", for: .normal)
+        self.setStyleView(view: self.lineOfDocumentsView)
+        self.setStyleView(view: self.lotsAvailable)
+        self.setStyleView(view: self.lotsSelected)
+        
+        self.lineDocTable.delegate = self
+        self.lotsAvailablesTable.delegate = self
+        self.lotsSelectedTable.delegate = self
+        self.lineDocTable.tableFooterView = UIView()
+        self.lotsAvailablesTable.tableFooterView = UIView()
+        self.lotsSelectedTable.tableFooterView = UIView()
+    }
+    
+    func setStyleView(view: UIView) {
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowOffset  = CGSize(width: 0.1, height: 0.1)
+        view.layer.shadowRadius = 5
+        view.layer.cornerRadius = 10
+    }
+}
+
+extension LotsViewController: UITableViewDelegate {
+    
+    // Pinta una fila o otra no en la tabla
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.selectionStyle = .blue
+        if(indexPath.row%2 == 0) {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
+    }    
+}

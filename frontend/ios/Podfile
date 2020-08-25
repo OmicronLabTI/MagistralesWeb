@@ -13,6 +13,7 @@ target 'Omicron' do
   pod 'lottie-ios'
   pod 'Eureka'
   pod 'Resolver'
+  pod 'SignaturePad', '~> 1.0.3'
   
   target 'OmicronTests' do
     inherit! :search_paths
