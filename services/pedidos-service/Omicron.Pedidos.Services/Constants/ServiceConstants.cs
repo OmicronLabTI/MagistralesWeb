@@ -54,6 +54,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Pendiente = "Pendiente";
 
         /// <summary>
+        /// abierto status.
+        /// </summary>
+        public const string Abierto = "Abierto";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";

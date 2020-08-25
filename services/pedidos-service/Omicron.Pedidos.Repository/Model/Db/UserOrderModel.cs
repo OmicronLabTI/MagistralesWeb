@@ -61,5 +61,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// String status.
         [Column("status")]
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets comments.
+        /// </summary>
+        /// <value>
+        /// String comments.
+        [Column("comments")]
+        public string Comments { get; set; }
     }
 }

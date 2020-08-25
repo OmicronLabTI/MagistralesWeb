@@ -23,5 +23,12 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// <param name="listPedidos">the pedidos.</param>
         /// <returns>the qfb.</returns>
         Task<ResultDto> GetUserPedidos(List<int> listPedidos);
+
+        /// <summary>
+        /// Gets the fabrication order by ids.
+        /// </summary>
+        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <returns>Result object.</returns>
+        Task<ResultDto> GetFabricationOrders(List<int> fabricationOrderIds);
     }
 }

@@ -65,6 +65,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
+                .Setup(m => m.GetUserOrderByFabOrder(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
                 .Setup(m => m.GetFabOrderByUserID(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
@@ -109,11 +113,15 @@ namespace Omicron.Pedidos.Test.Facade
                             .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-            .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
-            .Returns(Task.FromResult(response));
+                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+                .Returns(Task.FromResult(response));
 
             mockServicesPedidos
                 .Setup(m => m.GetOrderSignatures(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.UpdateFabOrderComments(It.IsAny<List<UpdateOrderCommentsModel>>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
@@ -148,6 +156,28 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetUserOrderByFabOrder()
+        {
+            // arrange
+            var listIds = new List<int>();
+
+            // act
+            var response = await this.pedidoFacade.GetUserOrderByFabOrder(listIds);
 
             // Assert
             Assert.IsNotNull(response);
@@ -460,7 +490,7 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.AreEqual(200, response.Code);
         }
 
-/// <summary>
+        /// <summary>
         /// test test.
         /// </summary>
         /// <returns>returns nothing.</returns>
@@ -475,6 +505,31 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.UpdateBatches(updateBatches);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task UpdateFabOrderComments()
+        {
+            // arrange
+            var orders = new List<UpdateOrderCommentsDto>
+            {
+                new UpdateOrderCommentsDto { OrderId = 1, UserId = "mockUser", Comments = "Hello" },
+            };
+
+            // act
+            var response = await this.pedidoFacade.UpdateFabOrderComments(orders);
 
             // Assert
             Assert.IsNotNull(response);

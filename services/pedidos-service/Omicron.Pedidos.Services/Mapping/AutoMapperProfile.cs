@@ -48,6 +48,8 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<AssignBatchModel, AssignBatchDto>();
             this.CreateMap<UpdateOrderSignatureDto, UpdateOrderSignatureModel>();
             this.CreateMap<UpdateOrderSignatureModel, UpdateOrderSignatureDto>();
+            this.CreateMap<UpdateOrderCommentsDto, UpdateOrderCommentsModel>();
+            this.CreateMap<UpdateOrderCommentsModel, UpdateOrderCommentsDto>();
         }
     }
 }
