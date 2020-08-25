@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// The pedidos service interface.
@@ -30,6 +31,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listIds">the list ids.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds);
+
+        /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds);
 
         /// <summary>
         /// Gets the QFB orders (ipad).
@@ -67,6 +75,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
 
         /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments);
+
+        /// <summary>
         /// Gets the connection to sap di api.
         /// </summary>
         /// <returns>the conection.</returns>
@@ -87,10 +102,39 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders);
 
         /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultModel> CancelFabOrder(List<CancelOrderModel> cancelOrders);
+
+        /// <summary>
         /// Makes the automatic assign.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel);
+
+        /// <summary>
+        /// Makes the call to assign batches.
+        /// </summary>
+        /// <param name="assignBatches">the batches.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
+
+        /// <summary>
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel);
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> GetOrderSignatures(int productionOrderId);
     }
 }

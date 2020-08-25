@@ -6,10 +6,15 @@ export const Messages = {
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s)?',
   processOrdersDetail: '¿Deseas cambiar a estatus planificado el(los) detalle(s) de pedido(s) seleccionado(s)?',
   placeOrder: '¿Deseas asignar el(los) pedido(s) seleccionado(s) a',
+  placeOrderAutomatic: '¿Deseas asignar el(los) pedido(s) de forma automática?',
   placeOrderDetail: '¿Deseas asignar la(las) orden(es) seleccionada(s) a',
-  deleteComponents: '¿Deseas eliminar el(los) componente seleccionado(s)?',
+  deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s)?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
-  onlyPositiveNumber: 'Ingresa sólo valores positivos'
+  onlyPositiveNumber: 'Solo se aceptan números positivos',
+  errorToAssignOrderAutomatic: 'Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual',
+  errorToAssignOrderAutomaticSubtitle: 'Favor de verificar la información e intentarlo de nuevo',
+  cancelOrders: '¿Deseas cancelar el(los) pedido(s) seleccionado(s)?',
+  cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s)? '
 };

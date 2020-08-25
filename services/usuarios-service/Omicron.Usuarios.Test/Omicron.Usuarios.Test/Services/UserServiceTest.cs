@@ -286,6 +286,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // arrange
             var user = this.GetUserModel();
             user.Id = "1";
+            user.UserName = "userName1";
 
             // act
             var response = await this.userServices.UpdateUser(user);

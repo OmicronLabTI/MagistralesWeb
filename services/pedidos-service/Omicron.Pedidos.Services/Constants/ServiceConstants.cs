@@ -54,6 +54,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Pendiente = "Pendiente";
 
         /// <summary>
+        /// abierto status.
+        /// </summary>
+        public const string Abierto = "Abierto";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -111,7 +116,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the error when update a order fab.
         /// </summary>
-        public const string ErrorUpdateFavOrd = "ErrorUpdateFabOrd";
+        public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
         /// if there were error while inserting.
@@ -132,6 +137,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// if the type is pedido.
         /// </summary>
         public const string TypePedido = "Pedido";
+
+        /// <summary>
+        /// if the type is fabrication order.
+        /// </summary>
+        public const string TypeFabOrder = "Orden de Fabricación";
 
         /// <summary>
         /// Status liberado.
@@ -174,6 +184,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
+        /// the update batches.
+        /// </summary>
+        public const string UpdateBatches = "batches";
+
+        /// <summary>
         /// route to cancel orders.
         /// </summary>
         public const string CancelFabOrder = "cancelProductionOrder";
@@ -192,5 +207,30 @@ namespace Omicron.Pedidos.Services.Constants
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
+
+        /// <summary>
+        /// Reason not found.
+        /// </summary>
+        public const string ReasonNotExistsOrder = "No existe la orden.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonOrderFinished = "La orden ya esta finalizada.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonSalesOrderFinished = "El pedido ya esta finalizado.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonProductionOrderFinished = "La orden de fabricación {0} se encuentra finalizada.";
+
+        /// <summary>
+        /// Reason SAP error.
+        /// </summary>
+        public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
     }
 }

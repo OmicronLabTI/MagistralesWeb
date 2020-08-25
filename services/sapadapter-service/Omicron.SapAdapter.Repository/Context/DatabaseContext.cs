@@ -91,6 +91,38 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<Users> Users { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<BatchesQuantity> BatchesQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<Batches> Batches { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<BatchesTransactionQtyModel> BatchesTransactionQtyModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<BatchTransacitions> BatchTransacitions { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>
@@ -112,6 +144,13 @@ namespace Omicron.SapAdapter.Entities.Context
             {
                 table.ItemCode,
                 table.WhsCode,
+            });
+
+            modelBuilder.Entity<BatchesTransactionQtyModel>().HasKey(table => new
+            {
+                table.LogEntry,
+                table.ItemCode,
+                table.SysNumber,
             });
         }
     }

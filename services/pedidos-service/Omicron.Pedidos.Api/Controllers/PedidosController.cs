@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// the class for pedidos.
@@ -69,6 +70,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetUserOrderBySalesOrder(List<int> listIds)
         {
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/fabOrder")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            var response = await this.pedidoFacade.GetUserOrderByFabOrder(listIds);
             return this.Ok(response);
         }
 
@@ -164,6 +178,68 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/fabOrder/cancel")]
+        [HttpPut]
+        public async Task<IActionResult> CancelFabOrder(List<CancelOrderDto> cancelOrders)
+        {
+            var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Change fabrication order comments.
+        /// </summary>
+        /// <param name="updateComments">the order info.</param>
+        /// <returns>the order.</returns>
+        [Route("/fabOrder/comments")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments)
+        {
+            var response = await this.pedidoFacade.UpdateFabOrderComments(updateComments);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Update the order signatures.
+        /// </summary>
+        /// <param name="signatureType">Signature to update.</param>
+        /// <param name="orderSignature">Orders signature data.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/fabOrder/{signatureType:regex(^(logistic|technical)$)}/signature")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateOrderSignature(string signatureType, UpdateOrderSignatureDto orderSignature)
+        {
+            ResultDto result = null;
+            if (signatureType.Equals("logistic"))
+            {
+                result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+            }
+            else if (signatureType.Equals("technical"))
+            {
+                result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+            }
+
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/fabOrder/signatures")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrderSignatures(int productionOrderId)
+        {
+            ResultDto result = await this.pedidoFacade.GetOrderSignatures(productionOrderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// connects the DI api.
         /// </summary>
         /// <returns>the connection.</returns>
@@ -172,6 +248,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> ConnectDiApi()
         {
             var response = await this.pedidoFacade.ConnectDiApi();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="assignBatches">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/assignBatches")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateBatches(List<AssignBatchDto> assignBatches)
+        {
+            var response = await this.pedidoFacade.UpdateBatches(assignBatches);
             return this.Ok(response);
         }
     }

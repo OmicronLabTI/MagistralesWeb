@@ -109,5 +109,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var result = await this.sapFacade.GetComponents(parameters);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/componentes/lotes/{ordenId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetBatchesComponents(int ordenId)
+        {
+            var result = await this.sapFacade.GetBatchesComponents(ordenId);
+            return this.Ok(result);
+        }
     }
 }

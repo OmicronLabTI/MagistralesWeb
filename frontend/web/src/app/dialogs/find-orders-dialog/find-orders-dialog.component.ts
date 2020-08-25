@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
+import {Subscription} from 'rxjs';
 
 
 @Component({
@@ -14,13 +15,14 @@ import {Messages} from '../../constants/messages';
   templateUrl: './find-orders-dialog.component.html',
   styleUrls: ['./find-orders-dialog.component.scss']
 })
-export class FindOrdersDialogComponent implements OnInit {
+export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   findOrdersForm: FormGroup;
   fullDate: string [] = [];
   qfbsSelect: QfbSelect[] = [];
   maxDate = new Date();
   isBeginInitForm = true;
   isToResetData = false;
+  subscriptionForm = new Subscription();
   constructor(private formBuilder: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public filterData: any,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
@@ -42,10 +44,11 @@ export class FindOrdersDialogComponent implements OnInit {
 
   async ngOnInit() {
       await this.ordersServices.getQfbs().toPromise().then(resQfbs => {
+
           this.qfbsSelect = resQfbs.response.map(qfb => {
               return {
                   qfbId: qfb.id,
-                  qfbName: qfb.firstName
+                  qfbName: qfb.firstName + ' ' + qfb.lastName
               };
           });
           this.qfbsSelect.sort((a, b) => {
@@ -73,7 +76,7 @@ export class FindOrdersDialogComponent implements OnInit {
       } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status) {
           this.getDisableOnlyForDocNum();
       }
-      this.findOrdersForm.valueChanges.subscribe(formData => {
+      this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
           if (!this.isBeginInitForm) {
               if (formData.docNum !== null && formData.docNum) {
                   this.isToResetData = false;
@@ -139,4 +142,7 @@ export class FindOrdersDialogComponent implements OnInit {
       this.isBeginInitForm = true;
       this.getDisableOnlyForDocNum();
   }
+    ngOnDestroy() {
+        this.subscriptionForm.unsubscribe();
+    }
 }
