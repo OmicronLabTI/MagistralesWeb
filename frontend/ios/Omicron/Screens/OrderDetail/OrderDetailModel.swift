@@ -33,7 +33,7 @@ class OrderDetail {
     var baseDocument: Int?
     var client: String?
     var completeQuantity: Int?
-    var realEndDate, productLabel, container: String?
+    var realEndDate, productLabel, container, comments: String?
     var isChecked: Bool?
     var details: [Detail]?
     required init?(map: Map) {}
@@ -64,6 +64,7 @@ extension OrderDetail: Mappable {
         self.container <- map["container"]
         self.isChecked <- map["isChecked"]
         self.details <- map["details"]
+        self.comments <- map["comments"]
     }
 }
 

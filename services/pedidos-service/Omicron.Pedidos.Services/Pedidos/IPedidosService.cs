@@ -33,6 +33,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds);
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds);
+
+        /// <summary>
         /// Gets the QFB orders (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -66,6 +73,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="updateStatusOrder">the status model.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder);
+
+        /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments);
 
         /// <summary>
         /// Gets the connection to sap di api.
@@ -108,6 +122,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
 
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>

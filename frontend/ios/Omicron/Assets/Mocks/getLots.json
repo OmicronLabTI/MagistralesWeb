@@ -1,0 +1,61 @@
+{
+    "code": 200,
+    "userError": null,
+    "exceptionMessage": null,
+    "success": true,
+    "response": [
+        {
+            "codigoProducto": "GRN-029",
+            "descripcionProducto": "Granel Cáp. Ivermectina 6 mg, Excipiente csp 1 cápsula.",
+            "almacen": "MN",
+            "totalNecesario": 20,
+            "totalSeleccionado": 0,
+            "lotes": [
+                {
+                    "numeroLote": "OMBE160620-1",
+                    "cantidadDisponible": 2632.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 7
+                },
+                {
+                    "numeroLote": "OMBE090720-1",
+                    "cantidadDisponible": 748.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 8
+                },
+                {
+                    "numeroLote": "OMBE100720-A",
+                    "cantidadDisponible": 420.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 9
+                },
+                {
+                    "numeroLote": "OMBE140720-A",
+                    "cantidadDisponible": 314.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 11
+                },
+                {
+                    "numeroLote": "OMBE160720-A",
+                    "cantidadDisponible": 1244.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 12
+                },
+                {
+                    "numeroLote": "OMBE200720-A",
+                    "cantidadDisponible": 740.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 13
+                },
+                {
+                    "numeroLote": "OMBE220720-A",
+                    "cantidadDisponible": 32080.000000,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 14
+                }
+            ],
+            "lotesAsignados": []
+        }
+    ],
+    "comments": null
+}
