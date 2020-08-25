@@ -167,8 +167,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
     
     func initComponents() -> Void {
-        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
-        self.navigationItem.rightBarButtonItem = comments
+//        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
+//        self.navigationItem.rightBarButtonItem = comments
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -204,13 +204,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.assignedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         default:
             print("")
         }
