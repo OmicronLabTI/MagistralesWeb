@@ -108,7 +108,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
 
-        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>
@@ -122,12 +121,5 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> GetOrderSignatures(int productionOrderId);
-
-        /// <summary>
-        /// finish the order by the qfb.
-        /// </summary>
-        /// <param name="updateOrderSignature">the signature dto.</param>
-        /// <returns>the data.</returns>
-        Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
     }
 }

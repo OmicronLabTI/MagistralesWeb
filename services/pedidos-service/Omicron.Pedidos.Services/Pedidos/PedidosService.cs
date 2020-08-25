@@ -647,16 +647,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
-        /// Finish the order by the QFB.
-        /// </summary>
-        /// <param name="updateOrderSignature">the model.</param>
-        /// <returns>the result.</returns>
-        public async Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature)
-        {
-            var sapAdapterResponse
-        }
-
-        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
