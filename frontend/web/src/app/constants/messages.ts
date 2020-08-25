@@ -19,5 +19,6 @@ export const Messages = {
   cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s)? ',
   batchesCantidadSeleccionadaZero: "Debes ingresar una cantidad mayor a 0",
   batchDelete: "¿Deseas eliminar esta asignación de lotes?",
-  batchesSelectedQtyError: "No puede sobrepasar la cantidad necesaria, por favor revise."
+  batchesSelectedQtyError: "No puede sobrepasar la cantidad necesaria, por favor revise.",
+  saveBatches: "¿Deseas guardar la configuración de Lotes para esta orden?"
 };

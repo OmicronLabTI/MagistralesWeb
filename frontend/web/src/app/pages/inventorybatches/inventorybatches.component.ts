@@ -236,10 +236,12 @@ export class InventorybatchesComponent implements OnInit {
         });
       }
     });
-    console.log("Objeto a enviar: ", objectToSave);
-    this.batchesService.updateBatches(objectToSave).subscribe( () => {
-      //window.location.reload();
-    }, error => console.log('error: ', error ));
-    
+    this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
+      if (resultSaveMessage.isConfirmed) {
+        this.batchesService.updateBatches(objectToSave).subscribe( () => {
+          window.location.reload();
+        }, error => console.log('error: ', error ));
+      }
+    }); 
   }
 }
