@@ -111,7 +111,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the error when update a order fab.
         /// </summary>
-        public const string ErrorUpdateFavOrd = "ErrorUpdateFabOrd";
+        public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
         /// if there were error while inserting.
@@ -179,6 +179,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
+        /// the update batches.
+        /// </summary>
+        public const string UpdateBatches = "batches";
+
+        /// <summary>
         /// route to cancel orders.
         /// </summary>
         public const string CancelFabOrder = "cancelProductionOrder";
@@ -211,7 +216,12 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// Reason finsihed order.
         /// </summary>
-        public const string ReasonProductionOrderFinished = "Una orden de fabricación se encuentra finalizada.";
+        public const string ReasonSalesOrderFinished = "El pedido ya esta finalizado.";
+
+        /// <summary>
+        /// Reason finsihed order.
+        /// </summary>
+        public const string ReasonProductionOrderFinished = "La orden de fabricación {0} se encuentra finalizada.";
 
         /// <summary>
         /// Reason SAP error.

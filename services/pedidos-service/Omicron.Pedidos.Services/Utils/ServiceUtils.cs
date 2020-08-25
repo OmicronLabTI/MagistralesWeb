@@ -177,7 +177,14 @@ namespace Omicron.Pedidos.Services.Utils
             listWithError.ForEach(x =>
             {
                 var order = x.Split("-");
-                listToReturn.Add(order[1]);
+                if (order.Count() > 2)
+                {
+                    listToReturn.Add($"{order[1]}-{order[2]}");
+                }
+                else
+                {
+                    listToReturn.Add(order[1]);
+                }
             });
 
             return listToReturn;

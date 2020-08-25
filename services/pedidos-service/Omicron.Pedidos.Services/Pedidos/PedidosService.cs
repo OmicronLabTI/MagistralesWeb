@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -284,14 +285,20 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonSalesOrderFinished));
                     continue;
                 }
 
                 // Validate non finished production orders
-                if (relatedOrders.Any(x => x.Status.Equals(ServiceConstants.Finalizado)))
+                var finishedOrders = relatedOrders.Where(x => x.Status.Equals(ServiceConstants.Finalizado)).ToList();
+                if (finishedOrders.Any())
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                    foreach (var finishedOrder in finishedOrders)
+                    {
+                        var message = string.Format(ServiceConstants.ReasonProductionOrderFinished, finishedOrder.Productionorderid);
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, message));
+                    }
+
                     continue;
                 }
 
@@ -351,13 +358,19 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     if (order.Order.PedidoStatus.Equals("C"))
                     {
-                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonOrderFinished));
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonSalesOrderFinished));
                         continue;
                     }
 
-                    if (order.Detalle.Any(x => x.Status.Equals("L")))
+                    var finishedOrders = order.Detalle.Where(x => x.Status.Equals("L")).ToList();
+                    if (finishedOrders.Any())
                     {
-                        failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, ServiceConstants.ReasonProductionOrderFinished));
+                        foreach (var finishedOrder in finishedOrders)
+                        {
+                            var message = string.Format(ServiceConstants.ReasonProductionOrderFinished, finishedOrder.OrdenFabricacionId);
+                            failed.Add(ServiceUtils.CreateCancellationFail(orderToCancel, message));
+                        }
+
                         continue;
                     }
 
@@ -512,7 +525,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersSap);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFavOrd);
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
@@ -540,6 +553,97 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// Makes the call to assign batches.
+        /// </summary>
+        /// <param name="assignBatches">the batches.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
+        {
+            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// the signatures.
+        /// </summary>
+        /// <param name="signatureType">the type.</param>
+        /// <param name="signatureModel">the model.</param>
+        /// <returns>the value.</returns>
+        public async Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel)
+        {
+            var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };
+            var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+
+            if (productionOrder != null)
+            {
+                var orderSignatures = await this.pedidosDao.GetSignaturesByUserOrderId(productionOrder.Id);
+                var isNew = false;
+                if (orderSignatures == null)
+                {
+                    orderSignatures = new UserOrderSignatureModel();
+                    orderSignatures.UserOrderId = productionOrder.Id;
+                    isNew = true;
+                }
+
+                // Convert Base64 Encoded string to Byte Array.
+                byte[] newSignatureAsByte = Convert.FromBase64String(signatureModel.Signature);
+
+                switch (signatureType)
+                {
+                    case SignatureTypeEnum.LOGISTICS:
+                        orderSignatures.LogisticSignature = newSignatureAsByte;
+                        break;
+                    case SignatureTypeEnum.TECHNICAL:
+                        orderSignatures.TechnicalSignature = newSignatureAsByte;
+                        break;
+                }
+
+                if (isNew)
+                {
+                    await this.pedidosDao.InsertOrderSignatures(orderSignatures);
+                }
+                else
+                {
+                    await this.pedidosDao.SaveOrderSignatures(orderSignatures);
+                }
+
+                return ServiceUtils.CreateResult(true, 200, null, orderSignatures, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
+        }
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> GetOrderSignatures(int productionOrderId)
+        {
+            var ids = new List<string> { productionOrderId.ToString() };
+            var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+
+            if (productionOrder != null)
+            {
+                var orderSignatures = await this.pedidosDao.GetSignaturesByUserOrderId(productionOrder.Id);
+
+                if (orderSignatures == null)
+                {
+                    orderSignatures = new UserOrderSignatureModel();
+                    orderSignatures.UserOrderId = productionOrder.Id;
+                }
+
+                return ServiceUtils.CreateResult(true, 200, null, orderSignatures, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
         }
 
         /// <summary>

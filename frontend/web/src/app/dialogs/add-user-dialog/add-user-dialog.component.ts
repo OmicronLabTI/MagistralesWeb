@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
@@ -8,17 +8,19 @@ import {CONST_USER_DIALOG, HttpServiceTOCall, MODAL_NAMES} from '../../constants
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {SweetAlertIcon} from 'sweetalert2';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss']
 })
-export class AddUserDialogComponent implements OnInit {
+export class AddUserDialogComponent implements OnInit, OnDestroy {
   userToEdit: IUserReq;
   addUserForm: FormGroup;
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
+  subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
               private usersService: UsersService, private errorService: ErrorService,
               private dataService: DataService) {
@@ -37,6 +39,12 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
+      if (valueForm.userName) {
+        this.addUserForm.get('userName').setValue(
+            valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+      }
+    });
     this.usersService.getRoles().subscribe(rolesRes => {
      this.userRoles = rolesRes.response;
      this.addUserForm.get('userTypeR').
@@ -97,5 +105,8 @@ export class AddUserDialogComponent implements OnInit {
   createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
     this.dataService.setCallHttpService(HttpServiceTOCall.USERS);
     this.dataService.setMessageGeneralCallHttp({title, icon, isButtonAccept});
+  }
+  ngOnDestroy() {
+   this.subscription.unsubscribe();
   }
 }

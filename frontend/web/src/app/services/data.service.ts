@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
+import {CancelOrders} from '../model/device/orders';
+import {CancelOrderReq} from '../model/http/pedidos';
 
 
 @Injectable({
@@ -19,8 +21,15 @@ export class DataService {
   private messageGenericCallHttp = new Subject<GeneralMessage>();
   private isToSaVeAnything = false;
   private urlActive = new Subject<HttpServiceTOCall>();
+  private cancelOrders = new Subject<CancelOrders>();
   constructor(private datePipe: DatePipe) { }
 
+  setCancelOrders(cancelOrder: CancelOrders) {
+    this.cancelOrders.next(cancelOrder);
+  }
+  getCancelOrder() {
+    return this.cancelOrders.asObservable();
+  }
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
   }
@@ -111,7 +120,7 @@ export class DataService {
     return !!localStorage.getItem('token-omi');
   }
   presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
-                     showConfirmButton: boolean = false, showCancelButton: boolean = false) {
+                     showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
     return new Promise (resolve => {
       Swal.fire({
         title,
@@ -124,8 +133,10 @@ export class DataService {
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
         buttonsStyling: false,
+
         customClass: {
           container: 'swal2-actions',
+          popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
         }
@@ -134,5 +145,37 @@ export class DataService {
   }
   transformDate(date: Date) {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+  getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
+    let errorOrders = '';
+    let firstMessage = '';
+    let finishMessaje = '';
+    switch (messageType) {
+      case MessageType.processOrder:
+        firstMessage = 'El producto ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.processDetailOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.placeOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Asignada \n';
+        break;
+      case MessageType.cancelOrder:
+        firstMessage = 'La orden de fabricación ';
+        break;
+    }
+    if (!isFromCancel) {
+      itemsWithError.forEach(order => {
+        errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
+      });
+    } else {
+      itemsWithError.forEach((order: CancelOrderReq) => {
+        errorOrders += `${firstMessage} ${order.orderId} ${order.reason} \n`;
+      });
+    }
+    return errorOrders;
   }
 }
