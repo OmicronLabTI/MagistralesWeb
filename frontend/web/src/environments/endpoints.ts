@@ -24,7 +24,9 @@ export const Endpoints = {
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
     placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
     cancelOrders: `${environment.baseUrl}/api/pedidos/salesOrder/cancel`,
-    cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`
+    cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`,
+    finalizeOrders: `${environment.baseUrl}/api/pedidos/fabOrder/finish`,
+    finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish2`
 }
 };
 

@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
-import {isString} from "util";
+import {isString} from 'util';
+import {DataService} from './data.service';
+import {Messages} from '../constants/messages';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorService {
 
-  constructor() { }
+  constructor(private dataService: DataService) { }
   httpError(error: any) {
+    this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});
     console.log('error httpService: ', error, 'isString: ', isString(error));
   }
 }

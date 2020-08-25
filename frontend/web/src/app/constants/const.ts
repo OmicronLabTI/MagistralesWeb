@@ -48,7 +48,8 @@ export enum MessageType {
     placeOrder,
     placeDetailOrder,
     cancelOrder,
-    cancelDetailOrder
+    cancelDetailOrder,
+    finalizeOrder
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'

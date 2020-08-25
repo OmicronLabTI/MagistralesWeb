@@ -32,12 +32,12 @@
           &nbsp; Reasignar &nbsp; 
         </button>
         &nbsp;
-        &nbsp;
-        <button mat-raised-button class="button-blue">
+        &nbsp;-->
+        <button [disabled]="isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
           &nbsp; Finalizar &nbsp; 
         </button>
         &nbsp;
-        &nbsp;-->
+        &nbsp;
         <button mat-raised-button [disabled]="!isThereOrdersDetailToCancel" [ngClass]="isThereOrdersDetailToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()">
           Cancelar
         </button>

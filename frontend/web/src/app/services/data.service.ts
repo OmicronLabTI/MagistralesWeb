@@ -22,8 +22,15 @@ export class DataService {
   private isToSaVeAnything = false;
   private urlActive = new Subject<HttpServiceTOCall>();
   private cancelOrders = new Subject<CancelOrders>();
+  private finalizeOrders = new Subject<CancelOrders>();
   constructor(private datePipe: DatePipe) { }
 
+  setFinalizeOrders(finalizeOrders: CancelOrders) {
+    this.finalizeOrders.next(finalizeOrders);
+  }
+  getFinalizeOrders() {
+    return this.finalizeOrders.asObservable();
+  }
   setCancelOrders(cancelOrder: CancelOrders) {
     this.cancelOrders.next(cancelOrder);
   }
@@ -163,17 +170,14 @@ export class DataService {
         firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Asignada \n';
         break;
-      case MessageType.cancelOrder:
-        firstMessage = 'La orden de fabricación ';
-        break;
     }
     if (!isFromCancel) {
-      itemsWithError.forEach(order => {
+      itemsWithError.forEach((order: string) => {
         errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
       });
     } else {
       itemsWithError.forEach((order: CancelOrderReq) => {
-        errorOrders += `${firstMessage} ${order.orderId} ${order.reason} \n`;
+        errorOrders += `${order.reason} \n`;
       });
     }
     return errorOrders;

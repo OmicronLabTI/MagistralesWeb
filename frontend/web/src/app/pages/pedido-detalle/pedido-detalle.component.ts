@@ -45,6 +45,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   subscriptionCallHttpDetail = new Subscription();
   detailsOrderToProcess = new ProcessOrdersDetailReq();
   isThereOrdersDetailToCancel = false;
+  isThereOrdersDetailToFinalize = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title) {
@@ -77,6 +78,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
+        this.isThereOrdersDetailToFinalize = false;
       }
     );
   }
@@ -111,6 +113,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersDetailToPlan = this.getIsThereOnData(ConstStatus.abierto);
     this.isThereOrdersDetailToPlace = this.getIsThereOnData(ConstStatus.planificado);
     this.isThereOrdersDetailToCancel = this.getIsThereOnData(ConstStatus.finalizado, true);
+    this.isThereOrdersDetailToFinalize = this.getIsThereOnData(ConstStatus.terminado);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
@@ -138,7 +141,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                 const titleProcessDetailWithError = this.dataService.getMessageTitle(
                     resultProcessDetail.response, MessageType.processDetailOrder);
                 this.getDetallePedido();
-                this.dataService.presentToastCustom(titleProcessDetailWithError, 'info',
+                this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false,  ClassNames.popupCustom);
               } else {
                 this.getDetallePedido();
@@ -162,5 +165,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         return cancelOrder;
       }),
       cancelType: MODAL_NAMES.placeOrdersDetail});
+  }
+
+  finalizeOrdersDetail() {
+    this.dataService.setFinalizeOrders({list: [{orderId: 12349}], cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 }

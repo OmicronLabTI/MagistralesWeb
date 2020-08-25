@@ -59,4 +59,8 @@ export class PedidosService {
     return this.consumeService.httpPut<ICancelOrdersRes>(isCancelOrder ? Endpoints.pedidos.cancelOrders :
         Endpoints.pedidos.cancelOrdersDetail, cancelOrders);
   }
+  putFinalizeOrders(cancelOrders: CancelOrderReq[] , isFinalizeOrder: boolean) {
+    return this.consumeService.httpPut<ICancelOrdersRes>(isFinalizeOrder ? Endpoints.pedidos.finalizeOrders :
+        Endpoints.pedidos.finalizeOrdersDetail, cancelOrders);
+  }
 }
