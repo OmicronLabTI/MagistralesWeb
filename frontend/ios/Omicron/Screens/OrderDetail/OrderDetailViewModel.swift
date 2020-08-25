@@ -23,7 +23,11 @@ class OrderDetailViewModel {
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
     var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
+    var seeLotsButtonDidTap = PublishSubject<Void>()
+    var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    var orderId: Int = -1
+    
     
     // MARK: Init
     init() {
@@ -31,13 +35,17 @@ class OrderDetailViewModel {
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
             self.showAlertConfirmation.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
         }).disposed(by: self.disposeBag)
+        
+        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
+            self.goToSeeLotsViewController.onNext(())
+        }).disposed(by: self.disposeBag)
 
     }
     
     // MARK: Functions
-    func getOrdenDetail(orderId: Int) -> Void {
+    func getOrdenDetail() -> Void {
         loading.onNext(true)
-        NetworkManager.shared.getOrdenDetail(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
+        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
             self.orderDetailData.accept([res.response!])
             self.tableData.onNext(res.response!.details!)
             self.auxTabledata = res.response!.details!
