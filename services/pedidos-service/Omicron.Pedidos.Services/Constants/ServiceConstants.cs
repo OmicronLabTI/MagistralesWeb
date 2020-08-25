@@ -199,6 +199,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetUsersByRole = "role/{0}";
 
         /// <summary>
+        /// Gets the components with the data.
+        /// </summary>
+        public const string GetComponentsWithBatches = "componentes/lotes/{0}";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
