@@ -12,9 +12,13 @@ export const Messages = {
   saveFormulaDetail: '¿Deseas guardar los cambios realizados?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
-  onlyPositiveNumber: 'Solo se aceptan números positivos',
+  onlyPositiveNumber: 'Ingresa sólo valores positivos',
   errorToAssignOrderAutomatic: 'Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual',
   errorToAssignOrderAutomaticSubtitle: 'Favor de verificar la información e intentarlo de nuevo',
   cancelOrders: '¿Deseas cancelar el(los) pedido(s) seleccionado(s)?',
-  cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s)? '
+  cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s)? ',
+  batchesCantidadSeleccionadaZero: "Debes ingresar una cantidad mayor a 0",
+  batchDelete: "¿Deseas eliminar esta asignación de lotes?",
+  batchesSelectedQtyError: "No puede sobrepasar la cantidad necesaria, por favor revise.",
+  saveBatches: "¿Deseas guardar la configuración de Lotes para esta orden?"
 };
