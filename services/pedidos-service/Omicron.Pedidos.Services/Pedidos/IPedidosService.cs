@@ -108,6 +108,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
 
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>
