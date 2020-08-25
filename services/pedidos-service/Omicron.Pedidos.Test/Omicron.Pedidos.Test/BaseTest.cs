@@ -80,6 +80,18 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// Gets the signature.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<UserOrderSignatureModel> GetSignature()
+        {
+            return new List<UserOrderSignatureModel>
+            {
+                new UserOrderSignatureModel { Id = 1000, LogisticSignature = null, TechnicalSignature = null, UserOrderId = 1 },
+            };
+        }
+
+        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
@@ -188,6 +200,53 @@ namespace Omicron.Pedidos.Test
             {
                 { "100-Aspirina-101", ServiceConstants.Ok },
                 { "200-Aspirina-023", ServiceConstants.ErrorUpdateFabOrd },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetBatches()
+        {
+            var assigneBatches = new List<AssignedBatches>
+            {
+                new AssignedBatches { CantidadSeleccionada = 10, NumeroLote = "asd", SysNumber = 1 },
+            };
+
+            var listOrders = new List<BatchesComponentModel>
+            {
+                new BatchesComponentModel { CodigoProducto = "asd", LotesAsignados = assigneBatches },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetMissingBatches()
+        {
+            var listOrders = new List<BatchesComponentModel>
+            {
+                new BatchesComponentModel { CodigoProducto = "asd", LotesAsignados = new List<AssignedBatches>() },
             };
 
             return new ResultModel
