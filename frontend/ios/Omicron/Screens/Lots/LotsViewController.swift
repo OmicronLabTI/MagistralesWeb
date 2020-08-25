@@ -58,6 +58,7 @@ class LotsViewController: UIViewController {
         self.viewModelBinding()
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
+        self.setupKeyboard()
     }
         
     // MARK: - Functions
@@ -156,6 +157,20 @@ class LotsViewController: UIViewController {
         view.layer.shadowOffset  = CGSize(width: 0.1, height: 0.1)
         view.layer.shadowRadius = 5
         view.layer.cornerRadius = 10
+    }
+    
+    @objc func keyBoardActions(notification: Notification) {
+        if (notification.name == UIResponder.keyboardWillShowNotification) {
+            self.view.frame.origin.y = -400
+        } else {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
+    func setupKeyboard() -> Void {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 }
 
