@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import { IUserReq, RoleUser} from '../../model/http/users';
@@ -23,7 +23,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
               private usersService: UsersService, private errorService: ErrorService,
-              private dataService: DataService) {
+              private dataService: DataService,
+              private dialogRef: MatDialogRef<AddUserDialogComponent>) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
 
@@ -50,9 +51,12 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
      this.addUserForm.get('userTypeR').
         setValue(!this.isForEditModal ? this.userRoles.
         filter(user =>
-          CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
+          CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
           this.userToEdit.role.toString());
-    }, error => this.errorService.httpError(error));
+    }, error => {
+      this.errorService.httpError(error);
+      this.dialogRef.close();
+    });
 
     if (!this.isForEditModal) {
       this.addUserForm.get('activo').setValue(1);

@@ -85,7 +85,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
       },
-      error => {/// checar con gus para manejar errores
+      error => { // checar con gus para manejar errores
         this.errorService.httpError(error);
         this.dataSource.data = [];
       }
@@ -254,7 +254,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrders() {
-    console.log('finalize orders')
+    console.log('finalize orders');
     this.dataService.setFinalizeOrders({list: [{orderId: 1234}], cancelType: MODAL_NAMES.placeOrders});
   }
 }

@@ -11,7 +11,6 @@ import {
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
-import {RoleQfbId} from '../constants/const';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +33,8 @@ export class PedidosService {
   processOrders(ordersToProcess) {
     return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrders, ordersToProcess);
   }
-  getQfbs() {
-    return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.qfbs}/${RoleQfbId}`);
+  getQfbs(defaultQfbId: number ) {
+    return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.qfbs}/${defaultQfbId}`);
   }
   getQfbsWithOrders() {
     return this.consumeService.httpGet<IQfbWithNumberRes>(`${Endpoints.users.qfbsWithOrders}`);

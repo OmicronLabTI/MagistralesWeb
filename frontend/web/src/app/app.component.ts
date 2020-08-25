@@ -74,6 +74,7 @@ export class AppComponent implements OnDestroy , OnInit {
     if (!this.dataService.getIsToSaveAnything()) {
       this.navigatePage(url);
     } else {
+        console.log('there anything to save');
       /*this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
           .then((savedResult: any) => {
             if (savedResult.isConfirmed) {
