@@ -88,6 +88,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders);
 
         /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultModel> FinishOrder(List<CancelOrderModel> finishOrders);
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
@@ -108,6 +115,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
 
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>

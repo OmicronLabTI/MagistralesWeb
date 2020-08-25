@@ -140,6 +140,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> FinishOrder(List<CancelOrderDto> finishOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishOrder(this.mapper.Map<List<CancelOrderModel>>(finishOrders)));
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para

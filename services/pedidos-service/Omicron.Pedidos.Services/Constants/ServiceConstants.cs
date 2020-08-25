@@ -24,6 +24,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Cancelled = "Cancelado";
 
         /// <summary>
+        /// Completed status.
+        /// </summary>
+        public const string Completed = "Terminado";
+
+        /// <summary>
         /// status middleware liberado.
         /// </summary>
         public const string Liberado = "Liberado";
@@ -67,6 +72,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// when the order goes to Cancelled.
         /// </summary>
         public const string OrderCancelled = "La orden {0} paso a Cancelado";
+
+        /// <summary>
+        /// when the order goes to Finished.
+        /// </summary>
+        public const string OrderFinished = "La orden {0} paso a Finalizado";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -189,6 +199,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string CancelFabOrder = "cancelProductionOrder";
 
         /// <summary>
+        /// route to finish orders.
+        /// </summary>
+        public const string FinishFabOrder = "finishProducionOrders";
+
+        /// <summary>
         /// the connect to sap di api.
         /// </summary>
         public const string ConnectSapDiApi = "connect";
@@ -219,13 +234,28 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ReasonSalesOrderFinished = "El pedido ya esta finalizado.";
 
         /// <summary>
-        /// Reason finsihed order.
+        /// Reason finsihed production order.
         /// </summary>
         public const string ReasonProductionOrderFinished = "La orden de fabricación {0} se encuentra finalizada.";
+
+        /// <summary>
+        /// Reason non complete production orders.
+        /// </summary>
+        public const string ReasonProductionOrderNonCompleted = "La orden de fabricación {0} no se encuentra terminada.";
+
+        /// <summary>
+        /// Reason non complete sales orders.
+        /// </summary>
+        public const string ReasonOrderNonCompleted = "La orden no se encuentra terminada.";
 
         /// <summary>
         /// Reason SAP error.
         /// </summary>
         public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
+
+        /// <summary>
+        /// Reason SAP error.
+        /// </summary>
+        public const string ReasonSapConnectionError = "Ocurrió un error al actualizar en SAP.";
     }
 }

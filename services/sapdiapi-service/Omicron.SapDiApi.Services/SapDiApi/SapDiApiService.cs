@@ -347,7 +347,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     _loggerProxy.Debug($"The production order { productionOrderId } doesn´t exists.");
                     results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
                 }
-                
+
+                if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposClosed)
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } already closed.");
+                    continue;
+                }
+
                 if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
                 {
                     _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
