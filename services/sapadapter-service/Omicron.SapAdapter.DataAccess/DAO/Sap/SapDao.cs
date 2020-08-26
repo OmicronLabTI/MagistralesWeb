@@ -216,7 +216,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                 {
                                     OrderFabId = w.OrderFabId,
                                     ProductId = w.ItemCode,
-                                    Description = p.ProductoName,
+                                    Description = p.LargeDescription,
                                     BaseQuantity = w.BaseQuantity,
                                     RequiredQuantity = w.RequiredQty,
                                     Consumed = (int)w.ConsumidoQty,
@@ -264,7 +264,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     listToReturn.Add(new CompleteDetalleFormulaModel
                     {
                         ProductId = p.ProductoId,
-                        Description = p.ProductoName,
+                        Description = p.LargeDescription,
                         Consumed = 0,
                         Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
                         Unit = p.Unit,
@@ -301,7 +301,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     listToReturn.Add(new CompleteDetalleFormulaModel
                     {
                         ProductId = p.ProductoId,
-                        Description = p.ProductoName,
+                        Description = p.LargeDescription,
                         Consumed = 0,
                         Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
                         Unit = p.Unit,
@@ -342,7 +342,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               Warehouse = c.Almacen,
                               PendingQuantity = c.RequiredQty,
                               ProductId = c.ItemCode,
-                              Description = p.ProductoName,
+                              Description = p.LargeDescription,
                               OrderFabId = c.OrderFabId,
                           }).ToListAsync();
         }
