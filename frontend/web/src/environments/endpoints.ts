@@ -28,7 +28,11 @@ export const Endpoints = {
     cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`,
     finalizeOrders: `${environment.baseUrl}/api/pedidos/fabOrder/finish`,
     finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish2`
-}
+  },
+  inventoryBatches: {
+    getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
+    assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
+  }
 };
 
 export const TokenExcludedEndpoints = [

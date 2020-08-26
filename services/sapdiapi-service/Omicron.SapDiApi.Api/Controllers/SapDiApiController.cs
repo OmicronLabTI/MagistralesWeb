@@ -99,6 +99,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Finish production order.
+        /// </summary>
+        /// <param name="productionOrdes">Production orders to finish.</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("finishProducionOrders")]
+        public async Task<IHttpActionResult> FinishProductionOrders([FromBody] List<CancelOrderDto> productionOrdes)
+        {
+            var result = await this.sapFacade.FinishOrder(productionOrdes);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

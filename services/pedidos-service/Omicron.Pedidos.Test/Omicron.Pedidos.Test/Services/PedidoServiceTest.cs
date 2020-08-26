@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Test.Services
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
@@ -58,6 +59,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.OrderLogModel.Add(this.GetOrderLogModel());
+            this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
             this.sapAdapter = new Mock<ISapAdapter>();
@@ -387,9 +389,9 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var userId = "abc";
 
-            var orderToUpdate = new List<CancelOrderModel>
+            var orderToUpdate = new List<OrderIdModel>
             {
-                new CancelOrderModel { UserId = userId, OrderId = orderId },
+                new OrderIdModel { UserId = userId, OrderId = orderId },
             };
 
             // act
@@ -412,9 +414,9 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var userId = "abc";
 
-            var orderToUpdate = new List<CancelOrderModel>
+            var orderToUpdate = new List<OrderIdModel>
             {
-                new CancelOrderModel { UserId = userId, OrderId = orderId },
+                new OrderIdModel { UserId = userId, OrderId = orderId },
             };
 
             // act
@@ -437,9 +439,9 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var userId = "abc";
 
-            var orderToUpdate = new List<CancelOrderModel>
+            var orderToUpdate = new List<OrderIdModel>
             {
-                new CancelOrderModel { UserId = userId, OrderId = orderId },
+                new OrderIdModel { UserId = userId, OrderId = orderId },
             };
 
             // act
@@ -586,6 +588,131 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishOrder()
+        {
+            // arrange
+            var update = new UpdateOrderSignatureModel
+            {
+                FabricationOrderId = 100,
+                Signature = "asdf",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetBatches()));
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.FinishOrder(update);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishOrderNewSignature()
+        {
+            // arrange
+            var update = new UpdateOrderSignatureModel
+            {
+                FabricationOrderId = 101,
+                Signature = "asdf",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetBatches()));
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.FinishOrder(update);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishOrderHasError()
+        {
+            // arrange
+            var update = new UpdateOrderSignatureModel
+            {
+                FabricationOrderId = 101,
+                Signature = "asdf",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetMissingBatches()));
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.FinishOrder(update));
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishBySalesOrder()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdModel>
+            {
+                new OrderIdModel { OrderId = 104, UserId = "abc", },
+            };
+            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockResult = new ResultModel();
+            mockResult.Success = true;
+            mockResult.Code = 200;
+            mockResult.Response = JsonConvert.SerializeObject(mockContent);
+
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResult));
+
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.FinishBySalesOrder(salesOrders);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

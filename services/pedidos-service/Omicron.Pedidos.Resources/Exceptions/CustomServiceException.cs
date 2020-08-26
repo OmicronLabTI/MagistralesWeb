@@ -55,11 +55,32 @@ namespace Omicron.LeadToCash.Resources.Exceptions
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CustomServiceException"/> class.
+        /// </summary>
+        /// <param name="message">the message.</param>
+        /// <param name="status">the statucs code.</param>
+        /// <param name="body">The body to send.</param>
+        public CustomServiceException(string message, HttpStatusCode status, object body)
+            : base(message)
+        {
+            this.Status = status;
+            this.ResponseBody = body;
+        }
+
+        /// <summary>
         /// Gets the Status.
         /// </summary>
         /// <value>
         /// The Status.
         /// </value>
         public virtual HttpStatusCode Status { get; }
+
+        /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <value>
+        /// The Status.
+        /// </value>
+        public virtual object ResponseBody { get; }
     }
 }

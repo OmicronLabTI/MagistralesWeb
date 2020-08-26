@@ -171,9 +171,22 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/cancel")]
         [HttpPut]
-        public async Task<IActionResult> CancelOrder(List<CancelOrderDto> cancelOrders)
+        public async Task<IActionResult> CancelOrder(List<OrderIdDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/salesOrder/finish")]
+        [HttpPut]
+        public async Task<IActionResult> FinishBySalesOrder(List<OrderIdDto> finishOrders)
+        {
+            var response = await this.pedidoFacade.FinishBySalesOrder(finishOrders);
             return this.Ok(response);
         }
 
@@ -184,7 +197,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/fabOrder/cancel")]
         [HttpPut]
-        public async Task<IActionResult> CancelFabOrder(List<CancelOrderDto> cancelOrders)
+        public async Task<IActionResult> CancelFabOrder(List<OrderIdDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
             return this.Ok(response);
@@ -262,6 +275,30 @@ namespace Omicron.Pedidos.Api.Controllers
         {
             var response = await this.pedidoFacade.UpdateBatches(assignBatches);
             return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Finish the order by the qfb.
+        /// </summary>
+        /// <param name="orderSignature">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/finishOrder")]
+        [HttpPost]
+        public async Task<IActionResult> FinishOrder(UpdateOrderSignatureDto orderSignature)
+        {
+            var response = await this.pedidoFacade.FinishOrder(orderSignature);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/ping")]
+        [HttpGet]
+        public async Task<IActionResult> Ping()
+        {
+            return this.Ok("Pong");
         }
     }
 }

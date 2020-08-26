@@ -24,6 +24,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Cancelled = "Cancelado";
 
         /// <summary>
+        /// Completed status.
+        /// </summary>
+        public const string Completed = "Terminado";
+
+        /// <summary>
         /// status middleware liberado.
         /// </summary>
         public const string Liberado = "Liberado";
@@ -37,6 +42,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// the proceso status.
         /// </summary>
         public const string Proceso = "Proceso";
+
+        /// <summary>
+        /// The terminado status.
+        /// </summary>
+        public const string Terminado = "Terminado";
 
         /// <summary>
         /// the en proceso status.
@@ -74,6 +84,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrderCancelled = "La orden {0} paso a Cancelado";
 
         /// <summary>
+        /// when the order goes to Finished.
+        /// </summary>
+        public const string OrderFinished = "La orden {0} paso a Finalizado";
+
+        /// <summary>
         /// cuando se asigna un pedido.
         /// </summary>
         public const string AsignarVenta = "Se asigno el pedido a {0}";
@@ -82,6 +97,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// se asigna la orden.
         /// </summary>
         public const string AsignarOrden = "Se asigno la orden a {0}";
+
+        /// <summary>
+        /// se termino la orden.
+        /// </summary>
+        public const string OrdenTerminada = "Se termino la orden por el usuario";
 
         /// <summary>
         /// orde fab plani.
@@ -194,6 +214,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string CancelFabOrder = "cancelProductionOrder";
 
         /// <summary>
+        /// route to finish orders.
+        /// </summary>
+        public const string FinishFabOrder = "finishProducionOrders";
+
+        /// <summary>
         /// the connect to sap di api.
         /// </summary>
         public const string ConnectSapDiApi = "connect";
@@ -202,6 +227,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
+
+        /// <summary>
+        /// Gets the components with the data.
+        /// </summary>
+        public const string GetComponentsWithBatches = "componentes/lotes/{0}";
 
         /// <summary>
         /// the id for qfb role.
@@ -224,13 +254,33 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ReasonSalesOrderFinished = "El pedido ya esta finalizado.";
 
         /// <summary>
-        /// Reason finsihed order.
+        /// Reason finsihed production order.
         /// </summary>
         public const string ReasonProductionOrderFinished = "La orden de fabricación {0} se encuentra finalizada.";
+
+        /// <summary>
+        /// Reason non complete production orders.
+        /// </summary>
+        public const string ReasonProductionOrderNonCompleted = "La orden de fabricación {0} no se encuentra terminada.";
+
+        /// <summary>
+        /// Reason non complete sales orders.
+        /// </summary>
+        public const string ReasonOrderNonCompleted = "La orden no se encuentra terminada.";
 
         /// <summary>
         /// Reason SAP error.
         /// </summary>
         public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
+
+        /// <summary>
+        /// Reason SAP error.
+        /// </summary>
+        public const string ReasonSapConnectionError = "Ocurrió un error al actualizar en SAP.";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string BatchesAreMissingError = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado";
     }
 }

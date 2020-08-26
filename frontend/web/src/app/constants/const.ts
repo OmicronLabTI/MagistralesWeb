@@ -5,8 +5,8 @@ export const CONST_NUMBER = {
     three: 3,
     five: 5,
     ten: 10,
-    timeToast: 2000
-
+    timeToast: 2000,
+    nulo: null
 };
 export const CONST_STRING = {
     empty: ''
@@ -75,8 +75,15 @@ export const HttpStatus = {
     notFound: 404,
 };
 
+<<<<<<< HEAD
 export const ConstToken = {
     accessToken: 'token-omi',
     refreshToken: 'refresh-omi',
     rememberSession: 'session-re'
 };
+=======
+export const BOOLEANS = {
+    verdadero: true,
+    falso: false
+}
+>>>>>>> 88fa9d55259576ef9b2f91d7b36197394cfde0ea

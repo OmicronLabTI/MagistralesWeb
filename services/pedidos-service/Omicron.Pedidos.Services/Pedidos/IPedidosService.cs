@@ -99,14 +99,21 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders);
+        Task<ResultModel> CancelOrder(List<OrderIdModel> cancelOrders);
+
+        /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultModel> FinishBySalesOrder(List<OrderIdModel> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultModel> CancelFabOrder(List<CancelOrderModel> cancelOrders);
+        Task<ResultModel> CancelFabOrder(List<OrderIdModel> cancelOrders);
 
         /// <summary>
         /// Makes the automatic assign.
@@ -136,5 +143,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> GetOrderSignatures(int productionOrderId);
+
+        /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature);
     }
 }

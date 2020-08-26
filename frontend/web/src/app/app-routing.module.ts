@@ -33,6 +33,11 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
+    path: 'lotes/:ordenid',
+    loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
+    canActivate: [GuardService]
+  },
+  {
     path: '**',
     redirectTo: '/login'
 
