@@ -174,3 +174,15 @@ extension ChangeStatus: Mappable {
         status <- map["Status"]
     }
 }
+
+class FinishOrder: Codable {
+    var userId: String?
+    var fabricationOrderId: Int?
+    var signature: String?
+    
+    init(userId: String, fabricationOrderId: Int, signature: String) {
+        self.userId = userId
+        self.fabricationOrderId = fabricationOrderId
+        self.signature = signature
+    }
+}

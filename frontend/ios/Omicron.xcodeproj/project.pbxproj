@@ -55,6 +55,9 @@
 		7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D324CB9576005A7FED /* InboxViewModel.swift */; };
 		7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE216D524CB9588005A7FED /* InboxModel.swift */; };
 		7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED3DA224DC0FBA00C52225 /* AlertManager.swift */; };
+		7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */; };
+		7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */; };
+		7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
 		98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CB524AFBC6C00E7772F /* Main.storyboard */; };
@@ -143,6 +146,9 @@
 		7CE216D324CB9576005A7FED /* InboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModel.swift; sourceTree = "<group>"; };
 		7CE216D524CB9588005A7FED /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
 		7CED3DA224DC0FBA00C52225 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewController.swift; sourceTree = "<group>"; };
+		7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewModel.swift; sourceTree = "<group>"; };
+		7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadModel.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAC24AFBC6C00E7772F /* Omicron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Omicron.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -320,6 +326,16 @@
 			path = Inbox;
 			sourceTree = "<group>";
 		};
+		7CF2EA3624F6C5DD0005602F /* SignaturePad */ = {
+			isa = PBXGroup;
+			children = (
+				7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */,
+				7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */,
+				7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */,
+			);
+			path = SignaturePad;
+			sourceTree = "<group>";
+		};
 		98015CA324AFBC6C00E7772F = {
 			isa = PBXGroup;
 			children = (
@@ -437,6 +453,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				7CF2EA3624F6C5DD0005602F /* SignaturePad */,
 				7C9118F924EF1C5300E2571A /* Lots */,
 				7C5C6D9F24E8F43700662508 /* OrderDetailForm */,
 				7C3A55CA24E76DC2001B627E /* Comments */,
@@ -741,6 +758,7 @@
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
 				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
+				7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */,
 				7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */,
 				98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */,
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
@@ -753,12 +771,14 @@
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
+				7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
 				7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */,
 				7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
+				7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,

@@ -40,5 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { OrderDetailFormViewModel() }.scope(Resolver.cached)
         Resolver.register { CommentsViewModel() }.scope(Resolver.cached)
         Resolver.register { LotsViewModel() }.scope(Resolver.cached)
+        Resolver.register {SignaturePadViewModel() }.scope(Resolver.cached)
     }
 }

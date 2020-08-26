@@ -110,6 +110,13 @@ class NetworkManager: SessionProtocol {
         let res: Observable<LotsResponse> = makeRequest(request: req)
         return res
     }
+    
+    // Finaliza la order de fabricación
+    func finishOrder(order: FinishOrder) -> Observable<OrderDetailResponse> {
+        let req: ApiService = ApiService.finishOrder(finishOrder: order)
+        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in

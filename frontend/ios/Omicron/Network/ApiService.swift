@@ -18,6 +18,7 @@ enum ApiService {
     case deleteItemOfOrdenDetail(orderDetailRequest: OrderDetailRequest)
     case changeStatusOrder(changeStatusRequest: [ChangeStatusRequest])
     case getLots(orderId: Int)
+    case finishOrder(finishOrder: FinishOrder)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -49,12 +50,14 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/status/fabOrder"
         case .getLots(let orderId):
             return "sapadapter/componentes/lotes/\(orderId)"
+        case .finishOrder:
+            return "pedidos/finishOrder"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .login, .renew:
+        case .login, .renew, .finishOrder:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -81,6 +84,8 @@ extension ApiService: AuthorizedTargetType {
         case .deleteItemOfOrdenDetail(let data):
             return .requestJSONEncodable(data)
         case .changeStatusOrder(let data):
+            return .requestJSONEncodable(data)
+        case .finishOrder(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -128,6 +133,13 @@ extension ApiService: AuthorizedTargetType {
             return data
             
         case .getLots:
+            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+            
+        case .finishOrder:
             guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()

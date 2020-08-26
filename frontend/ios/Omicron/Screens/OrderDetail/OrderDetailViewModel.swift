@@ -18,11 +18,13 @@ class OrderDetailViewModel {
     var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
-    var showAlertConfirmation: PublishSubject<String> = PublishSubject()
+    var showAlertConfirmationProcess = PublishSubject<String>()
+    var showAlertConfirmationFinished = PublishSubject<String>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
-    var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
+    var processButtonDidTap = PublishSubject<Void>()
+    var finishedButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
@@ -32,8 +34,12 @@ class OrderDetailViewModel {
     // MARK: Init
     init() {
         
-        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
-            self.showAlertConfirmation.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.showAlertConfirmationFinished.onNext("¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+        
+        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
         }).disposed(by: self.disposeBag)
         
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {

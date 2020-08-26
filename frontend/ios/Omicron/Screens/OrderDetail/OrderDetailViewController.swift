@@ -113,10 +113,22 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
-        self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in self.changeStatus(response: "Cancelar")})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK)})
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.changeStatus(response: "Cancelar", statusType: "")})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK, statusType: "process")})
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un mensaje de confirmación para poner la orden en status finalizado
+        self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.changeStatus(response: "Cancelar", statusType: "")})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK, statusType: "finished")})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
@@ -208,7 +220,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.assignedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
@@ -242,7 +254,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             // Logica para borrar un elemento de la tabla
             let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
                 let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
                 let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)
@@ -267,11 +279,23 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
     
-    func changeStatus(response: String) -> Void  {
+    func changeStatus(response: String, statusType: String) -> Void  {
         
         if(response == "OK") {
-            orderDetailViewModel.changeStatus()
-            return
+            switch statusType {
+            case "process":
+                 orderDetailViewModel.changeStatus()
+                return
+            case "finished":
+                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+                let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+                signatureVC.orderId = self.orderId
+                signatureVC.modalPresentationStyle = .overCurrentContext
+                self.present(signatureVC, animated: true, completion: nil)
+                return
+            default:
+                return
+            }
         }
         self.navigationController?.popViewController(animated: true)
     }
