@@ -82,6 +82,16 @@ namespace Omicron.SapDiApi.Facade.Sap
         }
 
         /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> FinishOrder(List<CancelOrderDto> productionOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.FinishOrder(this.mapper.Map<List<CancelOrderModel>>(productionOrders)));
+        }
+
+        /// <summary>
         /// Upfate the batches.
         /// </summary>
         /// <param name="assginBatches">The assign batches.</param>
