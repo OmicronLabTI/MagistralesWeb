@@ -82,5 +82,25 @@ namespace Omicron.SapDiApi.Services.Constants
         /// deletes the batch.
         /// </summary>
         public const string DeleteBatch = "delete";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotExistsProductionOrder = "La orden de produción {0} no existe.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReleasedProductionOrder = "La orden de producción {0} no esta liberada.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReceipProductionCreated = "No se ha podido crear recepción de producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotProductionStatusClosed = "La orden de producción {0} no se ha podido cerrar.";
     }
 }
