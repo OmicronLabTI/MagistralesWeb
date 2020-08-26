@@ -93,13 +93,14 @@ namespace Omicron.SapAdapter.Services.Sap
             details.ToList().ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
-                var userId = userOrder == null ? string.Empty : userOrder.Userid;
+                userOrder = userOrder == null ? new UserOrderModel() : userOrder;
+                var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 
-                x.Status = userOrder == null ? string.Empty : userOrder.Status;
+                x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? string.Empty : string.Empty;
+                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
