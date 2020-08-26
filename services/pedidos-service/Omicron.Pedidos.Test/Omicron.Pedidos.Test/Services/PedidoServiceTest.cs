@@ -720,7 +720,7 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishFabOrder()
+        public async Task CloseFabOrders()
         {
             // arrange
             var salesOrders = new List<OrderIdModel>
@@ -743,7 +743,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
-            var response = await pedidoServiceLocal.FinishFabOrder(salesOrders);
+            var response = await pedidoServiceLocal.CloseFabOrders(salesOrders);
 
             // assert
             Assert.IsNotNull(response);

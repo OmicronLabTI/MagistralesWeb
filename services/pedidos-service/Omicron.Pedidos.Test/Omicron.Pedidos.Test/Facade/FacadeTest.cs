@@ -133,7 +133,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.FinishFabOrder(It.IsAny<List<OrderIdModel>>()))
+                .Setup(m => m.CloseFabOrders(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
@@ -609,7 +609,7 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>returns nothing.</returns>
         [Test]
-        public async Task FinishFabOrder()
+        public async Task CloseFabOrders()
         {
             // arrange
             var salesOrders = new List<OrderIdDto>
@@ -618,7 +618,7 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             // act
-            var response = await this.pedidoFacade.FinishFabOrder(salesOrders);
+            var response = await this.pedidoFacade.CloseFabOrders(salesOrders);
 
             // Assert
             Assert.IsNotNull(response);

@@ -120,7 +120,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</para
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> FinishFabOrder(List<OrderIdDto> finishOrders);
+        Task<ResultDto> CloseFabOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// the automatic assign.

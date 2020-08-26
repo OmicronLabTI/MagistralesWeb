@@ -670,7 +670,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</para
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> FinishFabOrder(List<OrderIdModel> finishOrders)
+        public async Task<ResultModel> CloseFabOrders(List<OrderIdModel> finishOrders)
         {
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
