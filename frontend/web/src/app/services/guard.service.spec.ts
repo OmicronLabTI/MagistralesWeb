@@ -1,20 +1,33 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { GuardService } from './guard.service';
 import { DataService } from './data.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {DatePipe} from '@angular/common';
 describe('GuardService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [
-      RouterTestingModule
-    ],
-    providers: [
-      DataService,
-        DatePipe
-    ]
-  }));
+  let routerSpy: jasmine.SpyObj<Router>;
+  let dataSpyService: jasmine.SpyObj<DataService>;
+  beforeEach(() => {
+    routerSpy = jasmine.createSpyObj<Router>('Router', [
+      'navigate'
+    ]);
+    dataSpyService = jasmine.createSpyObj<DataService>('DataService', [
+      'userIsAuthenticated'
+    ]);
+    dataSpyService.userIsAuthenticated.and.returnValue(true);
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
+      providers: [
+        DataService,
+        DatePipe,
+        { provide: Router, useValue: routerSpy },
+        { provide: DataService, useValue: dataSpyService }
+      ]
+    });
+  });
 
   it('should be created', () => {
     const service: GuardService = TestBed.get(GuardService);
@@ -22,22 +35,19 @@ describe('GuardService', () => {
   });
 
   it('should can activate true', () => {
-    inject([DataService], (dataService) => {
       const service: GuardService = TestBed.get(GuardService);
       const route = {} as ActivatedRouteSnapshot;
       const state = {} as RouterStateSnapshot;
-      dataService.setToken('token');
       expect(service.canActivate(route, state)).toBeTruthy();
-    });
+      expect(routerSpy.navigate).not.toHaveBeenCalledWith(['/login']);
   });
 
   it('should can activate false', () => {
     const service: GuardService = TestBed.get(GuardService);
-    inject([DataService], (dataService) => {
-      const route = {} as ActivatedRouteSnapshot;
-      const state = {} as RouterStateSnapshot;
-      dataService.setToken(undefined);
-      expect(service.canActivate(route, state)).toBeFalsy();
-    });
+    dataSpyService.userIsAuthenticated.and.returnValue(false);
+    const route = {} as ActivatedRouteSnapshot;
+    const state = {} as RouterStateSnapshot;
+    expect(service.canActivate(route, state)).toBe(false);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
   });
 });

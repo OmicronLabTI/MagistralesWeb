@@ -4,7 +4,7 @@ import { SecurityService } from './security.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { DataService } from './data.service';
 import { ConsumeService } from './consume.service';
-import { ILoginReq, ILoginRes } from '../model/http/security.model';
+import { ILoginReq } from '../model/http/security.model';
 import { Observable } from 'rxjs';
 import { Endpoints } from 'src/environments/endpoints';
 import {DatePipe} from '@angular/common';
@@ -28,7 +28,7 @@ describe('SecurityService', () => {
   it('should create login observable', () => {
     const service: ConsumeService = TestBed.get(ConsumeService);
     const obs = service.httpGet<ILoginReq>(Endpoints.security.login);
-    expect(obs instanceof Observable).toBeTruthy();
+    expect(obs  ).toBeTruthy();
   });
 
   it('should login',
@@ -55,4 +55,12 @@ describe('SecurityService', () => {
       req.flush(res);
     })
   );
+  it('should refreshToken', () => {
+      const service: SecurityService = TestBed.get(SecurityService);
+      expect(service.refreshToken() instanceof Observable).toBeTruthy();
+    });
+  it('should getUser', () => {
+        const service: SecurityService = TestBed.get(SecurityService);
+        expect(service.getUser('anyUsername') instanceof Observable).toBeTruthy();
+    });
 });
