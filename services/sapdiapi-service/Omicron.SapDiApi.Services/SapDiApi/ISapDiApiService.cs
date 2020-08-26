@@ -53,6 +53,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches);
 
         /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

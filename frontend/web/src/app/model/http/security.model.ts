@@ -12,3 +12,9 @@ export interface ILoginRes {
   expires_in: number;
   scope: string;
 }
+
+export interface IRefreshTokenReq {
+  grant_type: string;
+  refresh_token: string;
+  scope: string;
+}

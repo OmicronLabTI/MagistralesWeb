@@ -65,6 +65,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
+                .Setup(m => m.GetUserOrderByFabOrder(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
                 .Setup(m => m.GetFabOrderByUserID(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
@@ -89,11 +93,11 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.CancelOrder(It.IsAny<List<CancelOrderModel>>()))
+                .Setup(m => m.CancelOrder(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.CancelFabOrder(It.IsAny<List<CancelOrderModel>>()))
+                .Setup(m => m.CancelFabOrder(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -109,11 +113,27 @@ namespace Omicron.Pedidos.Test.Facade
                             .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-            .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
-            .Returns(Task.FromResult(response));
+                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+                .Returns(Task.FromResult(response));
 
             mockServicesPedidos
                 .Setup(m => m.GetOrderSignatures(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.FinishOrder(It.IsAny<UpdateOrderSignatureModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.UpdateFabOrderComments(It.IsAny<List<UpdateOrderCommentsModel>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.CloseSalesOrders(It.IsAny<List<OrderIdModel>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.CloseFabOrders(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
@@ -148,6 +168,28 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetUserOrderByFabOrder()
+        {
+            // arrange
+            var listIds = new List<int>();
+
+            // act
+            var response = await this.pedidoFacade.GetUserOrderByFabOrder(listIds);
 
             // Assert
             Assert.IsNotNull(response);
@@ -343,9 +385,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CancelOrder()
         {
             // arrange
-            var orders = new List<CancelOrderDto>
+            var orders = new List<OrderIdDto>
             {
-                new CancelOrderDto { OrderId = 1, UserId = "mockUser" },
+                new OrderIdDto { OrderId = 1, UserId = "mockUser" },
             };
 
             // act
@@ -394,9 +436,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CancelFabOrder()
         {
             // arrange
-            var orders = new List<CancelOrderDto>
+            var orders = new List<OrderIdDto>
             {
-                new CancelOrderDto { OrderId = 1, UserId = "mockUser" },
+                new OrderIdDto { OrderId = 1, UserId = "mockUser" },
             };
 
             // act
@@ -460,7 +502,7 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.AreEqual(200, response.Code);
         }
 
-/// <summary>
+        /// <summary>
         /// test test.
         /// </summary>
         /// <returns>returns nothing.</returns>
@@ -475,6 +517,108 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.UpdateBatches(updateBatches);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task UpdateFabOrderComments()
+        {
+            // arrange
+            var orders = new List<UpdateOrderCommentsDto>
+            {
+                new UpdateOrderCommentsDto { OrderId = 1, UserId = "mockUser", Comments = "Hello" },
+            };
+
+            // act
+            var response = await this.pedidoFacade.UpdateFabOrderComments(orders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task FinishOrder()
+        {
+            // arrange
+            var updateBatches = new UpdateOrderSignatureDto
+            {
+                FabricationOrderId = 200,
+                Signature = "signature",
+                UserId = "abc",
+            };
+
+            // act
+            var response = await this.pedidoFacade.FinishOrder(updateBatches);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CloseSalesOrders()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdDto>
+            {
+                new OrderIdDto { OrderId = 1, UserId = "abc", },
+            };
+
+            // act
+            var response = await this.pedidoFacade.CloseSalesOrders(salesOrders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CloseFabOrders()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdDto>
+            {
+                new OrderIdDto { OrderId = 1, UserId = "abc", },
+            };
+
+            // act
+            var response = await this.pedidoFacade.CloseFabOrders(salesOrders);
 
             // Assert
             Assert.IsNotNull(response);

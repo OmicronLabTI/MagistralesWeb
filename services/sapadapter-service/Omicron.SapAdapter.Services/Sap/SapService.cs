@@ -93,12 +93,14 @@ namespace Omicron.SapAdapter.Services.Sap
             details.ToList().ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
-                var userId = userOrder == null ? string.Empty : userOrder.Userid;
+                userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
+                var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 
-                x.Status = userOrder == null ? string.Empty : userOrder.Status;
+                x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
+                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -160,6 +162,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
+            var result = await this.pedidosService.GetFabricationOrders(ordenFab.Select(x => x.OrdenId).ToList());
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+
             foreach (var o in ordenFab)
             {
                 if (!dictUser.ContainsKey(o.User))
@@ -169,13 +174,16 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+                var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
+                var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
+                var comments = userOrder != null ? userOrder.Comments : string.Empty;
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
                     IsChecked = false,
                     ProductionOrderId = o.OrdenId,
                     Code = o.ProductoId,
-                    ProductDescription = o.ProdName,
+                    ProductDescription = item == null ? string.Empty : item.LargeDescription,
                     Type = ServiceConstants.DictStatusType.ContainsKey(o.Type) ? ServiceConstants.DictStatusType[o.Type] : o.Type,
                     Status = ServiceConstants.DictStatus.ContainsKey(o.Status) ? ServiceConstants.DictStatus[o.Status] : o.Status,
                     PlannedQuantity = (int)o.Quantity,
@@ -194,7 +202,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     RealEndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
-                    Comments = o.Comments,
+                    Comments = comments,
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
@@ -223,6 +231,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listValues = new List<CompleteDetalleFormulaModel>();
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());

@@ -81,6 +81,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string EnProceso = "En proceso";
 
         /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string Terminado = "Terminado";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -114,6 +119,18 @@ namespace Omicron.SapAdapter.Services.Constants
         public static Dictionary<string, string> DictStatusOrigin { get; } = new Dictionary<string, string>
         {
             { "M", "Manual" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictUrlEncode { get; } = new Dictionary<string, string>
+        {
+            { "%C3%9C", "Ü" },
+            { "%C3%BC", "ü" },
         };
     }
 }

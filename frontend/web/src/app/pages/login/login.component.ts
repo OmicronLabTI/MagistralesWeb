@@ -5,6 +5,7 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import {ConstToken} from '../../constants/const';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit {
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+        rememberSession: [false, []]
     });
   }
 
@@ -43,6 +45,10 @@ export class LoginComponent implements OnInit {
     } as ILoginReq;
     this.securityService.login(userLoginReq).toPromise().then(async res => {
       this.dataService.setToken(res.access_token);
+      this.dataService.setRefreshToken(res.refresh_token);
+      if (this.formLogin.get('rememberSession').value) {
+          this.dataService.setRememberSession(ConstToken.rememberSession);
+      }
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
               this.dataService.setUserId(userRes.response.id);

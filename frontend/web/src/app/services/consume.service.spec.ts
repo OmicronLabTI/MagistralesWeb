@@ -38,4 +38,9 @@ describe('ConsumeService', () => {
     const obs = service.httpPut<any>('http://google.com', {});
     expect(obs instanceof Observable).toBeTruthy();
   });
+  it('should create patch observable', () => {
+    const service: ConsumeService = TestBed.get(ConsumeService);
+    const obs = service.httpPatch<any>('http://google.com', {});
+    expect(obs instanceof Observable).toBeTruthy();
+  });
 });

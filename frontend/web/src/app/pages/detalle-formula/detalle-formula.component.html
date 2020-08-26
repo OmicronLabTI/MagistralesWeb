@@ -3,7 +3,7 @@
     <div class="header-page">
       <div class="title-list-container">
         <span>Detalle</span>
-        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / <a class="breadcrumblink" [routerLink]="['/pdetalle', oldDataFormulaDetail.baseDocument, 'Abierto']">Detalle</a> / Formula </div>
+        <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / <a class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument, 'Abierto'])">Detalle</a> / Formula </div>
       </div>
       <div class="filter-select">
         <div class="docbase">Documento base: {{oldDataFormulaDetail.baseDocument}} </div>
@@ -18,12 +18,12 @@
 
         </div>
         <div class="table-toolbar-buttons">
-            <!--<button mat-raised-button class="button-blue">
+            <button mat-raised-button class="button-blue" [routerLink]="['/lotes', ordenFabricacionId]">
             &nbsp; Lotes &nbsp; 
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue">
+            <!--<button mat-raised-button class="button-blue">
             &nbsp; Mi lista de componentes &nbsp; 
             </button>
             &nbsp;

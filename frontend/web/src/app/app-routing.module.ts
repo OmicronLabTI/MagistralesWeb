@@ -20,7 +20,7 @@ const routes: Routes = [
   {
     path: 'pedidos',
     loadChildren: () => import('./pages/pedidos/pedidos.module').then(m => m.PedidosModule),
-    canActivate: [GuardService]
+    // canActivate: [GuardService]
   },
   {
     path: 'pdetalle/:id/:status',
@@ -30,6 +30,11 @@ const routes: Routes = [
   {
     path: 'ordenfabricacion/:ordenid',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'lotes/:ordenid',
+    loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },
   {

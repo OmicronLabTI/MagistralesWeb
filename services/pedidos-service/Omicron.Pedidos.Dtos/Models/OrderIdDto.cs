@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="CancelOrderDto.cs" company="Axity">
+// <copyright file="OrderIdDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,9 +9,9 @@
 namespace Omicron.Pedidos.Dtos.Models
 {
     /// <summary>
-    /// class for the cancel order.
+    /// class for the order operation.
     /// </summary>
-    public class CancelOrderDto
+    public class OrderIdDto
     {
         /// <summary>
         /// Gets or sets user id.

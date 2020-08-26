@@ -33,6 +33,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetUserOrderBySalesOrder(List<int> listIds);
 
         /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds);
+
+        /// <summary>
         /// Gets the orders of a specific QFB (ipad).
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -68,6 +75,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> UpdateStatusOrder(List<UpdateStatusOrderDto> updateStatus);
 
         /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments);
+
+        /// <summary>
         /// gets the connection to DI api.
         /// </summary>
         /// <returns>the connectin.</returns>
@@ -85,14 +99,28 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders);
+        Task<ResultDto> CancelOrder(List<OrderIdDto> cancelOrders);
+
+        /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> CancelFabOrder(List<CancelOrderDto> cancelOrders);
+        Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders);
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CloseFabOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// the automatic assign.
@@ -108,6 +136,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch);
 
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>
@@ -121,5 +150,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> GetOrderSignatures(int productionOrderId);
+
+        /// <summary>
+        /// finish the order by the qfb.
+        /// </summary>
+        /// <param name="updateOrderSignature">the signature dto.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
     }
 }

@@ -12,12 +12,14 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper.Internal;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
+    using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -130,7 +132,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 insertUserOrdersale = true;
             }
 
-            saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Liberado : ServiceConstants.Planificado;
+            saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
 
             if (insertUserOrdersale)
             {
@@ -162,6 +164,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listIdString = listIds.Select(x => x.ToString()).ToList();
             var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders), null);
+        }
+
+        /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderByProducionOrder(listIdString);
+            return ServiceUtils.CreateResult(true, 200, null, orders, null);
         }
 
         /// <summary>
@@ -214,6 +228,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
+            if (resultSapApi.Success && !string.IsNullOrEmpty(updateFormula.Comments))
+            {
+                await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
+            }
+
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }
 
@@ -243,6 +262,54 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments)
+        {
+            var successfuly = new List<UserOrderModel>();
+            var failed = new List<UpdateOrderCommentsModel>();
+
+            foreach (var item in updateComments)
+            {
+                var result = await this.UpdateFabOrderComments(item.OrderId, item.Comments);
+                if (result != null)
+                {
+                    successfuly.Add(result);
+                }
+                else
+                {
+                    failed.Add(item);
+                }
+            }
+
+            var resultContent = new { successfuly, failed };
+            return ServiceUtils.CreateResult(true, 200, null, resultContent, null);
+        }
+
+        /// <summary>
+        ///  Update order comments.
+        /// </summary>
+        /// <param name="fabOrderId">Order to update.</param>
+        /// <param name="comments">Comment to set.</param>
+        /// <returns>Updated order. </returns>
+        public async Task<UserOrderModel> UpdateFabOrderComments(int fabOrderId, string comments)
+        {
+            var fabOrderToUpdate = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { fabOrderId.ToString() })).FirstOrDefault();
+
+            if (fabOrderToUpdate == null)
+            {
+                return null;
+            }
+
+            var listOrderLogs = new List<OrderLogModel>();
+            fabOrderToUpdate.Comments = comments;
+            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { fabOrderToUpdate });
+            return fabOrderToUpdate;
+        }
+
+        /// <summary>
         /// Gets the connection to sap di api.
         /// </summary>
         /// <returns>the conection.</returns>
@@ -257,9 +324,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update orders info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> CancelOrder(List<CancelOrderModel> cancelOrders)
+        public async Task<ResultModel> CancelOrder(List<OrderIdModel> cancelOrders)
         {
-            var missingOrders = new List<CancelOrderModel>();
+            var missingOrders = new List<OrderIdModel>();
             var missingSalesOrders = new List<OrderWithDetailModel>();
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
@@ -412,11 +479,112 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
+        {
+            var logs = new List<OrderLogModel>();
+            var successfuly = new List<object>();
+            var failed = new List<object>();
+
+            foreach (var orderToFinish in finishOrders)
+            {
+                var ids = new List<string> { orderToFinish.OrderId.ToString() };
+                var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ids)).ToList();
+
+                // Identify sales order
+                var salesOrder = relatedOrders.First(x => string.IsNullOrEmpty(x.Productionorderid));
+                if (!salesOrder.Status.Equals(ServiceConstants.Completed))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonOrderNonCompleted));
+                    continue;
+                }
+
+                var salesOrderId = int.Parse(salesOrder.Salesorderid);
+
+                // Identify production order
+                var productionOrders = relatedOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                productionOrders = productionOrders.Where(x => !x.Status.Equals(ServiceConstants.Finalizado)).ToList();
+
+                // Validate completed production orders
+                var nonCompleted = productionOrders.Where(x => !x.Status.Equals(ServiceConstants.Completed)).ToList();
+                if (nonCompleted.Any())
+                {
+                    foreach (var completeOrder in nonCompleted)
+                    {
+                        var message = string.Format(ServiceConstants.ReasonProductionOrderNonCompleted, completeOrder.Productionorderid);
+                        failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
+                    }
+
+                    continue;
+                }
+
+                // Update in SAP
+                var payload = productionOrders.Select(x => new { OrderId = x.Productionorderid });
+                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+
+                if (!result.Success)
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonSapConnectionError));
+                    continue;
+                }
+
+                var resultMessages = JsonConvert.DeserializeObject<Dictionary<int, string>>(result.Response.ToString());
+
+                // Map errors
+                foreach (var error in resultMessages.Where(x => x.Key > 0))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, error.Value));
+                }
+
+                // Update production order status
+                foreach (var userOrder in productionOrders)
+                {
+                    int prodOrderId = int.Parse(userOrder.Productionorderid);
+                    if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
+                    {
+                        userOrder.CloseUserId = orderToFinish.UserId;
+                        userOrder.CloseDate = DateTime.Now.FormatedDate();
+                        userOrder.Status = ServiceConstants.Finalizado;
+
+                        logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
+                    }
+                }
+
+                await this.pedidosDao.UpdateUserOrders(productionOrders);
+
+                // Update sales order status
+                if (resultMessages.Keys.Any(x => x.Equals(0)))
+                {
+                    salesOrder.CloseUserId = orderToFinish.UserId;
+                    salesOrder.CloseDate = DateTime.Now.FormatedDate();
+                    salesOrder.Status = ServiceConstants.Finalizado;
+
+                    logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
+
+                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
+                    successfuly.Add(orderToFinish);
+                }
+            }
+
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            var results = new
+            {
+                success = successfuly.Distinct(),
+                failed = failed.Distinct(),
+            };
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> CancelFabOrder(List<CancelOrderModel> cancelOrders)
+        public async Task<ResultModel> CancelFabOrder(List<OrderIdModel> cancelOrders)
         {
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
@@ -487,6 +655,110 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
+            await this.pedidosDao.InsertOrderLog(logs);
+
+            var results = new
+            {
+                success = successfuly.Distinct(),
+                failed = failed.Distinct(),
+            };
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultModel> CloseFabOrders(List<OrderIdModel> finishOrders)
+        {
+            var logs = new List<OrderLogModel>();
+            var successfuly = new List<object>();
+            var failed = new List<object>();
+            var affectedSalesOrderIds = new List<KeyValuePair<string, string>>();
+
+            foreach (var orderToFinish in finishOrders)
+            {
+                var productionOrderId = orderToFinish.OrderId;
+                var ids = new List<string> { productionOrderId.ToString() };
+                var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+
+                if (productionOrder == null)
+                {
+                    var message = string.Format(ServiceConstants.ReasonProductionOrderNotExists, productionOrderId);
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
+                    continue;
+                }
+
+                // Validate finished production orders
+                if (productionOrder.Status.Equals(ServiceConstants.Finalizado))
+                {
+                    successfuly.Add(orderToFinish);
+                    continue;
+                }
+
+                // Validate completed production orders
+                if (!productionOrder.Status.Equals(ServiceConstants.Completed))
+                {
+                    var message = string.Format(ServiceConstants.ReasonProductionOrderNonCompleted, productionOrderId);
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
+                    continue;
+                }
+
+                // Update in SAP
+                var payload = new List<object> { new { OrderId = productionOrderId } };
+                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+
+                if (!result.Success)
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonSapConnectionError));
+                    continue;
+                }
+
+                var resultMessages = JsonConvert.DeserializeObject<Dictionary<int, string>>(result.Response.ToString());
+
+                // Map errors
+                foreach (var error in resultMessages.Where(x => x.Key > 0))
+                {
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, error.Value));
+                }
+
+                // Update production order status
+                if (!resultMessages.Keys.Any(x => x.Equals(productionOrderId)))
+                {
+                    productionOrder.CloseUserId = orderToFinish.UserId;
+                    productionOrder.CloseDate = DateTime.Now.FormatedDate();
+                    productionOrder.Status = ServiceConstants.Finalizado;
+
+                    logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
+                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
+                    affectedSalesOrderIds.Add(KeyValuePair.Create(orderToFinish.UserId, productionOrder.Salesorderid));
+                    successfuly.Add(orderToFinish);
+                }
+            }
+
+            // Validate affected sales order
+            foreach (var salesOrderToValidate in affectedSalesOrderIds.Distinct())
+            {
+                var userId = salesOrderToValidate.Key;
+                var salesOrderIdAsInt = int.Parse(salesOrderToValidate.Value);
+                var ids = new List<string> { salesOrderToValidate.Value };
+                var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ids)).ToList();
+
+                // Identify production orders
+                var productionOrders = relatedOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)))
+                {
+                    var salesOrder = relatedOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).First();
+                    salesOrder.CloseUserId = userId;
+                    salesOrder.CloseDate = DateTime.Now.FormatedDate();
+                    salesOrder.Status = ServiceConstants.Finalizado;
+
+                    logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
+                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
+                }
+            }
+
             await this.pedidosDao.InsertOrderLog(logs);
 
             var results = new
@@ -644,6 +916,61 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
+        }
+
+        /// <summary>
+        /// Finish the order by the QFB.
+        /// </summary>
+        /// <param name="updateOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        public async Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature)
+        {
+            var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, updateOrderSignature.FabricationOrderId));
+            var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
+
+            if (components.Any(x => !x.LotesAsignados.Any()))
+            {
+                throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
+            orders = orders == null ? new UserOrderModel() : orders;
+
+            var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
+            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
+            var newSignatureAsByte = Convert.FromBase64String(updateOrderSignature.Signature);
+
+            if (orderSignature == null)
+            {
+                var newSignature = new UserOrderSignatureModel
+                {
+                    TechnicalSignature = newSignatureAsByte,
+                    UserOrderId = orders.Id,
+                };
+
+                await this.pedidosDao.InsertOrderSignatures(newSignature);
+            }
+            else
+            {
+                orderSignature.TechnicalSignature = newSignatureAsByte;
+                await this.pedidosDao.SaveOrderSignatures(orderSignature);
+            }
+
+            orders.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
+            orders.Status = ServiceConstants.Terminado;
+
+            var listToUpdate = new List<UserOrderModel> { orders };
+
+            var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
+            saleOrder.Status = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
+
+            listToUpdate.Add(saleOrder);
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+
+            var orderLogs = ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
+            await this.pedidosDao.InsertOrderLog(orderLogs);
+
+            return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
         /// <summary>

@@ -61,5 +61,37 @@ namespace Omicron.Pedidos.Entities.Model
         /// String status.
         [Column("status")]
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets comments.
+        /// </summary>
+        /// <value>
+        /// String comments.
+        [Column("comments")]
+        public string Comments { get; set; }
+
+        /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("finishdate")]
+        public string FinishDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets close date.
+        /// </summary>
+        /// <value>
+        /// String close date.
+        [Column("closedate")]
+        public string CloseDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("closeuserid")]
+        public string CloseUserId { get; set; }
     }
 }

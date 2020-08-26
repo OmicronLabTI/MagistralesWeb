@@ -66,11 +66,5 @@ describe('LoginComponent', () => {
     component.formLogin.get('password').setValue('pass');
     component.login();
     expect(securityServiceSpy.login).toHaveBeenCalled();
-  /*  //spyOn(dataServiceSpy, 'setToken');
-    expect(dataServiceSpy.setToken).
-    expect(dataServiceSpy.setIsLogin).toHaveBeenCalled();
-    expect(dataServiceSpy.setUserName).toHaveBeenCalled();
-    //expect(securityServiceSpy.getUser).toHaveBeenCalled();*/
-
   });
 });

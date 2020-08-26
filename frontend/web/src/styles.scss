@@ -504,13 +504,16 @@ div.breadcrumb{
 a.breadcrumblink{
   text-decoration: none;
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 
 a.breadcrumblink:visited{
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 a.breadcrumblink:hover{
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 
 .mat-form-field-label {
@@ -552,4 +555,25 @@ a.breadcrumblink:hover{
 
 .table-container-component::-webkit-scrollbar {
   display: none;
+}
+.seleccion-lotes{
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.column-a {
+  padding-right: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 55%;
+}
+
+.column-b{
+  padding-left: 30px;
+  display: flex;
+  width: 45%;
+  flex-direction: column;
 }
