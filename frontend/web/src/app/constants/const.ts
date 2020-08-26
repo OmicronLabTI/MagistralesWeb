@@ -78,7 +78,9 @@ export const HttpStatus = {
 export const ConstToken = {
     accessToken: 'token-omi',
     refreshToken: 'refresh-omi',
-    rememberSession: 'session-re'
+    rememberSession: 'session-re',
+    userId: 'userId',
+    userName: 'userName'
 };
 export const BOOLEANS = {
     verdadero: true,

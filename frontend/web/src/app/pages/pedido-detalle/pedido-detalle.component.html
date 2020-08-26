@@ -33,7 +33,7 @@
         </button>
         &nbsp;
         &nbsp;-->
-        <button [disabled]="isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
+        <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
           &nbsp; Finalizar &nbsp; 
         </button>
         &nbsp;

@@ -167,6 +167,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({list: [{orderId: 12349}], cancelType: MODAL_NAMES.placeOrdersDetail});
+    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.status === ConstStatus.terminado)).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      }), cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 }
