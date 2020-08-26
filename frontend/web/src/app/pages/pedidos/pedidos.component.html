@@ -32,20 +32,18 @@
                 &nbsp; Planificar &nbsp;
             </button>
             &nbsp;
-            &nbsp;
             <button [disabled]="!isThereOrdersToPlace" mat-raised-button [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'" (click)="openPlaceOrdersDialog()">
                 &nbsp; Asignar &nbsp;
             </button>
-            &nbsp;
-            &nbsp;
-            <!--<button mat-raised-button class="button-blue ">
-                &nbsp; Finalizar &nbsp;
+
+            &nbsp;<button [disabled]="!isThereOrdersToCancel" mat-raised-button [ngClass]="isThereOrdersToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()">
+                  Cancelar
             </button>
-            -->
-            <button [disabled]="!isThereOrdersToCancel" [ngClass]="isThereOrdersToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()" mat-raised-button>
-                Cancelar
+
+            &nbsp;<button  [disabled]="isThereOrdersToFinalize" mat-raised-button [ngClass]="isThereOrdersToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrders()">
+                Finalizar
             </button>
-            &nbsp;
+
             &nbsp;
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >
                 <mat-icon *ngIf="isSearchWithFilter">filter_tilt_shift

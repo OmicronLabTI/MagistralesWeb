@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
@@ -17,7 +17,7 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./detalle-formula.component.scss']
 })
 
-export class DetalleFormulaComponent implements OnInit {
+export class DetalleFormulaComponent implements OnInit, OnDestroy {
   allComplete = false;
   oldDataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
@@ -221,6 +221,21 @@ export class DetalleFormulaComponent implements OnInit {
     this.dataSource.data[index].warehouse = value;
     this.getAction(index);
     this.getIsReadyTOSave();
+  }
+
+  ngOnDestroy() {
+    this.dataService.setIsToSaveAnything(false);
+  }
+
+  goToOrders(urlPath: string[]) {
+    this.setPathUrlService(urlPath);
+  }
+
+  goToDetailOrder(urlPath: (string | number)[]) {
+    this.setPathUrlService(urlPath);
+  }
+  setPathUrlService(urlPath: any[]) {
+    this.dataService.setPathUrl(urlPath);
   }
 }
 

@@ -2,19 +2,17 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {IRolesRes, IUserListRes, IUserReq} from '../model/http/users';
 import {Endpoints} from '../../environments/endpoints';
-import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
 
-  constructor(private consumeService: ConsumeService, private httpClient: HttpClient) {
+  constructor(private consumeService: ConsumeService) {
   }
 
   createUser(user: IUserReq) {
-    console.log('user req inter: ', user);
-    return this.httpClient.post(Endpoints.users.createUser, user);
+    return this.consumeService.httpPost(Endpoints.users.createUser, user);
   }
   getRoles() {
     return this.consumeService.httpGet<IRolesRes>(Endpoints.users.roles);

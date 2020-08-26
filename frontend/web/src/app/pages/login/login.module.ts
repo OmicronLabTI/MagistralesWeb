@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { LoginRoutingModule } from './login-routing.module';
 import {LoginComponent} from './login.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ExtendedModule, FlexModule} from '@angular/flex-layout';
 
 
@@ -16,7 +16,8 @@ import {ExtendedModule, FlexModule} from '@angular/flex-layout';
         MATERIAL_COMPONENTS,
         ReactiveFormsModule,
         FlexModule,
-        ExtendedModule
+        ExtendedModule,
+        FormsModule
     ]
 })
 export class LoginModule {}

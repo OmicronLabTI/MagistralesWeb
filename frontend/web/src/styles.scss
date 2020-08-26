@@ -504,13 +504,16 @@ div.breadcrumb{
 a.breadcrumblink{
   text-decoration: none;
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 
 a.breadcrumblink:visited{
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 a.breadcrumblink:hover{
   color: #3b3f5c !important;
+  cursor: pointer;
 }
 
 .mat-form-field-label {
