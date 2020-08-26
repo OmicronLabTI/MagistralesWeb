@@ -16,6 +16,7 @@ namespace Omicron.Usuarios.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.OpenApi.Models;
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
     using Omicron.Usuarios.Services.Pedidos;
@@ -99,6 +100,8 @@ namespace Omicron.Usuarios.Api
                         Url = new System.Uri(AXITYURL),
                     },
                 });
+
+                c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
             services.AddHttpClient("pedidoservice", c =>
@@ -121,11 +124,26 @@ namespace Omicron.Usuarios.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                var basepath = this.Configuration["SwaggerAddress"];
+
+                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    var paths = new OpenApiPaths();
+                    foreach (var path in swaggerDoc.Paths)
+                    {
+                        paths.Add(basepath + path.Key, path.Value);
+                    }
+
+                    swaggerDoc.Paths = paths;
+                });
+            });
+
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Users");
+                c.SwaggerEndpoint($"{this.Configuration["SwaggerAddress"]}/swagger/v1/swagger.json", "Api Users");
                 c.RoutePrefix = string.Empty;
             });
             app.UseResponseCompression();
