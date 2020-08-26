@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {DataService} from './data.service';
 import {Messages} from '../constants/messages';
-import {ErrorHttp} from '../model/http/commons';
+import {ErrorHttpInterface} from '../model/http/commons';
+import {HttpStatus} from '../constants/const';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,16 @@ import {ErrorHttp} from '../model/http/commons';
 export class ErrorService {
 
   constructor(private dataService: DataService) { }
-  httpError(error: ErrorHttp) {
-    this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});
+  httpError(error: ErrorHttpInterface) {
     console.log('error httpService: ', error);
+    switch (error.status) { // status: 0 = server refused
+      case HttpStatus.unauthorized:
+        this.dataService.setIsLogout(true);
+        break;
+      default:
+        this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});
+        break;
+    }
+
   }
 }

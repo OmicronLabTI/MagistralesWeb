@@ -30,7 +30,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
               private usersService: UsersService) {
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
-      docNum: ['', [Validators.maxLength(60)]],
+      docNum: ['', [Validators.maxLength(50)]],
           dateType: ['', []],
           fini: ['', []],
           ffin: ['', []],

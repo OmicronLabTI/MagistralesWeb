@@ -18,6 +18,8 @@ export const Messages = {
   errorToAssignOrderAutomaticSubtitle: 'Favor de verificar la información e intentarlo de nuevo',
   cancelOrders: '¿Deseas cancelar el(los) pedido(s) seleccionado(s)?',
   cancelOrdersDetail: '¿Deseas cancelar la(s) orden(es) seleccionada(s) ?',
-  finalizeOrders:  '¿Deseas Finalizar el(los) pedido(s) seleccionado(s) ?',
+  finalizeOrders: '¿Deseas Finalizar el(los) pedido(s) seleccionado(s) ?',
   finalizeOrdersDetail: '¿Estás seguro que deseas Finalizar la(s) orden(s) seleccionada(s) ?',
+  endSession: 'Sesión cerrada con éxito',
+  expiredSession: 'La sessión ha expirado'
 };

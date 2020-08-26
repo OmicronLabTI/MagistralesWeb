@@ -74,3 +74,9 @@ export const HttpStatus = {
     forbidden: 403,
     notFound: 404,
 };
+
+export const ConstToken = {
+    accessToken: 'token-omi',
+    refreshToken: 'refresh-omi',
+    rememberSession: 'session-re'
+};

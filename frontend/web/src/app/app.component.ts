@@ -4,7 +4,15 @@ import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material';
 import {AppConfig} from './constants/app-config';
 import {Router} from '@angular/router';
-import {ClassNames, CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType, MODAL_NAMES} from './constants/const';
+import {
+    ClassNames,
+    CONST_NUMBER,
+    CONST_STRING,
+    HttpServiceTOCall,
+    HttpStatus,
+    MessageType,
+    MODAL_NAMES
+} from './constants/const';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Messages} from './constants/messages';
@@ -14,6 +22,7 @@ import {ErrorService} from './services/error.service';
 import {GeneralMessage} from './model/device/general';
 import {ICancelOrdersRes, IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes} from './model/http/pedidos';
 import {CancelOrders} from './model/device/orders';
+import {ErrorHttpInterface} from './model/http/commons';
 
 
 @Component({
@@ -61,26 +70,22 @@ export class AppComponent implements OnDestroy , OnInit {
         this.onSuccessFinalizeOrders(resultFinalize)));
     this.subscriptionObservables.add(this.dataService.getPathUrl().subscribe(resultPath =>
         this.goToPageEvaluate(resultPath)));
+    this.subscriptionObservables.add(this.dataService.getIsLogout().subscribe(() => this.logoutSession(false)));
   }
-  logoutSession() {
-    this.dataService.setIsLogin(false);
-    this.dataService.clearToken();
-    this.router.navigate(['/login']);
+  endSession() {
+      this.logoutSession(true);
+
+  }
+  logoutSession(isFromEndSession: boolean) {
+      this.dataService.setIsLogin(false);
+      this.dataService.clearToken();
+      this.onSuccessGeneralMessage({title: isFromEndSession ? Messages.endSession : Messages.expiredSession ,
+      icon: isFromEndSession ? 'success' : 'info', isButtonAccept: true});
+      this.router.navigate(['/login']);
   }
 
   goToPage(url: string[]) {
       this.goToPageEvaluate(url);
-    /*if (!this.dataService.getIsToSaveAnything()) {
-      this.navigatePage(url);
-    } else {
-        console.log('there anything to save');
-        this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
-          .then((savedResult: any) => {
-            if (savedResult.isConfirmed) {
-                this.navigatePage(url);
-            }
-          });
-    }*/
   }
   goToPageEvaluate(url: any[]) {
       if (!this.dataService.getIsToSaveAnything()) {
@@ -134,9 +139,12 @@ export class AppComponent implements OnDestroy , OnInit {
               placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
               this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe( resultAutomatic => {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType);
-              }, error => { // checar con gus objeto de error
-                this.errorService.httpError(error);
-                this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'info', isButtonAccept: true});
+              }, (error: ErrorHttpInterface) => {
+                  if (error.status === HttpStatus.badRequest) {
+                      this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'error', isButtonAccept: true});
+                  } else {
+                      this.errorService.httpError(error);
+                  }
               });
             } else {
               this.createPlaceOrderDialog(qfbToPlace);

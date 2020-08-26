@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, ConstToken, HttpServiceTOCall, MessageType} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
@@ -24,7 +24,27 @@ export class DataService {
   private cancelOrders = new Subject<CancelOrders>();
   private finalizeOrders = new Subject<CancelOrders>();
   private pathUrl = new Subject<any[]>();
+  private isLogout = new Subject<boolean>();
   constructor(private datePipe: DatePipe) { }
+
+  setIsLogout(isLogout: boolean) {
+    this.isLogout.next(isLogout);
+  }
+  getIsLogout() {
+    return this.isLogout.asObservable();
+  }
+  setRememberSession(rememberSession: string) {
+    localStorage.setItem(ConstToken.rememberSession, rememberSession);
+  }
+  getRememberSession() {
+    return localStorage.getItem(ConstToken.rememberSession);
+  }
+  setRefreshToken(refreshToken: string) {
+    localStorage.setItem(ConstToken.refreshToken, refreshToken);
+  }
+  getRefreshToken() {
+    return localStorage.getItem(ConstToken.refreshToken);
+  }
 
   setPathUrl(pathUrl: any[]) {
     this.pathUrl.next(pathUrl);
@@ -103,14 +123,13 @@ export class DataService {
   }
 
   getToken(): string {
-    return localStorage.getItem('token-omi');
+    return localStorage.getItem(ConstToken.accessToken);
   }
-
   setToken(token: string) {
-    localStorage.setItem('token-omi', token);
+    localStorage.setItem(ConstToken.accessToken, token);
   }
   clearToken() {
-    localStorage.removeItem('token-omi');
+    localStorage.removeItem(ConstToken.accessToken);
   }
 
   setUserId(userId: string) {
@@ -131,7 +150,7 @@ export class DataService {
 
 
   userIsAuthenticated(): boolean {
-    return !!localStorage.getItem('token-omi');
+    return !!localStorage.getItem(ConstToken.accessToken);
   }
   presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
                      showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {

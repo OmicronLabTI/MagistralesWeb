@@ -6,7 +6,7 @@ export class BaseResponseHttp {
     comments?: number;
 }
 
-export class ErrorHttp {
+export class ErrorHttpInterface {
     error: string;
     message: string;
     name: string;

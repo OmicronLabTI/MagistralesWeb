@@ -6,7 +6,7 @@ import {
   ClassNames,
   CONST_NUMBER,
   CONST_STRING, ConstStatus,
-  HttpServiceTOCall, MessageType,
+  HttpServiceTOCall, HttpStatus, MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
@@ -18,6 +18,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
+import {ErrorHttpInterface} from '../../model/http/commons';
 
 @Component({
   selector: 'app-pedidos',
@@ -85,8 +86,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
       },
-        (error) => {
-        this.errorService.httpError(error);
+        (error: ErrorHttpInterface) => {
+        if (error.status !== HttpStatus.notFound) {
+          this.errorService.httpError(error);
+        }
         this.dataSource.data = [];
       }
     );

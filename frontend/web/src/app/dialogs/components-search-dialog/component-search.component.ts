@@ -36,14 +36,13 @@ export class ComponentSearchComponent implements OnInit {
   isDisableSearch = false;
   pageEvent: PageEvent;
   rowPrevious = {};
+  count = 0;
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService) {
   }
 
   ngOnInit() {
-    this.getQueryString();
-    this.getComponents();
     this.dataSource.paginator = this.paginator;
   }
 
@@ -74,9 +73,9 @@ export class ComponentSearchComponent implements OnInit {
 
     if ((value || '').trim()) {
       this.keywords.push(value.trim());
+      this.getQueryString();
+      this.getComponents();
     }
-    this.getQueryString();
-    this.getComponents();
     if (input) {
       input.value = '';
     }

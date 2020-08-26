@@ -147,4 +147,28 @@ describe('DataService', () => {
     expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
         .toEqual('Hubo un error \n');
   });
+  it('should getRefreshToken', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setRefreshToken('anyRefreshToken');
+    expect(service.getRefreshToken()).toEqual('anyRefreshToken');
+  });
+  it('should getRememberSession', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setRememberSession('anyRememberSession');
+    expect(service.getRememberSession()).toEqual('anyRememberSession');
+  });
+  it('should getIsLogout true', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getIsLogout().subscribe(isLogout => {
+      expect(isLogout).toBeTruthy();
+    });
+    service.setIsLogout(true);
+  });
+  it('should getIsLogout false', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getIsLogout().subscribe(isLogout => {
+      expect(isLogout).toBeFalsy();
+    });
+    service.setIsLogout(false);
+  });
 });

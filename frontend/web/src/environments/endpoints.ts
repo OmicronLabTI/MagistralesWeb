@@ -1,7 +1,8 @@
 import { environment } from './environment';
 export const Endpoints = {
   security: {
-    login: `${environment.baseUrl}/api/oauth/oauthrs/authorize`
+    login: `${environment.baseUrl}/api/oauth/oauthrs/authorize`,
+    refresh: `${environment.baseUrl}/api/oauth/oauthrs/renew`
   },
   users: {
     createUser: `${environment.baseUrl}/api/usuarios/createuser`,
@@ -31,5 +32,6 @@ export const Endpoints = {
 };
 
 export const TokenExcludedEndpoints = [
-  'login'
+  '/api/oauth/oauthrs/authorize',
+  '/api/oauth/oauthrs/renew'
 ];

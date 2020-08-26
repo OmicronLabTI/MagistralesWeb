@@ -4,11 +4,12 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import { IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
-import {CONST_USER_DIALOG, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {SweetAlertIcon} from 'sweetalert2';
 import {Subscription} from 'rxjs';
+import {ErrorHttpInterface} from '../../model/http/commons';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -85,10 +86,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.usersService.createUser(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
           },
-          error => {/// checar con gus para manejar errores
-            this.createMessageOk(Messages.userExist, 'info', true);
-            this.errorService.httpError(error);
-          });
+          error => this.userExistDialog(error));
     } else {
       const user: IUserReq = {
         id: this.userToEdit.id,
@@ -102,7 +100,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
           },
-          error => this.errorService.httpError(error));
+          error => this.userExistDialog(error));
     }
 
   }
@@ -112,5 +110,12 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
    this.subscription.unsubscribe();
+  }
+  userExistDialog(error: ErrorHttpInterface) {
+    if (error.status === HttpStatus.badRequest) {
+      this.createMessageOk(Messages.userExist, 'info', true);
+    } else {
+      this.errorService.httpError(error);
+    }
   }
 }
