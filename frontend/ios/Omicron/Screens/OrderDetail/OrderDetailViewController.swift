@@ -33,6 +33,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
+    @IBOutlet weak var htDescription: UILabel!
     @IBOutlet weak var htBaseQuantity: UILabel!
     @IBOutlet weak var htrequiredQuantity: UILabel!
     @IBOutlet weak var htConsumed: UILabel!
@@ -142,6 +143,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
+            cell.descriptionLabel.text = data.detailDescription
             cell.baseQuantityLabel.text =  self.formatter.string(from: NSNumber(value: data.baseQuantity!))
             cell.requiredQuantityLabel.text =   self.formatter.string(from: NSNumber(value: data.requiredQuantity!))
             cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed!))
@@ -186,6 +188,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 15, typeFont: "bold")
+        
         
         self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
         self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase:", textToBold: "Envase")
