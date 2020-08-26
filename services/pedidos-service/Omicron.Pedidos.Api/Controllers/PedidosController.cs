@@ -204,6 +204,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/fabOrder/finish")]
+        [HttpPut]
+        public async Task<IActionResult> FinishFabOrder(List<OrderIdDto> finishOrders)
+        {
+            var response = await this.pedidoFacade.FinishFabOrder(finishOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Change fabrication order comments.
         /// </summary>
         /// <param name="updateComments">the order info.</param>

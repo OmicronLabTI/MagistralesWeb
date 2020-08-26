@@ -714,5 +714,40 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task FinishFabOrder()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdModel>
+            {
+                new OrderIdModel { OrderId = 107, UserId = "abc", },
+            };
+            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockResult = new ResultModel();
+            mockResult.Success = true;
+            mockResult.Code = 200;
+            mockResult.Response = JsonConvert.SerializeObject(mockContent);
+
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResult));
+
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.FinishFabOrder(salesOrders);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

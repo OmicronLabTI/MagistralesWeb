@@ -116,6 +116,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders);
 
         /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> FinishFabOrder(List<OrderIdDto> finishOrders);
+
+        /// <summary>
         /// the automatic assign.
         /// </summary>
         /// <param name="automaticAssing">the assign object.</param>

@@ -180,6 +180,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> FinishFabOrder(List<OrderIdDto> finishOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishFabOrder(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
+        }
+
+        /// <summary>
         /// the automatic assign.
         /// </summary>
         /// <param name="automaticAssing">the assign object.</param>
