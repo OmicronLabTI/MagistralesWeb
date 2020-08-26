@@ -72,3 +72,13 @@ extension LotsSelected: Mappable {
         self.sysNumber <- map["sysNumber"]
     }
 }
+
+class Inputs {
+    var lotsAvailable: LotsAvailable
+    var quantitySelected: String
+    
+    init(lotsAvailable: LotsAvailable,  quantitySelected: String) {
+        self.lotsAvailable = lotsAvailable
+        self.quantitySelected = quantitySelected
+    }
+}

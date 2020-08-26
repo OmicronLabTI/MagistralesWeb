@@ -64,6 +64,9 @@ class LotsViewController: UIViewController {
     // MARK: - Functions
     func viewModelBinding() -> Void {
         
+        self.addLotButton.rx.tap.bind(to: self.lotsViewModel.addLotDidTap).disposed(by: self.disposeBag)
+        self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
+        
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
             self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
@@ -80,7 +83,7 @@ class LotsViewController: UIViewController {
             self.countLotsSelected = self.countLotsSelected + 1
             cell.lotsLabel.text = "\(self.countLotsSelected)"
             cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
-            //cell.quantitySelected.text = ""
+            cell.quantitySelected.text = "0.0"
             cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
         }.disposed(by: self.disposeBag)
         
@@ -94,6 +97,12 @@ class LotsViewController: UIViewController {
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
             self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
         }).disposed(by: self.disposeBag)
+        
+        // Obtiene el objeto de la columna seleccionada en la tabla lots Available
+        self.lotsAvailablesTable.rx.modelSelected(LotsAvailable.self).observeOn(MainScheduler.instance).subscribe(onNext: { res in
+            self.lotsViewModel.itemSelected.onNext(res)
+        }).disposed(by: self.disposeBag)
+        
         
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in

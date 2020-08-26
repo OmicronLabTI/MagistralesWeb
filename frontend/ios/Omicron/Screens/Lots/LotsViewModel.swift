@@ -9,6 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import Resolver
 
 class LotsViewModel {
     
@@ -20,7 +21,27 @@ class LotsViewModel {
     var dataOfLots = BehaviorSubject<[Lots]>(value: [])
     var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
     var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])
+    var addLotDidTap = PublishSubject<Void>()
+    var removeLotDidTap = PublishSubject<Void>()
+    var quantitySelectedValue = ""
+    
+    var quantitySelectedInput = BehaviorSubject<String>(value: "")
+    var itemSelected = PublishSubject<LotsAvailable>()
+    
     init() {
+    
+        // Obtiene los valores para poder añadir lotes disponibles a seleccionados por checar
+        let inputs = Observable.combineLatest(itemSelected, quantitySelectedInput)
+        self.addLotDidTap.withLatestFrom(inputs).map({
+            Inputs(lotsAvailable: $0, quantitySelected: $1)
+        }).subscribe(onNext: { data in
+            print("pinta lots: \(data.lotsAvailable)")
+            print("pinta quantoty selected: \(data.quantitySelected)")
+        }).disposed(by: self.disposeBag)
+        
+        self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
+            
+        }).disposed(by: self.disposeBag)
         
     }
     
@@ -43,7 +64,6 @@ class LotsViewModel {
     }
     
     func itemSelectedOfLineDocTable(lot: Lots) -> Void {
-        print("lote selecionado \(lot)")
         if (lot.lotesDisponibles!.count > 0) {
               self.dataLotsAvailable.onNext(lot.lotesDisponibles!)
         } else {
@@ -55,5 +75,10 @@ class LotsViewModel {
         } else {
              self.dataLotsSelected.onNext([])
         }
+    }
+    
+    func getLotOfLotsAvailableTable(lot: LotsAvailable) -> Void {
+        print("Value cuando se seleccionó un elemento \(self.quantitySelectedValue)")
+        print("Objecto completo de lotes disponibles: \(lot)")
     }
 }
