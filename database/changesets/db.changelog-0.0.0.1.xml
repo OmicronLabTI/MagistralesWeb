@@ -295,4 +295,21 @@
 		</column>
 	</addColumn>  
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.35">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="closedate"
+			type="VARCHAR(20)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.36">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="closeuserid"
+			type="VARCHAR(50)">
+		</column>
+	</addColumn>
+	<addForeignKeyConstraint baseColumnNames="closeuserid" baseTableName="usersorders" constraintName="fk_close_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>	
+  </changeSet>
 </databaseChangeLog> 
