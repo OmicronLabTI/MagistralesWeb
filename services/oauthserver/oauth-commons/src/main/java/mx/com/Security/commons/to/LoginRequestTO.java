@@ -8,6 +8,15 @@ public class LoginRequestTO implements Serializable {
 	private String password;
 	private String redirectUri;
 	private String clientId;
+	private String origin;
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
 
 	public String getUser() {
 		return user;

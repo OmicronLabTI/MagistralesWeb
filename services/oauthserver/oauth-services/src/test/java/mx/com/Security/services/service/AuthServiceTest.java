@@ -14,13 +14,13 @@ public class AuthServiceTest extends BaseTest {
 
     @Test
     public void shouldReturnValidCredentials() {
-        authService.validateCredentials("guz", "ABC");
+        authService.validateCredentials("guz", "ABC", "");
         Assert.assertTrue(true);
     }
 
     @Test(expected = UnAuthorizedException.class)
     public void shouldReturnExceptionWithInvalidCredentials() {
-        authService.validateCredentials("guz", "321");
+        authService.validateCredentials("guz", "321", "");
         Assert.assertTrue(true);
     }
 }
