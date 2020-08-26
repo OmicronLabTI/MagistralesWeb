@@ -120,5 +120,17 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { "M", "Manual" },
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictUrlEncode { get; } = new Dictionary<string, string>
+        {
+            { "%C3%9C", "Ü" },
+            { "%C3%BC", "ü" },
+        };
     }
 }
