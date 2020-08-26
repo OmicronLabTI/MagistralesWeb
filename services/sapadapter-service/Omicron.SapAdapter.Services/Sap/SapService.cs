@@ -93,7 +93,7 @@ namespace Omicron.SapAdapter.Services.Sap
             details.ToList().ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
-                userOrder = userOrder == null ? new UserOrderModel() : userOrder;
+                userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
                 var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
