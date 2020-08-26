@@ -685,7 +685,7 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishBySalesOrder()
+        public async Task CloseSalesOrders()
         {
             // arrange
             var salesOrders = new List<OrderIdModel>
@@ -708,7 +708,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
-            var response = await pedidoServiceLocal.FinishBySalesOrder(salesOrders);
+            var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
 
             // assert
             Assert.IsNotNull(response);

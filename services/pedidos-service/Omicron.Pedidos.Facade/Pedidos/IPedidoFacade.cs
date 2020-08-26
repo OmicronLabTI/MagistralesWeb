@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> FinishBySalesOrder(List<OrderIdDto> finishOrders);
+        Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.

@@ -164,9 +164,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultDto> FinishBySalesOrder(List<OrderIdDto> finishOrders)
+        public async Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishBySalesOrder(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CloseSalesOrders(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
         }
 
         /// <summary>
