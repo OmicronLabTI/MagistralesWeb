@@ -139,6 +139,28 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// replaces the values for the chips if they have encode values.
+        /// </summary>
+        /// <param name="chipsValues">the chips.</param>
+        /// <returns>the data.</returns>
+        public static List<string> UndecodeSpecialCaracters(List<string> chipsValues)
+        {
+            var listToReturn = new List<string>();
+
+            chipsValues.ForEach(chip =>
+            {
+                foreach (var key in ServiceConstants.DictUrlEncode)
+                {
+                    chip = chip.Contains(key.Key) ? chip.Replace(key.Key, key.Value) : chip;
+                }
+
+                listToReturn.Add(chip);
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
