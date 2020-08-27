@@ -9,7 +9,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
-
+import Resolver
 
 class SignaturePadViewModel  {
     
@@ -23,7 +23,8 @@ class SignaturePadViewModel  {
     let canGetSignature: Driver<Bool>
     var loading = PublishSubject<Bool>()
     let showAlertMessage = PublishSubject<String>()
-    var backToInboxVC = PublishSubject<Void>()
+    var dismissSignatureView = PublishSubject<Void>()
+    @Injected var orderDetailVC: OrderDetailViewModel
     
     
     init() {
@@ -44,7 +45,8 @@ class SignaturePadViewModel  {
         
         NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.loading.onNext(false)
-            self.backToInboxVC.onNext(())
+            self.dismissSignatureView.onNext(())
+            self.orderDetailVC.backToInboxView.onNext(())
         }, onError: { error in
             self.loading.onNext(false)
             self.showAlertMessage.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")

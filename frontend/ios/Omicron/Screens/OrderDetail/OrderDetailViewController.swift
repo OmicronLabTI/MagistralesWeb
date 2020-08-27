@@ -101,7 +101,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func viewModelBinding() {
         
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popViewController(animated: true)
+            self.navigationController?.popToRootViewController(animated: true)
         }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in

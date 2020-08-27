@@ -27,6 +27,7 @@ class SignaturePadViewController: UIViewController {
     
     // MARK: -Variables
     @Injected var signaturePadViewModel: SignaturePadViewModel
+    @Injected var orderDetailViewModel: OrderDetailViewModel
     let diposeBag = DisposeBag()
     var orderId: Int = -1
     
@@ -42,7 +43,8 @@ class SignaturePadViewController: UIViewController {
     // MARK: Functions
     
     @IBAction func cancelActionButton(_ sender: Any) {
-        self.navigationController?.popToRootViewController(animated: true)
+        self.dismiss(animated: true)
+        self.orderDetailViewModel.backToInboxView.onNext(())
     }
     
     @IBAction func clearActionButton(_ sender: Any) {
@@ -69,8 +71,8 @@ class SignaturePadViewController: UIViewController {
         }).disposed(by: self.diposeBag)
         
         // Si el cambio del status a finalización fue éxitosa se regresa a Inbox
-        self.signaturePadViewModel.backToInboxVC.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popToRootViewController(animated: true)
+        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.dismiss(animated: true)
         }).disposed(by: self.diposeBag)
     }
     
