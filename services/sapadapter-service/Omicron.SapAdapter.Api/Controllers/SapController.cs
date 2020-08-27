@@ -122,5 +122,19 @@ namespace Omicron.SapAdapter.Api.Controllers
             var result = await this.sapFacade.GetBatchesComponents(ordenId);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        [Route("/fabOrder/isolated/last")]
+        [HttpGet]
+        public async Task<IActionResult> GetlLastIsolatedProductionOrderId([FromQuery] string productId, [FromQuery] string uniqueId)
+        {
+            var result = await this.sapFacade.GetlLastIsolatedProductionOrderId(productId, uniqueId);
+            return this.Ok(result);
+        }
     }
 }

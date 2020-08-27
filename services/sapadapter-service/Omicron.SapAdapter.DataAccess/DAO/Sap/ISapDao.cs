@@ -137,5 +137,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="logEntry">the log entry.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry);
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
     }
 }

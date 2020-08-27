@@ -183,6 +183,7 @@ namespace Omicron.SapAdapter.Test
             return new List<OrdenFabricacionModel>
             {
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 110, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
             };
         }
 

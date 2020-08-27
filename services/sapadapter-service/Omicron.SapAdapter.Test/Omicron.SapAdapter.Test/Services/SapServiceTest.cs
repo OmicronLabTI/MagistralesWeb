@@ -372,5 +372,23 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetlLastIsolatedProductionOrderId()
+        {
+            // arrange
+            var productId = "Abc Aspirina";
+            var uniqueId = "token";
+
+            // act
+            var result = await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

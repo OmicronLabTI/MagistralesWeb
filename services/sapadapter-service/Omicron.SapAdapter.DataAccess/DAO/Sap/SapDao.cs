@@ -178,6 +178,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        public async Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel
+                                    .Where(
+                                        x => x.ProductoId.Equals(productId) && 
+                                        x.Comments.Equals(uniqueId) &&
+                                        string.IsNullOrEmpty(x.CardCode) &&
+                                        x.DataSource.Equals("O"))
+                                    .MaxAsync(x => x.OrdenId);
+            return query;
+        }
+
+        /// <summary>
         /// gets the orders by product and item.
         /// </summary>
         /// <param name="listOrders">the product id.</param>        
