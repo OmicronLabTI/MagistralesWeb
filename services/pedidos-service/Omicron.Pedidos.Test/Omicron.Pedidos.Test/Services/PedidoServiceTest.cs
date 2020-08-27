@@ -598,10 +598,11 @@ namespace Omicron.Pedidos.Test.Services
         public async Task FinishOrder()
         {
             // arrange
-            var update = new UpdateOrderSignatureModel
+            var update = new FinishOrderModel
             {
                 FabricationOrderId = 100,
-                Signature = "asdf",
+                TechnicalSignature = "QXhpdHkyMDIw",
+                QfbSignature = "QXhpdHkyMDIw",
                 UserId = "abc",
             };
 
@@ -629,10 +630,11 @@ namespace Omicron.Pedidos.Test.Services
         public async Task FinishOrderNewSignature()
         {
             // arrange
-            var update = new UpdateOrderSignatureModel
+            var update = new FinishOrderModel
             {
                 FabricationOrderId = 101,
-                Signature = "asdf",
+                TechnicalSignature = "QXhpdHkyMDIw",
+                QfbSignature = "QXhpdHkyMDIw",
                 UserId = "abc",
             };
 
@@ -660,10 +662,10 @@ namespace Omicron.Pedidos.Test.Services
         public async Task FinishOrderHasError()
         {
             // arrange
-            var update = new UpdateOrderSignatureModel
+            var update = new FinishOrderModel
             {
                 FabricationOrderId = 101,
-                Signature = "asdf",
+                QfbSignature = "asdf",
                 UserId = "abc",
             };
 

@@ -312,4 +312,12 @@
 	</addColumn>
 	<addForeignKeyConstraint baseColumnNames="closeuserid" baseTableName="usersorders" constraintName="fk_close_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>	
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.37">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="qfbsignature"
+			type="BYTEA">
+		</column>
+	</addColumn>	
+  </changeSet>
 </databaseChangeLog> 

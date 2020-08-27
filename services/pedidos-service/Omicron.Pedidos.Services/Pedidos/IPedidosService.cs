@@ -156,6 +156,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="updateOrderSignature">the model.</param>
         /// <returns>the result.</returns>
-        Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature);
+        Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature);
     }
 }

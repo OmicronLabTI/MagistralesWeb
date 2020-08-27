@@ -121,7 +121,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.FinishOrder(It.IsAny<UpdateOrderSignatureModel>()))
+                .Setup(m => m.FinishOrder(It.IsAny<FinishOrderModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -560,10 +560,11 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task FinishOrder()
         {
             // arrange
-            var updateBatches = new UpdateOrderSignatureDto
+            var updateBatches = new FinishOrderDto
             {
                 FabricationOrderId = 200,
-                Signature = "signature",
+                TechnicalSignature = "signture",
+                QfbSignature = "asf",
                 UserId = "abc",
             };
 
