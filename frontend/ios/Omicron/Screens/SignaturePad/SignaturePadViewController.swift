@@ -42,7 +42,7 @@ class SignaturePadViewController: UIViewController {
     // MARK: Functions
     
     @IBAction func cancelActionButton(_ sender: Any) {
-        self.dismiss(animated: true)
+        self.navigationController?.popToRootViewController(animated: true)
     }
     
     @IBAction func clearActionButton(_ sender: Any) {
