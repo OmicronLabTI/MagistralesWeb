@@ -97,9 +97,7 @@ body {
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
 }
-.scroll-custom {
-  overflow-y: scroll;
-}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scroll-custom::-webkit-scrollbar {
   display: none;
@@ -107,6 +105,7 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scroll-custom {
+  overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
 }
 
