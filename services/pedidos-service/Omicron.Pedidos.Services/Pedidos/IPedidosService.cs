@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultModel> FinishBySalesOrder(List<OrderIdModel> finishOrders);
+        Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
@@ -114,6 +114,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CancelFabOrder(List<OrderIdModel> cancelOrders);
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultModel> CloseFabOrders(List<OrderIdModel> finishOrders);
 
         /// <summary>
         /// Makes the automatic assign.
@@ -149,7 +156,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="updateOrderSignature">the model.</param>
         /// <returns>the result.</returns>
-        Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature);
+        Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature);
 
         /// <summary>
         /// Create new isolated production order.

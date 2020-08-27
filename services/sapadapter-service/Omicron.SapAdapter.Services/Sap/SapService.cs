@@ -93,13 +93,14 @@ namespace Omicron.SapAdapter.Services.Sap
             details.ToList().ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
-                var userId = userOrder == null ? string.Empty : userOrder.Userid;
+                userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
+                var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
                 x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 
-                x.Status = userOrder == null ? string.Empty : userOrder.Status;
+                x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? string.Empty : string.Empty;
+                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -173,7 +174,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
-
+                var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
 
@@ -182,7 +183,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     IsChecked = false,
                     ProductionOrderId = o.OrdenId,
                     Code = o.ProductoId,
-                    ProductDescription = o.ProdName,
+                    ProductDescription = item == null ? string.Empty : item.LargeDescription,
                     Type = ServiceConstants.DictStatusType.ContainsKey(o.Type) ? ServiceConstants.DictStatusType[o.Type] : o.Type,
                     Status = ServiceConstants.DictStatus.ContainsKey(o.Status) ? ServiceConstants.DictStatus[o.Status] : o.Status,
                     PlannedQuantity = (int)o.Quantity,
@@ -230,6 +231,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listValues = new List<CompleteDetalleFormulaModel>();
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());

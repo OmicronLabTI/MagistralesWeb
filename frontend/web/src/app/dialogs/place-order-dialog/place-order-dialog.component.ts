@@ -28,7 +28,10 @@ export class PlaceOrderDialogComponent implements OnInit {
 
   async ngOnInit() {
     await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => this.qfbs = resultQfbs.response)
-        .catch(error => this.errorService.httpError(error));
+        .catch(error => {
+            this.errorService.httpError(error);
+            this.dialogRef.close();
+        });
   }
 
   changePlaceManual() {

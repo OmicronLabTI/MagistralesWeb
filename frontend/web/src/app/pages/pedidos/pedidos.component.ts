@@ -6,9 +6,9 @@ import {
   ClassNames,
   CONST_NUMBER,
   CONST_STRING, ConstStatus,
-  HttpServiceTOCall, MessageType,
+  HttpServiceTOCall, HttpStatus, MessageType,
   MODAL_FIND_ORDERS,
-  MODAL_NAMES
+  MODAL_NAMES,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -18,6 +18,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
+import {ErrorHttpInterface} from '../../model/http/commons';
 
 @Component({
   selector: 'app-pedidos',
@@ -45,6 +46,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToPlace = false;
   subscriptionCallHttp = new Subscription();
   isThereOrdersToCancel = false;
+  isThereOrdersToFinalize = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -77,14 +79,33 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
+          switch(element.pedidoStatus){
+            case ConstStatus.abierto:
+              element.class = 'green';
+              break;
+            case ConstStatus.planificado:
+              element.class = 'mat-primary';
+              break;
+            case ConstStatus.liberado:
+              element.class = 'liberado';
+              break;
+            case ConstStatus.cancelado:
+              element.class = 'cancelado';
+              break;
+            case ConstStatus.enProceso:
+              element.class = 'proceso';
+              break;
+          }
         });
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
         this.isThereOrdersToCancel = false;
+        this.isThereOrdersToFinalize = false;
       },
-      error => {/// checar con gus para manejar errores
-        this.errorService.httpError(error);
+        (error: ErrorHttpInterface) => {
+        if (error.status !== HttpStatus.notFound) {
+          this.errorService.httpError(error);
+        }
         this.dataSource.data = [];
       }
     );
@@ -123,7 +144,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
             if (resProcessOrder.success && resProcessOrder.response.length > 0) {
               const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
               this.getPedidos();
-              this.dataService.presentToastCustom(titleProcessWithError, 'info',
+              this.dataService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
               this.getPedidos();
@@ -223,6 +244,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
     this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
     this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
+    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
@@ -248,5 +270,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         return cancelOrder;
       }),
         cancelType: MODAL_NAMES.placeOrders});
+  }
+
+  finalizeOrders() {
+    console.log('finalize orders');
+    this.dataService.setFinalizeOrders({list: [{orderId: 1234}], cancelType: MODAL_NAMES.placeOrders});
   }
 }

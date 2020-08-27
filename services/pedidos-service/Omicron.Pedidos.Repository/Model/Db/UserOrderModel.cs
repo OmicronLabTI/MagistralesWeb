@@ -93,5 +93,21 @@ namespace Omicron.Pedidos.Entities.Model
         /// String creator user id.
         [Column("creatoruserid")]
         public string CreatorUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets close date.
+        /// </summary>
+        /// <value>
+        /// String close date.
+        [Column("closedate")]
+        public string CloseDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("closeuserid")]
+        public string CloseUserId { get; set; }
     }
 }

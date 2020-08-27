@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {DatePipe} from '@angular/common';
 import {DataService} from './data.service';
-import {HttpServiceTOCall} from '../constants/const';
+import {HttpServiceTOCall, MessageType} from '../constants/const';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
@@ -122,5 +122,53 @@ describe('DataService', () => {
       expect(urlActive).toEqual(HttpServiceTOCall.ORDERS);
     });
     service.setUrlActive(HttpServiceTOCall.ORDERS);
+  });
+  it('should getIsToSaveAnything', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setIsToSaveAnything(false);
+    expect(service.getIsToSaveAnything()).toBeFalsy();
+    service.setIsToSaveAnything(true);
+    expect(service.getIsToSaveAnything()).toBeTruthy();
+  });
+  it('should getCancelOrder', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getCancelOrder().subscribe(resultCancel => {
+      expect(resultCancel).toEqual({list: [{orderId: 55, reason: 'Hubo un error', userId: 'user-id-22'}], cancelType: 'Pedido'});
+    });
+    service.setCancelOrders({list: [{orderId: 55, reason: 'Hubo un error', userId: 'user-id-22'}], cancelType: 'Pedido'});
+  });
+  it('should getMessageTitle', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual('El producto  1234 no pudo ser Planificado \n');
+    expect(service.getMessageTitle(['1234'], MessageType.processDetailOrder))
+        .toEqual('La orden de fabricación  1234 no pudo ser Planificado \n');
+    expect(service.getMessageTitle(['1234'], MessageType.placeOrder))
+        .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
+    expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
+        .toEqual('Hubo un error \n');
+  });
+  it('should getRefreshToken', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setRefreshToken('anyRefreshToken');
+    expect(service.getRefreshToken()).toEqual('anyRefreshToken');
+  });
+  it('should getRememberSession', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setRememberSession('anyRememberSession');
+    expect(service.getRememberSession()).toEqual('anyRememberSession');
+  });
+  it('should getIsLogout true', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getIsLogout().subscribe(isLogout => {
+      expect(isLogout).toBeTruthy();
+    });
+    service.setIsLogout(true);
+  });
+  it('should getIsLogout false', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getIsLogout().subscribe(isLogout => {
+      expect(isLogout).toBeFalsy();
+    });
+    service.setIsLogout(false);
   });
 });

@@ -184,9 +184,9 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/finish")]
         [HttpPut]
-        public async Task<IActionResult> FinishBySalesOrder(List<OrderIdDto> finishOrders)
+        public async Task<IActionResult> CloseSalesOrders(List<OrderIdDto> finishOrders)
         {
-            var response = await this.pedidoFacade.FinishBySalesOrder(finishOrders);
+            var response = await this.pedidoFacade.CloseSalesOrders(finishOrders);
             return this.Ok(response);
         }
 
@@ -200,6 +200,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> CancelFabOrder(List<OrderIdDto> cancelOrders)
         {
             var response = await this.pedidoFacade.CancelFabOrder(cancelOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/fabOrder/finish")]
+        [HttpPut]
+        public async Task<IActionResult> CloseFabOrders(List<OrderIdDto> finishOrders)
+        {
+            var response = await this.pedidoFacade.CloseFabOrders(finishOrders);
             return this.Ok(response);
         }
 
@@ -222,18 +235,22 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <param name="signatureType">Signature to update.</param>
         /// <param name="orderSignature">Orders signature data.</param>
         /// <returns>Operation result.</returns>
-        [Route("/fabOrder/{signatureType:regex(^(logistic|technical)$)}/signature")]
+        [Route("/fabOrder/{signatureType:regex(^(logistic|technical|qfb)$)}/signature")]
         [HttpPut]
         public async Task<IActionResult> UpdateOrderSignature(string signatureType, UpdateOrderSignatureDto orderSignature)
         {
             ResultDto result = null;
-            if (signatureType.Equals("logistic"))
+            switch (signatureType)
             {
-                result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
-            }
-            else if (signatureType.Equals("technical"))
-            {
-                result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+                case "logistic":
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+                    break;
+                case "technical":
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+                    break;
+                case "qfb":
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.QFB, orderSignature);
+                    break;
             }
 
             return this.Ok(result);
@@ -284,7 +301,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/finishOrder")]
         [HttpPost]
-        public async Task<IActionResult> FinishOrder(UpdateOrderSignatureDto orderSignature)
+        public async Task<IActionResult> FinishOrder(FinishOrderDto orderSignature)
         {
             var response = await this.pedidoFacade.FinishOrder(orderSignature);
             return this.Ok(response);

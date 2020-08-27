@@ -52,6 +52,7 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<UpdateOrderCommentsModel, UpdateOrderCommentsDto>();
             this.CreateMap<CreateIsolatedFabOrderModel, CreateIsolatedFabOrderDto>();
             this.CreateMap<CreateIsolatedFabOrderDto, CreateIsolatedFabOrderModel>();
+            this.CreateMap<FinishOrderDto, FinishOrderModel>();
         }
     }
 }

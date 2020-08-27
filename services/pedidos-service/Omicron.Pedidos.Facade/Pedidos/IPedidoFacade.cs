@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> FinishBySalesOrder(List<OrderIdDto> finishOrders);
+        Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
@@ -114,6 +114,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="cancelOrders">Orders to cancel.</para
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders);
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        Task<ResultDto> CloseFabOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
         /// the automatic assign.
@@ -143,13 +150,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> GetOrderSignatures(int productionOrderId);
-
+ 
         /// <summary>
         /// finish the order by the qfb.
         /// </summary>
         /// <param name="updateOrderSignature">the signature dto.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
+        Task<ResultDto> FinishOrder(FinishOrderDto updateOrderSignature);
 
         /// <summary>
         /// Create new isolated production order.

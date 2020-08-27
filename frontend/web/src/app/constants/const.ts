@@ -13,7 +13,7 @@ export const CONST_STRING = {
 };
 
 export const CONST_USER_DIALOG = {
-    defaultDefault: 'QFB',
+    defaultQfb: 'QFB',
     patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/
 };
 
@@ -48,7 +48,8 @@ export enum MessageType {
     placeOrder,
     placeDetailOrder,
     cancelOrder,
-    cancelDetailOrder
+    cancelDetailOrder,
+    finalizeOrder
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -65,9 +66,21 @@ export const ConstStatus = {
     terminado: 'Terminado',
     reasingado: 'Reasingado',
 };
-export const RoleQfbId = 2;
+export const HttpStatus = {
+    ok: 200,
+    created: 201,
+    badRequest: 400,
+    unauthorized: 401,
+    forbidden: 403,
+    notFound: 404,
+};
 
+export const ConstToken = {
+    accessToken: 'token-omi',
+    refreshToken: 'refresh-omi',
+    rememberSession: 'session-re'
+};
 export const BOOLEANS = {
     verdadero: true,
     falso: false
-}
+};
