@@ -146,4 +146,10 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.subscriptionForm.unsubscribe();
     }
+
+    keyDownFunction(event: KeyboardEvent) {
+        if (event.key === MODAL_FIND_ORDERS.keyEnter) {
+            this.searchOrders();
+      }
+    }
 }

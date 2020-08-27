@@ -3,6 +3,7 @@ export interface ILoginReq {
   password: string;
   redirectUri: string;
   clientId2: string;
+  origin: string;
 }
 
 export interface ILoginRes {

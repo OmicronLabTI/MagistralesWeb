@@ -65,9 +65,16 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.comments = this.oldDataFormulaDetail.comments || '';
         const endDate = this.oldDataFormulaDetail.dueDate.split('/');
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
-        // this.dataSource.data = formulaRes.response.details;
         this.dataSource.data = this.oldDataFormulaDetail.details;
-        this.dataSource.data.forEach(detail => {detail.isChecked = false; });
+        this.dataSource.data.forEach(detail => {
+          detail.isChecked = false;
+          const warehouseSplit = detail.warehouseQuantity.toString().split('.');
+          const stockSplit = detail.stock.toString().split('.');
+          detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
+              `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
+          detail.stock = stockSplit.length === 1 ? warehouseSplit[0] :
+              `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
+        });
         this.isReadyToSave = false;
         this.componentsToDelete = [];
         this.dataService.setIsToSaveAnything(false);
