@@ -40,7 +40,7 @@
                   Cancelar
             </button>
 
-            &nbsp;<button  [disabled]="isThereOrdersToFinalize" mat-raised-button [ngClass]="isThereOrdersToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrders()">
+            &nbsp;<button  [disabled]="!isThereOrdersToFinalize" mat-raised-button [ngClass]="isThereOrdersToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrders()">
                 Finalizar
             </button>
 

@@ -274,6 +274,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   finalizeOrders() {
     console.log('finalize orders');
-    this.dataService.setFinalizeOrders({list: [{orderId: 1234}], cancelType: MODAL_NAMES.placeOrders});
+    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
+        const finalizeOrder = new CancelOrderReq();
+        finalizeOrder.orderId = order.docNum;
+        return finalizeOrder;
+      }), cancelType: MODAL_NAMES.placeOrders});
   }
 }

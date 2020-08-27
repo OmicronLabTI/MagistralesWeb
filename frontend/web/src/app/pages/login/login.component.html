@@ -5,7 +5,7 @@
       <mat-card-title class="text-center" >
         <span class="title-login">Logueate con tu cuenta para iniciar sesión</span>
       </mat-card-title>
-      <mat-card-content [formGroup]="formLogin" class="card-content-custom">
+      <mat-card-content [formGroup]="formLogin" class="card-content-custom" (keydown)="keyDownFunction($event)">
         <mat-form-field class="login-field">
           <mat-card-title class="text-left" >
             <span class="title-input text-left">Usuario</span>

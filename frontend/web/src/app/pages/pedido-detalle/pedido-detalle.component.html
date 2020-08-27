@@ -13,9 +13,6 @@
   
     <div class="table-toolbar">
       <div class="table-toolbar-search">
-        <!--<mat-form-field >
-          <input matInput placeholder="Buscar órdenes...">       
-        </mat-form-field>-->
       </div>
       <div class="table-toolbar-buttons">
         <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'" (click)="processOrdersDetail()">
@@ -33,7 +30,7 @@
         </button>
         &nbsp;
         &nbsp;-->
-        <button [disabled]="isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
+        <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
           &nbsp; Finalizar &nbsp; 
         </button>
         &nbsp;
