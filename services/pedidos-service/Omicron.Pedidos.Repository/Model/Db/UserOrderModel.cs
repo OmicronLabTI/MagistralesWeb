@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>
         /// String creation date.
-        [Column("crationdate")]
+        [Column("creationdate")]
         public string CreationDate { get; set; }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>
         /// String creator user id.
-        [Column("creatoruserid")]
+        [Column("creationuserid")]
         public string CreatorUserId { get; set; }
 
         /// <summary>
