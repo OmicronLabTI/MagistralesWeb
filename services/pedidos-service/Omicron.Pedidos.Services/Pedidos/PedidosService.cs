@@ -78,12 +78,20 @@ namespace Omicron.Pedidos.Services.Pedidos
             var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
             var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
 
-            var listToInsert = ServiceUtils.CreateUserOrder(listOrders);
+            var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
+            var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
+
+            var listToInsert = ServiceUtils.CreateUserModelOrders(listOrders);
+            var dataToInsertUpdate = ServiceUtils.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders);
+            listToInsert.AddRange(dataToInsertUpdate.Item1);
+            var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
+
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             var userError = listErrorId.Any() ? ServiceConstants.ErrorAlInsertar : null;
@@ -117,7 +125,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
 
-            var dataToInsert = ServiceUtils.CreateUserModel(listOrders);
+            var dataToInsert = ServiceUtils.CreateUserModelOrders(listOrders);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
