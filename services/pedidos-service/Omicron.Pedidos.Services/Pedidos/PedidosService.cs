@@ -63,13 +63,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId.ListIds, ServiceConstants.GetOrderWithDetail);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var listToSend = new List<OrderWithDetailModel>();
 
             ordersSap.ForEach(o =>
             {
-                o.Detalle = o.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
+                var listDetalle = new List<CompleteDetailOrderModel>();
+
+                o.Detalle
+                .Where(x => string.IsNullOrEmpty(x.Status))
+                .ToList()
+                .ForEach(y =>
+                {
+                    y.DescripcionProducto = y.DescripcionCorta;
+                    listDetalle.Add(y);
+                });
+
+                var objectToCreate = new OrderWithDetailModel { Order = o.Order, Detalle = listDetalle };
+                listToSend.Add(objectToCreate);
             });
 
-            var resultSap = await this.sapDiApi.PostToSapDiApi(ordersSap, ServiceConstants.CreateFabOrder);
+            var resultSap = await this.sapDiApi.PostToSapDiApi(listToSend, ServiceConstants.CreateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);

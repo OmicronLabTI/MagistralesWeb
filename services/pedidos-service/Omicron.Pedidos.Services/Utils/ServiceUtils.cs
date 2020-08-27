@@ -225,6 +225,14 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the data.</returns>
         public static OrderWithDetailModel CreateOrderWithDetail(OrderWithDetailModel order, List<CompleteDetailOrderModel> listToSend)
         {
+            var listUpdated = new List<CompleteDetailOrderModel>();
+
+            listToSend.ForEach(x =>
+            {
+                x.DescripcionProducto = x.DescripcionCorta;
+                listUpdated.Add(x);
+            });
+
             return new OrderWithDetailModel
             {
                 Order = new OrderModel
@@ -233,7 +241,7 @@ namespace Omicron.Pedidos.Services.Utils
                     FechaInicio = order.Order.FechaInicio,
                     FechaFin = order.Order.FechaFin,
                 },
-                Detalle = new List<CompleteDetailOrderModel>(listToSend),
+                Detalle = new List<CompleteDetailOrderModel>(listUpdated),
             };
         }
 
