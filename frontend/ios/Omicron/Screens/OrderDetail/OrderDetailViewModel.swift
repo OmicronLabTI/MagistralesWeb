@@ -28,6 +28,7 @@ class OrderDetailViewModel {
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    var showIconComments = PublishSubject<String>()
     var orderId: Int = -1
     
     
@@ -58,6 +59,8 @@ class OrderDetailViewModel {
             self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
             self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
+            let iconName = res.response?.comments != nil ? "message.fill": "message"
+            self.showIconComments.onNext(iconName)
         }, onError: { error in
             self.loading.onNext(false)
             self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")

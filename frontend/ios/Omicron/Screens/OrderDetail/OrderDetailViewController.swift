@@ -167,6 +167,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity!))
         }.disposed(by: disposeBag)
         
+        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { iconName in
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItem = comments
+        }).disposed(by: self.disposeBag)
+        
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
@@ -181,8 +186,10 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     }
     
     func initComponents() -> Void {
-        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
-        self.navigationItem.rightBarButtonItem = comments
+        
+//        let comments = UIBarButtonItem(image: UIImage(systemName: "message"), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+//        self.navigationItem.rightBarButtonItem = comments
+
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
