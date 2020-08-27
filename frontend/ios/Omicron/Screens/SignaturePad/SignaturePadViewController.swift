@@ -27,7 +27,6 @@ class SignaturePadViewController: UIViewController {
     
     // MARK: -Variables
     @Injected var signaturePadViewModel: SignaturePadViewModel
-    @Injected var orderDetailViewModel: OrderDetailViewModel
     let diposeBag = DisposeBag()
     var orderId: Int = -1
     
@@ -44,7 +43,6 @@ class SignaturePadViewController: UIViewController {
     
     @IBAction func cancelActionButton(_ sender: Any) {
         self.dismiss(animated: true)
-        self.orderDetailViewModel.backToInboxView.onNext(())
     }
     
     @IBAction func clearActionButton(_ sender: Any) {
