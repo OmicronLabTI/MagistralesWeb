@@ -30,9 +30,9 @@ class CommentsViewModel {
             if (self.orderDetail.first != nil) {
                 let order = OrderDetailRequest(fabOrderID: self.orderDetail[0].productionOrderID!, plannedQuantity: self.orderDetail[0].plannedQuantity!, fechaFin: UtilsManager.shared.formattedDateFromString(dateString: self.orderDetail[0].dueDate! , withFormat: "yyyy-MM-dd")!, comments: data, components: [])
                 self.loading.onNext(true)
-                self.backToOrderDetail.onNext(())
                 NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
                     self.loading.onNext(false)
+                    self.backToOrderDetail.onNext(())
                 }, onError: { error in
                     self.loading.onNext(false)
                     self.showAlert.onNext("Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo")

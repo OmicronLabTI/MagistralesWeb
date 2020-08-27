@@ -52,9 +52,8 @@ class CommentsViewController: UIViewController {
     
     func viewModelBinding() -> Void {
         self.commentsViewModel.backToOrderDetail.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            // TODO: chechar para actualizar
-            // self.orderDetailVC.getOrdenDetail()
             self.backToOrderDetail()
+            self.orderDetailVC.getOrdenDetail()
         }).disposed(by: self.disposeBag)
         
         self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)
