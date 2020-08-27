@@ -165,22 +165,23 @@ namespace Omicron.Pedidos.Services.Utils
         public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
         {
             var dictUserPedido = new Dictionary<int, string>();
-            var listOrdersAignado = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Asignado)).Select(y => int.Parse(y.Productionorderid)).ToList();
-
-            var usersAvailable = users.Where(x => x.ProductionOrders.Any(y => listOrdersAignado.Contains(y))).ToList();
 
             foreach (var p in orderDetail)
             {
+                users = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
+
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
                 {
                     dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
                     continue;
                 }
 
-                foreach (var d in p.Detalle)
+                dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, users, p.Order.DocNum, users.FirstOrDefault().User.Id, userOrders);
+
+                users.ForEach(x =>
                 {
-                    dictUserPedido = GetEntryUserValue(dictUserPedido, d, usersAvailable, p.Order.DocNum, users.FirstOrDefault().User.Id);
-                }
+                    x.TotalCount = x.User.Id.Equals(dictUserPedido[p.Order.DocNum]) ? p.Detalle.Sum(y => y.QtyPlanned.Value) + x.TotalCount : x.TotalCount;
+                });
             }
 
             return dictUserPedido;
@@ -194,17 +195,30 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="availableUsers">the available users by formula.</param>
         /// <param name="pedidoId">the pedido id.</param>
         /// <param name="defaultUser">the default user if nothing matches.</param>
+        /// <param name="userOrders">The user orders already assigned.</param>
         /// <returns>the dict.</returns>
-        private static Dictionary<int, string> GetEntryUserValue(Dictionary<int, string> pedidoUser, CompleteDetailOrderModel detailModel, List<AutomaticAssignUserModel> availableUsers, int pedidoId, string defaultUser)
+        private static Dictionary<int, string> GetEntryUserValue(Dictionary<int, string> pedidoUser, List<CompleteDetailOrderModel> detailModel, List<AutomaticAssignUserModel> availableUsers, int pedidoId, string defaultUser, List<UserOrderModel> userOrders)
         {
             if (pedidoUser.ContainsKey(pedidoId))
             {
                 return pedidoUser;
             }
 
-            var descriptionproduct = detailModel.CodigoProducto.Split("   ")[0];
+            var listOrdersAignado = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Asignado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+            var usersFormulaAvailable = availableUsers.Where(x => x.ProductionOrders.Any(y => listOrdersAignado.Contains(y))).ToList();
 
-            var user = availableUsers.FirstOrDefault(y => y.ItemCodes.Any(z => z.Contains(descriptionproduct)));
+            var users = new List<AutomaticAssignUserModel>();
+            detailModel
+                .Where(x => x.CodigoProducto.Contains("   "))
+                .Select(y => y.CodigoProducto.Split("   ")[0])
+                .ToList()
+                .ForEach(d =>
+                {
+                    users.AddRange(usersFormulaAvailable.Where(z => z.ItemCodes.Any(a => a.Contains(d))).ToList());
+                });
+
+            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList().FirstOrDefault();
+
             if (user != null)
             {
                 pedidoUser.Add(pedidoId, user.User.Id);
