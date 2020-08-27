@@ -28,7 +28,7 @@ public class OauthFacade implements IOauthFacade {
     @Override
     public TokenResponseTO authorize(LoginRequestTO loginRequest) {
 
-        authService.validateCredentials(loginRequest.getUser(), loginRequest.getPassword());
+        authService.validateCredentials(loginRequest.getUser(), loginRequest.getPassword(), loginRequest.getOrigin());
 
         String access_token = tokenService.generateToken(loginRequest.getClientId(), loginRequest.getUser(), "admin", ttl);
 
