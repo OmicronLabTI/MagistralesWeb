@@ -63,13 +63,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var orders = await this.sapAdapter.PostSapAdapter(pedidosId.ListIds, ServiceConstants.GetOrderWithDetail);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var listToSend = new List<OrderWithDetailModel>();
 
             ordersSap.ForEach(o =>
             {
-                o.Detalle = o.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
+                var listDetalle = new List<CompleteDetailOrderModel>();
+
+                o.Detalle
+                .Where(x => string.IsNullOrEmpty(x.Status))
+                .ToList()
+                .ForEach(y =>
+                {
+                    y.DescripcionProducto = y.DescripcionCorta;
+                    listDetalle.Add(y);
+                });
+
+                var objectToCreate = new OrderWithDetailModel { Order = o.Order, Detalle = listDetalle };
+                listToSend.Add(objectToCreate);
             });
 
-            var resultSap = await this.sapDiApi.PostToSapDiApi(ordersSap, ServiceConstants.CreateFabOrder);
+            var resultSap = await this.sapDiApi.PostToSapDiApi(listToSend, ServiceConstants.CreateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
@@ -78,12 +91,20 @@ namespace Omicron.Pedidos.Services.Pedidos
             var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
             var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
 
-            var listToInsert = ServiceUtils.CreateUserOrder(listOrders);
+            var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
+            var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
+
+            var listToInsert = ServiceUtils.CreateUserModelOrders(listOrders);
+            var dataToInsertUpdate = ServiceUtils.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders);
+            listToInsert.AddRange(dataToInsertUpdate.Item1);
+            var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
+
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
 
             await this.pedidosDao.InsertUserOrder(listToInsert);
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             var userError = listErrorId.Any() ? ServiceConstants.ErrorAlInsertar : null;
@@ -117,7 +138,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
 
-            var dataToInsert = ServiceUtils.CreateUserModel(listOrders);
+            var dataToInsert = ServiceUtils.CreateUserModelOrders(listOrders);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
@@ -779,6 +800,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente };
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
             var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
+
             userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter, 200);
 
