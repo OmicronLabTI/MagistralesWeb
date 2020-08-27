@@ -860,6 +860,48 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolateFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolateFabOrder)
+        {
+            var logs = new List<OrderLogModel>();
+            var payload = new { ProductCode = isolateFabOrder.ProductCode };
+            var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
+
+            if (!diapiResult.Success)
+            {
+                return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonSapConnectionError, null, null);
+            }
+
+            var resultMessage = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(diapiResult.Response.ToString());
+            var productionOrderId = 0;
+
+            if (!string.IsNullOrEmpty(resultMessage.Key))
+            {
+                // Get new production order id
+                var route = $"{ServiceConstants.GetLastIsolatedProductionOrderId}?productId={isolateFabOrder.ProductCode}&uniqueId={resultMessage.Key}";
+                var result = await this.sapAdapter.GetSapAdapter(route);
+                productionOrderId = int.Parse(result.Response.ToString());
+
+                UserOrderModel newProductionOrder = new UserOrderModel();
+                newProductionOrder.Salesorderid = string.Empty;
+                newProductionOrder.Productionorderid = productionOrderId.ToString();
+                newProductionOrder.CreatorUserId = isolateFabOrder.UserId;
+                newProductionOrder.CreationDate = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt");
+                newProductionOrder.Status = ServiceConstants.Planificado;
+
+                logs.AddRange(ServiceUtils.CreateOrderLog(isolateFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
+
+                await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
+                await this.pedidosDao.InsertOrderLog(logs);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

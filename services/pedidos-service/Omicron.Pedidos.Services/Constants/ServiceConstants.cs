@@ -184,6 +184,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetFormula = "formula/";
 
         /// <summary>
+        /// gets the last isolated production order id.
+        /// </summary>
+        public const string GetLastIsolatedProductionOrderId = "fabOrder/isolated/last";
+
+        /// <summary>
         /// the route to call the details for the details.
         /// </summary>
         public const string GetFabOrdersByPedidoId = "detail/{0}";
@@ -212,6 +217,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// route to cancel orders.
         /// </summary>
         public const string CancelFabOrder = "cancelProductionOrder";
+
+        /// <summary>
+        /// route to create isolated fabrication orders.
+        /// </summary>
+        public const string CreateIsolatedFabOrder = "isolatedProductionOrder";
 
         /// <summary>
         /// route to finish orders.
@@ -282,5 +292,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// error when batche are missing.
         /// </summary>
         public const string BatchesAreMissingError = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado";
+
+        /// <summary>
+        /// when the isolated order is created.
+        /// </summary>
+        public const string IsolatedProductionOrderCreated = "La orden de fabricación {0} ha sido creada.";
     }
 }

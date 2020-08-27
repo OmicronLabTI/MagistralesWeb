@@ -77,5 +77,21 @@ namespace Omicron.Pedidos.Entities.Model
         /// String status.
         [Column("finishdate")]
         public string FinishDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets creation date.
+        /// </summary>
+        /// <value>
+        /// String creation date.
+        [Column("crationdate")]
+        public string CreationDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets creator user id.
+        /// </summary>
+        /// <value>
+        /// String creator user id.
+        [Column("creatoruserid")]
+        public string CreatorUserId { get; set; }
     }
 }

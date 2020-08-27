@@ -291,6 +291,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("/fabOrder/isolated")]
+        public async Task<IActionResult> FinishOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
+        {
+            var response = await this.pedidoFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

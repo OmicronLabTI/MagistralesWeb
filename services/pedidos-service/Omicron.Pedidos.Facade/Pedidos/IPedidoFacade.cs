@@ -150,5 +150,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="updateOrderSignature">the signature dto.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder);
     }
 }
