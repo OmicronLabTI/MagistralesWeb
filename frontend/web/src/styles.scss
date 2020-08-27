@@ -449,8 +449,8 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
 }
 
 .mat-stroked-button.mat-primary {
-  color: #6C90B3 !important;
-  border: 1px solid #6C90B3 !important;
+  color: #2196f3 !important;
+  border: 1px solid #2196f3 !important;
 }
 
 .mat-stroked-button.green {
@@ -603,4 +603,38 @@ a.breadcrumblink:hover{
   display: flex;
   width: 45%;
   flex-direction: column;
+}
+.mat-stroked-button.liberado {
+  color: #6C90B3 !important;
+  border: 1px solid #6C90B3 !important;
+}
+
+.mat-stroked-button.cancelado {
+  color: #3b3f5c !important;
+  border: 1px solid #3b3f5c !important;
+}
+
+.mat-stroked-button.proceso {
+  color: #e7515a !important;
+  border: 1px solid #e7515a !important;
+}
+
+.mat-stroked-button.asignado {
+  color: #8dbf42 !important;
+  border: 1px solid #8dbf42 !important;
+}
+
+.mat-stroked-button.pendiente {
+  color: #3b3f5c !important;
+  border: 1px solid #3b3f5c !important;
+}
+
+.mat-stroked-button.terminado {
+  color: #2196f3 !important;
+  border: 1px solid #2196f3 !important;
+}
+
+.mat-stroked-button.cerrado {
+  color: #e7515a !important;
+  border: 1px solid #e7515a !important;
 }
