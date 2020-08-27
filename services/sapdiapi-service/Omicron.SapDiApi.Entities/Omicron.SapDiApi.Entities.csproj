@@ -68,6 +68,7 @@
     <Compile Include="Models\AssignBatchModel.cs" />
     <Compile Include="Models\CompleteDetailModel.cs" />
     <Compile Include="Models\CompleteDetalleFormulaModel.cs" />
+    <Compile Include="Models\CreateIsolatedFabOrderModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderWithDetailModel.cs" />
     <Compile Include="Models\ResultModel.cs" />

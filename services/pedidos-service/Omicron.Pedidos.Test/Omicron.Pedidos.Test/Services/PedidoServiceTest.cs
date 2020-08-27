@@ -751,5 +751,48 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateIsolatedProductionOrder()
+        {
+            // arrange
+            var order = new CreateIsolatedFabOrderModel { ProductCode = "ProductCode", UserId = "abc", };
+
+            var mockContent = new KeyValuePair<string, string>("token", "Ok");
+            var mockSapDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockResultDiApi = new ResultModel();
+            mockResultDiApi.Success = true;
+            mockResultDiApi.Code = 200;
+            mockResultDiApi.Response = JsonConvert.SerializeObject(mockContent);
+
+            var mockResultSapAdapter = new ResultModel();
+            mockResultSapAdapter.Success = true;
+            mockResultSapAdapter.Code = 200;
+            mockResultSapAdapter.Response = "12345";
+
+            mockSapDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResultDiApi));
+
+            mockSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResultSapAdapter));
+
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSapDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.CreateIsolatedProductionOrder(order);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

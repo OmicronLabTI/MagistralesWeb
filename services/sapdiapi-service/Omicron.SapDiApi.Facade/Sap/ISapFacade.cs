@@ -56,6 +56,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> FinishOrder(List<CancelOrderDto> productionOrders);
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

@@ -102,5 +102,15 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Fail reason.
         /// </summary>
         public const string FailReasonNotProductionStatusClosed = "La orden de producción {0} no se ha podido cerrar.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonProductCodeNotExists = "El producto con código {0} no existe.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0}.";
     }
 }

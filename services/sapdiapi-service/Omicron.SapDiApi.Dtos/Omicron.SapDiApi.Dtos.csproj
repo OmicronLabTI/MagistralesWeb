@@ -68,6 +68,7 @@
     <Compile Include="Models\OrderDto.cs" />
     <Compile Include="Models\OrderWithDetailDto.cs" />
     <Compile Include="Models\ResultDto.cs" />
+    <Compile Include="Models\CreateIsolatedFabOrderDto.cs" />
     <Compile Include="Models\UpdateFabOrderDto.cs" />
     <Compile Include="Models\UpdateFormulaDto.cs" />
     <Compile Include="Models\CancelOrderDto.cs" />

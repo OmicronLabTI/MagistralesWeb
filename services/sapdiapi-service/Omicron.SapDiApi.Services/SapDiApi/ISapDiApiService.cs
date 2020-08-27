@@ -60,6 +60,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders);
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>
