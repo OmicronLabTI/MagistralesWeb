@@ -31,7 +31,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8040
+  - port: 80
     targetPort: 80
     protocol: TCP
   externalIPs:
