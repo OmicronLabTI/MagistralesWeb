@@ -92,6 +92,16 @@ namespace Omicron.SapDiApi.Facade.Sap
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolatedFabOrder)));
+        }
+
+        /// <summary>
         /// Upfate the batches.
         /// </summary>
         /// <param name="assginBatches">The assign batches.</param>
