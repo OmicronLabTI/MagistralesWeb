@@ -10,6 +10,7 @@ export class IPedidoDetalleReq {
     fechaOfFin: string;
     qfb: string;
     status: string;
+    class?: string;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;

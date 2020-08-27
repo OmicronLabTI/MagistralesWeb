@@ -143,6 +143,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    OrdenFabricacionId = dp.OrdenId,
                                    CodigoProducto = d.ProductoId,
                                    DescripcionProducto = p.LargeDescription,
+                                   DescripcionCorta = p.ProductoName,
                                    QtyPlanned = (int)dp.Quantity,
                                    QtyPlannedDetalle = (int)d.Quantity,
                                    FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
