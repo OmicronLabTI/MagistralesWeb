@@ -29,7 +29,8 @@ export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
     perDay: 1000 * 3600 * 24,
     ninetyDays: (24 * 60 * 60 * 1000) * 90,
-    ninetyDaysDifference: 90
+    ninetyDaysDifference: 90,
+    keyEnter: 'Enter'
 };
 export const CONST_DETAIL_FORMULA = {
     update: 'update',
@@ -42,6 +43,11 @@ export enum HttpServiceTOCall {
     USERS,
     DETAIL_FORMULA
 }
+export const ConstLogin = {
+    defaultRedirectUri: 'asdad',
+    defaultClientId2: '',
+    defaultOrigin: 'web'
+};
 export enum MessageType {
     processOrder,
     processDetailOrder,
