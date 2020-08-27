@@ -897,6 +897,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     case SignatureTypeEnum.TECHNICAL:
                         orderSignatures.TechnicalSignature = newSignatureAsByte;
                         break;
+                    case SignatureTypeEnum.QFB:
+                        orderSignatures.QfbSignature = newSignatureAsByte;
+                        break;
                 }
 
                 if (isNew)
@@ -945,7 +948,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="updateOrderSignature">the model.</param>
         /// <returns>the result.</returns>
-        public async Task<ResultModel> FinishOrder(UpdateOrderSignatureModel updateOrderSignature)
+        public async Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature)
         {
             var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, updateOrderSignature.FabricationOrderId));
             var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
@@ -960,13 +963,15 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
             var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
-            var newSignatureAsByte = Convert.FromBase64String(updateOrderSignature.Signature);
+            var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature);
+            var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature);
 
             if (orderSignature == null)
             {
                 var newSignature = new UserOrderSignatureModel
                 {
-                    TechnicalSignature = newSignatureAsByte,
+                    TechnicalSignature = newTechSignatureAsByte,
+                    QfbSignature = newQfbSignatureAsByte,
                     UserOrderId = orders.Id,
                 };
 
@@ -974,7 +979,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
             else
             {
-                orderSignature.TechnicalSignature = newSignatureAsByte;
+                orderSignature.TechnicalSignature = newTechSignatureAsByte;
+                orderSignature.QfbSignature = newQfbSignatureAsByte;
                 await this.pedidosDao.SaveOrderSignatures(orderSignature);
             }
 

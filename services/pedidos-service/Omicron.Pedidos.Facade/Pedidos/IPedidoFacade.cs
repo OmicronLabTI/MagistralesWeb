@@ -156,6 +156,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="updateOrderSignature">the signature dto.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature);
+        Task<ResultDto> FinishOrder(FinishOrderDto updateOrderSignature);
     }
 }
