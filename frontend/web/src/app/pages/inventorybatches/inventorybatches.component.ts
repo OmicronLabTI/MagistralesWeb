@@ -47,7 +47,7 @@ export class InventorybatchesComponent implements OnInit {
     'lote',
     'seleccionada',
     'opciones'
-  ]
+  ];
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
@@ -142,6 +142,7 @@ export class InventorybatchesComponent implements OnInit {
           .cantidadDisponible.toFixed(6)) - parseFloat(element
           .cantidadSeleccionada.toFixed(6));
         this.setTotales(element.cantidadSeleccionada);
+        this.isReadyToSave = true;
       }
     } else{
       this.dataService.setGeneralNotificationMessage(Messages.batchesSelectedQtyError);
@@ -207,6 +208,7 @@ export class InventorybatchesComponent implements OnInit {
         }
       });
       this.setTotales(-element.cantidadSeleccionada)
+      this.isReadyToSave = true;
     }
     return false;
   }

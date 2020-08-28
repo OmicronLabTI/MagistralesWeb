@@ -15,7 +15,7 @@
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button (click)="buildObjectToSap()" class="button-blue">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="buildObjectToSap()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
