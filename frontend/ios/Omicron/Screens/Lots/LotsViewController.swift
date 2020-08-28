@@ -48,7 +48,6 @@ class LotsViewController: UIViewController {
     @Injected var lotsViewModel: LotsViewModel
     let disposeBag = DisposeBag()
     var orderId = -1
-    var countItemsOfLineDocuments = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,8 +66,7 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
-           // self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
-            cell.numberLabel.text = "1"
+            cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
@@ -93,17 +91,9 @@ class LotsViewController: UIViewController {
         
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
-//            self.countLotsSelected = -1
-//            self.countLotsAvailables = -1
             self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
         }).disposed(by: self.disposeBag)
-        
-        // Obtiene el objeto de la columna seleccionada en la tabla lots Available
-        self.lotsAvailablesTable.rx.modelSelected(LotsAvailable.self).observeOn(MainScheduler.instance).subscribe(onNext: { res in
-            self.lotsViewModel.itemSelected.onNext(res)
-        }).disposed(by: self.disposeBag)
-        
-        
+                
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {

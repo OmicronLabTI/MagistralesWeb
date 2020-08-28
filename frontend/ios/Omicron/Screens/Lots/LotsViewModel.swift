@@ -26,7 +26,7 @@ class LotsViewModel {
     var quantitySelectedValue = ""
     
     var quantitySelectedInput = BehaviorSubject<String>(value: "")
-    var itemSelected = PublishSubject<LotsAvailable>()
+    var rowSelected = PublishSubject<Int>()
     
     var lineDocumentsDataAux:[Lots] = []
     var lotsAvailablesAux:[LotsAvailable] = []
@@ -36,18 +36,20 @@ class LotsViewModel {
     init() {
     
         // Obtiene los valores para poder añadir lotes disponibles a seleccionados por checar
-        let inputs = Observable.combineLatest(itemSelected, quantitySelectedInput)
+        let inputs = Observable.combineLatest(rowSelected, quantitySelectedInput)
+        
         self.addLotDidTap.withLatestFrom(inputs).map({
-            Inputs(lotsAvailable: $0, quantitySelected: $1)
+            LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
-            print("pinta lots: \(data.lotsAvailable)")
-            print("pinta quantoty selected: \(data.quantitySelected)")
-            
-            
-            
-            
-            let lotSelected = LotsSelected(numeroLote: data.lotsAvailable.numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected)!, sysNumber: data.lotsAvailable.sysNumber!)
-            self.dataLotsSelected.onNext([lotSelected])
+            let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
+
+            let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
+            if((index) != nil) {
+                self.lotsSelectedAux[index!].cantidadSeleccionada = lotSelected.cantidadSeleccionada
+            } else {
+                self.lotsSelectedAux.append(lotSelected)
+            }
+            self.dataLotsSelected.onNext(self.lotsSelectedAux)
         }).disposed(by: self.disposeBag)
         
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in

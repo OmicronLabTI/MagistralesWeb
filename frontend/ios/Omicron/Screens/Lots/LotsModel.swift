@@ -79,12 +79,12 @@ extension LotsSelected: Mappable {
     }
 }
 
-class Inputs {
-    var lotsAvailable: LotsAvailable
+class LotsAvailableInfo {
+    var row: Int
     var quantitySelected: String
     
-    init(lotsAvailable: LotsAvailable,  quantitySelected: String) {
-        self.lotsAvailable = lotsAvailable
+    init(row: Int,  quantitySelected: String) {
+        self.row = row
         self.quantitySelected = quantitySelected
     }
 }

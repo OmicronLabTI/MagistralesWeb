@@ -22,7 +22,6 @@ class LotsAvailableTableViewCell: UITableViewCell {
     // MARK: -VARIABLES
     @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
-    var quantitySelectedInput = BehaviorRelay<String>(value: "")
     var row: Int?
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -39,12 +38,12 @@ class LotsAvailableTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
-        self.quantitySelectedInput.accept(self.quantitySelected.text!)
     }
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
         var cell: LotsAvailableTableViewCell?
         var superview: UIView? = textField.superview
         
@@ -55,6 +54,8 @@ extension LotsAvailableTableViewCell: UITextFieldDelegate {
         
         if cell != nil {
             cell?.setSelected(true, animated: true)
+            self.row = cell?.row
+            self.lotsViewModel.rowSelected.onNext((cell?.row)!)
         }
         return true
     }

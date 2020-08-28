@@ -17,7 +17,7 @@ class LotsTableViewCell: UITableViewCell {
     @IBOutlet weak var warehouseCodeLabel: UILabel!
     @IBOutlet weak var totalNeededLabel: UILabel!
     @IBOutlet weak var totalSelectedLabel: UILabel!
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
