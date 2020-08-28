@@ -139,8 +139,8 @@ export class InventorybatchesComponent implements OnInit {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
         this.tableLotesView();
         element.cantidadDisponible = parseFloat(element
-          .cantidadDisponible.toFixed(10)) - parseFloat(element
-          .cantidadSeleccionada.toFixed(10));
+          .cantidadDisponible.toFixed(6)) - parseFloat(element
+          .cantidadSeleccionada.toFixed(6));
         this.setTotales(element.cantidadSeleccionada);
       }
     } else{
@@ -172,7 +172,7 @@ export class InventorybatchesComponent implements OnInit {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: parseFloat(suma.toFixed(10))
+              cantidadSeleccionada: parseFloat(suma.toFixed(6))
             }
           } else {
             objetoLoteAsignado = {
@@ -203,7 +203,7 @@ export class InventorybatchesComponent implements OnInit {
       this.dataSourceLotesAsignados._updateChangeSubscription();
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(item => {
         if (item.numeroLote === element.numeroLote) {
-          item.cantidadDisponible = parseFloat(item.cantidadDisponible.toFixed(10)) + parseFloat(element.cantidadSeleccionada.toFixed(10));
+          item.cantidadDisponible = parseFloat(item.cantidadDisponible.toFixed(6)) + parseFloat(element.cantidadSeleccionada.toFixed(6));
         }
       });
       this.setTotales(-element.cantidadSeleccionada)
@@ -241,10 +241,10 @@ export class InventorybatchesComponent implements OnInit {
   setTotales(cantidadSeleccionada?: number){
     if (cantidadSeleccionada != undefined){
       this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat(
-        (this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(10)
+        (this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(6)
       );
       this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat(
-        (this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(10)
+        (this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(6)
       );
       this.setInputNecesaryQty();
     }
@@ -271,7 +271,7 @@ export class InventorybatchesComponent implements OnInit {
             const objectSAP: ILotesToSaveReq = {
               orderId: parseInt(ordenFabricacionId),
               itemCode: element.codigoProducto,
-              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(10)),
+              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
               action: lote.action,
               batchNumber: lote.numeroLote
             }
