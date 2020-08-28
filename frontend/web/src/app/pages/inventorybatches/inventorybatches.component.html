@@ -5,6 +5,10 @@
         <span>Lotes</span>
         <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle / Lotes </div>
       </div>
+      <div class="filter-select">
+        <div class="docbase">Número de pedido: {{document}} </div>
+        <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
+      </div>
     </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
@@ -18,6 +22,9 @@
     </div>
     
     <div class="list-users-container">
+        <div class="title-list-container">
+            <span>Líneas de documentos</span>
+        </div>
         <table mat-table [dataSource]="dataSourceDetails" class="mat-elevation-z8">
             <ng-container matColumnDef="cons">
                 <th mat-header-cell *matHeaderCellDef class="centered">#</th>
@@ -56,7 +63,7 @@
         <div class="column-a">
             <div class="title-list-container">
                 <span>Lotes disponibles</span>
-              </div>
+            </div>
             <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8" style="margin-bottom: 20px !important;">
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
@@ -99,8 +106,8 @@
         </div>
         <div class="column-b">
             <div class="title-list-container">
-                <span>Lotes asignados</span>
-              </div>
+                <span>Lotes seleccionados</span>
+            </div>
             <table mat-table [dataSource]="dataSourceLotesAsignados" class="mat-elevation-z8 table-pl">
                 <ng-container matColumnDef="lote" [style.display]="element.action == 'delete' ? 'none' : 'true'">
                     <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>

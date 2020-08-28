@@ -17,9 +17,10 @@ import { element } from 'protractor';
 })
 
 export class InventorybatchesComponent implements OnInit {
-  cantidadNecesariaInput: number = 0;
-  indexSelected: number = 0;
+  cantidadNecesariaInput = 0;
+  indexSelected = 0;
   dataSelected: ILotesFormulaReq;
+  document: string;
   ordenFabricacionId: string;
   dataSourceDetails = new MatTableDataSource<ILotesFormulaReq>();
   dataSourceLotes = new MatTableDataSource<ILotesReq>();
@@ -56,6 +57,7 @@ export class InventorybatchesComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
+      this.document = params.get('document');
       this.ordenFabricacionId = params.get('ordenid');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
     });
