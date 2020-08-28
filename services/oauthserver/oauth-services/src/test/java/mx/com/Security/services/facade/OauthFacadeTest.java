@@ -27,6 +27,7 @@ public class OauthFacadeTest extends BaseTest {
         loginRequestTO.setClientId("1");
         loginRequestTO.setPassword("ABC");
         loginRequestTO.setUser("guz");
+        loginRequestTO.setOrigin("");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
@@ -56,6 +57,7 @@ public class OauthFacadeTest extends BaseTest {
         loginRequestTO.setClientId("1");
         loginRequestTO.setPassword("ABC");
         loginRequestTO.setUser("guz");
+        loginRequestTO.setOrigin("");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 
@@ -75,6 +77,7 @@ public class OauthFacadeTest extends BaseTest {
         loginRequestTO.setClientId("1");
         loginRequestTO.setPassword("ABC");
         loginRequestTO.setUser("guz");
+        loginRequestTO.setOrigin("");
 
         TokenResponseTO tokenResponseTO = oauthFacade.authorize(loginRequestTO);
 

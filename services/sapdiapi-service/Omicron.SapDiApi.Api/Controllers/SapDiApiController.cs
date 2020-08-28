@@ -112,6 +112,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("isolatedProductionOrder")]
+        public async Task<IHttpActionResult> CreateIsolatedProductionOrder([FromBody] CreateIsolatedFabOrderDto isolatedFabOrder)
+        {
+            var result = await this.sapFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

@@ -406,6 +406,53 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
+        {
+            var result = new KeyValuePair<string, string>();
+
+            var item =  (ProductTrees)this.company.GetBusinessObject(BoObjectTypes.oProductTrees);
+            if (item.GetByKey(isolatedFabOrder.ProductCode))
+            {
+                var uniqueId = Guid.NewGuid().ToString();
+                var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                productionOrder.ProductionOrderType = BoProductionOrderTypeEnum.bopotStandard;
+                productionOrder.StartDate = DateTime.Now;
+                productionOrder.DueDate = DateTime.Now;
+                productionOrder.ItemNo = item.TreeCode;
+                productionOrder.ProductDescription = item.ProductDescription;
+                productionOrder.PlannedQuantity = 1;
+                productionOrder.DistributionRule = string.Empty;
+                productionOrder.DistributionRule2 = string.Empty;
+                productionOrder.DistributionRule3 = string.Empty;
+                productionOrder.DistributionRule4 = string.Empty;
+                productionOrder.DistributionRule5 = string.Empty;
+                productionOrder.Project = string.Empty;
+                productionOrder.Remarks = uniqueId;
+
+                if (productionOrder.Add() != 0)
+                {
+                    this.company.GetLastError(out int errorCode, out string errorMessage);
+                    _loggerProxy.Debug($"An error has ocurred to create isolated production order { errorCode } - {errorMessage}.");
+                    result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode));
+                }
+                else
+                {
+                    result = new KeyValuePair<string, string>(uniqueId, ServiceConstants.Ok);
+                }
+            }
+            else
+            {
+                _loggerProxy.Debug($"The product with code { isolatedFabOrder.ProductCode } doesn´t exists.");
+                result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonProductCodeNotExists, isolatedFabOrder.ProductCode));
+            }
+            return ServiceUtils.CreateResult(true, 200, null, result, null);
+        }
+
+        /// <summary>
         /// sets the data to update.
         /// </summary>
         /// <param name="model">the model from controller.</param>

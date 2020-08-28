@@ -121,7 +121,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.FinishOrder(It.IsAny<UpdateOrderSignatureModel>()))
+                .Setup(m => m.FinishOrder(It.IsAny<FinishOrderModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -134,6 +134,10 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.CloseFabOrders(It.IsAny<List<OrderIdModel>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.CreateIsolatedProductionOrder(It.IsAny<CreateIsolatedFabOrderModel>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
@@ -560,10 +564,11 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task FinishOrder()
         {
             // arrange
-            var updateBatches = new UpdateOrderSignatureDto
+            var updateBatches = new FinishOrderDto
             {
                 FabricationOrderId = 200,
-                Signature = "signature",
+                TechnicalSignature = "signture",
+                QfbSignature = "asf",
                 UserId = "abc",
             };
 
@@ -619,6 +624,32 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CloseFabOrders(salesOrders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateIsolatedProductionOrder()
+        {
+            // arrange
+            var order = new CreateIsolatedFabOrderDto
+            {
+                ProductCode = "product",
+                UserId = "abc",
+            };
+
+            // act
+            var response = await this.pedidoFacade.CreateIsolatedProductionOrder(order);
 
             // Assert
             Assert.IsNotNull(response);

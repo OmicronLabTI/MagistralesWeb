@@ -53,8 +53,8 @@ export class IFormulaDetalleReq {
     unit: string;
     warehouse: string;
     pendingQuantity: number;
-    stock: number;
-    warehouseQuantity: number;
+    stock: any;
+    warehouseQuantity: any;
     action?: string;
 }
 

@@ -53,5 +53,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// Logistics signature.
         [Column("logisticsignature")]
         public byte[] LogisticSignature { get; set; }
+
+        /// <summary>
+        /// Gets or sets logistics signature in byte[] representation.
+        /// </summary>
+        /// <value>
+        /// Logistics signature.
+        [Column("qfbsignature")]
+        public byte[] QfbSignature { get; set; }
     }
 }

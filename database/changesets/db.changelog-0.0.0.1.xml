@@ -312,4 +312,27 @@
 	</addColumn>
 	<addForeignKeyConstraint baseColumnNames="closeuserid" baseTableName="usersorders" constraintName="fk_close_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>	
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.37">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="qfbsignature"
+			type="BYTEA">
+		</column>
+	</addColumn>	
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.38">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="creationdate"
+			type="VARCHAR(30)">
+		</column>
+	</addColumn>
+	<addColumn tableName ="usersorders">
+		<column 
+			name="creationuserid"
+			type="VARCHAR(50)">
+		</column>
+	</addColumn>
+	<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="usersorders" constraintName="fk_creation_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>	
+  </changeSet>
 </databaseChangeLog> 

@@ -101,7 +101,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func viewModelBinding() {
         
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popViewController(animated: true)
+            self.navigationController?.popToRootViewController(animated: true)
         }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
@@ -117,8 +117,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.changeStatus(response: "Cancelar", statusType: "")})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK, statusType: "process")})
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatusToProcess()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
@@ -127,8 +127,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         // Muestra un mensaje de confirmación para poner la orden en status finalizado
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.changeStatus(response: "Cancelar", statusType: "")})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK, statusType: "finished")})
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.dismiss(animated: true)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.showQfbSignatureView()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
@@ -167,6 +167,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity!))
         }.disposed(by: disposeBag)
         
+        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { iconName in
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItem = comments
+        }).disposed(by: self.disposeBag)
+        
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
@@ -178,11 +183,19 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 LottieManager.shared.hideLoading()
             }
         }).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { titleView in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            //signatureVC.orderId = self.orderId
+            signatureVC.titleView = titleView
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
     }
     
     func initComponents() -> Void {
-        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
-        self.navigationItem.rightBarButtonItem = comments
+
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -279,26 +292,21 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
     
-    func changeStatus(response: String, statusType: String) -> Void  {
-        
-        if(response == "OK") {
-            switch statusType {
-            case "process":
-                 orderDetailViewModel.changeStatus()
-                return
-            case "finished":
-                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-                let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
-                signatureVC.orderId = self.orderId
-                signatureVC.modalPresentationStyle = .overCurrentContext
-                self.present(signatureVC, animated: true, completion: nil)
-                return
-            default:
-                return
-            }
-        }
-        self.navigationController?.popViewController(animated: true)
+    func changeStatusToProcess() -> Void  {
+        orderDetailViewModel.changeStatus()
     }
+    
+    func showQfbSignatureView() {
+        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
+    }
+    
+//    func showSignatureView(title: String) {
+//        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+//        let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+//        signatureVC.orderId = self.orderId
+//        signatureVC.modalPresentationStyle = .overCurrentContext
+//        self.present(signatureVC, animated: true, completion: nil)
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
        if segue.identifier == ViewControllerIdentifiers.orderDetailFormViewController {

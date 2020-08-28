@@ -82,7 +82,6 @@ class Persistence {
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
     }
-    
 }
 
 protocol ObjectSavable {

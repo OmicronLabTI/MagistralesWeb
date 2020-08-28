@@ -28,7 +28,8 @@ class SignaturePadViewController: UIViewController {
     // MARK: -Variables
     @Injected var signaturePadViewModel: SignaturePadViewModel
     let diposeBag = DisposeBag()
-    var orderId: Int = -1
+    //var orderId: Int = -1
+    var titleView = ""
     
     // MARK: -Life Cycles
     override func viewDidLoad() {
@@ -36,6 +37,10 @@ class SignaturePadViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.initComponents()
         self.viewModelBinding()
+//          checar esto para obtener la firma y setearla 
+//        let qfbSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.qfbSignatureName)
+//        let tecnicalSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.technicalSignatureName)
+        
     }
     
     
@@ -53,24 +58,10 @@ class SignaturePadViewController: UIViewController {
     func viewModelBinding() {
         self.acceptButton.rx.tap.bind(to: signaturePadViewModel.acceptDidTap).disposed(by: self.diposeBag)
         self.signaturePadViewModel.canGetSignature.drive(self.acceptButton.rx.isEnabled).disposed(by: self.diposeBag)
-        
-        // Muestra u oculta el loading
-        self.signaturePadViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
-            if(showLoading) {
-                LottieManager.shared.showLoading()
-                return
-            }
-            LottieManager.shared.hideLoading()
-        }).disposed(by: self.diposeBag)
-        
-        // Muestra un Alert
-        self.signaturePadViewModel.showAlertMessage.observeOn(MainScheduler.instance).subscribe(onNext: { message in
-            AlertManager.shared.showAlert(message: message, view: self)
-        }).disposed(by: self.diposeBag)
-        
+                        
         // Si el cambio del status a finalización fue éxitosa se regresa a Inbox
-        self.signaturePadViewModel.backToInboxVC.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popToRootViewController(animated: true)
+        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.dismiss(animated: true)
         }).disposed(by: self.diposeBag)
     }
     
@@ -80,7 +71,7 @@ class SignaturePadViewController: UIViewController {
         self.signatureTitleView.backgroundColor = OmicronColors.comments
         self.buttonsView.backgroundColor = OmicronColors.comments
         
-        self.signatureTitleLabel.text = "Firma del QFB"
+        self.signatureTitleLabel.text = self.titleView
         self.signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
         
         self.clearButton.setTitle("Limpiar", for: .normal)
@@ -102,17 +93,12 @@ extension SignaturePadViewController: SignaturePadDelegate {
     
     func didFinish() {
         if let signature = self.signaturePadView.getSignature() {
-            if let signatureBase64 = signature.toBase64() {
-                self.signaturePadViewModel.getOrder.onNext(self.orderId)
-                self.signaturePadViewModel.getSignature.onNext(signatureBase64)
-            }
+            self.signaturePadViewModel.getTypeSignature.onNext(self.titleView)
+            self.signaturePadViewModel.getSignature.onNext(signature)
+//            if let signatureBase64 = signature.toBase64() {
+//                self.signaturePadViewModel.getTypeSignature.onNext(self.titleView)
+//                self.signaturePadViewModel.getSignature.onNext(signatureBase64)
+//            }
         }
-    }
-}
-
-extension UIImage {
-    func toBase64() -> String? {
-        guard let imageData = self.pngData() else { return nil }
-        return imageData.base64EncodedString(options: Data.Base64EncodingOptions.lineLength64Characters)
     }
 }

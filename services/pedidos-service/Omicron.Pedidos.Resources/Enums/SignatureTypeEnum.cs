@@ -22,5 +22,10 @@ namespace Omicron.Pedidos.Resources.Enums
         /// Represents a technical signature.
         /// </summary>
         TECHNICAL = 2,
+
+        /// <summary>
+        /// The QFB signature.
+        /// </summary>
+        QFB = 3,
     }
 }

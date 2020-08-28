@@ -28,8 +28,13 @@ class OrderDetailViewModel {
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    var showIconComments = PublishSubject<String>()
     var orderId: Int = -1
-    
+    var showSignatureView = PublishSubject<String>()
+    var  qfbSignatureIsGet = false
+    var technicalSignatureIsGet = false
+    var sqfbSignature = ""
+    var technicalSignature = ""
     
     // MARK: Init
     init() {
@@ -45,6 +50,8 @@ class OrderDetailViewModel {
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
             self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
+        
+        
 
     }
     
@@ -58,6 +65,8 @@ class OrderDetailViewModel {
             self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
             self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
+            let iconName = res.response?.comments != nil ? "message.fill": "message"
+            self.showIconComments.onNext(iconName)
         }, onError: { error in
             self.loading.onNext(false)
             self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
@@ -110,5 +119,20 @@ class OrderDetailViewModel {
     
     func getDataTableToEdit() -> OrderDetail  {
         return self.tempOrderDetailData!
+    }
+    
+    func validSignatures() -> Void {
+        if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
+            
+//            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
+//
+//            NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+//                self.loading.onNext(false)
+//                self.backToInboxView.onNext(())
+//            }, onError: { error in
+//                self.loading.onNext(false)
+//                self.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+//            }).disposed(by: self.disposeBag)
+        }
     }
 }

@@ -142,7 +142,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                {
                                    OrdenFabricacionId = dp.OrdenId,
                                    CodigoProducto = d.ProductoId,
-                                   DescripcionProducto = p.ProductoName,
+                                   DescripcionProducto = p.LargeDescription,
+                                   DescripcionCorta = p.ProductoName,
                                    QtyPlanned = (int)dp.Quantity,
                                    QtyPlannedDetalle = (int)d.Quantity,
                                    FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
@@ -175,6 +176,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O").ToListAsync();
             return query.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        public async Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel
+                                    .Where(
+                                        x => x.ProductoId.Equals(productId) && 
+                                        x.Comments.Equals(uniqueId) &&
+                                        string.IsNullOrEmpty(x.CardCode) &&
+                                        x.DataSource.Equals("O"))
+                                    .MaxAsync(x => x.OrdenId);
+            return query;
         }
 
         /// <summary>
@@ -287,7 +306,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
         {
-            var products = await this.databaseContext.ProductoModel.Where(x => x.LargeDescription.ToLower().Contains(value)).ToListAsync();
+            var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)).ToListAsync();
             var listIds = products.Select(x => x.ProductoId).ToList();
             var listToReturn = new List<CompleteDetalleFormulaModel>();
             if (products.Any())

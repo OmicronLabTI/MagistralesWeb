@@ -78,9 +78,9 @@ export class AppComponent implements OnDestroy , OnInit {
   }
   logoutSession(isFromEndSession: boolean) {
       this.dataService.setIsLogin(false);
-      this.dataService.clearToken();
+      this.dataService.clearSession();
       this.onSuccessGeneralMessage({title: isFromEndSession ? Messages.endSession : Messages.expiredSession ,
-      icon: isFromEndSession ? 'success' : 'info', isButtonAccept: true});
+      icon: isFromEndSession ? 'success' : 'info', isButtonAccept: false});
       this.router.navigate(['/login']);
   }
 
@@ -228,7 +228,6 @@ export class AppComponent implements OnDestroy , OnInit {
                     const finalizeOrders = [...resultFinalize.list];
                     const userId = this.dataService.getUserId();
                     finalizeOrders.forEach(order => order.userId = userId);
-                    console.log('result true modal: ', finalizeOrders)
                     this.pedidosService.putFinalizeOrders(finalizeOrders, resultFinalize.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultFinalizeHttp => {
                            this.onSuccessFinalizeHttp(resultFinalizeHttp, resultFinalize.cancelType);

@@ -178,11 +178,13 @@ extension ChangeStatus: Mappable {
 class FinishOrder: Codable {
     var userId: String?
     var fabricationOrderId: Int?
-    var signature: String?
+    var qfbSignature: String?
+    var technicalSignature: String?
     
-    init(userId: String, fabricationOrderId: Int, signature: String) {
+    init(userId: String, fabricationOrderId: Int, qfbSignature: String, technicalSignature: String) {
         self.userId = userId
         self.fabricationOrderId = fabricationOrderId
-        self.signature = signature
+        self.qfbSignature = qfbSignature
+        self.technicalSignature = technicalSignature
     }
 }

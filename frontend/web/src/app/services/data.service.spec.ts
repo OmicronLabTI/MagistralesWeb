@@ -47,7 +47,7 @@ describe('DataService', () => {
   });
   it('should get userIsAuthenticated', () => {
     const service: DataService = TestBed.get(DataService);
-    service.clearToken();
+    service.clearSession();
     expect(service.userIsAuthenticated()).toBeFalsy();
     service.setToken('token');
     expect(service.userIsAuthenticated()).toBeTruthy();
@@ -67,7 +67,7 @@ describe('DataService', () => {
   it('should clear token', () => {
     const service: DataService = TestBed.get(DataService);
     service.setToken('token');
-    service.clearToken();
+    service.clearSession();
     expect(service.getToken()).toBeFalsy();
   });
   it('should getQfbToPlace', () => {

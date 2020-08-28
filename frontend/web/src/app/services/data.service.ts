@@ -128,24 +128,28 @@ export class DataService {
   setToken(token: string) {
     localStorage.setItem(ConstToken.accessToken, token);
   }
-  clearToken() {
+  clearSession() {
     localStorage.removeItem(ConstToken.accessToken);
+    localStorage.removeItem(ConstToken.rememberSession);
+    localStorage.removeItem(ConstToken.refreshToken);
+    localStorage.removeItem(ConstToken.userId);
+    localStorage.removeItem(ConstToken.userName);
   }
 
   setUserId(userId: string) {
-    localStorage.setItem('userId', userId);
+    localStorage.setItem(ConstToken.userId, userId);
   }
 
   getUserId() {
-    return localStorage.getItem('userId');
+    return localStorage.getItem(ConstToken.userId);
   }
 
   setUserName(userName: string) {
-    localStorage.setItem('userName', userName);
+    localStorage.setItem(ConstToken.userName, userName);
   }
 
   getUserName() {
-    return localStorage.getItem('userName');
+    return localStorage.getItem(ConstToken.userName);
   }
 
 

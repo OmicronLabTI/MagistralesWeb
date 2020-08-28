@@ -255,20 +255,25 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
             </mat-tab>
-            <mat-tab label="Comentarios">
-                         <div class="comments-container">
-                             <div class="title-comments">
-                                 <span>Comentarios</span>
-                             </div>
-                             <div class="text-area-comments">
-                                 <textarea class="text-area-formula" cols="100" rows="12"
+            <mat-tab>
+                <ng-template matTabLabel>
+                    <span *ngIf="comments !== '' && comments" class="material-icons material-custom color-omicron">
+                      radio_button_unchecked
+                    </span>
+                    Comentarios
+                </ng-template>
+                <div class="comments-container">
+                    <div class="title-comments">
+                        <span>Comentarios</span>
+                    </div>
+                    <div class="text-area-comments">
+                        <textarea class="text-area-formula" cols="100" rows="12"
                                            maxlength="500"
                                            [(ngModel)]="comments"
-                                           (ngModelChange)="changeData()"
-                                           >
-                                 </textarea>
-                             </div>
-                         </div>
+                                           (ngModelChange)="changeData()">
+                        </textarea>
+                    </div>
+                </div>
             </mat-tab>
         </mat-tab-group>
         

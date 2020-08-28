@@ -6,7 +6,7 @@
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
         <mat-card-content class="content-card-container">
-            <form [formGroup]="findOrdersForm"  class="form-orders">
+            <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
@@ -68,10 +68,15 @@
                     <div class="form-field-left margin-top-status">
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Estatus</mat-label>
-                            <mat-select formControlName="status">
+                            <mat-select formControlName="status">Cancelado
+                                Terminado
+                                Finalizado
                                 <mat-option value="Abierto">Abierto</mat-option>
                                 <mat-option value="Planificado">Planificado</mat-option>
                                 <mat-option value="Liberado">Liberado</mat-option>
+                                <mat-option value="Liberado">Cancelado</mat-option>
+                                <mat-option value="Liberado">Terminado</mat-option>
+                                <mat-option value="Liberado">Finalizado</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>

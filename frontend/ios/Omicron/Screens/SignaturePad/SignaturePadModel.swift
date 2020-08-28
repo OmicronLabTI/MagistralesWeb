@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import UIKit
 
 class OrderSignature  {
-    var order: Int
-    var signature: String
+    var signatureType: String
+    var signature: UIImage
     
-    init(order: Int, signature: String) {
-        self.order = order
+    init(signatureType: String, signature: UIImage) {
+        self.signatureType = signatureType
         self.signature = signature
     }
 }

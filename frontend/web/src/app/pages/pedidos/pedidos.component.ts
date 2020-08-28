@@ -8,7 +8,7 @@ import {
   CONST_STRING, ConstStatus,
   HttpServiceTOCall, HttpStatus, MessageType,
   MODAL_FIND_ORDERS,
-  MODAL_NAMES
+  MODAL_NAMES,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -79,7 +79,23 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          element.class = element.pedidoStatus === 'Abierto' ? 'green' : 'mat-primary';
+          switch(element.pedidoStatus){
+            case ConstStatus.abierto:
+              element.class = 'green';
+              break;
+            case ConstStatus.planificado:
+              element.class = 'mat-primary';
+              break;
+            case ConstStatus.liberado:
+              element.class = 'liberado';
+              break;
+            case ConstStatus.cancelado:
+              element.class = 'cancelado';
+              break;
+            case ConstStatus.enProceso:
+              element.class = 'proceso';
+              break;
+          }
         });
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
@@ -258,6 +274,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   finalizeOrders() {
     console.log('finalize orders');
-    this.dataService.setFinalizeOrders({list: [{orderId: 1234}], cancelType: MODAL_NAMES.placeOrders});
+    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
+        const finalizeOrder = new CancelOrderReq();
+        finalizeOrder.orderId = order.docNum;
+        return finalizeOrder;
+      }), cancelType: MODAL_NAMES.placeOrders});
   }
 }
