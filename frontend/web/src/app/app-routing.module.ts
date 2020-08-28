@@ -28,7 +28,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'lotes/:ordenid',
+    path: 'lotes/:document/:ordenid',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },
