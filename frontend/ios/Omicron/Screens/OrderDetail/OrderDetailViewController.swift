@@ -128,7 +128,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatusToFinish()})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.showQfbSignatureView()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
@@ -182,6 +182,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             } else {
                 LottieManager.shared.hideLoading()
             }
+        }).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { titleView in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            //signatureVC.orderId = self.orderId
+            signatureVC.titleView = titleView
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
     }
     
@@ -285,32 +294,19 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     func changeStatusToProcess() -> Void  {
         orderDetailViewModel.changeStatus()
-//        if(response == "OK") {
-//            switch statusType {
-//            case "process":
-//                 orderDetailViewModel.changeStatus()
-//                return
-//            case "finished":
-//                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-//                let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
-//                signatureVC.orderId = self.orderId
-//                signatureVC.modalPresentationStyle = .overCurrentContext
-//                self.present(signatureVC, animated: true, completion: nil)
-//                return
-//            default:
-//                return
-//            }
-//        }
-//        self.navigationController?.popViewController(animated: true)
     }
     
-    func changeStatusToFinish() {
-        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-        let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
-        signatureVC.orderId = self.orderId
-        signatureVC.modalPresentationStyle = .overCurrentContext
-        self.present(signatureVC, animated: true, completion: nil)
+    func showQfbSignatureView() {
+        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
     }
+    
+//    func showSignatureView(title: String) {
+//        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+//        let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+//        signatureVC.orderId = self.orderId
+//        signatureVC.modalPresentationStyle = .overCurrentContext
+//        self.present(signatureVC, animated: true, completion: nil)
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
        if segue.identifier == ViewControllerIdentifiers.orderDetailFormViewController {
