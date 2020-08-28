@@ -129,9 +129,9 @@ export class InventorybatchesComponent implements OnInit {
         }
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
         this.tableLotesView();
+        element.cantidadDisponible = element.cantidadDisponible - element.cantidadSeleccionada;
         this.setTotales(element.cantidadSeleccionada);
       }
-      //this.setInputNecesaryQty();
     } else{
       this.dataService.setGeneralNotificationMessage(Messages.batchesSelectedQtyError);
     }
@@ -144,24 +144,24 @@ export class InventorybatchesComponent implements OnInit {
     let arrayObjetos: ILotesAsignadosReq[] = [];
     let objetoLoteAsignado: ILotesAsignadosReq;
     let arrayNoRepetir: string[] = [];
-    this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(function(elementA){
+    this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(elementA => {
       if (elementA.action != CONST_DETAIL_FORMULA.delete){
         if (!arrayNoRepetir.includes(elementA.numeroLote)){
           arrayNoRepetir.push(elementA.numeroLote);
           let arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (element.numeroLote == elementA.numeroLote));
           let suma = CONST_NUMBER.zero;          
           if (arraySum.length > CONST_NUMBER.one){
-            arraySum.forEach(function(ele){
-              if(ele.action != CONST_DETAIL_FORMULA.delete)
+            arraySum.forEach(ele => {
+              if (ele.action != CONST_DETAIL_FORMULA.delete) {
                 suma = suma + ele.cantidadSeleccionada;
+              }
             });
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
               cantidadSeleccionada: parseFloat(suma.toFixed(10))
             }
-          }
-          else{
+          } else {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
@@ -181,22 +181,27 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   deleteLotes(element?: ILotesAsignadosReq){
-    if(element != undefined){
-      let indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
+    if (element !== undefined){
+      const indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
       if ( indiceBorrar !== -1 ) {
         this.deleteDetails(element);
         this.dataSourceDetails.data[this.indexSelected].lotesAsignados.splice( indiceBorrar, CONST_NUMBER.one );
       }
       this.dataSourceLotesAsignados._updateChangeSubscription();
+      this.dataSourceDetails.data[this.indexSelected].lotes.forEach(item => {
+        if (item.numeroLote === element.numeroLote) {
+          item.cantidadDisponible = parseFloat(item.cantidadDisponible.toFixed(10) + element.cantidadSeleccionada.toFixed(10));
+        }
+      });
       this.setTotales(-element.cantidadSeleccionada)
     }
     return false;
   }
 
-  deleteDetails(element?:ILotesAsignadosReq){
-    if (element != undefined){
+  deleteDetails(element?: ILotesAsignadosReq){
+    if (element !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
-        if (ele.numeroLote === element.numeroLote){
+        if (ele.numeroLote === element.numeroLote) {
           ele.action = CONST_DETAIL_FORMULA.delete;
           ele.noidb = BOOLEANS.verdadero;
         }
@@ -212,8 +217,8 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
-  setSelectedQuantity(cantidadNecesaria?){
-    if (cantidadNecesaria != undefined){
+  setSelectedQuantity(cantidadNecesaria?) {
+    if (cantidadNecesaria !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(ele => {
         ele.cantidadSeleccionada = cantidadNecesaria;
       });
@@ -225,13 +230,13 @@ export class InventorybatchesComponent implements OnInit {
       this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat((this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(10));
       this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat((this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(10)); 
       this.setInputNecesaryQty();
-    }
+    }0
   }
 
   setInputNecesaryQty(){
-    let dataSourceDetails = this.dataSourceDetails;
-    let indexSelected = this.indexSelected;
-    this.dataSourceDetails.data[this.indexSelected].lotes.forEach(function(element){
+    const dataSourceDetails = this.dataSourceDetails;
+    const indexSelected = this.indexSelected;
+    this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
       element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
     });
     return true;
@@ -240,28 +245,32 @@ export class InventorybatchesComponent implements OnInit {
   buildObjectToSap(){
     let objectToSave = this.objectToSave;
     objectToSave = [];
-    let ordenFabricacionId = this.ordenFabricacionId;
-    this.dataSourceDetails.data.forEach(function(element){
+    const ordenFabricacionId = this.ordenFabricacionId;
+    this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null){
-        element.lotesSeleccionados.forEach(function(lote){
+        element.lotesSeleccionados.forEach(lote => {
           if (lote.noidb)
           {
-            let objectSAP: ILotesToSaveReq = {
+            const objectSAP: ILotesToSaveReq = {
               orderId: parseInt(ordenFabricacionId),
               itemCode: element.codigoProducto,
-              assignedQty: lote.cantidadSeleccionada,
+              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(10)),
               action: lote.action,
               batchNumber: lote.numeroLote
             }
             objectToSave.push(objectSAP);
-          }          
+          }
         });
       }
     });
     this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
         this.batchesService.updateBatches(objectToSave).subscribe( () => {
-          window.location.reload();
+          this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
+            if (resultBatchSave.isConfirmed) {
+              window.location.reload();
+            }
+          });
         }, error => console.log('error: ', error ));
       }
     }); 
