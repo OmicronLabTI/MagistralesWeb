@@ -38,7 +38,7 @@
 
             <ng-container matColumnDef="descripcionProducto">
                 <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO</th>
-                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.descripcionProducto}} </td>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.descripcionProducto | uppercase}} </td>
             </ng-container>
 
             <ng-container matColumnDef="almacen">
