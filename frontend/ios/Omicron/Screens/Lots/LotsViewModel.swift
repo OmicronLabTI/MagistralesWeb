@@ -28,6 +28,11 @@ class LotsViewModel {
     var quantitySelectedInput = BehaviorSubject<String>(value: "")
     var itemSelected = PublishSubject<LotsAvailable>()
     
+    var lineDocumentsDataAux:[Lots] = []
+    var lotsAvailablesAux:[LotsAvailable] = []
+    var lotsSelectedAux:[LotsSelected] = []
+    
+    
     init() {
     
         // Obtiene los valores para poder añadir lotes disponibles a seleccionados por checar
@@ -37,6 +42,10 @@ class LotsViewModel {
         }).subscribe(onNext: { data in
             print("pinta lots: \(data.lotsAvailable)")
             print("pinta quantoty selected: \(data.quantitySelected)")
+            
+            
+            
+            
             let lotSelected = LotsSelected(numeroLote: data.lotsAvailable.numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected)!, sysNumber: data.lotsAvailable.sysNumber!)
             self.dataLotsSelected.onNext([lotSelected])
         }).disposed(by: self.disposeBag)
@@ -57,6 +66,9 @@ class LotsViewModel {
                 if let lots = lotsData.first {
                     self.dataLotsAvailable.onNext(lots.lotesDisponibles!)
                     self.dataLotsSelected.onNext(lots.lotesSelecionados!)
+                    self.lineDocumentsDataAux = lotsData
+                    self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
+                    self.lotsSelectedAux = lotsData[0].lotesSelecionados!
                 }
             }
         }, onError: { error in
@@ -68,14 +80,18 @@ class LotsViewModel {
     func itemSelectedOfLineDocTable(lot: Lots) -> Void {
         if (lot.lotesDisponibles!.count > 0) {
               self.dataLotsAvailable.onNext(lot.lotesDisponibles!)
+                self.lotsAvailablesAux = lot.lotesDisponibles!
         } else {
             self.dataLotsAvailable.onNext([])
+             self.lotsAvailablesAux = []
         }
         
         if(lot.lotesSelecionados!.count > 0) {
             self.dataLotsSelected.onNext(lot.lotesSelecionados!)
+            self.lotsSelectedAux = lot.lotesSelecionados!
         } else {
              self.dataLotsSelected.onNext([])
+            self.lotsSelectedAux = lot.lotesSelecionados!
         }
     }
     
