@@ -32,20 +32,20 @@ class SignaturePadViewModel  {
         self.canGetSignature = isValid.asDriver(onErrorJustReturn: false)
     
         self.acceptDidTap.withLatestFrom(input).map({OrderSignature(signatureType: $0, signature: $1)}).subscribe(onNext: { data in
-            if (data.signatureType == "Firma del  QFB") {
+            if (data.signatureType == CommonStrings.signatureViewTitleQFB) {
                 self.orderDetailVC.qfbSignatureIsGet = true
                 self.dismissSignatureView.onNext(())
                 // Guarda la firma en storage del ipad
-                self.saveSignatureOnIpad(signature: data.signature, name: "")
+                FileManagerApp.shared.saveSignatureOnIpad(signature: data.signature, name: FileManagerConstants.qfbSignatureName)
                 self.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? ""
-                self.orderDetailVC.showSignatureView.onNext("Firma del Técnico")
+                self.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
             }
             
-            if(data.signatureType == "Firma del Técnico")  {
+            if(data.signatureType == CommonStrings.signatureViewTitleTechnical)  {
                 self.orderDetailVC.technicalSignatureIsGet = true
                 self.dismissSignatureView.onNext(())
                 // guarda la firma en el storage del ipad
-                self.saveSignatureOnIpad(signature: data.signature, name: "")
+                FileManagerApp.shared.saveSignatureOnIpad(signature: data.signature, name: FileManagerConstants.technicalSignatureName)
                 self.orderDetailVC.technicalSignature = data.signature.toBase64() ?? ""
                 self.orderDetailVC.validSignatures()
             }
@@ -53,20 +53,22 @@ class SignaturePadViewModel  {
     
     }
         
-    func saveSignatureOnIpad(signature: UIImage, name: String) -> Void {
-        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileURL = URL(fileURLWithPath: name, relativeTo: directoryURL).appendingPathExtension("jpg")
-        guard let data = signature.jpegData(compressionQuality: 1) else { return }
-        
-        // Guarda los datos
-        do {
-            try data.write(to: fileURL)
-        } catch {
-            self.showAlert.onNext("No se pudo guardar la firma, intentar de nuevo")
-            print(error.localizedDescription)
-        }
-    }
+//    func saveSignatureOnIpad(signature: UIImage, name: String) -> Void {
+//        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+//        let fileURL = URL(fileURLWithPath: name, relativeTo: directoryURL).appendingPathExtension("jpg")
+//        guard let data = signature.jpegData(compressionQuality: 1) else { return }
+//
+//        // Guarda los datos
+//        do {
+//            try data.write(to: fileURL)
+//        } catch {
+//            self.showAlert.onNext("No se pudo guardar la firma, intentar de nuevo")
+//            print(error.localizedDescription)
+//        }
+//    }
 }
+
+
 
 extension UIImage {
     func toBase64() -> String? {

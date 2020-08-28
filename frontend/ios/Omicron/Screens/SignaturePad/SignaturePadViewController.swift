@@ -37,6 +37,10 @@ class SignaturePadViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.initComponents()
         self.viewModelBinding()
+//          checar esto para obtener la firma y setearla 
+//        let qfbSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.qfbSignatureName)
+//        let tecnicalSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.technicalSignatureName)
+        
     }
     
     
@@ -54,16 +58,7 @@ class SignaturePadViewController: UIViewController {
     func viewModelBinding() {
         self.acceptButton.rx.tap.bind(to: signaturePadViewModel.acceptDidTap).disposed(by: self.diposeBag)
         self.signaturePadViewModel.canGetSignature.drive(self.acceptButton.rx.isEnabled).disposed(by: self.diposeBag)
-        
-        // Muestra u oculta el loading
-//        self.signaturePadViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
-//            if(showLoading) {
-//                LottieManager.shared.showLoading()
-//                return
-//            }
-//            LottieManager.shared.hideLoading()
-//        }).disposed(by: self.diposeBag)
-                
+                        
         // Si el cambio del status a finalización fue éxitosa se regresa a Inbox
         self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.dismiss(animated: true)
