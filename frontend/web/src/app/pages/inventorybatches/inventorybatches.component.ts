@@ -122,7 +122,7 @@ export class InventorybatchesComponent implements OnInit {
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada === CONST_NUMBER.zero){
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
-        if (element.cantidadDisponible <= CONST_NUMBER.zero) {
+        if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
           this.dataService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
           return false;
         }
