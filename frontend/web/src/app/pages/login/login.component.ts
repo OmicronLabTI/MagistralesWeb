@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
-import {ErrorHttpInterface} from "../../model/http/commons";
+import {ErrorHttpInterface} from '../../model/http/commons';
+import {Messages} from '../../constants/messages';
 
 @Component({
   selector: 'app-login',
@@ -67,7 +68,7 @@ export class LoginComponent implements OnInit {
     }).catch( (error: ErrorHttpInterface) => {
         switch (error.status) {
             case HttpStatus.serverError:
-                this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
+                this.dataService.setMessageGeneralCallHttp({title: Messages.credentialsInvalid, icon: 'warning', isButtonAccept: true});
                 break;
             case HttpStatus.unauthorized:
                 this.dataService.setMessageGeneralCallHttp({title: error.error.userError, icon: 'warning', isButtonAccept: true});
