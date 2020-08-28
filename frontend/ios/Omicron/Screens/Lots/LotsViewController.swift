@@ -78,6 +78,7 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla de lotes disponibles
         self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
+            cell.row = row
             cell.lotsLabel.text = data.numeroLote
             cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
             cell.quantitySelected.text = "0.0"

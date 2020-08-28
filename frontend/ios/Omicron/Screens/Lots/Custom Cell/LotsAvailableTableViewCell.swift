@@ -23,6 +23,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
     var quantitySelectedInput = BehaviorRelay<String>(value: "")
+    var row: Int?
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -43,6 +44,36 @@ class LotsAvailableTableViewCell: UITableViewCell {
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        var cell: LotsAvailableTableViewCell?
+        var superview: UIView? = textField.superview
+        
+        while superview != nil && cell == nil {
+            cell = superview as? LotsAvailableTableViewCell
+            superview = superview?.superview
+        }
+        
+        if cell != nil {
+            cell?.setSelected(true, animated: true)
+        }
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        var cell: LotsAvailableTableViewCell?
+        var superview: UIView? = textField.superview
+        
+        while superview != nil && cell == nil {
+            cell = superview as? LotsAvailableTableViewCell
+            superview = superview?.superview
+        }
+        
+        if cell != nil {
+            cell?.setSelected(false, animated: true)
+        }
+        return true
+    }
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         guard textField == self.quantitySelected, let textFieldString = textField.text as NSString? else {
