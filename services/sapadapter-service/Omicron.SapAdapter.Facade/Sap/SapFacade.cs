@@ -117,5 +117,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId));
         }
+
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrders(parameters));
+        }
     }
 }

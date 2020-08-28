@@ -1044,6 +1044,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the data.</returns>
+        public Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
+        {
+            var dateFilter = GetFabOrderUtils.GetDateFilter(parameters);
+
+        }
+
+        /// <summary>
         /// gets the order from sap.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

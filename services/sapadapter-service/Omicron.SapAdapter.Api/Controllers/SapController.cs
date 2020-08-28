@@ -146,5 +146,16 @@ namespace Omicron.SapAdapter.Api.Controllers
             var result = await this.sapFacade.GetlLastIsolatedProductionOrderId(productId, uniqueId);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/ping")]
+        [HttpGet]
+        public async Task<IActionResult> Ping()
+        {
+            return this.Ok("Pong");
+        }
     }
 }

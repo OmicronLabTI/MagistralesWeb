@@ -74,5 +74,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="uniqueId">the unique record id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters);
     }
 }

@@ -249,5 +249,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolateFabOrder)));
         }
+
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetFabOrders(parameters));
+        }
     }
 }

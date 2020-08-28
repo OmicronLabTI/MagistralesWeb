@@ -794,5 +794,22 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrders()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }
