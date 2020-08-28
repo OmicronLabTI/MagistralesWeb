@@ -79,12 +79,16 @@ export class InventorybatchesComponent implements OnInit {
 
   getBatchesFromSelected(codigoProducto?){
     if (codigoProducto != undefined){
-      let resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
+      const resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
       this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
       this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
-      if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null)
+      if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = resultData[CONST_NUMBER.zero].lotesAsignados;
+      }
       this.setSelectedQuantity(resultData[CONST_NUMBER.zero].totalNecesario);
+      if (this.dataSourceLotes.data.length === CONST_NUMBER.one) {
+        this.addLotes(this.dataSourceLotes.data[CONST_NUMBER.zero]);
+      }
       return true;
     }
     return false;
@@ -95,19 +99,24 @@ export class InventorybatchesComponent implements OnInit {
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
         this.dataSourceDetails.data = batchesRes.response;
-        console.log("respuesta: ", batchesRes.response);
-        resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === this.dataSourceDetails.data[CONST_NUMBER.zero].codigoProducto))
+        resultData = this.dataSourceDetails.data.filter(element => (
+          element.codigoProducto === this.dataSourceDetails.data[CONST_NUMBER.zero].codigoProducto)
+        );
         resultData[CONST_NUMBER.zero].selected = BOOLEANS.verdadero;
         this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
         this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = resultData[CONST_NUMBER.zero].lotesAsignados;
         this.setSelectedQuantity(resultData[CONST_NUMBER.zero].totalNecesario);
+        if (this.dataSourceLotes.data.length === CONST_NUMBER.one){
+          this.addLotes(this.dataSourceLotes.data[CONST_NUMBER.zero]);
+        }
       }
     );
     return true;
   }
 
   addLotes(element: ILotesReq){
+    console.log("element: ", element);
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada === CONST_NUMBER.zero){
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
