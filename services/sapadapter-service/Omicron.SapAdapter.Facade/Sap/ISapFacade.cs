@@ -65,5 +65,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="ordenId">the order id.</param>
         /// <returns>the components.</returns>
         Task<ResultDto> GetBatchesComponents(int ordenId);
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
     }
 }

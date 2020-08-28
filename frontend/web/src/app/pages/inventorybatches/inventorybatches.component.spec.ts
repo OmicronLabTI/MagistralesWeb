@@ -29,5 +29,53 @@ describe('InventorybatchesComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(component.lotesSelectedColumns).toEqual([
+      'lote',
+      'seleccionada',
+      'opciones'
+    ]);
+    expect(component.detailsColumns).toEqual([
+      'cons',
+      'codigoProducto',
+      'descripcionProducto',
+      'almacen',
+      'totalNecesario',
+      'totalSeleccionado'
+    ]);
+    expect(component.lotesColumns).toEqual([
+      'cons',
+      'disponible',
+      'seleccionada',
+      'asignada',
+      'opciones'
+    ]);
+  });
+
+  it('should call getInventoryBatches() ok', () => {
+    expect(component.getInventoryBatches()).toBeTruthy();
+  });
+
+  it('should return true', () =>{
+    expect(component.setSelectedTr()).toBeTruthy();
+  });
+
+  it('should return false', () =>{
+    expect(component.getBatchesFromSelected()).toBeFalsy();
+  });
+
+  it('should return false', () =>{
+    expect(component.deleteLotes()).toBeFalsy();
+  });
+
+  it('should return false', () =>{
+    expect(component.deleteDetails()).toBeFalsy();
+  });
+
+  it('should return false', () =>{
+    expect(component.setSelectedQuantity()).toBeFalsy();
+  });
+
+  it('should return false', () =>{
+    expect(component.setTotales()).toBeFalsy();
   });
 });

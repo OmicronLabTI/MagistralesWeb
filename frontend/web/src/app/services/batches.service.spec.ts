@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BatchesService } from './batches.service';
 import { DatePipe } from '@angular/common';
 import { ConsumeService } from './consume.service';
-import { ILotesFormulaReq } from '../model/http/lotesformula';
+import { ILotesFormulaReq, ILotesToSaveReq } from '../model/http/lotesformula';
 import { Endpoints } from 'src/environments/endpoints';
 import { Observable } from 'rxjs';
 import { Component } from '@angular/core';
@@ -25,4 +25,22 @@ describe('BatchesService', () => {
     expect(obs instanceof Observable).toBeTruthy();
   });
 
+  it('should getBatches', () => {
+    const service: BatchesService = TestBed.get(BatchesService);
+    expect(service.getInventoryBatches("anysring") instanceof Observable).toBeTruthy();
+  });
+
+  it('should updateBatches', () => {
+    let objeto: ILotesToSaveReq[] = [
+      {
+        batchNumber: "1234",
+        orderId: 1234,
+        assignedQty: 222,
+        itemCode: "MP   009",
+        action: "insert"
+      }
+    ]
+    const service: BatchesService = TestBed.get(BatchesService);
+    expect(service.updateBatches(objeto)).toBeTruthy();
+  });
 });

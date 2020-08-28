@@ -235,9 +235,19 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="updateOrderSignature">the signature dto.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> FinishOrder(UpdateOrderSignatureDto updateOrderSignature)
+        public async Task<ResultDto> FinishOrder(FinishOrderDto updateOrderSignature)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishOrder(this.mapper.Map<UpdateOrderSignatureModel>(updateOrderSignature)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishOrder(this.mapper.Map<FinishOrderModel>(updateOrderSignature)));
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolateFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolateFabOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolateFabOrder)));
         }
     }
 }

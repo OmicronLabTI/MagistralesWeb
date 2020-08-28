@@ -290,6 +290,18 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
+        {
+            var lastId = await this.sapDao.GetlLastIsolatedProductionOrderId(productId, uniqueId);
+            return ServiceUtils.CreateResult(true, 200, null, lastId, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

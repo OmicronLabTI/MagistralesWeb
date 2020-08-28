@@ -75,6 +75,23 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
+          switch(element.status){
+            case ConstStatus.abierto:
+              element.class = 'green';
+              break;
+            case ConstStatus.asignado:
+              element.class = 'asignado';
+              break;
+            case ConstStatus.pendiente:
+              element.class = 'pendiente';
+              break;
+            case ConstStatus.terminado:
+              element.class = 'terminado';
+              break;
+              case ConstStatus.enProceso:
+                element.class = 'proceso';
+                break;
+          }
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -167,6 +184,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({list: [{orderId: 12349}], cancelType: MODAL_NAMES.placeOrdersDetail});
+    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.status === ConstStatus.terminado)).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      }), cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 }
