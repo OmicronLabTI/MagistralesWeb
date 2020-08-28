@@ -34,13 +34,14 @@ class SignaturePadViewController: UIViewController {
     // MARK: -Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Do any additional setup after loading the view.
         self.initComponents()
         self.viewModelBinding()
-//          checar esto para obtener la firma y setearla 
+        
+//         Checar esto para obtener la firma y setearla
 //        let qfbSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.qfbSignatureName)
 //        let tecnicalSignature = FileManagerApp.shared.getSignatureOnIpad(fileName: FileManagerConstants.technicalSignatureName)
-        
     }
     
     
