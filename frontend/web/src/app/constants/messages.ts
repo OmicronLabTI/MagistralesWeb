@@ -25,5 +25,6 @@ export const Messages = {
   batchesCantidadSeleccionadaZero: 'Debes ingresar una cantidad mayor a 0',
   batchDelete: '¿Deseas eliminar esta asignación de lotes?',
   batchesSelectedQtyError: 'No puede sobrepasar la cantidad necesaria, por favor revise.',
-  saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?'
+  saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?',
+  batchesNotAvailableQty: 'No hay cantidad disponible para asignar.',
 };
