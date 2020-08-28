@@ -204,6 +204,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
+                                ItemCode = sapOrder.Code,
                             };
 
                             ordersDetail.Add(order);
