@@ -58,10 +58,16 @@ extension LotsAvailable: Mappable {
     }
 }
 
-class LotsSelected {
+class LotsSelected: Codable {
     var numeroLote: String?
     var cantidadSeleccionada: Double?
     var sysNumber: Int?
+    
+    init(numeroLote: String, cantidadSeleccionada: Double, sysNumber: Int) {
+        self.numeroLote = numeroLote
+        self.cantidadSeleccionada = cantidadSeleccionada
+        self.sysNumber = sysNumber
+    }
     required init?(map: Map) { }
 }
 

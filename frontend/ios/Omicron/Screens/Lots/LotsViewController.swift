@@ -48,9 +48,7 @@ class LotsViewController: UIViewController {
     @Injected var lotsViewModel: LotsViewModel
     let disposeBag = DisposeBag()
     var orderId = -1
-    var countItemsOfLineDocuments = 0
-    var countLotsAvailables = 0
-    var countLotsSelected = 0
+    var countItemsOfLineDocuments = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,8 +67,8 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
-            self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
-            cell.numberLabel.text = "\(self.countItemsOfLineDocuments)"
+           // self.countItemsOfLineDocuments = self.countItemsOfLineDocuments + 1
+            cell.numberLabel.text = "1"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
@@ -80,8 +78,7 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla de lotes disponibles
         self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
-            self.countLotsSelected = self.countLotsSelected + 1
-            cell.lotsLabel.text = "\(self.countLotsSelected)"
+            cell.lotsLabel.text = data.numeroLote
             cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
             cell.quantitySelected.text = "0.0"
             cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
@@ -89,12 +86,14 @@ class LotsViewController: UIViewController {
         
         //Muestra los datos en la tabla de Lotes Selecionados
         self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) {row, data, cell in
-            self.countLotsSelected = self.countLotsSelected + 1
-            cell.lotsLabel.text = "\(self.countLotsSelected)"
+            cell.lotsLabel.text = data.numeroLote
+            cell.quantitySelectedLabel.text = "\(data.cantidadSeleccionada!)"
         }.disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
+//            self.countLotsSelected = -1
+//            self.countLotsAvailables = -1
             self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
         }).disposed(by: self.disposeBag)
         

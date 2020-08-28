@@ -37,6 +37,8 @@ class LotsViewModel {
         }).subscribe(onNext: { data in
             print("pinta lots: \(data.lotsAvailable)")
             print("pinta quantoty selected: \(data.quantitySelected)")
+            let lotSelected = LotsSelected(numeroLote: data.lotsAvailable.numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected)!, sysNumber: data.lotsAvailable.sysNumber!)
+            self.dataLotsSelected.onNext([lotSelected])
         }).disposed(by: self.disposeBag)
         
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
