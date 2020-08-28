@@ -30,5 +30,11 @@ describe('ErrorService', () => {
     errorHttpTest.status = 500;
     service.httpError(errorHttpTest);
     expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    errorHttpTest.status = 504;
+    service.httpError(errorHttpTest);
+    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    errorHttpTest.status = 0;
+    service.httpError(errorHttpTest);
+    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
   });
 });

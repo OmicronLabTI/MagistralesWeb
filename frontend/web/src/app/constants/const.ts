@@ -80,7 +80,8 @@ export const HttpStatus = {
     forbidden: 403,
     notFound: 404,
     serverError: 500,
-    timeOut: 504
+    timeOut: 504,
+    connectionRefused: 0
 };
 
 export const ConstToken = {
