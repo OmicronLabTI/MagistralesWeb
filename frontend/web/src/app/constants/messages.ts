@@ -29,4 +29,5 @@ export const Messages = {
   batchesSelectedQtyError: 'No puede sobrepasar la cantidad necesaria, por favor revise.',
   saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?',
   batchesNotAvailableQty: 'No hay cantidad disponible para asignar.',
+  successBatchesSave: 'Se guardó la información con éxito.',
 };
