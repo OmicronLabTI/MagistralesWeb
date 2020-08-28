@@ -23,7 +23,7 @@ class LotsResponse: HttpResponse {
 
 class Lots {
     var codigoProducto, descripcionProducto, almacen: String?
-    var totalNecesario, totalSeleccionado: Int?
+    var totalNecesario, totalSeleccionado: Double?
     var lotesSelecionados: [LotsSelected]?
     var lotesDisponibles: [LotsAvailable]?
     
