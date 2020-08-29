@@ -177,6 +177,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
+                var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
@@ -199,7 +200,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     BaseDocument = o.PedidoId,
                     Client = o.CardCode,
                     CompleteQuantity = (int)o.CompleteQuantity,
-                    RealEndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
                     Comments = comments,
