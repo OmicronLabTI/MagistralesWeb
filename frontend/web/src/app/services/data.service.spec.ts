@@ -171,4 +171,18 @@ describe('DataService', () => {
     });
     service.setIsLogout(false);
   });
+  it('should getPathUrl', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getPathUrl().subscribe(pathUrl => {
+      expect(pathUrl).toEqual(['orders']);
+    });
+    service.setPathUrl(['orders']);
+  });
+  it('should getFinalizeOrders', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getFinalizeOrders().subscribe(finalizeOrders => {
+      expect(finalizeOrders).toEqual({list: [{orderId: 123}], cancelType: 'pedidos'});
+    });
+    service.setFinalizeOrders({list: [{orderId: 123}], cancelType: 'pedidos'});
+  });
 });

@@ -309,7 +309,6 @@ th.centered {
   padding: 0 10px;
   text-shadow: none;
   font-weight: 300;
-  word-wrap: break-word;
   box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
   margin: 5px;
   border-radius: .25rem;
@@ -637,4 +636,28 @@ a.breadcrumblink:hover{
 .mat-stroked-button.cerrado {
   color: #e7515a !important;
   border: 1px solid #e7515a !important;
+}
+
+.is-loading {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 10000;
+  position: absolute;
+}
+
+.docbase-status{
+  font-weight: normal !important;
+}
+
+.docbase-status span{
+  font-weight: bold !important;
+}
+
+.docbase{
+  font-weight: normal !important;
+}
+
+.docbase .spandoc{
+  font-weight: bold !important;
 }

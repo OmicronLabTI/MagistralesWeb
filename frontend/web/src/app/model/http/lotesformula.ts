@@ -4,6 +4,10 @@ export class ILotesFormulaRes extends BaseResponseHttp {
     response: ILotesFormulaReq[];
 }
 
+export class ILotesSaveRes extends BaseResponseHttp {
+    response: string[];
+}
+
 export class ILotesFormulaReq {
     codigoProducto: string;
     descripcionProducto: string;

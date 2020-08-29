@@ -46,11 +46,11 @@
 
 //tabla lotes-producto
 .pllote{
-    width: 20% !important;
+    width: 30% !important;
 }
 
 .plseleccionada{
-    width: 60% !important;
+    width: 50% !important;
 }
 
 .table-pl .tdactions{
@@ -64,4 +64,12 @@
 tr.selected{
     background-color:#6C90B3 !important;
     font-weight: bold !important;
+}
+
+tr.selected td {
+    color: #fff !important;
+}
+
+.table-pl{
+    margin-bottom: 20px !important;
 }

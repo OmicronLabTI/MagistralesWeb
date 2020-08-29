@@ -5,19 +5,26 @@
         <span>Lotes</span>
         <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle / Lotes </div>
       </div>
+      <div class="filter-select">
+        <div class="docbase">Número de pedido: <span class="spandoc">{{document}}</span></div>
+        <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
+      </div>
     </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="isReadyToSave" (click)="buildObjectToSap()">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="buildObjectToSap()">
             &nbsp; Guardar &nbsp; 
             </button>
         </div>
     </div>
     
     <div class="list-users-container">
+        <div class="title-list-container">
+            <span>Líneas de documentos</span>
+        </div>
         <table mat-table [dataSource]="dataSourceDetails" class="mat-elevation-z8">
             <ng-container matColumnDef="cons">
                 <th mat-header-cell *matHeaderCellDef class="centered">#</th>
@@ -31,7 +38,7 @@
 
             <ng-container matColumnDef="descripcionProducto">
                 <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO</th>
-                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.descripcionProducto}} </td>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.descripcionProducto | uppercase}} </td>
             </ng-container>
 
             <ng-container matColumnDef="almacen">
@@ -54,7 +61,10 @@
     </div>
     <div class="seleccion-lotes">
         <div class="column-a">
-            <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8">
+            <div class="title-list-container">
+                <span>Lotes disponibles</span>
+            </div>
+            <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8" style="margin-bottom: 20px !important;">
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
                     <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center lotesconsecutivo"> {{element.numeroLote}} </td>
@@ -79,7 +89,7 @@
 
                 <ng-container matColumnDef="asignada">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD ASIGNADA </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesasignados"> 0 </td>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesasignados"> {{element.cantidadAsignada}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="opciones">
@@ -95,9 +105,12 @@
             </table>
         </div>
         <div class="column-b">
+            <div class="title-list-container">
+                <span>Lotes seleccionados</span>
+            </div>
             <table mat-table [dataSource]="dataSourceLotesAsignados" class="mat-elevation-z8 table-pl">
                 <ng-container matColumnDef="lote" [style.display]="element.action == 'delete' ? 'none' : 'true'">
-                    <th mat-header-cell *matHeaderCellDef class="centered">Lote</th>
+                    <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
                     <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center pllote" [style.display]="element.action == 'delete' ? 'none' : 'true'"> {{element.numeroLote}} </td>
                 </ng-container>
                 <ng-container matColumnDef="seleccionada" [style.display]="element.action == 'delete' ? 'none' : 'true'">

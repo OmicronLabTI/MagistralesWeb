@@ -47,7 +47,7 @@ export class TokenInterceptor implements HttpInterceptor {
       timeout(AppConfig.httpTimeout || DEFAULT_TIMEOUT),
       catchError((error: ErrorHttpInterface) => {
         if (error instanceof TimeoutError) {
-          return throwError(Messages.timeout);
+          return throwError({status: HttpStatus.timeOut} as ErrorHttpInterface);
         } else {
          if (error.status === HttpStatus.unauthorized && this.dataService.getRefreshToken() !== CONST_STRING.empty
               && this.dataService.getRememberSession() !== null) {
