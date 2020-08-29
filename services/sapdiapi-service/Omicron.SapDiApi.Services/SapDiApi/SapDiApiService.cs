@@ -313,9 +313,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                                 productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
                             });
                             
-                            var updated = productionOrderObj.Update();                            
-                            lastError = updated != 0 ? updated : lastError;
-                            _loggerProxy.Info($"The next Batch was tried to be assign with status {lastError}- {group.Key}-{JsonConvert.SerializeObject(sg)}");
+                            var updated = productionOrderObj.Update();
+
+                            if (updated != 0)
+                            {
+                                lastError = updated;
+                            }
+                            
+                            company.GetLastError(out var error, out var lastMsg);
+                            _loggerProxy.Info($"The next Batch was tried to be assign with status {error} - {lastMsg} - {group.Key}-{JsonConvert.SerializeObject(sg)}");
                         });
 
                     dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
