@@ -379,12 +379,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     int counter = 0;
                     foreach (var batchConfig in productionOrder.Batches)
                     {
+                        if (counter > 0)
+                            receiptProduction.Lines.BatchNumbers.Add();
+                        receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
                         receiptProduction.Lines.BatchNumbers.BatchNumber = batchConfig.BatchCode;
                         receiptProduction.Lines.BatchNumbers.ManufacturingDate = batchConfig.ManufacturingDate;
                         receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate; 
                         receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
-                        receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
-                        receiptProduction.Lines.BatchNumbers.Add();
                         counter += 1;
                     }
                 }
