@@ -258,7 +258,10 @@
             <mat-tab>
                 <ng-template matTabLabel>
                     <span *ngIf="comments !== '' && comments" class="material-icons material-custom color-omicron">
-                      radio_button_unchecked
+                      insert_comment
+                    </span>
+                    <span *ngIf="comments === '' || comments === null" class="material-icons material-custom color-omicron">
+                      mode_comment
                     </span>
                     Comentarios
                 </ng-template>

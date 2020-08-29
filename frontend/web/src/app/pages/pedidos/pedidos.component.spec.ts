@@ -9,14 +9,20 @@ import {PedidosService} from '../../services/pedidos.service';
 import {of, throwError} from 'rxjs';
 import {PedidosListMock} from '../../../mocks/pedidosListMock';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ConstStatus} from '../../constants/const';
+import {ConstStatus, MODAL_NAMES} from '../../constants/const';
+import {PageEvent} from '@angular/material/paginator';
+import {DataService} from '../../services/data.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
   let fixture: ComponentFixture<PedidosComponent>;
   let pedidosServiceSpy;
-
+  let dataServiceSpy;
   beforeEach(async(() => {
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
+        'transformDate', 'setRefreshToken'
+    ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos'
     ]);
@@ -29,6 +35,7 @@ describe('PedidosComponent', () => {
       providers: [
         DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
+       // { provide: DataService, useValue: dataServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -73,11 +80,62 @@ describe('PedidosComponent', () => {
     expect(component.isThereOrdersToCancel).toBeFalsy();
     expect(component.isThereOrdersToFinalize).toBeFalsy();
   });
-  it('should should call getPedidos error', () => {
+  it('should call getPedidos error', () => {
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return throwError({ status: 500 });
     });
     component.getPedidos();
     expect(component.dataSource.data.length).toEqual(0);
+  });
+  // only Locally
+  it('should updateAllComplete', () => {
+    component.updateAllComplete();
+    expect(component.allComplete).toBeFalsy();
+    component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.updateAllComplete();
+    expect(component.allComplete).toBeTruthy();
+    component.dataSource.data.forEach( user => user.isChecked = false);
+  });
+  it('should someComplete', () => {
+
+    component.dataSource.data = null;
+    expect(component.someComplete()).toBeFalsy();
+    component.dataSource.data = PedidosListMock.response;
+    component.allComplete = false;
+    expect(component.someComplete()).toBeFalsy();
+    component.dataSource.data.forEach( user => user.isChecked = true);
+    expect(component.someComplete()).toBeTruthy();
+    component.dataSource.data.forEach( user => user.isChecked = false);
+  });
+  it('should setAll', () => {
+    component.dataSource.data = null;
+    component.setAll(true);
+    expect(component.allComplete).toBeTruthy();
+    component.dataSource.data = PedidosListMock.response;
+    component.setAll(true);
+    expect(component.allComplete).toBeTruthy();
+    expect(component.dataSource.data.every(user => user.isChecked)).toBeTruthy();
+    component.setAll(false);
+    expect(component.allComplete).toBeFalsy();
+    expect(component.dataSource.data.every(user => user.isChecked)).toBeFalsy();
+  });
+  it('should changeDataEvent', () => {
+     expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
+     expect(component.pageIndex ).toEqual(0);
+     expect(component.offset).toEqual(0);
+     expect(component.limit).toEqual(5);
+  });
+  it('should getDateFormatted', () => {
+     expect(component.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
+     expect(component.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
+  });
+  it('should openPlaceOrdersDialog', () => {
+    component.dataSource.data = [];
+    component.openPlaceOrdersDialog();
+    component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.filter( order => order.pedidoStatus === ConstStatus.planificado)
+        .forEach(order => order.isChecked = true);
+    // expect(dataServiceSpy.setQbfToPlace).toHaveBeenCalledWith({modalType: MODAL_NAMES.placeOrders, list: [60022]});
   });
 });
