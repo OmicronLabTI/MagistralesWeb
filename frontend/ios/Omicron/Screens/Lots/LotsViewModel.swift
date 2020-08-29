@@ -32,7 +32,8 @@ class LotsViewModel {
     var lotsAvailablesAux:[LotsAvailable] = []
     var lotsSelectedAux:[LotsSelected] = []
     
-    var itemSelectedLineDocuments: Int = -1
+    var itemSelectedLineDocuments: Int = 0
+    var itemLotSelected:LotsSelected? = nil
     
     init() {
     
@@ -58,7 +59,7 @@ class LotsViewModel {
                     self.lotsSelectedAux.append(lotSelected)
                 }
                 
-                self.lotsAvailablesAux[data.row].cantidadDisponible =  self.lotsAvailablesAux[data.row].cantidadDisponible! - lotSelected.cantidadSeleccionada!
+                self.lotsAvailablesAux[data.row].cantidadDisponible! -= lotSelected.cantidadSeleccionada!
                 self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! -= lotSelected.cantidadSeleccionada!
                 self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! += lotSelected.cantidadSeleccionada!
                 self.dataOfLots.onNext(self.lineDocumentsDataAux)
@@ -69,7 +70,19 @@ class LotsViewModel {
         }).disposed(by: self.disposeBag)
         
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
-            
+            let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote}))
+            if (index != nil) {
+                
+                if let indexLotAvailable = self.lotsAvailablesAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote})) {
+                    self.lotsAvailablesAux[indexLotAvailable].cantidadDisponible! += self.itemLotSelected!.cantidadSeleccionada!
+                    self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! += self.itemLotSelected!.cantidadSeleccionada!
+                    self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! -= self.itemLotSelected!.cantidadSeleccionada!
+                    self.dataOfLots.onNext(self.lineDocumentsDataAux)
+                    self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
+                    self.lotsSelectedAux.remove(at: index!)
+                    self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                }
+            }
         }).disposed(by: self.disposeBag)
         
     }
