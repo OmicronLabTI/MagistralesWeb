@@ -645,3 +645,19 @@ a.breadcrumblink:hover{
   z-index: 10000;
   position: absolute;
 }
+
+.docbase-status{
+  font-weight: normal !important;
+}
+
+.docbase-status span{
+  font-weight: bold !important;
+}
+
+.docbase{
+  font-weight: normal !important;
+}
+
+.docbase .spandoc{
+  font-weight: bold !important;
+}
