@@ -292,6 +292,6 @@ export class InventorybatchesComponent implements OnInit {
           });
         }, error => console.log('error: ', error ));
       }
-    }); 
+    });
   }
 }
