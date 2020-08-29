@@ -32,6 +32,7 @@ class LotsViewModel {
     var lotsAvailablesAux:[LotsAvailable] = []
     var lotsSelectedAux:[LotsSelected] = []
     
+    var itemSelectedLineDocuments: Int = -1
     
     init() {
     
@@ -41,15 +42,30 @@ class LotsViewModel {
         self.addLotDidTap.withLatestFrom(inputs).map({
             LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
+            
+            print("elemento selecionado: \(self.itemSelectedLineDocuments)")
+            
+            
             let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
 
-            let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
-            if((index) != nil) {
-                self.lotsSelectedAux[index!].cantidadSeleccionada = lotSelected.cantidadSeleccionada
-            } else {
-                self.lotsSelectedAux.append(lotSelected)
+            if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadSeleccionada! )) {
+                print("Si se pasa")
+
+                let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
+                if((index) != nil) {
+                    self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
+                } else {
+                    self.lotsSelectedAux.append(lotSelected)
+                }
+                
+                self.lotsAvailablesAux[data.row].cantidadDisponible =  self.lotsAvailablesAux[data.row].cantidadDisponible! - lotSelected.cantidadSeleccionada!
+                self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! -= lotSelected.cantidadSeleccionada!
+                self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! += lotSelected.cantidadSeleccionada!
+                self.dataOfLots.onNext(self.lineDocumentsDataAux)
+                self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
             }
-            self.dataLotsSelected.onNext(self.lotsSelectedAux)
+            
         }).disposed(by: self.disposeBag)
         
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
@@ -69,6 +85,16 @@ class LotsViewModel {
                     self.dataLotsAvailable.onNext(lots.lotesDisponibles!)
                     self.dataLotsSelected.onNext(lots.lotesSelecionados!)
                     self.lineDocumentsDataAux = lotsData
+                    // Se asignan los valores a cada lote disponible su cantidad sugerida (total necesario)
+                    for lotData in lotsData {
+                        for lot in lotData.lotesDisponibles!{
+                            lot.cantidadSeleccionada = lotData.totalNecesario
+                        }
+                    }
+                    for lot in lotsData[0].lotesDisponibles! {
+                        lot.cantidadSeleccionada = lotsData[0].totalNecesario
+                    }
+                    
                     self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
                     self.lotsSelectedAux = lotsData[0].lotesSelecionados!
                 }

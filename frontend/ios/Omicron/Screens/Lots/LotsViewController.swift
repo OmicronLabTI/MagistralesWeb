@@ -66,6 +66,7 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
+            cell.row = row
             cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
@@ -79,7 +80,7 @@ class LotsViewController: UIViewController {
             cell.row = row
             cell.lotsLabel.text = data.numeroLote
             cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
-            cell.quantitySelected.text = "0.0"
+            cell.quantitySelected.text = "\(data.cantidadSeleccionada!)"
             cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
         }.disposed(by: self.disposeBag)
         
@@ -92,6 +93,10 @@ class LotsViewController: UIViewController {
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
             self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
+        }).disposed(by: self.disposeBag)
+        
+        self.lineDocTable.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext: { index in
+            self.lotsViewModel.itemSelectedLineDocuments = index.row
         }).disposed(by: self.disposeBag)
                 
         // Muestra o coulta el loading

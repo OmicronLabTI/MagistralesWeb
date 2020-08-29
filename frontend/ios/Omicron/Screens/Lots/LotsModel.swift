@@ -44,7 +44,7 @@ extension Lots: Mappable {
 
 class LotsAvailable {
     var numeroLote: String?
-    var cantidadDisponible, cantidadAsignada: Double?
+    var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Double?
     var sysNumber: Int?
     required init?(map: Map) {}
 }
