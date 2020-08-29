@@ -1,0 +1,75 @@
+//tabla productos
+.consecutivo{
+    width: 5% !important;
+}
+
+.codigoproducto{
+    width: 15% !important;
+}
+
+.descripcion{
+    width: 30% !important;
+}
+
+.almacen{
+    width: 15% !important;
+}
+
+.cantreq{
+    width: 15% !important;
+}
+
+.cantseleccionada{
+    width: 15% !important;
+}
+
+//tabla lotes
+.lotesconsecutivo{
+    width: 15% !important;
+}
+
+.disponible{
+    width: 20% !important;
+}
+
+.lotesseleccionado{
+    width: 18% !important;
+}
+
+.lotesasignados{
+    width: 23% !important;
+}
+
+.tdactions{
+    width: 19% !important;
+}
+
+//tabla lotes-producto
+.pllote{
+    width: 30% !important;
+}
+
+.plseleccionada{
+    width: 50% !important;
+}
+
+.table-pl .tdactions{
+    width: 20% !important;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+tr.selected{
+    background-color:#6C90B3 !important;
+    font-weight: bold !important;
+}
+
+tr.selected td {
+    color: #fff !important;
+}
+
+.table-pl{
+    margin-bottom: 20px !important;
+}

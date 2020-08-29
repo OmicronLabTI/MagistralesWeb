@@ -77,6 +77,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
                         dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
+                        _loggerProxy.Info($"The next order was tried to be created: {errorCode} - {errMsg} - {pedido.Order.PedidoId}");
                     }
                     else
                     {
@@ -101,6 +102,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
                 var orderFab = productionOrderObj.GetByKey(order.OrderFabId);
 
+
                 if (orderFab)
                 {
                     productionOrderObj = this.UpdateEntry(order, productionOrderObj);
@@ -110,6 +112,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
                         dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, errorCode.ToString(), errMsg));
+                        _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {order.OrderFabId}");
                     }
                     else
                     {
@@ -167,6 +170,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     catch(Exception ex)
                     {
+                        continue;
                     }
 
                     var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode));
@@ -216,6 +220,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             var updated = productionOrderObj.Update();
+
+            if (updated != 0)
+            {
+                company.GetLastError(out int errorCode, out string errMsg);
+                _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {JsonConvert.SerializeObject(updateFormula)}");
+            }
+
             dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
@@ -257,6 +268,158 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// The method to update batches.
+        /// </summary>
+        /// <param name="updateBatches">the update batches.</param>
+        /// <returns>the batches updated.</returns>
+        public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches)
+        {
+            var dictResult = new Dictionary<string, string>();
+            var listyGrouped = updateBatches.GroupBy(x => x.OrderId).ToList();
+
+            foreach (var group in listyGrouped)
+            {
+                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                var orderFab = productionOrderObj.GetByKey(group.Key);
+
+                if (!orderFab)
+                {
+                    _loggerProxy.Info($"The production order {group.Key} was not found.");
+                    dictResult = this.AddResult($"{group.Key}-{group.Key}", $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}", -1, company, dictResult);
+                    continue;
+                }
+
+                var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, group.Key));
+
+                for (var i = 0; i < components.RecordCount; i++)
+                {
+                    var lineNum = components.Fields.Item("VisOrder").Value;
+                    var itemCode = components.Fields.Item("ItemCode").Value;
+
+                    if (!group.Any(x => x.ItemCode == itemCode))
+                    {
+                        components.MoveNext();
+                        continue;
+                    }
+
+                    var lastError = 0;
+                    productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    group
+                        .Where(x => x.ItemCode == itemCode)
+                        .GroupBy(z => z.Action)
+                        .OrderBy(a => a.Key)
+                        .ToList()
+                        .ForEach(sg => 
+                        {
+                            sg
+                            .ToList()
+                            .ForEach(z =>
+                            {
+                                productionOrderObj.Lines.BatchNumbers.Add();
+                                productionOrderObj.Lines.BatchNumbers.Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty;
+                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
+                            });
+                            
+                            var updated = productionOrderObj.Update();
+
+                            if (updated != 0)
+                            {
+                                lastError = updated;
+                            }
+                            
+                            company.GetLastError(out var error, out var lastMsg);
+                            _loggerProxy.Info($"The next Batch was tried to be assign with status {error} - {lastMsg} - {group.Key}-{JsonConvert.SerializeObject(sg)}");
+                        });
+
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
+
+                    components.MoveNext();                    
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders)
+        {
+            var results = new Dictionary<int, string>();
+
+            foreach (var productionOrder in productionOrders)
+            {
+                var productionOrderId = productionOrder.OrderId;
+
+                _loggerProxy.Debug($"Production order to finish: { productionOrderId }.");
+                var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+
+                if (!orderReference.GetByKey( productionOrder.OrderId ))
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } doesn´t exists.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
+                }
+
+                if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposClosed)
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } already closed.");
+                    continue;
+                }
+
+                if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
+                {
+                    _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
+                }
+
+                // Production orders
+                _loggerProxy.Debug($"Data production order { productionOrderId }.");
+                _loggerProxy.Debug($"DocumentNumber: { orderReference.DocumentNumber }.");
+                _loggerProxy.Debug($"PlannedQuantity: { orderReference.PlannedQuantity }.");
+                _loggerProxy.Debug($"Warehouse: { orderReference.Warehouse }.");
+
+                // Create a new receipt production order
+                var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
+                receiptProduction.Lines.BaseEntry = orderReference.DocumentNumber;
+                receiptProduction.Lines.BaseType = 202;
+                receiptProduction.Lines.Quantity = orderReference.PlannedQuantity;
+                receiptProduction.Lines.TransactionType = BoTransactionTypeEnum.botrntComplete;
+                receiptProduction.Lines.WarehouseCode = orderReference.Warehouse;
+                receiptProduction.Lines.Add();
+
+                // Save receipt production
+                if (receiptProduction.Add() > 0)
+                {
+                    this.company.GetLastError(out int errorCode, out string errorMessage);
+                    _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
+                    continue;
+                }
+
+                // Set closed status 
+                orderReference.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
+
+                if (orderReference.Update() > 0)
+                {
+                    this.company.GetLastError(out int errorCode, out string errorMessage);
+                    _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
+                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrderId ));
+                    continue;
+                }
+            }
+
+            if (!results.Any())
+            {
+                results.Add(0, ServiceConstants.Ok);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
         /// sets the data to update.
         /// </summary>
         /// <param name="model">the model from controller.</param>
@@ -287,7 +450,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 company.GetLastError(out int errorCode, out string errMsg);
                 errMsg = string.IsNullOrEmpty(errMsg) ? string.Empty : errMsg;
-                dictResult.Add(key, string.Format(value, $"{value}-{errorCode.ToString()}-{errMsg}", errMsg));
+                dictResult.Add(key, $"{value}-{errorCode.ToString()}-{errMsg}");
             }
             else
             {

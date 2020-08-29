@@ -21,7 +21,7 @@ public class AuthServiceImpl implements IAuthService {
     private SecurityDAO securityDAO;
 
     @Override
-    public void validateCredentials(String usr, String password) {
+    public void validateCredentials(String usr, String password, String origin) {
 
         SecurityDO securityDO = securityDAO.findFirstByUsername(usr);
 
@@ -33,6 +33,14 @@ public class AuthServiceImpl implements IAuthService {
 
         if (securityDO.getActivo() == 0){
             throw new UnAuthorizedException(ErrorMessages.USUARIO_INACTIVO);
+        }
+
+        if(origin != null && securityDO.getRole() == 1 && origin.toLowerCase().equals("app")){
+            throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
+        }
+
+        if(origin != null && securityDO.getRole() == 2 && origin.toLowerCase().equals("web")){
+            throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
     }
 

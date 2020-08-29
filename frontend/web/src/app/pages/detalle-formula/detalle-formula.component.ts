@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
@@ -17,7 +17,7 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./detalle-formula.component.scss']
 })
 
-export class DetalleFormulaComponent implements OnInit {
+export class DetalleFormulaComponent implements OnInit, OnDestroy {
   allComplete = false;
   oldDataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
@@ -65,9 +65,16 @@ export class DetalleFormulaComponent implements OnInit {
         this.comments = this.oldDataFormulaDetail.comments || '';
         const endDate = this.oldDataFormulaDetail.dueDate.split('/');
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
-        // this.dataSource.data = formulaRes.response.details;
         this.dataSource.data = this.oldDataFormulaDetail.details;
-        this.dataSource.data.forEach(detail => {detail.isChecked = false; });
+        this.dataSource.data.forEach(detail => {
+          detail.isChecked = false;
+          const warehouseSplit = detail.warehouseQuantity.toString().split('.');
+          const stockSplit = detail.stock.toString().split('.');
+          detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
+              `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
+          detail.stock = stockSplit.length === 1 ? warehouseSplit[0] :
+              `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
+        });
         this.isReadyToSave = false;
         this.componentsToDelete = [];
         this.dataService.setIsToSaveAnything(false);
@@ -209,16 +216,33 @@ export class DetalleFormulaComponent implements OnInit {
   }
   getIsThereNull(isFromDelete: boolean = false) {
     if (!isFromDelete) {
-      return this.dataSource.data.filter(component => component.baseQuantity === null || component.requiredQuantity === null).length === 0;
+      return this.dataSource.data.filter(component => ((component.baseQuantity === null || component.baseQuantity <= 0)
+          && (component.requiredQuantity === null || component.baseQuantity <= 0))).length === 0;
     } else {
-      return this.dataSource.data.filter(component => component.isChecked && (component.baseQuantity === null
-          || component.requiredQuantity === null)).length === 0;
+      return this.dataSource.data.filter(component => component.isChecked &&
+          ((component.baseQuantity === null || component.baseQuantity <= 0)
+          && (component.requiredQuantity === null || component.baseQuantity <= 0))).length === 0;
     }
   }
   onSelectWareHouseChange(value: string, index: number) {
     this.dataSource.data[index].warehouse = value;
     this.getAction(index);
     this.getIsReadyTOSave();
+  }
+
+  ngOnDestroy() {
+    this.dataService.setIsToSaveAnything(false);
+  }
+
+  goToOrders(urlPath: string[]) {
+    this.setPathUrlService(urlPath);
+  }
+
+  goToDetailOrder(urlPath: (string | number)[]) {
+    this.setPathUrlService(urlPath);
+  }
+  setPathUrlService(urlPath: any[]) {
+    this.dataService.setPathUrl(urlPath);
   }
 }
 

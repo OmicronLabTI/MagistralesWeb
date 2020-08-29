@@ -1,17 +1,95 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
 import { PedidosService } from './pedidos.service';
 import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {Observable} from 'rxjs';
+import {IPlaceOrdersReq} from '../model/http/users';
+import {IComponentsSaveReq} from '../model/http/detalleformula';
+import {CancelOrderReq, IPlaceOrdersAutomaticReq, ProcessOrdersDetailReq} from '../model/http/pedidos';
 
 describe('PedidosService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
-    providers: [DatePipe]
-  }));
+  beforeEach(() => {
+        TestBed.configureTestingModule({
+          imports: [HttpClientTestingModule],
+          providers: [DatePipe]
+        });
+      });
 
   it('should be created', () => {
     const service: PedidosService = TestBed.get(PedidosService);
     expect(service).toBeTruthy();
   });
+  it('should getPedidos', () => {
+    const service: PedidosService = TestBed.get(PedidosService);
+    expect(service.getPedidos('anyQueryString') instanceof Observable).toBeTruthy();
+  });
+  it('should getDetallePedido', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getDetallePedido('anyDocumentNum') instanceof Observable).toBeTruthy();
+    });
+  it('should getFormulaDetail', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getFormulaDetail('anyOrderNum') instanceof Observable).toBeTruthy();
+    });
+  it('should processOrders', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.processOrders('anyOrdersToProcess') instanceof Observable).toBeTruthy();
+    });
+  it('should getQfbs', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getQfbs(2) instanceof Observable).toBeTruthy();
+    });
+  it('should getQfbsWithOrders', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getQfbsWithOrders() instanceof Observable).toBeTruthy();
+    });
+  it('should postPlaceOrders', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const placeOlderReq = new IPlaceOrdersReq();
+        placeOlderReq.docEntry = [1, 2, 3, 4];
+        placeOlderReq.orderType = 'Type orden [Pedido, Orden]';
+        placeOlderReq.userId = 'idUser to place orders';
+        placeOlderReq.userLogistic = 'Id user logueado';
+        expect(service.postPlaceOrders(placeOlderReq) instanceof Observable).toBeTruthy();
+    });
+  it('should getComponents', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getComponents('anyQueryStringToGetComponents') instanceof Observable).toBeTruthy();
+    });
+  it('should updateFormula', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const componentsToSaveReq = new IComponentsSaveReq();
+        componentsToSaveReq.components = []; // components to insert, delete, update
+        componentsToSaveReq.fechaFin = '01/12/2020';
+        componentsToSaveReq.comments = 'anyComments';
+        componentsToSaveReq.plannedQuantity = 30;
+        componentsToSaveReq.fabOrderId = 12;
+        expect(service.updateFormula(componentsToSaveReq) instanceof Observable).toBeTruthy();
+    });
+  it('should postPlaceOrdersDetail', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const processOrdersDetailReq = new ProcessOrdersDetailReq();
+        processOrdersDetailReq.productId = []; // productsIds
+        processOrdersDetailReq.userId = 'user logueado';
+        processOrdersDetailReq.pedidoId = 1234;
+        expect(service.postPlaceOrdersDetail(processOrdersDetailReq) instanceof Observable).toBeTruthy();
+    });
+  it('should postPlaceOrderAutomatic', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
+        placeOrdersAutomaticReq.docEntry = []; // ids to place automatic
+        placeOrdersAutomaticReq.userLogistic = 'user logueado';
+        expect(service.postPlaceOrderAutomatic(placeOrdersAutomaticReq) instanceof Observable).toBeTruthy();
+    });
+  it('should putCancelOrders', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const cancelOrderReq: CancelOrderReq[] = []; // {idOrder: 234, userId: 'user logueado'} // to cancel
+        expect(service.putCancelOrders(cancelOrderReq, true) instanceof Observable).toBeTruthy();
+    });
+  it('should putFinalizeOrders', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const cancelOrderReq: CancelOrderReq[] = []; // {idOrder: 234, userId: 'user logueado'} // to finalize
+        expect(service.putFinalizeOrders(cancelOrderReq, true) instanceof Observable).toBeTruthy();
+    });
 });
+

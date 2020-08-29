@@ -46,43 +46,11 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// create users orders.
-        /// </summary>
-        /// <param name="ordenFabId">the ids to create.</param>
-        /// <returns>the list.</returns>
-        public static List<UserOrderModel> CreateUserOrder(List<FabricacionOrderModel> ordenFabId)
-        {
-            var listToReturn = new List<UserOrderModel>();
-            ordenFabId.ForEach(x =>
-            {
-                var userOrder = new UserOrderModel
-                {
-                    Status = ServiceConstants.Planificado,
-                    Salesorderid = x.PedidoId.ToString(),
-                    Productionorderid = x.OrdenId.ToString(),
-                };
-
-                listToReturn.Add(userOrder);
-            });
-
-            ordenFabId.Select(x => x.PedidoId).Distinct().ToList().ForEach(p =>
-            {
-                listToReturn.Add(new UserOrderModel
-                {
-                    Status = ServiceConstants.Planificado,
-                    Salesorderid = p.ToString(),
-                });
-            });
-
-            return listToReturn;
-        }
-
-        /// <summary>
         /// creates the user model from fabrication.
         /// </summary>
         /// <param name="dataToCreate">the data to create.</param>
         /// <returns>the data.</returns>
-        public static List<UserOrderModel> CreateUserModel(List<FabricacionOrderModel> dataToCreate)
+        public static List<UserOrderModel> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate)
         {
             var listToReturn = new List<UserOrderModel>();
             dataToCreate.ForEach(x =>
@@ -177,7 +145,14 @@ namespace Omicron.Pedidos.Services.Utils
             listWithError.ForEach(x =>
             {
                 var order = x.Split("-");
-                listToReturn.Add(order[1]);
+                if (order.Count() > 2)
+                {
+                    listToReturn.Add($"{order[1]}-{order[2]}");
+                }
+                else
+                {
+                    listToReturn.Add(order[1]);
+                }
             });
 
             return listToReturn;
@@ -250,6 +225,14 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the data.</returns>
         public static OrderWithDetailModel CreateOrderWithDetail(OrderWithDetailModel order, List<CompleteDetailOrderModel> listToSend)
         {
+            var listUpdated = new List<CompleteDetailOrderModel>();
+
+            listToSend.ForEach(x =>
+            {
+                x.DescripcionProducto = x.DescripcionCorta;
+                listUpdated.Add(x);
+            });
+
             return new OrderWithDetailModel
             {
                 Order = new OrderModel
@@ -258,7 +241,7 @@ namespace Omicron.Pedidos.Services.Utils
                     FechaInicio = order.Order.FechaInicio,
                     FechaFin = order.Order.FechaFin,
                 },
-                Detalle = new List<CompleteDetailOrderModel>(listToSend),
+                Detalle = new List<CompleteDetailOrderModel>(listUpdated),
             };
         }
 
@@ -335,6 +318,63 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return orderToSend;
+        }
+
+        /// <summary>
+        /// Create a cancellation order fail object.
+        /// </summary>
+        /// <param name="cancellationModel">Model with data.</param>
+        /// <param name="reason">Fail reason.</param>
+        /// <returns>Formated object.</returns>
+        public static object CreateCancellationFail(OrderIdModel cancellationModel, string reason)
+        {
+            return new
+            {
+                cancellationModel.OrderId,
+                cancellationModel.UserId,
+                reason,
+            };
+        }
+
+        /// <summary>
+        /// Gets the list To update or insert.
+        /// </summary>
+        /// <param name="pedidosId">the pedidos id.</param>
+        /// <param name="dataBaseSaleOrders">the database sale orders.</param>
+        /// <returns>the first is the list to insert the second the list to update.</returns>
+        public static Tuple<List<UserOrderModel>, List<UserOrderModel>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders)
+        {
+            var listToInsert = new List<UserOrderModel>();
+            var listToUpdate = new List<UserOrderModel>();
+
+            pedidosId.ForEach(p =>
+            {
+                var insertUserOrdersale = false;
+                var saleOrder = dataBaseSaleOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(p.ToString()));
+
+                if (saleOrder == null)
+                {
+                    saleOrder = new UserOrderModel
+                    {
+                        Salesorderid = p.ToString(),
+                    };
+
+                    insertUserOrdersale = true;
+                }
+
+                saleOrder.Status = ServiceConstants.Planificado;
+
+                if (insertUserOrdersale)
+                {
+                    listToInsert.Add(saleOrder);
+                }
+                else
+                {
+                    listToUpdate.Add(saleOrder);
+                }
+            });
+
+            return new Tuple<List<UserOrderModel>, List<UserOrderModel>>(listToInsert, listToUpdate);
         }
     }
 }

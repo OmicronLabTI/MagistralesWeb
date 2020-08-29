@@ -1,12 +1,12 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_USER_DIALOG, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
-import {DataService} from '../../services/data.service';
-import {Messages} from '../../constants/messages';
+import {Subscription} from 'rxjs';
+import {UsersService} from '../../services/users.service';
 
 
 @Component({
@@ -14,22 +14,23 @@ import {Messages} from '../../constants/messages';
   templateUrl: './find-orders-dialog.component.html',
   styleUrls: ['./find-orders-dialog.component.scss']
 })
-export class FindOrdersDialogComponent implements OnInit {
+export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   findOrdersForm: FormGroup;
   fullDate: string [] = [];
   qfbsSelect: QfbSelect[] = [];
   maxDate = new Date();
   isBeginInitForm = true;
   isToResetData = false;
+  subscriptionForm = new Subscription();
   constructor(private formBuilder: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public filterData: any,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
               private errorService: ErrorService,
-              private dataService: DataService) {
+              private usersService: UsersService) {
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
-      docNum: ['', [Validators.maxLength(60)]],
+      docNum: ['', [Validators.maxLength(50)]],
           dateType: ['', []],
           fini: ['', []],
           ffin: ['', []],
@@ -41,22 +42,25 @@ export class FindOrdersDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
-      await this.ordersServices.getQfbs().toPromise().then(resQfbs => {
-          this.qfbsSelect = resQfbs.response.map(qfb => {
-              return {
-                  qfbId: qfb.id,
-                  qfbName: qfb.firstName
-              };
+      await this.usersService.getRoles().toPromise().then( resultRoles =>
+          resultRoles.response.filter( resRole => resRole.description === CONST_USER_DIALOG.defaultQfb)[0].id)
+          .then( resRole => this.ordersServices.getQfbs(resRole).toPromise())
+          .then(resultQfb => {
+              this.qfbsSelect = resultQfb.response.map(qfb => {
+                  return {
+                      qfbId: qfb.id,
+                      qfbName: qfb.firstName + ' ' + qfb.lastName
+                  };
+              });
+              this.qfbsSelect.sort((a, b) => {
+                  return a.qfbName.localeCompare(b.qfbName);
+              });
+              this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
+          }).catch(error => {
+              this.dialogRef.close();
+              this.errorService.httpError(error);
           });
-          this.qfbsSelect.sort((a, b) => {
-              return a.qfbName.localeCompare(b.qfbName);
-          });
-          this.findOrdersForm.get('qfb').setValue(this.filterData.filterOrdersData.qfb ? this.filterData.filterOrdersData.qfb : '' );
-      }).catch(error => {
-          this.errorService.httpError(error);
-          this.dialogRef.close();
-          this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'info', isButtonAccept: true});
-      });
+
       this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
       const initDateTrans = this.fullDate[0].split('/');
       const finishDateTrans = this.fullDate[1].split('/');
@@ -73,7 +77,7 @@ export class FindOrdersDialogComponent implements OnInit {
       } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status) {
           this.getDisableOnlyForDocNum();
       }
-      this.findOrdersForm.valueChanges.subscribe(formData => {
+      this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
           if (!this.isBeginInitForm) {
               if (formData.docNum !== null && formData.docNum) {
                   this.isToResetData = false;
@@ -139,4 +143,13 @@ export class FindOrdersDialogComponent implements OnInit {
       this.isBeginInitForm = true;
       this.getDisableOnlyForDocNum();
   }
+    ngOnDestroy() {
+        this.subscriptionForm.unsubscribe();
+    }
+
+    keyDownFunction(event: KeyboardEvent) {
+        if (event.key === MODAL_FIND_ORDERS.keyEnter) {
+            this.searchOrders();
+      }
+    }
 }

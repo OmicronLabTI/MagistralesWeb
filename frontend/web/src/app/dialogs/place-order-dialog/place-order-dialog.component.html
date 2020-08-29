@@ -1,6 +1,6 @@
-<div class="place-order-container">
+<div [ngClass]="isPlaceManual ? 'place-order-container-with-data' : 'place-order-container-no-data'">
     <mat-card class="add-user-card">
-        <mat-card-header class="card-header-container">
+        <mat-card-header [ngClass]="isPlaceManual ? 'height-with-data ' : 'height-no-data '" class="card-header-container-custom">
             <mat-card-title >
                 <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">Asigna el pedido</span>
                 <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">Asigna los pedidos</span>
@@ -11,10 +11,13 @@
         </mat-card-header>
         <mat-card-content class="content-card-container-custom">
         <div class="options-content">
-            <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button" (click)="changePlaceManual()">Manual</button>
-            <!--<button mat-button class="btn-cancel-modal btn-manual-place btn&#45;&#45;modal">Automático</button>-->
+            <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button" (click)="changePlaceManual()" >Manual</button>
+            <button *ngIf="placeData.placeOrdersData.modalType === 'Pedido'"
+                    mat-button class="btn-add-modal btn-manual-place btn--modal"
+                    (click)="placeOrderAutomatic()"
+                    >Automático</button>
         </div>
-          <div class="qfbs-container scroll-custom" *ngIf="isPlaceManual">
+          <div class="qfbs-container scroll-visible" *ngIf="isPlaceManual">
               <div class="qfb-with-orders" *ngFor="let qfb of qfbs">
                   <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom" (click)="placeOrder(qfb.userId, qfb.userName)">
                       <div class="qfb-name">
@@ -23,7 +26,7 @@
                       </span>
                       </div>
                       <div class="orders-number">
-                          <button mat-mini-fab class="fab-orders-number color-omicron">
+                          <button mat-mini-fab class="fab-orders-number background-color-omicron">
                               {{qfb.countTotal}}
                           </button>
                       </div>

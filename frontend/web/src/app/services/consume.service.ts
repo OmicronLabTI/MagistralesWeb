@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {HttpHeaders, HttpClient, HttpParams} from '@angular/common/http';
 import { DataService } from './data.service';
 
@@ -18,7 +18,7 @@ export class ConsumeService {
       });
     }
 
-   let objParams = new HttpParams();
+    let objParams = new HttpParams();
     if (params) {
       Object.keys(params).forEach((key) => {
         objParams = objParams.append(key, params[key]);
@@ -29,12 +29,9 @@ export class ConsumeService {
     return new Observable<T>(observer => {
       this.http.get<any>(url, { headers: objHeaders, params: objParams })
         .subscribe(response => {
-          observer.next(response);
-          observer.complete();
-          this.dataService.setIsLoading(false);
+          this.successObserver(observer, response);
         }, err => {
-          observer.error(err);
-          this.dataService.setIsLoading(false);
+          this.onErrorObserver(observer, err);
         });
     });
   }
@@ -51,12 +48,9 @@ export class ConsumeService {
     return new Observable<T>(observer => {
       this.http.post<any>(url, body, { headers: objHeaders })
         .subscribe(response => {
-          observer.next(response);
-          observer.complete();
-          this.dataService.setIsLoading(false);
+          this.successObserver(observer, response);
         }, err => {
-          observer.error(err);
-          this.dataService.setIsLoading(false);
+          this.onErrorObserver(observer, err);
         });
     });
   }
@@ -73,12 +67,9 @@ export class ConsumeService {
     return new Observable<T>(observer => {
       this.http.put<any>(url, body, { headers: objHeaders })
         .subscribe(response => {
-          observer.next(response);
-          observer.complete();
-          this.dataService.setIsLoading(false);
+          this.successObserver(observer, response);
         }, err => {
-          observer.error(err);
-          this.dataService.setIsLoading(false);
+          this.onErrorObserver(observer, err);
         });
     });
   }
@@ -95,13 +86,21 @@ export class ConsumeService {
     return new Observable<T>(observer => {
       this.http.patch<any>(url, body, { headers: objHeaders })
           .subscribe(response => {
-            observer.next(response);
-            observer.complete();
-            this.dataService.setIsLoading(false);
+            this.successObserver(observer, response);
           }, err => {
-            observer.error(err);
-            this.dataService.setIsLoading(false);
+            this.onErrorObserver(observer, err);
           });
     });
+  }
+
+  private successObserver(observer: any, response: any) {
+    observer.next(response);
+    observer.complete();
+    this.dataService.setIsLoading(false);
+  }
+
+  private onErrorObserver(observer: any, err: any) {
+    observer.error(err);
+    this.dataService.setIsLoading(false);
   }
 }

@@ -23,7 +23,7 @@ export class ComponentSearchComponent implements OnInit {
   keywords: string[] = [];
   allComplete = false;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  pageSize = CONST_NUMBER.five;
+  pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   displayedColumns: string[] = [
     'numero',
@@ -36,14 +36,13 @@ export class ComponentSearchComponent implements OnInit {
   isDisableSearch = false;
   pageEvent: PageEvent;
   rowPrevious = {};
+  count = 0;
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService) {
   }
 
   ngOnInit() {
-    this.getQueryString();
-    this.getComponents();
     this.dataSource.paginator = this.paginator;
   }
 
@@ -54,7 +53,10 @@ export class ComponentSearchComponent implements OnInit {
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
         }
-        , error => this.errorService.httpError(error) );
+        , error => {
+          this.errorService.httpError(error);
+          this.dialogRef.close();
+        });
   }
 
   changeDataEvent(event: PageEvent) {
@@ -71,9 +73,9 @@ export class ComponentSearchComponent implements OnInit {
 
     if ((value || '').trim()) {
       this.keywords.push(value.trim());
+      this.getQueryString();
+      this.getComponents();
     }
-    this.getQueryString();
-    this.getComponents();
     if (input) {
       input.value = '';
     }

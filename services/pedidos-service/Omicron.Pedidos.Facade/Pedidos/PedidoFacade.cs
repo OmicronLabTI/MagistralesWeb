@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using AutoMapper;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -57,6 +58,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrderBySalesOrder(List<int> listIds)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderBySalesOrder(listIds));
+        }
+
+        /// <summary>
+        /// Get the user order by fabrication order id.
+        /// </summary>
+        /// <param name="listIds">the list of ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderByFabOrder(listIds));
         }
 
         /// <summary>
@@ -110,6 +121,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// updates order comments.
+        /// </summary>
+        /// <param name="updateComments">Fabrication order comments.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateFabOrderComments(List<UpdateOrderCommentsDto> updateComments)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateFabOrderComments(this.mapper.Map<List<UpdateOrderCommentsModel>>(updateComments)));
+        }
+
+        /// <summary>
         /// gets the connection to DI api.
         /// </summary>
         /// <returns>the connectin.</returns>
@@ -133,9 +154,39 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="cancelOrders">Update order info.</param>
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultDto> CancelOrder(List<CancelOrderDto> cancelOrders)
+        public async Task<ResultDto> CancelOrder(List<OrderIdDto> cancelOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelOrder(this.mapper.Map<List<CancelOrderModel>>(cancelOrders)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelOrder(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
+        }
+
+        /// <summary>
+        /// Change order status to finish.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CloseSalesOrders(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
+        }
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelFabOrder(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
+        }
+
+        /// <summary>
+        /// Finish fabrication orders.
+        /// </summary>
+        /// <param name="finishOrders">Orders to finish.</para
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task<ResultDto> CloseFabOrders(List<OrderIdDto> finishOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CloseFabOrders(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
         }
 
         /// <summary>
@@ -146,6 +197,47 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.AutomaticAssign(this.mapper.Map<AutomaticAssingModel>(automaticAssing)));
+        }
+
+        /// <summary>
+        /// Updates the batches.
+        /// </summary>
+        /// <param name="assignBatch">the objecto to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateBatches(List<AssignBatchDto> assignBatch)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assignBatch)));
+        }
+
+        /// <summary>
+        /// Save signatures.
+        /// </summary>
+        /// <param name="signatureType">The signature type.</param>
+        /// <param name="signatureModel">The signature info.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateOrderSignature(signatureType, this.mapper.Map<UpdateOrderSignatureModel>(signatureModel)));
+        }
+
+        /// <summary>
+        /// Get production order signatures.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> GetOrderSignatures(int productionOrderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrderSignatures(productionOrderId));
+        }
+
+        /// <summary>
+        /// finish the order by the qfb.
+        /// </summary>
+        /// <param name="updateOrderSignature">the signature dto.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> FinishOrder(FinishOrderDto updateOrderSignature)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.FinishOrder(this.mapper.Map<FinishOrderModel>(updateOrderSignature)));
         }
     }
 }

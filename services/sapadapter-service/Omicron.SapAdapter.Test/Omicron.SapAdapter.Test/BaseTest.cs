@@ -115,6 +115,54 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<Batches> GetBatches()
+        {
+            return new List<Batches>
+            {
+                new Batches { AbsEntry = 1, DistNumber = "Lote1", ItemCode = "Abc Aspirina", SysNumber = 1 },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<BatchesQuantity> GetBatchesQuantity()
+        {
+            return new List<BatchesQuantity>
+            {
+                new BatchesQuantity { AbsEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1, CommitQty = 10, Quantity = 10, WhsCode = "MN" },
+            };
+        }
+
+        /// <summary>
+        /// returns  data.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<BatchTransacitions> GetBatchTransacitions()
+        {
+            return new List<BatchTransacitions>
+            {
+                new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+            };
+        }
+
+        /// <summary>
+        /// gets the transaction qty model.
+        /// </summary>
+        /// <returns>the model.</returns>
+        public List<BatchesTransactionQtyModel> GetBatchesTransactionQtyModel()
+        {
+            return new List<BatchesTransactionQtyModel>
+            {
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+            };
+        }
+
+        /// <summary>
         /// get the product.
         /// </summary>
         /// <returns>the product.</returns>
@@ -122,7 +170,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%" },
             };
         }
 
@@ -159,7 +207,7 @@ namespace Omicron.SapAdapter.Test
         {
             var listUsers = new List<UserOrderModel>
             {
-                new UserOrderModel { Id = 1, Productionorderid = "12", Salesorderid = "12", Status = "Abierto", Userid = "123" },
+                new UserOrderModel { Id = 1, Productionorderid = "12", Salesorderid = "12", Status = "Abierto", Userid = "123", CloseDate = "20/01/2020", Comments = "comments", FinishDate = "20/01/2020" },
             };
 
             return new ResultDto

@@ -199,6 +199,20 @@
             <param name="productionOrder">Production order to update</param>
             <returns>the reult.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateBatches(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.AssginBatchDto})">
+            <summary>
+            Cancel production order by id
+            </summary>
+            <param name="assginBatches">The assign batches mnodel.</param>
+            <returns>the reult.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.FinishProductionOrders(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CancelOrderDto})">
+            <summary>
+            Finish production order.
+            </summary>
+            <param name="productionOrdes">Production orders to finish.</param>
+            <returns>the reult.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

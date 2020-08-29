@@ -46,6 +46,20 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> CancelProductionOrder(CancelOrderModel productionOrder);
 
         /// <summary>
+        /// The method to update batches.
+        /// </summary>
+        /// <param name="updateBatches">the update batches.</param>
+        /// <returns>the batches updated.</returns>
+        Task<ResultModel> UpdateBatches(List<AssignBatchModel> updateBatches);
+
+        /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

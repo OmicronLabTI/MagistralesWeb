@@ -1,27 +1,31 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import { IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
-import {CONST_USER_DIALOG, HttpServiceTOCall, MODAL_NAMES} from '../../constants/const';
+import {CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {SweetAlertIcon} from 'sweetalert2';
+import {Subscription} from 'rxjs';
+import {ErrorHttpInterface} from '../../model/http/commons';
 
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss']
 })
-export class AddUserDialogComponent implements OnInit {
+export class AddUserDialogComponent implements OnInit, OnDestroy {
   userToEdit: IUserReq;
   addUserForm: FormGroup;
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
+  subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
               private usersService: UsersService, private errorService: ErrorService,
-              private dataService: DataService) {
+              private dataService: DataService,
+              private dialogRef: MatDialogRef<AddUserDialogComponent>) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
 
@@ -37,14 +41,23 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
+      if (valueForm.userName) {
+        this.addUserForm.get('userName').setValue(
+            valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+      }
+    });
     this.usersService.getRoles().subscribe(rolesRes => {
      this.userRoles = rolesRes.response;
      this.addUserForm.get('userTypeR').
         setValue(!this.isForEditModal ? this.userRoles.
         filter(user =>
-          CONST_USER_DIALOG.defaultDefault.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
+          CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
           this.userToEdit.role.toString());
-    }, error => this.errorService.httpError(error));
+    }, error => {
+      this.errorService.httpError(error);
+      this.dialogRef.close();
+    });
 
     if (!this.isForEditModal) {
       this.addUserForm.get('activo').setValue(1);
@@ -73,10 +86,7 @@ export class AddUserDialogComponent implements OnInit {
       this.usersService.createUser(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
           },
-          error => {/// checar con gus para manejar errores
-            this.createMessageOk(Messages.userExist, 'info', true);
-            this.errorService.httpError(error);
-          });
+          error => this.userExistDialog(error));
     } else {
       const user: IUserReq = {
         id: this.userToEdit.id,
@@ -90,12 +100,22 @@ export class AddUserDialogComponent implements OnInit {
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
           },
-          error => this.errorService.httpError(error));
+          error => this.userExistDialog(error));
     }
 
   }
   createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
     this.dataService.setCallHttpService(HttpServiceTOCall.USERS);
     this.dataService.setMessageGeneralCallHttp({title, icon, isButtonAccept});
+  }
+  ngOnDestroy() {
+   this.subscription.unsubscribe();
+  }
+  userExistDialog(error: ErrorHttpInterface) {
+    if (error.status === HttpStatus.badRequest) {
+      this.createMessageOk(Messages.userExist, 'info', true);
+    } else {
+      this.errorService.httpError(error);
+    }
   }
 }

@@ -6,12 +6,12 @@
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
         <mat-card-content class="content-card-container">
-            <form [formGroup]="findOrdersForm"  class="form-orders">
+            <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
                             <input matInput placeholder="Ingresar pedido" type="number"
-                                   maxlength="60"
+                                   maxlength="50"
                                    class="height-input"
                                     formControlName="docNum">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
@@ -72,6 +72,9 @@
                                 <mat-option value="Abierto">Abierto</mat-option>
                                 <mat-option value="Planificado">Planificado</mat-option>
                                 <mat-option value="Liberado">Liberado</mat-option>
+                                <mat-option value="Terminado">Terminado</mat-option>
+                                <mat-option value="Finalizado">Finalizado</mat-option>
+                                <mat-option value="Cancelado">Cancelado</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>

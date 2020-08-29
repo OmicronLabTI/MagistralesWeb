@@ -12,6 +12,8 @@ namespace Omicron.SapAdapter.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.Facade.Sap;
 
     /// <summary>
@@ -24,12 +26,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         private readonly ISapFacade sapFacade;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<SapController> logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapController"/> class.
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
-        public SapController(ISapFacade sapFacade)
+        /// <param name="loggerFactory">the logger factory.</param>
+        public SapController(ISapFacade sapFacade, ILoggerFactory loggerFactory)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
+            this.logger = loggerFactory.CreateLogger<SapController>();
         }
 
         /// <summary>
@@ -106,7 +115,21 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetComponentes([FromQuery] Dictionary<string, string> parameters)
         {
+            this.logger.LogInformation($"Se buscara {JsonConvert.SerializeObject(parameters)}");
             var result = await this.sapFacade.GetComponents(parameters);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/componentes/lotes/{ordenId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetBatchesComponents(int ordenId)
+        {
+            var result = await this.sapFacade.GetBatchesComponents(ordenId);
             return this.Ok(result);
         }
     }

@@ -1,6 +1,23 @@
-.place-order-container {
+.place-order-container-with-data {
   width: 35rem;
   height: 30rem;
+}
+.place-order-container-no-data {
+  width: 35rem;
+  height: 10rem;
+}
+.card-header-container-custom {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: #3b3f5c solid 1px;
+}
+.height-with-data {
+  height: 10%;
+}
+.height-no-data {
+  height: 20%;
 }
 .place-order-card {
   width: 100%;
@@ -35,6 +52,9 @@
 .btn-manual-place{
   width: 6rem;
   height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .margin-right-button{
   margin-right: 15px ;

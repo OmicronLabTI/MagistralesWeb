@@ -39,25 +39,25 @@
                 </ng-container>
 
                 <ng-container matColumnDef="names">
-                    <th mat-header-cell class="centered" *matHeaderCellDef > Nombre(s) </th>
+                    <th mat-header-cell class="centered" *matHeaderCellDef > NOMBRE(S) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables text-center tdcell"> {{element.firstName}} </td>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="lastName">
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > Apellido(s) </th>
+                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > APELLIDO(S) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide"> {{element.lastName}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="role">
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > Rol </th>
+                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ROL</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > <span *ngIf="element.role === 2">QFB</span> <span *ngIf="element.role === 1">Administrador</span> </td>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="status">
-                    <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > Estatus </th>
+                    <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > ESTATUS </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > {{element.activo == 1 ? "Activo" : "Inactivo"}} </td>
                 </ng-container>
 

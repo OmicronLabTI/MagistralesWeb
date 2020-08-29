@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../constants/const';
+import {CONST_NUMBER, CONST_STRING, ConstToken, HttpServiceTOCall, MessageType} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
+import {CancelOrders} from '../model/device/orders';
+import {CancelOrderReq} from '../model/http/pedidos';
 
 
 @Injectable({
@@ -19,8 +21,49 @@ export class DataService {
   private messageGenericCallHttp = new Subject<GeneralMessage>();
   private isToSaVeAnything = false;
   private urlActive = new Subject<HttpServiceTOCall>();
+  private cancelOrders = new Subject<CancelOrders>();
+  private finalizeOrders = new Subject<CancelOrders>();
+  private pathUrl = new Subject<any[]>();
+  private isLogout = new Subject<boolean>();
   constructor(private datePipe: DatePipe) { }
 
+  setIsLogout(isLogout: boolean) {
+    this.isLogout.next(isLogout);
+  }
+  getIsLogout() {
+    return this.isLogout.asObservable();
+  }
+  setRememberSession(rememberSession: string) {
+    localStorage.setItem(ConstToken.rememberSession, rememberSession);
+  }
+  getRememberSession() {
+    return localStorage.getItem(ConstToken.rememberSession);
+  }
+  setRefreshToken(refreshToken: string) {
+    localStorage.setItem(ConstToken.refreshToken, refreshToken);
+  }
+  getRefreshToken() {
+    return localStorage.getItem(ConstToken.refreshToken);
+  }
+
+  setPathUrl(pathUrl: any[]) {
+    this.pathUrl.next(pathUrl);
+  }
+  getPathUrl() {
+    return this.pathUrl.asObservable();
+  }
+  setFinalizeOrders(finalizeOrders: CancelOrders) {
+    this.finalizeOrders.next(finalizeOrders);
+  }
+  getFinalizeOrders() {
+    return this.finalizeOrders.asObservable();
+  }
+  setCancelOrders(cancelOrder: CancelOrders) {
+    this.cancelOrders.next(cancelOrder);
+  }
+  getCancelOrder() {
+    return this.cancelOrders.asObservable();
+  }
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
   }
@@ -80,38 +123,41 @@ export class DataService {
   }
 
   getToken(): string {
-    return localStorage.getItem('token-omi');
+    return localStorage.getItem(ConstToken.accessToken);
   }
-
   setToken(token: string) {
-    localStorage.setItem('token-omi', token);
+    localStorage.setItem(ConstToken.accessToken, token);
   }
-  clearToken() {
-    localStorage.removeItem('token-omi');
+  clearSession() {
+    localStorage.removeItem(ConstToken.accessToken);
+    localStorage.removeItem(ConstToken.rememberSession);
+    localStorage.removeItem(ConstToken.refreshToken);
+    localStorage.removeItem(ConstToken.userId);
+    localStorage.removeItem(ConstToken.userName);
   }
 
   setUserId(userId: string) {
-    localStorage.setItem('userId', userId);
+    localStorage.setItem(ConstToken.userId, userId);
   }
 
   getUserId() {
-    return localStorage.getItem('userId');
+    return localStorage.getItem(ConstToken.userId);
   }
 
   setUserName(userName: string) {
-    localStorage.setItem('userName', userName);
+    localStorage.setItem(ConstToken.userName, userName);
   }
 
   getUserName() {
-    return localStorage.getItem('userName');
+    return localStorage.getItem(ConstToken.userName);
   }
 
 
   userIsAuthenticated(): boolean {
-    return !!localStorage.getItem('token-omi');
+    return !!localStorage.getItem(ConstToken.accessToken);
   }
   presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
-                     showConfirmButton: boolean = false, showCancelButton: boolean = false) {
+                     showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
     return new Promise (resolve => {
       Swal.fire({
         title,
@@ -124,8 +170,10 @@ export class DataService {
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
         buttonsStyling: false,
+
         customClass: {
           container: 'swal2-actions',
+          popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
         }
@@ -134,5 +182,38 @@ export class DataService {
   }
   transformDate(date: Date) {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+  getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
+    let errorOrders = '';
+    let firstMessage = '';
+    let finishMessaje = '';
+    switch (messageType) {
+      case MessageType.processOrder:
+        firstMessage = 'El producto ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.processDetailOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Planificado \n';
+        break;
+      case MessageType.placeOrder:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no pudo ser Asignada \n';
+        break;
+      case MessageType.saveBatches:
+        firstMessage = 'Error al asignar lotes a ';
+        finishMessaje = ', por favor verificar \n';
+        break;
+    }
+    if (!isFromCancel) {
+      itemsWithError.forEach((order: string) => {
+        errorOrders += `${firstMessage} ${order} ${finishMessaje}`;
+      });
+    } else {
+      itemsWithError.forEach((order: CancelOrderReq) => {
+        errorOrders += `${order.reason} \n`;
+      });
+    }
+    return errorOrders;
   }
 }

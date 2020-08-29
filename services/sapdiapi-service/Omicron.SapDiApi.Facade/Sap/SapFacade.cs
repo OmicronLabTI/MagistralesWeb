@@ -80,5 +80,25 @@ namespace Omicron.SapDiApi.Facade.Sap
         { 
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.CancelProductionOrder(this.mapper.Map<CancelOrderModel>(productionOrder)));
         }
+
+        /// <summary>
+        /// Finish production orders.
+        /// </summary>
+        /// <param name="productionOrders">Production orders to finish.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> FinishOrder(List<CancelOrderDto> productionOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.FinishOrder(this.mapper.Map<List<CancelOrderModel>>(productionOrders)));
+        }
+
+        /// <summary>
+        /// Upfate the batches.
+        /// </summary>
+        /// <param name="assginBatches">The assign batches.</param>
+        /// <returns>the batches.</returns>
+        public async Task<ResultDto> UpdateBatches(List<AssginBatchDto> assginBatches)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assginBatches)));
+        }
     }
 }

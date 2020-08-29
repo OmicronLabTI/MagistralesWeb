@@ -1,7 +1,8 @@
 import { environment } from './environment';
 export const Endpoints = {
   security: {
-    login: `${environment.baseUrl}/api/oauth/oauthrs/authorize`
+    login: `${environment.baseUrl}/api/oauth/oauthrs/authorize`,
+    refresh: `${environment.baseUrl}/api/oauth/oauthrs/renew`
   },
   users: {
     createUser: `${environment.baseUrl}/api/usuarios/createuser`,
@@ -22,9 +23,18 @@ export const Endpoints = {
     getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
-}
+    placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
+    cancelOrders: `${environment.baseUrl}/api/pedidos/salesOrder/cancel`,
+    cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`,
+    finalizeOrders: `${environment.baseUrl}/api/pedidos/salesOrder/finish`,
+    finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish`
+  },
+  inventoryBatches: {
+    getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
+    assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
+  }
 };
 
 export const TokenExcludedEndpoints = [
-  'login'
+  '/api/oauth/oauthrs'
 ];

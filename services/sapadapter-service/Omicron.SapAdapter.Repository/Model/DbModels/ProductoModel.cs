@@ -52,5 +52,19 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("InvntryUom")]
         public string Unit { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("ManBtchNum")]
+        public string ManagedBatches { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("UserText")]
+        public string LargeDescription { get; set; }
     }
 }

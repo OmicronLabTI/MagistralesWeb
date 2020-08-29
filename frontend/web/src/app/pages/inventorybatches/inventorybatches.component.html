@@ -1,0 +1,133 @@
+
+<div class="container-list-page">
+    <div class="header-page">
+      <div class="title-list-container">
+        <span>Lotes</span>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / Detalle / Lotes </div>
+      </div>
+      <div class="filter-select">
+        <div class="docbase">Número de pedido: <span class="spandoc">{{document}}</span></div>
+        <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
+      </div>
+    </div>
+    <div class="table-toolbar">
+        <div class="table-toolbar-search">
+
+        </div>
+        <div class="table-toolbar-buttons">
+            <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="buildObjectToSap()">
+            &nbsp; Guardar &nbsp; 
+            </button>
+        </div>
+    </div>
+    
+    <div class="list-users-container">
+        <div class="title-list-container">
+            <span>Líneas de documentos</span>
+        </div>
+        <table mat-table [dataSource]="dataSourceDetails" class="mat-elevation-z8">
+            <ng-container matColumnDef="cons">
+                <th mat-header-cell *matHeaderCellDef class="centered">#</th>
+                <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center consecutivo"> {{i+1}} </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="codigoProducto">
+                <th mat-header-cell *matHeaderCellDef class=""> CÓDIGO DEL PRODUCTO</th>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell codigoproducto">{{element.codigoProducto}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="descripcionProducto">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO</th>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.descripcionProducto | uppercase}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="almacen">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DE ALMACÉN </th>
+                <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen"> {{element.almacen}} </td>
+                </ng-container>
+    
+            <ng-container matColumnDef="totalNecesario">
+            <th mat-header-cell *matHeaderCellDef class="mobile-hide">  TOTAL NECESARIO </th>
+            <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide cantreq"> {{element.totalNecesario}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalSeleccionado">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide">  TOTAL SELECCIONADO </th>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide cantseleccionada"> {{element.totalSeleccionado}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="detailsColumns" class="color-text-intables"></tr>
+            <tr mat-row *matRowDef="let row; columns: detailsColumns;" class="clickable" [ngClass]="row.selected ? 'selected' : ''" (click)="setSelectedTr(row)"></tr>
+        </table>
+    </div>
+    <div class="seleccion-lotes">
+        <div class="column-a">
+            <div class="title-list-container">
+                <span>Lotes disponibles</span>
+            </div>
+            <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8" style="margin-bottom: 20px !important;">
+                <ng-container matColumnDef="cons">
+                    <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center lotesconsecutivo"> {{element.numeroLote}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="disponible">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD DISPONIBLE </th>
+                <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide disponible"> {{element.cantidadDisponible}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="seleccionada">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD SELECCIONADA </th>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesseleccionado"> 
+                        <mat-form-field appearance="outline" class="generalinput" style="width: 70%;">
+                            <input matInput type="number"
+                                class="number" placeholder="Cantidad seleccionada"
+                                [(ngModel)]="element.cantidadSeleccionada "
+                            >
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="asignada">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD ASIGNADA </th>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide lotesasignados"> {{element.cantidadAsignada}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="opciones">
+                    <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
+                        <button mat-icon-button class="ico-col-pri" (click)="addLotes(element)">
+                            <mat-icon >arrow_forward_ios</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="lotesColumns" class="color-text-intables"></tr>
+                <tr mat-row *matRowDef="let row; columns: lotesColumns;"></tr>
+            </table>
+        </div>
+        <div class="column-b">
+            <div class="title-list-container">
+                <span>Lotes seleccionados</span>
+            </div>
+            <table mat-table [dataSource]="dataSourceLotesAsignados" class="mat-elevation-z8 table-pl">
+                <ng-container matColumnDef="lote" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                    <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center pllote" [style.display]="element.action == 'delete' ? 'none' : 'true'"> {{element.numeroLote}} </td>
+                </ng-container>
+                <ng-container matColumnDef="seleccionada" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD SELECCIONADA </th>
+                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell mobile-hide plseleccionada" [style.display]="element.action == 'delete' ? 'none' : 'true'"> {{element.cantidadSeleccionada}} </td>
+                </ng-container>
+                <ng-container matColumnDef="opciones" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                    <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions" [style.display]="element.action == 'delete' ? 'none' : 'true'">
+                        <button mat-icon-button class="ico-col-pri" (click)="deleteLotes(element)">
+                            <mat-icon >arrow_back_ios</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="lotesSelectedColumns" class="color-text-intables"></tr>
+                <tr mat-row *matRowDef="let row; columns: lotesSelectedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+  </div>
