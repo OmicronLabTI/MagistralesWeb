@@ -15,7 +15,7 @@ const routes: Routes = [
   {
     path: 'pedidos',
     loadChildren: () => import('./pages/pedidos/pedidos.module').then(m => m.PedidosModule),
-    // canActivate: [GuardService]
+    canActivate: [GuardService]
   },
   {
     path: 'pdetalle/:id/:status',

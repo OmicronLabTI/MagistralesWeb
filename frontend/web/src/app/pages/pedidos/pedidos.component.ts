@@ -48,7 +48,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToCancel = false;
   isThereOrdersToFinalize = false;
   pageIndex = 0;
-  isLoading: Observable<boolean>;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -56,7 +55,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private titleService: Title
   ) {
-    this.isLoading = this.dataService.getIsLoading();
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
@@ -120,7 +118,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   someComplete(): boolean {
-    if (this.dataSource.data == null) {
+    if (this.dataSource.data === null) {
       return false;
     }
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
