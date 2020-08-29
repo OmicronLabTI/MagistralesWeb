@@ -1051,7 +1051,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
         {
             var localFilterOrders = await GetFabOrderUtils.GetOrdersByFilter(parameters, this.pedidosDao);
-            var ordersId = localFilterOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
+            var ordersId = localFilterOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).ToList();
 
             var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = ordersId }, ServiceConstants.GetFabOrdersByFilter);
             var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());

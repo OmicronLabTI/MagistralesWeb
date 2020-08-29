@@ -140,7 +140,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CreateIsolatedProductionOrder(It.IsAny<CreateIsolatedFabOrderModel>()))
                 .Returns(Task.FromResult(response));
 
-            mockSapServices
+            mockServicesPedidos
                 .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 

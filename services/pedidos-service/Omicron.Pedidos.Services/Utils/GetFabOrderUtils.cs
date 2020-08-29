@@ -46,8 +46,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (filterStatus)
             {
-                var listStatus = filterQfb ? listOrders.Where(x => x.Status.Equals(parameters[ServiceConstants.Status])).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { parameters[ServiceConstants.Status] })).ToList();
-                listOrders.AddRange(listStatus);
+                listOrders = filterQfb ? listOrders.Where(x => x.Status.Equals(parameters[ServiceConstants.Status])).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { parameters[ServiceConstants.Status] })).ToList();
             }
 
             if (filterFechaFin)

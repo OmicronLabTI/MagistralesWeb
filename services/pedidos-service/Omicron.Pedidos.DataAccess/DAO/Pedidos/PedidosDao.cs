@@ -108,7 +108,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             {
                 DateTime.TryParse(x.FinishDate, out var finishDate);
 
-                if(finishDate >= fechaInicio && finishDate >= fechaFin)
+                if(finishDate >= fechaInicio  && finishDate <= fechaFin)
                 {
                     listToReturn.Add(x);
                 }
