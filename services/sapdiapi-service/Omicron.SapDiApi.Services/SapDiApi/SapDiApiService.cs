@@ -77,6 +77,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
                         dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
+                        _loggerProxy.Info($"The next order was tried to be created: {errorCode} - {errMsg} - {pedido.Order.PedidoId}");
                     }
                     else
                     {
@@ -111,6 +112,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
                         dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, errorCode.ToString(), errMsg));
+                        _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {order.OrderFabId}");
                     }
                     else
                     {
@@ -218,6 +220,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             var updated = productionOrderObj.Update();
+
+            if (updated != 0)
+            {
+                company.GetLastError(out int errorCode, out string errMsg);
+                _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {JsonConvert.SerializeObject(updateFormula)}");
+            }
+
             dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
@@ -267,7 +276,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var dictResult = new Dictionary<string, string>();
             var listyGrouped = updateBatches.GroupBy(x => x.OrderId).ToList();
-            _loggerProxy.Info($"The next object is going to be updated {JsonConvert.SerializeObject(updateBatches)}");
 
             foreach (var group in listyGrouped)
             {
