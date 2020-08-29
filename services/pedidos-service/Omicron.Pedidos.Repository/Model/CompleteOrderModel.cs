@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="FabricacionOrderModel.cs" company="Axity">
+// <copyright file="CompleteOrderModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,24 +8,34 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
-    using System;
-
     /// <summary>
-    /// the fabricacion order.
+    /// the class of the complete order model.
     /// </summary>
-    public class FabricacionOrderModel
+    public class CompleteOrderModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int OrdenId { get; set; }
+        public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int PedidoId { get; set; }
+        public int FabOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ItemCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -37,36 +47,24 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime PostDate { get; set; }
+        public string CreateDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime CreatedDate { get; set; }
+        public string FinishDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Qfb { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         public string Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string ProductoId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string DataSource { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string ProdName { get; set; }
     }
 }

@@ -14,8 +14,10 @@ namespace Omicron.SapAdapter.Test.Facade
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
@@ -88,7 +90,7 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockSapServices
-                .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
+                .Setup(m => m.GetFabOrders(It.IsAny<GetOrderFabModel>()))
                 .Returns(Task.FromResult(response));
 
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
@@ -274,7 +276,11 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetFabOrders()
         {
             // arrange
-            var parameters = new Dictionary<string, string>();
+            var parameters = new GetOrderFabDto
+            {
+                Filters = new Dictionary<string, string>(),
+                OrdersId = new List<int>(),
+            };
 
             // act
             var response = await this.sapFacade.GetFabOrders(parameters);

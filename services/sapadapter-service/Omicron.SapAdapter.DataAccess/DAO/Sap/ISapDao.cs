@@ -67,6 +67,21 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
 
         /// <summary>
+        /// gets the orders by orderid.
+        /// </summary>
+        /// <param name="fechaInit">initial date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate);
+
+        /// <summary>
+        /// Gets the prod by itemcode.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(List<string> itemCode);
+
+        /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
         /// <param name="orderId">the order id.</param>

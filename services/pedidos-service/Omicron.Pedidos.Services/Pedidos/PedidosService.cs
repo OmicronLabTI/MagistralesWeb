@@ -1048,10 +1048,36 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="parameters">the params.</param>
         /// <returns>the data.</returns>
-        public Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
+        public async Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
         {
-            var dateFilter = GetFabOrderUtils.GetDateFilter(parameters);
+            var localFilterOrders = await GetFabOrderUtils.GetOrdersByFilter(parameters, this.pedidosDao);
+            var ordersId = localFilterOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
 
+            var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = ordersId }, ServiceConstants.GetFabOrdersByFilter);
+            var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+
+            if (!sapOrders.Any())
+            {
+                return ServiceUtils.CreateResult(true, 200, null, new List<FabricacionOrderModel>(), null);
+            }
+
+            var sapOrdersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(sapOrdersId)).ToList();
+            var usersId = userOrders.Select(x => x.Userid).ToList();
+
+            var userService = await this.userService.PostSimpleUsers(usersId, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userService.Response.ToString());
+
+            var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
+
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            var orderToReturnSkip = orderToReturn.Skip(offsetNumber).Take(limitNumber).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null);
         }
 
         /// <summary>

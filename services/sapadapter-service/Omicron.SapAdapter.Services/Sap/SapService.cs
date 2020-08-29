@@ -302,6 +302,29 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="orderFabModel">the params.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
+        {
+            var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
+
+            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
+                orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
+                orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
+            {
+                var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
+                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
+            }
+
+            var dataBaseOrders = await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao);
+            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, null);
+
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

@@ -77,8 +77,8 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Look for the orders.
         /// </summary>
-        /// <param name="parameters">the parameters.</param>
+        /// <param name="orderFabDto">the parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters);
+        Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto);
     }
 }

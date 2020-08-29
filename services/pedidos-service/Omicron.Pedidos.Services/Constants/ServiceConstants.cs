@@ -244,6 +244,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetComponentsWithBatches = "componentes/lotes/{0}";
 
         /// <summary>
+        /// gets the data by the filters.
+        /// </summary>
+        public const string GetFabOrdersByFilter = "fabOrder/filters";
+
+        /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
+        public const string GetUsersById = "getUsersById";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
@@ -327,11 +337,6 @@ namespace Omicron.Pedidos.Services.Constants
         /// the filter for orders.
         /// </summary>
         public const string Qfb = "qfb";
-
-        /// <summary>
-        /// the filter for orders.
-        /// </summary>
-        public const string ItemCode = "code";
 
         /// <summary>
         /// const for offset.

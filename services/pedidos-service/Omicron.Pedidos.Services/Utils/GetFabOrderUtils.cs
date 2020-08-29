@@ -35,20 +35,24 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             var listOrders = new List<UserOrderModel>();
-            if (parameters.ContainsKey(ServiceConstants.Qfb))
+            var filterQfb = parameters.ContainsKey(ServiceConstants.Qfb);
+            var filterFechaFin = parameters.ContainsKey(ServiceConstants.FechaFin);
+            var filterStatus = parameters.ContainsKey(ServiceConstants.Status);
+
+            if (filterQfb)
             {
                 listOrders.AddRange((await pedidosDao.GetUserOrderByUserId(new List<string> { parameters[ServiceConstants.Qfb] })).ToList());
             }
 
-            if (parameters.ContainsKey(ServiceConstants.FechaFin))
+            if (filterStatus)
             {
-                var dateFilter = GetDateFilter(parameters);
-                listOrders.AddRange((await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
+                var listStatus = filterQfb ? listOrders.Where(x => x.Status.Equals(parameters[ServiceConstants.Status])).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { parameters[ServiceConstants.Status] })).ToList();
+                listOrders.AddRange(listStatus);
             }
 
-            if (parameters.ContainsKey(ServiceConstants.Status))
+            if (filterFechaFin)
             {
-                listOrders.AddRange((await pedidosDao.GetUserOrderByStatus(new List<string> { parameters[ServiceConstants.Status] })).ToList());
+                listOrders = await GetOrdersFilteredByDate(parameters, filterQfb || filterStatus, listOrders, pedidosDao);
             }
 
             return listOrders.DistinctBy(x => x.Id).ToList();
@@ -67,6 +71,44 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return new Dictionary<string, DateTime>();
+        }
+
+        /// <summary>
+        /// Creates the model to return.
+        /// </summary>
+        /// <param name="fabOrderModel">the order.</param>
+        /// <param name="userOrders">the user order.</param>
+        /// <param name="users">the user.</param>
+        /// <returns>the data.</returns>
+        public static List<CompleteOrderModel> CreateModels(List<FabricacionOrderModel> fabOrderModel, List<UserOrderModel> userOrders, List<UserModel> users)
+        {
+            var listToReturn = new List<CompleteOrderModel>();
+
+            fabOrderModel.ForEach(x =>
+            {
+                var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid.Equals(x.OrdenId.ToString()));
+                userOrder = userOrder == null ? new UserOrderModel() : userOrder;
+                var status = userOrder.Status == null ? ServiceConstants.Abierto : userOrder.Status;
+
+                var user = users.FirstOrDefault(y => y.Id.Equals(userOrder.Userid));
+
+                var fabOrder = new CompleteOrderModel
+                {
+                    DocNum = x.PedidoId,
+                    FabOrderId = x.OrdenId,
+                    ItemCode = x.ProductoId,
+                    Description = x.ProdName,
+                    Quantity = x.Quantity,
+                    CreateDate = x.CreatedDate.ToString("dd/MM/yyyy"),
+                    FinishDate = userOrder.FinishDate == null ? string.Empty : userOrder.FinishDate,
+                    Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
+                    Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                };
+
+                listToReturn.Add(fabOrder);
+            });
+
+            return listToReturn;
         }
 
         /// <summary>
@@ -106,6 +148,39 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return dateArrayNum;
+        }
+
+        /// <summary>
+        /// Get the data filtered by date.
+        /// </summary>
+        /// <param name="parameters">the original dict.</param>
+        /// <param name="dataFiltered">if there are other filtesr.</param>
+        /// <param name="listOrders">the data already filtered.</param>
+        /// <param name="pedidosDao">the dao.</param>
+        /// <returns>the data.</returns>
+        private static async Task<List<UserOrderModel>> GetOrdersFilteredByDate(Dictionary<string, string> parameters, bool dataFiltered, List<UserOrderModel> listOrders, IPedidosDao pedidosDao)
+        {
+            var dateFilter = GetDateFilter(parameters);
+
+            if (dataFiltered)
+            {
+                var listToReturn = new List<UserOrderModel>();
+                listOrders.ForEach(x =>
+                {
+                    DateTime.TryParse(x.FinishDate, out var date);
+
+                    if (date >= dateFilter[ServiceConstants.FechaInicio] && date <= dateFilter[ServiceConstants.FechaFin])
+                    {
+                        listToReturn.Add(x);
+                    }
+                });
+
+                return listToReturn;
+            }
+            else
+            {
+                return (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+            }
         }
     }
 }

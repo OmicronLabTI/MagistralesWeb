@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.User
 {
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
@@ -52,6 +53,26 @@ namespace Omicron.Pedidos.Services.User
                     throw new CustomServiceException(jsonString);
                 }
 
+                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// gets the data.
+        /// </summary>
+        /// <param name="data">the data.</param>
+        /// <param name="route">the route.</param>
+        /// <returns>the returns.</returns>
+        public async Task<ResultModel> PostSimpleUsers(object data, string route)
+        {
+            ResultModel result;
+            var stringContent = new StringContent(JsonConvert.SerializeObject(data), UnicodeEncoding.UTF8, "application/json");
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
+            {
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
             }
 

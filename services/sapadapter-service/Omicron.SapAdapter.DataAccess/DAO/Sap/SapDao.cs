@@ -208,6 +208,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// gets the orders by orderid.
+        /// </summary>
+        /// <param name="fechaInit">initial date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
+        /// Gets the prod by itemcode.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(List<string> itemCode)
+        {
+            return await this.databaseContext.OrdenFabricacionModel.Where(x => itemCode.Any(y => x.ProductoId.Contains(y))).ToListAsync();
+        }
+
+        /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
         /// <param name="orderId">the order id.</param>
