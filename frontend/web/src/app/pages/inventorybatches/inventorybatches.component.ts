@@ -286,7 +286,6 @@ export class InventorybatchesComponent implements OnInit {
     this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
         this.batchesService.updateBatches(objectToSave).subscribe( resultSaveBatches => {
-          console.log("asdasdads: ", resultSaveBatches)
           if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
