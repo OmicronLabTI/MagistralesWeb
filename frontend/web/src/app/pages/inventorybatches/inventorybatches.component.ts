@@ -119,7 +119,7 @@ export class InventorybatchesComponent implements OnInit {
 
   addLotes(element: ILotesReq){
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
-      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada === CONST_NUMBER.zero){
+      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero){
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
         if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
@@ -138,9 +138,8 @@ export class InventorybatchesComponent implements OnInit {
         }
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
         this.tableLotesView();
-        element.cantidadDisponible = parseFloat(element
-          .cantidadDisponible.toFixed(6)) - parseFloat(element
-          .cantidadSeleccionada.toFixed(6));
+        element.cantidadDisponible = parseFloat((element
+          .cantidadDisponible - element.cantidadSeleccionada).toFixed(6));
         this.setTotales(element.cantidadSeleccionada);
         this.isReadyToSave = true;
       }
@@ -287,7 +286,7 @@ export class InventorybatchesComponent implements OnInit {
         this.batchesService.updateBatches(objectToSave).subscribe( () => {
           this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
             if (resultBatchSave.isConfirmed) {
-              window.location.reload();
+              //window.location.reload();
             }
           });
         }, error => console.log('error: ', error ));
