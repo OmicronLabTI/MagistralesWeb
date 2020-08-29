@@ -77,11 +77,19 @@ class LotsViewModel {
                     self.lotsAvailablesAux[indexLotAvailable].cantidadDisponible! += self.itemLotSelected!.cantidadSeleccionada!
                     self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! += self.itemLotSelected!.cantidadSeleccionada!
                     self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! -= self.itemLotSelected!.cantidadSeleccionada!
-                    self.dataOfLots.onNext(self.lineDocumentsDataAux)
-                    self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
                     self.lotsSelectedAux.remove(at: index!)
-                    self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                } else {
+                    for item in self.lineDocumentsDataAux {
+                        if let indexOfTable = item.lotesDisponibles?.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote})) {
+                            let lotAvailable = LotsAvailable(numeroLote: item.lotesDisponibles![indexOfTable].numeroLote , cantidadDisponible:  item.lotesDisponibles![indexOfTable].cantidadDisponible!, cantidadAsignada:  item.lotesDisponibles![indexOfTable].cantidadAsignada!, cantidadSeleccionada:  item.lotesDisponibles![indexOfTable].cantidadSeleccionada!, sysNumber:  item.lotesDisponibles![indexOfTable].sysNumber!)
+                            self.lotsAvailablesAux.append(lotAvailable)
+                        }
+                    }
                 }
+                
+                self.dataOfLots.onNext(self.lineDocumentsDataAux)
+                self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
+                self.dataLotsSelected.onNext(self.lotsSelectedAux)
             }
         }).disposed(by: self.disposeBag)
         
@@ -93,11 +101,7 @@ class LotsViewModel {
         NetworkManager.shared.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { data in
             self.loading.onNext(false)
             if let lotsData = data.response {
-                self.dataOfLots.onNext(lotsData)
-                if let lots = lotsData.first {
-                    self.dataLotsAvailable.onNext(lots.lotesDisponibles!)
-                    self.dataLotsSelected.onNext(lots.lotesSelecionados!)
-                    self.lineDocumentsDataAux = lotsData
+                if lotsData.first != nil {
                     // Se asignan los valores a cada lote disponible su cantidad sugerida (total necesario)
                     for lotData in lotsData {
                         for lot in lotData.lotesDisponibles!{
@@ -108,8 +112,23 @@ class LotsViewModel {
                         lot.cantidadSeleccionada = lotsData[0].totalNecesario
                     }
                     
-                    self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
-                    self.lotsSelectedAux = lotsData[0].lotesSelecionados!
+                    // Validación por si hay un solo lote se pasa directamemte a lotes seleccionados
+                    if( lotsData[0].lotesDisponibles!.count == 1 && lotsData[0].lotesSelecionados!.count == 0 &&  lotsData[0].lotesDisponibles![0].cantidadSeleccionada! <= lotsData[0].totalNecesario!) {
+                        let lotSelected = LotsSelected(numeroLote: lotsData[0].lotesDisponibles![0].numeroLote! , cantidadSeleccionada:  lotsData[0].lotesDisponibles![0].cantidadSeleccionada!, sysNumber:  lotsData[0].lotesDisponibles![0].sysNumber!)
+                            
+                        lotsData[0].totalNecesario = 0
+                        lotsData[0].totalSeleccionado = lotsData[0].lotesDisponibles![0].cantidadSeleccionada!
+                         self.lotsSelectedAux = [lotSelected]
+                        self.lotsAvailablesAux = []
+                    } else {
+                        self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
+                        self.lotsSelectedAux = lotsData[0].lotesSelecionados!
+                    }
+                    
+                    self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
+                    self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                    self.dataOfLots.onNext(lotsData)
+                    self.lineDocumentsDataAux = lotsData
                 }
             }
         }, onError: { error in

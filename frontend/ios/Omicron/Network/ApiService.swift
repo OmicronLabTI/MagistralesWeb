@@ -19,6 +19,7 @@ enum ApiService {
     case changeStatusOrder(changeStatusRequest: [ChangeStatusRequest])
     case getLots(orderId: Int)
     case finishOrder(finishOrder: FinishOrder)
+    case assingLots(lotsRequest: LotsRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -52,20 +53,18 @@ extension ApiService: AuthorizedTargetType {
             return "sapadapter/componentes/lotes/\(orderId)"
         case .finishOrder:
             return "pedidos/finishOrder"
+        case .assingLots:
+            return "/pedidos/assignBatches"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .login, .renew, .finishOrder:
+        case .login, .renew, .finishOrder, .assingLots:
             return .post
-        case .getInfoUser,
-             .getStatusList,
-             .getLots,
-             .getOrdenDetail:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail:
             return .get
-        case .deleteItemOfOrdenDetail,
-             .changeStatusOrder:
+        case .deleteItemOfOrdenDetail, .changeStatusOrder:
             return .put
         }
     }
@@ -86,6 +85,8 @@ extension ApiService: AuthorizedTargetType {
         case .changeStatusOrder(let data):
             return .requestJSONEncodable(data)
         case .finishOrder(let data):
+            return .requestJSONEncodable(data)
+        case .assingLots(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -140,6 +141,13 @@ extension ApiService: AuthorizedTargetType {
             return data
             
         case .finishOrder:
+            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+            
+        case .assingLots:
             guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()

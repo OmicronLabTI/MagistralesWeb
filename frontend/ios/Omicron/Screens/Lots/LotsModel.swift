@@ -46,6 +46,14 @@ class LotsAvailable {
     var numeroLote: String?
     var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Double?
     var sysNumber: Int?
+    
+    init (numeroLote: String?, cantidadDisponible:Double, cantidadAsignada:Double, cantidadSeleccionada: Double, sysNumber: Int) {
+        self.numeroLote = numeroLote
+        self.cantidadDisponible = cantidadDisponible
+        self.cantidadAsignada = cantidadAsignada
+        self.cantidadSeleccionada = cantidadSeleccionada
+        self.sysNumber = sysNumber
+    }
     required init?(map: Map) {}
 }
 
@@ -86,5 +94,21 @@ class LotsAvailableInfo {
     init(row: Int,  quantitySelected: String) {
         self.row = row
         self.quantitySelected = quantitySelected
+    }
+}
+
+class LotsRequest:Codable {
+    var orderId: Int?
+    var assignedQty: Double?
+    var batchNumber: String?
+    var itemCode: String?
+    var action: String?
+    
+    init(orderId: Int, assignedQty: Double, batchNumber: String, itemCode: String, action: String) {
+        self.orderId = orderId
+        self.assignedQty = assignedQty
+        self.batchNumber = batchNumber
+        self.itemCode = itemCode
+        self.action = action
     }
 }

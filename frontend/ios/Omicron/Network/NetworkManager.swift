@@ -117,7 +117,14 @@ class NetworkManager: SessionProtocol {
         let res: Observable<OrderDetailResponse> = makeRequest(request: req)
         return res
     }
-
+    
+    // Asigna lotes a una orden de fabricación
+    func assingLots(lotsRequest: LotsRequest) -> Observable<OrderDetailResponse> {
+        let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)
+        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        return res
+    }
+    
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?
