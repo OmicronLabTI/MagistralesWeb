@@ -37,7 +37,7 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var lotsAvailable: UIView!
     @IBOutlet weak var lotsSelected: UIView!
     
-    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var saveLotsButton: UIButton!
     
     
     @IBOutlet weak var lineDocTable: UITableView!
@@ -63,6 +63,7 @@ class LotsViewController: UIViewController {
         
         self.addLotButton.rx.tap.bind(to: self.lotsViewModel.addLotDidTap).disposed(by: self.disposeBag)
         self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
+        self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
@@ -139,7 +140,7 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
         
-        UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)

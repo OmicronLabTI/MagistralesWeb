@@ -23,6 +23,7 @@ class LotsViewModel {
     var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])
     var addLotDidTap = PublishSubject<Void>()
     var removeLotDidTap = PublishSubject<Void>()
+    var saveLotsDidTap = PublishSubject<Void>()
     var quantitySelectedValue = ""
     
     var quantitySelectedInput = BehaviorSubject<String>(value: "")
@@ -36,22 +37,15 @@ class LotsViewModel {
     var itemLotSelected:LotsSelected? = nil
     
     init() {
-    
-        // Obtiene los valores para poder añadir lotes disponibles a seleccionados por checar
+
+        // Añade lotes de Lotes disponibles a Lotes Seleccionados
         let inputs = Observable.combineLatest(rowSelected, quantitySelectedInput)
-        
         self.addLotDidTap.withLatestFrom(inputs).map({
             LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
-            
-            print("elemento selecionado: \(self.itemSelectedLineDocuments)")
-            
-            
             let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
 
             if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadSeleccionada! )) {
-                print("Si se pasa")
-
                 let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
                 if((index) != nil) {
                     self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
@@ -66,9 +60,9 @@ class LotsViewModel {
                 self.dataLotsSelected.onNext(self.lotsSelectedAux)
                 self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
             }
-            
         }).disposed(by: self.disposeBag)
         
+        // Remueve un lote de Lotes seleccionados y lo pasa a Lotes Disponibles
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
             let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote}))
             if (index != nil) {
@@ -92,6 +86,12 @@ class LotsViewModel {
                 self.dataLotsSelected.onNext(self.lotsSelectedAux)
             }
         }).disposed(by: self.disposeBag)
+        
+        
+        // Guada los lotes selecionados y los manda al servicio
+        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.assingLots()
+        }).self.disposed(by: self.disposeBag)
         
     }
     
@@ -158,5 +158,26 @@ class LotsViewModel {
     func getLotOfLotsAvailableTable(lot: LotsAvailable) -> Void {
         print("Value cuando se seleccionó un elemento \(self.quantitySelectedValue)")
         print("Objecto completo de lotes disponibles: \(lot)")
+    }
+    
+    func assingLots() -> Void {
+        self.loading.onNext(true)
+        var assignedOrders: [LotsRequest] = []
+        
+        for lot in self.lotsSelectedAux {
+            let lotAssigned = LotsRequest(orderId: self.orderId, assignedQty: lot.cantidadSeleccionada!, batchNumber: lot.numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto! , action: "update")
+            assignedOrders.append(lotAssigned)
+        }
+        
+        print("Ordenes to send: \(assignedOrders)")
+        
+        NetworkManager.shared.assingLots(lotsRequest: assignedOrders).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.loading.onNext(false)
+            self.showMessage.onNext("")
+        }, onError:  { error in
+            self.loading.onNext(false)
+            self.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
+        }).disposed(by: self.disposeBag)
+        
     }
 }
