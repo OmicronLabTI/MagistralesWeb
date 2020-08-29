@@ -286,7 +286,7 @@ export class InventorybatchesComponent implements OnInit {
         this.batchesService.updateBatches(objectToSave).subscribe( () => {
           this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
             if (resultBatchSave.isConfirmed) {
-              //window.location.reload();
+              window.location.reload();
             }
           });
         }, error => console.log('error: ', error ));
