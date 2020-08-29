@@ -47,7 +47,7 @@ namespace Omicron.SapAdapter.Services.Utils
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
             {
                 var code = parameters[ServiceConstants.ItemCode];
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.Contains(code)).ToList() : (await sapDao.GetFabOrderByItemCode(new List<string> { code })).ToList();
+                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.Contains(code)).ToList() : (await sapDao.GetFabOrderByItemCode(code)).ToList();
             }
 
             return listToReturn.DistinctBy(x => x.OrdenId).ToList();

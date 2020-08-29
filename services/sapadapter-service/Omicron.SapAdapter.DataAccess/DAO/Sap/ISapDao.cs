@@ -79,7 +79,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="itemCode">the item code.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(List<string> itemCode);
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode);
 
         /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.

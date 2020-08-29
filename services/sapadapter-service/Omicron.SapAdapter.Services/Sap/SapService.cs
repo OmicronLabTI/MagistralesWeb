@@ -321,7 +321,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var dataBaseOrders = await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao);
             return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, null);
-
         }
 
         /// <summary>
