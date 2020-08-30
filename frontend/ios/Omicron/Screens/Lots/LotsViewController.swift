@@ -103,6 +103,11 @@ class LotsViewController: UIViewController {
         
         self.lineDocTable.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext: { index in
             self.lotsViewModel.itemSelectedLineDocuments = index.row
+            self.lineDocTable.selectRow(at: index, animated: true, scrollPosition: .none)
+        }).disposed(by: self.disposeBag)
+
+        self.lotsViewModel.firstTime.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .none)
         }).disposed(by: self.disposeBag)
                 
         // Muestra o coulta el loading
