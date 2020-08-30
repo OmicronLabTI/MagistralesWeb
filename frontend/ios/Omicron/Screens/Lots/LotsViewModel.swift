@@ -25,7 +25,7 @@ class LotsViewModel {
     var removeLotDidTap = PublishSubject<Void>()
     var saveLotsDidTap = PublishSubject<Void>()
     var quantitySelectedValue = ""
-    
+    var lotsSelectedCopy:[LotsSelected] = []
     var quantitySelectedInput = BehaviorSubject<String>(value: "")
     var rowSelected = PublishSubject<Int>()
     
@@ -35,7 +35,7 @@ class LotsViewModel {
     
     var itemSelectedLineDocuments: Int = 0
     var itemLotSelected:LotsSelected? = nil
-    
+    var prueba: [Any] = []
     init() {
 
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
@@ -44,14 +44,16 @@ class LotsViewModel {
             LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
             let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
-
-            if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadSeleccionada! )) {
+            
+            if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! )) {
                 let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
                 if((index) != nil) {
                     self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
                 } else {
                     self.lotsSelectedAux.append(lotSelected)
                 }
+                
+                self.prueba.append(self.lotsSelectedAux)
                 
                 self.lotsAvailablesAux[data.row].cantidadDisponible! -= lotSelected.cantidadSeleccionada!
                 self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! -= lotSelected.cantidadSeleccionada!
@@ -119,10 +121,12 @@ class LotsViewModel {
                         lotsData[0].totalNecesario = 0
                         lotsData[0].totalSeleccionado = lotsData[0].lotesDisponibles![0].cantidadSeleccionada!
                          self.lotsSelectedAux = [lotSelected]
+                        self.lotsSelectedCopy = [lotSelected]
                         self.lotsAvailablesAux = []
                     } else {
                         self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
                         self.lotsSelectedAux = lotsData[0].lotesSelecionados!
+                        self.lotsSelectedCopy = lotsData[0].lotesSelecionados!
                     }
                     
                     self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
@@ -154,30 +158,63 @@ class LotsViewModel {
             self.lotsSelectedAux = lot.lotesSelecionados!
         }
     }
-    
-    func getLotOfLotsAvailableTable(lot: LotsAvailable) -> Void {
-        print("Value cuando se seleccionó un elemento \(self.quantitySelectedValue)")
-        print("Objecto completo de lotes disponibles: \(lot)")
-    }
-    
-    func assingLots() -> Void {
-        self.loading.onNext(true)
-        var assignedOrders: [LotsRequest] = []
         
-        for lot in self.lotsSelectedAux {
-            let lotAssigned = LotsRequest(orderId: self.orderId, assignedQty: lot.cantidadSeleccionada!, batchNumber: lot.numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto! , action: "update")
-            assignedOrders.append(lotAssigned)
+    func assingLots() -> Void {
+        
+        // Proceso de eliminación
+        // Se busca lote del arreglo original (lotsSelectedCopy) en arreglo actual (lotsSelectedAux)
+        // Si existe no se realiza nada
+        // No existe, se crea el objeto para la eliminación en servicio
+        var lotsRequest:[LotsRequest] = []
+        
+        for lso in self.lotsSelectedCopy {
+            
+            if (self.lotsSelectedAux.first(where: ({$0.numeroLote == lso.numeroLote})) == nil) {
+                let lotRequest = LotsRequest(orderId: self.orderId, assignedQty: lso.cantidadSeleccionada!, batchNumber: lso.numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!, action: "delete")
+                lotsRequest.append(lotRequest)
+            }
         }
         
-        print("Ordenes to send: \(assignedOrders)")
+        // Proceso de inserción y actualización
+        //Se busca lote del arreglo actual (lotsSelectedAux) en el arreglo original (lotsSelectedCopy)
+        // Si existe se crea el objeto de eliminación del arreglo original, se obtiene el valor absoluto de la resta de cantidad seleccionada entre lotsSelectedAux y lotsSelectedCopy, por último se crea el objecto de actualización con el valor de la resta
+        //No existe se crea un nuevo objeto de inserción
         
-        NetworkManager.shared.assingLots(lotsRequest: assignedOrders).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+        for lsa in self.lotsSelectedAux {
+            var lotRequest:LotsRequest? = nil
+            
+            if let index = self.lotsSelectedCopy.firstIndex(where: ({ $0.numeroLote == lsa.numeroLote })) {
+                
+                // Se crea el objeto de eliminación
+                lotRequest = LotsRequest(orderId: self.orderId, assignedQty: self.lotsSelectedCopy[index].cantidadSeleccionada!, batchNumber: self.lotsSelectedCopy[index].numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!, action: "delete")
+                lotsRequest.append(lotRequest!)
+                
+                //Se obtiene el valor absoluto de la resta de cantidad seleccionada entre lotsSelectedAux y lotsSelectedCopy, por último se crea el objecto de actualización con el valor de la resta
+                var  subtraction = lsa.cantidadSeleccionada! - self.lotsSelectedCopy[index].cantidadSeleccionada!
+                if(subtraction.isLess(than: 0.0)) {
+                    subtraction = (subtraction * -1)
+                }
+                
+                lotRequest = LotsRequest(orderId: self.orderId, assignedQty: subtraction, batchNumber: self.lotsSelectedCopy[index].numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!, action: "update")
+                lotsRequest.append(lotRequest!)
+            } else {
+                 //No existe se crea un nuevo objeto de inserción
+                lotRequest = LotsRequest(orderId: self.orderId, assignedQty: lsa.cantidadSeleccionada!, batchNumber: lsa.numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!, action: "insert")
+                lotsRequest.append(lotRequest!)
+            }
+        }
+        
+    }
+    
+    
+    func sendToServerAssignedLots(lotsToSend: [LotsRequest]) -> Void {
+        self.loading.onNext(true)
+        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.loading.onNext(false)
             self.showMessage.onNext("")
         }, onError:  { error in
             self.loading.onNext(false)
             self.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
         }).disposed(by: self.disposeBag)
-        
     }
 }
