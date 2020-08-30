@@ -42,6 +42,50 @@ extension Lots: Mappable {
     }
 }
 
+class LotsAux {
+    var codigoProducto, descripcionProducto, almacen: String?
+    var totalNecesario, totalSeleccionado: NSDecimalNumber?
+    var lotesSelecionados: [LotsSelectedAux]?
+    var lotesDisponibles: [LotsAvailableAux]?
+    
+    init (codigoProducto: String, descripcionProducto: String, almacen: String,  totalNecesario: NSDecimalNumber, totalSeleccionado: NSDecimalNumber, lotesSelecionados: [LotsSelectedAux], lotesDisponibles: [LotsAvailableAux]) {
+        self.codigoProducto = codigoProducto
+        self.descripcionProducto = descripcionProducto
+        self.almacen = almacen
+        self.totalNecesario = totalNecesario
+        self.totalSeleccionado = totalSeleccionado
+        self.lotesSelecionados = lotesSelecionados
+        self.lotesDisponibles = lotesDisponibles
+        
+    }
+}
+
+class LotsAvailableAux {
+    var numeroLote: String?
+    var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: NSDecimalNumber?
+    var sysNumber: Int?
+    
+    init (numeroLote: String?, cantidadDisponible: NSDecimalNumber, cantidadAsignada:NSDecimalNumber, cantidadSeleccionada: NSDecimalNumber, sysNumber: Int) {
+        self.numeroLote = numeroLote
+        self.cantidadDisponible = cantidadDisponible
+        self.cantidadAsignada = cantidadAsignada
+        self.cantidadSeleccionada = cantidadSeleccionada
+        self.sysNumber = sysNumber
+    }
+}
+
+class LotsSelectedAux {
+    var numeroLote: String?
+    var cantidadSeleccionada: NSDecimalNumber?
+    var sysNumber: Int?
+    
+    init(numeroLote: String, cantidadSeleccionada: NSDecimalNumber, sysNumber: Int) {
+        self.numeroLote = numeroLote
+        self.cantidadSeleccionada = cantidadSeleccionada
+        self.sysNumber = sysNumber
+    }
+}
+
 class LotsAvailable {
     var numeroLote: String?
     var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Double?

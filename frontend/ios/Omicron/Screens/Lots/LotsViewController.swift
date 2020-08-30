@@ -72,8 +72,8 @@ class LotsViewController: UIViewController {
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text = "\(data.totalNecesario!)"
-            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!)"
+            cell.totalNeededLabel.text = "\(data.totalNecesario!.decimalValue)"
+            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!.decimalValue)"
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles
@@ -98,7 +98,7 @@ class LotsViewController: UIViewController {
         
         // Detecta que item de la tabla lotes selecionados fué selecionado
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
-            self.lotsViewModel.itemLotSelected = item
+//            self.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
         
         self.lineDocTable.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext: { index in
