@@ -58,12 +58,16 @@ class InboxViewController: UIViewController {
         
         // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
         collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ indexpath in
-            if(indexpath.row >= 0) {
+            if self.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
                 self.processButton.isEnabled = true
-                return
             }
-            self.processButton.isEnabled = false
         }).disposed(by: self.disposeBag)
+        
+        collectionView.rx.itemDeselected.subscribe(onNext: { _ in
+            if self.collectionView.indexPathsForSelectedItems?.count == 0 {
+                self.processButton.isEnabled = false
+            }
+        }).disposed(by: disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
