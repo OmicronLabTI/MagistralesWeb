@@ -244,7 +244,7 @@ export class InventorybatchesComponent implements OnInit {
   setTotales(cantidadSeleccionada?: number) {
     if (cantidadSeleccionada !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat(
-        (this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(6)
+        (parseFloat(this.dataSourceDetails.data[this.indexSelected].totalSeleccionado.toFixed(6)) + cantidadSeleccionada).toFixed(6)
       );
       this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat(
         (this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(6)
@@ -290,7 +290,9 @@ export class InventorybatchesComponent implements OnInit {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
             this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
-            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom).then( (resultBatchSave: any) => {
+            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom);
+          } else {
+            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }
