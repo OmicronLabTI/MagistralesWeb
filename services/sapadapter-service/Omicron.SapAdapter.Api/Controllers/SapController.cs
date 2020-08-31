@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
 
     /// <summary>
@@ -145,6 +146,30 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             var result = await this.sapFacade.GetlLastIsolatedProductionOrderId(productId, uniqueId);
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="orderFabDto">The orderFabDto.</param>
+        /// <returns>the data.</returns>
+        [Route("/fabOrder/filters")]
+        [HttpPost]
+        public async Task<IActionResult> GetFabOrders(GetOrderFabDto orderFabDto)
+        {
+            var result = await this.sapFacade.GetFabOrders(orderFabDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/ping")]
+        [HttpGet]
+        public async Task<IActionResult> Ping()
+        {
+            return this.Ok("Pong");
         }
     }
 }

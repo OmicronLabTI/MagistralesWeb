@@ -82,6 +82,10 @@ namespace Omicron.Pedidos.Test.Services
 
             this.usersService = new Mock<IUsersService>();
 
+            this.usersService
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
         }
@@ -793,6 +797,110 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByDocNum()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, "100" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByQfb()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByStatus()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Status, "Asignado" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByDate()
+        {
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dateFinal) },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersAllFilters()
+        {
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Status, "Asignado" },
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
         }
     }
 }

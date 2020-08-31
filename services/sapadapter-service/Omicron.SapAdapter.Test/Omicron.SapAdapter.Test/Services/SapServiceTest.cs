@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
@@ -386,6 +387,248 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyLocals()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 100 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.Status, "Asignado" },
+                    { ServiceConstants.Qfb, "abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyLocalsFechaIni()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.Status, "Asignado" },
+                    { ServiceConstants.Qfb, "abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyLocalsItemCode()
+        {
+            // arrange
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.ItemCode, "Abc" },
+                    { ServiceConstants.Status, "Asignado" },
+                    { ServiceConstants.Qfb, "abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyLocalsItemCodeFechaIni()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.ItemCode, "Abc" },
+                    { ServiceConstants.Status, "Asignado" },
+                    { ServiceConstants.Qfb, "abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyLocalsDocNum()
+        {
+            // arrange
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.DocNum, "100" },
+                    { ServiceConstants.Qfb, "abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersDbFechaIni()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersDbItemCode()
+        {
+            // arrange
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.ItemCode, "Abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersDbItemCodeDateIni()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.ItemCode, "Abc" },
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersDocNum()
+        {
+            // arrange
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.DocNum, "100" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
             Assert.IsNotNull(result);

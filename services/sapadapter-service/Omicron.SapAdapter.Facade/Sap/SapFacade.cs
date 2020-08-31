@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Sap;
 
     /// <summary>
@@ -116,6 +117,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId));
+        }
+
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="orderFabDto">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrders(this.mapper.Map<GetOrderFabModel>(orderFabDto)));
         }
     }
 }
