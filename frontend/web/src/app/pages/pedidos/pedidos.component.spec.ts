@@ -9,9 +9,11 @@ import {PedidosService} from '../../services/pedidos.service';
 import {of, throwError} from 'rxjs';
 import {PedidosListMock} from '../../../mocks/pedidosListMock';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ConstStatus, MODAL_NAMES} from '../../constants/const';
+import {ConstStatus} from '../../constants/const';
 import {PageEvent} from '@angular/material/paginator';
 import {DataService} from '../../services/data.service';
+import Swal from 'sweetalert2';
+import {IProcessOrdersRes} from '../../model/http/pedidos';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -24,8 +26,11 @@ describe('PedidosComponent', () => {
         'transformDate', 'setRefreshToken'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getPedidos'
+      'getPedidos', 'processOrders'
     ]);
+    pedidosServiceSpy.processOrders.and.callFake(() => {
+      return of({success: true, response: ['id']} as IProcessOrdersRes);
+    });
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
     });
@@ -89,24 +94,23 @@ describe('PedidosComponent', () => {
   });
   // only Locally
   it('should updateAllComplete', () => {
+    component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.forEach( user => user.isChecked = false);
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.forEach( user => user.isChecked = true);
     component.updateAllComplete();
     expect(component.allComplete).toBeTruthy();
-    component.dataSource.data.forEach( user => user.isChecked = false);
+
   });
   it('should someComplete', () => {
-
-    component.dataSource.data = null;
-    expect(component.someComplete()).toBeFalsy();
+    component.dataSource.data = [];
     component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.forEach( user => user.isChecked = false);
     component.allComplete = false;
     expect(component.someComplete()).toBeFalsy();
     component.dataSource.data.forEach( user => user.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
-    component.dataSource.data.forEach( user => user.isChecked = false);
   });
   it('should setAll', () => {
     component.dataSource.data = null;
@@ -136,6 +140,29 @@ describe('PedidosComponent', () => {
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.filter( order => order.pedidoStatus === ConstStatus.planificado)
         .forEach(order => order.isChecked = true);
-    // expect(dataServiceSpy.setQbfToPlace).toHaveBeenCalledWith({modalType: MODAL_NAMES.placeOrders, list: [60022]});
+  });
+  it('should cancelOrders', () => {
+    component.dataSource.data = [];
+    component.cancelOrders();
+    component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.filter( order => order.pedidoStatus !== ConstStatus.finalizado)
+        .forEach(order => order.isChecked = true);
+  });
+  it('should finalizeOrders', () => {
+    component.dataSource.data = [];
+    component.finalizeOrders();
+    component.dataSource.data = PedidosListMock.response;
+    component.dataSource.data.filter( order => order.pedidoStatus === ConstStatus.terminado)
+        .forEach(order => order.isChecked = true);
+  });
+  it('should processOrders', (done) => {
+    component.dataSource.data = [];
+    component.processOrdersService();
+    setTimeout(() => {
+      expect(Swal.isVisible()).toBeTruthy();
+      Swal.clickConfirm();
+      // expect(pedidosServiceSpy.processOrders).toHaveBeenCalled();
+      done();
+    });
   });
 });
