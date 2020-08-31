@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace Omicron.SapDiApi.Dtos.Models
 {
     /// <summary>
-    /// Close production order dto
+    /// Close production order dto.
     /// </summary>
     public class CloseProductionOrderDto
     {
@@ -25,7 +25,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         }
 
         /// <summary>
-        /// Gets or sets batches
+        /// Gets or sets batches.
         /// </summary>
         /// <value>The order batches.</value>
         public List<BatchesConfigurationDto> Batches

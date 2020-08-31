@@ -10,12 +10,12 @@ namespace Omicron.SapDiApi.Dtos.Models
     using System;
     
     /// <summary>
-    /// Batches configuration model
+    /// Batches configuration dto.
     /// </summary>
     public class BatchesConfigurationDto
     {
         /// <summary>
-        /// Gets or sets batch
+        /// Gets or sets batch.
         /// </summary>
         /// <value>Batch code.</value>
         public string BatchCode
@@ -24,7 +24,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         }
 
         /// <summary>
-        /// Gets or sets quantity in the batch
+        /// Gets or sets quantity in the batch.
         /// </summary>
         /// <value>The batch quantity.</value>
         public string Quantity
@@ -33,7 +33,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         }
 
         /// <summary>
-        /// Gets or sets the expiration date 
+        /// Gets or sets the expiration date.
         /// </summary>
         /// <value>The expiration date.</value>
         public DateTime ExpirationDate
@@ -42,7 +42,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         }
 
         /// <summary>
-        /// Gets or sets the manufacturing date
+        /// Gets or sets the manufacturing date.
         /// </summary>
         /// <value>The manufacturing date.</value>
         public DateTime ManufacturingDate
