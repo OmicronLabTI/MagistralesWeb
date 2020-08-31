@@ -60,11 +60,11 @@ extension ApiService: AuthorizedTargetType {
     
     var method: Moya.Method {
         switch self {
-        case .login, .renew, .finishOrder, .assingLots:
+        case .login, .renew, .finishOrder:
             return .post
         case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail:
             return .get
-        case .deleteItemOfOrdenDetail, .changeStatusOrder:
+        case .deleteItemOfOrdenDetail, .changeStatusOrder, .assingLots:
             return .put
         }
     }

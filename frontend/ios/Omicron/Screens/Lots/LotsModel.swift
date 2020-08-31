@@ -9,6 +9,18 @@
 import Foundation
 import ObjectMapper
 
+
+class AssingbBatchResponse: HttpResponse {
+    var response: [String]?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        response <- map["response"]
+    }
+}
+
 class LotsResponse: HttpResponse {
     var response: [Lots]?
     required init?(map: Map) {
@@ -110,5 +122,16 @@ class LotsRequest:Codable {
         self.batchNumber = batchNumber
         self.itemCode = itemCode
         self.action = action
+    }
+}
+
+
+class cacheLotsSelected {
+    var indexOdLineDocumentsTableSelected: Int
+    var lotsSelected: [LotsSelected]
+    
+    init (indexOdLineDocumentsTableSelected: Int, lotsSelected: [LotsSelected]) {
+        self.indexOdLineDocumentsTableSelected = indexOdLineDocumentsTableSelected
+        self.lotsSelected = lotsSelected
     }
 }

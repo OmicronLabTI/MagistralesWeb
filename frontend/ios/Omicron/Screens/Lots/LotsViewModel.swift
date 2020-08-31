@@ -36,6 +36,8 @@ class LotsViewModel {
     var itemSelectedLineDocuments: Int = 0
     var itemLotSelected:LotsSelected? = nil
     var prueba: [Any] = []
+
+    
     init() {
 
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
@@ -43,9 +45,12 @@ class LotsViewModel {
         self.addLotDidTap.withLatestFrom(inputs).map({
             LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
+            
+        
             let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada: Decimal(string: data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
             
-            if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! )) {
+            // Perdsiste la presición del problema con los decimales
+            if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! + 0.00000000000001)) {
                 let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
                 if((index) != nil) {
                     self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
@@ -204,14 +209,26 @@ class LotsViewModel {
             }
         }
         
+     self.sendToServerAssignedLots(lotsToSend: lotsRequest)
     }
     
     
     func sendToServerAssignedLots(lotsToSend: [LotsRequest]) -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
-            self.showMessage.onNext("")
+            if(res.response!.isEmpty) {
+                self.showMessage.onNext("Proceso realizado correctamente")
+                // actualiza la pantalla
+                self.getLots()
+                return
+            }
+
+            var badBatches = ""
+            for batch in res.response! {
+                badBatches += " \(batch)"
+            }
+            self.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
         }, onError:  { error in
             self.loading.onNext(false)
             self.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")

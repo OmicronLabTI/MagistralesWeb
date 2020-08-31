@@ -48,6 +48,7 @@ class LotsViewController: UIViewController {
     @Injected var lotsViewModel: LotsViewModel
     let disposeBag = DisposeBag()
     var orderId = -1
+    var formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,26 +73,23 @@ class LotsViewController: UIViewController {
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text = "\(data.totalNecesario!)"
-            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!)"
+            cell.totalNeededLabel.text =  self.formatter.string(from: data.totalNecesario! as NSNumber)
+            cell.totalSelectedLabel.text = self.formatter.string(from: data.totalSeleccionado! as NSNumber)
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles
         self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
-            let formatter = NumberFormatter()
-            formatter.minimumFractionDigits = 8
-
             cell.row = row
             cell.lotsLabel.text = data.numeroLote
-            cell.quantityAvailableLabel.text = formatter.string(from: data.cantidadDisponible! as NSNumber)
-            cell.quantitySelected.text = "\(data.cantidadSeleccionada!)"
-            cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
+            cell.quantityAvailableLabel.text = self.formatter.string(from: data.cantidadDisponible! as NSNumber)
+            cell.quantitySelected.text = self.formatter.string(from: data.cantidadSeleccionada! as NSNumber)
+            cell.quantityAssignedLabel.text = self.formatter.string(from: data.cantidadAsignada! as NSNumber)
         }.disposed(by: self.disposeBag)
         
         //Muestra los datos en la tabla de Lotes Selecionados
         self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) {row, data, cell in
             cell.lotsLabel.text = data.numeroLote
-            cell.quantitySelectedLabel.text = "\(data.cantidadSeleccionada!)"
+            cell.quantitySelectedLabel.text = self.formatter.string(from: data.cantidadSeleccionada! as NSNumber)
         }.disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla linea de documentos fué seleccionada
