@@ -100,7 +100,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listSales = userOrdersByProd.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
-            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, assignModel.UserId);
+            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, assignModel.UserId, ServiceConstants.Asignado);
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
@@ -188,6 +188,46 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Place the status for the orders.
+        /// </summary>
+        /// <param name="listFromOrders">the list sent from front.</param>
+        /// <param name="listFromSales">list from DB.</param>
+        /// <param name="user">the user to update.</param>
+        /// <param name="statusOrder">Status for the order fab.</param>
+        /// <returns>the data.</returns>
+        public static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, string user, string statusOrder)
+        {
+            var listToUpdate = new List<UserOrderModel>();
+
+            listFromSales
+                .GroupBy(x => x.Salesorderid)
+                .ToList()
+                .ForEach(y =>
+                {
+                    var currentOrdersBySale = listFromOrders.Where(z => z.Salesorderid == y.Key).ToList();
+                    var currentOrders = currentOrdersBySale.Select(x => x.Productionorderid).ToList();
+                    var missing = y.Any(z => z.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(z.Productionorderid) && !currentOrders.Contains(z.Productionorderid));
+
+                    currentOrdersBySale.ForEach(o =>
+                    {
+                        o.Userid = user;
+                        o.Status = statusOrder;
+                        listToUpdate.Add(o);
+
+                        if (!string.IsNullOrEmpty(o.Salesorderid))
+                        {
+                            var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
+                            pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
+                            pedido.Userid = user;
+                            listToUpdate.Add(o);
+                        }
+                    });
+                });
+
+            return listToUpdate;
+        }
+
+        /// <summary>
         /// populates the dict for the user pedido.
         /// </summary>
         /// <param name="pedidoUser">the dictionary.</param>
@@ -227,45 +267,6 @@ namespace Omicron.Pedidos.Services.Utils
 
             pedidoUser.Add(pedidoId, defaultUser);
             return pedidoUser;
-        }
-
-        /// <summary>
-        /// Place the status for the orders.
-        /// </summary>
-        /// <param name="listFromOrders">the list sent from front.</param>
-        /// <param name="listFromSales">list from DB.</param>
-        /// <param name="user">the user to update.</param>
-        /// <returns>the data.</returns>
-        private static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, string user)
-        {
-            var listToUpdate = new List<UserOrderModel>();
-
-            listFromSales
-                .GroupBy(x => x.Salesorderid)
-                .ToList()
-                .ForEach(y =>
-                {
-                    var currentOrdersBySale = listFromOrders.Where(z => z.Salesorderid == y.Key).ToList();
-                    var currentOrders = currentOrdersBySale.Select(x => x.Productionorderid).ToList();
-                    var missing = y.Any(z => z.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(z.Productionorderid) && !currentOrders.Contains(z.Productionorderid));
-
-                    currentOrdersBySale.ForEach(o =>
-                    {
-                        o.Userid = user;
-                        o.Status = ServiceConstants.Asignado;
-                        listToUpdate.Add(o);
-
-                        if (!string.IsNullOrEmpty(o.Salesorderid))
-                        {
-                            var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
-                            pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
-                            pedido.Userid = user;
-                            listToUpdate.Add(o);
-                        }
-                    });
-                });
-
-            return listToUpdate;
         }
 
         /// <summary>

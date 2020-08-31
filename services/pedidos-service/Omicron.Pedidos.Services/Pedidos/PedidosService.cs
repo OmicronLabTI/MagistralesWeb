@@ -12,11 +12,9 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using AutoMapper.Internal;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;

@@ -39,6 +39,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();
+            Services.AddTransient<IAssignPedidosService, AssignPedidosService>();
             Services.AddTransient<IPedidosDao, PedidosDao>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();

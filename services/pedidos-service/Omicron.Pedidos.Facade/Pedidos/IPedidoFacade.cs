@@ -171,5 +171,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Reassigns the orde to a user.
+        /// </summary>
+        /// <param name="manualAssign">the object to reassign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> ReassignOrder(ManualAssignDto manualAssign);
     }
 }

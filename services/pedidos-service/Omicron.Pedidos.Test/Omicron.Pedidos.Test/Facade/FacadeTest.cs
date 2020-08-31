@@ -55,6 +55,7 @@ namespace Omicron.Pedidos.Test.Facade
                 UserError = string.Empty,
             };
 
+            var mockerAssignPedidosService = new Mock<IAssignPedidosService>();
             var mockServicesPedidos = new Mock<IPedidosService>();
             mockServicesPedidos
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
@@ -144,7 +145,11 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
+            mockerAssignPedidosService
+                .Setup(m => m.ReassignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object);
         }
 
         /// <summary>
@@ -676,6 +681,34 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetFabOrders(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task ReassignOrder()
+        {
+            // arrange
+            var parameters = new ManualAssignDto()
+            {
+                DocEntry = new List<int> { 1, 2, 3 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abc",
+            };
+
+            // act
+            var response = await this.pedidoFacade.ReassignOrder(parameters);
 
             // Assert
             Assert.IsNotNull(response);

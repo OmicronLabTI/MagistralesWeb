@@ -334,6 +334,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="manualAssign">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/reasignar/manual")]
+        [HttpPost]
+        public async Task<IActionResult> ReassignOrder(ManualAssignDto manualAssign)
+        {
+            var response = await this.pedidoFacade.ReassignOrder(manualAssign);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
