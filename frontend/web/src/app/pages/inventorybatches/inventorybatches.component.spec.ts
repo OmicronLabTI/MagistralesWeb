@@ -14,7 +14,14 @@ describe('InventorybatchesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule, ReactiveFormsModule, FormsModule, BrowserAnimationsModule],
+      imports: [
+        RouterTestingModule,
+        MATERIAL_COMPONENTS,
+        HttpClientTestingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        BrowserAnimationsModule
+      ],
       declarations: [ InventorybatchesComponent ],
       providers: [DatePipe]
     })
@@ -55,27 +62,27 @@ describe('InventorybatchesComponent', () => {
     expect(component.getInventoryBatches()).toBeTruthy();
   });
 
-  it('should return true', () =>{
+  it('should return true', () => {
     expect(component.setSelectedTr()).toBeTruthy();
   });
 
-  it('should return false', () =>{
+  it('should return false', () => {
     expect(component.getBatchesFromSelected()).toBeFalsy();
   });
 
-  it('should return false', () =>{
+  it('should return false', () => {
     expect(component.deleteLotes()).toBeFalsy();
   });
 
-  it('should return false', () =>{
+  it('should return false', () => {
     expect(component.deleteDetails()).toBeFalsy();
   });
 
-  it('should return false', () =>{
+  it('should return false', () => {
     expect(component.setSelectedQuantity()).toBeFalsy();
   });
 
-  it('should return false', () =>{
+  it('should return false', () => {
     expect(component.setTotales()).toBeFalsy();
   });
 });

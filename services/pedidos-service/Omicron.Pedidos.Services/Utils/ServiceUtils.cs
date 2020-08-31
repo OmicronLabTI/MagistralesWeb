@@ -32,8 +32,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="userError">the user error.</param>
         /// <param name="responseObj">the responseobj.</param>
         /// <param name="exceptionMessage">the exception message.</param>
+        /// <param name="comments">The comments.</param>
         /// <returns>the resultModel.</returns>
-        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage)
+        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage, string comments = null)
         {
             return new ResultModel
             {
@@ -42,6 +43,7 @@ namespace Omicron.Pedidos.Services.Utils
                 UserError = userError,
                 ExceptionMessage = exceptionMessage,
                 Code = code,
+                Comments = comments,
             };
         }
 
@@ -204,6 +206,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
+                                ItemCode = sapOrder.Code,
                             };
 
                             ordersDetail.Add(order);
@@ -375,6 +378,26 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return new Tuple<List<UserOrderModel>, List<UserOrderModel>>(listToInsert, listToUpdate);
+        }
+
+        /// <summary>
+        /// gets the distinc by.
+        /// </summary>
+        /// <typeparam name="Tsource">the list source.</typeparam>
+        /// <typeparam name="TKey">the key to look.</typeparam>
+        /// <param name="source">the sourec.</param>
+        /// <param name="keyselector">the key.</param>
+        /// <returns>the list distinc.</returns>
+        public static IEnumerable<Tsource> DistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (Tsource element in source)
+            {
+                if (seenKeys.Add(keyselector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
     }
 }

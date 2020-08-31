@@ -22,5 +22,13 @@ namespace Omicron.Pedidos.Services.User
         /// <param name="route">the list ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> SimpleGetUsers(string route);
+
+        /// <summary>
+        /// gets the data.
+        /// </summary>
+        /// <param name="data">the data.</param>
+        /// <param name="route">the route.</param>
+        /// <returns>the returns.</returns>
+        Task<ResultModel> PostSimpleUsers(object data, string route);
     }
 }

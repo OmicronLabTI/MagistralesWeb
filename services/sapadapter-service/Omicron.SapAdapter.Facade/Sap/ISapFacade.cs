@@ -80,5 +80,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetNextBatchCode(string productCode);
+        
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="orderFabDto">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto);
     }
 }

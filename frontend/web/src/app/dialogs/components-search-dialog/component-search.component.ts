@@ -23,7 +23,7 @@ export class ComponentSearchComponent implements OnInit {
   keywords: string[] = [];
   allComplete = false;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  pageSize = CONST_NUMBER.five;
+  pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   displayedColumns: string[] = [
     'numero',

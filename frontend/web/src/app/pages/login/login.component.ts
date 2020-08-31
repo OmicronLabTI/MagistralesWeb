@@ -5,8 +5,10 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import {ConstLogin, ConstToken, MODAL_FIND_ORDERS} from '../../constants/const';
+import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
+import {ErrorHttpInterface} from '../../model/http/commons';
+import {Messages} from '../../constants/messages';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +46,7 @@ export class LoginComponent implements OnInit {
         password: this.formLogin.get('password').value,
         redirectUri: ConstLogin.defaultRedirectUri,
         clientId2: ConstLogin.defaultClientId2,
-        // origin: ConstLogin.defaultOrigin
+        origin: ConstLogin.defaultOrigin
     } as ILoginReq;
     this.securityService.login(userLoginReq).toPromise().then(async res => {
       this.dataService.setToken(res.access_token);
@@ -63,8 +65,17 @@ export class LoginComponent implements OnInit {
       });
       this.dataService.setIsLogin(true);
       this.goToPedidos();
-    }).catch( (error) => {
-      this.errorService.httpError(error, true);
+    }).catch( (error: ErrorHttpInterface) => {
+        switch (error.status) {
+            case HttpStatus.serverError:
+                this.dataService.setMessageGeneralCallHttp({title: Messages.credentialsInvalid, icon: 'warning', isButtonAccept: true});
+                break;
+            case HttpStatus.unauthorized:
+                this.dataService.setMessageGeneralCallHttp({title: error.error.userError, icon: 'warning', isButtonAccept: true});
+                break;
+            default:
+                this.errorService.httpError(error);
+        }
     });
   }
   goToPedidos() {

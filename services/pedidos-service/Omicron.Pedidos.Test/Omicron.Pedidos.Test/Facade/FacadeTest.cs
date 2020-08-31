@@ -140,6 +140,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CreateIsolatedProductionOrder(It.IsAny<CreateIsolatedFabOrderModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
         }
 
@@ -650,6 +654,28 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateIsolatedProductionOrder(order);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetFabOrders()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.GetFabOrders(parameters);
 
             // Assert
             Assert.IsNotNull(response);

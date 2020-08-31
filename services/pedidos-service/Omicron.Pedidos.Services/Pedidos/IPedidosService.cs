@@ -164,5 +164,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="isolatedFabOrder">Isolated production order.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder);
+
+        /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters);
     }
 }

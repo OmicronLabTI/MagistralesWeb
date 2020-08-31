@@ -55,7 +55,8 @@ export enum MessageType {
     placeDetailOrder,
     cancelOrder,
     cancelDetailOrder,
-    finalizeOrder
+    finalizeOrder,
+    saveBatches
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -79,6 +80,9 @@ export const HttpStatus = {
     unauthorized: 401,
     forbidden: 403,
     notFound: 404,
+    serverError: 500,
+    timeOut: 504,
+    connectionRefused: 0
 };
 
 export const ConstToken = {
@@ -86,7 +90,7 @@ export const ConstToken = {
     refreshToken: 'refresh-omi',
     rememberSession: 'session-re',
     userId: 'userId',
-    userName: 'userName'
+    userName: 'userName',
 };
 export const BOOLEANS = {
     verdadero: true,

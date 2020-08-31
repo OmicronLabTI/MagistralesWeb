@@ -47,6 +47,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   subscriptionCallHttp = new Subscription();
   isThereOrdersToCancel = false;
   isThereOrdersToFinalize = false;
+  pageIndex = 0;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -79,7 +80,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          switch(element.pedidoStatus){
+          switch (element.pedidoStatus) {
             case ConstStatus.abierto:
               element.class = 'green';
               break;
@@ -117,9 +118,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   someComplete(): boolean {
-    if (this.dataSource.data == null) {
-      return false;
-    }
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
   }
 
@@ -132,7 +130,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.getButtonsToUnLooked();
   }
 
-  processOrders() {
+  processOrdersService() {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
@@ -159,6 +157,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     });
   }
   changeDataEvent(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
     this.getFullQueryString();
@@ -176,6 +175,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
       if (result) {
         this.filterDataOrders = new  ParamsPedidos();
+        this.pageIndex = 0;
         this.offset = 0;
         this.limit = 10;
       }
@@ -273,7 +273,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrders() {
-    console.log('finalize orders');
     this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
       (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
         const finalizeOrder = new CancelOrderReq();

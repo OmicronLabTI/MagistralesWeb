@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Services.Mapping
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
     /// <summary>
     /// Class Automapper.
@@ -25,6 +26,7 @@ namespace Omicron.SapAdapter.Services.Mapping
         {
             this.CreateMap<ResultDto, ResultModel>();
             this.CreateMap<ResultModel, ResultDto>();
+            this.CreateMap<GetOrderFabDto, GetOrderFabModel>();
         }
     }
 }

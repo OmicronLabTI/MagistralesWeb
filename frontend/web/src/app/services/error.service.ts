@@ -10,15 +10,16 @@ import {HttpStatus} from '../constants/const';
 export class ErrorService {
 
   constructor(private dataService: DataService) { }
-  httpError(error: ErrorHttpInterface, isFromLogin = false) {
+  httpError(error: ErrorHttpInterface) {
     console.log('error httpService: ', error);
     switch (error.status) { // status: 0 = server refused
       case HttpStatus.unauthorized:
-        if (isFromLogin) {
-          this.dataService.setGeneralNotificationMessage('Credenciales inválidas.');
-        } else {
-          this.dataService.setIsLogout(true);
-        }
+        this.dataService.setIsLogout(true);
+        break;
+      case HttpStatus.timeOut:
+        this.dataService.setMessageGeneralCallHttp({title: Messages.timeout, icon: 'error', isButtonAccept: true});
+        break;
+      case HttpStatus.connectionRefused:
         break;
       default:
         this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});

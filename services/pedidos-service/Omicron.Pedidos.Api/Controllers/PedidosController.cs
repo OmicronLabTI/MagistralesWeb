@@ -321,6 +321,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="parameters">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpGet]
+        [Route("/fabOrder")]
+        public async Task<IActionResult> GetFabOrders([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetFabOrders(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

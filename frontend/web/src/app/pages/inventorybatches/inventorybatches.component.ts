@@ -5,10 +5,11 @@ import { Title } from '@angular/platform-browser';
 import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq} from 'src/app/model/http/lotesformula';
 import { MatTableDataSource} from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
-import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING } from '../../constants/const'
+import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING, MessageType, ClassNames } from '../../constants/const'
 import { Messages } from '../../constants/messages'
 import {DataService} from '../../services/data.service';
 import { element } from 'protractor';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-inventorybatches',
@@ -17,9 +18,10 @@ import { element } from 'protractor';
 })
 
 export class InventorybatchesComponent implements OnInit {
-  cantidadNecesariaInput: number = 0;
-  indexSelected: number = 0;
+  cantidadNecesariaInput = 0;
+  indexSelected = 0;
   dataSelected: ILotesFormulaReq;
+  document: string;
   ordenFabricacionId: string;
   dataSourceDetails = new MatTableDataSource<ILotesFormulaReq>();
   dataSourceLotes = new MatTableDataSource<ILotesReq>();
@@ -46,16 +48,18 @@ export class InventorybatchesComponent implements OnInit {
     'lote',
     'seleccionada',
     'opciones'
-  ]
+  ];
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
     private batchesService: BatchesService,
-    private dataService: DataService
+    private dataService: DataService,
+    private errorService: ErrorService
   ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
+      this.document = params.get('document');
       this.ordenFabricacionId = params.get('ordenid');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
     });
@@ -63,28 +67,32 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   setSelectedTr(element?: ILotesFormulaReq){
-    if (element != undefined){
+    if (element !== undefined){
       this.dataSelected = element;
       this.indexSelected = this.dataSourceDetails.data.indexOf(element);
-      this.dataSourceDetails.data.filter(function(item){
+      this.dataSourceDetails.data.filter(item => {
         if (item.selected){
           item.selected = BOOLEANS.falso;
         }
-    });
-    element.selected = !element.selected;
-    this.getBatchesFromSelected(element.codigoProducto);
+      });
+      element.selected = !element.selected;
+      this.getBatchesFromSelected(element.codigoProducto);
     }
     return true;
   }
 
   getBatchesFromSelected(codigoProducto?){
-    if (codigoProducto != undefined){
-      let resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
+    if (codigoProducto !== undefined){
+      const resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
       this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
       this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
-      if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null)
+      if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = resultData[CONST_NUMBER.zero].lotesAsignados;
+      }
       this.setSelectedQuantity(resultData[CONST_NUMBER.zero].totalNecesario);
+      if (this.dataSourceLotes.data.length === CONST_NUMBER.one && this.dataSourceLotesAsignados.data.length === CONST_NUMBER.zero) {
+        this.addLotes(this.dataSourceLotes.data[CONST_NUMBER.zero]);
+      }
       return true;
     }
     return false;
@@ -95,75 +103,83 @@ export class InventorybatchesComponent implements OnInit {
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
         this.dataSourceDetails.data = batchesRes.response;
-        console.log("respuesta: ", batchesRes.response);
-        resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === this.dataSourceDetails.data[CONST_NUMBER.zero].codigoProducto))
+        resultData = this.dataSourceDetails.data.filter(element => (
+          element.codigoProducto === this.dataSourceDetails.data[CONST_NUMBER.zero].codigoProducto)
+        );
         resultData[CONST_NUMBER.zero].selected = BOOLEANS.verdadero;
         this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
         this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = resultData[CONST_NUMBER.zero].lotesAsignados;
         this.setSelectedQuantity(resultData[CONST_NUMBER.zero].totalNecesario);
+        if (this.dataSourceLotes.data.length === CONST_NUMBER.one && this.dataSourceLotesAsignados.data.length === CONST_NUMBER.zero) {
+          this.addLotes(this.dataSourceLotes.data[CONST_NUMBER.zero]);
+        }
       }
     );
     return true;
   }
 
   addLotes(element: ILotesReq){
-    if((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
-      if(element.cantidadSeleccionada == CONST_NUMBER.nulo || element.cantidadSeleccionada === CONST_NUMBER.zero){
+    if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
+      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
-      }
-      else{
-        let objetoNuevo: ILotesAsignadosReq = {
+      } else {
+        if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
+          this.dataService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
+          return false;
+        }
+        const objetoNuevo: ILotesAsignadosReq = {
           numeroLote: element.numeroLote,
           cantidadSeleccionada: element.cantidadSeleccionada,
           sysNumber: element.sysNumber,
           action: CONST_DETAIL_FORMULA.insert,
           noidb: BOOLEANS.verdadero
-        }
-        if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null){
+        };
+        if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
           this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = [];
         }
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
         this.tableLotesView();
+        element.cantidadDisponible = parseFloat((element
+          .cantidadDisponible - element.cantidadSeleccionada).toFixed(6));
         this.setTotales(element.cantidadSeleccionada);
+        this.isReadyToSave = true;
       }
-      //this.setInputNecesaryQty();
-    }
-    else{
-      this.dataService.setGeneralNotificationMessage(Messages.batchesSelectedQtyError);
     }
   }
 
   tableLotesView(){
-    let dataSourceDetails = this.dataSourceDetails;
-    let dataSourceLotesAsignados = this.dataSourceLotesAsignados;
-    let indexSelected = this.indexSelected;
-    let arrayObjetos: ILotesAsignadosReq[] = [];
+    const dataSourceDetails = this.dataSourceDetails;
+    const dataSourceLotesAsignados = this.dataSourceLotesAsignados;
+    const indexSelected = this.indexSelected;
+    const arrayObjetos: ILotesAsignadosReq[] = [];
     let objetoLoteAsignado: ILotesAsignadosReq;
-    let arrayNoRepetir: string[] = [];
-    this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(function(elementA){
-      if (elementA.action != CONST_DETAIL_FORMULA.delete){
+    const arrayNoRepetir: string[] = [];
+    this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(elementA => {
+      if (elementA.action !== CONST_DETAIL_FORMULA.delete){
         if (!arrayNoRepetir.includes(elementA.numeroLote)){
           arrayNoRepetir.push(elementA.numeroLote);
-          let arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (element.numeroLote == elementA.numeroLote));
-          let suma = CONST_NUMBER.zero;          
-          if (arraySum.length > CONST_NUMBER.one){
-            arraySum.forEach(function(ele){
-              if(ele.action != CONST_DETAIL_FORMULA.delete)
+          const arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (
+            element.numeroLote === elementA.numeroLote)
+          );
+          let suma = CONST_NUMBER.zero;
+          if (arraySum.length > CONST_NUMBER.one) {
+            arraySum.forEach(ele => {
+              if (ele.action !== CONST_DETAIL_FORMULA.delete) {
                 suma = suma + ele.cantidadSeleccionada;
+              }
             });
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: parseFloat(suma.toFixed(10))
+              cantidadSeleccionada: parseFloat(suma.toFixed(6))
             }
-          }
-          else{
+          } else {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
               cantidadSeleccionada: elementA.cantidadSeleccionada
-            }
+            };
           }
           arrayObjetos.push(objetoLoteAsignado);
           if (dataSourceDetails.data[indexSelected].lotesAsignados == null){
@@ -178,22 +194,28 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   deleteLotes(element?: ILotesAsignadosReq){
-    if(element != undefined){
-      let indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
+    if (element !== undefined){
+      const indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
       if ( indiceBorrar !== -1 ) {
         this.deleteDetails(element);
         this.dataSourceDetails.data[this.indexSelected].lotesAsignados.splice( indiceBorrar, CONST_NUMBER.one );
       }
       this.dataSourceLotesAsignados._updateChangeSubscription();
+      this.dataSourceDetails.data[this.indexSelected].lotes.forEach(item => {
+        if (item.numeroLote === element.numeroLote) {
+          item.cantidadDisponible = parseFloat((item.cantidadDisponible + element.cantidadSeleccionada).toFixed(6));
+        }
+      });
       this.setTotales(-element.cantidadSeleccionada)
+      this.isReadyToSave = true;
     }
     return false;
   }
 
-  deleteDetails(element?:ILotesAsignadosReq){
-    if (element != undefined){
+  deleteDetails(element?: ILotesAsignadosReq){
+    if (element !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
-        if (ele.numeroLote === element.numeroLote){
+        if (ele.numeroLote === element.numeroLote) {
           ele.action = CONST_DETAIL_FORMULA.delete;
           ele.noidb = BOOLEANS.verdadero;
         }
@@ -209,26 +231,34 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
-  setSelectedQuantity(cantidadNecesaria?){
-    if (cantidadNecesaria != undefined){
+  setSelectedQuantity(cantidadNecesaria?) {
+    if (cantidadNecesaria !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(ele => {
-        ele.cantidadSeleccionada = cantidadNecesaria;
+        if (cantidadNecesaria <= ele.cantidadDisponible) {
+          ele.cantidadSeleccionada = cantidadNecesaria;
+        } else {
+          ele.cantidadSeleccionada = ele.cantidadDisponible;
+        }
       });
     }
   }
 
-  setTotales(cantidadSeleccionada?: number){
-    if (cantidadSeleccionada != undefined){
-      this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat((this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(10));
-      this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat((this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(10)); 
+  setTotales(cantidadSeleccionada?: number) {
+    if (cantidadSeleccionada !== undefined) {
+      this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat(
+        (parseFloat(this.dataSourceDetails.data[this.indexSelected].totalSeleccionado.toFixed(6)) + cantidadSeleccionada).toFixed(6)
+      );
+      this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat(
+        (this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(6)
+      );
       this.setInputNecesaryQty();
     }
   }
 
-  setInputNecesaryQty(){
-    let dataSourceDetails = this.dataSourceDetails;
-    let indexSelected = this.indexSelected;
-    this.dataSourceDetails.data[this.indexSelected].lotes.forEach(function(element){
+  setInputNecesaryQty() {
+    const dataSourceDetails = this.dataSourceDetails;
+    const indexSelected = this.indexSelected;
+    this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
       element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
     });
     return true;
@@ -237,30 +267,41 @@ export class InventorybatchesComponent implements OnInit {
   buildObjectToSap(){
     let objectToSave = this.objectToSave;
     objectToSave = [];
-    let ordenFabricacionId = this.ordenFabricacionId;
-    this.dataSourceDetails.data.forEach(function(element){
+    const ordenFabricacionId = this.ordenFabricacionId;
+    this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null){
-        element.lotesSeleccionados.forEach(function(lote){
+        element.lotesSeleccionados.forEach(lote => {
           if (lote.noidb)
           {
-            let objectSAP: ILotesToSaveReq = {
+            const objectSAP: ILotesToSaveReq = {
               orderId: parseInt(ordenFabricacionId),
               itemCode: element.codigoProducto,
-              assignedQty: lote.cantidadSeleccionada,
+              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
               action: lote.action,
               batchNumber: lote.numeroLote
             }
             objectToSave.push(objectSAP);
-          }          
+          }
         });
       }
     });
     this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
-        this.batchesService.updateBatches(objectToSave).subscribe( () => {
-          window.location.reload();
-        }, error => console.log('error: ', error ));
+        this.batchesService.updateBatches(objectToSave).subscribe( resultSaveBatches => {
+          if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
+            const titleFinalizeWithError = this.dataService.getMessageTitle(
+              resultSaveBatches.response, MessageType.saveBatches);
+            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom);
+          } else {
+            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
+              if (resultBatchSave.isConfirmed) {
+                window.location.reload();
+              }
+            });
+          }
+        }, error => this.errorService.httpError(error));
       }
-    }); 
+    });
   }
 }

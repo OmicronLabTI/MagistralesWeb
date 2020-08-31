@@ -14,8 +14,10 @@ namespace Omicron.SapAdapter.Test.Facade
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
@@ -85,6 +87,10 @@ namespace Omicron.SapAdapter.Test.Facade
 
             mockSapServices
                 .Setup(m => m.GetlLastIsolatedProductionOrderId(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockSapServices
+                .Setup(m => m.GetFabOrders(It.IsAny<GetOrderFabModel>()))
                 .Returns(Task.FromResult(response));
 
             mockSapServices
@@ -278,6 +284,32 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetNextBatchCode(productId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetFabOrders()
+        {
+            // arrange
+            var parameters = new GetOrderFabDto
+            {
+                Filters = new Dictionary<string, string>(),
+                OrdersId = new List<int>(),
+            };
+
+            // act
+            var response = await this.sapFacade.GetFabOrders(parameters);
 
             // Assert
             Assert.IsNotNull(response);

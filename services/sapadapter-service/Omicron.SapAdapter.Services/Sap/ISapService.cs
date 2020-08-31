@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
     /// <summary>
     /// The interface for sap.
@@ -81,5 +82,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetNextBatchCode(string productCode);
+
+        /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="orderFabModel">the params.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel);
     }
 }

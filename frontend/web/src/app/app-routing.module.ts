@@ -15,7 +15,7 @@ const routes: Routes = [
   {
     path: 'pedidos',
     loadChildren: () => import('./pages/pedidos/pedidos.module').then(m => m.PedidosModule),
-    // canActivate: [GuardService]
+    canActivate: [GuardService]
   },
   {
     path: 'pdetalle/:id/:status',
@@ -28,7 +28,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'lotes/:ordenid',
+    path: 'lotes/:document/:ordenid',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },
