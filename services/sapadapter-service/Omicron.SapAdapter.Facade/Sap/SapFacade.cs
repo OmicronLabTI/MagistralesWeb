@@ -121,11 +121,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Get next batch code.
         /// </summary>
-        /// <param name="productId">the product id.</param>
+        /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> GetNextBatchCode(string productId)
+        public async Task<ResultDto> GetNextBatchCode(string productCode)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productId));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productCode));
         }
     }
 }

@@ -78,8 +78,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Get next batch code.
         /// </summary>
-        /// <param name="productId">the product id.</param>
+        /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetNextBatchCode(string productId);
+        Task<ResultModel> GetNextBatchCode(string productCode);
     }
 }

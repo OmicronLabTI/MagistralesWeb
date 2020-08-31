@@ -310,15 +310,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Get next batch code.
         /// </summary>
-        /// <param name="productId">the product id.</param>
+        /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetNextBatchCode(string productId)
+        public async Task<ResultModel> GetNextBatchCode(string productCode)
         {
             var max = 0;
             var batchCodePrefix = this.configuration["SapOmicron:BatchCodes:prefix"];
             var batchCodeNumberPositions = int.Parse(this.configuration["SapOmicron:BatchCodes:numberPositions"]);
             var batchCodePattern = batchCodePrefix.Concat("[0-9]", batchCodeNumberPositions);
-            var maxBatchCode = await this.sapDao.GetMaxBatchCode(batchCodePattern, productId);
+            var maxBatchCode = await this.sapDao.GetMaxBatchCode(batchCodePattern, productCode);
 
             if (!string.IsNullOrEmpty(maxBatchCode))
             {

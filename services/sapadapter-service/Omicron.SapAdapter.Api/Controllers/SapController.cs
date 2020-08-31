@@ -150,13 +150,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Get new batch code.
         /// </summary>
-        /// <param name="productId">the product id.</param>
+        /// <param name="productCode">the product code.</param>
         /// <returns>the data.</returns>
         [Route("/batchcode/next")]
         [HttpGet]
-        public async Task<IActionResult> GetNextBatchCode([FromQuery] string productId)
+        public async Task<IActionResult> GetNextBatchCode([FromQuery] string productCode)
         {
-            var result = await this.sapFacade.GetNextBatchCode(productId);
+            var result = await this.sapFacade.GetNextBatchCode(productCode);
             return this.Ok(result);
         }
     }
