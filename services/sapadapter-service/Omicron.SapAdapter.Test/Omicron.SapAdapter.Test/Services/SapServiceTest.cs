@@ -651,6 +651,6 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
-
+        }
     }
 }

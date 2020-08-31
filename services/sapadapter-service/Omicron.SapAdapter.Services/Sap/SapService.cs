@@ -336,7 +336,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var nextCode = $"{batchCodePrefix}{max.ToString().PadLeft(batchCodeNumberPositions, '0')}";
             return ServiceUtils.CreateResult(true, 200, null, nextCode, null, null);
         }
-        
+
         /// <summary>
         /// Gets the ordersby the filter.
         /// </summary>
