@@ -78,9 +78,12 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla de lotes disponibles
         self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) {row, data, cell in
+            let formatter = NumberFormatter()
+            formatter.minimumFractionDigits = 8
+
             cell.row = row
             cell.lotsLabel.text = data.numeroLote
-            cell.quantityAvailableLabel.text = "\(data.cantidadDisponible!)"
+            cell.quantityAvailableLabel.text = formatter.string(from: data.cantidadDisponible! as NSNumber)
             cell.quantitySelected.text = "\(data.cantidadSeleccionada!)"
             cell.quantityAssignedLabel.text = "\(data.cantidadAsignada!)"
         }.disposed(by: self.disposeBag)

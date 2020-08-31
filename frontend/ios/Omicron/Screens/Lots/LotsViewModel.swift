@@ -43,7 +43,7 @@ class LotsViewModel {
         self.addLotDidTap.withLatestFrom(inputs).map({
             LotsAvailableInfo(row: $0, quantitySelected: $1)
         }).subscribe(onNext: { data in
-            let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada:  Double(data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
+            let lotSelected = LotsSelected(numeroLote: self.lotsAvailablesAux[data.row].numeroLote!, cantidadSeleccionada: Decimal(string: data.quantitySelected) ?? 0.0, sysNumber: self.lotsAvailablesAux[data.row].sysNumber!)
             
             if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! )) {
                 let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))

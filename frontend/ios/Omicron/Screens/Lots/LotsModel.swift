@@ -23,7 +23,7 @@ class LotsResponse: HttpResponse {
 
 class Lots {
     var codigoProducto, descripcionProducto, almacen: String?
-    var totalNecesario, totalSeleccionado: Double?
+    var totalNecesario, totalSeleccionado: Decimal?
     var lotesSelecionados: [LotsSelected]?
     var lotesDisponibles: [LotsAvailable]?
     
@@ -35,8 +35,8 @@ extension Lots: Mappable {
         self.codigoProducto <- map["codigoProducto"]
         self.descripcionProducto <- map["descripcionProducto"]
         self.almacen <- map["almacen"]
-        self.totalNecesario <- map["totalNecesario"]
-        self.totalSeleccionado <- map["totalSeleccionado"]
+        self.totalNecesario <- (map["totalNecesario"], DecimalTransform())
+        self.totalSeleccionado <- (map["totalSeleccionado"], DecimalTransform())
         self.lotesDisponibles <- map["lotes"]
         self.lotesSelecionados <- map["lotesAsignados"]
     }
@@ -44,10 +44,10 @@ extension Lots: Mappable {
 
 class LotsAvailable {
     var numeroLote: String?
-    var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Double?
+    var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Decimal?
     var sysNumber: Int?
     
-    init (numeroLote: String?, cantidadDisponible:Double, cantidadAsignada:Double, cantidadSeleccionada: Double, sysNumber: Int) {
+    init (numeroLote: String?, cantidadDisponible: Decimal, cantidadAsignada: Decimal, cantidadSeleccionada: Decimal, sysNumber: Int) {
         self.numeroLote = numeroLote
         self.cantidadDisponible = cantidadDisponible
         self.cantidadAsignada = cantidadAsignada
@@ -60,18 +60,18 @@ class LotsAvailable {
 extension LotsAvailable: Mappable {
     func mapping(map: Map) {
         self.numeroLote <- map["numeroLote"]
-        self.cantidadDisponible <- map["cantidadDisponible"]
-        self.cantidadAsignada <- map["cantidadAsignada"]
+        self.cantidadDisponible <- (map["cantidadDisponible"], DecimalTransform())
+        self.cantidadAsignada <- (map["cantidadAsignada"], DecimalTransform())
         self.sysNumber <- map["sysNumber"]
     }
 }
 
 class LotsSelected: Codable {
     var numeroLote: String?
-    var cantidadSeleccionada: Double?
+    var cantidadSeleccionada: Decimal?
     var sysNumber: Int?
     
-    init(numeroLote: String, cantidadSeleccionada: Double, sysNumber: Int) {
+    init(numeroLote: String, cantidadSeleccionada: Decimal, sysNumber: Int) {
         self.numeroLote = numeroLote
         self.cantidadSeleccionada = cantidadSeleccionada
         self.sysNumber = sysNumber
@@ -82,7 +82,7 @@ class LotsSelected: Codable {
 extension LotsSelected: Mappable {
     func mapping(map: Map) {
         self.numeroLote <- map["numeroLote"]
-        self.cantidadSeleccionada <- map["cantidadSeleccionada"]
+        self.cantidadSeleccionada <- (map["cantidadSeleccionada"], DecimalTransform())
         self.sysNumber <- map["sysNumber"]
     }
 }
@@ -99,12 +99,12 @@ class LotsAvailableInfo {
 
 class LotsRequest:Codable {
     var orderId: Int?
-    var assignedQty: Double?
+    var assignedQty: Decimal?
     var batchNumber: String?
     var itemCode: String?
     var action: String?
     
-    init(orderId: Int, assignedQty: Double, batchNumber: String, itemCode: String, action: String) {
+    init(orderId: Int, assignedQty: Decimal, batchNumber: String, itemCode: String, action: String) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber

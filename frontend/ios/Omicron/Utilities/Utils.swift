@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import ObjectMapper
 
 class UtilsManager {
     //MARK: Variables
@@ -17,6 +18,7 @@ class UtilsManager {
     func setStyleButtonStatus( button: UIButton ,title: String, color: UIColor = OmicronColors.blue, backgroudColor: UIColor = UIColor.white, titleColor: UIColor = .white) -> Void {
         button.setTitle(title, for: .normal)
         button.setTitleColor(titleColor, for: .normal)
+        button.setTitleColor(titleColor.withAlphaComponent(0.35), for: .disabled)
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 10
         button.layer.borderColor = color.cgColor
@@ -71,4 +73,27 @@ class UtilsManager {
         return formatter
     }
     
+}
+
+open class DecimalTransform: TransformType {
+    public typealias Object = Decimal
+    public typealias JSON = String
+    
+    public init() {}
+    
+    public func transformFromJSON(_ value: Any?) -> Decimal? {
+        if let string = value as? String {
+            return Decimal(string: string)
+        } else if let number = value as? NSNumber {
+            return number.decimalValue
+        } else if let double = value as? Double {
+            return Decimal(floatLiteral: double)
+        }
+        return nil
+    }
+    
+    public func transformToJSON(_ value: Decimal?) -> String? {
+        guard let value = value else { return nil }
+        return value.description
+    }
 }
