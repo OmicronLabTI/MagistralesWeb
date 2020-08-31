@@ -82,6 +82,9 @@ body {
 .title-list-container{
   width: 50%;
   float: left;
+  font-weight: 600 !important;
+  font-size: 1.6em;
+  color: #3b3f5c;
 }
 .no-users-registered{
   width: 100%;
@@ -130,7 +133,7 @@ body {
   text-align: right;
   color: #3b3f5c;
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .filter-select .select-button{
@@ -155,11 +158,6 @@ body {
   color: #3b3f5c;
 }
 
-.title-list-container span{
-  font-size: 26px;
-  color: #3b3f5c;
-  font-weight: bold !important;
-}
 
 .table-toolbar{
   width: 100%;
@@ -294,6 +292,9 @@ th.centered {
   flex-direction: row;
   justify-content: space-between;
   border-bottom: #3b3f5c solid 1px;
+}
+.mat-card-title {
+  font-weight: 400 !important;
 }
 .content-card-container{
   width: 100%;
