@@ -134,7 +134,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.CloseFabOrders(It.IsAny<List<OrderIdModel>>()))
+                .Setup(m => m.CloseFabOrders(It.IsAny<List<CloseProductionOrderModel>>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -626,9 +626,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CloseFabOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdDto>
+            var salesOrders = new List<CloseProductionOrderDto>
             {
-                new OrderIdDto { OrderId = 1, UserId = "abc", },
+                new CloseProductionOrderDto { OrderId = 1, UserId = "abc", },
             };
 
             // act

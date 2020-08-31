@@ -149,6 +149,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Get new batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        [Route("/batchcode/next")]
+        [HttpGet]
+        public async Task<IActionResult> GetNextBatchCode([FromQuery] string productCode)
+        {
+            var result = await this.sapFacade.GetNextBatchCode(productCode);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="orderFabDto">The orderFabDto.</param>

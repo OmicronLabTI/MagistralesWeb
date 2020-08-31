@@ -448,5 +448,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.databaseContext.BatchesTransactionQtyModel.Where(x => x.LogEntry == logEntry).ToListAsync();
         }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="batchCodePattern">Batch code pattern.</param>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<string> GetMaxBatchCode(string batchCodePattern, string productCode)
+        { 
+            return (from    batch in this.databaseContext.Batches
+                                where   batch.ItemCode.Equals(productCode)
+                                &&      EF.Functions.Like(batch.DistNumber, batchCodePattern)
+                                orderby batch.DistNumber descending
+                                select  batch.DistNumber).Take(1).FirstOrDefault();
+        }
     }
 }

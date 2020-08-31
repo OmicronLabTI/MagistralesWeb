@@ -28,7 +28,7 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
-            <button [disabled]="!isThereOrdersToPlan" mat-raised-button [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"  (click)="processOrders()">
+            <button [disabled]="!isThereOrdersToPlan" mat-raised-button [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"  (click)="processOrdersService()">
                 &nbsp; Planificar &nbsp;
             </button>
             &nbsp;

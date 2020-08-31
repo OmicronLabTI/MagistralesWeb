@@ -689,7 +689,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</para
         /// <returns>Orders with updated info.</returns>urns>
-        public async Task<ResultModel> CloseFabOrders(List<OrderIdModel> finishOrders)
+        public async Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders)
         {
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
@@ -698,6 +698,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var orderToFinish in finishOrders)
             {
+                var orderIdModel = new OrderIdModel { UserId = orderToFinish.UserId, OrderId = orderToFinish.OrderId };
                 var productionOrderId = orderToFinish.OrderId;
                 var ids = new List<string> { productionOrderId.ToString() };
                 var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
@@ -705,14 +706,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (productionOrder == null)
                 {
                     var message = string.Format(ServiceConstants.ReasonProductionOrderNotExists, productionOrderId);
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, message));
                     continue;
                 }
 
                 // Validate finished production orders
                 if (productionOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
-                    successfuly.Add(orderToFinish);
+                    successfuly.Add(orderIdModel);
                     continue;
                 }
 
@@ -720,17 +721,17 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (!productionOrder.Status.Equals(ServiceConstants.Completed))
                 {
                     var message = string.Format(ServiceConstants.ReasonProductionOrderNonCompleted, productionOrderId);
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, message));
                     continue;
                 }
 
                 // Update in SAP
-                var payload = new List<object> { new { OrderId = productionOrderId } };
+                var payload = new List<object> { orderToFinish };
                 var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonSapConnectionError));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, ServiceConstants.ReasonSapConnectionError));
                     continue;
                 }
 
@@ -739,7 +740,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Map errors
                 foreach (var error in resultMessages.Where(x => x.Key > 0))
                 {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, error.Value));
+                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, error.Value));
                 }
 
                 // Update production order status
@@ -751,8 +752,12 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
-                    affectedSalesOrderIds.Add(KeyValuePair.Create(orderToFinish.UserId, productionOrder.Salesorderid));
-                    successfuly.Add(orderToFinish);
+                    successfuly.Add(orderIdModel);
+
+                    if (!productionOrder.IsIsolatedProductionOrder)
+                    {
+                        affectedSalesOrderIds.Add(KeyValuePair.Create(orderToFinish.UserId, productionOrder.Salesorderid));
+                    }
                 }
             }
 

@@ -74,15 +74,15 @@ export class InventorybatchesComponent implements OnInit {
         if (item.selected){
           item.selected = BOOLEANS.falso;
         }
-    });
-    element.selected = !element.selected;
-    this.getBatchesFromSelected(element.codigoProducto);
+      });
+      element.selected = !element.selected;
+      this.getBatchesFromSelected(element.codigoProducto);
     }
     return true;
   }
 
   getBatchesFromSelected(codigoProducto?){
-    if (codigoProducto != undefined){
+    if (codigoProducto !== undefined){
       const resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
       this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
       this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
@@ -121,7 +121,7 @@ export class InventorybatchesComponent implements OnInit {
 
   addLotes(element: ILotesReq){
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
-      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero){
+      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
         if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
@@ -135,7 +135,7 @@ export class InventorybatchesComponent implements OnInit {
           action: CONST_DETAIL_FORMULA.insert,
           noidb: BOOLEANS.verdadero
         };
-        if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null){
+        if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
           this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = [];
         }
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
@@ -145,8 +145,6 @@ export class InventorybatchesComponent implements OnInit {
         this.setTotales(element.cantidadSeleccionada);
         this.isReadyToSave = true;
       }
-    } else{
-      this.dataService.setGeneralNotificationMessage(Messages.batchesSelectedQtyError);
     }
   }
 
@@ -205,7 +203,7 @@ export class InventorybatchesComponent implements OnInit {
       this.dataSourceLotesAsignados._updateChangeSubscription();
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(item => {
         if (item.numeroLote === element.numeroLote) {
-          item.cantidadDisponible = parseFloat(item.cantidadDisponible.toFixed(6)) + parseFloat(element.cantidadSeleccionada.toFixed(6));
+          item.cantidadDisponible = parseFloat((item.cantidadDisponible + element.cantidadSeleccionada).toFixed(6));
         }
       });
       this.setTotales(-element.cantidadSeleccionada)
@@ -236,7 +234,11 @@ export class InventorybatchesComponent implements OnInit {
   setSelectedQuantity(cantidadNecesaria?) {
     if (cantidadNecesaria !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(ele => {
-        ele.cantidadSeleccionada = cantidadNecesaria;
+        if (cantidadNecesaria <= ele.cantidadDisponible) {
+          ele.cantidadSeleccionada = cantidadNecesaria;
+        } else {
+          ele.cantidadSeleccionada = ele.cantidadDisponible;
+        }
       });
     }
   }
@@ -244,7 +246,7 @@ export class InventorybatchesComponent implements OnInit {
   setTotales(cantidadSeleccionada?: number) {
     if (cantidadSeleccionada !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat(
-        (this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(6)
+        (parseFloat(this.dataSourceDetails.data[this.indexSelected].totalSeleccionado.toFixed(6)) + cantidadSeleccionada).toFixed(6)
       );
       this.dataSourceDetails.data[this.indexSelected].totalNecesario = parseFloat(
         (this.dataSourceDetails.data[this.indexSelected].totalNecesario - cantidadSeleccionada).toFixed(6)
@@ -290,7 +292,9 @@ export class InventorybatchesComponent implements OnInit {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
             this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
-            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom).then( (resultBatchSave: any) => {
+            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom);
+          } else {
+            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }

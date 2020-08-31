@@ -120,6 +120,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetNextBatchCode(string productCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productCode));
+        }
+
+        /// <summary>
         /// Look for the orders.
         /// </summary>
         /// <param name="orderFabDto">the parameters.</param>
