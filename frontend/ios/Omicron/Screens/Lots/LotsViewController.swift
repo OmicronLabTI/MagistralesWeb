@@ -72,8 +72,8 @@ class LotsViewController: UIViewController {
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text = "\(data.totalNecesario!.decimalValue)"
-            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!.decimalValue)"
+            cell.totalNeededLabel.text = "\(data.totalNecesario!)"
+            cell.totalSelectedLabel.text = "\(data.totalSeleccionado!)"
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles
@@ -98,16 +98,11 @@ class LotsViewController: UIViewController {
         
         // Detecta que item de la tabla lotes selecionados fué selecionado
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
-//            self.lotsViewModel.itemLotSelected = item
+            self.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
         
         self.lineDocTable.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext: { index in
             self.lotsViewModel.itemSelectedLineDocuments = index.row
-            self.lineDocTable.selectRow(at: index, animated: true, scrollPosition: .none)
-        }).disposed(by: self.disposeBag)
-
-        self.lotsViewModel.firstTime.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .none)
         }).disposed(by: self.disposeBag)
                 
         // Muestra o coulta el loading
@@ -201,5 +196,5 @@ extension LotsViewController: UITableViewDelegate {
         } else {
             cell.backgroundColor = .white
         }
-    }    
+    }
 }
