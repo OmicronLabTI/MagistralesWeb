@@ -150,11 +150,16 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                   .filter(component => component.action === CONST_DETAIL_FORMULA.update ||
                       component.action === CONST_DETAIL_FORMULA.insert);
               componentsToDeleteFull.push(...this.componentsToDelete);
+              componentsToDeleteFull.forEach( component => {
+                component.stock = Number(component.stock.toString().replace(',', ''));
+                component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
+              });
               detailComponentsTOSave.components =  componentsToDeleteFull;
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
               }, error => {
+                this.getDetalleFormula();
                 this.errorService.httpError(error);
                 this.componentsToDelete = [];
               });
