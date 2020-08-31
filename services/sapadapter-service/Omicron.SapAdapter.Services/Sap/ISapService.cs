@@ -74,5 +74,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="uniqueId">the unique record id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetNextBatchCode(string productId);
     }
 }

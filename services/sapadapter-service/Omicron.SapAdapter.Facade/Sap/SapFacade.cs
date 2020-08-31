@@ -117,5 +117,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId));
         }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetNextBatchCode(string productId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productId));
+        }
     }
 }
