@@ -377,8 +377,20 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 if (product.ManageBatchNumbers == BoYesNoEnum.tYES && productionOrder.Batches != null)
                 {
                     int counter = 0;
+                    bool batchError = false;
                     foreach (var batchConfig in productionOrder.Batches)
                     {
+                        var existingBatch = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                        existingBatch.DoQuery(string.Format(ServiceConstants.FindBatchCodeForItem, batchConfig.BatchCode, product.ItemCode));
+
+                        if (existingBatch.RecordCount != 0)
+                        {
+                            _loggerProxy.Debug($"An error has ocurred on create batch { batchConfig.BatchCode } for item {product.ItemCode}, the batch already exists.");
+                            batchError = true;
+                            results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batchConfig.BatchCode, product.ItemCode));
+                            break;
+                        }
+
                         if (counter > 0)
                             receiptProduction.Lines.BatchNumbers.Add();
                         receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
@@ -387,6 +399,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate; 
                         receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
                         counter += 1;
+                    }
+
+                    if (batchError)
+                    {
+                        continue;
                     }
                 }
 
