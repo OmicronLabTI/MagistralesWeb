@@ -17,6 +17,20 @@ namespace Omicron.Pedidos.Services.Pedidos
     public interface IAssignPedidosService
     {
         /// <summary>
+        /// Assign the orders.
+        /// </summary>
+        /// <param name="manualAssign">the manual assign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AssignOrder(ManualAssignModel manualAssign);
+
+        /// <summary>
+        /// Makes the automatic assign.
+        /// </summary>
+        /// <param name="assignModel">the assign model.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel);
+
+        /// <summary>
         /// Reassign the ordr to a user.
         /// </summary>
         /// <param name="manualAssign">the objecto to assign.</param>

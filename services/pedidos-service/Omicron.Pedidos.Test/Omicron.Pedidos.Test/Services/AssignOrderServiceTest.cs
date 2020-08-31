@@ -10,18 +10,13 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Enums;
-    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -39,8 +34,6 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> sapAdapter;
 
-        private ISapDiApi sapDiApi;
-
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
@@ -52,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(databaseName: "Temporal2")
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -87,6 +80,107 @@ namespace Omicron.Pedidos.Test.Services
 
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrderPedido()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
+            this.sapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
+
+            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+
+            // act
+            var response = await pedidosServiceLocal.AssignOrder(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AssignOrder()
+        {
+            // arrange
+            var assign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 100 },
+                OrderType = "Orden",
+                UserId = "abc",
+                UserLogistic = "abd",
+            };
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
+            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+
+            // act
+            var response = await pedidosServiceLocal.AssignOrder(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the automatic assign test.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task AutomaticAssign()
+        {
+            var assign = new AutomaticAssingModel
+            {
+                DocEntry = new List<int> { 100 },
+                UserLogistic = "abc",
+            };
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersByRole()));
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            mockSaDiApiLocal
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            sapAdapterLocal
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.AutomaticAssign(assign);
+
+            // assert
+            Assert.IsNotNull(response);
         }
 
         /// <summary>

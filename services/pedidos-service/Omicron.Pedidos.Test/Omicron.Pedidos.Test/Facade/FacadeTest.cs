@@ -78,10 +78,6 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
                 .Setup(m => m.UpdateComponents(It.IsAny<UpdateFormulaModel>()))
                 .Returns(Task.FromResult(response));
 
@@ -103,10 +99,6 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -147,6 +139,14 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockerAssignPedidosService
                 .Setup(m => m.ReassignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockerAssignPedidosService
+                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockerAssignPedidosService
+                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object);

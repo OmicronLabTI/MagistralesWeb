@@ -180,7 +180,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 users.ForEach(x =>
                 {
-                    x.TotalCount = x.User.Id.Equals(dictUserPedido[p.Order.DocNum]) ? p.Detalle.Sum(y => y.QtyPlanned.Value) + x.TotalCount : x.TotalCount;
+                    x.TotalCount = x.User.Id.Equals(dictUserPedido[p.Order.DocNum]) ? p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount : x.TotalCount;
                 });
             }
 
