@@ -154,7 +154,10 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
-              }, error => console.log('errorFormula: ', error ));
+              }, error => {
+                this.errorService.httpError(error);
+                this.componentsToDelete = [];
+              });
             }
           });
     } else {
