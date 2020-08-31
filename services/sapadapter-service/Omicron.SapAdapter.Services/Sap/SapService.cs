@@ -173,7 +173,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+                o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
+
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault();
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
@@ -190,14 +192,14 @@ namespace Omicron.SapAdapter.Services.Sap
                     PlannedQuantity = (int)o.Quantity,
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
-                    Number = o.PedidoId,
-                    FabDate = o.CreatedDate.ToString("dd/MM/yyyy"),
+                    Number = o.PedidoId.Value,
+                    FabDate = o.CreatedDate.Value.ToString("dd/MM/yyyy"),
                     DueDate = o.DueDate.HasValue ? o.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     User = dictUser[o.User],
                     Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
-                    BaseDocument = o.PedidoId,
+                    BaseDocument = o.PedidoId.Value,
                     Client = o.CardCode,
                     CompleteQuantity = (int)o.CompleteQuantity,
                     RealEndDate = realEndDate,

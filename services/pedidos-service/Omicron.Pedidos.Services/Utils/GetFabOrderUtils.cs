@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 var fabOrder = new CompleteOrderModel
                 {
-                    DocNum = x.PedidoId,
+                    DocNum = !x.PedidoId.HasValue ? 0 : x.PedidoId.Value,
                     FabOrderId = x.OrdenId,
                     ItemCode = x.ProductoId,
                     Description = x.ProdName,

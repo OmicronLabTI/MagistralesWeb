@@ -69,6 +69,12 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
+
+            if (!filterDate && !parameters.ContainsKey(ServiceConstants.ItemCode))
+            {
+                return orders;
+            }
+
             var listToReturn = new List<OrdenFabricacionModel>();
 
             if (filterDate)

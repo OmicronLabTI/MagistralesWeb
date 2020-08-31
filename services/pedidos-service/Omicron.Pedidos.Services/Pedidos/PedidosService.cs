@@ -1051,7 +1051,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
         {
             var localFilterOrders = await GetFabOrderUtils.GetOrdersByFilter(parameters, this.pedidosDao);
-            var ordersId = localFilterOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).ToList();
+            var ordersId = localFilterOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).Distinct().ToList();
 
             var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = ordersId }, ServiceConstants.GetFabOrdersByFilter);
             var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
@@ -1069,6 +1069,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userService.Response.ToString());
 
             var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
+            var total = orderToReturn.Count();
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -1077,7 +1078,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             int.TryParse(limit, out int limitNumber);
 
             var orderToReturnSkip = orderToReturn.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total.ToString());
         }
 
         /// <summary>
