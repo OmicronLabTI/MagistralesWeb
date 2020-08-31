@@ -6,7 +6,7 @@
         <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / <a class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument, 'Abierto'])">Detalle</a> / Formula </div>
       </div>
       <div class="filter-select">
-        <div class="docbase">Documento base: {{oldDataFormulaDetail.baseDocument}} </div>
+        <div class="docbase">Número de pedido: <span class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
@@ -18,7 +18,7 @@
 
         </div>
         <div class="table-toolbar-buttons">
-            <button mat-raised-button class="button-blue" [routerLink]="['/lotes', ordenFabricacionId]">
+            <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
             &nbsp; Lotes &nbsp; 
             </button>
             &nbsp;
@@ -258,7 +258,10 @@
             <mat-tab>
                 <ng-template matTabLabel>
                     <span *ngIf="comments !== '' && comments" class="material-icons material-custom color-omicron">
-                      radio_button_unchecked
+                      insert_comment
+                    </span>
+                    <span *ngIf="comments === '' || comments === null" class="material-icons material-custom color-omicron">
+                      mode_comment
                     </span>
                     Comentarios
                 </ng-template>

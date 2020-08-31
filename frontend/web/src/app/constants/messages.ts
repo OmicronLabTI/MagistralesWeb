@@ -1,6 +1,8 @@
 export const Messages = {
   success: 'Proceso realizado con éxito',
   generic: 'Lo sentimos, ocurrió un error inesperado',
+  connectionRefused: 'Ocurrió un error, no hay conexión con el servidor ',
+  credentialsInvalid: 'Credenciales inválidas',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
   deleteUsers: ' ¿Desea eliminar el(los) usuario(s) seleccionado(s) ?',
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s) ?',
@@ -25,5 +27,7 @@ export const Messages = {
   batchesCantidadSeleccionadaZero: 'Debes ingresar una cantidad mayor a 0',
   batchDelete: '¿Deseas eliminar esta asignación de lotes?',
   batchesSelectedQtyError: 'No puede sobrepasar la cantidad necesaria, por favor revise.',
-  saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?'
+  saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?',
+  batchesNotAvailableQty: 'No hay cantidad disponible para asignar.',
+  successBatchesSave: 'Se guardó la información con éxito.',
 };
