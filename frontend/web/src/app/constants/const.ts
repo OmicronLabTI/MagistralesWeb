@@ -55,7 +55,8 @@ export enum MessageType {
     placeDetailOrder,
     cancelOrder,
     cancelDetailOrder,
-    finalizeOrder
+    finalizeOrder,
+    saveBatches
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'

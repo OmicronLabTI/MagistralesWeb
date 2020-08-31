@@ -5,10 +5,11 @@ import { Title } from '@angular/platform-browser';
 import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq} from 'src/app/model/http/lotesformula';
 import { MatTableDataSource} from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
-import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING } from '../../constants/const'
+import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING, MessageType, ClassNames } from '../../constants/const'
 import { Messages } from '../../constants/messages'
 import {DataService} from '../../services/data.service';
 import { element } from 'protractor';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-inventorybatches',
@@ -52,7 +53,8 @@ export class InventorybatchesComponent implements OnInit {
     private titleService: Title,
     private route: ActivatedRoute,
     private batchesService: BatchesService,
-    private dataService: DataService
+    private dataService: DataService,
+    private errorService: ErrorService
   ) { }
 
   ngOnInit() {
@@ -119,7 +121,7 @@ export class InventorybatchesComponent implements OnInit {
 
   addLotes(element: ILotesReq){
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
-      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada === CONST_NUMBER.zero){
+      if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero){
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
         if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
@@ -138,9 +140,8 @@ export class InventorybatchesComponent implements OnInit {
         }
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
         this.tableLotesView();
-        element.cantidadDisponible = parseFloat(element
-          .cantidadDisponible.toFixed(6)) - parseFloat(element
-          .cantidadSeleccionada.toFixed(6));
+        element.cantidadDisponible = parseFloat((element
+          .cantidadDisponible - element.cantidadSeleccionada).toFixed(6));
         this.setTotales(element.cantidadSeleccionada);
         this.isReadyToSave = true;
       }
@@ -240,8 +241,8 @@ export class InventorybatchesComponent implements OnInit {
     }
   }
 
-  setTotales(cantidadSeleccionada?: number){
-    if (cantidadSeleccionada != undefined){
+  setTotales(cantidadSeleccionada?: number) {
+    if (cantidadSeleccionada !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].totalSeleccionado = parseFloat(
         (this.dataSourceDetails.data[this.indexSelected].totalSeleccionado + cantidadSeleccionada).toFixed(6)
       );
@@ -252,7 +253,7 @@ export class InventorybatchesComponent implements OnInit {
     }
   }
 
-  setInputNecesaryQty(){
+  setInputNecesaryQty() {
     const dataSourceDetails = this.dataSourceDetails;
     const indexSelected = this.indexSelected;
     this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
@@ -284,14 +285,19 @@ export class InventorybatchesComponent implements OnInit {
     });
     this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
-        this.batchesService.updateBatches(objectToSave).subscribe( () => {
-          this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
-            if (resultBatchSave.isConfirmed) {
-              window.location.reload();
-            }
-          });
-        }, error => console.log('error: ', error ));
+        this.batchesService.updateBatches(objectToSave).subscribe( resultSaveBatches => {
+          if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
+            const titleFinalizeWithError = this.dataService.getMessageTitle(
+              resultSaveBatches.response, MessageType.saveBatches);
+            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom).then( (resultBatchSave: any) => {
+              if (resultBatchSave.isConfirmed) {
+                window.location.reload();
+              }
+            });
+          }
+        }, error => this.errorService.httpError(error));
       }
-    }); 
+    });
   }
 }

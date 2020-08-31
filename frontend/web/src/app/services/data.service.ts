@@ -200,6 +200,10 @@ export class DataService {
         firstMessage = 'La orden de fabricación ';
         finishMessaje = 'no pudo ser Asignada \n';
         break;
+      case MessageType.saveBatches:
+        firstMessage = 'Error al asignar lotes a ';
+        finishMessaje = ', por favor verificar \n';
+        break;
     }
     if (!isFromCancel) {
       itemsWithError.forEach((order: string) => {
