@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
@@ -65,6 +66,10 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
             var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
 
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>()))
@@ -79,7 +84,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
             this.sapDao = new SapDao(this.context);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object);
         }
 
         /// <summary>
@@ -393,6 +398,23 @@ namespace Omicron.SapAdapter.Test.Services
         }
 
         /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetNextBatchCode()
+        {
+            // arrange
+            var productId = "Abc Aspirina";
+
+            // act
+            var result = await this.sapService.GetNextBatchCode(productId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
         /// Get last isolated production order id.
         /// </summary>
         /// <returns>the data.</returns>
@@ -629,9 +651,6 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
-
-            // assert
-            Assert.IsNotNull(result);
         }
     }
 }

@@ -346,14 +346,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultModel> FinishOrder(List<CancelOrderModel> productionOrders)
+        public async Task<ResultModel> FinishOrder(List<CloseProductionOrderModel> productionOrders)
         {
             var results = new Dictionary<int, string>();
-
             foreach (var productionOrder in productionOrders)
             {
                 var productionOrderId = productionOrder.OrderId;
-
+                
                 _loggerProxy.Debug($"Production order to finish: { productionOrderId }.");
                 var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
 
@@ -374,15 +373,54 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
                     results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
                 }
-
-                // Production orders
+                
+                // Get related product
+                var product = this.GetProductByCode(orderReference.ItemNo);
+                
+                // Production order info
                 _loggerProxy.Debug($"Data production order { productionOrderId }.");
                 _loggerProxy.Debug($"DocumentNumber: { orderReference.DocumentNumber }.");
                 _loggerProxy.Debug($"PlannedQuantity: { orderReference.PlannedQuantity }.");
                 _loggerProxy.Debug($"Warehouse: { orderReference.Warehouse }.");
+                _loggerProxy.Debug($"Managed batch numbers: { product.ManageBatchNumbers }.");
+                _loggerProxy.Debug($"Managed serial numbers: { product.ManageSerialNumbers }.");
 
                 // Create a new receipt production order
                 var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
+
+                if (product.ManageBatchNumbers == BoYesNoEnum.tYES && productionOrder.Batches != null)
+                {
+                    int counter = 0;
+                    bool batchError = false;
+                    foreach (var batchConfig in productionOrder.Batches)
+                    {
+                        var existingBatch = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                        existingBatch.DoQuery(string.Format(ServiceConstants.FindBatchCodeForItem, batchConfig.BatchCode, product.ItemCode));
+
+                        if (existingBatch.RecordCount != 0)
+                        {
+                            _loggerProxy.Debug($"An error has ocurred on create batch { batchConfig.BatchCode } for item {product.ItemCode}, the batch already exists.");
+                            batchError = true;
+                            results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batchConfig.BatchCode, product.ItemCode));
+                            break;
+                        }
+
+                        if (counter > 0)
+                            receiptProduction.Lines.BatchNumbers.Add();
+                        receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
+                        receiptProduction.Lines.BatchNumbers.BatchNumber = batchConfig.BatchCode;
+                        receiptProduction.Lines.BatchNumbers.ManufacturingDate = batchConfig.ManufacturingDate;
+                        receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate; 
+                        receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
+                        counter += 1;
+                    }
+
+                    if (batchError)
+                    {
+                        continue;
+                    }
+                }
+
                 receiptProduction.Lines.BaseEntry = orderReference.DocumentNumber;
                 receiptProduction.Lines.BaseType = 202;
                 receiptProduction.Lines.Quantity = orderReference.PlannedQuantity;
@@ -427,17 +465,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
             var result = new KeyValuePair<string, string>();
-
-            var item =  (ProductTrees)this.company.GetBusinessObject(BoObjectTypes.oProductTrees);
-            if (item.GetByKey(isolatedFabOrder.ProductCode))
+            var item = this.GetProductByCode(isolatedFabOrder.ProductCode);
+            
+            if (item != null)
             {
                 var uniqueId = Guid.NewGuid().ToString();
                 var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
                 productionOrder.ProductionOrderType = BoProductionOrderTypeEnum.bopotStandard;
                 productionOrder.StartDate = DateTime.Now;
                 productionOrder.DueDate = DateTime.Now;
-                productionOrder.ItemNo = item.TreeCode;
-                productionOrder.ProductDescription = item.ProductDescription;
+                productionOrder.ItemNo = item.ItemCode;
+                productionOrder.ProductDescription = item.ItemName;
                 productionOrder.PlannedQuantity = 1;
                 productionOrder.DistributionRule = string.Empty;
                 productionOrder.DistributionRule2 = string.Empty;
@@ -505,6 +543,21 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             return dictResult;
+        }
+
+        /// <summary>
+        /// Get product by code
+        /// </summary>
+        /// <param name="productCode">The product code</param>
+        /// <returns></returns>
+        private Items GetProductByCode(string productCode)
+        {
+            var item = (Items)this.company.GetBusinessObject(BoObjectTypes.oItems);
+            if (item.GetByKey(productCode))
+            {
+                return item;
+            }
+            return null;
         }
     }
 }

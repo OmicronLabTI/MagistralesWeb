@@ -210,7 +210,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/fabOrder/finish")]
         [HttpPut]
-        public async Task<IActionResult> CloseFabOrders(List<OrderIdDto> finishOrders)
+        public async Task<IActionResult> CloseFabOrders(List<CloseProductionOrderDto> finishOrders)
         {
             var response = await this.pedidoFacade.CloseFabOrders(finishOrders);
             return this.Ok(response);
