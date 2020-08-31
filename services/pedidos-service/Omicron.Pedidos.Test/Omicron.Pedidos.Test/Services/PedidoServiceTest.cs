@@ -725,9 +725,9 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CloseFabOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdModel>
+            var salesOrders = new List<CloseProductionOrderModel>
             {
-                new OrderIdModel { OrderId = 107, UserId = "abc", },
+                new CloseProductionOrderModel { OrderId = 107, UserId = "abc", },
             };
             var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
