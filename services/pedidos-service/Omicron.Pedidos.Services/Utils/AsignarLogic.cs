@@ -238,25 +238,34 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the data.</returns>
         private static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, string user)
         {
-            var currentOrders = listFromOrders.Select(x => x.Productionorderid).ToList();
-            var missing = listFromSales.Any(y => y.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(y.Productionorderid) && !currentOrders.Contains(y.Productionorderid));
+            var listToUpdate = new List<UserOrderModel>();
 
-            var listPedidos = new List<UserOrderModel>();
+            listFromSales
+                .GroupBy(x => x.Salesorderid)
+                .ToList()
+                .ForEach(y =>
+                {
+                    var currentOrdersBySale = listFromOrders.Where(z => z.Salesorderid == y.Key).ToList();
+                    var currentOrders = currentOrdersBySale.Select(x => x.Productionorderid).ToList();
+                    var missing = y.Any(z => z.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(z.Productionorderid) && !currentOrders.Contains(z.Productionorderid));
 
-            listFromOrders.ForEach(o =>
-            {
-                o.Userid = user;
-                o.Status = ServiceConstants.Asignado;
+                    currentOrdersBySale.ForEach(o =>
+                    {
+                        o.Userid = user;
+                        o.Status = ServiceConstants.Asignado;
+                        listToUpdate.Add(o);
 
-                var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
-                pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
-                pedido.Userid = user;
-                listPedidos.Add(pedido);
-            });
+                        if (!string.IsNullOrEmpty(o.Salesorderid))
+                        {
+                            var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
+                            pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
+                            pedido.Userid = user;
+                            listToUpdate.Add(o);
+                        }
+                    });
+                });
 
-            listFromOrders.AddRange(listPedidos);
-
-            return listFromOrders;
+            return listToUpdate;
         }
 
         /// <summary>
