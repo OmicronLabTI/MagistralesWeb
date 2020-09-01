@@ -145,7 +145,7 @@ class LotsViewController: UIViewController {
         
         UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Lotes", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad diaponible", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad disponible", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad seleccionada", fontSize: 15)
         UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
         
