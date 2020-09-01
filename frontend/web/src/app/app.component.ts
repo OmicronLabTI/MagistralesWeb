@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material';
 import {AppConfig} from './constants/app-config';
 import {Router} from '@angular/router';
 import {
-    ClassNames,
+    ClassNames, ComponentSearch,
     CONST_NUMBER,
     CONST_STRING,
     HttpServiceTOCall,
@@ -20,10 +20,15 @@ import {IPlaceOrdersReq, QfbWithNumber} from './model/http/users';
 import {PedidosService} from './services/pedidos.service';
 import {ErrorService} from './services/error.service';
 import {GeneralMessage} from './model/device/general';
-import {ICancelOrdersRes, IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes} from './model/http/pedidos';
-import {CancelOrders} from './model/device/orders';
+import {
+    CreateIsolatedOrderReq,
+    ICancelOrdersRes,
+    IPlaceOrdersAutomaticReq,
+    IPlaceOrdersAutomaticRes
+} from './model/http/pedidos';
+import {CancelOrders, SearchComponentModal} from './model/device/orders';
 import {ErrorHttpInterface} from './model/http/commons';
-
+import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 
 @Component({
   selector: 'app-root',
@@ -71,6 +76,8 @@ export class AppComponent implements OnDestroy , OnInit {
     this.subscriptionObservables.add(this.dataService.getPathUrl().subscribe(resultPath =>
         this.goToPageEvaluate(resultPath)));
     this.subscriptionObservables.add(this.dataService.getIsLogout().subscribe(() => this.logoutSession(false)));
+    this.subscriptionObservables.add(this.dataService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
+         this.onSuccessSearchComponentModal(resultSearchComponentModal)));
   }
   endSession() {
       this.logoutSession(true);
@@ -91,7 +98,6 @@ export class AppComponent implements OnDestroy , OnInit {
       if (!this.dataService.getIsToSaveAnything()) {
           this.navigatePage(url);
       } else {
-          console.log('there anything to save');
           this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
               .then((savedResult: any) => {
                   if (savedResult.isConfirmed) {
@@ -245,5 +251,40 @@ export class AppComponent implements OnDestroy , OnInit {
         } else {
             this.createDialogHttpOhAboutTypePlace(fromCall);
         }
+    }
+
+    private onSuccessSearchComponentModal(resultSearchComponentModal: SearchComponentModal) {
+        const dialogRef = this.dialog.open(ComponentSearchComponent, {
+            panelClass: 'custom-dialog-container',
+            data: {
+                modalType: resultSearchComponentModal.modalType
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((resultComponents: any) => {
+            console.log('components: ', resultComponents)
+            if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent)) {
+                this.dataService.setNewFormulaComponent(resultComponents);
+            } else {
+                this.onSuccessDialogClosed(resultComponents);
+            }
+        });
+    }
+
+    onSuccessDialogClosed(resultComponents: any) {
+        console.log('resultComponentToService', resultComponents.productId);
+        const createIsolatedReq = new CreateIsolatedOrderReq();
+        createIsolatedReq.productCode = resultComponents.productId;
+        createIsolatedReq.userId = this.dataService.getUserId();
+        this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
+            console.log('resultIsolated: ', resultCreateIsolated)
+            if (resultCreateIsolated.response !== 0) {// 0 = with error
+                this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
+                this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
+            } else {
+                this.dataService.presentToastCustom(resultCreateIsolated.userError, 'error',
+                    Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
+            }
+        }, error => this.errorService.httpError(error));
     }
 }

@@ -27,7 +27,9 @@ export const Endpoints = {
     cancelOrders: `${environment.baseUrl}/api/pedidos/salesOrder/cancel`,
     cancelOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/cancel`,
     finalizeOrders: `${environment.baseUrl}/api/pedidos/salesOrder/finish`,
-    finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish`
+    finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish`,
+    getProducts: `${environment.baseUrl}/api/sapadapter/products`,
+    createIsolatedOrder: `${environment.baseUrl}/api/pedidos/fabOrder/isolated`
   },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,

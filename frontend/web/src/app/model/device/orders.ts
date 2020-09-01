@@ -11,4 +11,7 @@ export class CancelOrders {
     list: CancelOrderReq[];
     cancelType: string;
 }
+export class SearchComponentModal {
+    modalType: string;
+}
 

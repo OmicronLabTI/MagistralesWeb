@@ -96,3 +96,7 @@ export const BOOLEANS = {
     verdadero: true,
     falso: false
 };
+
+export const ComponentSearch = {
+    searchComponent: 'searchComponent'
+};

@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {IFormulaDetalleReq} from '../../model/http/detalleformula';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {CONST_NUMBER} from '../../constants/const';
+import {ComponentSearch, CONST_NUMBER} from '../../constants/const';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {PedidosService} from '../../services/pedidos.service';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
 
 @Component({
@@ -25,10 +25,7 @@ export class ComponentSearchComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
-  displayedColumns: string[] = [
-    'numero',
-    'descripcion'
-  ];
+  displayedColumns: string[] = [];
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
@@ -37,9 +34,24 @@ export class ComponentSearchComponent implements OnInit {
   pageEvent: PageEvent;
   rowPrevious = {};
   count = 0;
+  isFromSearchComponent = true;
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
-              private errorService: ErrorService) {
+              private errorService: ErrorService,
+              @Inject(MAT_DIALOG_DATA) public data: any) {
+    console.log('data: ', this.data)
+    if (this.data.modalType === ComponentSearch.searchComponent) {
+      this.isFromSearchComponent = true;
+      this.displayedColumns = [
+        'numero',
+        'descripcion'
+      ];
+    } else {
+      this.displayedColumns = [
+        'numero'
+      ];
+      this.isFromSearchComponent = false;
+    }
   }
 
   ngOnInit() {
@@ -48,7 +60,8 @@ export class ComponentSearchComponent implements OnInit {
 
   getComponents() {
     this.isDisableSearch = true;
-    this.ordersService.getComponents(this.queryStringComponents).subscribe(resComponents => {
+    this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
+          console.log('resComponentes', resComponents)
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
