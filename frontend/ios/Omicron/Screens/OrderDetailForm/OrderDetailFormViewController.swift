@@ -183,7 +183,7 @@ class OrderDetailFormViewController:  FormViewController {
                     self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
                     self.werehouse = self.form.rowBy(tag: "werehouse")
                     
-                    let alert = UIAlertController(title: CommonStrings.Emty, message: "Deseas guardar los cambios ingresados?", preferredStyle: .alert)
+                    let alert = UIAlertController(title: CommonStrings.Emty, message: "¿Deseas guardar los cambios ingresados?", preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in self.dismiss(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.saveChanges()})
                     alert.addAction(cancelAction)
