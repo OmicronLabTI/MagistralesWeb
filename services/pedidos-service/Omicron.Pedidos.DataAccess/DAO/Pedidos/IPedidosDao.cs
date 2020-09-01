@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="fechaInicio">The init date.</param>
         /// <param name="fechaFin">the end date.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin);;
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin);
 
         /// <summary>
         /// Updates the entries.

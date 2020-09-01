@@ -61,8 +61,13 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
 
-            var matrix = this.GetMatrix(dates, users, userOrdersByDate);
-            return ServiceUtils.CreateResult(true, 200, null, matrix, null, null);
+            var matrix = await this.GetMatrix(dates, users, userOrdersByDate);
+            var productivite = new ProductivityModel
+            {
+                Matrix = matrix,
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, productivite, null, null);
         }
 
         /// <summary>
@@ -81,11 +86,15 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var u in users)
             {
+                var ordersSap = new List<FabricacionOrderModel>();
                 var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id)).ToList();
-                var ordersId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                var ordersId = orderByUser.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
 
-                var sapResponse = await this.sapAdapter.PostSapAdapter(ordersId, ServiceConstants.GetUsersByOrdersById);
-                var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+                if (ordersId.Any())
+                {
+                    var sapResponse = await this.sapAdapter.PostSapAdapter(ordersId, ServiceConstants.GetUsersByOrdersById);
+                    ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+                }
 
                 matrixToReturn.Add(this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]));
             }
@@ -107,7 +116,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var culture = new CultureInfo("es-MX");
             for (var i = initDate.Month; i <= endDate.Month; i++)
             {
-                listMonths.Add(culture.DateTimeFormat.GetMonthName(i));
+                listMonths.Add(culture.DateTimeFormat.GetMonthName(i).ToUpper());
             }
 
             return listMonths;
@@ -142,7 +151,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var userOrderIds = userOrderByMonth.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
                 var orderFromSap = fabOrder.Where(x => userOrderIds.Contains(x.OrdenId)).ToList();
                 total += orderFromSap.Sum(x => x.Quantity);
-                listToReturn.Add(total.ToString());
+                listToReturn.Add(((int)total).ToString());
             }
 
             return listToReturn;

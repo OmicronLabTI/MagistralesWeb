@@ -69,6 +69,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            this.usersService
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
         }
@@ -83,7 +87,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var assign = new Dictionary<string, string>
             {
-                { ServiceConstants.FechaFin, "a" },
+                { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
             };
 
             var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
