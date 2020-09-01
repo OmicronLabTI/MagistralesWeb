@@ -171,6 +171,8 @@ namespace Omicron.SapAdapter.Test
             return new List<ProductoModel>
             {
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Ungüento 1", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Cápsula 12ML", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR" },
             };
         }
 

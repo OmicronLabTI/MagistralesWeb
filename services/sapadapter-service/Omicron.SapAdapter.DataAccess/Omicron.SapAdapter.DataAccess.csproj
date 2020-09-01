@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Omicron.SapAdapter.Repository\Omicron.SapAdapter.Entities.csproj" />
+    <ProjectReference Include="..\Omicron.SapAdapter.Resources\Omicron.SapAdapter.Resources.csproj" />
   </ItemGroup>
 
 </Project>
