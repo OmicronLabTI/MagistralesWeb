@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
-  ClassNames,
   CONST_NUMBER,
   CONST_STRING, ConstStatus,
-  HttpServiceTOCall, HttpStatus, MessageType,
-  MODAL_FIND_ORDERS,
-  MODAL_NAMES,
+  HttpStatus,
+  MODAL_FIND_ORDERS
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
