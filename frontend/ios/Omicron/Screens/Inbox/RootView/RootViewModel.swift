@@ -79,11 +79,11 @@ class RootViewModel {
                 }
             }, onError: { err in
                 print(err)
-                self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
+                self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
                 self.loading.onNext(false)
             }).disposed(by: disposeBag)
         } else {
-            self.error.onNext("Hubo un error al cargar las ordenes de fabricación, por favor intentarlo de nuevo")
+            self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
             self.showRefreshControl.onNext(())
         }
     }
