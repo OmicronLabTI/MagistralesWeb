@@ -39,6 +39,7 @@ class LotsViewModel {
     var cache:[String: [LotsSelected]]  = [:]
     var cacheOriginal: [String: [LotsSelected]]  = [:]
     var cacheLineDocuments: [String:Lots] = [:]
+        var firstTime = PublishSubject<Void>()
     
     init() {
 
@@ -110,6 +111,7 @@ class LotsViewModel {
             self.loading.onNext(false)
             if let lotsData = data.response {
                 if lotsData.first != nil {
+                    self.firstTime.onNext(())
                      self.lineDocumentsDataAux = lotsData
                     // Se inicializa la caché
                     self.cacheLineDocuments = [:]
