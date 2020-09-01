@@ -56,6 +56,7 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             var mockerAssignPedidosService = new Mock<IAssignPedidosService>();
+            var mockProductivityService = new Mock<IProductivityService>();
             var mockServicesPedidos = new Mock<IPedidosService>();
             mockServicesPedidos
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
@@ -149,7 +150,11 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
                 .Returns(Task.FromResult(response));
 
-            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object);
+            mockProductivityService
+                .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
+            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockProductivityService.Object);
         }
 
         /// <summary>
@@ -685,10 +690,6 @@ namespace Omicron.Pedidos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
         }
 
         /// <summary>
@@ -713,10 +714,24 @@ namespace Omicron.Pedidos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetProductivityData()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.GetProductivityData(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }
