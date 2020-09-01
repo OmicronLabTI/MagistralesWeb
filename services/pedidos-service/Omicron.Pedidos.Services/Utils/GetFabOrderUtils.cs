@@ -58,21 +58,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// gets the date filter for sap.
-        /// </summary>
-        /// <param name="filter">the dictionary.</param>
-        /// <returns>the datetime.</returns>
-        public static Dictionary<string, DateTime> GetDateFilter(Dictionary<string, string> filter)
-        {
-            if (filter.ContainsKey(ServiceConstants.FechaFin))
-            {
-                return GetDictDates(filter[ServiceConstants.FechaFin]);
-            }
-
-            return new Dictionary<string, DateTime>();
-        }
-
-        /// <summary>
         /// Creates the model to return.
         /// </summary>
         /// <param name="fabOrderModel">the order.</param>
@@ -111,45 +96,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// gets the dictionary.
-        /// </summary>
-        /// <param name="dateRange">the date range.</param>
-        /// <returns>the data.</returns>
-        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
-        {
-            var dictToReturn = new Dictionary<string, DateTime>();
-            var dates = dateRange.Split("-");
-
-            var dateInicioArray = GetDatesAsArray(dates[0]);
-            var dateFinArray = GetDatesAsArray(dates[1]);
-
-            var dateInicio = new DateTime(dateInicioArray[2], dateInicioArray[1], dateInicioArray[0]);
-            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0]);
-            dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
-            dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
-            return dictToReturn;
-        }
-
-        /// <summary>
-        /// split the dates to int array.
-        /// </summary>
-        /// <param name="date">the date in string.</param>
-        /// <returns>the dates.</returns>
-        private static List<int> GetDatesAsArray(string date)
-        {
-            var dateArrayNum = new List<int>();
-            var dateArray = date.Split("/");
-
-            dateArray.ToList().ForEach(x =>
-            {
-                int.TryParse(x, out int result);
-                dateArrayNum.Add(result);
-            });
-
-            return dateArrayNum;
-        }
-
-        /// <summary>
         /// Get the data filtered by date.
         /// </summary>
         /// <param name="parameters">the original dict.</param>
@@ -159,7 +105,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the data.</returns>
         private static async Task<List<UserOrderModel>> GetOrdersFilteredByDate(Dictionary<string, string> parameters, bool dataFiltered, List<UserOrderModel> listOrders, IPedidosDao pedidosDao)
         {
-            var dateFilter = GetDateFilter(parameters);
+            var dateFilter = ServiceUtils.GetDateFilter(parameters);
 
             if (dataFiltered)
             {

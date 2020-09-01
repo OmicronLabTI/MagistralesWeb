@@ -98,6 +98,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             details.ToList().ForEach(x =>
             {
+                var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
                 userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
                 var userId = userOrder.Userid;
@@ -107,6 +108,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
                 x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
+                x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -379,6 +381,18 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var dataBaseOrders = await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao);
             return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, null);
+        }
+
+        /// <summary>
+        /// Gets the orderd by id.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrdersById(List<int> ordersId)
+        {
+            var orders = (await this.sapDao.GetFabOrderById(ordersId)).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
         }
 
         /// <summary>

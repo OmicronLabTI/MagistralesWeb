@@ -652,6 +652,26 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersById()
+        {
+            // arrange
+            var parameters = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetFabOrdersById(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
         }
 
         /// <summary>

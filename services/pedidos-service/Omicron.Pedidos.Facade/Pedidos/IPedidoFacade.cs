@@ -178,5 +178,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="manualAssign">the object to reassign.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> ReassignOrder(ManualAssignDto manualAssign);
+
+        /// <summary>
+        /// Gets the productivity indicators.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetProductivityData(Dictionary<string, string> parameters);
     }
 }

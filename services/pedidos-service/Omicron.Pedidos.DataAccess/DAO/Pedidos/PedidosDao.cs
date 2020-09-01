@@ -118,6 +118,30 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="fechaInicio">The init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var listToReturn = new List<UserOrderModel>();
+            var orderByFinishDate = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.CloseDate)).ToListAsync();
+
+            orderByFinishDate.ForEach(x =>
+            {
+                DateTime.TryParse(x.CloseDate, out var finishDate);
+
+                if (finishDate >= fechaInicio && finishDate <= fechaFin)
+                {
+                    listToReturn.Add(x);
+                }
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// Updates the entries.
         /// </summary>
         /// <param name="userOrderModels">the user model.</param>
