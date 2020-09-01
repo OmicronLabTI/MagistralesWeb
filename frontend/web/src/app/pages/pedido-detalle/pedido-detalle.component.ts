@@ -75,7 +75,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
-          switch(element.status){
+          switch(element.status) {
             case ConstStatus.abierto:
               element.class = 'green';
               break;
