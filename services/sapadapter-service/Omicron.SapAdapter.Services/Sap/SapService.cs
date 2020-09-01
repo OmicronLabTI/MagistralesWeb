@@ -19,11 +19,11 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
-    using Omicron.SapAdapter.Resources.Extensions;
+    using Omicron.SapAdapter.Services.User;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -261,6 +261,28 @@ namespace Omicron.SapAdapter.Services.Sap
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                throw new CustomServiceException(ServiceConstants.NoChipsError);
+            }
+
+            var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            var items = await this.sapDao.GetProductsManagmentByBatch(chipValues);
+
+            bool resultOffset = parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
+            bool resultLimit = parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
+
+            var itemsToReturn = items.Skip(offset).Take(limit).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count());
         }
 
         /// <summary>

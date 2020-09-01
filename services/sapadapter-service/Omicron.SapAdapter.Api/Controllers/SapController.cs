@@ -10,12 +10,14 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Resources.Extensions;
 
     /// <summary>
     /// Class User Controller.
@@ -171,6 +173,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetFabOrders(GetOrderFabDto orderFabDto)
         {
             var result = await this.sapFacade.GetFabOrders(orderFabDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        [HttpGet]
+        [Route("/products")]
+        public async Task<IActionResult> GetProductsManagmentByBatch([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetProductsManagmentByBatch(parameters.DecodeQueryString());
             return this.Ok(result);
         }
 

@@ -62,6 +62,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetComponents(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Get the components managed by batches.
         /// </summary>
         /// <param name="ordenId">the ordenid.</param>

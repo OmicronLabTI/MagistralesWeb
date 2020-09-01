@@ -138,5 +138,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrders(this.mapper.Map<GetOrderFabModel>(orderFabDto)));
         }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetProductsManagmentByBatch(parameters));
+        }
     }
 }

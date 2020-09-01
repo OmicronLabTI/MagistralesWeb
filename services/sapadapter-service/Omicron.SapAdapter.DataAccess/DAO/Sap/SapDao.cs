@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Resources.Extensions;
 
     /// <summary>
     /// Class for the dao.
@@ -462,6 +463,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                 &&      EF.Functions.Like(batch.DistNumber, batchCodePattern)
                                 orderby batch.DistNumber descending
                                 select  batch.DistNumber).Take(1).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="criterials">the values to look.</param>
+        /// <returns>the value.</returns>
+        public async Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials)
+        {
+            var results = from product in this.databaseContext.ProductoModel where product.ManagedBatches.Equals("Y") select product;
+
+            foreach (var criterial in criterials)
+            {
+                results =   from    product in results
+                            where   EF.Functions.Like(product.ProductoId, $"%{criterial}%")
+                            ||      EF.Functions.Like(product.ProductoName, $"%{criterial}%")
+                            orderby product.ProductoId ascending
+                            select  product;
+            }
+             
+            return results.ToList();
         }
     }
 }
