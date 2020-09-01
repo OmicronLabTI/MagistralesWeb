@@ -666,7 +666,7 @@ namespace Omicron.SapAdapter.Test.Services
         [TestCase("ung", 1)]
         [TestCase("10 GR", 1)]
         [TestCase("10 GR,enTo", 1)]
-        [TestCase("Cáp", 1)]
+        [TestCase("psula", 1)]
         public async Task GetProductsManagmentByBatch(string criterials, int expectedResults)
         {
             // arrange
