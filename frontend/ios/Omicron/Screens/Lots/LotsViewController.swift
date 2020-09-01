@@ -49,6 +49,7 @@ class LotsViewController: UIViewController {
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    var statusType = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,6 +172,13 @@ class LotsViewController: UIViewController {
         self.lineDocTable.tableFooterView = UIView()
         self.lotsAvailablesTable.tableFooterView = UIView()
         self.lotsSelectedTable.tableFooterView = UIView()
+        
+        if(self.statusType == "Terminado") {
+            self.addLotButton.isEnabled = false
+            self.removeLotButton.isEnabled = false
+            self.saveLotsButton.isEnabled = false
+        }
+        
     }
     
     func setStyleView(view: UIView) {
