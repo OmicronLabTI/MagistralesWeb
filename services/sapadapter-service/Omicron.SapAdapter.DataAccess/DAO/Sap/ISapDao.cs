@@ -160,5 +160,21 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="uniqueId">the unique record id.</param>
         /// <returns>the data.</returns>
         Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="batchCodePattern">Batch code pattern.</param>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<string> GetMaxBatchCode(string batchCodePattern, string productCode);
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="criterials">the values to look.</param>
+        /// <returns>the value.</returns>
+        Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials);
+
     }
 }

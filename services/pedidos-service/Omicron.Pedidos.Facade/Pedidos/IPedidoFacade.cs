@@ -120,7 +120,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</para
         /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultDto> CloseFabOrders(List<OrderIdDto> finishOrders);
+        Task<ResultDto> CloseFabOrders(List<CloseProductionOrderDto> finishOrders);
 
         /// <summary>
         /// the automatic assign.
@@ -171,5 +171,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Reassigns the orde to a user.
+        /// </summary>
+        /// <param name="manualAssign">the object to reassign.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> ReassignOrder(ManualAssignDto manualAssign);
     }
 }

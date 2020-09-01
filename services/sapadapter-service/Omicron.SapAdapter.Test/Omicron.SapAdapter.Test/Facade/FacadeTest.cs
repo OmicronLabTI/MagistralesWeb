@@ -93,6 +93,14 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetFabOrders(It.IsAny<GetOrderFabModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetNextBatchCode(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockSapServices
+                .Setup(m => m.GetProductsManagmentByBatch(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
         }
 
@@ -273,6 +281,28 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task GetNextBatchCode()
+        {
+            // arrange
+            var productId = "code";
+
+            // act
+            var response = await this.sapFacade.GetNextBatchCode(productId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetFabOrders()
         {
             // arrange
@@ -284,6 +314,28 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetFabOrders(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetProductsManagmentByBatch()
+        {
+            // arrange
+            var pamameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetProductsManagmentByBatch(pamameters);
 
             // Assert
             Assert.IsNotNull(response);

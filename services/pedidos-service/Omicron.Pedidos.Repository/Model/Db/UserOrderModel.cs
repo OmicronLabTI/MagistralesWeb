@@ -109,5 +109,29 @@ namespace Omicron.Pedidos.Entities.Model
         /// String user id.
         [Column("closeuserid")]
         public string CloseUserId { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is isolated production order.
+        [NotMapped]
+        public bool IsIsolatedProductionOrder => string.IsNullOrEmpty(this.Salesorderid);
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is sales order.
+        [NotMapped]
+        public bool IsSalesOrder => string.IsNullOrEmpty(this.Productionorderid);
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public bool IsProductionOrder => !string.IsNullOrEmpty(this.Productionorderid);
     }
 }

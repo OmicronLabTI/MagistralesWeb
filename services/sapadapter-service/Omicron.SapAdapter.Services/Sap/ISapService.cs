@@ -62,6 +62,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetComponents(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Get the components managed by batches.
         /// </summary>
         /// <param name="ordenId">the ordenid.</param>
@@ -75,6 +82,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="uniqueId">the unique record id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetNextBatchCode(string productCode);
 
         /// <summary>
         /// Gets the ordersby the filter.

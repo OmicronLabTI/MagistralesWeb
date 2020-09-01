@@ -120,6 +120,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetNextBatchCode(string productCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productCode));
+        }
+
+        /// <summary>
         /// Look for the orders.
         /// </summary>
         /// <param name="orderFabDto">the parameters.</param>
@@ -127,6 +137,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrders(this.mapper.Map<GetOrderFabModel>(orderFabDto)));
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetProductsManagmentByBatch(parameters));
         }
     }
 }

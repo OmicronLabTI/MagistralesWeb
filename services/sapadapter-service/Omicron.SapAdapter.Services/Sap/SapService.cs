@@ -19,10 +19,12 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
+    using Omicron.SapAdapter.Services.User;
+    using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// The sap class.
@@ -35,17 +37,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IUsersService usersService;
 
+        private readonly IConfiguration configuration;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
         /// <param name="pedidosService">the pedidosservice.</param>
         /// <param name="userService">user service.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService)
+        /// <param name="configuration">App configuration.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -258,6 +264,28 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                throw new CustomServiceException(ServiceConstants.NoChipsError);
+            }
+
+            var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            var items = await this.sapDao.GetProductsManagmentByBatch(chipValues);
+
+            bool resultOffset = parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
+            bool resultLimit = parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
+
+            var itemsToReturn = items.Skip(offset).Take(limit).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count());
+        }
+
+        /// <summary>
         /// Get the components managed by batches.
         /// </summary>
         /// <param name="ordenId">the ordenid.</param>
@@ -302,6 +330,33 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lastId = await this.sapDao.GetlLastIsolatedProductionOrderId(productId, uniqueId);
             return ServiceUtils.CreateResult(true, 200, null, lastId, null, null);
+        }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetNextBatchCode(string productCode)
+        {
+            var max = 0;
+            var batchCodePrefix = this.configuration["SapOmicron:BatchCodes:prefix"];
+            var batchCodeNumberPositions = int.Parse(this.configuration["SapOmicron:BatchCodes:numberPositions"]);
+            var batchCodePattern = batchCodePrefix.Concat("[0-9]", batchCodeNumberPositions);
+            var maxBatchCode = await this.sapDao.GetMaxBatchCode(batchCodePattern, productCode);
+
+            if (!string.IsNullOrEmpty(maxBatchCode))
+            {
+                var startIndex = maxBatchCode.IndexOf('-') + 1;
+                var endIndex = maxBatchCode.Length;
+                var codeNumber = maxBatchCode.Substring(startIndex, endIndex - startIndex);
+                max = int.Parse(codeNumber);
+            }
+
+            max += 1;
+
+            var nextCode = $"{batchCodePrefix}{max.ToString().PadLeft(batchCodeNumberPositions, '0')}";
+            return ServiceUtils.CreateResult(true, 200, null, nextCode, null, null);
         }
 
         /// <summary>
