@@ -360,6 +360,18 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the orderd by id.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrdersById(List<int> ordersId)
+        {
+            var orders = (await this.sapDao.GetFabOrderById(ordersId)).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

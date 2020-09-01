@@ -87,5 +87,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="orderFabDto">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto);
+
+        /// <summary>
+        /// Gets the orders by ordersId.
+        /// </summary>
+        /// <param name="listOrdersId">The orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetFabOrdersById(List<int> listOrdersId);
     }
 }
