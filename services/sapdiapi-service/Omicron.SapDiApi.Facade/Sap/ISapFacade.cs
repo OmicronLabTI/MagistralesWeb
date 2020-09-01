@@ -53,7 +53,7 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultDto> FinishOrder(List<CancelOrderDto> productionOrders);
+        Task<ResultDto> FinishOrder(List<CloseProductionOrderDto> productionOrders);
 
         /// <summary>
         /// Create new isolated production order.

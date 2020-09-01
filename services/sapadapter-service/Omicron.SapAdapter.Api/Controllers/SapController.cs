@@ -10,12 +10,14 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Resources.Extensions;
 
     /// <summary>
     /// Class User Controller.
@@ -149,7 +151,20 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Get last id of isolated production order created.
+        /// Get new batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        [Route("/batchcode/next")]
+        [HttpGet]
+        public async Task<IActionResult> GetNextBatchCode([FromQuery] string productCode)
+        {
+            var result = await this.sapFacade.GetNextBatchCode(productCode);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get the orders by the filters.
         /// </summary>
         /// <param name="orderFabDto">The orderFabDto.</param>
         /// <returns>the data.</returns>
@@ -158,6 +173,32 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetFabOrders(GetOrderFabDto orderFabDto)
         {
             var result = await this.sapFacade.GetFabOrders(orderFabDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        [HttpGet]
+        [Route("/products")]
+        public async Task<IActionResult> GetProductsManagmentByBatch([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetProductsManagmentByBatch(parameters.DecodeQueryString());
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get the orders by the orderid.
+        /// </summary>
+        /// <param name="lisOrders">The orderFabDto.</param>
+        /// <returns>the data.</returns>
+        [Route("/fabOrderId")]
+        [HttpPost]
+        public async Task<IActionResult> GetFabOrdersById(List<int> lisOrders)
+        {
+            var result = await this.sapFacade.GetFabOrdersById(lisOrders);
             return this.Ok(result);
         }
 

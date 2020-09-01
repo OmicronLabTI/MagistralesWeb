@@ -55,6 +55,8 @@ namespace Omicron.Pedidos.Test.Facade
                 UserError = string.Empty,
             };
 
+            var mockerAssignPedidosService = new Mock<IAssignPedidosService>();
+            var mockProductivityService = new Mock<IProductivityService>();
             var mockServicesPedidos = new Mock<IPedidosService>();
             mockServicesPedidos
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
@@ -74,10 +76,6 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.GetUserOrdersByUserId(It.IsAny<List<string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -105,10 +103,6 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
                             .Setup(m => m.UpdateBatches(It.IsAny<List<AssignBatchModel>>()))
                             .Returns(Task.FromResult(response));
 
@@ -133,7 +127,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.CloseFabOrders(It.IsAny<List<OrderIdModel>>()))
+                .Setup(m => m.CloseFabOrders(It.IsAny<List<CloseProductionOrderModel>>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -144,7 +138,23 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper);
+            mockerAssignPedidosService
+                .Setup(m => m.ReassignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockerAssignPedidosService
+                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockerAssignPedidosService
+                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockProductivityService
+                .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
+            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockProductivityService.Object);
         }
 
         /// <summary>
@@ -621,9 +631,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CloseFabOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdDto>
+            var salesOrders = new List<CloseProductionOrderDto>
             {
-                new OrderIdDto { OrderId = 1, UserId = "abc", },
+                new CloseProductionOrderDto { OrderId = 1, UserId = "abc", },
             };
 
             // act
@@ -680,10 +690,48 @@ namespace Omicron.Pedidos.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task ReassignOrder()
+        {
+            // arrange
+            var parameters = new ManualAssignDto()
+            {
+                DocEntry = new List<int> { 1, 2, 3 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "abc",
+            };
+
+            // act
+            var response = await this.pedidoFacade.ReassignOrder(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetProductivityData()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.GetProductivityData(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }

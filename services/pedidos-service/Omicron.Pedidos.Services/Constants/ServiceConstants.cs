@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class for constatns.
     /// </summary>
@@ -69,6 +71,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Abierto = "Abierto";
 
         /// <summary>
+        /// abierto status.
+        /// </summary>
+        public const string Reasignado = "Reasignado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -107,6 +114,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// orde fab plani.
         /// </summary>
         public const string OrdenFabricacionPlan = "Orden de fabricación planificada";
+
+        /// <summary>
+        /// when the Pedido es reassigned.
+        /// </summary>
+        public const string ReasignarPedido = "Se reasigno el pedido a {0}";
+
+        /// <summary>
+        /// se asigna la orden.
+        /// </summary>
+        public const string ReasignarOrden = "Se reasigno la orden a {0}";
 
         /// <summary>
         /// orden fab.
@@ -254,6 +271,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetUsersById = "getUsersById";
 
         /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
+        public const string GetUsersByOrdersById = "fabOrderId";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
@@ -347,5 +369,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// Const for the limit.
         /// </summary>
         public const string Limit = "limit";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusAvoidReasignar { get; } = new List<string>
+        {
+            "Finalizado",
+        };
     }
 }
