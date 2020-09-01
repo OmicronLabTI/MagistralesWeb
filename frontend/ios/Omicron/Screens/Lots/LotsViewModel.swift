@@ -31,11 +31,14 @@ class LotsViewModel {
     
     var lineDocumentsDataAux:[Lots] = []
     var lotsAvailablesAux:[LotsAvailable] = []
-    var lotsSelectedAux:[LotsSelected] = []
+    // var lotsSelectedAux:[LotsSelected] = []
     
     var itemSelectedLineDocuments: Int = 0
+    var itemDeselectedLineDocuments: Int = 0
     var itemLotSelected:LotsSelected? = nil
-    var prueba: [Any] = []
+    //var prueba: [Any] = []
+    
+    var cache:[String: [LotsSelected]]  = [:]
 
     
     init() {
@@ -51,34 +54,42 @@ class LotsViewModel {
             
             // Perdsiste la presición del problema con los decimales
             if((lotSelected.cantidadSeleccionada! <= self.lotsAvailablesAux[data.row].cantidadDisponible!) && ( lotSelected.cantidadSeleccionada! <= self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! + 0.00000000000001)) {
-                let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
+                //let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
+                let index = self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!.firstIndex(where: ({$0.numeroLote == lotSelected.numeroLote}))
                 if((index) != nil) {
-                    self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
+                    // self.lotsSelectedAux[index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
+                    self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]![index!].cantidadSeleccionada! += lotSelected.cantidadSeleccionada!
                 } else {
-                    self.lotsSelectedAux.append(lotSelected)
+                    self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!.append(lotSelected)
+                    //self.lotsSelectedAux.append(lotSelected)
                 }
                 
-                self.prueba.append(self.lotsSelectedAux)
+                //self.prueba.append(self.lotsSelectedAux)
                 
                 self.lotsAvailablesAux[data.row].cantidadDisponible! -= lotSelected.cantidadSeleccionada!
                 self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! -= lotSelected.cantidadSeleccionada!
                 self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! += lotSelected.cantidadSeleccionada!
                 self.dataOfLots.onNext(self.lineDocumentsDataAux)
-                self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                //self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                self.dataLotsSelected.onNext(self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!)
                 self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
+                 //self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!] = self.lotsSelectedAux //------------------------
             }
         }).disposed(by: self.disposeBag)
         
         // Remueve un lote de Lotes seleccionados y lo pasa a Lotes Disponibles
         self.removeLotDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { itemSelected in
-            let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote}))
+//            let index = self.lotsSelectedAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote}))
+             let index = self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote}))
             if (index != nil) {
                 
                 if let indexLotAvailable = self.lotsAvailablesAux.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote})) {
                     self.lotsAvailablesAux[indexLotAvailable].cantidadDisponible! += self.itemLotSelected!.cantidadSeleccionada!
                     self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalNecesario! += self.itemLotSelected!.cantidadSeleccionada!
                     self.lineDocumentsDataAux[self.itemSelectedLineDocuments].totalSeleccionado! -= self.itemLotSelected!.cantidadSeleccionada!
-                    self.lotsSelectedAux.remove(at: index!)
+                    //self.lotsSelectedAux.remove(at: index!)
+                    self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!.remove(at: index!)
+                    //self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!] = self.lotsSelectedAux //------------------------
                 } else {
                     for item in self.lineDocumentsDataAux {
                         if let indexOfTable = item.lotesDisponibles?.firstIndex(where: ({$0.numeroLote == self.itemLotSelected?.numeroLote})) {
@@ -90,12 +101,13 @@ class LotsViewModel {
                 
                 self.dataOfLots.onNext(self.lineDocumentsDataAux)
                 self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
-                self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                //self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                self.dataLotsSelected.onNext(self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!)
             }
         }).disposed(by: self.disposeBag)
         
         
-        // Guada los lotes selecionados y los manda al servicio
+        // Guada los lotes seleccionados y los manda al servicio
         self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.assingLots()
         }).self.disposed(by: self.disposeBag)
@@ -109,6 +121,13 @@ class LotsViewModel {
             self.loading.onNext(false)
             if let lotsData = data.response {
                 if lotsData.first != nil {
+                     self.lineDocumentsDataAux = lotsData
+                    // Se inicializa la caché
+                    for lot in lotsData {
+                        self.cache[lot.codigoProducto!] = []
+                    }
+                    
+                    
                     // Se asignan los valores a cada lote disponible su cantidad sugerida (total necesario)
                     for lotData in lotsData {
                         for lot in lotData.lotesDisponibles!{
@@ -125,19 +144,24 @@ class LotsViewModel {
                             
                         lotsData[0].totalNecesario = 0
                         lotsData[0].totalSeleccionado = lotsData[0].lotesDisponibles![0].cantidadSeleccionada!
-                         self.lotsSelectedAux = [lotSelected]
+                        self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]! = [lotSelected]
+//                         self.lotsSelectedAux = [lotSelected]
+//                        self.cache[lotsData[0].codigoProducto!] =  self.lotsSelectedAux
                         self.lotsSelectedCopy = [lotSelected]
                         self.lotsAvailablesAux = []
                     } else {
                         self.lotsAvailablesAux = lotsData[0].lotesDisponibles!
-                        self.lotsSelectedAux = lotsData[0].lotesSelecionados!
+                         self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]! =  lotsData[0].lotesSelecionados!
+//                        self.lotsSelectedAux = lotsData[0].lotesSelecionados!
+//                        self.cache[lotsData[0].codigoProducto!] =  self.lotsSelectedAux
                         self.lotsSelectedCopy = lotsData[0].lotesSelecionados!
                     }
                     
                     self.dataLotsAvailable.onNext(self.lotsAvailablesAux)
-                    self.dataLotsSelected.onNext(self.lotsSelectedAux)
+//                    self.dataLotsSelected.onNext(self.lotsSelectedAux)
+                    self.dataLotsSelected.onNext(self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]! )
                     self.dataOfLots.onNext(lotsData)
-                    self.lineDocumentsDataAux = lotsData
+                    //self.lineDocumentsDataAux = lotsData
                 }
             }
         }, onError: { error in
@@ -155,17 +179,18 @@ class LotsViewModel {
              self.lotsAvailablesAux = []
         }
         
-        if(lot.lotesSelecionados!.count > 0) {
-            self.dataLotsSelected.onNext(lot.lotesSelecionados!)
-            self.lotsSelectedAux = lot.lotesSelecionados!
+        if(cache[lot.codigoProducto!]!.count > 0) {
+            self.dataLotsSelected.onNext(cache[lot.codigoProducto!]!)
+            //self.lotsSelectedAux = lot.lotesSelecionados!
         } else {
              self.dataLotsSelected.onNext([])
-            self.lotsSelectedAux = lot.lotesSelecionados!
+//            let lll = cache[lot.codigoProducto!]
+//            self.lotsSelectedAux = lll!
         }
     }
         
     func assingLots() -> Void {
-        
+        print("caché \(self.cache)")
         // Proceso de eliminación
         // Se busca lote del arreglo original (lotsSelectedCopy) en arreglo actual (lotsSelectedAux)
         // Si existe no se realiza nada
@@ -173,8 +198,8 @@ class LotsViewModel {
         var lotsRequest:[LotsRequest] = []
         
         for lso in self.lotsSelectedCopy {
-            
-            if (self.lotsSelectedAux.first(where: ({$0.numeroLote == lso.numeroLote})) == nil) {
+//            if (self.lotsSelectedAux.first(where: ({$0.numeroLote == lso.numeroLote})) == nil) {
+             if ( self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]!.first(where: ({$0.numeroLote == lso.numeroLote})) == nil) {
                 let lotRequest = LotsRequest(orderId: self.orderId, assignedQty: lso.cantidadSeleccionada!, batchNumber: lso.numeroLote!, itemCode: self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!, action: "delete")
                 lotsRequest.append(lotRequest)
             }
@@ -184,8 +209,7 @@ class LotsViewModel {
         //Se busca lote del arreglo actual (lotsSelectedAux) en el arreglo original (lotsSelectedCopy)
         // Si existe se crea el objeto de eliminación del arreglo original, se obtiene el valor absoluto de la resta de cantidad seleccionada entre lotsSelectedAux y lotsSelectedCopy, por último se crea el objecto de actualización con el valor de la resta
         //No existe se crea un nuevo objeto de inserción
-        
-        for lsa in self.lotsSelectedAux {
+        for lsa in  self.cache[self.lineDocumentsDataAux[self.itemSelectedLineDocuments].codigoProducto!]! {
             var lotRequest:LotsRequest? = nil
             
             if let index = self.lotsSelectedCopy.firstIndex(where: ({ $0.numeroLote == lsa.numeroLote })) {
@@ -233,5 +257,11 @@ class LotsViewModel {
             self.loading.onNext(false)
             self.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    func saveCacheLotsSelected(index: Int) -> Void {
+//        let productCode = lineDocumentsDataAux[index].codigoProducto ?? ""
+//        self.cache[productCode] = self.lotsSelectedAux
+//        print("Valor del \(self.cache[productCode])")
     }
 }

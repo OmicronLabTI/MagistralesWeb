@@ -102,10 +102,21 @@ class LotsViewController: UIViewController {
             self.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
         
+        //Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext: { index in
             self.lotsViewModel.itemSelectedLineDocuments = index.row
         }).disposed(by: self.disposeBag)
-                
+        
+        // Se detecta el item que se deselecionó para poder guardar la información de lotes seleccionados
+        self.lineDocTable.rx.itemDeselected.observeOn(MainScheduler.instance).subscribe(onNext: { res in
+            self.lotsViewModel.saveCacheLotsSelected(index: res.row)
+        }).disposed(by: self.disposeBag)
+          
+         // Se detecta el item que se deselecionó para poder guardar la información de lotes seleccionados
+//        self.lineDocTable.rx.modelDeselected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { lineDocItem in
+//            self.lotsViewModel.saveCacheLotsSelected(lots: lineDocItem)
+//        }).disposed(by: self.disposeBag)
+        
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
