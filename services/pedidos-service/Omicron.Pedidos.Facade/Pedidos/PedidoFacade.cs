@@ -29,14 +29,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IPedidosService pedidoService;
 
+        private readonly IAssignPedidosService assignPedidosService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidoFacade"/> class.
         /// </summary>
         /// <param name="pedidoService">the pedido service.</param>
         /// <param name="mapper">the mapper.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper)
+        /// <param name="assignPedidosService">The assign pedidos service.</param>
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
+            this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
             this.mapper = mapper;
         }
 
@@ -97,7 +101,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultDto> AssignHeader(ManualAssignDto manualAssign)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.AssignOrder(this.mapper.Map<ManualAssignModel>(manualAssign)));
+            return this.mapper.Map<ResultDto>(await this.assignPedidosService.AssignOrder(this.mapper.Map<ManualAssignModel>(manualAssign)));
         }
 
         /// <summary>
@@ -196,7 +200,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultDto> AutomaticAssign(AutomaticAssingDto automaticAssing)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.AutomaticAssign(this.mapper.Map<AutomaticAssingModel>(automaticAssing)));
+            return this.mapper.Map<ResultDto>(await this.assignPedidosService.AutomaticAssign(this.mapper.Map<AutomaticAssingModel>(automaticAssing)));
         }
 
         /// <summary>
@@ -258,6 +262,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetFabOrders(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetFabOrders(parameters));
+        }
+
+        /// <summary>
+        /// Reassigns the orde to a user.
+        /// </summary>
+        /// <param name="manualAssign">the object to reassign.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> ReassignOrder(ManualAssignDto manualAssign)
+        {
+            return this.mapper.Map<ResultDto>(await this.assignPedidosService.ReassignOrder(this.mapper.Map<ManualAssignModel>(manualAssign)));
         }
     }
 }

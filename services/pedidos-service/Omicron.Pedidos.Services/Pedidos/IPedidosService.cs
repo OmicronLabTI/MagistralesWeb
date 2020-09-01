@@ -54,13 +54,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> GetUserOrdersByUserId(List<string> listIds);
 
         /// <summary>
-        /// Assign the orders.
-        /// </summary>
-        /// <param name="manualAssign">the manual assign.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> AssignOrder(ManualAssignModel manualAssign);
-
-        /// <summary>
         /// Updates the formula for an order.
         /// </summary>
         /// <param name="updateFormula">upddates the formula.</param>
@@ -121,13 +114,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="finishOrders">Orders to finish.</para
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders);
-
-        /// <summary>
-        /// Makes the automatic assign.
-        /// </summary>
-        /// <param name="assignModel">the assign model.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel);
 
         /// <summary>
         /// Makes the call to assign batches.
