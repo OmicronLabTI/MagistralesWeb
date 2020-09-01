@@ -47,12 +47,6 @@ describe('PedidosComponent', () => {
     .compileComponents();
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PedidosComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns)
@@ -107,9 +101,10 @@ describe('PedidosComponent', () => {
     component.dataSource.data = [];
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.forEach( user => user.isChecked = false);
-    component.allComplete = false;
+    component.allComplete = true;
     expect(component.someComplete()).toBeFalsy();
     component.dataSource.data.forEach( user => user.isChecked = true);
+    component.allComplete = false;
     expect(component.someComplete()).toBeTruthy();
   });
   it('should setAll', () => {

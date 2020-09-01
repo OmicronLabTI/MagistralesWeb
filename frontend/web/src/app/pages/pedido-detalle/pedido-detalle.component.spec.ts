@@ -41,6 +41,7 @@ describe('PedidoDetalleComponent', () => {
     fixture = TestBed.createComponent(PedidoDetalleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.dataSource.data = null;
   });
   it('should create', () => {
     expect(component).toBeTruthy();
