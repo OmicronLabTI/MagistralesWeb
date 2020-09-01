@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetProductsManagmentByBatch(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-			mockSapServices
+            mockSapServices
                 .Setup(m => m.GetFabOrdersById(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 

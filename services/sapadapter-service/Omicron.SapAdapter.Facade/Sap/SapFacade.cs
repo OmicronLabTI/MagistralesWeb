@@ -149,7 +149,7 @@ namespace Omicron.SapAdapter.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.sapService.GetProductsManagmentByBatch(parameters));
         }
 
-		/// <summary>
+        /// <summary>
         /// Gets the orders by ordersId.
         /// </summary>
         /// <param name="listOrdersId">The orders ids.</param>
