@@ -75,7 +75,7 @@ struct CommonStrings {
     static let password = "Password"
     static let Emty = ""
     static let OK = "OK"
-    static let searchOrden = "Buscar órden"
+    static let searchOrden = "Buscar orden"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
 }

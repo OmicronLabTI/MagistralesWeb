@@ -128,15 +128,15 @@ class InboxViewController: UIViewController {
             if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
                 switch data.indexStatusSelected {
                 case 0:
-                    message = "No tienes ordenes Asignadas"
+                    message = "No tienes órdenes Asignadas"
                 case 1:
-                    message = "No tienes ordenes En proceso"
+                    message = "No tienes órdenes En proceso"
                 case 2:
-                    message = "No tienes ordenes Pendientes"
+                    message = "No tienes órdenes Pendientes"
                 case 3:
-                    message = "No tienes ordenes Terminadas"
+                    message = "No tienes órdenes Terminadas"
                 case 4:
-                    message = "No tienes ordenes Reasignadas"
+                    message = "No tienes órdenes Reasignadas"
                 default:
                     message = ""
                 }
