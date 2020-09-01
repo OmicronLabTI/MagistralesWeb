@@ -140,6 +140,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetProductsManagmentByBatch(parameters));
+        }
+
+		/// <summary>
         /// Gets the orders by ordersId.
         /// </summary>
         /// <param name="listOrdersId">The orders ids.</param>

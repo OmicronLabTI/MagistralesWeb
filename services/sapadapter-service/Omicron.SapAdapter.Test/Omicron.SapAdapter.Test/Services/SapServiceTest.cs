@@ -19,6 +19,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -671,6 +672,39 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="criterials">Filters.</param>
+        /// <param name="expectedResults">Number of expected results.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("Abc,pirina", 1)]
+        [TestCase("ento", 1)]
+        [TestCase("ung", 1)]
+        [TestCase("10 GR", 1)]
+        [TestCase("10 GR,enTo", 1)]
+        [TestCase("psula", 1)]
+        public async Task GetProductsManagmentByBatch(string criterials, int expectedResults)
+        {
+            // arrange
+            var paramsDict = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { "chips", criterials },
+            };
+
+            // act
+            var result = await this.sapService.GetProductsManagmentByBatch(paramsDict);
+
+            // assert
+            var responseAsJson = JsonConvert.SerializeObject(result.Response);
+            var returnItems = JsonConvert.DeserializeObject<List<ProductoModel>>(responseAsJson);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResults, returnItems.Count);
         }
     }
 }
