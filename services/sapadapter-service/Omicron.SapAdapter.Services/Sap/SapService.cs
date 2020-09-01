@@ -92,6 +92,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             details.ToList().ForEach(x =>
             {
+                var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
                 userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
                 var userId = userOrder.Userid;
@@ -101,6 +102,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
                 x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
+                x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -173,7 +175,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault(x => x.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
