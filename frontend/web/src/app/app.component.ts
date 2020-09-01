@@ -272,9 +272,9 @@ export class AppComponent implements OnDestroy , OnInit {
     }
 
     onSuccessDialogClosed(resultComponents: any) {
-        console.log('resultComponentToService', resultComponents.productId);
+        console.log('resultComponentToService', resultComponents.productoId);
         const createIsolatedReq = new CreateIsolatedOrderReq();
-        createIsolatedReq.productCode = resultComponents.productId;
+        createIsolatedReq.productCode = resultComponents.productoId;
         createIsolatedReq.userId = this.dataService.getUserId();
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             console.log('resultIsolated: ', resultCreateIsolated)

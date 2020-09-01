@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
-  ClassNames,
+  ClassNames, ComponentSearch,
   CONST_NUMBER,
   CONST_STRING, ConstStatus,
   HttpServiceTOCall, HttpStatus, MessageType,
@@ -140,4 +140,7 @@ export class FabordersListComponent implements OnInit {
     return event;
   }
 
+  createOrderIsolated() {
+    this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
+  }
 }

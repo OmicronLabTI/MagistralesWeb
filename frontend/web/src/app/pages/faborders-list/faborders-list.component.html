@@ -28,6 +28,9 @@
         <div class="table-toolbar-search">
         </div>
         <div class="table-toolbar-buttons">
+            <button mat-raised-button class="button-blue " (click)="createOrderIsolated()" >
+                &nbsp; Crear orden &nbsp;
+            </button>
             <button mat-raised-button class="button-blue " (click)="openFindOrdersDialog()" >
                 <mat-icon *ngIf="isSearchWithFilter">filter_tilt_shift
                 </mat-icon>

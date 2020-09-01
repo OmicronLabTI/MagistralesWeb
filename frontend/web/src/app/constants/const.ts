@@ -98,5 +98,6 @@ export const BOOLEANS = {
 };
 
 export const ComponentSearch = {
-    searchComponent: 'searchComponent'
+    searchComponent: 'searchComponent',
+    createOrderIsolated: 'createOrder'
 };
