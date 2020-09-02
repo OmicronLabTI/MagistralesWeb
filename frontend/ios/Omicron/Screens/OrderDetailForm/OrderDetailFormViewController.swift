@@ -177,7 +177,7 @@ class OrderDetailFormViewController:  FormViewController {
             }
             .onCellSelection { cell, row in
                 row.section?.form?.validate()
-                if (row.isValid) {
+                if (row.isValid && !row.isDisabled) {
                     
                     self.baseQuantity = self.form.rowBy(tag: "baseQuantity")
                     self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
