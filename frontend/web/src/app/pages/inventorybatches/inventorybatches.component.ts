@@ -259,7 +259,11 @@ export class InventorybatchesComponent implements OnInit {
     const dataSourceDetails = this.dataSourceDetails;
     const indexSelected = this.indexSelected;
     this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
-      element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
+      if (dataSourceDetails.data[indexSelected].totalNecesario <= element.cantidadDisponible) {
+        element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
+      } else {
+        element.cantidadSeleccionada = element.cantidadDisponible;
+      }
     });
     return true;
   }
