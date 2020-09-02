@@ -29,6 +29,26 @@ class RootViewController: UIViewController {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.initComponents()
+        self.viewModelBinding()
+       self.viewTable.refreshControl = refreshControl
+        self.setTitleCustom()
+        // Configure Refresh Control
+       self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        self.rootViewModel.getOrders()
+    }
+    
+    // MARK: Functions
+    @objc func refreshOrders() -> Void {
+        self.rootViewModel.getOrders(isUpdate: true)
+    }
+    
+    // Pone el título del del usuario logeado
+    func setTitleCustom() -> Void {
         let navLabel = UILabel(frame: (self.navigationController?.navigationBar.frame)!)
         navLabel.numberOfLines = 0
         let navTitle = NSMutableAttributedString(string: "Hola\n", attributes:[
@@ -41,24 +61,6 @@ class RootViewController: UIViewController {
 
         navLabel.attributedText = navTitle
         self.navigationItem.titleView = navLabel
-        self.initComponents()
-        self.viewModelBinding()
-       self.viewTable.refreshControl = refreshControl
-        
-        // Configure Refresh Control
-       self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        self.rootViewModel.getOrders()
-    }
-    
-    // MARK: Functions
-    
-    // Falta funcionalidad
-    @objc func refreshOrders() -> Void {
-        self.rootViewModel.getOrders(isUpdate: true)
     }
     
     func viewModelBinding() {
