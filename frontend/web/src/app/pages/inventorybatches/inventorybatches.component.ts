@@ -296,9 +296,9 @@ export class InventorybatchesComponent implements OnInit {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
             this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
-            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom);
+            Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
           } else {
-            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
+            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then( (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }

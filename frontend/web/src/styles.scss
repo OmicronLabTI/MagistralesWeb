@@ -236,6 +236,7 @@ th.centered {
   -webkit-hyphens: auto !important;
   hyphens: auto !important;
 }
+
 .tdcell-center{
   text-align: center;
 }
@@ -662,4 +663,8 @@ a.breadcrumblink:hover{
 
 .docbase .spandoc{
   font-weight: bold !important;
+}
+
+.mat-tooltip {
+  font-size: 13px !important;
 }
