@@ -108,6 +108,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
             lotsVC.orderId = self.orderId
+            lotsVC.statusType = self.statusType
             self.navigationController?.pushViewController(lotsVC, animated: true)
         }).disposed(by: self.disposeBag)
         
@@ -237,7 +238,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:

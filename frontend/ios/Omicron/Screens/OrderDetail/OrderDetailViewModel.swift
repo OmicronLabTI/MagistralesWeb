@@ -50,9 +50,6 @@ class OrderDetailViewModel {
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
             self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
-        
-        
-
     }
     
     // MARK: Functions

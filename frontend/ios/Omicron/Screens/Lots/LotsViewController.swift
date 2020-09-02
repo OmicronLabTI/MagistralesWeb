@@ -49,6 +49,7 @@ class LotsViewController: UIViewController {
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    var statusType = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,6 +133,11 @@ class LotsViewController: UIViewController {
             self.lotsViewModel.itemSelectedLineDocuments = index.row
         }).disposed(by: self.disposeBag)
         
+        // Se autoseleciona la primera columna de la tabla linea de documentos
+        self.lotsViewModel.firstTime.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .none)
+        }).disposed(by: self.disposeBag)
+        
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
@@ -191,6 +197,13 @@ class LotsViewController: UIViewController {
         self.lineDocTable.tableFooterView = UIView()
         self.lotsAvailablesTable.tableFooterView = UIView()
         self.lotsSelectedTable.tableFooterView = UIView()
+        
+        if(self.statusType == "Terminado") {
+            self.addLotButton.isEnabled = false
+            self.removeLotButton.isEnabled = false
+            self.saveLotsButton.isEnabled = false
+        }
+        
     }
     
     func setStyleView(view: UIView) {

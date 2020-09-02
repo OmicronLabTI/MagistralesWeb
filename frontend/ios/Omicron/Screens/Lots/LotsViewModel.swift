@@ -39,6 +39,7 @@ class LotsViewModel {
     var cache:[String: [LotsSelected]]  = [:]
     var cacheOriginal: [String: [LotsSelected]]  = [:]
     var cacheLineDocuments: [String:Lots] = [:]
+        var firstTime = PublishSubject<Void>()
     
     private var selectedBatches: [BatchSelected] = []
     var documentSelected = PublishSubject<Lots>()
