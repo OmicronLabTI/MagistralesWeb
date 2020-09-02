@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
+                x.FechaOfFin = !string.IsNullOrEmpty(userOrder.FinishDate) ? userOrder.FinishDate : string.Empty;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
@@ -277,12 +277,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
                 double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
 
+                totalNecesario = Math.Round(totalNecesario, 6);
+                doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
+
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = x.Warehouse,
                     CodigoProducto = x.ProductId,
                     DescripcionProducto = x.Description,
-                    TotalNecesario = totalNecesario - doubleTotalBathches,
+                    TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
                     TotalSeleccionado = doubleTotalBathches,
                     Lotes = lotes,
                     LotesAsignados = batches,
@@ -347,7 +350,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     SysNumber = x.SysNumber,
                     NumeroLote = x.DistNumber,
                     CantidadAsignada = x.CommitQty,
-                    CantidadDisponible = x.Quantity - x.CommitQty,
+                    CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
                 });
             });
 
