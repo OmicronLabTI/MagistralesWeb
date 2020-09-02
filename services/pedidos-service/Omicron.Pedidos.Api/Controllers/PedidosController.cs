@@ -385,6 +385,7 @@ namespace Omicron.Pedidos.Api.Controllers
             return this.Ok(response);
         }
 
+        /// <summary>
         /// Asignacion manual.
         /// </summary>
         /// <param name="parameters">the assign model.</param>

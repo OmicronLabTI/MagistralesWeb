@@ -783,6 +783,7 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // act
             var response = await this.pedidoFacade.GetCustomComponentListByProductId(string.Empty);
+
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
