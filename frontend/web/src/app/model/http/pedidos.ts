@@ -15,6 +15,9 @@ export class IPlaceOrdersAutomaticRes extends BaseResponseHttp {
 export class ICancelOrdersRes extends BaseResponseHttp {
     response: ResponseCancel;
 }
+export class ICreateIsolatedOrderRes extends BaseResponseHttp {
+    response: number;
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum: any;
@@ -62,4 +65,8 @@ export class CancelOrderReq {
 }
 export class ResponseCancel {
     failed: CancelOrderReq[];
+}
+export class CreateIsolatedOrderReq {
+    userId: string;
+    productCode: string;
 }

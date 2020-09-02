@@ -1,0 +1,86 @@
+export const DetailOrderMock = {
+    code: 200,
+    userError: null,
+    exceptionMessage: null,
+    success: true,
+    response: [
+        {
+            ordenFabricacionId: 0,
+            codigoProducto: '1071   15 ML',
+            descripcionProducto: 'Ascorbico 4%  Glicolico 10%  Hialuronico 3%  Crema',
+            descripcionCorta: 'ASCORBICO 4%  GLICOLICO 10%  HIALURONICO',
+            qtyPlanned: null,
+            qtyPlannedDetalle: 10,
+            fechaOf: '',
+            fechaOfFin: '',
+            qfb: '',
+            status: 'Abierto',
+            isChecked: false
+        },
+        {
+            ordenFabricacionId: 89101,
+            codigoProducto: '1070   30 ML',
+            descripcionProducto: 'Glicolico 15%  Hialuronico 3%  Kojico 5%  Crema',
+            descripcionCorta: 'GLICOLICO 15%  HIALURONICO 3%  KOJICO 5%',
+            qtyPlanned: 5,
+            qtyPlannedDetalle: 5,
+            fechaOf: '19/08/2020',
+            fechaOfFin: '',
+            qfb: 'Sergio Flores',
+            status: 'Asignado',
+            isChecked: false
+        },
+        {
+            ordenFabricacionId: 89102,
+            codigoProducto: '1070   30 ML',
+            descripcionProducto: 'Glicolico 15%  Hialuronico 3%  Kojico 5%  Crema',
+            descripcionCorta: 'GLICOLICO 15%  HIALURONICO 3%  KOJICO 5%',
+            qtyPlanned: 5,
+            qtyPlannedDetalle: 5,
+            fechaOf: '19/08/2020',
+            fechaOfFin: '',
+            qfb: 'Sergio Flores',
+            status: 'Pendiente',
+            isChecked: false
+        },
+        {
+            ordenFabricacionId: 89103,
+            codigoProducto: '1070   30 ML',
+            descripcionProducto: 'Glicolico 15%  Hialuronico 3%  Kojico 5%  Crema',
+            descripcionCorta: 'GLICOLICO 15%  HIALURONICO 3%  KOJICO 5%',
+            qtyPlanned: 5,
+            qtyPlannedDetalle: 5,
+            fechaOf: '',
+            fechaOfFin: '',
+            qfb: 'Sergio Flores',
+            status: 'Terminado',
+            isChecked: false
+        },
+        {
+            ordenFabricacionId: 89104,
+            codigoProducto: '1070   30 ML',
+            descripcionProducto: 'Glicolico 15%  Hialuronico 3%  Kojico 5%  Crema',
+            descripcionCorta: 'GLICOLICO 15%  HIALURONICO 3%  KOJICO 5%',
+            qtyPlanned: 5,
+            qtyPlannedDetalle: 5,
+            fechaOf: '19/08/2020',
+            fechaOfFin: '',
+            qfb: 'Sergio Flores',
+            status: 'En proceso',
+            isChecked: false
+        },
+        {
+            ordenFabricacionId: 89105,
+            codigoProducto: '1070   30 ML',
+            descripcionProducto: 'Glicolico 15%  Hialuronico 3%  Kojico 5%  Crema',
+            descripcionCorta: 'GLICOLICO 15%  HIALURONICO 3%  KOJICO 5%',
+            qtyPlanned: 5,
+            qtyPlannedDetalle: 5,
+            fechaOf: '19/08/2020',
+            fechaOfFin: '',
+            qfb: 'Sergio Flores',
+            status: '',
+            isChecked: false
+        }
+    ]
+};

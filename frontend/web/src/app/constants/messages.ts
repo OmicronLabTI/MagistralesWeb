@@ -26,8 +26,9 @@ export const Messages = {
   expiredSession: 'La sesión ha expirado',
   batchesCantidadSeleccionadaZero: 'Debes ingresar una cantidad mayor a 0',
   batchDelete: '¿Deseas eliminar esta asignación de lotes?',
-  batchesSelectedQtyError: 'No puede sobrepasar la cantidad necesaria, por favor revise.',
+  batchesSelectedQtyError: 'No puede sobrepasar la cantidad necesaria, por favor revise',
   saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?',
-  batchesNotAvailableQty: 'No hay cantidad disponible para asignar.',
-  successBatchesSave: 'Se guardó la información con éxito.',
+  batchesNotAvailableQty: 'No hay cantidad disponible para asignar',
+  successBatchesSave: 'Se guardó la información con éxito',
+  createIsolatedOrder: '¿Deseas crear la orden de fabricación con el producto '
 };

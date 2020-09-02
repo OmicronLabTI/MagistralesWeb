@@ -5,9 +5,8 @@ import {CONST_NUMBER, CONST_STRING, ConstToken, HttpServiceTOCall, MessageType} 
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
-import {CancelOrders} from '../model/device/orders';
+import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq} from '../model/http/pedidos';
-
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +24,22 @@ export class DataService {
   private finalizeOrders = new Subject<CancelOrders>();
   private pathUrl = new Subject<any[]>();
   private isLogout = new Subject<boolean>();
+  private searchComponentModal = new Subject<SearchComponentModal>();
+  private newFormulaComponent = new Subject<any>();
   constructor(private datePipe: DatePipe) { }
 
+  setNewFormulaComponent(newFormulaComponent: any) {
+    this.newFormulaComponent.next(newFormulaComponent);
+  }
+  getNewFormulaComponent() {
+    return this.newFormulaComponent.asObservable();
+  }
+  setSearchComponentModal(searchComponentModal: SearchComponentModal) {
+    this.searchComponentModal.next(searchComponentModal);
+  }
+  getSearchComponentModal() {
+    return this.searchComponentModal.asObservable();
+  }
   setIsLogout(isLogout: boolean) {
     this.isLogout.next(isLogout);
   }

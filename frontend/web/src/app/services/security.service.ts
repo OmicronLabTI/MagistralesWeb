@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ConsumeService } from './consume.service';
 import { IUserRes} from '../model/http/users';
 import {DataService} from './data.service';
+import {CONST_STRING} from '../constants/const';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,10 @@ export class SecurityService {
   }
   refreshToken() {
     const refreshTokenReq = {
-      scope: '',
+      scope: CONST_STRING.empty,
       refresh_token: this.dataService.getRefreshToken(),
-      grant_type: ''
+      grant_type: CONST_STRING.empty
     } as IRefreshTokenReq;
-    console.log(' refresh TOKEN REQ: ', refreshTokenReq)
     return this.consumeService.httpPost<ILoginRes>(Endpoints.security.refresh, refreshTokenReq);
   }
 
