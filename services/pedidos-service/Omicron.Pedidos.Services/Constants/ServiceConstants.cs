@@ -390,5 +390,21 @@ namespace Omicron.Pedidos.Services.Constants
         {
             "Finalizado",
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusWorkload { get; } = new List<string>
+        {
+            Asignado,
+            Proceso,
+            Pendiente,
+            Terminado,
+            Finalizado,
+            Reasignado,
+        };
     }
 }

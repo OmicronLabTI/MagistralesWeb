@@ -376,11 +376,25 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
                 orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders);
-                return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
             }
 
-            var dataBaseOrders = await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao);
-            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, null);
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            var total = dataBaseOrders.Count;
+
+            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Offset) && orderFabModel.Filters.ContainsKey(ServiceConstants.Limit))
+            {
+                var offset = orderFabModel.Filters[ServiceConstants.Offset];
+                var limit = orderFabModel.Filters[ServiceConstants.Limit];
+
+                int.TryParse(offset, out int offsetNumber);
+                int.TryParse(limit, out int limitNumber);
+
+                var orderToReturnSkip = dataBaseOrders.Skip(offsetNumber).Take(limitNumber).ToList();
+                return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, total);
         }
 
         /// <summary>

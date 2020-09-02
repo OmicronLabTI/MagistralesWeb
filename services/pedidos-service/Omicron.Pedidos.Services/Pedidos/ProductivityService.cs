@@ -54,9 +54,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetProductivityData(Dictionary<string, string> parameters)
         {
             var dates = ServiceUtils.GetDateFilter(parameters);
-
-            var userResponse = await this.userService.SimpleGetUsers(string.Format(ServiceConstants.GetUsersByRole, ServiceConstants.QfbRoleId));
-            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+            var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
             users = users.Where(x => x.Activo == 1).ToList();
 
             var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
@@ -68,6 +66,34 @@ namespace Omicron.Pedidos.Services.Pedidos
             };
 
             return ServiceUtils.CreateResult(true, 200, null, productivite, null, null);
+        }
+
+        /// <summary>
+        /// Gets the workload of the users.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetWorkLoad(Dictionary<string, string> parameters)
+        {
+            var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
+
+            var sapOrders = await this.GetSapFabOrders(parameters);
+            var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
+
+            var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders);
+            return ServiceUtils.CreateResult(true, 200, null, workLoad, null, null);
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <param name="role">the role to lookg.</param>
+        /// <returns>the users.</returns>
+        private async Task<List<UserModel>> GetUsersByRole(int role)
+        {
+            var userResponse = await this.userService.SimpleGetUsers(string.Format(ServiceConstants.GetUsersByRole, role));
+            return JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
         }
 
         /// <summary>
@@ -153,6 +179,140 @@ namespace Omicron.Pedidos.Services.Pedidos
                 total += orderFromSap.Sum(x => x.Quantity);
                 listToReturn.Add(((int)total).ToString());
             }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the workload by user.
+        /// </summary>
+        /// <param name="users">the user.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="sapOrders">the sap order.</param>
+        /// <returns>the data.</returns>
+        private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
+        {
+            var listToReturn = new List<WorkLoadModel>();
+            users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList().ForEach(user =>
+            {
+                var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
+                var workLoadByUser = this.GetTotalsByUser(ordersByUser, sapOrders, user);
+                listToReturn.Add(workLoadByUser);
+            });
+
+            listToReturn.Add(this.GetTotalAll(userOrders, sapOrders));
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the total by user.
+        /// </summary>
+        /// <param name="usersOrders">the user orders.</param>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="user">the current user.</param>
+        /// <returns>the data.</returns>
+        private WorkLoadModel GetTotalsByUser(List<UserOrderModel> usersOrders, List<FabricacionOrderModel> sapOrders, UserModel user)
+        {
+            var workLoadModel = new WorkLoadModel();
+            workLoadModel.User = $"{user.FirstName} {user.LastName}";
+            workLoadModel.TotalPossibleAssign = 200;
+
+            workLoadModel = this.GetTotals(usersOrders, sapOrders, workLoadModel);
+            return workLoadModel;
+        }
+
+        /// <summary>
+        /// Get the total based on the user orders.
+        /// </summary>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="workLoadModel">the workmodel.</param>
+        /// <returns>the data.</returns>
+        private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, WorkLoadModel workLoadModel)
+        {
+            ServiceConstants.StatusWorkload.ForEach(status =>
+            {
+                var ordersByStatus = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                var total = (int)sapOrders.Where(x => ordersByStatus.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
+
+                switch (status)
+                {
+                    case ServiceConstants.Asignado:
+                        workLoadModel.Assigned = total;
+                        break;
+
+                    case ServiceConstants.Proceso:
+                        workLoadModel.Processed = total;
+                        break;
+
+                    case ServiceConstants.Pendiente:
+                        workLoadModel.Pending = total;
+                        break;
+
+                    case ServiceConstants.Terminado:
+                        workLoadModel.Finished = total;
+                        break;
+
+                    case ServiceConstants.Finalizado:
+                        workLoadModel.Finalized = total;
+                        break;
+
+                    case ServiceConstants.Reasignado:
+                        workLoadModel.Reassigned = total;
+                        break;
+                }
+            });
+
+            workLoadModel.TotalFabOrders = userOrders.DistinctBy(y => y.Productionorderid).ToList().Count;
+            workLoadModel.TotalOrders = userOrders.DistinctBy(y => y.Salesorderid).ToList().Count;
+
+            var ordersId = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
+            workLoadModel.TotalPieces = sapOrders.Where(x => ordersId.Any(y => y == x.OrdenId)).Sum(y => (int)y.Quantity);
+
+            return workLoadModel;
+        }
+
+        /// <summary>
+        /// Gets the total for all.
+        /// </summary>
+        /// <param name="userOrders">all the user orders.</param>
+        /// <param name="sapOrders">all the sap orders.</param>
+        /// <returns>the data.</returns>
+        private WorkLoadModel GetTotalAll(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
+        {
+            var workLoadModel = new WorkLoadModel
+            {
+                User = "Total",
+                TotalPossibleAssign = 0,
+            };
+
+            workLoadModel = this.GetTotals(userOrders, sapOrders, workLoadModel);
+            return workLoadModel;
+        }
+
+        /// <summary>
+        /// Gets the sap fab orders.
+        /// </summary>
+        /// <param name="parameters">the dict.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<FabricacionOrderModel>> GetSapFabOrders(Dictionary<string, string> parameters)
+        {
+            var listToReturn = new List<FabricacionOrderModel>();
+            parameters.Add(ServiceConstants.Offset, "0");
+            parameters.Add(ServiceConstants.Limit, "8000");
+            var offset = 0;
+            int total;
+
+            do
+            {
+                parameters[ServiceConstants.Offset] = offset.ToString();
+                var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
+                listToReturn.AddRange(JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString()));
+
+                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString()) : 0;
+                offset += 8000;
+            }
+            while (total > 0 && offset < total);
 
             return listToReturn;
         }

@@ -610,6 +610,36 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetFabOrdersDbItemCodeDateIniOffset()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.ItemCode, "Abc" },
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.Offset, "1" },
+                    { ServiceConstants.Limit, "1" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetFabOrdersDbItemCodeDateIni()
         {
             // arrange
