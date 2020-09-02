@@ -31,6 +31,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IAssignPedidosService assignPedidosService;
 
+        private readonly ICancelPedidosService cancelPedidosService;
+
         private readonly IProductivityService productivityService;
 
         /// <summary>
@@ -40,10 +42,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="mapper">the mapper.</param>
         /// <param name="assignPedidosService">The assign pedidos service.</param>
         /// <param name="productivityService">The productivity services.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, IProductivityService productivityService)
+        /// <param name="cancelPedidosService">The cancel pedidos service.</param>
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
+            this.cancelPedidosService = cancelPedidosService ?? throw new ArgumentNullException(nameof(cancelPedidosService));
             this.productivityService = productivityService ?? throw new ArgumentNullException(nameof(productivityService));
             this.mapper = mapper;
         }
@@ -164,7 +168,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultDto> CancelOrder(List<OrderIdDto> cancelOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelOrder(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelSalesOrder(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
         }
 
         /// <summary>
@@ -184,7 +188,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CancelFabOrder(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelFabricationOrders(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
         }
 
         /// <summary>
