@@ -132,7 +132,7 @@ class RootViewController: UIViewController {
         
         self.view.backgroundColor = OmicronColors.tableStatus
        
-        self.refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        self.refreshControl.tintColor = OmicronColors.blue
         self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
        
         self.logoutButton.setTitle("Cerrar sesión", for: .normal)

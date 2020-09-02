@@ -35,6 +35,7 @@ class OrderDetailViewModel {
     var technicalSignatureIsGet = false
     var sqfbSignature = ""
     var technicalSignature = ""
+    var endRefreshing = PublishSubject<Void>()
     
     // MARK: Init
     init() {
@@ -53,7 +54,7 @@ class OrderDetailViewModel {
     }
     
     // MARK: Functions
-    func getOrdenDetail() -> Void {
+    func getOrdenDetail(isRefresh: Bool = false) -> Void {
         loading.onNext(true)
         NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
             self.orderDetailData.accept([res.response!])
@@ -64,8 +65,14 @@ class OrderDetailViewModel {
             self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
             let iconName = res.response?.comments != nil ? "message.fill": "message"
             self.showIconComments.onNext(iconName)
+            if(isRefresh) {
+                self.endRefreshing.onNext(())
+            }
         }, onError: { error in
             self.loading.onNext(false)
+            if(isRefresh) {
+                self.endRefreshing.onNext(())
+            }
             self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }

@@ -55,6 +55,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     var indexOfTableToEditItem: Int = -1
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var orderDetail: [OrderDetail] = []
+    var refreshControl = UIRefreshControl()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -62,7 +63,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
-        //self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
         self.tableView.allowsMultipleSelectionDuringEditing = false
@@ -73,15 +73,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        //self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
-        //self.showButtonsByStatusType(statusType: statusType)
         self.orderDetailViewModel.getOrdenDetail()
-//        self.initComponents()
-//        self.viewModelBinding()
-//        self.tableView.allowsMultipleSelectionDuringEditing = false
-//        tableView.delegate = self
-//        tableView.setEditing(false, animated: true)
+        self.refreshViewControl()
     }
         
     override func viewDidAppear(_ animated: Bool) {
@@ -99,7 +93,24 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     }
     
+    // Inicia la ejecución del refresh control
+    func refreshViewControl() -> Void {
+        self.refreshControl.tintColor = OmicronColors.blue
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        self.tableView.addSubview(self.refreshControl)
+    }
+    
+    @objc func refresh(_ sender: AnyObject) -> Void {
+        self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
+    }
+    
     func viewModelBinding() {
+        
+        // Termina la ejecución del refresh control
+        self.orderDetailViewModel.endRefreshing.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.refreshControl.endRefreshing()
+        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             self.navigationController?.popToRootViewController(animated: true)
