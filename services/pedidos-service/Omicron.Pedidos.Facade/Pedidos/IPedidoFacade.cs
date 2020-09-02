@@ -185,5 +185,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetProductivityData(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the workload.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters);
     }
 }

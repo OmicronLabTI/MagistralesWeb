@@ -156,6 +156,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockProductivityService
+                .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockCancelPedidosServices.Object, mockProductivityService.Object);
         }
 
@@ -730,6 +734,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetProductivityData(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetWorkLoad()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.GetWorkLoad(parameters);
 
             // Assert
             Assert.IsNotNull(response);

@@ -291,5 +291,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.productivityService.GetProductivityData(parameters));
         }
+
+        /// <summary>
+        /// Gets the workload.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.productivityService.GetWorkLoad(parameters));
+        }
     }
 }
