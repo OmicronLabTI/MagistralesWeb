@@ -88,25 +88,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
 
         /// <summary>
-        /// Change order status to cancel.
-        /// </summary>
-        /// <param name="cancelOrders">Update orders info.</param>
-        /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultModel> CancelOrder(List<OrderIdModel> cancelOrders);
-
-        /// <summary>
         /// Change order status to finish.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders);
-
-        /// <summary>
-        /// Cancel fabrication orders.
-        /// </summary>
-        /// <param name="cancelOrders">Orders to cancel.</para
-        /// <returns>Orders with updated info.</returns>urns>
-        Task<ResultModel> CancelFabOrder(List<OrderIdModel> cancelOrders);
 
         /// <summary>
         /// Finish fabrication orders.

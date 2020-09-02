@@ -5,56 +5,432 @@
     "success": true,
     "response": [
         {
-            "codigoProducto": "GRN-029",
-            "descripcionProducto": "Granel Cáp. Ivermectina 6 mg, Excipiente csp 1 cápsula.",
-            "almacen": "MN",
-            "totalNecesario": 20,
+            "codigoProducto": "GR-046",
+            "descripcionProducto": "Granel Hialurónico 1%",
+            "almacen": "MG",
+            "totalNecesario": 5.5,
             "totalSeleccionado": 0,
             "lotes": [
                 {
-                    "numeroLote": "OMBE160620-1",
-                    "cantidadDisponible": 2632.000000,
-                    "cantidadAsignada": 0.000000,
-                    "sysNumber": 7
-                },
-                {
-                    "numeroLote": "OMBE090720-1",
-                    "cantidadDisponible": 748.000000,
-                    "cantidadAsignada": 0.000000,
+                    "numeroLote": "1",
+                    "cantidadDisponible": 0.041400,
+                    "cantidadAsignada": 0.000600,
                     "sysNumber": 8
                 },
                 {
-                    "numeroLote": "OMBE100720-A",
-                    "cantidadDisponible": 420.000000,
-                    "cantidadAsignada": 0.000000,
-                    "sysNumber": 9
+                    "numeroLote": "7",
+                    "cantidadDisponible": 0.033812,
+                    "cantidadAsignada": 0.000100,
+                    "sysNumber": 14
                 },
                 {
-                    "numeroLote": "OMBE140720-A",
-                    "cantidadDisponible": 314.000000,
-                    "cantidadAsignada": 0.000000,
-                    "sysNumber": 11
+                    "numeroLote": "8",
+                    "cantidadDisponible": 0.021950,
+                    "cantidadAsignada": 0.000100,
+                    "sysNumber": 15
                 },
                 {
-                    "numeroLote": "OMBE160720-A",
-                    "cantidadDisponible": 1244.000000,
+                    "numeroLote": "10",
+                    "cantidadDisponible": 0.011660,
+                    "cantidadAsignada": 0.000100,
+                    "sysNumber": 17
+                },
+                {
+                    "numeroLote": "12",
+                    "cantidadDisponible": 0.028260,
+                    "cantidadAsignada": 0.000090,
+                    "sysNumber": 19
+                },
+                {
+                    "numeroLote": "14",
+                    "cantidadDisponible": 0.007249,
+                    "cantidadAsignada": 0.000070,
+                    "sysNumber": 20
+                },
+                {
+                    "numeroLote": "19",
+                    "cantidadDisponible": 0.007050,
+                    "cantidadAsignada": 0.000600,
+                    "sysNumber": 25
+                },
+                {
+                    "numeroLote": "20",
+                    "cantidadDisponible": 0.035590,
+                    "cantidadAsignada": 0.000100,
+                    "sysNumber": 27
+                },
+                {
+                    "numeroLote": "22",
+                    "cantidadDisponible": 0.565814,
+                    "cantidadAsignada": 0.000010,
+                    "sysNumber": 29
+                },
+                {
+                    "numeroLote": "25",
+                    "cantidadDisponible": 0.285220,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 32
+                },
+                {
+                    "numeroLote": "26",
+                    "cantidadDisponible": 0.041110,
+                    "cantidadAsignada": 0.000030,
+                    "sysNumber": 33
+                },
+                {
+                    "numeroLote": "27",
+                    "cantidadDisponible": 0.344055,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 34
+                },
+                {
+                    "numeroLote": "28",
+                    "cantidadDisponible": 0.199795,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 35
+                },
+                {
+                    "numeroLote": "29",
+                    "cantidadDisponible": 0.066200,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 36
+                },
+                {
+                    "numeroLote": "30",
+                    "cantidadDisponible": 0.196153,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 37
+                },
+                {
+                    "numeroLote": "31",
+                    "cantidadDisponible": 0.128445,
+                    "cantidadAsignada": 0.003000,
+                    "sysNumber": 38
+                },
+                {
+                    "numeroLote": "32",
+                    "cantidadDisponible": 1.617090,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 39
+                },
+                {
+                    "numeroLote": "33",
+                    "cantidadDisponible": 1.390720,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 40
+                }
+            ],
+            "lotesAsignados": []
+        },
+        {
+            "codigoProducto": "MP-007",
+            "descripcionProducto": "Acido Kojico",
+            "almacen": "MG",
+            "totalNecesario": 0,
+            "totalSeleccionado": 0.0075,
+            "lotes": [
+                {
+                    "numeroLote": "184-91-01",
+                    "cantidadDisponible": 0.449347,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 4
+                },
+                {
+                    "numeroLote": "184-91-04",
+                    "cantidadDisponible": 3.730650,
+                    "cantidadAsignada": 0.007500,
+                    "sysNumber": 5
+                }
+            ],
+            "lotesAsignados": [
+                {
+                    "numeroLote": "184-91-04",
+                    "cantidadSeleccionada": 0.007500,
+                    "sysNumber": 5
+                }
+            ]
+        },
+        {
+            "codigoProducto": "GR-019",
+            "descripcionProducto": "Granel de Soluci¾n Antioxidante",
+            "almacen": "MG",
+            "totalNecesario": 0,
+            "totalSeleccionado": 0.0015,
+            "lotes": [
+                {
+                    "numeroLote": "5",
+                    "cantidadDisponible": 0.010350,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 5
+                },
+                {
+                    "numeroLote": "12",
+                    "cantidadDisponible": 0.000980,
                     "cantidadAsignada": 0.000000,
                     "sysNumber": 12
                 },
                 {
-                    "numeroLote": "OMBE200720-A",
-                    "cantidadDisponible": 740.000000,
+                    "numeroLote": "15",
+                    "cantidadDisponible": 0.004820,
                     "cantidadAsignada": 0.000000,
-                    "sysNumber": 13
+                    "sysNumber": 15
                 },
                 {
-                    "numeroLote": "OMBE220720-A",
-                    "cantidadDisponible": 32080.000000,
+                    "numeroLote": "16",
+                    "cantidadDisponible": 0.000484,
+                    "cantidadAsignada": 0.001500,
+                    "sysNumber": 16
+                },
+                {
+                    "numeroLote": "17",
+                    "cantidadDisponible": 0.086560,
                     "cantidadAsignada": 0.000000,
-                    "sysNumber": 14
+                    "sysNumber": 17
+                },
+                {
+                    "numeroLote": "18",
+                    "cantidadDisponible": 0.040855,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 18
+                },
+                {
+                    "numeroLote": "19",
+                    "cantidadDisponible": 0.010450,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 19
+                },
+                {
+                    "numeroLote": "20",
+                    "cantidadDisponible": 0.140056,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 20
+                },
+                {
+                    "numeroLote": "21",
+                    "cantidadDisponible": 0.123140,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 21
+                },
+                {
+                    "numeroLote": "22",
+                    "cantidadDisponible": 0.119984,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 22
+                },
+                {
+                    "numeroLote": "23",
+                    "cantidadDisponible": 0.038510,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 23
+                },
+                {
+                    "numeroLote": "24",
+                    "cantidadDisponible": 0.146010,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 24
+                },
+                {
+                    "numeroLote": "26",
+                    "cantidadDisponible": 0.148660,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 26
+                },
+                {
+                    "numeroLote": "27",
+                    "cantidadDisponible": 0.210640,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 27
+                },
+                {
+                    "numeroLote": "28",
+                    "cantidadDisponible": 0.227200,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 28
+                },
+                {
+                    "numeroLote": "29",
+                    "cantidadDisponible": 0.600380,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 29
                 }
             ],
-            "lotesAsignados": []
+            "lotesAsignados": [
+                {
+                    "numeroLote": "16",
+                    "cantidadSeleccionada": 0.001500,
+                    "sysNumber": 16
+                }
+            ]
+        },
+        {
+            "codigoProducto": "MP-108",
+            "descripcionProducto": "Vitamina E",
+            "almacen": "MG",
+            "totalNecesario": 0,
+            "totalSeleccionado": 0.0003,
+            "lotes": [
+                {
+                    "numeroLote": "66804316K0",
+                    "cantidadDisponible": 0.300995,
+                    "cantidadAsignada": 0.006750,
+                    "sysNumber": 4
+                },
+                {
+                    "numeroLote": "31903516K0",
+                    "cantidadDisponible": 0.467440,
+                    "cantidadAsignada": 0.006300,
+                    "sysNumber": 5
+                }
+            ],
+            "lotesAsignados": [
+                {
+                    "numeroLote": "31903516K0",
+                    "cantidadSeleccionada": 0.000300,
+                    "sysNumber": 5
+                }
+            ]
+        },
+        {
+            "codigoProducto": "BA-02",
+            "descripcionProducto": "CREMA BASE PARA HIDROQUINONA",
+            "almacen": "MG",
+            "totalNecesario": 0,
+            "totalSeleccionado": 0.10405,
+            "lotes": [
+                {
+                    "numeroLote": "OMD2919-2",
+                    "cantidadDisponible": 0.042160,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 17
+                },
+                {
+                    "numeroLote": "OME0619-1",
+                    "cantidadDisponible": 0.028620,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 18
+                },
+                {
+                    "numeroLote": "OMF0519-1",
+                    "cantidadDisponible": 0.111333,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 20
+                },
+                {
+                    "numeroLote": "OMF1719-2",
+                    "cantidadDisponible": 0.208360,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 22
+                },
+                {
+                    "numeroLote": "OMG0819-1",
+                    "cantidadDisponible": 0.634515,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 23
+                },
+                {
+                    "numeroLote": "OMG2419-2",
+                    "cantidadDisponible": 0.185373,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 24
+                },
+                {
+                    "numeroLote": "OMH1219-2",
+                    "cantidadDisponible": 0.017800,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 25
+                },
+                {
+                    "numeroLote": "OMJ0219-1",
+                    "cantidadDisponible": 0.013170,
+                    "cantidadAsignada": 0.104050,
+                    "sysNumber": 26
+                },
+                {
+                    "numeroLote": "OMJ0319-1",
+                    "cantidadDisponible": 0.335100,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 27
+                },
+                {
+                    "numeroLote": "OMJ2319-1",
+                    "cantidadDisponible": 0.177305,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 28
+                },
+                {
+                    "numeroLote": "OMJ2419-1",
+                    "cantidadDisponible": 0.381680,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 29
+                },
+                {
+                    "numeroLote": "OML1119-2",
+                    "cantidadDisponible": 1.189269,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 31
+                },
+                {
+                    "numeroLote": "OML2619-3",
+                    "cantidadDisponible": 0.296868,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 33
+                },
+                {
+                    "numeroLote": "OMH1919-2",
+                    "cantidadDisponible": 0.064665,
+                    "cantidadAsignada": 0,
+                    "sysNumber": 35
+                },
+                {
+                    "numeroLote": "OML0518-2",
+                    "cantidadDisponible": 0.040460,
+                    "cantidadAsignada": 0,
+                    "sysNumber": 36
+                },
+                {
+                    "numeroLote": "OMA2020-2",
+                    "cantidadDisponible": 9.423987,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 38
+                },
+                {
+                    "numeroLote": "OMB1020-3",
+                    "cantidadDisponible": 2.959835,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 39
+                },
+                {
+                    "numeroLote": "OMC0220-3",
+                    "cantidadDisponible": 2.339433,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 41
+                },
+                {
+                    "numeroLote": "OMF0220-2",
+                    "cantidadDisponible": 1.619343,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 44
+                },
+                {
+                    "numeroLote": "OMF0320-1",
+                    "cantidadDisponible": 12.827301,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 45
+                },
+                {
+                    "numeroLote": "OMF1520-2",
+                    "cantidadDisponible": 17.460200,
+                    "cantidadAsignada": 0.000000,
+                    "sysNumber": 46
+                }
+            ],
+            "lotesAsignados": [
+                {
+                    "numeroLote": "OMJ0219-1",
+                    "cantidadSeleccionada": 0.104050,
+                    "sysNumber": 26
+                }
+            ]
         }
     ],
     "comments": null

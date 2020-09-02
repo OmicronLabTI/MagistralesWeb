@@ -33,6 +33,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
+    @IBOutlet weak var htDescription: UILabel!
     @IBOutlet weak var htBaseQuantity: UILabel!
     @IBOutlet weak var htrequiredQuantity: UILabel!
     @IBOutlet weak var htConsumed: UILabel!
@@ -47,12 +48,14 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
+    @Injected var lottieManager: LottieManager
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType: String = ""
     var indexOfTableToEditItem: Int = -1
-    let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var orderDetail: [OrderDetail] = []
+    var refreshControl = UIRefreshControl()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -60,7 +63,6 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
-        //self.orderDetailViewModel.getOrdenDetail(orderId: orderId)
         self.initComponents()
         self.viewModelBinding()
         self.tableView.allowsMultipleSelectionDuringEditing = false
@@ -71,15 +73,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        //self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
-        //self.showButtonsByStatusType(statusType: statusType)
         self.orderDetailViewModel.getOrdenDetail()
-//        self.initComponents()
-//        self.viewModelBinding()
-//        self.tableView.allowsMultipleSelectionDuringEditing = false
-//        tableView.delegate = self
-//        tableView.setEditing(false, animated: true)
+        self.refreshViewControl()
     }
         
     override func viewDidAppear(_ animated: Bool) {
@@ -97,25 +93,55 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     }
     
+    // Inicia la ejecución del refresh control
+    func refreshViewControl() -> Void {
+        self.refreshControl.tintColor = OmicronColors.blue
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        self.tableView.addSubview(self.refreshControl)
+    }
+    
+    @objc func refresh(_ sender: AnyObject) -> Void {
+        self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
+    }
+    
     func viewModelBinding() {
         
+        // Termina la ejecución del refresh control
+        self.orderDetailViewModel.endRefreshing.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.refreshControl.endRefreshing()
+        }).disposed(by: self.disposeBag)
+        
         self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popViewController(animated: true)
+            self.navigationController?.popToRootViewController(animated: true)
         }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
             lotsVC.orderId = self.orderId
+            lotsVC.statusType = self.statusType
             self.navigationController?.pushViewController(lotsVC, animated: true)
         }).disposed(by: self.disposeBag)
         
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
-        self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in self.changeStatus(response: "Cancelar")})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatus(response: CommonStrings.OK)})
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatusToProcess()})
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra un mensaje de confirmación para poner la orden en status finalizado
+        self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.dismiss(animated: true)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.showQfbSignatureView()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
@@ -129,19 +155,21 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             
             if((res.first) != nil) {
                 self.orderDetail = res
-                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código: \(res[0].code!)", textToBold: "Código:")
+                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
-                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
+                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
-                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                //self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
             }
                 }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
+            cell.descriptionLabel.text = data.detailDescription
             cell.baseQuantityLabel.text =  self.formatter.string(from: NSNumber(value: data.baseQuantity!))
             cell.requiredQuantityLabel.text =   self.formatter.string(from: NSNumber(value: data.requiredQuantity!))
             cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed!))
@@ -153,22 +181,35 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity!))
         }.disposed(by: disposeBag)
         
+        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { iconName in
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItem = comments
+        }).disposed(by: self.disposeBag)
+        
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
         orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
             } else {
-                LottieManager.shared.hideLoading()
+                self.lottieManager.hideLoading()
             }
+        }).disposed(by: self.disposeBag)
+        
+        self.orderDetailViewModel.showSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { titleView in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            //signatureVC.orderId = self.orderId
+            signatureVC.titleView = titleView
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
     }
     
     func initComponents() -> Void {
-//        let comments = UIBarButtonItem(barButtonSystemItem: .compose , target: self, action: #selector(self.goToCommentsViewController))
-//        self.navigationItem.rightBarButtonItem = comments
+
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.penddingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -186,6 +227,8 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 15, typeFont: "bold")
+        
         
         self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
         self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase:", textToBold: "Envase")
@@ -204,13 +247,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.assignedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
             print("")
         }
@@ -238,7 +281,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             // Logica para borrar un elemento de la tabla
             let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
                 let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
                 let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)
@@ -263,14 +306,21 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
     
-    func changeStatus(response: String) -> Void  {
-        
-        if(response == "OK") {
-            orderDetailViewModel.changeStatus()
-            return
-        }
-        self.navigationController?.popViewController(animated: true)
+    func changeStatusToProcess() -> Void  {
+        orderDetailViewModel.changeStatus()
     }
+    
+    func showQfbSignatureView() {
+        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
+    }
+    
+//    func showSignatureView(title: String) {
+//        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+//        let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+//        signatureVC.orderId = self.orderId
+//        signatureVC.modalPresentationStyle = .overCurrentContext
+//        self.present(signatureVC, animated: true, completion: nil)
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
        if segue.identifier == ViewControllerIdentifiers.orderDetailFormViewController {
