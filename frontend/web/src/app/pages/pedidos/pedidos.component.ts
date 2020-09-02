@@ -16,7 +16,7 @@ import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../mo
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
-import {Observable, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 
@@ -118,9 +118,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   someComplete(): boolean {
-    if (this.dataSource.data === null) {
-      return false;
-    }
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
   }
 
@@ -133,7 +130,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.getButtonsToUnLooked();
   }
 
-  processOrders() {
+  processOrdersService() {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {

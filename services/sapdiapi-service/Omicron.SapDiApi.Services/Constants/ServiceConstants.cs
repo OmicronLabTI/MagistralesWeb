@@ -62,6 +62,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// selects data from WOR1 by DocEntry.
         /// </summary>
         public const string FindWor1ByDocEntry = "SELECT DocEntry, LineNum, BaseQty, IssuedQty, wareHouse, ItemCode, VisOrder FROM WOR1 WHERE DocEntry = {0}";
+        
+        /// <summary>
+        /// Select existing batch code
+        /// </summary>
+        public const string FindBatchCodeForItem = "SELECT TOP 1 AbsEntry FROM OBTN WHERE DistNumber = '{0}' AND ItemCode = '{1}'";
 
         /// <summary>
         /// the value to delete the conmponent.
@@ -112,5 +117,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Fail reason.
         /// </summary>
         public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonBatchAlreadyExists = "El lote {0} ya existe para el producto {1}.";
+
     }
 }

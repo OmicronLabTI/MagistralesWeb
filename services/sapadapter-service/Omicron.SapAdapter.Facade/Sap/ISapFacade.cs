@@ -73,5 +73,33 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="uniqueId">the unique record id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetNextBatchCode(string productCode);
+
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="orderFabDto">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto);
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetProductsManagmentByBatch(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the orders by ordersId.
+        /// </summary>
+        /// <param name="listOrdersId">The orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetFabOrdersById(List<int> listOrdersId);
     }
 }

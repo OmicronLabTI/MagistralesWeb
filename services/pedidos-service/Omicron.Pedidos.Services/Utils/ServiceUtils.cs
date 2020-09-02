@@ -32,8 +32,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="userError">the user error.</param>
         /// <param name="responseObj">the responseobj.</param>
         /// <param name="exceptionMessage">the exception message.</param>
+        /// <param name="comments">The comments.</param>
         /// <returns>the resultModel.</returns>
-        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage)
+        public static ResultModel CreateResult(bool success, int code, string userError, object responseObj, string exceptionMessage, string comments = null)
         {
             return new ResultModel
             {
@@ -42,6 +43,7 @@ namespace Omicron.Pedidos.Services.Utils
                 UserError = userError,
                 ExceptionMessage = exceptionMessage,
                 Code = code,
+                Comments = comments,
             };
         }
 
@@ -204,6 +206,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
+                                ItemCode = sapOrder.Code,
                             };
 
                             ordersDetail.Add(order);
@@ -375,6 +378,80 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return new Tuple<List<UserOrderModel>, List<UserOrderModel>>(listToInsert, listToUpdate);
+        }
+
+        /// <summary>
+        /// gets the distinc by.
+        /// </summary>
+        /// <typeparam name="Tsource">the list source.</typeparam>
+        /// <typeparam name="TKey">the key to look.</typeparam>
+        /// <param name="source">the sourec.</param>
+        /// <param name="keyselector">the key.</param>
+        /// <returns>the list distinc.</returns>
+        public static IEnumerable<Tsource> DistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (Tsource element in source)
+            {
+                if (seenKeys.Add(keyselector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        /// <summary>
+        /// gets the date filter for sap.
+        /// </summary>
+        /// <param name="filter">the dictionary.</param>
+        /// <returns>the datetime.</returns>
+        public static Dictionary<string, DateTime> GetDateFilter(Dictionary<string, string> filter)
+        {
+            if (filter.ContainsKey(ServiceConstants.FechaFin))
+            {
+                return GetDictDates(filter[ServiceConstants.FechaFin]);
+            }
+
+            return new Dictionary<string, DateTime>();
+        }
+
+        /// <summary>
+        /// gets the dictionary.
+        /// </summary>
+        /// <param name="dateRange">the date range.</param>
+        /// <returns>the data.</returns>
+        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
+        {
+            var dictToReturn = new Dictionary<string, DateTime>();
+            var dates = dateRange.Split("-");
+
+            var dateInicioArray = GetDatesAsArray(dates[0]);
+            var dateFinArray = GetDatesAsArray(dates[1]);
+
+            var dateInicio = new DateTime(dateInicioArray[2], dateInicioArray[1], dateInicioArray[0]);
+            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0]);
+            dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
+            dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
+            return dictToReturn;
+        }
+
+        /// <summary>
+        /// split the dates to int array.
+        /// </summary>
+        /// <param name="date">the date in string.</param>
+        /// <returns>the dates.</returns>
+        private static List<int> GetDatesAsArray(string date)
+        {
+            var dateArrayNum = new List<int>();
+            var dateArray = date.Split("/");
+
+            dateArray.ToList().ForEach(x =>
+            {
+                int.TryParse(x, out int result);
+                dateArrayNum.Add(result);
+            });
+
+            return dateArrayNum;
         }
     }
 }

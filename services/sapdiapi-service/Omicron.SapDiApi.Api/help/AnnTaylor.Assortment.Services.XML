@@ -206,7 +206,7 @@
             <param name="assginBatches">The assign batches mnodel.</param>
             <returns>the reult.</returns>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.FinishProductionOrders(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CancelOrderDto})">
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.FinishProductionOrders(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CloseProductionOrderDto})">
             <summary>
             Finish production order.
             </summary>

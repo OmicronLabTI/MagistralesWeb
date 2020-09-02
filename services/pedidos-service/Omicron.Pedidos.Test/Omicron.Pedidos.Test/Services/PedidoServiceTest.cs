@@ -11,7 +11,6 @@ namespace Omicron.Pedidos.Test.Services
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
@@ -81,6 +80,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(new ResultModel()));
 
             this.usersService = new Mock<IUsersService>();
+
+            this.usersService
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
 
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
@@ -198,70 +201,6 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrdersByUserId(id);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// the processs.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
-        public async Task AssignOrderPedido()
-        {
-            // arrange
-            var assign = new ManualAssignModel
-            {
-                DocEntry = new List<int> { 100 },
-                OrderType = "Pedido",
-                UserId = "abc",
-                UserLogistic = "abd",
-            };
-
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
-
-            this.sapAdapter
-                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
-
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
-
-            // act
-            var response = await pedidosServiceLocal.AssignOrder(assign);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// the processs.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
-        public async Task AssignOrder()
-        {
-            // arrange
-            var assign = new ManualAssignModel
-            {
-                DocEntry = new List<int> { 100 },
-                OrderType = "Orden",
-                UserId = "abc",
-                UserLogistic = "abd",
-            };
-
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
-
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
-
-            // act
-            var response = await pedidosServiceLocal.AssignOrder(assign);
 
             // assert
             Assert.IsNotNull(response);
@@ -450,43 +389,6 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
-        }
-
-        /// <summary>
-        /// the automatic assign test.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
-        public async Task AutomaticAssign()
-        {
-            var assign = new AutomaticAssingModel
-            {
-                DocEntry = new List<int> { 100 },
-                UserLogistic = "abc",
-            };
-
-            var mockUsers = new Mock<IUsersService>();
-            mockUsers
-                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUsersByRole()));
-
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            var sapAdapterLocal = new Mock<ISapAdapter>();
-            sapAdapterLocal
-                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
-
-            var pedidoServiceLocal = new PedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
-
-            // act
-            var response = await pedidoServiceLocal.AutomaticAssign(assign);
-
-            // assert
-            Assert.IsNotNull(response);
         }
 
         /// <summary>
@@ -725,9 +627,9 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CloseFabOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdModel>
+            var salesOrders = new List<CloseProductionOrderModel>
             {
-                new OrderIdModel { OrderId = 107, UserId = "abc", },
+                new CloseProductionOrderModel { OrderId = 107, UserId = "abc", },
             };
             var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
@@ -793,6 +695,110 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByDocNum()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, "100" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByQfb()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByStatus()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Status, "Asignado" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dic);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersByDate()
+        {
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dateFinal) },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersAllFilters()
+        {
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Status, "Asignado" },
+                { ServiceConstants.Qfb, "abc" },
+            };
+
+            // act
+            var result = await this.pedidosService.GetFabOrders(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
         }
     }
 }

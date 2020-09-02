@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Sap;
 
     /// <summary>
@@ -116,6 +117,46 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId));
+        }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetNextBatchCode(string productCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetNextBatchCode(productCode));
+        }
+
+        /// <summary>
+        /// Look for the orders.
+        /// </summary>
+        /// <param name="orderFabDto">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabOrders(GetOrderFabDto orderFabDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrders(this.mapper.Map<GetOrderFabModel>(orderFabDto)));
+        }
+
+        /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetProductsManagmentByBatch(parameters));
+        }
+
+        /// <summary>
+        /// Gets the orders by ordersId.
+        /// </summary>
+        /// <param name="listOrdersId">The orders ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabOrdersById(List<int> listOrdersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrdersById(listOrdersId));
         }
     }
 }

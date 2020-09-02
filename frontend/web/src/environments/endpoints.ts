@@ -32,6 +32,9 @@ export const Endpoints = {
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
+  },
+  orders: {
+    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`
   }
 };
 
