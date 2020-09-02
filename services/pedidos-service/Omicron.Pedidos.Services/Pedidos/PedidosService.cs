@@ -759,7 +759,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             int.TryParse(limit, out int limitNumber);
 
             var orderToReturnSkip = orderToReturn.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, sapResponse.Comments.ToString());
+            var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
         }
 
         /// <summary>
