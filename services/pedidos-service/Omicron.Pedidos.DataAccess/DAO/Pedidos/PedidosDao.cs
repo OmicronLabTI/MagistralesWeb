@@ -222,6 +222,17 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId)).ToListAsync();
         }
+
+
+        /// <summary>
+        /// Get all component for custom list id.
+        /// </summary>
+        /// <param name="customListId">Te custom list id.</param>
+        /// <returns>Related components.</returns>
+        public async Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId)
+        {
+            return await this.databaseContext.ComponentsCustomComponentLists.Where(x => x.CustomListId.Equals(customListId)).ToListAsync();
+        }
     }
 }
 

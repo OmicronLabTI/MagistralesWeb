@@ -162,6 +162,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CreateCustomComponentList(It.IsAny<string>(), It.IsAny<CustomComponentListModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockFormulasPedidosServices
+                .Setup(m => m.GetCustomComponentListByProductId(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -760,6 +764,21 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateCustomComponentList(string.Empty, formula);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetCustomComponentListByProductId()
+        {
+            // act
+            var response = await this.pedidoFacade.GetCustomComponentListByProductId(string.Empty);
 
             // Assert
             Assert.IsNotNull(response);

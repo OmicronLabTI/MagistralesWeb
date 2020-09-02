@@ -373,6 +373,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get custom components list by product id.
+        /// </summary>
+        /// <param name="productId">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        [Route("/components/custom")]
+        [HttpGet]
+        public async Task<IActionResult> GetCustomComponentListByProductId([FromQuery]string productId)
+        {
+            var response = await this.pedidoFacade.GetCustomComponentListByProductId(productId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

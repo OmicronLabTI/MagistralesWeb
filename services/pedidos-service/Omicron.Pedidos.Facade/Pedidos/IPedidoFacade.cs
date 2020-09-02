@@ -193,5 +193,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="customList">The custom list.</param>
         /// <returns>New custom list.</returns>
         Task<ResultDto> CreateCustomComponentList(string userId, CustomComponentListDto customList);
+
+        /// <summary>
+        /// Get custom components list by product id.
+        /// </summary>
+        /// <param name="productId">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        Task<ResultDto> GetCustomComponentListByProductId(string productId);
     }
 }
