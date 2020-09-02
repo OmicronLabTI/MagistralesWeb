@@ -72,6 +72,14 @@ class LotsViewController: UIViewController {
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla Linea de documentos
+        self.lotsViewModel.dataOfLots.subscribe(onNext: { data in
+            if (self.lotsViewModel.itemSelectedLineDocuments != nil && data.count > 0) {
+                DispatchQueue.main.async {
+                    self.lineDocTable.selectRow(at: IndexPath(row: self.lotsViewModel.itemSelectedLineDocuments!, section: 0), animated: false, scrollPosition: .none)
+                    self.lineDocTable.delegate?.tableView?(self.lineDocTable, didSelectRowAt: IndexPath(row: self.lotsViewModel.itemSelectedLineDocuments!, section: 0))
+                }
+            }
+        }).disposed(by: disposeBag)
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) {row, data, cell in
             cell.row = row
             cell.numberLabel.text = "\(row + 1)"
@@ -98,11 +106,23 @@ class LotsViewController: UIViewController {
         }.disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla linea de documentos fué seleccionada
+        self.lineDocTable.rx.modelSelected(Lots.self).bind(to: lotsViewModel.documentSelected).disposed(by: disposeBag)
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
             self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
         }).disposed(by: self.disposeBag)
         
+        // Detecta que item de la tabla lotes disponibles fue selecionado
+        self.lotsAvailablesTable.rx.modelSelected(LotsAvailable.self).bind(to: lotsViewModel.availableSelected).disposed(by: disposeBag)
+        self.lotsAvailablesTable.rx.itemSelected.subscribe(onNext: { indexPath in
+            if let cell = self.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
+                if !cell.quantitySelected.isFirstResponder {
+                    cell.quantitySelected.becomeFirstResponder()
+                }
+            }
+        }).disposed(by: disposeBag)
+        
         // Detecta que item de la tabla lotes selecionados fué selecionado
+        self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).bind(to: lotsViewModel.batchSelected).disposed(by: disposeBag)
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).observeOn(MainScheduler.instance).subscribe(onNext: { item in
             self.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
@@ -119,6 +139,11 @@ class LotsViewController: UIViewController {
                 return
             }
             LottieManager.shared.hideLoading()
+            
+            if (self.lineDocTable.indexPathForSelectedRow == nil) {
+                self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
+                self.lineDocTable.delegate?.tableView?(self.lineDocTable, didSelectRowAt: IndexPath(row: 0, section: 0))
+            }
         }).disposed(by: self.disposeBag)
         
         // Muestra un AlertMessage

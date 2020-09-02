@@ -100,23 +100,47 @@ extension LotsSelected: Mappable {
 }
 
 class LotsAvailableInfo {
-    var row: Int
+    var documentSelected: Lots?
+    var availableSelected: LotsAvailable?
     var quantitySelected: String
     
-    init(row: Int,  quantitySelected: String) {
-        self.row = row
+    init(documentSelected: Lots?, availableSelected: LotsAvailable?,  quantitySelected: String) {
+        self.documentSelected = documentSelected
+        self.availableSelected = availableSelected
         self.quantitySelected = quantitySelected
     }
 }
 
-class LotsRequest:Codable {
+class BatchSelected: Codable {
+    var orderId: Int?
+    var assignedQty: Decimal?
+    var batchNumber: String?
+    var itemCode: String?
+    var action: String?
+    var sysNumber: Int?
+    
+    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?, sysNumber: Int?) {
+        self.orderId = orderId
+        self.assignedQty = assignedQty
+        self.batchNumber = batchNumber
+        self.itemCode = itemCode
+        self.action = action
+        self.sysNumber = sysNumber
+    }
+    
+    func toLotsSelected() -> LotsSelected {
+        return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!, sysNumber: self.sysNumber!)
+    }
+}
+
+class LotsRequest: Codable {
     var orderId: Int?
     var assignedQty: Decimal?
     var batchNumber: String?
     var itemCode: String?
     var action: String?
     
-    init(orderId: Int, assignedQty: Decimal, batchNumber: String, itemCode: String, action: String) {
+    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber

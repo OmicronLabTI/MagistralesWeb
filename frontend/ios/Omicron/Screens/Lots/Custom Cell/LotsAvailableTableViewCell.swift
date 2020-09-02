@@ -23,6 +23,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
     var row: Int?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -42,35 +43,36 @@ class LotsAvailableTableViewCell: UITableViewCell {
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        var cell: LotsAvailableTableViewCell?
-        var superview: UIView? = textField.superview
+        var tableView: UITableView?
+        var superview: UIView? = self.superview
         
-        while superview != nil && cell == nil {
-            cell = superview as? LotsAvailableTableViewCell
+        while superview != nil && tableView == nil {
+            tableView = superview as? UITableView
             superview = superview?.superview
         }
         
-        if cell != nil {
-            cell?.setSelected(true, animated: true)
-            self.row = cell?.row
-            self.lotsViewModel.rowSelected.onNext((cell?.row)!)
+        if tableView != nil && self.row != nil {
+            let indexPath = IndexPath(row: self.row!, section: 0)
+            tableView!.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            tableView!.delegate?.tableView?(tableView!, didSelectRowAt: indexPath)
         }
-        return true
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        var cell: LotsAvailableTableViewCell?
-        var superview: UIView? = textField.superview
+        var tableView: UITableView?
+        var superview: UIView? = self.superview
         
-        while superview != nil && cell == nil {
-            cell = superview as? LotsAvailableTableViewCell
+        while superview != nil && tableView == nil {
+            tableView = superview as? UITableView
             superview = superview?.superview
         }
         
-        if cell != nil {
-            cell?.setSelected(false, animated: true)
+        if tableView != nil && self.row != nil {
+            let indexPath = IndexPath(row: self.row!, section: 0)
+            tableView?.deselectRow(at: IndexPath(row: self.row!, section: 0), animated: true)
+            tableView!.delegate?.tableView?(tableView!, didDeselectRowAt: indexPath)
         }
         return true
     }
