@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {IFormulaDetalleReq} from '../../model/http/detalleformula';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {CONST_NUMBER} from '../../constants/const';
+import {ComponentSearch, CONST_NUMBER} from '../../constants/const';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {PedidosService} from '../../services/pedidos.service';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
 
 @Component({
@@ -25,10 +25,7 @@ export class ComponentSearchComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
-  displayedColumns: string[] = [
-    'numero',
-    'descripcion'
-  ];
+  displayedColumns: string[] = ['numero', 'descripcion'];
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
@@ -37,18 +34,26 @@ export class ComponentSearchComponent implements OnInit {
   pageEvent: PageEvent;
   rowPrevious = {};
   count = 0;
+  isFromSearchComponent = true;
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
-              private errorService: ErrorService) {
+              private errorService: ErrorService,
+              @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
+    this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
   }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
+    if (this.keywords.length > 0 ) {
+      this.getQueryString();
+      this.getComponents();
+    }
   }
 
   getComponents() {
     this.isDisableSearch = true;
-    this.ordersService.getComponents(this.queryStringComponents).subscribe(resComponents => {
+    this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
@@ -97,6 +102,7 @@ export class ComponentSearchComponent implements OnInit {
 
   selectComponent(row: any) {
     if (row === this.rowPrevious) {
+      row.chips = this.keywords;
       this.dialogRef.close(row);
     } else {
       this.rowPrevious = row;

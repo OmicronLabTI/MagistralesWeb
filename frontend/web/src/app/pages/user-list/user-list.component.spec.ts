@@ -23,6 +23,7 @@ import {UserListMock} from '../../../mocks/userListMock';
 import {DataService} from '../../services/data.service';
 import { HttpServiceTOCall} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
+import {PageEvent} from "@angular/material/paginator";
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -134,6 +135,11 @@ describe('UserListComponent', () => {
   it('should call createMessageHttpOk()', () => {
     component.createMessageHttpOk();
     expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+  it('should call changeDataEvent', () => {
+    expect(component.changeDataEvent({pageSize: 10, pageIndex: 0} as PageEvent)).toEqual({pageSize: 10, pageIndex: 0} as PageEvent);
+    expect(component.offset).toEqual(0);
+    expect(component.limit).toEqual(10);
   });
 
 });
