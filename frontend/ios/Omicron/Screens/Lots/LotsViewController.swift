@@ -114,9 +114,9 @@ class LotsViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         
         // Se autoseleciona la primera columna de la tabla linea de documentos
-        self.lotsViewModel.firstTime.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .none)
-        }).disposed(by: self.disposeBag)
+//        self.lotsViewModel.firstTime.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+//            self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .none)
+//        }).disposed(by: self.disposeBag)
         
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
