@@ -623,6 +623,8 @@ namespace Omicron.SapAdapter.Test.Services
                 {
                     { ServiceConstants.ItemCode, "Abc" },
                     { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.Offset, "1" },
+                    { ServiceConstants.Limit, "1" },
                 },
             };
 

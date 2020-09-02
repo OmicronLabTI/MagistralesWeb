@@ -77,9 +77,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
 
-            var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
-            var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
-
+            var sapOrders = await this.GetSapFabOrders(parameters);
             var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
 
@@ -290,6 +288,33 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             workLoadModel = this.GetTotals(userOrders, sapOrders, workLoadModel);
             return workLoadModel;
+        }
+
+        /// <summary>
+        /// Gets the sap fab orders.
+        /// </summary>
+        /// <param name="parameters">the dict.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<FabricacionOrderModel>> GetSapFabOrders(Dictionary<string, string> parameters)
+        {
+            var listToReturn = new List<FabricacionOrderModel>();
+            parameters.Add(ServiceConstants.Offset, "0");
+            parameters.Add(ServiceConstants.Limit, "8000");
+            var offset = 0;
+            int total;
+
+            do
+            {
+                parameters[ServiceConstants.Offset] = offset.ToString();
+                var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
+                listToReturn.AddRange(JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString()));
+
+                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString()) : 0;
+                offset += 8000;
+            }
+            while (total > 0 && offset < total);
+
+            return listToReturn;
         }
     }
 }
