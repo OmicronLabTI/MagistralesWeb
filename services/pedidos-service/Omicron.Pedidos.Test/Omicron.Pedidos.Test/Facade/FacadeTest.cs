@@ -162,6 +162,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CreateCustomComponentList(It.IsAny<string>(), It.IsAny<CustomComponentListModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockProductivityService
+                .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -760,6 +764,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateCustomComponentList(string.Empty, formula);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+/// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetWorkLoad()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.GetWorkLoad(parameters);
 
             // Assert
             Assert.IsNotNull(response);

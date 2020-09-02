@@ -23,5 +23,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetProductivityData(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the workload of the users.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetWorkLoad(Dictionary<string, string> parameters);
     }
 }
