@@ -309,6 +309,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Get custom components list by product id.
+        /// </summary>
+        /// <param name="productId">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        public async Task<ResultDto> GetCustomComponentListByProductId(string productId)
+        {
+            return this.mapper.Map<ResultDto>(await this.formulaPedidosService.GetCustomComponentListByProductId(productId));
+        }
+
+        /// <summary>
         /// Gets the workload.
         /// </summary>
         /// <param name="parameters">the filters.</param>

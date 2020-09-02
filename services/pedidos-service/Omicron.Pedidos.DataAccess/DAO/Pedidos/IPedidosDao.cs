@@ -122,5 +122,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="productId">Te product id.</param>
         /// <returns>Related lists.</returns>
         Task<List<CustomComponentListModel>> GetCustomComponentListByProduct(string productId);
+
+        /// <summary>
+        /// Get all component for custom list id.
+        /// </summary>
+        /// <param name="customListId">Te custom list id.</param>
+        /// <returns>Related components.</returns>
+        Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId);
     }
 }

@@ -109,6 +109,26 @@ namespace Omicron.Pedidos.Test.Services
         }
 
         /// <summary>
+        /// Get related custom list to product code.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task GetCustomComponentListByProductId_Exists_SuccessResults()
+        {
+            // arrange
+            var customList = this.GetComponentList();
+
+            // act
+            var response = await this.formulaPedidosService.GetCustomComponentListByProductId(customList.ProductId);
+
+            // assert
+            var listsInResponse = (List<CustomComponentListModel>)response.Response;
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(listsInResponse.Count, 1);
+            Assert.AreEqual(listsInResponse[0].Components.Count, 2);
+        }
+
+        /// <summary>
         /// Get component list for test.
         /// </summary>
         /// <returns>Component list.</returns>

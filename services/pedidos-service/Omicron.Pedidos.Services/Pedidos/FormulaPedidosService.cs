@@ -68,14 +68,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Get custom components list by product id.
+        /// </summary>
+        /// <param name="productId">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        public async Task<ResultModel> GetCustomComponentListByProductId(string productId)
+        {
+            var customLists = await this.pedidosDao.GetCustomComponentListByProduct(productId);
+            customLists.ForEach(async (x) => x.Components = await this.pedidosDao.GetComponentsByCustomListId(x.Id));
+            return ServiceUtils.CreateResult(true, 200, null, customLists, null);
+        }
+
+        /// <summary>
         /// Validate if custom list exist.
         /// </summary>
         /// <param name="customList">Custom list to validate.</param>
         /// <returns>Flag result.</returns>urns>
         private async Task<bool> Exists(CustomComponentListModel customList)
         {
-            var formulas = await this.pedidosDao.GetCustomComponentListByProduct(customList.ProductId);
-            return formulas.Any(x => x.Name.ToLower().Equals(customList.Name.ToLower()));
+            var customLists = await this.pedidosDao.GetCustomComponentListByProduct(customList.ProductId);
+            return customLists.Any(x => x.Name.ToLower().Equals(customList.Name.ToLower()));
         }
     }
 }
