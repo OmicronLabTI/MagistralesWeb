@@ -41,7 +41,8 @@ export enum HttpServiceTOCall {
     ORDERS,
     DETAIL_ORDERS,
     USERS,
-    DETAIL_FORMULA
+    DETAIL_FORMULA,
+    ORDERS_ISOLATED
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -95,4 +96,9 @@ export const ConstToken = {
 export const BOOLEANS = {
     verdadero: true,
     falso: false
+};
+
+export const ComponentSearch = {
+    searchComponent: 'searchComponent',
+    createOrderIsolated: 'createOrder'
 };

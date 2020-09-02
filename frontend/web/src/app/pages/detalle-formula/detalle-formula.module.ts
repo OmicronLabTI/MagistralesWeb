@@ -5,11 +5,9 @@ import { DetalleFormulaRoutingModule } from './detalle-formula-routing.module';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {DetalleFormulaComponent} from './detalle-formula.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
-
 
 @NgModule({
-  declarations: [DetalleFormulaComponent, ComponentSearchComponent],
+  declarations: [DetalleFormulaComponent],
     imports: [
         CommonModule,
         DetalleFormulaRoutingModule,
@@ -18,6 +16,5 @@ import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/c
         ReactiveFormsModule
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [ComponentSearchComponent]
 })
 export class DetalleFormulaModule { }

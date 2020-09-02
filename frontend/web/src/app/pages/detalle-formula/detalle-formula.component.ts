@@ -5,11 +5,11 @@ import {IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq} from '../../model/h
 import { ActivatedRoute } from '@angular/router';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
-import {ComponentSearchComponent} from '../../dialogs/components-search-dialog/component-search.component';
 import {DataService} from '../../services/data.service';
-import {CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} from '../../constants/const';
+import {ComponentSearch, CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -43,6 +43,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   isReadyToSave = false;
   componentsToDelete: IFormulaDetalleReq [] = [];
   minDate = new Date();
+  subscription = new Subscription();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
@@ -56,6 +57,12 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
     });
     this.getDetalleFormula();
+    this.subscription.add(this.dataService.getNewFormulaComponent().subscribe( resultNewFormulaComponent => {
+      resultNewFormulaComponent.action = CONST_DETAIL_FORMULA.insert;
+      this.oldDataFormulaDetail.details.push(resultNewFormulaComponent);
+      this.dataSource.data = this.oldDataFormulaDetail.details;
+      this.getIsReadyTOSave();
+    }));
   }
 
   getDetalleFormula() {
@@ -102,22 +109,16 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.checkISComponentsToDelete();
   }
 
-  openDialog(modalTypeOpen: string) {
-    const dialogRef = this.dialog.open(ComponentSearchComponent, {
-      panelClass: 'custom-dialog-container',
-      data: {
-        modalType: modalTypeOpen
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
+  openDialog() {
+    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
+    /*dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
       if (resultComponents) {
         resultComponents.action = CONST_DETAIL_FORMULA.insert;
         this.oldDataFormulaDetail.details.push(resultComponents);
         this.dataSource.data = this.oldDataFormulaDetail.details;
         this.getIsReadyTOSave();
       }
-    });
+    });*/
   }
 
 
