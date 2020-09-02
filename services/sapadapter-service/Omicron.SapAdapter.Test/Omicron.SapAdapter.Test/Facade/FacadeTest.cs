@@ -101,6 +101,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetProductsManagmentByBatch(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockSapServices
+                .Setup(m => m.GetFabOrdersById(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
         }
 
@@ -336,6 +340,28 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetProductsManagmentByBatch(pamameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+         /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetFabOrdersById()
+        {
+            // arrange
+            var parameters = new List<int>();
+
+            // act
+            var response = await this.sapFacade.GetFabOrdersById(parameters);
 
             // Assert
             Assert.IsNotNull(response);

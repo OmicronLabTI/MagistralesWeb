@@ -164,7 +164,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Get last id of isolated production order created.
+        /// Get the orders by the filters.
         /// </summary>
         /// <param name="orderFabDto">The orderFabDto.</param>
         /// <returns>the data.</returns>
@@ -186,6 +186,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetProductsManagmentByBatch([FromQuery] Dictionary<string, string> parameters)
         {
             var result = await this.sapFacade.GetProductsManagmentByBatch(parameters.DecodeQueryString());
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get the orders by the orderid.
+        /// </summary>
+        /// <param name="lisOrders">The orderFabDto.</param>
+        /// <returns>the data.</returns>
+        [Route("/fabOrderId")]
+        [HttpPost]
+        public async Task<IActionResult> GetFabOrdersById(List<int> lisOrders)
+        {
+            var result = await this.sapFacade.GetFabOrdersById(lisOrders);
             return this.Ok(result);
         }
 

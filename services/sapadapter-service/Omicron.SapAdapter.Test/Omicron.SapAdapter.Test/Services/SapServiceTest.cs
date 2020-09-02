@@ -652,6 +652,26 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersById()
+        {
+            // arrange
+            var parameters = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetFabOrdersById(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
         }
 
         /// <summary>
@@ -662,12 +682,11 @@ namespace Omicron.SapAdapter.Test.Services
         /// <returns>the data.</returns>
         [Test]
         [TestCase("Abc,pirina", 1)]
-        [TestCase("Ungüento", 1)]
-        [TestCase("ungÜenTo", 1)]
+        [TestCase("ento", 1)]
+        [TestCase("ung", 1)]
         [TestCase("10 GR", 1)]
-        [TestCase("10 GR,ungÜenTo", 1)]
-        [TestCase("Üen", 1)]
-        [TestCase("Cáp", 1)]
+        [TestCase("10 GR,enTo", 1)]
+        [TestCase("psula", 1)]
         public async Task GetProductsManagmentByBatch(string criterials, int expectedResults)
         {
             // arrange

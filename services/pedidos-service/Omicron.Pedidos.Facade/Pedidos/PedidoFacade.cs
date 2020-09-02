@@ -33,18 +33,22 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly ICancelPedidosService cancelPedidosService;
 
+        private readonly IProductivityService productivityService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidoFacade"/> class.
         /// </summary>
         /// <param name="pedidoService">the pedido service.</param>
         /// <param name="mapper">the mapper.</param>
         /// <param name="assignPedidosService">The assign pedidos service.</param>
+        /// <param name="productivityService">The productivity services.</param>
         /// <param name="cancelPedidosService">The cancel pedidos service.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService)
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, , IProductivityService productivityService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
             this.cancelPedidosService = cancelPedidosService ?? throw new ArgumentNullException(nameof(cancelPedidosService));
+            this.productivityService = productivityService ?? throw new ArgumentNullException(nameof(productivityService));
             this.mapper = mapper;
         }
 
@@ -276,6 +280,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> ReassignOrder(ManualAssignDto manualAssign)
         {
             return this.mapper.Map<ResultDto>(await this.assignPedidosService.ReassignOrder(this.mapper.Map<ManualAssignModel>(manualAssign)));
+        }
+
+        /// <summary>
+        /// Gets the productivity indicators.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetProductivityData(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.productivityService.GetProductivityData(parameters));
         }
     }
 }

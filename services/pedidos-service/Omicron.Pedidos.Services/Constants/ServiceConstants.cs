@@ -271,6 +271,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetUsersById = "getUsersById";
 
         /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
+        public const string GetUsersByOrdersById = "fabOrderId";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;

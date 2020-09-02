@@ -347,6 +347,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="parameters">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/qfb/productivity")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductivityData([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetProductivityData(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

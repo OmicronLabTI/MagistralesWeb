@@ -96,5 +96,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="orderFabModel">the params.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel);
+
+        /// <summary>
+        /// Gets the orderd by id.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrdersById(List<int> ordersId);
     }
 }
