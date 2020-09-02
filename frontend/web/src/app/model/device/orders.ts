@@ -13,5 +13,6 @@ export class CancelOrders {
 }
 export class SearchComponentModal {
     modalType: string;
+    chips?: string[];
 }
 

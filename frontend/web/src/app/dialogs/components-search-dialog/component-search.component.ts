@@ -40,16 +40,20 @@ export class ComponentSearchComponent implements OnInit {
               private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public data: any) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
+    this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
   }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
+    if (this.keywords.length > 0 ) {
+      this.getQueryString();
+      this.getComponents();
+    }
   }
 
   getComponents() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
-          console.log('resComponentes', resComponents)
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
@@ -98,6 +102,7 @@ export class ComponentSearchComponent implements OnInit {
 
   selectComponent(row: any) {
     if (row === this.rowPrevious) {
+      row.chips = this.keywords;
       this.dialogRef.close(row);
     } else {
       this.rowPrevious = row;

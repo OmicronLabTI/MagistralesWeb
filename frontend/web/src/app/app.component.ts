@@ -257,7 +257,8 @@ export class AppComponent implements OnDestroy , OnInit {
         const dialogRef = this.dialog.open(ComponentSearchComponent, {
             panelClass: 'custom-dialog-container',
             data: {
-                modalType: resultSearchComponentModal.modalType
+                modalType: resultSearchComponentModal.modalType,
+                chips: resultSearchComponentModal.chips
             }
         });
 
@@ -265,18 +266,28 @@ export class AppComponent implements OnDestroy , OnInit {
             if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent)) {
                 this.dataService.setNewFormulaComponent(resultComponents);
             } else if (resultComponents) {
-                this.onSuccessDialogClosed(resultComponents);
+                this.dataService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
+                    'question', CONST_STRING.empty, true, true)
+                    .then((resultCreateIsolated: any) => {
+                        if (resultCreateIsolated.isConfirmed) {
+                            this.onSuccessDialogClosed(resultComponents);
+                        } else {
+                            this.onSuccessSearchComponentModal({
+                                modalType: resultSearchComponentModal.modalType,
+                                chips: resultComponents.chips
+                            });
+                        }
+                    });
+
             }
         });
     }
 
     onSuccessDialogClosed(resultComponents: any) {
-        console.log('resultComponentToService', resultComponents.productoId);
         const createIsolatedReq = new CreateIsolatedOrderReq();
         createIsolatedReq.productCode = resultComponents.productoId;
         createIsolatedReq.userId = this.dataService.getUserId();
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
-            console.log('resultIsolated: ', resultCreateIsolated)
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
                 this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
