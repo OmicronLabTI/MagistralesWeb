@@ -41,7 +41,8 @@ export enum HttpServiceTOCall {
     ORDERS,
     DETAIL_ORDERS,
     USERS,
-    DETAIL_FORMULA
+    DETAIL_FORMULA,
+    ORDERS_ISOLATED
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',

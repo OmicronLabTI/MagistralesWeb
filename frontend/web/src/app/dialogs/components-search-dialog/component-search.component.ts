@@ -25,7 +25,7 @@ export class ComponentSearchComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
-  displayedColumns: string[] = [];
+  displayedColumns: string[] = ['numero', 'descripcion'];
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
@@ -39,19 +39,7 @@ export class ComponentSearchComponent implements OnInit {
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log('data: ', this.data)
-    if (this.data.modalType === ComponentSearch.searchComponent) {
-      this.isFromSearchComponent = true;
-      this.displayedColumns = [
-        'numero',
-        'descripcion'
-      ];
-    } else {
-      this.displayedColumns = [
-        'numero'
-      ];
-      this.isFromSearchComponent = false;
-    }
+    this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
   }
 
   ngOnInit() {

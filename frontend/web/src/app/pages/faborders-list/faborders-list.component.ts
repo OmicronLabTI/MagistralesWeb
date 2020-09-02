@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
-  ClassNames, ComponentSearch,
+  ComponentSearch,
   CONST_NUMBER,
-  CONST_STRING, ConstStatus,
-  HttpServiceTOCall, HttpStatus, MessageType,
-  MODAL_FIND_ORDERS,
-  MODAL_NAMES,
+  CONST_STRING, ConstStatus, HttpServiceTOCall,
+  HttpStatus,
+  MODAL_FIND_ORDERS
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
@@ -57,6 +56,7 @@ export class FabordersListComponent implements OnInit {
     private errorService: ErrorService,
     private titleService: Title
   ) {
+    this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
     this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.dateType = '0';
     this.filterDataOrders.dateFull = this.rangeDate;
@@ -142,5 +142,9 @@ export class FabordersListComponent implements OnInit {
 
   createOrderIsolated() {
     this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
+  }
+
+  openSearchOrders() {
+    console.log('searching')
   }
 }

@@ -183,7 +183,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault();
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;

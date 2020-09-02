@@ -262,10 +262,9 @@ export class AppComponent implements OnDestroy , OnInit {
         });
 
         dialogRef.afterClosed().subscribe((resultComponents: any) => {
-            console.log('components: ', resultComponents)
             if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent)) {
                 this.dataService.setNewFormulaComponent(resultComponents);
-            } else {
+            } else if (resultComponents) {
                 this.onSuccessDialogClosed(resultComponents);
             }
         });
