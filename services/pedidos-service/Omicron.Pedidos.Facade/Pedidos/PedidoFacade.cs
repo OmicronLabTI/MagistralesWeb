@@ -43,7 +43,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="assignPedidosService">The assign pedidos service.</param>
         /// <param name="productivityService">The productivity services.</param>
         /// <param name="cancelPedidosService">The cancel pedidos service.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, , IProductivityService productivityService)
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));

@@ -152,7 +152,6 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
                 .Returns(Task.FromResult(response));
 
-
             mockProductivityService
                 .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
