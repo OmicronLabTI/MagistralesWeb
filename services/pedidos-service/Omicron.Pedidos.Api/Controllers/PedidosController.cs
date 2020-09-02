@@ -314,7 +314,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Operation result.</returns>
         [HttpPost]
         [Route("/fabOrder/isolated")]
-        public async Task<IActionResult> FinishOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
+        public async Task<IActionResult> CreateIsolatedFabricationOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
         {
             var response = await this.pedidoFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
             return this.Ok(response);
