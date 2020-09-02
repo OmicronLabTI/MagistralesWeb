@@ -336,6 +336,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string IsolatedProductionOrderCreated = "La orden de fabricación {0} ha sido creada.";
 
         /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string ReasonUnexpectedError = "Ocurrió un error inesperado.";
+
+        /// <summary>
+        /// Reason custom formula already exists.
+        /// </summary>
+        public const string ReasonCustomListAlreadyExists = "La lista {0} ya existe para el producto {1}.";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string FechaInicio = "fini";

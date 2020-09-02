@@ -8,8 +8,9 @@
 
 namespace Omicron.Pedidos.Entities.Context
 {
-    using Omicron.Pedidos.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
     /// Class DBcontext.
@@ -51,5 +52,21 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object UserModel UserOrderSignature.
         /// </value>
         public virtual DbSet<UserOrderSignatureModel> UserOrderSignatureModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets custom component lists.
+        /// </summary>
+        /// <value>
+        /// Object custom lists.
+        /// </value>
+        public virtual DbSet<CustomComponentListModel> CustomComponentLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets components of custom lists .
+        /// </summary>
+        /// <value>
+        /// Object componets of custom lists.
+        /// </value>
+        public virtual DbSet<ComponentCustomComponentListModel> ComponentsCustomComponentLists { get; set; }
     }
 }
