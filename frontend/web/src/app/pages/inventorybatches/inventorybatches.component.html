@@ -3,7 +3,7 @@
     <div class="header-page">
       <div class="title-list-container">
         <span>Lotes</span>
-        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / <a class="breadcrumblink">Detalle </a> / <a class="breadcrumblink">Formula</a> / Lotes </div>
+        <div class="breadcrumb"><a class="breadcrumblink" [routerLink]="['pedidos']">Pedidos</a> / <a class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', document])">Detalle </a> / <a class="breadcrumblink" (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId])">Formula</a> / Lotes </div>
       </div>
       <div class="filter-select">
         <div class="docbase">Número de pedido: <span class="spandoc">{{document}}</span></div>

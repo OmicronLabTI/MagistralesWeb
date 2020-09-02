@@ -304,4 +304,15 @@ export class InventorybatchesComponent implements OnInit {
       }
     });
   }
+
+  goToDetailOrder(urlPath: (string | number)[]) {
+    this.setPathUrlService(urlPath);
+  }
+  setPathUrlService(urlPath: any[]) {
+    this.dataService.setPathUrl(urlPath);
+  }
+
+  goToOrdenFab(urlPath: string[]) {
+    this.dataService.setPathUrl(urlPath);
+  }
 }
