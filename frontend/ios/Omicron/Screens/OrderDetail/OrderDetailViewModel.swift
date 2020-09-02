@@ -106,6 +106,7 @@ class OrderDetailViewModel {
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
                 self.tempOrderDetailData?.details?.remove(at: index)
+            self.auxTabledata = self.tempOrderDetailData!.details!
             self.tableData.onNext((self.tempOrderDetailData?.details)!)
             self.sumFormula.accept(self.sum(tableDetails: (self.tempOrderDetailData?.details)!))
         }, onError: {  error in
