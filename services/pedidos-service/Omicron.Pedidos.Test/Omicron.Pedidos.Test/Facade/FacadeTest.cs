@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.Test.Facade
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Mapping;
@@ -59,6 +60,7 @@ namespace Omicron.Pedidos.Test.Facade
             var mockProductivityService = new Mock<IProductivityService>();
             var mockServicesPedidos = new Mock<IPedidosService>();
             var mockCancelPedidosServices = new Mock<ICancelPedidosService>();
+            var mockFormulasPedidosServices = new Mock<IFormulaPedidosService>();
 
             mockServicesPedidos
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
@@ -156,7 +158,17 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockCancelPedidosServices.Object, mockProductivityService.Object);
+            mockFormulasPedidosServices
+                .Setup(m => m.CreateCustomComponentList(It.IsAny<string>(), It.IsAny<CustomComponentListModel>()))
+                .Returns(Task.FromResult(response));
+
+            this.pedidoFacade = new PedidoFacade(
+                mockServicesPedidos.Object,
+                mapper,
+                mockerAssignPedidosService.Object,
+                mockCancelPedidosServices.Object,
+                mockProductivityService.Object,
+                mockFormulasPedidosServices.Object);
         }
 
         /// <summary>
@@ -730,6 +742,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetProductivityData(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task CreateCustomFormula()
+        {
+            // arrange
+            var formula = new CustomComponentListDto();
+
+            // act
+            var response = await this.pedidoFacade.CreateCustomComponentList(string.Empty, formula);
 
             // Assert
             Assert.IsNotNull(response);
