@@ -25,6 +25,7 @@ class CommentsViewController: UIViewController {
     // MARK: -Variables
     @Injected var commentsViewModel: CommentsViewModel
     @Injected var orderDetailVC: OrderDetailViewModel
+    @Injected var lottieManager: LottieManager
     var orderDetail: [OrderDetail] = []
     var disposeBag = DisposeBag()
     
@@ -65,10 +66,10 @@ class CommentsViewController: UIViewController {
         
         self.commentsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
     }
     
@@ -90,18 +91,6 @@ class CommentsViewController: UIViewController {
         self.textView.text = ""
         self.textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 18)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 

@@ -46,6 +46,7 @@ class LotsViewController: UIViewController {
     
     // MARK: -Variables
     @Injected var lotsViewModel: LotsViewModel
+    @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
@@ -141,10 +142,10 @@ class LotsViewController: UIViewController {
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
             
             if (self.lineDocTable.indexPathForSelectedRow == nil) {
                 self.lineDocTable.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)

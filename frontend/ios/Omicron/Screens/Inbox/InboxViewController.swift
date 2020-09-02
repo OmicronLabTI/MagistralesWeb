@@ -22,7 +22,7 @@ class InboxViewController: UIViewController {
     // MARK:  Variables
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
-
+    @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     private var typeCard: Int = 0
@@ -72,10 +72,10 @@ class InboxViewController: UIViewController {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         // Muestra un mensaje AlertViewController

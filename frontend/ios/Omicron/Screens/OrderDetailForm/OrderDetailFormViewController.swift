@@ -17,7 +17,7 @@ class OrderDetailFormViewController:  FormViewController {
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var orderDetailFormViewModel: OrderDetailFormViewModel
-
+    @Injected var lottieManager: LottieManager
     var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
     var disposeBag = DisposeBag()
@@ -211,10 +211,10 @@ class OrderDetailFormViewController:  FormViewController {
         // Muestra o oculta el loading
         orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in

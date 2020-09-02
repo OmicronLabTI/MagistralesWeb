@@ -48,6 +48,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
+    @Injected var lottieManager: LottieManager
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType: String = ""
@@ -179,9 +180,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
             } else {
-                LottieManager.shared.hideLoading()
+                self.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
         

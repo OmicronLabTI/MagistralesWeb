@@ -28,6 +28,7 @@ class LoginViewController: UIViewController {
     
     // MARK: - VARIABLES
     @Injected var viewModel: LoginViewModel
+    @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
     
     // MARK: - LIFE CYCLES
@@ -53,9 +54,9 @@ class LoginViewController: UIViewController {
             .subscribe(onNext: { [weak self] loading in
                 self?.loginButton.isEnabled = !loading
                 if loading {
-                    LottieManager.shared.showLoading()
+                    self?.lottieManager.showLoading()
                 } else {
-                    LottieManager.shared.hideLoading()
+                    self?.lottieManager.hideLoading()
                 }
             }).disposed(by: disposeBag)
         

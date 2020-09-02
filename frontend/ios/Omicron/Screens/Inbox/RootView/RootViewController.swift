@@ -23,6 +23,7 @@ class RootViewController: UIViewController {
     let disposeBag = DisposeBag()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
+    @Injected var lottieManager: LottieManager
     var dataStatusOfService: [SectionOrder] = []
     var refreshControl = UIRefreshControl()
     
@@ -96,9 +97,9 @@ class RootViewController: UIViewController {
         
         rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { loadingResponse in
             if (loadingResponse) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
             } else {
-                LottieManager.shared.hideLoading()
+                self.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
         
