@@ -72,7 +72,7 @@ struct CommonStrings {
     static let logIntoYourAccount = "Ingresa a tu cuenta"
     static let enter = "Entrar"
     static let user = "Usuario"
-    static let password = "Password"
+    static let password = "Contraseña"
     static let Emty = ""
     static let OK = "OK"
     static let searchOrden = "Buscar orden"

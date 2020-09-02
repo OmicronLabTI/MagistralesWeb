@@ -19,7 +19,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton : UIButton!
     @IBOutlet weak var logoView: UIView!
     @IBOutlet weak var loginView: UIView!
-    @IBOutlet weak var loginLabel: UILabel!
     @IBOutlet weak var loginDescriptionLabel: UILabel!
     @IBOutlet weak var loginButtonDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
@@ -99,11 +98,7 @@ class LoginViewController: UIViewController {
 
         self.loginView.backgroundColor = UIColor.white
         self.loginView.layer.cornerRadius = 30
-        
-        self.loginLabel.text = CommonStrings.login
-        self.loginLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
-        self.loginLabel.textColor = UIColor.black
-        
+                
         self.loginDescriptionLabel.text = CommonStrings.logIntoYourAccount
         self.loginDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 24)
         self.loginDescriptionLabel.textColor = UIColor.black
