@@ -19,7 +19,7 @@ enum ApiService {
     case changeStatusOrder(changeStatusRequest: [ChangeStatusRequest])
     case getLots(orderId: Int)
     case finishOrder(finishOrder: FinishOrder)
-    case assingLots(lotsRequest: [LotsRequest])
+    case assingLots(lotsRequest: [BatchSelected])
 }
 
 extension ApiService: AuthorizedTargetType {
