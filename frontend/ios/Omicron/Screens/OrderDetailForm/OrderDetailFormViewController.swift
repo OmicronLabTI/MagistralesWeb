@@ -17,14 +17,14 @@ class OrderDetailFormViewController:  FormViewController {
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var orderDetailFormViewModel: OrderDetailFormViewModel
-
+    @Injected var lottieManager: LottieManager
     var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
     var disposeBag = DisposeBag()
     var baseQuantity: DecimalRow? = nil
     var requiredQuantity: DecimalRow? = nil
     var werehouse: PickerInlineRow<String>? = nil
-    let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
    
     // MARK: Life cycles
     override func viewDidLoad() {
@@ -177,13 +177,13 @@ class OrderDetailFormViewController:  FormViewController {
             }
             .onCellSelection { cell, row in
                 row.section?.form?.validate()
-                if (row.isValid) {
+                if (row.isValid && !row.isDisabled) {
                     
                     self.baseQuantity = self.form.rowBy(tag: "baseQuantity")
                     self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
                     self.werehouse = self.form.rowBy(tag: "werehouse")
                     
-                    let alert = UIAlertController(title: CommonStrings.Emty, message: "Deseas guardar los cambios ingresados?", preferredStyle: .alert)
+                    let alert = UIAlertController(title: CommonStrings.Emty, message: "¿Deseas guardar los cambios ingresados?", preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in self.dismiss(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.saveChanges()})
                     alert.addAction(cancelAction)
@@ -211,10 +211,10 @@ class OrderDetailFormViewController:  FormViewController {
         // Muestra o oculta el loading
         orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in

@@ -14,12 +14,14 @@ struct Login: Codable {
     var password: String
     var redirectUri: String?
     var clientId2: String?
+    var origin: String?
     
-    init(username: String, password: String, redirectUri: String? = nil, clientId2: String? = nil) {
+    init(username: String, password: String, redirectUri: String , clientId2: String, origin: String) {
         self.user = username
         self.password = password
         self.redirectUri = redirectUri
         self.clientId2 = clientId2
+        self.origin = origin
     }
 }
 

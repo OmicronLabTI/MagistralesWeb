@@ -187,6 +187,14 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetProductivityData(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Create custom component list.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="customList">The custom list.</param>
+        /// <returns>New custom list.</returns>
+        Task<ResultDto> CreateCustomComponentList(string userId, CustomComponentListDto customList);
+
+        /// <summary>
         /// Gets the workload.
         /// </summary>
         /// <param name="parameters">the filters.</param>

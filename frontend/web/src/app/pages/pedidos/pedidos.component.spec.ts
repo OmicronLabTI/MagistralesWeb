@@ -23,7 +23,7 @@ describe('PedidosComponent', () => {
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
-        'transformDate', 'setRefreshToken'
+      'transformDate', 'setRefreshToken'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders'
@@ -40,11 +40,11 @@ describe('PedidosComponent', () => {
       providers: [
         DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
-       // { provide: DataService, useValue: dataServiceSpy },
+        // { provide: DataService, useValue: dataServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+        .compileComponents();
   }));
 
   beforeEach(() => {
@@ -125,14 +125,14 @@ describe('PedidosComponent', () => {
     expect(component.dataSource.data.every(user => user.isChecked)).toBeFalsy();
   });
   it('should changeDataEvent', () => {
-     expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
-     expect(component.pageIndex ).toEqual(0);
-     expect(component.offset).toEqual(0);
-     expect(component.limit).toEqual(5);
+    expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
+    expect(component.pageIndex ).toEqual(0);
+    expect(component.offset).toEqual(0);
+    expect(component.limit).toEqual(5);
   });
   it('should getDateFormatted', () => {
-     expect(component.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
-     expect(component.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
+    expect(component.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
+    expect(component.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
   });
   it('should openPlaceOrdersDialog', () => {
     component.dataSource.data = [];

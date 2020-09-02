@@ -23,17 +23,17 @@ class RootViewController: UIViewController {
     let disposeBag = DisposeBag()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
+    @Injected var lottieManager: LottieManager
     var dataStatusOfService: [SectionOrder] = []
     var refreshControl = UIRefreshControl()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = getUserInfo()
         self.initComponents()
         self.viewModelBinding()
        self.viewTable.refreshControl = refreshControl
-        
+        self.setTitleCustom()
         // Configure Refresh Control
        self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
     }
@@ -44,10 +44,24 @@ class RootViewController: UIViewController {
     }
     
     // MARK: Functions
-    
-    // Falta funcionalidad
     @objc func refreshOrders() -> Void {
         self.rootViewModel.getOrders(isUpdate: true)
+    }
+    
+    // Pone el título del del usuario logeado
+    func setTitleCustom() -> Void {
+        let navLabel = UILabel(frame: (self.navigationController?.navigationBar.frame)!)
+        navLabel.numberOfLines = 0
+        let navTitle = NSMutableAttributedString(string: "Hola\n", attributes:[
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10.0)
+        ])
+
+        navTitle.append(NSMutableAttributedString(string: getUserInfo(), attributes:[
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17.0)
+        ]))
+
+        navLabel.attributedText = navTitle
+        self.navigationItem.titleView = navLabel
     }
     
     func viewModelBinding() {
@@ -83,9 +97,9 @@ class RootViewController: UIViewController {
         
         rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { loadingResponse in
             if (loadingResponse) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
             } else {
-                LottieManager.shared.hideLoading()
+                self.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
         
@@ -118,13 +132,13 @@ class RootViewController: UIViewController {
         
         self.view.backgroundColor = OmicronColors.tableStatus
        
-        self.refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        self.refreshControl.tintColor = OmicronColors.blue
         self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
        
         self.logoutButton.setTitle("Cerrar sesión", for: .normal)
         self.logoutButton.tintColor = .darkGray
         self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
-        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 20)
+        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 260)
         self.logoutButton.titleEdgeInsets.left = 35
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
     }

@@ -18,32 +18,43 @@ class OrderDetailViewModel {
     var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
-    var showAlertConfirmation: PublishSubject<String> = PublishSubject()
+    var showAlertConfirmationProcess = PublishSubject<String>()
+    var showAlertConfirmationFinished = PublishSubject<String>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
-    var processButtonDidTap: PublishSubject<Void> = PublishSubject<Void>()
+    var processButtonDidTap = PublishSubject<Void>()
+    var finishedButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
+    var showIconComments = PublishSubject<String>()
     var orderId: Int = -1
-    
+    var showSignatureView = PublishSubject<String>()
+    var  qfbSignatureIsGet = false
+    var technicalSignatureIsGet = false
+    var sqfbSignature = ""
+    var technicalSignature = ""
+    var endRefreshing = PublishSubject<Void>()
     
     // MARK: Init
     init() {
         
-        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
-            self.showAlertConfirmation.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.showAlertConfirmationFinished.onNext("¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+        
+        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+            self.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
         }).disposed(by: self.disposeBag)
         
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
             self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
-
     }
     
     // MARK: Functions
-    func getOrdenDetail() -> Void {
+    func getOrdenDetail(isRefresh: Bool = false) -> Void {
         loading.onNext(true)
         NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
             self.orderDetailData.accept([res.response!])
@@ -52,8 +63,16 @@ class OrderDetailViewModel {
             self.tempOrderDetailData = res.response!
             self.loading.onNext(false)
             self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
+            let iconName = res.response?.comments != nil ? "message.fill": "message"
+            self.showIconComments.onNext(iconName)
+            if(isRefresh) {
+                self.endRefreshing.onNext(())
+            }
         }, onError: { error in
             self.loading.onNext(false)
+            if(isRefresh) {
+                self.endRefreshing.onNext(())
+            }
             self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }
@@ -94,6 +113,7 @@ class OrderDetailViewModel {
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
             self.loading.onNext(false)
                 self.tempOrderDetailData?.details?.remove(at: index)
+            self.auxTabledata = self.tempOrderDetailData!.details!
             self.tableData.onNext((self.tempOrderDetailData?.details)!)
             self.sumFormula.accept(self.sum(tableDetails: (self.tempOrderDetailData?.details)!))
         }, onError: {  error in
@@ -104,5 +124,20 @@ class OrderDetailViewModel {
     
     func getDataTableToEdit() -> OrderDetail  {
         return self.tempOrderDetailData!
+    }
+    
+    func validSignatures() -> Void {
+        if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
+            
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
+
+            NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+                self.loading.onNext(false)
+                self.backToInboxView.onNext(())
+            }, onError: { error in
+                self.loading.onNext(false)
+                self.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+            }).disposed(by: self.disposeBag)
+        }
     }
 }

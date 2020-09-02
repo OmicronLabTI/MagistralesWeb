@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using AutoMapper;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Pedidos;
 
@@ -35,6 +36,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IProductivityService productivityService;
 
+        private readonly IFormulaPedidosService formulaPedidosService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidoFacade"/> class.
         /// </summary>
@@ -43,12 +46,14 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="assignPedidosService">The assign pedidos service.</param>
         /// <param name="productivityService">The productivity services.</param>
         /// <param name="cancelPedidosService">The cancel pedidos service.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService)
+        /// <param name="formulaPedidosService">The formula pedidos service.</param>
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService, IFormulaPedidosService formulaPedidosService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
             this.cancelPedidosService = cancelPedidosService ?? throw new ArgumentNullException(nameof(cancelPedidosService));
             this.productivityService = productivityService ?? throw new ArgumentNullException(nameof(productivityService));
+            this.formulaPedidosService = formulaPedidosService ?? throw new ArgumentNullException(nameof(formulaPedidosService));
             this.mapper = mapper;
         }
 
@@ -290,6 +295,17 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetProductivityData(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.productivityService.GetProductivityData(parameters));
+        }
+
+        /// <summary>
+        /// Create custom component list.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="customList">The custom list.</param>
+        /// <returns>New custom list.</returns>
+        public async Task<ResultDto> CreateCustomComponentList(string userId, CustomComponentListDto customList)
+        {
+            return this.mapper.Map<ResultDto>(await this.formulaPedidosService.CreateCustomComponentList(userId, this.mapper.Map<CustomComponentListModel>(customList)));
         }
 
         /// <summary>
