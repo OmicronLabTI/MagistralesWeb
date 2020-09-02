@@ -335,4 +335,42 @@
 	</addColumn>
 	<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="usersorders" constraintName="fk_creation_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>	
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.39">
+    <createTable tableName="customcomponentlists">
+      <column name="id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	
+	  <column name="productid" type="VARCHAR(50)">
+        <constraints nullable="false" />  
+      </column> 
+	  <column name="name" type="VARCHAR(100)">
+        <constraints nullable="false" />  
+      </column>
+	  <column name="creationuserid" type="VARCHAR(50)">
+		<constraints nullable="false" /> 
+	  </column>
+	  <column name="creationdate" type="VARCHAR(30)">
+		<constraints nullable="false" /> 
+	  </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.40">
+    <createTable tableName="customcomponentlistscomponents">
+      <column name="id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+      <column name="customlistid" type="INT">
+      </column>	  
+	  <column name="productid" type="VARCHAR(50)">
+        <constraints nullable="false" />  
+      </column>
+	  <column name="description" type="VARCHAR(100)">
+        <constraints nullable="false" />  
+      </column>
+	  <column name="basequantity" type="DECIMAL(19,6)">
+        <constraints nullable="false" />  
+      </column>  
+    </createTable>
+    <addForeignKeyConstraint baseColumnNames="customlistid" baseTableName="customcomponentlistscomponents" constraintName="fk_customcomponentlistscomponents_customcomponentlists_id" referencedColumnNames="id" referencedTableName="customcomponentlists"/>
+  </changeSet>
 </databaseChangeLog> 

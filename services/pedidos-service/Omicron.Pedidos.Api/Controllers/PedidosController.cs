@@ -360,6 +360,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Create custom components list.
+        /// </summary>
+        /// <param name="customList">The custom list.</param>
+        /// <returns>Custom list.</returns>
+        [Route("/components/custom")]
+        [HttpPost]
+        public async Task<IActionResult> CreateCustomComponentList(UserActionDto<CustomComponentListDto> customList)
+        {
+            var response = await this.pedidoFacade.CreateCustomComponentList(customList.UserId, customList.Data);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
