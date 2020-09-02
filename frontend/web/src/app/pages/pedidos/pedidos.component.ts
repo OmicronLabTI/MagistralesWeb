@@ -5,7 +5,7 @@ import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_NUMBER,
-  CONST_STRING, ConstStatus,
+  CONST_STRING, ConstOrders, ConstStatus,
   HttpServiceTOCall, HttpStatus, MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES,
@@ -165,14 +165,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
     return event;
   }
   openFindOrdersDialog() {
-    const dialogRef = this.dialog.open(FindOrdersDialogComponent, {
+  /*  const dialogRef = this.dialog.open(FindOrdersDialogComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        modalType: 'orders',
+        modalType: ConstOrders.modalOrders,
         filterOrdersData: this.filterDataOrders
       }
-    });
-    dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
+    });*/
+    /*dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
       if (result) {
         this.filterDataOrders = new  ParamsPedidos();
         this.pageIndex = 0;
@@ -224,7 +224,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       if (result) {
         this.getPedidos();
       }
-    });
+    });*/
   }
   getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
     if (isBeginDate) {
@@ -241,10 +241,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
+    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
     this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
     this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
     this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
-    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {

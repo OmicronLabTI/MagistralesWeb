@@ -96,3 +96,6 @@ export const BOOLEANS = {
     verdadero: true,
     falso: false
 };
+export const ConstOrders = {
+  modalOrders: 'orders',
+};
