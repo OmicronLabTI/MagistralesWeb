@@ -63,9 +63,9 @@ class UtilsManager {
            return nil
        }
     
-    func formatterDoublesTo8Decimals() ->  NumberFormatter {
+    func formatterDoublesTo6Decimals() ->  NumberFormatter {
         let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 8
+        formatter.minimumFractionDigits = 6
         return formatter
     }
     

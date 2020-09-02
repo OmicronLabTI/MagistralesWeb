@@ -49,7 +49,7 @@ class LotsViewController: UIViewController {
     @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
     var orderId = -1
-    var formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var statusType = ""
     
     override func viewDidLoad() {

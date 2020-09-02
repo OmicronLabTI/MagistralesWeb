@@ -24,7 +24,7 @@ class OrderDetailFormViewController:  FormViewController {
     var baseQuantity: DecimalRow? = nil
     var requiredQuantity: DecimalRow? = nil
     var werehouse: PickerInlineRow<String>? = nil
-    let formatter = UtilsManager.shared.formatterDoublesTo8Decimals()
+    let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
    
     // MARK: Life cycles
     override func viewDidLoad() {
