@@ -13,6 +13,7 @@ class DetailTableViewCell: UITableViewCell {
     //MARK: Outlets
     
     @IBOutlet weak var codeLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var baseQuantityLabel: UILabel!
     @IBOutlet weak var requiredQuantityLabel: UILabel!
     @IBOutlet weak var consumedLabel: UILabel!
@@ -36,6 +37,7 @@ class DetailTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: 14)
+        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: 14)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

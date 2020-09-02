@@ -22,7 +22,7 @@ class InboxViewController: UIViewController {
     // MARK:  Variables
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
-
+    @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
     private var typeCard: Int = 0
@@ -58,20 +58,24 @@ class InboxViewController: UIViewController {
         
         // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
         collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ indexpath in
-            if(indexpath.row >= 0) {
+            if self.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
                 self.processButton.isEnabled = true
-                return
             }
-            self.processButton.isEnabled = false
         }).disposed(by: self.disposeBag)
+        
+        collectionView.rx.itemDeselected.subscribe(onNext: { _ in
+            if self.collectionView.indexPathsForSelectedItems?.count == 0 {
+                self.processButton.isEnabled = false
+            }
+        }).disposed(by: disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
             if(showLoading) {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         // Muestra un mensaje AlertViewController
@@ -124,15 +128,15 @@ class InboxViewController: UIViewController {
             if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
                 switch data.indexStatusSelected {
                 case 0:
-                    message = "No tienes ordenes Asignadas"
+                    message = "No tienes órdenes Asignadas"
                 case 1:
-                    message = "No tienes ordenes En proceso"
+                    message = "No tienes órdenes En proceso"
                 case 2:
-                    message = "No tienes ordenes Pendientes"
+                    message = "No tienes órdenes Pendientes"
                 case 3:
-                    message = "No tienes ordenes Terminadas"
+                    message = "No tienes órdenes Terminadas"
                 case 4:
-                    message = "No tienes ordenes Reasignadas"
+                    message = "No tienes órdenes Reasignadas"
                 default:
                     message = ""
                 }
@@ -196,7 +200,7 @@ class InboxViewController: UIViewController {
         case 1:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 3:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 4:
