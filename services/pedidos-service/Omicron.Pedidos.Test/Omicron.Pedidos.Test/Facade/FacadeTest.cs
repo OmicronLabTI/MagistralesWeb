@@ -58,6 +58,8 @@ namespace Omicron.Pedidos.Test.Facade
             var mockerAssignPedidosService = new Mock<IAssignPedidosService>();
             var mockProductivityService = new Mock<IProductivityService>();
             var mockServicesPedidos = new Mock<IPedidosService>();
+            var mockCancelPedidosServices = new Mock<ICancelPedidosService>();
+
             mockServicesPedidos
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
                 .Returns(Task.FromResult(response));
@@ -90,12 +92,12 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.ConnectDiApi())
                 .Returns(Task.FromResult(response));
 
-            mockServicesPedidos
-                .Setup(m => m.CancelOrder(It.IsAny<List<OrderIdModel>>()))
+            mockCancelPedidosServices
+                .Setup(m => m.CancelSalesOrder(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
-            mockServicesPedidos
-                .Setup(m => m.CancelFabOrder(It.IsAny<List<OrderIdModel>>()))
+            mockCancelPedidosServices
+                .Setup(m => m.CancelFabricationOrders(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -154,7 +156,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockProductivityService.Object);
+            this.pedidoFacade = new PedidoFacade(mockServicesPedidos.Object, mapper, mockerAssignPedidosService.Object, mockCancelPedidosServices.Object, mockProductivityService.Object);
         }
 
         /// <summary>
