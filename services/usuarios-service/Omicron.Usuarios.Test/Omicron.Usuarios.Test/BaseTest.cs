@@ -113,7 +113,7 @@ namespace Omicron.Usuarios.Test
         {
             var userOrders = new List<FabricacionOrderModel>
             {
-                new FabricacionOrderModel { CreatedDate = DateTime.Now, DataSource = "M", OrdenId = 100, PedidoId = 100, PostDate = "date", ProdName = "name", ProductoId = "Aspirina", Quantity = 10, Status = "status" },
+                new FabricacionOrderModel { CreatedDate = DateTime.Now, DataSource = "M", OrdenId = 100, PedidoId = 100, PostDate = DateTime.Now, ProdName = "name", ProductoId = "Aspirina", Quantity = 10, Status = "status" },
             };
 
             return new ResultModel

@@ -365,5 +365,22 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetUsersById()
+        {
+            // arrange
+            var listIds = new List<string> { "1" };
+
+            // act
+            var response = await this.userServices.GetUsersById(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

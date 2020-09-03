@@ -246,20 +246,23 @@ namespace Omicron.Usuarios.Services.User
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            foreach (var x in users)
+            await Task.WhenAll(users.Select(async x =>
             {
                 var usersOrders = orders.Where(y => y.Userid.Equals(x.Id) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList();
                 var sapOrders = await this.GetFabOrders(usersOrders);
 
-                listToReturn.Add(new UserWithOrderCountModel
+                lock (listToReturn)
                 {
-                    UserId = x.Id,
-                    UserName = $"{x.FirstName} {x.LastName}",
-                    CountTotal = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
-                    CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
-                    CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
-                });
-            }
+                    listToReturn.Add(new UserWithOrderCountModel
+                    {
+                        UserId = x.Id,
+                        UserName = $"{x.FirstName} {x.LastName}",
+                        CountTotal = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
+                        CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
+                        CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
+                    });
+                }
+            }));
 
             return listToReturn.OrderBy(x => x.UserName).ToList();
         }
