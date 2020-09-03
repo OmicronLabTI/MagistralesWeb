@@ -280,11 +280,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             var items = await this.sapDao.GetProductsManagmentByBatch(chipValues);
 
-            bool resultOffset = parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
-            bool resultLimit = parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
+            parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
+            parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
 
             var itemsToReturn = items.Skip(offset).Take(limit).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count);
         }
 
         /// <summary>
