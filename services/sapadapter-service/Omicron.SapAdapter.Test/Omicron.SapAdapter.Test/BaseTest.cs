@@ -12,7 +12,6 @@ namespace Omicron.SapAdapter.Test
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
