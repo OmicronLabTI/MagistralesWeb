@@ -33,6 +33,10 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
+    path: 'ordenes',
+    loadChildren: () => import('./pages/faborders-list/faborder-list.module').then(m => m.FaborderListModule),
+  },
+  {
     path: '**',
     redirectTo: '/login'
 

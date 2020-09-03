@@ -25,7 +25,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int PedidoId { get; set; }
+        public int? PedidoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -38,6 +38,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public DateTime PostDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public DateTime CreatedDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -56,5 +62,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string DataSource { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ProdName { get; set; }
     }
 }

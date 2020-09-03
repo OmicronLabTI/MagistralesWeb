@@ -210,7 +210,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/fabOrder/finish")]
         [HttpPut]
-        public async Task<IActionResult> CloseFabOrders(List<OrderIdDto> finishOrders)
+        public async Task<IActionResult> CloseFabOrders(List<CloseProductionOrderDto> finishOrders)
         {
             var response = await this.pedidoFacade.CloseFabOrders(finishOrders);
             return this.Ok(response);
@@ -304,6 +304,58 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> FinishOrder(FinishOrderDto orderSignature)
         {
             var response = await this.pedidoFacade.FinishOrder(orderSignature);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("/fabOrder/isolated")]
+        public async Task<IActionResult> CreateIsolatedFabricationOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
+        {
+            var response = await this.pedidoFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="parameters">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpGet]
+        [Route("/fabOrder")]
+        public async Task<IActionResult> GetFabOrders([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetFabOrders(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="manualAssign">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/reasignar/manual")]
+        [HttpPost]
+        public async Task<IActionResult> ReassignOrder(ManualAssignDto manualAssign)
+        {
+            var response = await this.pedidoFacade.ReassignOrder(manualAssign);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="parameters">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/qfb/productivity")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductivityData([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetProductivityData(parameters);
             return this.Ok(response);
         }
 

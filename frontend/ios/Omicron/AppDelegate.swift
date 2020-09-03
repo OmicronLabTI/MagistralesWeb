@@ -39,6 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { OrderDetailViewModel() }.scope(Resolver.cached)
         Resolver.register { OrderDetailFormViewModel() }.scope(Resolver.cached)
         Resolver.register { CommentsViewModel() }.scope(Resolver.cached)
-        Resolver.register { LotsViewModel() }.scope(Resolver.cached)
+        Resolver.register { LotsViewModel() }
+        Resolver.register {SignaturePadViewModel() }.scope(Resolver.cached)
+          Resolver.register {LottieManager() }.scope(Resolver.cached)
     }
 }

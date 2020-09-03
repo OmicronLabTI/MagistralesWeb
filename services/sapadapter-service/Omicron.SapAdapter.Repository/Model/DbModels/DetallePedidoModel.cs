@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Key]
         [Column("DocEntry")]
-        public int PedidoId { get; set; }
+        public int? PedidoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

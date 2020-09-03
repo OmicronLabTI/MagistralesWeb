@@ -92,7 +92,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             details.ToList().ForEach(x =>
             {
-                var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
                 userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
                 var userId = userOrder.Userid;
@@ -101,8 +100,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = !string.IsNullOrEmpty(userOrder.FinishDate) ? userOrder.FinishDate : string.Empty;
-                x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
+                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -175,7 +173,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault(x => x.ProductoId == o.ProductoId);
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
                 var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
@@ -277,15 +275,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
                 double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
 
-                totalNecesario = Math.Round(totalNecesario, 6);
-                doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
-
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = x.Warehouse,
                     CodigoProducto = x.ProductId,
                     DescripcionProducto = x.Description,
-                    TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
+                    TotalNecesario = totalNecesario - doubleTotalBathches,
                     TotalSeleccionado = doubleTotalBathches,
                     Lotes = lotes,
                     LotesAsignados = batches,
@@ -350,7 +345,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     SysNumber = x.SysNumber,
                     NumeroLote = x.DistNumber,
                     CantidadAsignada = x.CommitQty,
-                    CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
+                    CantidadDisponible = x.Quantity - x.CommitQty,
                 });
             });
 

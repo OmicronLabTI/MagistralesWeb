@@ -206,12 +206,19 @@
             <param name="assginBatches">The assign batches mnodel.</param>
             <returns>the reult.</returns>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.FinishProductionOrders(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CancelOrderDto})">
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.FinishProductionOrders(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CloseProductionOrderDto})">
             <summary>
             Finish production order.
             </summary>
             <param name="productionOrdes">Production orders to finish.</param>
             <returns>the reult.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateIsolatedProductionOrder(Omicron.SapDiApi.Dtos.Models.CreateIsolatedFabOrderDto)">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="isolatedFabOrder">Isolated production order.</param>
+            <returns>Operation result.</returns>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>

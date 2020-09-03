@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Omicron.SapAdapter.Facade\Omicron.SapAdapter.Facade.csproj" />
     <ProjectReference Include="..\..\Omicron.SapAdapter.Repository\Omicron.SapAdapter.Entities.csproj" />
+    <ProjectReference Include="..\..\Omicron.SapAdapter.Resources\Omicron.SapAdapter.Resources.csproj" />
     <ProjectReference Include="..\..\Omicron.SapAdapter.Services\Omicron.SapAdapter.Services.csproj" />
   </ItemGroup>
 

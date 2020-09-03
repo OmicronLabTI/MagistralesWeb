@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
     /// <summary>
     /// The interface for sap.
@@ -61,10 +62,46 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetComponents(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Get the components managed by batches.
         /// </summary>
         /// <param name="ordenId">the ordenid.</param>
         /// <returns>the data to return.</returns>
         Task<ResultModel> GetBatchesComponents(int ordenId);
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetNextBatchCode(string productCode);
+
+        /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="orderFabModel">the params.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel);
+
+        /// <summary>
+        /// Gets the orderd by id.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabOrdersById(List<int> ordersId);
     }
 }
