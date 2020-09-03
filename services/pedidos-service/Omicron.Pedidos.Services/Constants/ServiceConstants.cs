@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class for constatns.
     /// </summary>
@@ -69,6 +71,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Abierto = "Abierto";
 
         /// <summary>
+        /// abierto status.
+        /// </summary>
+        public const string Reasignado = "Reasignado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -107,6 +114,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// orde fab plani.
         /// </summary>
         public const string OrdenFabricacionPlan = "Orden de fabricación planificada";
+
+        /// <summary>
+        /// when the Pedido es reassigned.
+        /// </summary>
+        public const string ReasignarPedido = "Se reasigno el pedido a {0}";
+
+        /// <summary>
+        /// se asigna la orden.
+        /// </summary>
+        public const string ReasignarOrden = "Se reasigno la orden a {0}";
 
         /// <summary>
         /// orden fab.
@@ -184,6 +201,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetFormula = "formula/";
 
         /// <summary>
+        /// gets the last isolated production order id.
+        /// </summary>
+        public const string GetLastIsolatedProductionOrderId = "fabOrder/isolated/last";
+
+        /// <summary>
         /// the route to call the details for the details.
         /// </summary>
         public const string GetFabOrdersByPedidoId = "detail/{0}";
@@ -214,6 +236,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string CancelFabOrder = "cancelProductionOrder";
 
         /// <summary>
+        /// route to create isolated fabrication orders.
+        /// </summary>
+        public const string CreateIsolatedFabOrder = "isolatedProductionOrder";
+
+        /// <summary>
         /// route to finish orders.
         /// </summary>
         public const string FinishFabOrder = "finishProducionOrders";
@@ -232,6 +259,21 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the components with the data.
         /// </summary>
         public const string GetComponentsWithBatches = "componentes/lotes/{0}";
+
+        /// <summary>
+        /// gets the data by the filters.
+        /// </summary>
+        public const string GetFabOrdersByFilter = "fabOrder/filters";
+
+        /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
+        public const string GetUsersById = "getUsersById";
+
+        /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
+        public const string GetUsersByOrdersById = "fabOrderId";
 
         /// <summary>
         /// the id for qfb role.
@@ -287,5 +329,56 @@ namespace Omicron.Pedidos.Services.Constants
         /// error when batche are missing.
         /// </summary>
         public const string BatchesAreMissingError = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado";
+
+        /// <summary>
+        /// when the isolated order is created.
+        /// </summary>
+        public const string IsolatedProductionOrderCreated = "La orden de fabricación {0} ha sido creada.";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string FechaInicio = "fini";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string FechaFin = "ffin";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string DocNum = "docNum";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Status = "status";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Qfb = "qfb";
+
+        /// <summary>
+        /// const for offset.
+        /// </summary>
+        public const string Offset = "offset";
+
+        /// <summary>
+        /// Const for the limit.
+        /// </summary>
+        public const string Limit = "limit";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusAvoidReasignar { get; } = new List<string>
+        {
+            "Finalizado",
+        };
     }
 }

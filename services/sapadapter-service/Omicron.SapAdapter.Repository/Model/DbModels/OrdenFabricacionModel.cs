@@ -31,7 +31,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("OriginAbs")]
-        public int PedidoId { get; set; }
+        public int? PedidoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -52,7 +52,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("CreateDate")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

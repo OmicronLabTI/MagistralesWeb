@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Resources.Extensions;
 
     /// <summary>
     /// Class for the dao.
@@ -179,6 +180,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        public async Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel
+                                    .Where(
+                                        x => x.ProductoId.Equals(productId) && 
+                                        x.Comments.Equals(uniqueId) &&
+                                        string.IsNullOrEmpty(x.CardCode) &&
+                                        x.DataSource.Equals("O"))
+                                    .MaxAsync(x => x.OrdenId);
+            return query;
+        }
+
+        /// <summary>
         /// gets the orders by product and item.
         /// </summary>
         /// <param name="listOrders">the product id.</param>        
@@ -187,6 +206,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => listOrders.Contains(x.OrdenId)).ToListAsync();
             return query;
+        }
+
+        /// <summary>
+        /// gets the orders by orderid.
+        /// </summary>
+        /// <param name="fechaInit">initial date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
+        /// Gets the prod by itemcode.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode)
+        {
+            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.ProductoId.Contains(itemCode)).ToListAsync();
         }
 
         /// <summary>
@@ -407,6 +448,42 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry)
         {
             return await this.databaseContext.BatchesTransactionQtyModel.Where(x => x.LogEntry == logEntry).ToListAsync();
+        }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="batchCodePattern">Batch code pattern.</param>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<string> GetMaxBatchCode(string batchCodePattern, string productCode)
+        { 
+            return (from    batch in this.databaseContext.Batches
+                                where   batch.ItemCode.Equals(productCode)
+                                &&      EF.Functions.Like(batch.DistNumber, batchCodePattern)
+                                orderby batch.DistNumber descending
+                                select  batch.DistNumber).Take(1).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="criterials">the values to look.</param>
+        /// <returns>the value.</returns>
+        public async Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials)
+        {
+            var results = from product in this.databaseContext.ProductoModel where product.ManagedBatches.Equals("Y") select product;
+
+            foreach (var criterial in criterials)
+            {
+                results =   from    product in results
+                            where   EF.Functions.Like(product.ProductoId, $"%{criterial}%")
+                            ||      EF.Functions.Like(product.ProductoName, $"%{criterial}%")
+                            orderby product.ProductoId ascending
+                            select  product;
+            }
+             
+            return results.ToList();
         }
     }
 }

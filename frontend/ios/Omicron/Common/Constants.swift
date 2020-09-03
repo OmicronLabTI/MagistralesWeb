@@ -36,6 +36,7 @@ struct ViewControllerIdentifiers {
     static let lotsTableViewCell = "LotsTableViewCell"
     static let lotsSelectedTableViewCell = "LotsSelectedTableViewCell"
     static let lotsAvailableTableViewCell = "LotsAvailableTableViewCell"
+    static let signaturePadViewController = "SignaturePadViewController"
 }
 
 struct OmicronColors {
@@ -57,6 +58,8 @@ struct UsersDefaultsConstants {
     static let loginData = "loginData"
     static let username = "username"
     static let userData = "userData"
+    static let qfbSignature = "qfbSignature"
+    static let technicalSignature = "technicalSignature"
 }
 
 struct ImagesNames {
@@ -69,10 +72,12 @@ struct CommonStrings {
     static let logIntoYourAccount = "Ingresa a tu cuenta"
     static let enter = "Entrar"
     static let user = "Usuario"
-    static let password = "Password"
+    static let password = "Contraseña"
     static let Emty = ""
     static let OK = "OK"
-    static let searchOrden = "Buscar órden"
+    static let searchOrden = "Buscar orden"
+    static let signatureViewTitleQFB = "Firma del  QFB"
+    static let signatureViewTitleTechnical = "Firma del Técnico"
 }
 
 struct FontsNames {
@@ -114,4 +119,9 @@ struct IndicatorImageStatus {
     static let pendding = "pendingStatus"
     static let finished = "finishedStatus"
     static let reassined = "reassignedStatus"
+}
+
+struct FileManagerConstants {
+    static let qfbSignatureName = "qfbSignature.jpg"
+    static let technicalSignatureName = "tecnicalSignature.jpg"
 }

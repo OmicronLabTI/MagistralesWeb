@@ -67,6 +67,21 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
 
         /// <summary>
+        /// gets the orders by orderid.
+        /// </summary>
+        /// <param name="fechaInit">initial date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate);
+
+        /// <summary>
+        /// Gets the prod by itemcode.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode);
+
+        /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
         /// <param name="orderId">the order id.</param>
@@ -137,5 +152,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="logEntry">the log entry.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry);
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="batchCodePattern">Batch code pattern.</param>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<string> GetMaxBatchCode(string batchCodePattern, string productCode);
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="criterials">the values to look.</param>
+        /// <returns>the value.</returns>
+        Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials);
+
     }
 }

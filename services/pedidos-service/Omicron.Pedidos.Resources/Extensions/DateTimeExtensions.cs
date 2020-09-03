@@ -23,5 +23,15 @@ namespace Omicron.Pedidos.Resources.Extensions
         {
             return DateTime.Now.ToString("dd/MM/yyyy");
         }
+
+        /// <summary>
+        /// Create formated date time.
+        /// </summary>
+        /// <param name="dateTime">Date time instance.</param>
+        /// <returns>Formated string date.</returns>
+        public static string FormatedLargeDate(this DateTime dateTime)
+        {
+            return DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt");
+        }
     }
 }

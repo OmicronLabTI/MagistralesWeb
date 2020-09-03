@@ -18,7 +18,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'pdetalle/:id/:status',
+    path: 'pdetalle/:id',
     loadChildren: () => import('./pages/pedido-detalle/pedido-detalle.module').then(m => m.PedidoDetalleModule),
     canActivate: [GuardService]
   },
@@ -31,6 +31,10 @@ const routes: Routes = [
     path: 'lotes/:document/:ordenid',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
+  },
+  {
+    path: 'ordenes',
+    loadChildren: () => import('./pages/faborders-list/faborder-list.module').then(m => m.FaborderListModule),
   },
   {
     path: '**',

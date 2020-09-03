@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 {
     using Omicron.Pedidos.Entities.Model;
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -48,6 +49,29 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listStatus">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByStatus(List<string> listStatus);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="fechaInicio">The init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaFin(DateTime fechaInicio, DateTime fechaFin);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="fechaInicio">The init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin);
 
         /// <summary>
         /// Updates the entries.

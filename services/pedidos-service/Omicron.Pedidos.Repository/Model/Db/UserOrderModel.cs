@@ -79,6 +79,22 @@ namespace Omicron.Pedidos.Entities.Model
         public string FinishDate { get; set; }
 
         /// <summary>
+        /// Gets or sets creation date.
+        /// </summary>
+        /// <value>
+        /// String creation date.
+        [Column("creationdate")]
+        public string CreationDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets creator user id.
+        /// </summary>
+        /// <value>
+        /// String creator user id.
+        [Column("creationuserid")]
+        public string CreatorUserId { get; set; }
+
+        /// <summary>
         /// Gets or sets close date.
         /// </summary>
         /// <value>
@@ -93,5 +109,29 @@ namespace Omicron.Pedidos.Entities.Model
         /// String user id.
         [Column("closeuserid")]
         public string CloseUserId { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is isolated production order.
+        [NotMapped]
+        public bool IsIsolatedProductionOrder => string.IsNullOrEmpty(this.Salesorderid);
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is sales order.
+        [NotMapped]
+        public bool IsSalesOrder => string.IsNullOrEmpty(this.Productionorderid);
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public bool IsProductionOrder => !string.IsNullOrEmpty(this.Productionorderid);
     }
 }
