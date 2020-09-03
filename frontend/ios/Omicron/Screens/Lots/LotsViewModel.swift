@@ -167,6 +167,8 @@ class LotsViewModel {
                         }
                     }
                     self?.dataOfLots.onNext(lotsData)
+                } else {
+                    self?.showMessage.onNext("No hay lotes asignados")
                 }
             }
         }, onError: { [weak self] error in
