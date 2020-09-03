@@ -167,6 +167,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
+                { ServiceConstants.Cliente, "cliente" },
             };
 
             // act

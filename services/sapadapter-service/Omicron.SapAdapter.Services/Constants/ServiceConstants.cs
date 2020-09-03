@@ -41,6 +41,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// the key for cliente.
+        /// </summary>
+        public const string Cliente = "cliente";
+
+        /// <summary>
         /// const for offset.
         /// </summary>
         public const string Offset = "offset";
