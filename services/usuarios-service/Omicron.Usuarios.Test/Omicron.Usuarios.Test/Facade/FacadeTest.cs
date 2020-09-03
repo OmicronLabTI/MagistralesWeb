@@ -236,6 +236,7 @@ namespace Omicron.Usuarios.Test.Facade
             Assert.IsEmpty(response.ExceptionMessage);
             Assert.IsEmpty(response.UserError);
             Assert.AreEqual(200, response.Code);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>
