@@ -180,7 +180,7 @@ class LotsViewModel {
         }
         
         let selected = self.selectedBatches.filter({ b in
-            b.itemCode == lot.codigoProducto && b.action != "delete"
+            b.itemCode == lot.codigoProducto && b.action != "delete" && b.assignedQty != 0
         }).map({ $0.toLotsSelected() })
 
         if(selected.count > 0) {
