@@ -23,22 +23,6 @@ namespace Omicron.SapAdapter.Test
     public abstract class BaseTest
     {
         /// <summary>
-        /// Gets user Dto.
-        /// </summary>
-        /// <returns>the user.</returns>
-        public UserDto GetUserDto()
-        {
-            return new UserDto
-            {
-                Id = 10,
-                FirstName = "Jorge",
-                LastName = "Morales",
-                Email = "test@test.com",
-                Birthdate = DateTime.Now,
-            };
-        }
-
-        /// <summary>
         /// Return the asesor.
         /// </summary>
         /// <returns>the asesor.</returns>

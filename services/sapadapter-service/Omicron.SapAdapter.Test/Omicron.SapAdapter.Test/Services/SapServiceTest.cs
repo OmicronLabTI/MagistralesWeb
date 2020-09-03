@@ -73,15 +73,11 @@ namespace Omicron.SapAdapter.Test.Services
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
-
-            mockPedidoService
-                .Setup(m => m.GetFabricationOrders(It.IsAny<List<int>>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockUserService
-                .Setup(m => m.GetUsersById(It.IsAny<List<string>>()))
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
             this.sapDao = new SapDao(this.context);
