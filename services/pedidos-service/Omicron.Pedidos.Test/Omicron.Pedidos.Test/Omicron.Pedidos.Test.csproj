@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Omicron.Pedidos.Api\Omicron.Pedidos.Api.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Facade\Omicron.Pedidos.Facade.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Repository\Omicron.Pedidos.Entities.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Services\Omicron.Pedidos.Services.csproj" />

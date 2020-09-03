@@ -1,48 +1,66 @@
 ﻿// <summary>
-// <copyright file="DtoTests.cs" company="Axity">
+// <copyright file="EntitiesTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
-namespace Omicron.Pedidos.Test.Dto
+namespace Omicron.Pedidos.Test.Entities
 {
     using AutoFixture;
     using NUnit.Framework;
     using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
     /// Class for tests entities.
     /// </summary>
     [TestFixture]
-    public class DtoTests
+    public class EntitiesTest
     {
         /// <summary>
         /// TypeCases.
         /// </summary>
         private static readonly object[] TypeCases =
         {
-            new AssignBatchDto(),
-            new AutomaticAssingDto(),
-            new BatchesConfigurationDto(),
-            new CloseProductionOrderDto(),
-            new CompleteDetalleFormulaDto(),
-            new ComponentCustomComponentListDto(),
-            new CreateIsolatedFabOrderDto(),
+            new FabOrderDetail(),
+            new FabricacionOrderModel(),
+            new FinishOrderModel(),
+            new GetOrderFabModel(),
+            new ManualAssignModel(),
+            new OrderIdModel(),
+            new OrderModel(),
+            new OrderWithDetailModel(),
+            new ProcessByOrderModel(),
+            new ProcessOrderModel(),
+            new ProductivityModel(),
+            new QfbOrderDetail(),
+            new QfbOrderModel(),
+            new ResultModel(),
+            new SuccessFailResults<OrderIdModel>(),
+            new UpdateFabOrderModel(),
+            new UpdateOrderCommentsModel(),
+            new UpdateOrderSignatureModel(),
+            new UpdateStatusOrderModel(),
+            new UserModel(),
+            new WorkLoadModel(),
+            new UserOrderSignatureModel(),
+            new OrderLogModel(),
+            new UpdateFormulaModel(),
+            new CompleteFormulaWithDetalle(),
+            new CompleteOrderModel(),
+            new CreateIsolatedFabOrderModel(),
+            new CompleteDetalleFormulaModel(),
+            new CompleteDetailOrderModel(),
+            new CloseProductionOrderModel(),
+            new BatchesConfigurationModel(),
+            new BatchesComponentModel(),
+            new AssignBatchModel(),
+            new AssignedBatches(),
+            new AutomaticAssignUserModel(),
+            new AutomaticAssingModel(),
             new CustomComponentListDto(),
-            new FinishOrderDto(),
-            new ManualAssignDto(),
-            new OrderIdDto(),
-            new ProcessByOrderDto(),
-            new ProcessOrderDto(),
-            new ResultDto(),
-            new UpdateFormulaDto(),
-            new UpdateOrderCommentsDto(),
-            new UpdateOrderSignatureDto(),
-            new UpdateStatusOrderDto(),
-            new UserActionDto<CustomComponentListDto>(),
-            new UserDto(),
+            new ComponentCustomComponentListDto(),
         };
 
         /// <summary>
