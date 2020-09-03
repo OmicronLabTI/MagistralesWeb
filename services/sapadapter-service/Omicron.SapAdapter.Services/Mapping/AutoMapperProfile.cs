@@ -10,7 +10,6 @@ namespace Omicron.SapAdapter.Services.Mapping
 {
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
 

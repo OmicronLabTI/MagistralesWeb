@@ -9,13 +9,11 @@
 namespace Omicron.SapAdapter.Test.Facade
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Facade.Sap;
