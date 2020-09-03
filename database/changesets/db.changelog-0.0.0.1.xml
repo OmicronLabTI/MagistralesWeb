@@ -373,4 +373,9 @@
     </createTable>
     <addForeignKeyConstraint baseColumnNames="customlistid" baseTableName="customcomponentlistscomponents" constraintName="fk_customcomponentlistscomponents_customcomponentlists_id" referencedColumnNames="id" referencedTableName="customcomponentlists"/>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.41">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="Logistica"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

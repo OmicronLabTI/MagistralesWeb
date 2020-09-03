@@ -50,6 +50,53 @@ public class OauthFacadeTest extends BaseTest {
         oauthFacade.authorize(loginRequestTO);
     }
 
+    @Test(expected = UnAuthorizedException.class)
+    public void shouldReturnUnAuthorizedExceptionUserNotExist() {
+
+        LoginRequestTO loginRequestTO = new LoginRequestTO();
+        loginRequestTO.setClientId("1");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("Beto");
+
+        oauthFacade.authorize(loginRequestTO);
+    }
+
+    @Test(expected = UnAuthorizedException.class)
+    public void shouldReturnUnAuthorizedExceptionWrongRoleAdmin() {
+
+        LoginRequestTO loginRequestTO = new LoginRequestTO();
+        loginRequestTO.setClientId("1");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("guz");
+        loginRequestTO.setOrigin("app");
+
+        oauthFacade.authorize(loginRequestTO);
+    }
+
+    @Test(expected = UnAuthorizedException.class)
+    public void shouldReturnUnAuthorizedExceptionUserInactive() {
+
+        LoginRequestTO loginRequestTO = new LoginRequestTO();
+        loginRequestTO.setClientId("1");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("test3");
+        loginRequestTO.setOrigin("app");
+
+        oauthFacade.authorize(loginRequestTO);
+    }
+
+    @Test(expected = UnAuthorizedException.class)
+    public void shouldReturnUnAuthorizedExceptionWrongRoleQfb() {
+
+        LoginRequestTO loginRequestTO = new LoginRequestTO();
+        loginRequestTO.setClientId("1");
+        loginRequestTO.setPassword("BC");
+        loginRequestTO.setUser("test2");
+        loginRequestTO.setOrigin("web");
+
+        oauthFacade.authorize(loginRequestTO);
+    }
+
     @Test
     public void shouldValidateToken() {
 
