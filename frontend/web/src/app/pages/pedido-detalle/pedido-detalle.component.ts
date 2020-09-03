@@ -61,7 +61,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     });
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get('id');
-      this.docStatus = params.get('status');
       this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
@@ -72,6 +71,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       (pedidoDetalleRes) => {
         this.dataSource.data = pedidoDetalleRes.response;
         this.dataSource.data.forEach(element => {
+          this.docStatus = element.pedidoStatus;
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;

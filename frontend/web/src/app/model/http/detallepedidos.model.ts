@@ -11,6 +11,7 @@ export class IPedidoDetalleReq {
     qfb: string;
     status: string;
     class?: string;
+    pedidoStatus: string;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;

@@ -7,4 +7,5 @@ public class ErrorMessages {
     public final static String INVALID_CREDENTIALS = "Credenciales inválidas";
     public final static String USUARIO_INACTIVO = "Usuario inactivo";
     public final static String PERFIL_INCORRECTO = "El usuario no puede acceder con su rol";
+    public final static String USUARIO_NO_EXISTE = "El usuario no existe";
 }
