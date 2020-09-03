@@ -7,7 +7,7 @@ export const DetailOrderMock = {
         {
             ordenFabricacionId: 0,
             codigoProducto: '1071   15 ML',
-            descripcionProducto: 'AscorbicpedidoStatus: 'Planificado',o 4%  Glicolico 10%  Hialuronico 3%  Crema',
+            descripcionProducto: 'Ascorbico 4%  Glicolico 10%  Hialuronico 3%  Crema',
             descripcionCorta: 'ASCORBICO 4%  GLICOLICO 10%  HIALURONICO',
             qtyPlanned: null,
             qtyPlannedDetalle: 10,
