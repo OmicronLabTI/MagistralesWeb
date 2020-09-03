@@ -1,7 +1,9 @@
 <div class="find-orders-container">
     <mat-card class="orders-card">
         <mat-card-header class="card-header-container">
-            <mat-card-title><span>Buscar pedidos</span>
+            <mat-card-title>
+                <span *ngIf="isFromSearchOrders">Buscar pedidos</span>
+                <span *ngIf="!isFromSearchOrders">Buscar órdenes de fabricación</span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
@@ -10,7 +12,7 @@
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
-                            <input matInput placeholder="Ingresar pedido" type="number"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de órden de fabricación'" type="number"
                                    maxlength="50"
                                    class="height-input"
                                     formControlName="docNum">
@@ -28,8 +30,10 @@
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Fecha</mat-label>
                             <mat-select formControlName="dateType" >
-                                <mat-option value="0">Inicio</mat-option>
-                                <mat-option value="1">Finalización</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="1">Finalización</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="0">fabri</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="1">qfb</mat-option>
                             </mat-select>
                             <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
                                 Tipo de fecha es <strong>requerido</strong>
@@ -69,9 +73,13 @@
                         <mat-form-field appearance="fill" class="custom-field">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
-                                <mat-option value="Abierto">Abierto</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="Abierto">Abierto</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="Asignado">Asignado</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="En proceso">En proceso</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="Pendiente">Pendiente</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="Reasignado">Reasignado</mat-option>
                                 <mat-option value="Planificado">Planificado</mat-option>
-                                <mat-option value="Liberado">Liberado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="Liberado">Liberado</mat-option>
                                 <mat-option value="Terminado">Terminado</mat-option>
                                 <mat-option value="Finalizado">Finalizado</mat-option>
                                 <mat-option value="Cancelado">Cancelado</mat-option>
@@ -84,6 +92,19 @@
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-order">
+                    <div class="form-field-left" *ngIf="!isFromSearchOrders">
+                        <mat-form-field class="custom-field-full">
+                            <input matInput placeholder="Código del producto" type="text"
+                                   maxlength="40"
+                                   class="height-input"
+                                   formControlName="productCode">
+                            <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
+                                Solo 40 caracteres
+                            </mat-error>
                         </mat-form-field>
                     </div>
                 </div>

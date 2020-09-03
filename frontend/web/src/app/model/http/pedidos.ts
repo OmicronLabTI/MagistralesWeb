@@ -20,14 +20,16 @@ export class ICreateIsolatedOrderRes extends BaseResponseHttp {
 }
 export class ParamsPedidos {
     dateType?: string;
-    docNum: any;
-    fini: Date;
-    ffin: Date;
-    status: string;
-    qfb: string;
+    docNum?: any;
+    fini?: Date;
+    ffin?: Date;
+    status?: string;
+    qfb?: string;
     offset?: number;
     limit?: number;
-    dateFull: string;
+    dateFull?: string;
+    productCode?: string;
+    isFromOrders?: boolean;
 
 }
 

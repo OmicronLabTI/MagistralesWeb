@@ -5,13 +5,13 @@
         </div>
         <div class="filter-select" *ngIf="!filterDataOrders.docNum || filterDataOrders.docNum === 0">
             <span class="dateType" *ngIf="isDateInit">
-                Fecha inicio:
+                Fecha órden de fabricación
             </span>
             <span class="dateType" *ngIf="!isDateInit">
-                Fecha finalización:
+                Fecha de termino
             </span>
             <span class="date-selected">
-             {{ rangeDate}}
+             {{ filterDataOrders.dateFull}}
             </span>
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
@@ -32,7 +32,7 @@
                 &nbsp; Crear orden &nbsp;
             </button>
             <button mat-raised-button class="button-blue margin-left-options" (click)="openSearchOrders()" >
-                <mat-icon *ngIf="isSearchWithFilter">filter_tilt_shift
+                <mat-icon *ngIf="isSearchOrderWithFilter">filter_tilt_shift
                 </mat-icon>
                 &nbsp; Buscar &nbsp;
             </button>

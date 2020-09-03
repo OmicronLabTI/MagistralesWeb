@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
+import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 
 @NgModule({
   declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent
+    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -34,6 +35,6 @@ import {ComponentSearchComponent} from './dialogs/components-search-dialog/compo
     Title
   ],
   bootstrap: [AppComponent],
-    entryComponents: [PlaceOrderDialogComponent, ComponentSearchComponent]
+    entryComponents: [PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent]
 })
 export class AppModule { }

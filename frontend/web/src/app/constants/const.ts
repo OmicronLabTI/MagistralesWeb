@@ -99,6 +99,9 @@ export const BOOLEANS = {
 };
 export const ConstOrders = {
     modalOrders: 'orders',
+    modalOrdersIsolated: 'ordersIsolated',
+    defaultDateInit: '0',
+    dateFinishType: '1'
 };
 
 export const ComponentSearch = {
