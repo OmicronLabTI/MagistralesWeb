@@ -96,6 +96,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Terminado = "Terminado";
 
         /// <summary>
+        /// route to get the users sales orders.
+        /// </summary>
+        public const string GetUserSalesOrder = "getUserOrder/salesOrder";
+
+        /// <summary>
+        /// route to get the user fab order.
+        /// </summary>
+        public const string GetUserOrders = "getUserOrder/fabOrder";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string GetUsersById = "getUsersById";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

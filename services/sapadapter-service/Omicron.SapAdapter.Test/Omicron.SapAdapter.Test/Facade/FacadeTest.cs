@@ -43,8 +43,6 @@ namespace Omicron.SapAdapter.Test.Facade
             this.mapper = mapperConfiguration.CreateMapper();
 
             var mockServices = new Mock<IUsersService>();
-            var user = this.GetUserDto();
-            IEnumerable<UserDto> listUser = new List<UserDto> { user };
 
             var mockSapServices = new Mock<ISapService>();
 
