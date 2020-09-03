@@ -22,6 +22,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -35,8 +36,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         private IMapper mapper;
 
         private IUserDao userDao;
-
-        private IPedidosService pedidosService;
 
         private DatabaseContext context;
 
@@ -63,8 +62,13 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultFabOrders()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object);
         }
 
         /// <summary>
@@ -198,9 +202,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
-        /// <returns>returns nothing.</returns>
         [Test]
-        public async Task CreateUserErrorByRepeatedUsername()
+        public void CreateUserErrorByRepeatedUsername()
         {
             // arrange
             var user = this.GetUserModel();
@@ -212,9 +215,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
-        /// <returns>returns nothing.</returns>
         [Test]
-        public async Task CreateUserErrorByDataBase()
+        public void CreateUserErrorByDataBase()
         {
             // arrange
             var user = this.GetUserModel();
@@ -234,7 +236,9 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
-            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object);
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object, mockSapAdapter.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
@@ -298,9 +302,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Updates the user.
         /// </summary>
-        /// <returns>the user.</returns>
         [Test]
-        public async Task UpdateUserUserNotExist()
+        public void UpdateUserUserNotExist()
         {
             // arrange
             var user = this.GetUserModel();
@@ -351,6 +354,23 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // act
             var response = await this.userServices.GetActiveQfbWithOrcerCount();
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetUsersById()
+        {
+            // arrange
+            var listIds = new List<string> { "1" };
+
+            // act
+            var response = await this.userServices.GetUsersById(listIds);
 
             // assert
             Assert.IsNotNull(response);

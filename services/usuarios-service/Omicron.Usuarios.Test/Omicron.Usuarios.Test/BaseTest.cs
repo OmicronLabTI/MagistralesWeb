@@ -104,5 +104,26 @@ namespace Omicron.Usuarios.Test
                 UserError = string.Empty,
             };
         }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultFabOrders()
+        {
+            var userOrders = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { CreatedDate = DateTime.Now, DataSource = "M", OrdenId = 100, PedidoId = 100, PostDate = DateTime.Now, ProdName = "name", ProductoId = "Aspirina", Quantity = 10, Status = "status" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
     }
 }
