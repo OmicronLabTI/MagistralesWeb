@@ -155,15 +155,19 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             
             if((res.first) != nil) {
                 self.orderDetail = res
-                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base: \(res[0].baseDocument!)", textToBold: "Documento base:")
+                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
-                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].productDescription!)", textToBold: "Descripción del producto:")
-                //self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto: \(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                let codeArr = res[0].code?.components(separatedBy: "   ")
+                if let code = codeArr?.first {
+                    self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(code) \(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                } else {
+                        self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                }
             }
                 }).disposed(by: self.disposeBag)
         
