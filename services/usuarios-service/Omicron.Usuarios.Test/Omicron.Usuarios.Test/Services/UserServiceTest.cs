@@ -22,6 +22,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -37,6 +38,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         private IUserDao userDao;
 
         private IPedidosService pedidosService;
+
+        private ISapAdapter sapAdapter;
 
         private DatabaseContext context;
 
@@ -63,8 +66,13 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultFabOrders()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object);
         }
 
         /// <summary>
@@ -234,7 +242,9 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
-            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object);
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object, mockSapAdapter.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
