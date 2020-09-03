@@ -52,31 +52,31 @@ class LotsViewModel {
         let inputs = Observable.combineLatest(documentSelected, availableSelected, quantitySelectedInput)
         self.addLotDidTap.withLatestFrom(inputs).map({
             LotsAvailableInfo(documentSelected: $0, availableSelected: $1, quantitySelected: ($2.isEmpty ? 0 : Decimal(string: $2)) ?? 0)
-        }).subscribe(onNext: { data in
-            self.availableSelected.onNext(nil)
+        }).subscribe(onNext: { [weak self] data in
+            self?.availableSelected.onNext(nil)
 
             if (data.availableSelected == nil || data.quantitySelected == 0) {
                 return
             }
 
-            if let existing = self.selectedBatches.first(where: { batch in
+            if let existing = self?.selectedBatches.first(where: { batch in
                 return batch.itemCode == data.documentSelected?.codigoProducto && batch.batchNumber == data.availableSelected?.numeroLote
             }) {
                 existing.action = "delete"
-                self.selectedBatches.append(BatchSelected(orderId: existing.orderId, assignedQty: data.quantitySelected, batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: "insert", sysNumber: existing.sysNumber))
+                self?.selectedBatches.append(BatchSelected(orderId: existing.orderId, assignedQty: data.quantitySelected, batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: "insert", sysNumber: existing.sysNumber))
             } else {
-                self.selectedBatches.append(BatchSelected(
-                    orderId: self.orderId,
+                self?.selectedBatches.append(BatchSelected(
+                    orderId: self?.orderId,
                     assignedQty: data.quantitySelected,
                     batchNumber: data.availableSelected?.numeroLote,
                     itemCode: data.documentSelected?.codigoProducto,
                     action: "insert",
                     sysNumber: data.availableSelected?.sysNumber))
-                self.dataLotsSelected.onNext(self.selectedBatches.map({ $0.toLotsSelected() }))
+                self?.dataLotsSelected.onNext(self?.selectedBatches.map({ $0.toLotsSelected() }) ?? [])
                 
-                if let doc = self.documentLines.first(where: { $0.codigoProducto == data.documentSelected?.codigoProducto }) {
+                if let doc = self?.documentLines.first(where: { $0.codigoProducto == data.documentSelected?.codigoProducto }) {
                     doc.totalNecesario = (doc.totalNecesario ?? 0) - data.quantitySelected
-                    doc.totalSeleccionado = self.selectedBatches.filter({ data.documentSelected?.codigoProducto == $0.itemCode && $0.action != "delete" }).compactMap({ $0.assignedQty }).reduce(0, +)
+                    doc.totalSeleccionado = self?.selectedBatches.filter({ data.documentSelected?.codigoProducto == $0.itemCode && $0.action != "delete" }).compactMap({ $0.assignedQty }).reduce(0, +)
                     
                     doc.lotesDisponibles?.forEach({ lot in
                         if (lot.numeroLote == data.availableSelected?.numeroLote) {
@@ -86,11 +86,12 @@ class LotsViewModel {
                     })
                     
                     if let availableBatches = doc.lotesDisponibles {
-                        self.dataLotsAvailable.onNext(availableBatches)
+                        self?.dataLotsAvailable.onNext(availableBatches)
                     }
                 }
                 
-                self.dataOfLots.onNext(self.documentLines)
+                self?.dataOfLots.onNext(self?.documentLines ?? []
+)
             }
         }).disposed(by: self.disposeBag)
         
@@ -98,28 +99,28 @@ class LotsViewModel {
         let inputsRemove = Observable.combineLatest(documentSelected, batchSelected)
         self.removeLotDidTap.withLatestFrom(inputsRemove).map({
             ($0, $1)
-        }).subscribe(onNext: { document, batch in
-            if let existing = self.selectedBatches.first(where: { b in
+        }).subscribe(onNext: { [weak self] document, batch in
+            if let existing = self?.selectedBatches.first(where: { b in
                 return b.batchNumber == batch.numeroLote
             }) {
                 if (existing.action != nil) {
-                    if let index = self.selectedBatches.firstIndex(where: { $0.batchNumber == existing.batchNumber }) {
-                        self.selectedBatches.remove(at: index)
-                        self.dataLotsSelected.onNext(self.selectedBatches.map({ $0.toLotsSelected() }))
+                    if let index = self?.selectedBatches.firstIndex(where: { $0.batchNumber == existing.batchNumber }) {
+                        self?.selectedBatches.remove(at: index)
+                        self?.dataLotsSelected.onNext(self?.selectedBatches.map({ $0.toLotsSelected() }) ?? [])
                     }
                 } else {
                     existing.action = "delete"
-                    let newSelected = self.selectedBatches.filter({ $0.batchNumber == batch.numeroLote && $0.action != "delete" })
+                    let newSelected = self?.selectedBatches.filter({ $0.batchNumber == batch.numeroLote && $0.action != "delete" }) ?? []
                     if (newSelected.count > 0) {
-                        self.dataLotsSelected.onNext(newSelected.map({ $0.toLotsSelected() }))
+                        self?.dataLotsSelected.onNext(newSelected.map({ $0.toLotsSelected() }))
                     } else {
-                        self.dataLotsSelected.onNext([])
+                        self?.dataLotsSelected.onNext([])
                     }
                 }
                 
-                if let doc = self.documentLines.first(where: { $0.codigoProducto == document.codigoProducto }) {
+                if let doc = self?.documentLines.first(where: { $0.codigoProducto == document.codigoProducto }) {
                     doc.totalNecesario = (doc.totalNecesario ?? 0) + (batch.cantidadSeleccionada ?? 0)
-                    doc.totalSeleccionado = self.selectedBatches.filter({ document.codigoProducto == $0.itemCode && $0.action != "delete" }).compactMap({ $0.assignedQty }).reduce(0, +)
+                    doc.totalSeleccionado = self?.selectedBatches.filter({ document.codigoProducto == $0.itemCode && $0.action != "delete" }).compactMap({ $0.assignedQty }).reduce(0, +)
                     
                     doc.lotesDisponibles?.forEach({ lot in
                         if (lot.numeroLote == batch.numeroLote) {
@@ -129,18 +130,18 @@ class LotsViewModel {
                     })
                     
                     if let availableBatches = doc.lotesDisponibles {
-                        self.dataLotsAvailable.onNext(availableBatches)
+                        self?.dataLotsAvailable.onNext(availableBatches)
                     }
                 }
                 
-                self.dataOfLots.onNext(self.documentLines)
+                self?.dataOfLots.onNext(self?.documentLines ?? [])
             }
         }).disposed(by: self.disposeBag)
 
         
         // Guada los lotes seleccionados y los manda al servicio
-        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.assingLots()
+        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.assingLots()
         }).self.disposed(by: self.disposeBag)
         
     }
@@ -148,13 +149,13 @@ class LotsViewModel {
     // MARK: -Functions
     func getLots() -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { data in
-            self.loading.onNext(false)
+        NetworkManager.shared.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            self?.loading.onNext(false)
             if let lotsData = data.response {
-                self.documentLines = lotsData
-                self.selectedBatches = lotsData.map({ batch in
+                self?.documentLines = lotsData
+                self?.selectedBatches = lotsData.map({ batch in
                     let selected: [BatchSelected] = batch.lotesSelecionados != nil ? batch.lotesSelecionados!.compactMap({ sel in
-                        return BatchSelected(orderId: self.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber)
+                        return BatchSelected(orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber)
                     }) : []
                     return selected
                 }).reduce([], +)
@@ -164,11 +165,11 @@ class LotsViewModel {
                         lot.cantidadSeleccionada = min(lotData.totalNecesario ?? 0, lot.cantidadDisponible ?? 0)
                     }
                 }
-                self.dataOfLots.onNext(lotsData)
+                self?.dataOfLots.onNext(lotsData)
             }
-        }, onError: { error in
-            self.loading.onNext(false)
-            self.showMessage.onNext("Hubo un error al cargar los lotes, por favor de intentarlo de nuevo")
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showMessage.onNext("Hubo un error al cargar los lotes, por favor de intentarlo de nuevo")
         }).disposed(by: self.disposeBag)
     }
     
@@ -262,12 +263,12 @@ class LotsViewModel {
     
     func sendToServerAssignedLots(lotsToSend: [BatchSelected]) -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { res in
-            self.loading.onNext(false)
+        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+            self?.loading.onNext(false)
             if(res.response!.isEmpty) {
-                self.showMessage.onNext("Proceso realizado correctamente")
+                self?.showMessage.onNext("Proceso realizado correctamente")
                 // actualiza la pantalla
-                self.getLots()
+                self?.getLots()
                 return
             }
 
@@ -275,10 +276,10 @@ class LotsViewModel {
             for batch in res.response! {
                 badBatches += " \(batch)"
             }
-            self.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
-        }, onError:  { error in
-            self.loading.onNext(false)
-            self.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
+            self?.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
+        }, onError:  { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }
 
