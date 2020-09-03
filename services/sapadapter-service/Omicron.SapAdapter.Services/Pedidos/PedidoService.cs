@@ -15,7 +15,6 @@ namespace Omicron.SapAdapter.Services.Pedidos
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// clase de pedido Service.
@@ -40,33 +39,14 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// Gets the QFB with pedidos.
         /// </summary>
         /// <param name="listPedidos">Pedidos id.</param>
+        /// <param name="route">the route.</param>
         /// <returns>Result object.</returns>
-        public async Task<ResultDto> GetUserPedidos(List<int> listPedidos)
+        public async Task<ResultDto> GetUserPedidos(List<int> listPedidos, string route)
         {
             ResultDto result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");
 
-            var url = this.httpClient.BaseAddress + "getUserOrder/salesOrder";
-            using (var response = await this.httpClient.PostAsync(url, stringContent))
-            {
-                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the fabrication order by ids.
-        /// </summary>
-        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
-        /// <returns>Result object.</returns>
-        public async Task<ResultDto> GetFabricationOrders(List<int> fabricationOrderIds)
-        {
-            ResultDto result;
-
-            var stringContent = new StringContent(JsonConvert.SerializeObject(fabricationOrderIds), UnicodeEncoding.UTF8, "application/json");
-
-            var url = this.httpClient.BaseAddress + "getUserOrder/fabOrder";
+            var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
