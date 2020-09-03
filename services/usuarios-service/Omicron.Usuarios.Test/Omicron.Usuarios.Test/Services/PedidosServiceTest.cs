@@ -58,9 +58,8 @@ namespace Omicron.Usuarios.Test.Services
         /// <summary>
         /// Test for simple post.
         /// </summary>
-        /// <returns>the data.</returns>
         [Test]
-        public async Task SimplePostError()
+        public void SimplePostError()
         {
             // arrange
             var responses = new Dictionary<string, MockResponse>()

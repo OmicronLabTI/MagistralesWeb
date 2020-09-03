@@ -257,7 +257,7 @@ namespace Omicron.Usuarios.Services.User
                     {
                         UserId = x.Id,
                         UserName = $"{x.FirstName} {x.LastName}",
-                        CountTotal = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
+                        CountTotalFabOrders = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
                         CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
                         CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
                     });

@@ -35,7 +35,7 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// Username.
         /// </value>
-        public int CountTotal { get; set; }
+        public int CountTotalFabOrders { get; set; }
 
         /// <summary>
         /// Gets or sets Username.

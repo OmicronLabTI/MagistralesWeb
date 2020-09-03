@@ -37,10 +37,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
         private IUserDao userDao;
 
-        private IPedidosService pedidosService;
-
-        private ISapAdapter sapAdapter;
-
         private DatabaseContext context;
 
         /// <summary>
@@ -206,9 +202,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
-        /// <returns>returns nothing.</returns>
         [Test]
-        public async Task CreateUserErrorByRepeatedUsername()
+        public void CreateUserErrorByRepeatedUsername()
         {
             // arrange
             var user = this.GetUserModel();
@@ -220,9 +215,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
-        /// <returns>returns nothing.</returns>
         [Test]
-        public async Task CreateUserErrorByDataBase()
+        public void CreateUserErrorByDataBase()
         {
             // arrange
             var user = this.GetUserModel();
@@ -308,9 +302,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Updates the user.
         /// </summary>
-        /// <returns>the user.</returns>
         [Test]
-        public async Task UpdateUserUserNotExist()
+        public void UpdateUserUserNotExist()
         {
             // arrange
             var user = this.GetUserModel();
