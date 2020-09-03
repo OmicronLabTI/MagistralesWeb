@@ -8,8 +8,8 @@
 
 namespace Omicron.Usuarios.Entities.Context
 {
-    using Omicron.Usuarios.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Usuarios.Entities.Model;
 
     /// <summary>
     /// Interface IDataBaseContext.

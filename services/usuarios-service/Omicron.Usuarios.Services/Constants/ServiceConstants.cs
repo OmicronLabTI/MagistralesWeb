@@ -66,6 +66,11 @@ namespace Omicron.Usuarios.Services.Constants
         public const string QfbOrders = "qfbOrders";
 
         /// <summary>
+        /// Get fab orders.
+        /// </summary>
+        public const string GetFabOrders = "fabOrderId";
+
+        /// <summary>
         /// the qfb role.
         /// </summary>
         public const string Qfb = "qfb";
@@ -81,6 +86,7 @@ namespace Omicron.Usuarios.Services.Constants
             "Asignado",
             "Proceso",
             "Pendiente",
+            "Reasignado",
             "Terminado",
         };
     }

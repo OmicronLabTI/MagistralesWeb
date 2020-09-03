@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -22,9 +23,8 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Utils;
     using Omicron.SapAdapter.Services.User;
-    using Microsoft.Extensions.Configuration;
+    using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
     /// The sap class.
