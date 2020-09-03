@@ -375,5 +375,29 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        [Test]
+        public void UserWithOrderCountModelTest()
+        {
+            // arrange
+            var data = new UserWithOrderCountModel
+            {
+                CountTotalFabOrders = 10,
+                CountTotalOrders = 10,
+                CountTotalPieces = 10,
+                UserId = "asd",
+                UserName = "asd",
+            };
+
+            // assert
+            Assert.IsNotNull(data.CountTotalFabOrders);
+            Assert.IsNotNull(data.CountTotalOrders);
+            Assert.IsNotNull(data.CountTotalPieces);
+            Assert.IsNotNull(data.UserId);
+            Assert.IsNotNull(data.UserName);
+        }
     }
 }
