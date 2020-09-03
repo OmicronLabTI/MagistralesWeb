@@ -152,20 +152,22 @@ class LotsViewModel {
         NetworkManager.shared.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             self?.loading.onNext(false)
             if let lotsData = data.response {
-                self?.documentLines = lotsData
-                self?.selectedBatches = lotsData.map({ batch in
-                    let selected: [BatchSelected] = batch.lotesSelecionados != nil ? batch.lotesSelecionados!.compactMap({ sel in
-                        return BatchSelected(orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber)
-                    }) : []
-                    return selected
-                }).reduce([], +)
-                
-                for lotData in lotsData {
-                    for lot in lotData.lotesDisponibles ?? [] {
-                        lot.cantidadSeleccionada = min(lotData.totalNecesario ?? 0, lot.cantidadDisponible ?? 0)
+                if lotsData.count > 0 {
+                    self?.documentLines = lotsData
+                    self?.selectedBatches = lotsData.map({ batch in
+                        let selected: [BatchSelected] = batch.lotesSelecionados != nil ? batch.lotesSelecionados!.compactMap({ sel in
+                            return BatchSelected(orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber)
+                        }) : []
+                        return selected
+                    }).reduce([], +)
+                    
+                    for lotData in lotsData {
+                        for lot in lotData.lotesDisponibles ?? [] {
+                            lot.cantidadSeleccionada = min(lotData.totalNecesario ?? 0, lot.cantidadDisponible ?? 0)
+                        }
                     }
+                    self?.dataOfLots.onNext(lotsData)
                 }
-                self?.dataOfLots.onNext(lotsData)
             }
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
@@ -181,7 +183,7 @@ class LotsViewModel {
         }
         
         let selected = self.selectedBatches.filter({ b in
-            b.itemCode == lot.codigoProducto && b.action != "delete" && b.assignedQty != 0
+            b.itemCode == lot.codigoProducto && b.action != "delete"
         }).map({ $0.toLotsSelected() })
 
         if(selected.count > 0) {
@@ -193,13 +195,14 @@ class LotsViewModel {
         // Selección automática de lote disponible
         if (lot.lotesDisponibles!.count == 1 && selected.count == 0) {
             if let firstAvailable = lot.lotesDisponibles?.first, let doc = self.documentLines.first(where: { $0.codigoProducto == lot.codigoProducto }) {
-                let batch = BatchSelected(orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada, batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto, action: "insert", sysNumber: firstAvailable.sysNumber)
-                    
-                doc.totalNecesario = 0
-                doc.totalSeleccionado = doc.lotesDisponibles![0].cantidadSeleccionada!
-                self.selectedBatches.append(batch)
                 
-                self.dataOfLots.onNext(documentLines)
+                if(firstAvailable.cantidadDisponible != 0.0) {
+                        let batch = BatchSelected(orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada, batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto, action: "insert", sysNumber: firstAvailable.sysNumber)
+                        doc.totalNecesario = 0
+                        doc.totalSeleccionado = doc.lotesDisponibles![0].cantidadSeleccionada!
+                        self.selectedBatches.append(batch)
+                    self.dataOfLots.onNext(documentLines)
+                }
             }
         }
     }

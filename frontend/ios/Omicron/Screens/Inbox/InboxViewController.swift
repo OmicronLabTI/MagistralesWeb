@@ -232,7 +232,7 @@ extension InboxViewController: CardCellDelegate {
     // Chec this
     func detailTapped(row: Int) {
         self.inboxViewModel.statusData.subscribe(onNext: { res in
-            if (res.count > 0 ) {
+            if (res.count > 0) {
                 self.orderId = res[row].productionOrderId!
             }
         }).disposed(by: self.disposeBag)
