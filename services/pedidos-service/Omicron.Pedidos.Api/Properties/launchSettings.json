@@ -14,14 +14,14 @@
       "launchBrowser": true,
       "launchUrl": "api",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Omicron.Pedidos.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5103"
     }
