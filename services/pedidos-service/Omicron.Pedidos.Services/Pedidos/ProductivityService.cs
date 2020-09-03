@@ -137,7 +137,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private List<string> GetMonths(DateTime initDate, DateTime endDate)
         {
             var listMonths = new List<string>();
-            listMonths.Add(string.Empty);
+            listMonths.Add("-");
 
             var culture = new CultureInfo("es-MX");
             for (var i = initDate.Month; i <= endDate.Month; i++)
