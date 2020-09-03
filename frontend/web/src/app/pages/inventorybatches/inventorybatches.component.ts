@@ -259,7 +259,11 @@ export class InventorybatchesComponent implements OnInit {
     const dataSourceDetails = this.dataSourceDetails;
     const indexSelected = this.indexSelected;
     this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
-      element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
+      if (dataSourceDetails.data[indexSelected].totalNecesario <= element.cantidadDisponible) {
+        element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
+      } else {
+        element.cantidadSeleccionada = element.cantidadDisponible;
+      }
     });
     return true;
   }
@@ -292,9 +296,9 @@ export class InventorybatchesComponent implements OnInit {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
             this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
-            Messages.errorToAssignOrderAutomaticSubtitle, true, true, ClassNames.popupCustom);
+            Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
           } else {
-            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, true).then( (resultBatchSave: any) => {
+            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then( (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }
@@ -303,5 +307,16 @@ export class InventorybatchesComponent implements OnInit {
         }, error => this.errorService.httpError(error));
       }
     });
+  }
+
+  goToDetailOrder(urlPath: (string | number)[]) {
+    this.setPathUrlService(urlPath);
+  }
+  setPathUrlService(urlPath: any[]) {
+    this.dataService.setPathUrl(urlPath);
+  }
+
+  goToOrdenFab(urlPath: string[]) {
+    this.dataService.setPathUrl(urlPath);
   }
 }
