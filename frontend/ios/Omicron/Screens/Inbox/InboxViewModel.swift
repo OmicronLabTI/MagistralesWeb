@@ -72,11 +72,6 @@ class  InboxViewModel {
             orders.append(order)
         }
         
-        for index in indexPath {
-            ordersTemp.remove(at: index.row)
-        }
-        self.statusData.accept(ordersTemp)
-        
         NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
             self.loading.onNext(false)
             self.refreshDataWhenChangeProcessIsSucces.onNext(())
