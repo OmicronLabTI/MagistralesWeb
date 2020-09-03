@@ -30,11 +30,11 @@ div.docbase{
 }
 
 .numero{
-    width: 8% !important;
+    width: 6% !important;
 }
 
 .descripcion{
-    width: 13% !important;
+    width: 16% !important;
 }
 
 .cantbase{
@@ -54,7 +54,7 @@ div.docbase{
 }
 
 .unidad{
-    width: 8% !important;
+    width: 6% !important;
 }
 
 .almacen{
@@ -94,7 +94,7 @@ div.docbase{
     width: 100%;
     height: 90%;
 }
-::ng-deep .mat-form-field-infix { width: 80px !important; }
+::ng-deep .mat-form-field-infix { width: 60px !important; }
 
 ::ng-deep .mat-form-field-underline {
     display: none;

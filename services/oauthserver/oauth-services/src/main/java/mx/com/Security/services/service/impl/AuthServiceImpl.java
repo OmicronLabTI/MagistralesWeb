@@ -25,6 +25,10 @@ public class AuthServiceImpl implements IAuthService {
 
         SecurityDO securityDO = securityDAO.findFirstByUsername(usr);
 
+        if (securityDO == null){
+            throw new UnAuthorizedException(ErrorMessages.USUARIO_NO_EXISTE);
+        }
+
         String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
 
         if(!encodedPassword.equals(securityDO.getPassword())){
