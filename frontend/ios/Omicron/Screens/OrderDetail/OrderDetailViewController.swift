@@ -162,7 +162,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
-                    self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "Descripción del producto:")
+                    self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
             }
                 }).disposed(by: self.disposeBag)
         
@@ -237,7 +237,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
         self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación:", textToBold: "Fecha orden de fabricación:")
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
-        self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Descripción del producto:", textToBold: "Descripción ®del producto:")
+        self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 18)
         self.detailTable.tableFooterView = UIView()
     }
     
