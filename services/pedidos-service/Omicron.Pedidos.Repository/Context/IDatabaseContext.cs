@@ -8,8 +8,8 @@
 
 namespace Omicron.Pedidos.Entities.Context
 {
-    using Omicron.Pedidos.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
@@ -64,5 +64,21 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object componets of custom lists.
         /// </value>
         DbSet<ComponentCustomComponentListModel> ComponentsCustomComponentLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material requests.
+        /// </summary>
+        /// <value>
+        /// Object requests.
+        /// </value>
+        DbSet<RawMaterialRequestModel> RawMaterialRequests { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material request details.
+        /// </summary>
+        /// <value>
+        /// Object request details.
+        /// </value>
+        DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetails { get; set; }
     }
 }
