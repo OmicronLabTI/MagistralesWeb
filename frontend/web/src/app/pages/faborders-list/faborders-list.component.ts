@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   ComponentSearch,
   CONST_NUMBER,
-  CONST_STRING, ConstStatus, HttpServiceTOCall,
+  CONST_STRING, ConstOrders, ConstStatus, HttpServiceTOCall,
   HttpStatus,
   MODAL_FIND_ORDERS
 } from '../../constants/const';
@@ -15,6 +15,7 @@ import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { OrdersService } from 'src/app/services/orders.service';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-faborders-list',
@@ -44,12 +45,12 @@ export class FabordersListComponent implements OnInit {
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  rangeDate = CONST_STRING.empty;
+  // rangeDate = CONST_STRING.empty;
   isDateInit =  true;
-  isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
   pageIndex = 0;
-
+  subscriptionObservables = new Subscription();
+  isSearchOrderWithFilter = false;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -57,10 +58,11 @@ export class FabordersListComponent implements OnInit {
     private titleService: Title
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
-    this.filterDataOrders.dateType = '0';
-    this.filterDataOrders.dateFull = this.rangeDate;
-    this.queryString = `?fini=${this.rangeDate}`;
+    // this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
+    this.filterDataOrders.isFromOrders = false;
+    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+    this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
     this.getFullQueryString();
   }
 
@@ -68,6 +70,11 @@ export class FabordersListComponent implements OnInit {
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.getOrders();
     this.dataSource.paginator = this.paginator;
+    this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe( resultSearchOrdersModal => {
+      if (!resultSearchOrdersModal.isFromOrders) {
+        this.onSuccessSearchOrdersModal(resultSearchOrdersModal);
+      }
+    }));
   }
 
   updateAllComplete() {
@@ -145,7 +152,20 @@ export class FabordersListComponent implements OnInit {
   }
 
   openSearchOrders() {
-    console.log('searching')
+    this.dataService.setSearchOrdersModal({modalType: ConstOrders.modalOrdersIsolated, filterOrdersData: this.filterDataOrders });
+
+  }
+
+  onSuccessSearchOrdersModal(resultSearchOrdersModal: ParamsPedidos) {
+    this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
+    this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
+    this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
+    this.getFullQueryString();
+    this.getOrders();
+    this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
+    this.pageIndex = 0;
+    this.offset = 0;
+    this.limit = 10;
   }
 
   cancelOrder() {
