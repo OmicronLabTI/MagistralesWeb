@@ -110,7 +110,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (userSaleOrder.ContainsKey(saleOrderInt))
                 {
-                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
+                    var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
+                    x.Status = asignable ? ServiceConstants.Asignado : x.Status;
+                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
                     x.Userid = userSaleOrder[saleOrderInt];
 
                     var orderId = string.IsNullOrEmpty(x.Productionorderid) ? saleOrderInt : productionId;
