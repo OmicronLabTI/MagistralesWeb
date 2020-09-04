@@ -169,15 +169,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
             cell.descriptionLabel.text = data.detailDescription
-            cell.baseQuantityLabel.text =  self.formatter.string(from: NSNumber(value: data.baseQuantity!))
-            cell.requiredQuantityLabel.text =   self.formatter.string(from: NSNumber(value: data.requiredQuantity!))
-            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed!))
-            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available!))
+            cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
+            cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
+            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
+            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity!))
-            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock!))
-            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity!))
+            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
+            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
+            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { iconName in
