@@ -54,11 +54,11 @@ class LotsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.initComponents()
+        self.viewModelBinding()
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
         self.setupKeyboard()
-        self.viewModelBinding()
-        self.initComponents()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
