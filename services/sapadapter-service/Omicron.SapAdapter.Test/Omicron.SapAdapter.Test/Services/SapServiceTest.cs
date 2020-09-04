@@ -73,15 +73,11 @@ namespace Omicron.SapAdapter.Test.Services
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
-
-            mockPedidoService
-                .Setup(m => m.GetFabricationOrders(It.IsAny<List<int>>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockUserService
-                .Setup(m => m.GetUsersById(It.IsAny<List<string>>()))
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
             this.sapDao = new SapDao(this.context);
@@ -167,6 +163,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
+                { ServiceConstants.Cliente, "cliente" },
             };
 
             // act
@@ -595,6 +592,36 @@ namespace Omicron.SapAdapter.Test.Services
                 Filters = new Dictionary<string, string>
                 {
                     { ServiceConstants.ItemCode, "Abc" },
+                },
+            };
+
+            // act
+            var result = await this.sapService.GetFabOrders(parameters);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersDbItemCodeDateIniOffset()
+        {
+            // arrange
+            var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+
+            var parameters = new GetOrderFabModel
+            {
+                OrdersId = new List<int> { 120 },
+                Filters = new Dictionary<string, string>
+                {
+                    { ServiceConstants.ItemCode, "Abc" },
+                    { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                    { ServiceConstants.Offset, "1" },
+                    { ServiceConstants.Limit, "1" },
                 },
             };
 

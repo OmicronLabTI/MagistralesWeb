@@ -10,8 +10,11 @@ namespace Omicron.Pedidos.Test
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
     using Omicron.Pedidos.Dtos.User;
+    using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
 
@@ -363,6 +366,28 @@ namespace Omicron.Pedidos.Test
                 Success = true,
                 UserError = string.Empty,
             };
+        }
+
+        /// <summary>
+        /// Get new db context for in memory database.
+        /// </summary>
+        /// <param name="dbname">Data base name.</param>
+        /// <returns>New context options.</returns>
+        internal static DbContextOptions<DatabaseContext> CreateNewContextOptions(string dbname)
+        {
+            // Create a fresh service provider, and therefore a fresh.
+            // InMemory database instance.
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
+            // Create a new options instance telling the context to use an
+            // InMemory database and the new service provider.
+            var builder = new DbContextOptionsBuilder<DatabaseContext>();
+            builder.UseInMemoryDatabase(dbname)
+                   .UseInternalServiceProvider(serviceProvider);
+
+            return builder.Options;
         }
     }
 }

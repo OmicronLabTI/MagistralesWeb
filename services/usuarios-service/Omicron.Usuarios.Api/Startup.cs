@@ -20,6 +20,7 @@ namespace Omicron.Usuarios.Api
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Prometheus;
     using Serilog;
     using Serilog.Events;
@@ -32,10 +33,6 @@ namespace Omicron.Usuarios.Api
     /// </summary>
     public class Startup
     {
-        private const string AXITYURL = "https://www.axity.com/";
-
-        private const string PedidosUrl = "http://pedidosservice";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -97,7 +94,7 @@ namespace Omicron.Usuarios.Api
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(AXITYURL),
+                        Url = new System.Uri(this.Configuration["AxityUrl"]),
                     },
                 });
 
@@ -106,10 +103,17 @@ namespace Omicron.Usuarios.Api
 
             services.AddHttpClient("pedidoservice", c =>
             {
-                c.BaseAddress = new Uri(PedidosUrl);
+                c.BaseAddress = new Uri(this.Configuration["PedidosUrl"]);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IPedidosService, PedidosService>();
+
+            services.AddHttpClient("sapadapterservice", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ISapAdapter, SapAdapter>();
 
             this.AddRedis(services, Log.Logger);
 

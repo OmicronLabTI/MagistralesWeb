@@ -21,7 +21,8 @@ namespace Omicron.SapAdapter.Services.User
         /// Method for get all users from db.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
+        /// /// <param name="route">the route.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<ResultDto> GetUsersById(List<string> listIds);
+        Task<ResultDto> GetUsersById(List<string> listIds, string route);
     }
 }

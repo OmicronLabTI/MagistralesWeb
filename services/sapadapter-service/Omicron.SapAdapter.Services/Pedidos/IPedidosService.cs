@@ -21,14 +21,8 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// Gets the pedidos.
         /// </summary>
         /// <param name="listPedidos">the pedidos.</param>
+        /// <param name="route">The route.</param>
         /// <returns>the qfb.</returns>
-        Task<ResultDto> GetUserPedidos(List<int> listPedidos);
-
-        /// <summary>
-        /// Gets the fabrication order by ids.
-        /// </summary>
-        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
-        /// <returns>Result object.</returns>
-        Task<ResultDto> GetFabricationOrders(List<int> fabricationOrderIds);
+        Task<ResultDto> GetUserPedidos(List<int> listPedidos, string route);
     }
 }

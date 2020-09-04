@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -22,9 +23,8 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Utils;
     using Omicron.SapAdapter.Services.User;
-    using Microsoft.Extensions.Configuration;
+    using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
     /// The sap class.
@@ -64,7 +64,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
-            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
+            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
 
@@ -91,7 +91,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(docId);
 
-            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId });
+            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
 
             var listUsers = await this.GetUsers(userOrders);
@@ -170,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
-            var result = await this.pedidosService.GetFabricationOrders(ordenFab.Select(x => x.OrdenId).ToList());
+            var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
 
             foreach (var o in ordenFab)
@@ -280,11 +280,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             var items = await this.sapDao.GetProductsManagmentByBatch(chipValues);
 
-            bool resultOffset = parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
-            bool resultLimit = parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
+            parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
+            parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
 
             var itemsToReturn = items.Skip(offset).Take(limit).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count);
         }
 
         /// <summary>
@@ -376,11 +376,25 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
                 orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders);
-                return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
             }
 
-            var dataBaseOrders = await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao);
-            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, null);
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            var total = dataBaseOrders.Count;
+
+            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Offset) && orderFabModel.Filters.ContainsKey(ServiceConstants.Limit))
+            {
+                var offset = orderFabModel.Filters[ServiceConstants.Offset];
+                var limit = orderFabModel.Filters[ServiceConstants.Limit];
+
+                int.TryParse(offset, out int offsetNumber);
+                int.TryParse(limit, out int limitNumber);
+
+                var orderToReturnSkip = dataBaseOrders.Skip(offsetNumber).Take(limitNumber).ToList();
+                return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, total);
         }
 
         /// <summary>
@@ -427,7 +441,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
         {
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs);
+            var users = await this.usersService.GetUsersById(userIDs, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
 
