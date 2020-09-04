@@ -100,12 +100,12 @@ extension LotsSelected: Mappable {
 }
 
 class LotsAvailableInfo {
-    var documentSelected: Lots?
+    var productSelected: Lots?
     var availableSelected: LotsAvailable?
-    var quantitySelected: Decimal
+    var quantitySelected: String
     
-    init(documentSelected: Lots?, availableSelected: LotsAvailable?,  quantitySelected: Decimal) {
-        self.documentSelected = documentSelected
+    init(productSelected: Lots?, availableSelected: LotsAvailable?,  quantitySelected: String) {
+        self.productSelected = productSelected
         self.availableSelected = availableSelected
         self.quantitySelected = quantitySelected
     }

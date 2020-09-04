@@ -23,6 +23,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
     var row: Int?
+    var itemModel: LotsAvailable?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,7 +34,6 @@ class LotsAvailableTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.quantityAssignedLabel, text: "", fontSize: 14)
         self.quantitySelected.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 14)
         self.quantitySelected.delegate = self
-        self.quantitySelected.rx.text.orEmpty.bind(to: lotsViewModel.quantitySelectedInput).disposed(by: self.disposeBag)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -43,8 +43,11 @@ class LotsAvailableTableViewCell: UITableViewCell {
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+    }
+
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        
         var tableView: UITableView?
         var superview: UIView? = self.superview
         
@@ -55,25 +58,27 @@ extension LotsAvailableTableViewCell: UITextFieldDelegate {
         
         if tableView != nil && self.row != nil {
             let indexPath = IndexPath(row: self.row!, section: 0)
-            tableView!.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            tableView!.selectRow(at: indexPath, animated: false, scrollPosition: .none)
             tableView!.delegate?.tableView?(tableView!, didSelectRowAt: indexPath)
         }
+        
+        self.lotsViewModel.lastResponder.onNext(textField)
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        var tableView: UITableView?
-        var superview: UIView? = self.superview
-        
-        while superview != nil && tableView == nil {
-            tableView = superview as? UITableView
-            superview = superview?.superview
-        }
-        
-        if tableView != nil && self.row != nil {
-            let indexPath = IndexPath(row: self.row!, section: 0)
-            tableView?.deselectRow(at: IndexPath(row: self.row!, section: 0), animated: true)
-            tableView!.delegate?.tableView?(tableView!, didDeselectRowAt: indexPath)
-        }
+//        var tableView: UITableView?
+//        var superview: UIView? = self.superview
+//
+//        while superview != nil && tableView == nil {
+//            tableView = superview as? UITableView
+//            superview = superview?.superview
+//        }
+//
+//        if tableView != nil && self.row != nil {
+//            let indexPath = IndexPath(row: self.row!, section: 0)
+//            tableView?.deselectRow(at: IndexPath(row: self.row!, section: 0), animated: false)
+//            tableView!.delegate?.tableView?(tableView!, didDeselectRowAt: indexPath)
+//        }
         return true
     }
     
@@ -91,6 +96,8 @@ extension LotsAvailableTableViewCell: UITextFieldDelegate {
         if numberOfMathces == 0 {
             return false
         }
+        
+        self.itemModel?.cantidadSeleccionada = newString.isEmpty ? 0 : Decimal(string: newString)
         
         return true
     }
