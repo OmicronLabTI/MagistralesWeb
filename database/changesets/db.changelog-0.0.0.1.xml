@@ -378,4 +378,13 @@
 		<column name="roledescription" value="Logistica"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.42">
+	<addColumn tableName ="user">
+		<column 
+			name="pieces"
+			type="INT"
+			defaultValue="200">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 
