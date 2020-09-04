@@ -5,8 +5,12 @@ import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_NUMBER,
-  CONST_STRING, ConstStatus,
-  HttpServiceTOCall, HttpStatus, MessageType,
+  CONST_STRING,
+  ConstStatus,
+  FromToFilter,
+  HttpServiceTOCall,
+  HttpStatus,
+  MessageType,
   MODAL_FIND_ORDERS,
   MODAL_NAMES,
 } from '../../constants/const';
@@ -241,19 +245,20 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
-    this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
-    this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
-    this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
-    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
+    this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
+    this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
+    this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
+    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
+                                                                   ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
   }
-  getIsThereOnData(status: string, isFromCancelOrder = false) {
+  /*getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
       return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
     } else {
       return this.dataSource.data.filter(t => (t.isChecked &&
           (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
     }
-  }
+  }*/
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
   }

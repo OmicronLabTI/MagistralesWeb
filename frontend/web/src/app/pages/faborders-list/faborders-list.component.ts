@@ -147,4 +147,8 @@ export class FabordersListComponent implements OnInit {
   openSearchOrders() {
     console.log('searching')
   }
+
+  cancelOrder() {
+    // this.dataService.setCancelOrders({lis})
+  }
 }

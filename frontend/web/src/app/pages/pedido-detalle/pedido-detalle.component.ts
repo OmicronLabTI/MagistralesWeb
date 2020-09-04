@@ -1,19 +1,20 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatTableDataSource} from '@angular/material';
+import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
-import { ActivatedRoute } from '@angular/router';
+import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import {ActivatedRoute} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_STRING,
   ConstStatus,
+  FromToFilter,
   HttpServiceTOCall,
   MessageType,
   MODAL_NAMES
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -75,7 +76,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
-          switch(element.status) {
+          switch (element.status) {
             case ConstStatus.abierto:
               element.class = 'green';
               break;
@@ -127,20 +128,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToPlan = this.getIsThereOnData(ConstStatus.abierto);
-    this.isThereOrdersDetailToPlace = this.getIsThereOnData(ConstStatus.planificado);
-    this.isThereOrdersDetailToCancel = this.getIsThereOnData(ConstStatus.finalizado, true);
-    this.isThereOrdersDetailToFinalize = this.getIsThereOnData(ConstStatus.terminado);
+    this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+                                                                        FromToFilter.fromDefault);
+    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+                                                                         FromToFilter.fromDetailOrder);
+    this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
+                                                                           FromToFilter.fromDefault);
+    this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
   }
-  getIsThereOnData(status: string, isFromCancelOrder = false) {
-    if (!isFromCancelOrder) {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
-    } else {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.cancelado
-          && t.status !== ConstStatus.abierto)).length > 0;
-    }
-  }
-
   ngOnDestroy() {
     this.subscriptionCallHttpDetail.unsubscribe();
   }

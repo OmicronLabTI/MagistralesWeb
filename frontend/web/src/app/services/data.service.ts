@@ -1,7 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, ConstToken, HttpServiceTOCall, MessageType} from '../constants/const';
+import {
+  CONST_NUMBER,
+  CONST_STRING,
+  ConstStatus,
+  ConstToken,
+  FromToFilter,
+  HttpServiceTOCall,
+  MessageType
+} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
@@ -228,5 +236,21 @@ export class DataService {
       });
     }
     return errorOrders;
+  }
+  getIsThereOnData(dataToSearch: any[], status: string, fromToFilter: FromToFilter) {
+    switch (fromToFilter) {
+      case FromToFilter.fromOrders:
+        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+      case FromToFilter.fromOrdersCancel:
+        return dataToSearch.filter(t => (t.isChecked &&
+            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
+      case FromToFilter.fromDetailOrder:
+        return dataToSearch.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.cancelado
+            && t.status !== ConstStatus.abierto)).length > 0;
+      case FromToFilter.fromOrdersIsolated:
+        break;
+      default:
+        return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
+    }
   }
 }

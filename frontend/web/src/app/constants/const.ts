@@ -102,3 +102,11 @@ export const ComponentSearch = {
     searchComponent: 'searchComponent',
     createOrderIsolated: 'createOrder'
 };
+
+export enum FromToFilter {
+    fromOrders,
+    fromOrdersCancel,
+    fromDetailOrder,
+    fromOrdersIsolated,
+    fromDefault
+}

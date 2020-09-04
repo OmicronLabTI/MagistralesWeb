@@ -31,6 +31,18 @@
             <button mat-raised-button class="button-blue" (click)="createOrderIsolated()" >
                 &nbsp; Crear orden &nbsp;
             </button>
+            <button mat-raised-button class="button-blue" (click)="asignOrder()" >
+                &nbsp; Asignar
+            </button>
+            <button mat-raised-button class="button-blue" (click)="reAsignOrder()" >
+                &nbsp; Reasignar
+            </button>
+            <button mat-raised-button class="button-blue" (click)="finalizeOrder()" >
+                &nbsp; Finalizar &nbsp;
+            </button>
+            <button mat-raised-button class="button-blue" (click)="cancelOrder()" >
+                &nbsp; Cancelar &nbsp;
+            </button>
             <button mat-raised-button class="button-blue margin-left-options" (click)="openSearchOrders()" >
                 <mat-icon *ngIf="isSearchWithFilter">filter_tilt_shift
                 </mat-icon>
