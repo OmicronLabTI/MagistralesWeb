@@ -66,10 +66,6 @@ namespace Omicron.Usuarios.Test.Facade
             };
 
             mockServices
-                .Setup(m => m.ValidateCredentials(It.IsAny<LoginModel>()))
-                .Returns(Task.FromResult(result));
-
-            mockServices
                 .Setup(m => m.CreateUser(It.IsAny<UserModel>()))
                 .Returns(Task.FromResult(result));
 
@@ -155,28 +151,6 @@ namespace Omicron.Usuarios.Test.Facade
             // Assert
             Assert.IsNotNull(response);
             Assert.IsTrue(response);
-        }
-
-        /// <summary>
-        /// Validate Credentials test.
-        /// </summary>
-        /// <returns>nothing.</returns>
-        [Test]
-        public async Task ValidateCredentialsTest()
-        {
-            // Arrange
-            var user = new LoginDto
-            {
-                Password = "password",
-                Username = "Gustavo",
-            };
-
-            // Act
-            var response = await this.userFacade.ValidateCredentials(user);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
         }
 
         /// <summary>
