@@ -23,7 +23,7 @@ import {UserListMock} from '../../../mocks/userListMock';
 import {DataService} from '../../services/data.service';
 import { HttpServiceTOCall} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
-import {PageEvent} from "@angular/material/paginator";
+import {PageEvent} from '@angular/material/paginator';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;

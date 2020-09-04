@@ -24,11 +24,12 @@ import {
     CreateIsolatedOrderReq,
     ICancelOrdersRes,
     IPlaceOrdersAutomaticReq,
-    IPlaceOrdersAutomaticRes
+    IPlaceOrdersAutomaticRes, ParamsPedidos
 } from './model/http/pedidos';
 import {CancelOrders, SearchComponentModal} from './model/device/orders';
 import {ErrorHttpInterface} from './model/http/commons';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
+import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -78,6 +79,8 @@ export class AppComponent implements OnDestroy , OnInit {
     this.subscriptionObservables.add(this.dataService.getIsLogout().subscribe(() => this.logoutSession(false)));
     this.subscriptionObservables.add(this.dataService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
          this.onSuccessSearchComponentModal(resultSearchComponentModal)));
+    this.subscriptionObservables.add(this.dataService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
+        this.onSuccessSearchOrders(resultSearchOrdersModal)));
   }
   endSession() {
       this.logoutSession(true);
@@ -296,5 +299,19 @@ export class AppComponent implements OnDestroy , OnInit {
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             }
         }, error => this.errorService.httpError(error));
+    }
+
+    private onSuccessSearchOrders(resultSearchOrdersModal: SearchComponentModal) {
+        this.dialog.open(FindOrdersDialogComponent, {
+            panelClass: 'custom-dialog-container',
+            data: {
+                modalType: resultSearchOrdersModal.modalType,
+                filterOrdersData: resultSearchOrdersModal.filterOrdersData
+            }
+        }).afterClosed().subscribe((result: ParamsPedidos) => {
+           if (result) {
+               this.dataService.setNewSearchOrderModal(result);
+           }
+        });
     }
 }

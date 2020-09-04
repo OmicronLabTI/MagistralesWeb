@@ -64,18 +64,6 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         }
 
         /// <summary>
-        /// Updates the uses.
-        /// </summary>
-        /// <param name="listUsers">the list of users.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> UpdateUsers(List<UserModel> listUsers)
-        {
-            this.databaseContext.Usuarios.UpdateRange(listUsers);
-            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-            return true;
-        }
-
-        /// <summary>
         /// deletes the user.
         /// </summary>
         /// <param name="id">the list of ids.</param>

@@ -15,6 +15,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: '',
             status: 'Abierto',
+            pedidoStatus: 'Planificado',
             isChecked: false
         },
         {
@@ -28,6 +29,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: 'Sergio Flores',
             status: 'Asignado',
+            pedidoStatus: 'Planificado',
             isChecked: false
         },
         {
@@ -41,6 +43,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: 'Sergio Flores',
             status: 'Pendiente',
+            pedidoStatus: 'Planificado',
             isChecked: false
         },
         {
@@ -54,6 +57,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: 'Sergio Flores',
             status: 'Terminado',
+            pedidoStatus: 'Planificado',
             isChecked: false
         },
         {
@@ -67,6 +71,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: 'Sergio Flores',
             status: 'En proceso',
+            pedidoStatus: 'Planificado',
             isChecked: false
         },
         {
@@ -80,6 +85,7 @@ export const DetailOrderMock = {
             fechaOfFin: '',
             qfb: 'Sergio Flores',
             status: '',
+            pedidoStatus: 'Planificado',
             isChecked: false
         }
     ]

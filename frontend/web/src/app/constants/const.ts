@@ -97,6 +97,12 @@ export const BOOLEANS = {
     verdadero: true,
     falso: false
 };
+export const ConstOrders = {
+    modalOrders: 'orders',
+    modalOrdersIsolated: 'ordersIsolated',
+    defaultDateInit: '0',
+    dateFinishType: '1'
+};
 
 export const ComponentSearch = {
     searchComponent: 'searchComponent',
