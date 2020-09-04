@@ -4,12 +4,12 @@ import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
   CONST_NUMBER,
   CONST_STRING,
+  ConstOrders,
   ConstStatus,
   ConstToken,
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  ConstOrders,
   MODAL_FIND_ORDERS
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
@@ -271,6 +271,9 @@ export class DataService {
             && t.status !== ConstStatus.abierto)).length > 0;
       case FromToFilter.fromOrdersIsolated:
         break;
+      case FromToFilter.fromOrdersIsolatedCancel:
+        return dataToSearch.filter(t => (t.isChecked &&
+            (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }
@@ -312,7 +315,7 @@ export class DataService {
       queryString = `?docNum=${resultSearchOrderModal.docNum}`;
     } else {
       if (resultSearchOrderModal.dateType) {
-        filterDataOrders.dateType = resultSearchOrderModal.dateType; // se puede manejar localmente
+        filterDataOrders.dateType = resultSearchOrderModal.dateType;
         rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
         if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
           queryString = `?fini=${rangeDate}`;

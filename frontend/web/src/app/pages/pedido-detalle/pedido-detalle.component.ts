@@ -55,16 +55,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
-      if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
-        this.getDetallePedido();
-      }
-    });
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get('id');
       this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
+    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+      if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
+        this.getDetallePedido();
+      }
+    });
   }
 
   getDetallePedido() {
@@ -128,10 +128,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+        FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
                                                                         FromToFilter.fromDefault);
-    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
-                                                                         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
                                                                            FromToFilter.fromDefault);
     this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);

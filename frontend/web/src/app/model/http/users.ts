@@ -57,4 +57,5 @@ export  class QfbWithNumber {
     modalType?: string;
     list?: number[];
     assignType?: string;
+    isFromOrderIsolated?: boolean;
 }

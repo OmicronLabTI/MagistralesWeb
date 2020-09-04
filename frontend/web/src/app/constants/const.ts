@@ -114,5 +114,6 @@ export enum FromToFilter {
     fromOrdersCancel,
     fromDetailOrder,
     fromOrdersIsolated,
+    fromOrdersIsolatedCancel,
     fromDefault
 }

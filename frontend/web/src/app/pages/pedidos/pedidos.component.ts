@@ -183,11 +183,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
+    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
+        ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
     this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
-    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
-                                                                   ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
   }
   /*getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {

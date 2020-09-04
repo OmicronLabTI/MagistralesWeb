@@ -31,7 +31,7 @@
             <button mat-raised-button class="button-blue" (click)="createOrderIsolated()" >
                 &nbsp; Crear orden &nbsp;
             </button>
-            <button mat-raised-button class="button-blue" (click)="asignOrder()" >
+            <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
                 &nbsp; Asignar
             </button>
             <button mat-raised-button class="button-blue" (click)="reAsignOrder()" >
@@ -40,7 +40,7 @@
             <button mat-raised-button class="button-blue" (click)="finalizeOrder()" >
                 &nbsp; Finalizar &nbsp;
             </button>
-            <button mat-raised-button class="button-blue" (click)="cancelOrder()" >
+            <button [disabled]="!isThereOrdersIsolatedToCancel" mat-raised-button [ngClass]="isThereOrdersIsolatedToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrder()" >
                 &nbsp; Cancelar &nbsp;
             </button>
             <button mat-raised-button class="button-blue margin-left-options" (click)="openSearchOrders()" >
