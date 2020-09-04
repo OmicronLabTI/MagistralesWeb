@@ -1,1 +1,3 @@
 INSERT INTO User (Id , FirstName ,LastName, Role, Password, UserName, Activo ) VALUES (1, 'Gustavo', 'Ramirez', 1, 'QUJD', 'guz', 1);
+INSERT INTO User (Id , FirstName ,LastName, Role, Password, UserName, Activo ) VALUES (2, 'Gustavo', 'Ramirez', 2, 'QUJD', 'test2', 1);
+INSERT INTO User (Id , FirstName ,LastName, Role, Password, UserName, Activo ) VALUES (3, 'Gustavo', 'Ramirez', 2, 'QUJD', 'test3', 0);

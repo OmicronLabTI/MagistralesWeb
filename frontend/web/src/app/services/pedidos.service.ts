@@ -4,7 +4,7 @@ import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
 import {
-  CancelOrderReq, ICancelOrdersRes,
+  CancelOrderReq, CreateIsolatedOrderReq, ICancelOrdersRes, ICreateIsolatedOrderRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
   IProcessOrdersRes,
@@ -42,8 +42,9 @@ export class PedidosService {
   postPlaceOrders(placeOrder: IPlaceOrdersReq) {
     return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrders, placeOrder);
   }
-  getComponents(queryStringComponents: string) {
-    return this.consumeService.httpGet<IComponentsRes>(`${Endpoints.pedidos.getComponents}${queryStringComponents}`);
+  getComponents(queryStringComponents: string, isFromSearchComponents) {
+    return this.consumeService.httpGet<IComponentsRes>(`${isFromSearchComponents ? Endpoints.pedidos.getComponents :
+            Endpoints.pedidos.getProducts}${queryStringComponents}`);
   }
   updateFormula(formulaTOSave: IComponentsSaveReq) {
     return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
@@ -61,5 +62,8 @@ export class PedidosService {
   putFinalizeOrders(cancelOrders: CancelOrderReq[] , isFinalizeOrder: boolean) {
     return this.consumeService.httpPut<ICancelOrdersRes>(isFinalizeOrder ? Endpoints.pedidos.finalizeOrders :
         Endpoints.pedidos.finalizeOrdersDetail, cancelOrders);
+  }
+  createIsolatedOrder(createOrder: CreateIsolatedOrderReq) {
+    return this.consumeService.httpPost<ICreateIsolatedOrderRes>(Endpoints.pedidos.createIsolatedOrder, createOrder);
   }
 }

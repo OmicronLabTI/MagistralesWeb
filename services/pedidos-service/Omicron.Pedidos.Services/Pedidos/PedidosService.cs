@@ -751,7 +751,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userService.Response.ToString());
 
             var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
-            var total = orderToReturn.Count();
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -760,7 +759,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             int.TryParse(limit, out int limitNumber);
 
             var orderToReturnSkip = orderToReturn.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total.ToString());
+            var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
         }
 
         /// <summary>

@@ -54,7 +54,7 @@ describe('PedidosService', () => {
     });
   it('should getComponents', () => {
         const service: PedidosService = TestBed.get(PedidosService);
-        expect(service.getComponents('anyQueryStringToGetComponents') instanceof Observable).toBeTruthy();
+        expect(service.getComponents('anyQueryStringToGetComponents', false) instanceof Observable).toBeTruthy();
     });
   it('should updateFormula', () => {
         const service: PedidosService = TestBed.get(PedidosService);

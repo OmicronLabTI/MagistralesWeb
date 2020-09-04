@@ -1,4 +1,4 @@
-import {CancelOrderReq} from '../http/pedidos';
+import {CancelOrderReq, ParamsPedidos} from '../http/pedidos';
 
 export class PlaceOrders {
     placeOrdersData: {
@@ -10,5 +10,10 @@ export class PlaceOrders {
 export class CancelOrders {
     list: CancelOrderReq[];
     cancelType: string;
+}
+export class SearchComponentModal {
+    modalType: string;
+    chips?: string[];
+    filterOrdersData?: ParamsPedidos;
 }
 

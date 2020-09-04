@@ -39,13 +39,14 @@ namespace Omicron.SapAdapter.Services.User
         /// Method for get all users from db.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
+        /// <param name="route">the route.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultDto> GetUsersById(List<string> listIds)
+        public async Task<ResultDto> GetUsersById(List<string> listIds, string route)
         {
             ResultDto result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(listIds), UnicodeEncoding.UTF8, "application/json");
 
-            var url = this.httpClient.BaseAddress + "getUsersById";
+            var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());

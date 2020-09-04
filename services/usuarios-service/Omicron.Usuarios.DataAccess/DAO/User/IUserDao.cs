@@ -45,13 +45,6 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         Task<UserModel> GetUserByUserName(string userName);
 
         /// <summary>
-        /// Updates the uses.
-        /// </summary>
-        /// <param name="listUsers">the list of users.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> UpdateUsers(List<UserModel> listUsers);
-
-        /// <summary>
         /// Method for get user by id from db.
         /// </summary>
         /// <param name="userId">User Id.</param>
