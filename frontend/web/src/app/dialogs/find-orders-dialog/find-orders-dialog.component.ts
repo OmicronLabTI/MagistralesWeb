@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
@@ -84,7 +84,6 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
           this.getDisableOnlyForDocNum();
       }
       this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
-          console.log('formDataChanging: ', formData);
           if (!this.isBeginInitForm) {
               if (formData.docNum !== null && formData.docNum) {
                   this.isToResetData = false;
@@ -147,6 +146,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('productCode').enable({onlySelf: true, emitEvent: false});
   }
   changeValidatorsForDocNum() {
@@ -159,7 +159,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     keyDownFunction(event: KeyboardEvent) {
-        if (event.key === MODAL_FIND_ORDERS.keyEnter) {
+        if (event.key === MODAL_FIND_ORDERS.keyEnter && ((this.findOrdersForm.get('docNum').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('docNum').value !== null) || (this.findOrdersForm.get('productCode').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('productCode').value !== null))) {
             this.searchOrders();
       }
     }
