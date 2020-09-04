@@ -182,10 +182,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
+                var batchesCall = await this.GetBatchesComponents(o.OrdenId);
+                var batches = (List<BatchesComponentModel>)batchesCall.Response;
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
-                var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
+                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
 
@@ -214,6 +216,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
                     Comments = comments,
+                    HasBatches = batches.Any(y => y.LotesAsignados.Any()),
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
@@ -482,7 +485,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
-            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Where(y => y.DocQuantity > 0).Last();
+            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0);
 
             if (lastTransaction == null)
             {
