@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import { ProductivityComponent } from './productivity.component';
 import { ProductivityRoutingModule } from './productivity-routing.module';
+import { Chart } from 'chart.js';
 
 
 @NgModule({
@@ -11,7 +12,7 @@ import { ProductivityRoutingModule } from './productivity-routing.module';
   imports: [
     CommonModule,
     ProductivityRoutingModule,
-    MATERIAL_COMPONENTS,
+    MATERIAL_COMPONENTS
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
