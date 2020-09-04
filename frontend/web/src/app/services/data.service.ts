@@ -1,12 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
-import {CONST_NUMBER, CONST_STRING, ConstToken, HttpServiceTOCall, MessageType} from '../constants/const';
+import {
+  CONST_NUMBER,
+  CONST_STRING, ConstOrders,
+  ConstToken,
+  HttpServiceTOCall,
+  MessageType,
+  MODAL_FIND_ORDERS
+} from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
-import {CancelOrderReq} from '../model/http/pedidos';
+import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +33,22 @@ export class DataService {
   private isLogout = new Subject<boolean>();
   private searchComponentModal = new Subject<SearchComponentModal>();
   private newFormulaComponent = new Subject<any>();
+  private searchOrdersModal = new Subject<SearchComponentModal>();
+  private newSearchOrdersParams = new Subject<ParamsPedidos>();
   constructor(private datePipe: DatePipe) { }
 
+  setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
+    this.newSearchOrdersParams.next(searchOrdersParams);
+  }
+  getNewSearchOrdersModal() {
+    return this.newSearchOrdersParams.asObservable();
+  }
+  setSearchOrdersModal(searchOrder: SearchComponentModal) {
+    this.searchOrdersModal.next(searchOrder);
+  }
+  getSearchOrdersModal() {
+    return this.searchOrdersModal.asObservable();
+  }
   setNewFormulaComponent(newFormulaComponent: any) {
     this.newFormulaComponent.next(newFormulaComponent);
   }
@@ -193,6 +214,12 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
+    if (isBeginDate) {
+      initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+    }
+    return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
+  }
   transformDate(date: Date) {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
@@ -228,5 +255,67 @@ export class DataService {
       });
     }
     return errorOrders;
+  }
+  getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
+    let isSearchWithFilter = false;
+    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+      isSearchWithFilter = false;
+    }
+    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+      isSearchWithFilter = true;
+    }
+    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+      isSearchWithFilter = true;
+    }
+    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+      isSearchWithFilter = true;
+    }
+    if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
+      isSearchWithFilter = true;
+    }
+
+    return isSearchWithFilter;
+  }
+
+  getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
+    let queryString = CONST_STRING.empty;
+    let rangeDate = CONST_STRING.empty;
+    const filterDataOrders = new  ParamsPedidos();
+    filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
+
+    if (resultSearchOrderModal.docNum) {
+      filterDataOrders.docNum = resultSearchOrderModal.docNum;
+      filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
+      queryString = `?docNum=${resultSearchOrderModal.docNum}`;
+    } else {
+      if (resultSearchOrderModal.dateType) {
+        filterDataOrders.dateType = resultSearchOrderModal.dateType; // se puede manejar localmente
+        rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+        if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+          queryString = `?fini=${rangeDate}`;
+        } else {
+          queryString = `?ffin=${rangeDate}`;
+        }
+        filterDataOrders.dateFull = rangeDate;
+      }
+      if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
+        queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
+        filterDataOrders.status = resultSearchOrderModal.status;
+      }
+      if (resultSearchOrderModal.qfb !== '' && resultSearchOrderModal.qfb) {
+        queryString = `${queryString}&qfb=${resultSearchOrderModal.qfb}`;
+        filterDataOrders.qfb = resultSearchOrderModal.qfb;
+      }
+      if (resultSearchOrderModal.productCode !== '' && resultSearchOrderModal.productCode) {
+        queryString = `${queryString}&code=${resultSearchOrderModal.productCode}`;
+        filterDataOrders.productCode = resultSearchOrderModal.productCode;
+      }
+    }
+
+    return [filterDataOrders, queryString];
   }
 }

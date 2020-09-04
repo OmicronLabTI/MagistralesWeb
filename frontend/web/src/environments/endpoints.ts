@@ -36,7 +36,7 @@ export const Endpoints = {
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   },
   orders: {
-    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`
+    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
   }
 };
 
