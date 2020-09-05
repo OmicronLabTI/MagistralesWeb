@@ -72,50 +72,50 @@ class LotsViewController: UIViewController {
         self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
         
-        self.addLotButton.rx.tap.subscribe(onNext: { [unowned self] _ in
-            if let indexPath = self.lotsAvailablesTable.indexPathForSelectedRow, let cell = self.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
+        self.addLotButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            if let indexPath = self?.lotsAvailablesTable.indexPathForSelectedRow, let cell = self?.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
                 cell.quantitySelected.resignFirstResponder()
             }
         }).disposed(by: disposeBag)
         
         // Muestra los datos en la tabla Linea de documentos
-        self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) { [unowned self] row, data, cell in
+        self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) { [weak self] row, data, cell in
             cell.row = row
             cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text =  self.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
-            cell.totalSelectedLabel.text = self.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
+            cell.totalNeededLabel.text =  self?.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
+            cell.totalSelectedLabel.text = self?.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles
-        self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) { [unowned self] row, data, cell in
+        self.lotsViewModel.dataLotsAvailable.bind(to:  lotsAvailablesTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell, cellType: LotsAvailableTableViewCell.self)) { [weak self] row, data, cell in
             cell.row = row
             cell.itemModel = data
             cell.lotsLabel.text = data.numeroLote
-            cell.quantityAvailableLabel.text = self.formatter.string(from: (data.cantidadDisponible ?? 0) as NSNumber)
-            cell.quantitySelected.text = self.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
-            cell.quantityAssignedLabel.text = self.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
+            cell.quantityAvailableLabel.text = self?.formatter.string(from: (data.cantidadDisponible ?? 0) as NSNumber)
+            cell.quantitySelected.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
+            cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
         }.disposed(by: self.disposeBag)
         
         //Muestra los datos en la tabla de Lotes Selecionados
-        self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) { [unowned self] row, data, cell in
+        self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell, cellType: LotsSelectedTableViewCell.self)) { [weak self] row, data, cell in
             cell.lotsLabel.text = data.numeroLote
-            cell.quantitySelectedLabel.text = self.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
+            cell.quantitySelectedLabel.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
         }.disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).bind(to: lotsViewModel.productSelected).disposed(by: disposeBag)
-        self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] item in
-            self.lotsViewModel.itemSelectedOfLineDocTable(lot: item)
+        self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            self?.lotsViewModel.selectBatchIfNeeded(lot: item)
         }).disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla lotes disponibles fue selecionado
-        Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected, self.lotsViewModel.lastResponder, resultSelector: { index, responder in
-            if let cell = self.lotsAvailablesTable.cellForRow(at: index) as? LotsAvailableTableViewCell, let lastText = responder as? UITextField {
+        Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected, self.lotsViewModel.lastResponder, resultSelector: { [weak self] index, responder in
+            if let cell = self?.lotsAvailablesTable.cellForRow(at: index) as? LotsAvailableTableViewCell, let lastText = responder as? UITextField {
                 if cell.quantitySelected != lastText && !cell.quantitySelected.isEditing {
-                    self.view.endEditing(false)
+                    self?.view.endEditing(false)
                 }
             }
         }).subscribe().disposed(by: disposeBag)
@@ -123,35 +123,37 @@ class LotsViewController: UIViewController {
         
         // Detecta que item de la tabla lotes selecionados fué selecionado
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).bind(to: lotsViewModel.batchSelected).disposed(by: disposeBag)
-        self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] item in
-            self.lotsViewModel.itemLotSelected = item
+        self.lotsSelectedTable.rx.modelSelected(LotsSelected.self).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            self?.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
         
         //Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         
+        //Selecciona el primer elemento de productos cuando termina la carga de datos
+        Observable.combineLatest(self.lotsViewModel.dataOfLots, self.lotsViewModel.indexProductSelected, self.lotsViewModel.loading, resultSelector: { [weak self] data, indexPath, loading in
+            if data.count > 0 && !loading, let selectedRow = indexPath {
+                self?.lineDocTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
+            } else if data.count > 0, let weakSelf = self {
+                let firstRow = IndexPath(row: 0, section: 0)
+                weakSelf.lineDocTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
+                weakSelf.lineDocTable.delegate?.tableView?(weakSelf.lineDocTable, didSelectRowAt: firstRow)
+            }
+        }).subscribe().disposed(by: disposeBag)
+        
         // Muestra o coulta el loading
-        self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] showLoading in
+        self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
-                self.lottieManager.showLoading()
+                self?.lottieManager.showLoading()
                 return
             }
-            self.lottieManager.hideLoading()
-            
-            Observable.combineLatest(self.lotsViewModel.dataOfLots, self.lotsViewModel.indexProductSelected, resultSelector: { data, indexPath in
-                if data.count > 0, let selectedRow = indexPath {
-                    self.lineDocTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
-                } else if data.count > 0 {
-                    let firstRow = IndexPath(row: 0, section: 0)
-                    self.lineDocTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
-                    self.lineDocTable.delegate?.tableView?(self.lineDocTable, didSelectRowAt: firstRow)
-                }
-            }).subscribe().disposed(by: self.disposeBag)
+            self?.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         // Muestra un AlertMessage
-        self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] message in
-            AlertManager.shared.showAlert(message: message, view: self)
+        self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+            guard let weakSelf = self else { return }
+            AlertManager.shared.showAlert(message: message, view: weakSelf)
         }).disposed(by: self.disposeBag)
     }
     

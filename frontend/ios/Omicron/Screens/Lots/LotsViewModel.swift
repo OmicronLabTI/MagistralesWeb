@@ -34,8 +34,6 @@ class LotsViewModel {
     var removeLotDidTap = PublishSubject<Void>()
     var saveLotsDidTap = PublishSubject<Void>()
     
-    var itemSelectedLineDocuments: Int? = 0
-    var itemDeselectedLineDocuments: Int?
     var itemLotSelected:LotsSelected? = nil
     
     private var selectedBatches: [BatchSelected] = []
@@ -187,7 +185,7 @@ class LotsViewModel {
         }).disposed(by: self.disposeBag)
     }
     
-    func itemSelectedOfLineDocTable(lot: Lots) -> Void {
+    func selectBatchIfNeeded(lot: Lots) -> Void {
         if (lot.lotesDisponibles?.count ?? 0 > 0) {
             self.dataLotsAvailable.onNext(lot.lotesDisponibles ?? [])
         } else {

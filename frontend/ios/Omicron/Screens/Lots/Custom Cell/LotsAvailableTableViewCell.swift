@@ -23,7 +23,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
     var row: Int?
-    var itemModel: LotsAvailable?
+    weak var itemModel: LotsAvailable?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -43,10 +43,6 @@ class LotsAvailableTableViewCell: UITableViewCell {
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        return true
-    }
-
     func textFieldDidBeginEditing(_ textField: UITextField) {
         var tableView: UITableView?
         var superview: UIView? = self.superview
