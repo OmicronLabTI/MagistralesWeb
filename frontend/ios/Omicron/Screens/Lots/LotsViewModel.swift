@@ -70,9 +70,9 @@ class LotsViewModel {
                         sysNumber: existing.sysNumber))
                 } else {
                     existing.assignedQty = (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0)
-                    let newSelected = self?.selectedBatches.filter({ $0.itemCode == existing.itemCode && $0.action != "delete" }) ?? []
+                    let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode, batchNumber: existing.batchNumber) ?? []
                     if (newSelected.count > 0) {
-                        self?.dataLotsSelected.onNext(newSelected.map({ $0.toLotsSelected() }))
+                        self?.dataLotsSelected.onNext(newSelected)
                     } else {
                         self?.dataLotsSelected.onNext([])
                     }
@@ -85,7 +85,7 @@ class LotsViewModel {
                     itemCode: product.codigoProducto,
                     action: "insert",
                     sysNumber: available.sysNumber))
-                self?.dataLotsSelected.onNext(self?.selectedBatches.map({ $0.toLotsSelected() }) ?? [])
+                self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto, batchNumber: available.numeroLote) ?? [])
             }
             
             doc.totalNecesario = (doc.totalNecesario ?? 0) - quantity
@@ -114,13 +114,14 @@ class LotsViewModel {
                 if (existing.action != nil) {
                     if let index = self?.selectedBatches.firstIndex(where: { $0.batchNumber == existing.batchNumber }) {
                         self?.selectedBatches.remove(at: index)
-                        self?.dataLotsSelected.onNext(self?.selectedBatches.filter({ existing.itemCode == $0.itemCode && $0.action != "delete" }).map({ $0.toLotsSelected() }) ?? [])
+                        let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode, batchNumber: existing.batchNumber) ?? []
+                        self?.dataLotsSelected.onNext(newSelected)
                     }
                 } else {
                     existing.action = "delete"
-                    let newSelected = self?.selectedBatches.filter({ $0.itemCode == batch?.numeroLote && $0.action != "delete" }) ?? []
+                    let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode, batchNumber: existing.batchNumber) ?? []
                     if (newSelected.count > 0) {
-                        self?.dataLotsSelected.onNext(newSelected.map({ $0.toLotsSelected() }))
+                        self?.dataLotsSelected.onNext(newSelected)
                     } else {
                         self?.dataLotsSelected.onNext([])
                     }
@@ -248,5 +249,11 @@ class LotsViewModel {
                 self?.loading.onNext(false)
                 self?.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    private func getFilteredSelected(itemCode: String?, batchNumber: String?) -> [LotsSelected] {
+        return self.selectedBatches
+            .filter({ $0.itemCode == itemCode && $0.batchNumber == batchNumber && $0.action != "delete" })
+            .map({ $0.toLotsSelected() })
     }
 }
