@@ -64,6 +64,22 @@ class LotsViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        //Selecciona el primer elemento de productos cuando termina la carga de datos
+        Observable.combineLatest(self.lotsViewModel.dataOfLots, self.lotsViewModel.indexProductSelected, resultSelector: { [weak self] data, indexPath in
+            if data.count > 0, let selectedRow = indexPath {
+                self?.lineDocTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
+            } else if data.count > 0, let weakSelf = self {
+                let firstRow = IndexPath(row: 0, section: 0)
+                weakSelf.lineDocTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
+                weakSelf.lineDocTable.delegate?.tableView?(weakSelf.lineDocTable, didSelectRowAt: firstRow)
+            }
+        }).subscribe().disposed(by: disposeBag)
+        
+    }
         
     // MARK: - Functions
     func viewModelBinding() -> Void {
@@ -129,17 +145,6 @@ class LotsViewController: UIViewController {
         
         //Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
-        
-        //Selecciona el primer elemento de productos cuando termina la carga de datos
-        Observable.combineLatest(self.lotsViewModel.dataOfLots, self.lotsViewModel.indexProductSelected, self.lotsViewModel.loading, resultSelector: { [weak self] data, indexPath, loading in
-            if data.count > 0 && !loading, let selectedRow = indexPath {
-                self?.lineDocTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
-            } else if data.count > 0, let weakSelf = self {
-                let firstRow = IndexPath(row: 0, section: 0)
-                weakSelf.lineDocTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
-                weakSelf.lineDocTable.delegate?.tableView?(weakSelf.lineDocTable, didSelectRowAt: firstRow)
-            }
-        }).subscribe().disposed(by: disposeBag)
         
         // Muestra o coulta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in

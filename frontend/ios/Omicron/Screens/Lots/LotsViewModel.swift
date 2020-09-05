@@ -149,7 +149,7 @@ class LotsViewModel {
         
         // Guada los lotes seleccionados y los manda al servicio
         self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.assingLots()
+            self?.assignLots()
         }).self.disposed(by: self.disposeBag)
         
     }
@@ -218,7 +218,7 @@ class LotsViewModel {
         }
     }
     
-    func assingLots() -> Void {
+    func assignLots() -> Void {
         let batchesToSend = self.selectedBatches.filter({ $0.action != nil })
         if (batchesToSend.count == 0) {
             self.showMessage.onNext("No se han realizado modificaciones de lotes")
