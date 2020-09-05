@@ -82,7 +82,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         super.viewDidAppear(true)
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
     }
-
+    
     //MARK: Functions
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
@@ -108,61 +108,63 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     func viewModelBinding() {
         
         // Termina la ejecución del refresh control
-        self.orderDetailViewModel.endRefreshing.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.refreshControl.endRefreshing()
+        self.orderDetailViewModel.endRefreshing.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+            self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.navigationController?.popToRootViewController(animated: true)
+        self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.navigationController?.popToRootViewController(animated: true)
         }).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+        self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
-            lotsVC.orderId = self.orderId
-            lotsVC.statusType = self.statusType
-            self.navigationController?.pushViewController(lotsVC, animated: true)
+            if (self?.orderId != nil && self?.statusType != nil) {
+                lotsVC.orderId = self!.orderId
+                lotsVC.statusType = self!.statusType
+                self?.navigationController?.pushViewController(lotsVC, animated: true)
+            }
         }).disposed(by: self.disposeBag)
         
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.changeStatusToProcess()})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.changeStatusToProcess()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
+            self?.present(alert, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
         // Muestra un mensaje de confirmación para poner la orden en status finalizado
-        self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.showQfbSignatureView()})
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self?.dismiss(animated: true)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.showQfbSignatureView()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
+            self?.present(alert, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { sum in
-            self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(self.formatter.string(from: NSNumber(value: sum)) ?? "" )", textToBold: "Sumatoria de la fórmula: ")
+        self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
+            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(self?.formatter.string(from: NSNumber(value: sum)) ?? "" )", textToBold: "Sumatoria de la fórmula: ")
         }).disposed(by: self.disposeBag)
                 
-        self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { res in
+        self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             
             if((res.first) != nil) {
-                self.orderDetail = res
-                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
-                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
-                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
-                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
-                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
-                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
-                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
-                    self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
+                self?.orderDetail = res
+                self?.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
+                self?.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
+                self?.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
+                self?.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
+                self?.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
+                self?.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
+                self?.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
+                self?.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
             }
                 }).disposed(by: self.disposeBag)
         
@@ -180,30 +182,30 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
         }.disposed(by: disposeBag)
         
-        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { iconName in
-            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
-            self.navigationItem.rightBarButtonItem = comments
+        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self?.goToCommentsViewController))
+            self?.navigationItem.rightBarButtonItem = comments
         }).disposed(by: self.disposeBag)
         
-        orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
-            AlertManager.shared.showAlert(message: message, view: self)
+        orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+            AlertManager.shared.showAlert(message: message, view: self!)
         }).disposed(by: self.disposeBag)
         
-        orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+        orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
-                self.lottieManager.showLoading()
+                self?.lottieManager.showLoading()
             } else {
-                self.lottieManager.hideLoading()
+                self?.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.showSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { titleView in
+        self.orderDetailViewModel.showSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] titleView in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
             //signatureVC.orderId = self.orderId
             signatureVC.titleView = titleView
             signatureVC.modalPresentationStyle = .overCurrentContext
-            self.present(signatureVC, animated: true, completion: nil)
+            self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
     }
     
