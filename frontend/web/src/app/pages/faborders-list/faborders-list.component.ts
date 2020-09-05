@@ -8,7 +8,8 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   HttpStatus,
-  MODAL_FIND_ORDERS, MODAL_NAMES
+  MODAL_FIND_ORDERS,
+  MODAL_NAMES
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
@@ -49,7 +50,6 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  // rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   filterDataOrders = new ParamsPedidos();
   pageIndex = 0;
@@ -57,6 +57,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   isSearchOrderWithFilter = false;
   isThereOrdersIsolatedToCancel = false;
   isAssignOrderIsolated = false;
+  isReAssignOrderIsolated = false;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -64,7 +65,6 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private titleService: Title
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    // this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.isFromOrders = false;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
     this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
@@ -132,6 +132,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         });
         this.isThereOrdersIsolatedToCancel = false;
         this.isAssignOrderIsolated = false;
+        this.isReAssignOrderIsolated = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -202,9 +203,15 @@ export class FabordersListComponent implements OnInit, OnDestroy {
                                                                            FromToFilter.fromOrdersIsolatedCancel);
     this.isAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
         FromToFilter.fromDefault);
+    this.isReAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+                                                                      FromToFilter.fromOrderIsolatedReassign);
   }
-
-
+  reAssignOrder() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+                                FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
+      , isFromOrderIsolated: true});
+  }
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
   }

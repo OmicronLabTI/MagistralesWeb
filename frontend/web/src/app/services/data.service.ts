@@ -271,11 +271,21 @@ export class DataService {
             && t.status !== ConstStatus.abierto)).length > 0;
       case FromToFilter.fromOrdersIsolated:
         break;
+      case FromToFilter.fromOrderIsolatedReassign:
+        return dataToSearch.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.asignado
+            && t.status !== ConstStatus.enProceso && t.status !== ConstStatus.pendiente && t.status !== ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
+    }
+  }
+  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter) {
+    switch (fromToFilter) {
+      case FromToFilter.fromOrderIsolatedReassignItems:
+        return dataToSearch.filter(t => (t.isChecked && t.status !== ConstStatus.reasingado && t.status !== ConstStatus.asignado
+            && t.status !== ConstStatus.enProceso && t.status !== ConstStatus.pendiente && t.status !== ConstStatus.terminado));
     }
   }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {

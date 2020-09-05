@@ -34,7 +34,7 @@
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
                 &nbsp; Asignar
             </button>
-            <button mat-raised-button class="button-blue" (click)="reAsignOrder()" >
+            <button [disabled]="!isReAssignOrderIsolated" mat-raised-button [ngClass]="isReAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="reAssignOrder()" >
                 &nbsp; Reasignar
             </button>
             <button mat-raised-button class="button-blue" (click)="finalizeOrder()" >
