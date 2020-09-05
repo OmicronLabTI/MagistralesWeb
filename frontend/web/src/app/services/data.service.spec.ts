@@ -187,4 +187,9 @@ describe('DataService', () => {
     });
     service.setFinalizeOrders({list: [{orderId: 123}], cancelType: 'pedidos'});
   });
+  it('should getDateFormatted', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
+    expect(service.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
+  });
 });
