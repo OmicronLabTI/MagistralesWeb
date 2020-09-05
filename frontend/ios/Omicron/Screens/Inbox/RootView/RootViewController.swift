@@ -144,18 +144,6 @@ class RootViewController: UIViewController {
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
     }
     
-    private func getInboxViewModel() -> InboxViewModel? {
-        let childrenVC = self.splitViewController?.viewControllers.map({
-            return (($0 as? UINavigationController)?.viewControllers ?? [])
-        }).reduce([], +)
-        
-        if let vc = childrenVC?.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
-            return vc.inboxViewModel
-        }
-        
-        return nil
-    }
-    
     private func getUserInfo() -> String {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
