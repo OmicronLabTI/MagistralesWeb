@@ -68,5 +68,21 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object componets of custom lists.
         /// </value>
         public virtual DbSet<ComponentCustomComponentListModel> ComponentsCustomComponentLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material requests.
+        /// </summary>
+        /// <value>
+        /// Object requests.
+        /// </value>
+        public virtual DbSet<RawMaterialRequestModel> RawMaterialRequests { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material request details.
+        /// </summary>
+        /// <value>
+        /// Object request details.
+        /// </value>
+        public virtual DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetails { get; set; }
     }
 }

@@ -71,28 +71,6 @@ namespace Omicron.Usuarios.Services.User
         }
 
         /// <summary>
-        /// Method for validating the login.
-        /// </summary>
-        /// <param name="login">the login object.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultModel> ValidateCredentials(LoginModel login)
-        {
-            var user = await this.userDao.GetUserByUserName(login.Username);
-
-            if (user == null || user.UserName == null)
-            {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.UserDontExist, null, null, null);
-            }
-
-            if (!user.Password.Equals(login.Password))
-            {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null, null);
-            }
-
-            return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null, null);
-        }
-
-        /// <summary>
         /// Method to create a user.
         /// </summary>
         /// <param name="userModel">the user model.</param>
@@ -108,12 +86,7 @@ namespace Omicron.Usuarios.Services.User
 
             userModel.Id = Guid.NewGuid().ToString("D");
             userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
-            var dataBaseResponse = await this.userDao.InsertUser(userModel);
-
-            if (!dataBaseResponse)
-            {
-                throw new CustomServiceException(ServiceConstants.ErrorWhileInsertingUser, HttpStatusCode.InternalServerError);
-            }
+            await this.userDao.InsertUser(userModel);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null, null);
         }
@@ -179,6 +152,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
             usertoUpdate.Role = user.Role;
             usertoUpdate.Activo = user.Activo;
+            usertoUpdate.Piezas = user.Piezas;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
