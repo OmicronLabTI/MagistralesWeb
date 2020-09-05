@@ -21,8 +21,12 @@ class OrderDetailFormViewController:  FormViewController {
     var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
     var disposeBag = DisposeBag()
-    var baseQuantity: DecimalRow? = nil
-    var requiredQuantity: DecimalRow? = nil
+    var baseQuantity: TextRow? = nil
+    var requiredQuantity: TextRow? = nil
+    
+    
+//    var baseQuantityToSave: Decimal? = nil
+//    var requiredQuantity:Decimal? = nil
     var werehouse: PickerInlineRow<String>? = nil
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
    
@@ -205,7 +209,13 @@ class OrderDetailFormViewController:  FormViewController {
     }
     
     func saveChanges () {
-        self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
+//        self.baseQuantity.
+        
+        if(self.canOperation(rowValue: self.baseQuantity?.value ?? "f") && self.canOperation(rowValue: (self.requiredQuantity?.value) ?? "r")) {
+            let requiredQuantityValue = Double( self.requiredQuantity?.value ?? "0.0")
+            let baseQuantityValue = Double(self.baseQuantity?.value ?? "0.0")
+            self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantityValue ?? 0.0, requiredQuantity: requiredQuantityValue ?? 0.0, werehouse: (werehouse?.value)!)
+        }
     }
     
     func viewModelBinding () -> Void {
