@@ -19,7 +19,6 @@ export class PlaceOrderDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public placeData: PlaceOrders, private dataService: DataService) {
-        console.log('dataReceive: ', this.placeData);
         if (this.placeData.placeOrdersData) {
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
         }
