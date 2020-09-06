@@ -124,7 +124,7 @@ class LotsViewController: UIViewController {
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).bind(to: lotsViewModel.productSelected).disposed(by: disposeBag)
         self.lineDocTable.rx.modelSelected(Lots.self).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
-            self?.lotsViewModel.selectBatchIfNeeded(lot: item)
+            self?.lotsViewModel.updateInfoSelectedBatch(lot: item)
         }).disposed(by: self.disposeBag)
         
         // Detecta que item de la tabla lotes disponibles fue selecionado

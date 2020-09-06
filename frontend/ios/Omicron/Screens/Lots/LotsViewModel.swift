@@ -51,7 +51,7 @@ class LotsViewModel {
             
             let quantity = (available.cantidadSeleccionada ?? 0)
             
-            if (quantity == 0 || quantity > (doc.totalNecesario ?? 0)) {
+            if (quantity == 0 || quantity > (doc.totalNecesario ?? 0) || (available.cantidadDisponible ?? 0) == 0) {
                 return
             }
             
@@ -186,7 +186,7 @@ class LotsViewModel {
         }).disposed(by: self.disposeBag)
     }
     
-    func selectBatchIfNeeded(lot: Lots) -> Void {
+    func updateInfoSelectedBatch(lot: Lots) -> Void {
         if (lot.lotesDisponibles?.count ?? 0 > 0) {
             self.dataLotsAvailable.onNext(lot.lotesDisponibles ?? [])
         } else {
@@ -201,10 +201,14 @@ class LotsViewModel {
             self.dataLotsSelected.onNext([])
         }
         
+        self.selectBatchIfNeeded(lot: lot, selected: selected)
+    }
+    
+    func selectBatchIfNeeded(lot: Lots, selected: [LotsSelected]) -> Void {
         // Selección automática de lote disponible
         if (lot.lotesDisponibles!.count == 1 && selected.count == 0) {
             if let firstAvailable = lot.lotesDisponibles?.first, let doc = self.documentLines.first(where: { $0.codigoProducto == lot.codigoProducto }) {
-                if (firstAvailable.cantidadDisponible != 0.0) {
+                if ((firstAvailable.cantidadDisponible ?? 0) > 0) {
                     let batch = BatchSelected(orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada, batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto, action: "insert", sysNumber: firstAvailable.sysNumber)
                     doc.totalNecesario = 0
                     
@@ -212,6 +216,20 @@ class LotsViewModel {
                     doc.totalSeleccionado = firstBatch.cantidadSeleccionada ?? 0
                     self.selectedBatches.append(batch)
                     self.dataOfLots.onNext(documentLines)
+                    self.dataLotsSelected.onNext(self.getFilteredSelected(itemCode: doc.codigoProducto))
+                    
+                    doc.lotesDisponibles?.forEach({ lot in
+                        if (lot.numeroLote == firstBatch.numeroLote) {
+                            lot.cantidadDisponible = (lot.cantidadDisponible ?? 0) - (firstBatch.cantidadSeleccionada ?? 0)
+                        }
+                        lot.cantidadSeleccionada = min(doc.totalNecesario ?? 0, lot.cantidadDisponible ?? 0)
+                    })
+                    
+                    if let availableBatches = doc.lotesDisponibles {
+                        self.dataLotsAvailable.onNext(availableBatches)
+                    }
+                    
+                    self.dataOfLots.onNext(self.documentLines)
                 }
             }
         }
