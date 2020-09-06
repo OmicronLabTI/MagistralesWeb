@@ -127,7 +127,7 @@ class NetworkManager: SessionProtocol {
     }
     
     // Asigna lotes a una orden de fabricación
-    func assingLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
+    func assignLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
         let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)
         let res: Observable<AssingbBatchResponse> = makeRequest(request: req)
         return res

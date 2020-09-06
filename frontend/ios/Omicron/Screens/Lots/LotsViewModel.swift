@@ -229,7 +229,7 @@ class LotsViewModel {
     
     func sendToServerAssignedLots(lotsToSend: [BatchSelected]) -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.assingLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+        NetworkManager.shared.assignLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             self?.loading.onNext(false)
             if(res.response!.isEmpty) {
                 self?.showMessage.onNext("Proceso realizado correctamente")
