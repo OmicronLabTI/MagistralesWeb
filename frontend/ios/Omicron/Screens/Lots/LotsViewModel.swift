@@ -242,7 +242,7 @@ class LotsViewModel {
             
             var badBatches = ""
             for batch in res.response! {
-                badBatches += " \(batch)"
+                badBatches += "\n\(batch)"
             }
             self?.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
             }, onError:  { [weak self] error in
