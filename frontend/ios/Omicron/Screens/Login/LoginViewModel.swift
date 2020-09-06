@@ -35,13 +35,14 @@ class LoginViewModel {
             .map({
                 Login(username: $0, password: $1, redirectUri: "", clientId2: "", origin: "app")
             })
-            .subscribe(onNext: { data in
+            .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data)
                     .flatMap({ res -> Observable<UserInfoResponse> in
                         Persistence.shared.saveLoginData(data: res)
                         return NetworkManager.shared.getInfoUser(username: data.user)
-                    }).subscribe(onNext: { [weak self] info  in
+                    })
+                    .subscribe(onNext: { [weak self] info  in
                         self?.loading.onNext(false)
                         if let user = info.response {
                             Persistence.shared.saveUserData(user: user)

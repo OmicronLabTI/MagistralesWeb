@@ -136,7 +136,7 @@ class NetworkManager: SessionProtocol {
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?
-                self?.provider.rx.request(request) :
+                self?.provider.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
                 self?.provider.rx
                                 .request(request)
                                 .filterSuccessfulStatusAndRedirectCodes()
