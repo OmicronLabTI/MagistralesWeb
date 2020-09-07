@@ -40,40 +40,44 @@ class OrderDetailViewModel {
     // MARK: Init
     init() {
         
-        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.showAlertConfirmationFinished.onNext("¿Deseas terminar la orden?")
+        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.showAlertConfirmationFinished.onNext("¿Deseas terminar la orden?")
         }).disposed(by: self.disposeBag)
         
-        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
         }).disposed(by: self.disposeBag)
         
-        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: {
-            self.goToSeeLotsViewController.onNext(())
+        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+            self?.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
+    }
+    
+    deinit {
+        print("Se muere Order DetailViewController")
     }
     
     // MARK: Functions
     func getOrdenDetail(isRefresh: Bool = false) -> Void {
         loading.onNext(true)
-        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {res in
-            self.orderDetailData.accept([res.response!])
-            self.tableData.onNext(res.response!.details!)
-            self.auxTabledata = res.response!.details!
-            self.tempOrderDetailData = res.response!
-            self.loading.onNext(false)
-            self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
+        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.orderDetailData.accept([res.response!])
+            self?.tableData.onNext(res.response!.details!)
+            self?.auxTabledata = res.response!.details!
+            self?.tempOrderDetailData = res.response!
+            self?.loading.onNext(false)
+            self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
             let iconName = res.response?.comments != nil ? "message.fill": "message"
-            self.showIconComments.onNext(iconName)
+            self?.showIconComments.onNext(iconName)
             if(isRefresh) {
-                self.endRefreshing.onNext(())
+                self?.endRefreshing.onNext(())
             }
-        }, onError: { error in
-            self.loading.onNext(false)
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
             if(isRefresh) {
-                self.endRefreshing.onNext(())
+                self?.endRefreshing.onNext(())
             }
-            self.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+            self?.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }
     
@@ -93,12 +97,12 @@ class OrderDetailViewModel {
     func changeStatus() {
         self.loading.onNext(true)
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: "Proceso")
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: { res in
-            self.loading.onNext(false)
-            self.backToInboxView.onNext(())
-        }, onError: { error in
-            self.loading.onNext(false)
-            self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.loading.onNext(false)
+            self?.backToInboxView.onNext(())
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
             }).disposed(by: self.disposeBag)
     }
 
@@ -110,15 +114,17 @@ class OrderDetailViewModel {
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
         let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
 
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
-            self.loading.onNext(false)
-                self.tempOrderDetailData?.details?.remove(at: index)
-            self.auxTabledata = self.tempOrderDetailData!.details!
-            self.tableData.onNext((self.tempOrderDetailData?.details)!)
-            self.sumFormula.accept(self.sum(tableDetails: (self.tempOrderDetailData?.details)!))
-        }, onError: {  error in
-            self.loading.onNext(false)
-            self.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
+        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            if(self?.tempOrderDetailData != nil ) {
+                self?.loading.onNext(false)
+                self?.tempOrderDetailData?.details?.remove(at: index)
+                self?.auxTabledata = self!.tempOrderDetailData!.details!
+                self?.tableData.onNext((self?.tempOrderDetailData?.details)!)
+                self?.sumFormula.accept((self?.sum(tableDetails: (self?.tempOrderDetailData?.details)!))!)
+            }
+            }, onError: {  [weak self] error in
+                self?.loading.onNext(false)
+                self?.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
         }).disposed(by: self.disposeBag)
     }
     
@@ -131,12 +137,12 @@ class OrderDetailViewModel {
             
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
 
-            NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-                self.loading.onNext(false)
-                self.backToInboxView.onNext(())
-            }, onError: { error in
-                self.loading.onNext(false)
-                self.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+            NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+                self?.loading.onNext(false)
+                self?.backToInboxView.onNext(())
+            }, onError: { [weak self] error in
+                self?.loading.onNext(false)
+                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
             }).disposed(by: self.disposeBag)
         }
     }

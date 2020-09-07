@@ -217,9 +217,13 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean, isProductivity: boolean = false) {
     if (isBeginDate) {
-      initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+      if (isProductivity) {
+        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
+      } else {
+        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+      }
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }

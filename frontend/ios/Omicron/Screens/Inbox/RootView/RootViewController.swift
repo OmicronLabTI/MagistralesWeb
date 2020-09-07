@@ -138,21 +138,10 @@ class RootViewController: UIViewController {
         self.logoutButton.setTitle("Cerrar sesión", for: .normal)
         self.logoutButton.tintColor = .darkGray
         self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
+        self.logoutButton.imageView?.contentMode = .scaleAspectFit
         self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 260)
         self.logoutButton.titleEdgeInsets.left = 35
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
-    }
-    
-    private func getInboxViewModel() -> InboxViewModel? {
-        let childrenVC = self.splitViewController?.viewControllers.map({
-            return (($0 as? UINavigationController)?.viewControllers ?? [])
-        }).reduce([], +)
-        
-        if let vc = childrenVC?.first(where: { $0.isKind(of: InboxViewController.self) }) as? InboxViewController {
-            return vc.inboxViewModel
-        }
-        
-        return nil
     }
     
     private func getUserInfo() -> String {

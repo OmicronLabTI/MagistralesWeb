@@ -107,7 +107,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
+                x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
@@ -182,10 +182,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
+                var batchesCall = await this.GetBatchesComponents(o.OrdenId);
+                var batches = (List<BatchesComponentModel>)batchesCall.Response;
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
-                var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
+                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
 
@@ -213,7 +215,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
+                    DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
+                    HasBatches = batches.Any(y => y.LotesAsignados.Any()),
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
@@ -307,12 +311,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
                 double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
 
+                totalNecesario = Math.Round(totalNecesario, 6);
+                doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
+
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = x.Warehouse,
                     CodigoProducto = x.ProductId,
                     DescripcionProducto = x.Description,
-                    TotalNecesario = totalNecesario - doubleTotalBathches,
+                    TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
                     TotalSeleccionado = doubleTotalBathches,
                     Lotes = lotes,
                     LotesAsignados = batches,
@@ -375,26 +382,16 @@ namespace Omicron.SapAdapter.Services.Sap
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders);
+                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.PedidoId).ToList();
+                orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
             }
 
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.PedidoId).ToList();
             var total = dataBaseOrders.Count;
 
-            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Offset) && orderFabModel.Filters.ContainsKey(ServiceConstants.Limit))
-            {
-                var offset = orderFabModel.Filters[ServiceConstants.Offset];
-                var limit = orderFabModel.Filters[ServiceConstants.Limit];
-
-                int.TryParse(offset, out int offsetNumber);
-                int.TryParse(limit, out int limitNumber);
-
-                var orderToReturnSkip = dataBaseOrders.Skip(offsetNumber).Take(limitNumber).ToList();
-                return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
-            }
-
-            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, total);
+            var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, total);
         }
 
         /// <summary>
@@ -464,7 +461,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     SysNumber = x.SysNumber,
                     NumeroLote = x.DistNumber,
                     CantidadAsignada = x.CommitQty,
-                    CantidadDisponible = x.Quantity - x.CommitQty,
+                    CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
+                    FechaExp = x.FechaExp,
                 });
             });
 
@@ -482,7 +480,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
-            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Where(y => y.DocQuantity > 0).Last();
+            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0);
 
             if (lastTransaction == null)
             {
@@ -503,6 +501,23 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Applies the offset.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <param name="parameters">the dic.</param>
+        /// <returns>the data.</returns>
+        private List<OrdenFabricacionModel> ApplyOffsetLimit(List<OrdenFabricacionModel> orders, Dictionary<string, string> parameters)
+        {
+            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
+            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+
+            return orders.Skip(offsetNumber).Take(limitNumber).ToList();
         }
     }
 }

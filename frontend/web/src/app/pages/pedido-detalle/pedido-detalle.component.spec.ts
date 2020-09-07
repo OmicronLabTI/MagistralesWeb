@@ -57,6 +57,7 @@ describe('PedidoDetalleComponent', () => {
   });
 
   it('should someComplete return false', () => {
+    component.allComplete = true;
     expect(component.someComplete()).toBeFalsy();
   });
   it('should someComplete return true', () => {

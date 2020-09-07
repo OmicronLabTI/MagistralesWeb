@@ -32,6 +32,14 @@ class NetworkManager: SessionProtocol {
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
     // MARK: Init
+    
+    // Para consumir mock
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
+//    ])) {
+//        self.provider = provider
+//    }
+    
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
         AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
         NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
@@ -119,7 +127,7 @@ class NetworkManager: SessionProtocol {
     }
     
     // Asigna lotes a una orden de fabricación
-    func assingLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
+    func assignLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
         let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)
         let res: Observable<AssingbBatchResponse> = makeRequest(request: req)
         return res
@@ -128,7 +136,7 @@ class NetworkManager: SessionProtocol {
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?
-                self?.provider.rx.request(request) :
+                self?.provider.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
                 self?.provider.rx
                                 .request(request)
                                 .filterSuccessfulStatusAndRedirectCodes()
