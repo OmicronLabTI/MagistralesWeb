@@ -29,8 +29,8 @@ namespace Omicron.Pedidos.Test.Dto
             new CloseProductionOrderDto(),
             new CompleteDetalleFormulaDto(),
             new ComponentCustomComponentListDto(),
-            new CreateIsolatedFabOrderDto(),
             new CustomComponentListDto(),
+            new CreateIsolatedFabOrderDto(),
             new FinishOrderDto(),
             new ManualAssignDto(),
             new OrderIdDto(),
@@ -43,6 +43,8 @@ namespace Omicron.Pedidos.Test.Dto
             new UpdateStatusOrderDto(),
             new UserActionDto<CustomComponentListDto>(),
             new UserDto(),
+            new RawMaterialRequestDto(),
+            new RawMaterialRequestDetailDto(),
         };
 
         /// <summary>

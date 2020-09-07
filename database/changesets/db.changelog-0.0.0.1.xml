@@ -378,4 +378,59 @@
 		<column name="roledescription" value="Logistica"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.42">
+	<addColumn tableName ="user">
+		<column 
+			name="pieces"
+			type="INT"
+			defaultValue="200">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.43">
+    <createTable tableName="rawmaterialrequest">
+      <column name="id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	
+	  <column name="productionorderid" type="INT">
+        <constraints nullable="false" />  
+      </column> 
+	  <column name="signature" type="BYTEA">
+        <constraints nullable="true" />  
+      </column>
+	  <column name="signinguserid" type="VARCHAR(50)">
+        <constraints nullable="true" />  
+      </column>
+	  <column name="observations" type="NVARCHAR(500)">
+		<constraints nullable="true" /> 
+	  </column>
+	  <column name="creationuserid" type="VARCHAR(50)">
+		<constraints nullable="false" /> 
+	  </column>
+	  <column name="creationdate" type="VARCHAR(30)">
+		<constraints nullable="false" /> 
+	  </column>
+    </createTable>
+	<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="rawmaterialrequest" constraintName="fk_rawmaterialrequest_creation_user_users_id" referencedColumnNames="id" referencedTableName="user"/>	
+	<addForeignKeyConstraint baseColumnNames="signinguserid" baseTableName="rawmaterialrequest" constraintName="fk_rawmaterialrequest_signing_user_users_id" referencedColumnNames="id" referencedTableName="user"/>	
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.44">
+    <createTable tableName="rawmaterialrequestdetail">
+      <column name="id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+      <column name="rawmaterialrequestid" type="INT">
+      </column>	  
+	  <column name="productid" type="VARCHAR(50)">
+        <constraints nullable="false" />  
+      </column>
+	  <column name="description" type="VARCHAR(100)">
+        <constraints nullable="false" />  
+      </column>
+	  <column name="requestquantity" type="DECIMAL(19,6)">
+        <constraints nullable="false" />  
+      </column>  
+    </createTable>
+    <addForeignKeyConstraint baseColumnNames="rawmaterialrequestid" baseTableName="rawmaterialrequestdetail" constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id" referencedColumnNames="id" referencedTableName="rawmaterialrequest"/>
+  </changeSet> 
 </databaseChangeLog> 

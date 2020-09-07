@@ -39,13 +39,6 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         Task<bool> InsertUser(UserDto user);
 
         /// <summary>
-        /// Method to validate the users.
-        /// </summary>
-        /// <param name="loginDto">the loginDto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<ResultDto> ValidateCredentials(LoginDto loginDto);
-
-        /// <summary>
         /// The create user method.
         /// </summary>
         /// <param name="userDto">The user Dto.</param>

@@ -9,8 +9,8 @@ namespace Omicron.Pedidos.Test.Entities
 {
     using AutoFixture;
     using NUnit.Framework;
-    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
     /// Class for tests entities.
@@ -59,8 +59,10 @@ namespace Omicron.Pedidos.Test.Entities
             new AssignedBatches(),
             new AutomaticAssignUserModel(),
             new AutomaticAssingModel(),
-            new CustomComponentListDto(),
-            new ComponentCustomComponentListDto(),
+            new CustomComponentListModel(),
+            new ComponentCustomComponentListModel(),
+            new RawMaterialRequestModel(),
+            new RawMaterialRequestDetailModel(),
         };
 
         /// <summary>
