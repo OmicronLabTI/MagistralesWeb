@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CONST_USER_DIALOG, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
@@ -22,23 +22,27 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   isBeginInitForm = true;
   isToResetData = false;
   subscriptionForm = new Subscription();
+  isFromSearchOrders = false;
   constructor(private formBuilder: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public filterData: any,
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
               private errorService: ErrorService,
               private usersService: UsersService) {
+      this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
-      docNum: ['', [Validators.maxLength(50)]],
+          docNum: ['', [Validators.maxLength(50)]],
           dateType: ['', []],
           fini: ['', []],
           ffin: ['', []],
-      status: ['', []],
-      qfb: ['', []],
+          status: ['', []],
+          qfb: ['', []],
+          productCode: ['', [Validators.maxLength(40)]],
     });
-      this.isToResetData =
-          this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb;
+      this.isToResetData = // add more filter to receive
+          this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
+          || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode;
   }
 
   async ngOnInit() {
@@ -69,8 +73,10 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('ffin').setValue(new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`));
 
       this.findOrdersForm.get('dateType').setValue(this.filterData.filterOrdersData.dateType ?
-          this.filterData.filterOrdersData.dateType : '0');
+          this.filterData.filterOrdersData.dateType : ConstOrders.defaultDateInit);
       this.findOrdersForm.get('status').setValue(this.filterData.filterOrdersData.status ? this.filterData.filterOrdersData.status : '');
+      this.findOrdersForm.get('productCode').setValue(this.filterData.filterOrdersData.productCode ?
+          this.filterData.filterOrdersData.productCode : '');
       this.getMaxDate();
       if (this.filterData.filterOrdersData.docNum) {
           this.getDisableForDocNum();
@@ -87,7 +93,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
               } else if (formData.docNum === '' && (formData.dateType !== '' && formData.dateType ||
                   formData.fini !== '' && formData.fini ||
                   formData.ffin !== '' && formData.ffin ||
-                  formData.status !== '' && formData.status || formData.qfb !== '' && formData.qfb)) {
+                  formData.status !== '' && formData.status ||
+                  formData.qfb !== '' && formData.qfb ||
+                  formData.productCode !== '' && formData.productCode)) {
                   this.changeValidatorsForDocNum();
               }
           }
@@ -98,7 +106,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   }
 
   searchOrders() {
-      this.dialogRef.close(this.findOrdersForm.value);
+      this.dialogRef.close({...this.findOrdersForm.value, isFromOrders: this.filterData.filterOrdersData.isFromOrders});
   }
 
   getMaxDate() {
@@ -117,15 +125,17 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('ffin').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('productCode').disable({onlySelf: true, emitEvent: false});
   }
   getDisableOnlyForDocNum() {
       this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
   }
   resetParamsValue() {
-      this.findOrdersForm.get('dateType').setValue('0');
+      this.findOrdersForm.get('dateType').setValue(ConstOrders.defaultDateInit);
       this.findOrdersForm.get('docNum').setValue('');
       this.findOrdersForm.get('qfb').setValue( '' );
       this.findOrdersForm.get('status').setValue('');
+      this.findOrdersForm.get('productCode').setValue('');
   }
   enableAllParamsSearch() {
       this.getDisableForDocNum();
@@ -137,6 +147,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('docNum').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('productCode').enable({onlySelf: true, emitEvent: false});
   }
   changeValidatorsForDocNum() {
       this.isToResetData = true;
@@ -148,7 +159,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     keyDownFunction(event: KeyboardEvent) {
-        if (event.key === MODAL_FIND_ORDERS.keyEnter) {
+        if (event.key === MODAL_FIND_ORDERS.keyEnter && ((this.findOrdersForm.get('docNum').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('docNum').value !== null) || (this.findOrdersForm.get('productCode').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('productCode').value !== null))) {
             this.searchOrders();
       }
     }

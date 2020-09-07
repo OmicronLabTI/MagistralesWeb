@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Security.Cryptography.X509Certificates;
+    using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
     /// dao for pedidos
@@ -186,5 +187,52 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             return await this.databaseContext.UserOrderSignatureModel.FirstOrDefaultAsync(x => x.UserOrderId.Equals(userOrderId));
         }
+
+        /// <summary>
+        /// Insert new custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> InsertCustomComponentList(CustomComponentListModel customComponentList)
+        {
+            this.databaseContext.CustomComponentLists.Add(customComponentList);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Insert new components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<bool> InsertComponentsOfCustomList(List<ComponentCustomComponentListModel> components)
+        {
+            this.databaseContext.ComponentsCustomComponentLists.AddRange(components);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+
+        /// <summary>
+        /// Get all custom component lists for product id.
+        /// </summary>
+        /// <param name="productId">Te product id.</param>
+        /// <returns>Related lists.</returns>
+        public async Task<List<CustomComponentListModel>> GetCustomComponentListByProduct(string productId)
+        {
+            return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId)).ToListAsync();
+        }
+
+
+        /// <summary>
+        /// Get all component for custom list id.
+        /// </summary>
+        /// <param name="customListId">Te custom list id.</param>
+        /// <returns>Related components.</returns>
+        public async Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId)
+        {
+            return await this.databaseContext.ComponentsCustomComponentLists.Where(x => x.CustomListId.Equals(customListId)).ToListAsync();
+        }
     }
 }
+

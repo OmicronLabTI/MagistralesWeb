@@ -9,11 +9,10 @@
 namespace Omicron.Usuarios.Api.Controllers
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json;
     using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Facade.Catalogs.Users;
@@ -28,13 +27,10 @@ namespace Omicron.Usuarios.Api.Controllers
     {
         private readonly IUserFacade userFacade;
 
-        private readonly IDatabase database;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userFacade">User Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
         public UsersController(IUserFacade userFacade)
         {
             this.userFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));

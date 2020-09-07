@@ -9,7 +9,6 @@ export const environment = {
     apiLogin: '/api/oauth/oauthrs',
     apiCatalogs: '/api/catalogos',
     apiUsers: '/api/usuarios',
-
 };
 
 /*

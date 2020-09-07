@@ -12,7 +12,6 @@ namespace Omicron.SapAdapter.Test
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.User;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -22,22 +21,6 @@ namespace Omicron.SapAdapter.Test
     /// </summary>
     public abstract class BaseTest
     {
-        /// <summary>
-        /// Gets user Dto.
-        /// </summary>
-        /// <returns>the user.</returns>
-        public UserDto GetUserDto()
-        {
-            return new UserDto
-            {
-                Id = 10,
-                FirstName = "Jorge",
-                LastName = "Morales",
-                Email = "test@test.com",
-                Birthdate = DateTime.Now,
-            };
-        }
-
         /// <summary>
         /// Return the asesor.
         /// </summary>
