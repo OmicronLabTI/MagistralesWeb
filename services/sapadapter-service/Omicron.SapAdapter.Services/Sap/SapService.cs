@@ -215,6 +215,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
+                    DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
                     HasBatches = batches.Any(y => y.LotesAsignados.Any()),
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
