@@ -44,7 +44,7 @@ class LoginTest: XCTestCase {
     }
     
     func testLoginService() -> Void {
-        let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "")
+        let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "", origin: "")
         let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY3MzM1NTgsInVzZXIiOiJzZXJnaW8ifQ.W9kstVRF9qm_s2diVt-Ki0xb4FwkXIA0QtEFSDAlXCM"
             self.networkManager.login(data: (data)).subscribe(onNext: { res in
             XCTAssertNotNil(res.access_token)
