@@ -65,5 +65,25 @@ namespace Omicron.Pedidos.Test.Facade.Request
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateRawMaterialRequest()
+        {
+            // arrange
+            var requests = AutoFixtureProvider.Create<List<RawMaterialRequestDto>>();
+            var imageData = File.ReadAllText("SignatureBase64.txt");
+            requests.ForEach(x => x.Signature = imageData);
+
+            // act
+            var response = await this.requestFacade.UpdateRawMaterialRequest("userId", requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

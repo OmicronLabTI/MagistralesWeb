@@ -27,6 +27,14 @@ namespace Omicron.Pedidos.Services.Request
         Task<ResultModel> CreateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
 
         /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="requests">Requests data.</param>
+        /// <returns>List with successfuly and failed updates.</returns>
+        Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
+
+        /// <summary>
         /// Get a raw material request for production order id.
         /// </summary>
         /// <param name="productionOrderId">The production order id.</param>

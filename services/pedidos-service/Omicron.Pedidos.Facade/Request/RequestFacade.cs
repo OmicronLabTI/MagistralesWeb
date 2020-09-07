@@ -46,5 +46,16 @@ namespace Omicron.Pedidos.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.requestService.CreateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
         }
+
+        /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="requests">Requests data.</param>
+        /// <returns>List with successfuly and failed updates.</returns>
+        public async Task<ResultDto> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests)
+        {
+            return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
+        }
     }
 }

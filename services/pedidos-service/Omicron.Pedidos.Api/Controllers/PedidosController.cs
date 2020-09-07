@@ -416,6 +416,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Update a raw material request.
+        /// </summary>
+        /// <param name="requests">New request to add.</param>
+        /// <returns>List with successfuly and failed creations.</returns>
+        [HttpPut]
+        [Route("/request/rawmaterial")]
+        public async Task<IActionResult> UpdateRawMaterialRequest(UserActionDto<List<RawMaterialRequestDto>> requests)
+        {
+            var response = await this.requestFacade.UpdateRawMaterialRequest(requests.UserId, requests.Data);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

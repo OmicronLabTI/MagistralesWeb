@@ -45,6 +45,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Request
         }
 
         /// <summary>
+        /// Method for update raw material request
+        /// </summary>
+        /// <param name="request">Request to update.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> UpdateRawMaterialRequest(RawMaterialRequestModel request)
+        {
+            this.databaseContext.RawMaterialRequests.Update(request);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// Method for add detail of raw material request.
         /// </summary>
         /// <param name="detail">Raw material request detail to add.</param>
@@ -52,6 +64,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Request
         public async Task<bool> InsertDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail)
         {
             await this.databaseContext.RawMaterialRequestDetails.AddRangeAsync(detail);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Method for update detail of raw material request.
+        /// </summary>
+        /// <param name="detail">Raw material request detail to update.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> UpdateDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail)
+        {
+            this.databaseContext.RawMaterialRequestDetails.UpdateRange(detail);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
