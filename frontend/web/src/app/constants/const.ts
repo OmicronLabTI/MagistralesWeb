@@ -6,7 +6,8 @@ export const CONST_NUMBER = {
     five: 5,
     ten: 10,
     timeToast: 2000,
-    nulo: null
+    nulo: null,
+    six: 6,
 };
 export const CONST_STRING = {
     empty: ''
@@ -42,7 +43,8 @@ export enum HttpServiceTOCall {
     DETAIL_ORDERS,
     USERS,
     DETAIL_FORMULA,
-    ORDERS_ISOLATED
+    ORDERS_ISOLATED,
+    PRODUCTIVITY
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',

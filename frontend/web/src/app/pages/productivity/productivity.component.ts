@@ -4,49 +4,12 @@ import { Title } from '@angular/platform-browser';
 import { MatTableDataSource} from '@angular/material';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { IProductivityReq } from 'src/app/model/http/productivity';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Chart } from 'chart.js';
-import { Colors } from 'src/app/constants/const';
-
-const ELEMENT_DATA: string[][] = [
-  [
-    '-',
-    'julio',
-    'agosto',
-    'septiembre'
-  ],
-  [
-    'Armando Hoyos',
-    '12',
-    '13',
-    '14'
-  ],
-  [
-    'Carlos Espejel',
-    '15',
-    '16',
-    '17'
-  ],
-  [
-    'Fulano Perez',
-    '18',
-    '19',
-    '20'
-  ],
-  [
-    'Jaimito Luna',
-    '21',
-    '22',
-    '23'
-  ],
-  [
-    'Luis Mejia',
-    '24',
-    '25',
-    '26'
-  ]
-];
+import { Colors, CONST_STRING, HttpStatus, MODAL_FIND_ORDERS, CONST_NUMBER, HttpServiceTOCall } from 'src/app/constants/const';
+import { ProductivityService } from 'src/app/services/productivity.service';
+import {ParamsPedidos} from '../../model/http/pedidos';
+import { ErrorHttpInterface } from 'src/app/model/http/commons';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-productivity',
@@ -58,35 +21,67 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   dataSourceDetails: string[][];
   dataSource = new MatTableDataSource<string[]>();
   colors = Colors;
+  queryString = CONST_STRING.empty;
+  today = new Date();
+  minDate = new Date();
+  maxDate = new Date();
+  productivityForm: FormGroup;
+  fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
   @ViewChild('productivityChart', {static: false}) productivityChart: ElementRef;
   constructor(
     private titleService: Title,
     private dataService: DataService,
-    private errorService: ErrorService
-  ) { }
+    private errorService: ErrorService,
+    private productivityService: ProductivityService,
+    private formBuilder: FormBuilder,
+  ) {
+    this.productivityForm = this.formBuilder.group({
+      fini: ['', []],
+      ffin: ['', []],
+    });
+    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY)
+  }
 
   ngOnInit() {
-    //let productivityChart = document.getElementById('productivityChart');
   }
 
   ngAfterViewInit() {
-    console.log("hola: ", this.productivityChart.nativeElement);
+    const initDateTrans = this.fullDate[0].split('/');
+    const finishDateTrans = this.fullDate[1].split('/');
+    this.productivityForm.get('fini').setValue(new Date(`${initDateTrans[1]}/${initDateTrans[0]}/${initDateTrans[2]}`));
+    this.productivityForm.get('ffin').setValue(new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`));
+    this.minDateIni(this.today, false);
     this.getProductivityData();
   }
 
   getProductivityData() {
-    this.dataSourceDetails = ELEMENT_DATA;
-    this.dataSource.data = ELEMENT_DATA.filter(element => ELEMENT_DATA.indexOf(element) > 0);
-    this.monthColumns = this.dataSourceDetails[0];
-    this.chartObject(ELEMENT_DATA);
+    this.queryString = `?ffin=${this.dataService.getDateFormatted(
+      this.productivityForm.get('fini').value,
+      this.productivityForm.get('ffin').value,
+      false,
+      false
+    )}`;
+    this.productivityService.getProductivity(this.queryString).subscribe(
+      productivityRes => {
+        this.dataSourceDetails = productivityRes.response.matrix;
+        this.dataSource.data = productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0);
+        this.monthColumns = this.dataSourceDetails[0];
+        this.chartObject(productivityRes.response.matrix);
+      }, (error: ErrorHttpInterface) => {
+      if (error.status !== HttpStatus.notFound) {
+        this.errorService.httpError(error);
+      }
+      this.dataSource.data = [];
+    }
+    );
   }
 
   chartObject(datos) {
-    let barChartData = {
+    const barChartData = {
       labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
       datasets: this.dataSets(this.dataSource.data)
     };
-    let myChart = new Chart(this.productivityChart.nativeElement, {
+    const myChart = new Chart(this.productivityChart.nativeElement, {
       type: 'bar',
       data: barChartData,
       options: {
@@ -94,6 +89,14 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
           yAxes: [{
             ticks: {
               beginAtZero: true
+            },
+            gridLines: {
+              color: 'rgba(0, 0, 0, 0)',
+            }
+          }],
+          xAxes: [{
+            gridLines: {
+              color: 'rgba(0, 0, 0, 0)',
             }
           }]
         }
@@ -117,4 +120,14 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     return dataSet;
   }
 
+  minDateIni(fecha: Date, getData = true) {
+    this.minDate = new Date(
+      fecha.getFullYear(),
+      fecha.getMonth() - CONST_NUMBER.six,
+      fecha.getDate()
+    );
+    if (getData){
+      this.getProductivityData();
+    }
+  }
 }
