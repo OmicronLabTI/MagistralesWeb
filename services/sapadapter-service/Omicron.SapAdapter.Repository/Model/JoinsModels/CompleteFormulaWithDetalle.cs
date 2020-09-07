@@ -160,6 +160,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public bool HasBatches { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DestinyAddress { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>

@@ -191,7 +191,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
 
-            await this.pedidosDao.UpdateUserOrders(orders);
+            await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
