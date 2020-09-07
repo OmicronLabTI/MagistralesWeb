@@ -7,9 +7,9 @@ import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
 import { Colors, CONST_STRING, HttpStatus, MODAL_FIND_ORDERS, CONST_NUMBER, HttpServiceTOCall } from 'src/app/constants/const';
 import { ProductivityService } from 'src/app/services/productivity.service';
-import {ParamsPedidos} from '../../model/http/pedidos';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-productivity',
@@ -22,9 +22,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<string[]>();
   colors = Colors;
   queryString = CONST_STRING.empty;
-  today = new Date();
-  minDate = new Date();
-  maxDate = new Date();
+  today: Date;
+  minDate: Date;
   productivityForm: FormGroup;
   fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
   @ViewChild('productivityChart', {static: false}) productivityChart: ElementRef;
@@ -34,6 +33,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     private errorService: ErrorService,
     private productivityService: ProductivityService,
     private formBuilder: FormBuilder,
+    private cdRef: ChangeDetectorRef,
   ) {
     this.productivityForm = this.formBuilder.group({
       fini: ['', []],
@@ -46,11 +46,14 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.today = new Date();
+    this.minDate = new Date();
     const initDateTrans = this.fullDate[0].split('/');
     const finishDateTrans = this.fullDate[1].split('/');
     this.productivityForm.get('fini').setValue(new Date(`${initDateTrans[1]}/${initDateTrans[0]}/${initDateTrans[2]}`));
     this.productivityForm.get('ffin').setValue(new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`));
     this.minDateIni(this.today, false);
+    this.cdRef.detectChanges();
     this.getProductivityData();
   }
 
