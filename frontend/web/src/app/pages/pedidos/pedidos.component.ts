@@ -5,9 +5,8 @@ import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_NUMBER,
-  CONST_STRING, ConstStatus,
+  CONST_STRING, ConstOrders, ConstStatus,
   HttpServiceTOCall, HttpStatus, MessageType,
-  MODAL_FIND_ORDERS,
   MODAL_NAMES,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
@@ -15,7 +14,6 @@ import {ErrorService} from '../../services/error.service';
 import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
-import {FindOrdersDialogComponent} from '../../dialogs/find-orders-dialog/find-orders-dialog.component';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
@@ -38,7 +36,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
@@ -56,22 +53,27 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private titleService: Title
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
-    this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
-    this.filterDataOrders.dateType = '0';
-    this.filterDataOrders.dateFull = this.rangeDate;
-    this.queryString = `?fini=${this.rangeDate}`;
+    this.filterDataOrders.isFromOrders = true;
+    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
     this.getFullQueryString();
   }
 
   ngOnInit() {
-    this.subscriptionCallHttp = this.dataService.getCallHttpService().subscribe(callHttpService => {
-      if (callHttpService === HttpServiceTOCall.ORDERS) {
-        this.getPedidos();
-      }
-    });
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.getPedidos();
     this.dataSource.paginator = this.paginator;
+    this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
+      if (callHttpService === HttpServiceTOCall.ORDERS) {
+        this.getPedidos();
+      }
+    }));
+    this.subscriptionCallHttp.add(this.dataService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
+      if (resultSearchOrderModal.isFromOrders) {
+        this.onSuccessSearchOrderModal(resultSearchOrderModal);
+      }
+    }));
   }
 
   getPedidos() {
@@ -165,73 +167,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     return event;
   }
   openFindOrdersDialog() {
-    const dialogRef = this.dialog.open(FindOrdersDialogComponent, {
-      panelClass: 'custom-dialog-container',
-      data: {
-        modalType: 'orders',
-        filterOrdersData: this.filterDataOrders
-      }
-    });
-    dialogRef.afterClosed().subscribe((result: ParamsPedidos) => {
-      if (result) {
-        this.filterDataOrders = new  ParamsPedidos();
-        this.pageIndex = 0;
-        this.offset = 0;
-        this.limit = 10;
-      }
-      if (result.docNum) {
-        this.filterDataOrders.docNum = result.docNum;
-        this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-        this.queryString = `?docNum=${result.docNum}`;
-      } else {
-        if (result.dateType) {
-          this.filterDataOrders.dateType = result.dateType;
-          this.rangeDate = this.getDateFormatted(result.fini, result.ffin, false);
-          if ( result.dateType === '0') {
-            this.isDateInit = true;
-            this.queryString = `?fini=${this.rangeDate}`;
-          } else {
-            this.isDateInit = false;
-            this.queryString = `?ffin=${this.rangeDate}`;
-          }
-          this.filterDataOrders.dateFull = this.rangeDate;
-       }
-        if (result.status !== '' && result.status) {
-          this.queryString = `${this.queryString}&status=${result.status}`;
-          this.filterDataOrders.status = result.status;
-        }
-        if (result.qfb !== '' && result.qfb) {
-          this.queryString = `${this.queryString}&qfb=${result.qfb}`;
-          this.filterDataOrders.qfb = result.qfb;
-        }
-      }
-      if ((result && result.dateType === '0') && (result && result.status === '' || result.qfb === '')) {
-        this.isSearchWithFilter = false;
-      }
-      if ((result && result.dateType === '0') && (result && result.status !== '' || result.qfb !== '')) {
-         this.isSearchWithFilter = true;
-      }
-      if ((result && result.dateType === '1') && (result && result.status !== '' || result.qfb !== '')) {
-        this.isSearchWithFilter = true;
-      }
-      if ((result && result.dateType === '1') && (result && result.status === '' || result.qfb === '')) {
-        this.isSearchWithFilter = true;
-      }
-      if (result && result.docNum !== '') {
-        this.isSearchWithFilter = true;
-      }
-      this.getFullQueryString();
-      if (result) {
-        this.getPedidos();
-      }
-    });
-  }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
-    if (isBeginDate) {
-      initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
-    }
-    return `${this.dataService.transformDate(initDate)}-${this.dataService.transformDate(finishDate)}`;
-  }
+    this.dataService.setSearchOrdersModal({modalType: ConstOrders.modalOrders, filterOrdersData: this.filterDataOrders });
+ }
 
   openPlaceOrdersDialog() {
     this.dataService.setQbfToPlace(
@@ -241,10 +178,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
+    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
     this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
     this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
     this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
-    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
   }
   getIsThereOnData(status: string, isFromCancelOrder = false) {
     if (!isFromCancelOrder) {
@@ -279,5 +216,17 @@ export class PedidosComponent implements OnInit, OnDestroy {
         finalizeOrder.orderId = order.docNum;
         return finalizeOrder;
       }), cancelType: MODAL_NAMES.placeOrders});
+  }
+
+  private onSuccessSearchOrderModal(resultSearchOrderModal: ParamsPedidos) {
+    this.isDateInit = resultSearchOrderModal.dateType === ConstOrders.defaultDateInit;
+    this.pageIndex = 0;
+    this.offset = 0;
+    this.limit = 10;
+    this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
+    this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
+    this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
+    this.getFullQueryString();
+    this.getPedidos();
   }
 }

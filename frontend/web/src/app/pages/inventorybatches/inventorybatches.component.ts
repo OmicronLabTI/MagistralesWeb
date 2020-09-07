@@ -214,19 +214,27 @@ export class InventorybatchesComponent implements OnInit {
 
   deleteDetails(element?: ILotesAsignadosReq){
     if (element !== undefined) {
+      let tomarEnCuenta = false;
       this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
         if (ele.numeroLote === element.numeroLote) {
           ele.action = CONST_DETAIL_FORMULA.delete;
-          ele.noidb = BOOLEANS.verdadero;
+          if (ele.noidb === undefined || ele.noidb === false){
+            tomarEnCuenta = true;
+          } else {
+            tomarEnCuenta = false;
+            return;
+          }
         }
       });
-      this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push({
-        numeroLote: element.numeroLote,
-        noidb: BOOLEANS.verdadero,
-        sysNumber: element.sysNumber,
-        cantidadSeleccionada: element.cantidadSeleccionada,
-        action: CONST_DETAIL_FORMULA.delete
-      });
+      if (tomarEnCuenta){
+        this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push({
+          numeroLote: element.numeroLote,
+          noidb: BOOLEANS.falso,
+          sysNumber: element.sysNumber,
+          cantidadSeleccionada: element.cantidadSeleccionada,
+          action: CONST_DETAIL_FORMULA.delete
+        });
+      }
     }
     return false;
   }
@@ -274,8 +282,8 @@ export class InventorybatchesComponent implements OnInit {
     const ordenFabricacionId = this.ordenFabricacionId;
     this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null){
-        element.lotesSeleccionados.forEach(lote => {
-          if (lote.noidb)
+        element.lotesSeleccionados.forEach((lote, index) => {
+          if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert))
           {
             const objectSAP: ILotesToSaveReq = {
               orderId: parseInt(ordenFabricacionId),
@@ -283,7 +291,7 @@ export class InventorybatchesComponent implements OnInit {
               assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
               action: lote.action,
               batchNumber: lote.numeroLote
-            }
+            };
             objectToSave.push(objectSAP);
           }
         });

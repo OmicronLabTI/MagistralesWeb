@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.13.0" />
+    <PackageReference Include="AutoFixture.NUnit3" Version="4.13.0" />
     <PackageReference Include="coverlet.msbuild" Version="2.9.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Omicron.Pedidos.Api\Omicron.Pedidos.Api.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Facade\Omicron.Pedidos.Facade.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Repository\Omicron.Pedidos.Entities.csproj" />
     <ProjectReference Include="..\..\Omicron.Pedidos.Services\Omicron.Pedidos.Services.csproj" />

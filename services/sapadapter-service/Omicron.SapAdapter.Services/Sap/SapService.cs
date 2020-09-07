@@ -13,12 +13,14 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
@@ -35,17 +37,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IUsersService usersService;
 
+        private readonly IConfiguration configuration;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
         /// <param name="pedidosService">the pedidosservice.</param>
         /// <param name="userService">user service.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService)
+        /// <param name="configuration">App configuration.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -58,7 +64,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
-            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList());
+            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
 
@@ -85,13 +91,14 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(docId);
 
-            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId });
+            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
 
             var listUsers = await this.GetUsers(userOrders);
 
             details.ToList().ForEach(x =>
             {
+                var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
                 userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
                 var userId = userOrder.Userid;
@@ -100,7 +107,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = x.Status.Equals(ServiceConstants.Terminado) ? userOrder.FinishDate : string.Empty;
+                x.FechaOfFin = userOrder.FinishDate;
+                x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
@@ -162,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
-            var result = await this.pedidosService.GetFabricationOrders(ordenFab.Select(x => x.OrdenId).ToList());
+            var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
 
             foreach (var o in ordenFab)
@@ -173,9 +181,13 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId)).FirstOrDefault();
+                o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
+                var batchesCall = await this.GetBatchesComponents(o.OrdenId);
+                var batches = (List<BatchesComponentModel>)batchesCall.Response;
+
+                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
-                var userOrder = userOrders.Where(x => x.Productionorderid.Equals(o.OrdenId.ToString())).FirstOrDefault();
+                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
 
@@ -190,20 +202,21 @@ namespace Omicron.SapAdapter.Services.Sap
                     PlannedQuantity = (int)o.Quantity,
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
-                    Number = o.PedidoId,
-                    FabDate = o.CreatedDate.ToString("dd/MM/yyyy"),
+                    Number = o.PedidoId.Value,
+                    FabDate = o.CreatedDate.Value.ToString("dd/MM/yyyy"),
                     DueDate = o.DueDate.HasValue ? o.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     User = dictUser[o.User],
                     Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
-                    BaseDocument = o.PedidoId,
+                    BaseDocument = o.PedidoId.Value,
                     Client = o.CardCode,
                     CompleteQuantity = (int)o.CompleteQuantity,
                     RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
                     Comments = comments,
+                    HasBatches = batches.Any(y => y.LotesAsignados.Any()),
                     Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
                 };
 
@@ -256,6 +269,28 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Get products management by batches with criterials.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetProductsManagmentByBatch(Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                throw new CustomServiceException(ServiceConstants.NoChipsError);
+            }
+
+            var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
+            var items = await this.sapDao.GetProductsManagmentByBatch(chipValues);
+
+            parameters.TryGet<string, string, int>(ServiceConstants.Offset, 0, out int offset);
+            parameters.TryGet<string, string, int>(ServiceConstants.Limit, 1, out int limit);
+
+            var itemsToReturn = items.Skip(offset).Take(limit).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, itemsToReturn, null, items.Count);
+        }
+
+        /// <summary>
         /// Get the components managed by batches.
         /// </summary>
         /// <param name="ordenId">the ordenid.</param>
@@ -275,12 +310,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
                 double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
 
+                totalNecesario = Math.Round(totalNecesario, 6);
+                doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
+
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = x.Warehouse,
                     CodigoProducto = x.ProductId,
                     DescripcionProducto = x.Description,
-                    TotalNecesario = totalNecesario - doubleTotalBathches,
+                    TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
                     TotalSeleccionado = doubleTotalBathches,
                     Lotes = lotes,
                     LotesAsignados = batches,
@@ -288,6 +326,93 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        /// <summary>
+        /// Get last id of isolated production order created.
+        /// </summary>
+        /// <param name="productId">the product id.</param>
+        /// <param name="uniqueId">the unique record id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
+        {
+            var lastId = await this.sapDao.GetlLastIsolatedProductionOrderId(productId, uniqueId);
+            return ServiceUtils.CreateResult(true, 200, null, lastId, null, null);
+        }
+
+        /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetNextBatchCode(string productCode)
+        {
+            var max = 0;
+            var batchCodePrefix = this.configuration["SapOmicron:BatchCodes:prefix"];
+            var batchCodeNumberPositions = int.Parse(this.configuration["SapOmicron:BatchCodes:numberPositions"]);
+            var batchCodePattern = batchCodePrefix.Concat("[0-9]", batchCodeNumberPositions);
+            var maxBatchCode = await this.sapDao.GetMaxBatchCode(batchCodePattern, productCode);
+
+            if (!string.IsNullOrEmpty(maxBatchCode))
+            {
+                var startIndex = maxBatchCode.IndexOf('-') + 1;
+                var endIndex = maxBatchCode.Length;
+                var codeNumber = maxBatchCode.Substring(startIndex, endIndex - startIndex);
+                max = int.Parse(codeNumber);
+            }
+
+            max += 1;
+
+            var nextCode = $"{batchCodePrefix}{max.ToString().PadLeft(batchCodeNumberPositions, '0')}";
+            return ServiceUtils.CreateResult(true, 200, null, nextCode, null, null);
+        }
+
+        /// <summary>
+        /// Gets the ordersby the filter.
+        /// </summary>
+        /// <param name="orderFabModel">the params.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
+        {
+            var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
+
+            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
+                orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
+                orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
+            {
+                var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
+                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
+            }
+
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            var total = dataBaseOrders.Count;
+
+            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Offset) && orderFabModel.Filters.ContainsKey(ServiceConstants.Limit))
+            {
+                var offset = orderFabModel.Filters[ServiceConstants.Offset];
+                var limit = orderFabModel.Filters[ServiceConstants.Limit];
+
+                int.TryParse(offset, out int offsetNumber);
+                int.TryParse(limit, out int limitNumber);
+
+                var orderToReturnSkip = dataBaseOrders.Skip(offsetNumber).Take(limitNumber).ToList();
+                return ServiceUtils.CreateResult(true, 200, null, orderToReturnSkip, null, total);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dataBaseOrders, null, total);
+        }
+
+        /// <summary>
+        /// Gets the orderd by id.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabOrdersById(List<int> ordersId)
+        {
+            var orders = (await this.sapDao.GetFabOrderById(ordersId)).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
         }
 
         /// <summary>
@@ -322,7 +447,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
         {
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs);
+            var users = await this.usersService.GetUsersById(userIDs, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
 
@@ -345,7 +470,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     SysNumber = x.SysNumber,
                     NumeroLote = x.DistNumber,
                     CantidadAsignada = x.CommitQty,
-                    CantidadDisponible = x.Quantity - x.CommitQty,
+                    CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
                 });
             });
 
@@ -363,7 +488,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
-            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Where(y => y.DocQuantity > 0).Last();
+            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0);
 
             if (lastTransaction == null)
             {
