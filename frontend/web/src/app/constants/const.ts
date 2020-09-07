@@ -72,7 +72,7 @@ export const ConstStatus = {
     pendiente: 'Pendiente',
     asignado: 'Asignado',
     terminado: 'Terminado',
-    reasingado: 'Reasingado',
+    reasingado: 'Reasignado',
 };
 export const HttpStatus = {
     ok: 200,

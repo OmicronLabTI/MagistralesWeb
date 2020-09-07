@@ -25,11 +25,10 @@
         </button>
         &nbsp;
         &nbsp;
-        <!--<button mat-stroked-button color="primary">
+        <button [disabled]="!isThereOrdersDetailToReassign" mat-raised-button [ngClass]="isThereOrdersDetailToReassign ? 'button-blue' : 'disable-button'" (click)="reassignOrderDetail()">
           &nbsp; Reasignar &nbsp; 
         </button>
-        &nbsp;
-        &nbsp;-->
+
         <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'" (click)="finalizeOrdersDetail()">
           &nbsp; Finalizar &nbsp; 
         </button>

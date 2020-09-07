@@ -58,4 +58,5 @@ export  class QfbWithNumber {
     list?: number[];
     assignType?: string;
     isFromOrderIsolated?: boolean;
+    isFromReassign?: boolean;
 }

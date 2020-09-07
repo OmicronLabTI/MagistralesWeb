@@ -116,10 +116,15 @@ export class AppComponent implements OnDestroy , OnInit {
   }
 
   onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
+      console.log('obApp: ', qfbToPlace)
     if (qfbToPlace.userId) {
       this.dataService.presentToastCustom(
-          qfbToPlace.modalType === MODAL_NAMES.placeOrders ? `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
-              `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?`,
+          qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
+              `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
+              `${Messages.reassignOrder} ${qfbToPlace.userName} ?` :
+              !qfbToPlace.isFromReassign ?
+                  `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?` :
+                  `${Messages.reassignOrderDetail} ${qfbToPlace.userName} ?`,
           'question',
           CONST_STRING.empty,
           true, true)
@@ -130,7 +135,7 @@ export class AppComponent implements OnDestroy , OnInit {
                 placeOrder.userId = qfbToPlace.userId;
                 placeOrder.docEntry = qfbToPlace.list;
                 placeOrder.orderType = qfbToPlace.modalType;
-                this.pedidosService.postPlaceOrders( placeOrder).subscribe( resPlaceManual => {
+                this.pedidosService.postPlaceOrders( placeOrder, qfbToPlace.isFromReassign).subscribe( resPlaceManual => {
                     this.onSuccessPlaceOrdersHttp(resPlaceManual, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
                     }, error => this.errorService.httpError(error));
             } else {
@@ -202,7 +207,8 @@ export class AppComponent implements OnDestroy , OnInit {
 
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string, isFromOrderIsolated: boolean) {
-      if (resPlaceOrders.success && resPlaceOrders.response.length > CONST_NUMBER.zero) {
+      console.log('response reassign: ', resPlaceOrders)
+      if (resPlaceOrders.success && resPlaceOrders.response !== null && resPlaceOrders.response.length > CONST_NUMBER.zero) {
           const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
           this.callHttpAboutModalFrom(modalType, isFromOrderIsolated);
           this.dataService.presentToastCustom(titleItemsWithError, 'error',

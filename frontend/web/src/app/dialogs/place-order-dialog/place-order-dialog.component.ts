@@ -18,7 +18,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public placeData: any, private dataService: DataService) {
-        console.log('dataReceive: ', this.placeData.placeOrdersData.isFromOrderIsolated);
+        console.log('dataReceive: ', this.placeData.placeOrdersData);
         if (this.placeData.placeOrdersData) {
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
         }
@@ -40,7 +40,8 @@ export class PlaceOrderDialogComponent implements OnInit {
   placeOrder(userId: string, userName: string) {
    this.dataService.setQbfToPlace({userId, userName,
       modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list,
-       assignType: MODAL_NAMES.assignManual, isFromOrderIsolated: this.placeData.placeOrdersData.isFromOrderIsolated});
+       assignType: MODAL_NAMES.assignManual, isFromOrderIsolated: this.placeData.placeOrdersData.isFromOrderIsolated,
+       isFromReassign: this.placeData.placeOrdersData.isFromReassign});
    this.dialogRef.close();
   }
 

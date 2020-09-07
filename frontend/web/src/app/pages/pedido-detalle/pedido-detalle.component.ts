@@ -48,6 +48,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   detailsOrderToProcess = new ProcessOrdersDetailReq();
   isThereOrdersDetailToCancel = false;
   isThereOrdersDetailToFinalize = false;
+  isThereOrdersDetailToReassign = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService) {
@@ -98,6 +99,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
         this.isThereOrdersDetailToFinalize = false;
+        this.isThereOrdersDetailToReassign = false;
       }, error => this.errorService.httpError(error));
   }
 
@@ -135,6 +137,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
                                                                            FromToFilter.fromDefault);
     this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
+    this.isThereOrdersDetailToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+        FromToFilter.fromOrderIsolatedReassign);
   }
   ngOnDestroy() {
     this.subscriptionCallHttpDetail.unsubscribe();
@@ -185,5 +189,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         cancelOrder.orderId = order.ordenFabricacionId;
         return cancelOrder;
       }), cancelType: MODAL_NAMES.placeOrdersDetail});
+  }
+
+  reassignOrderDetail() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+          FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
+      , isFromReassign: true});
   }
 }
