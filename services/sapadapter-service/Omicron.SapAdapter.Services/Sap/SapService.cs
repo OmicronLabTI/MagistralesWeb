@@ -471,6 +471,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     NumeroLote = x.DistNumber,
                     CantidadAsignada = x.CommitQty,
                     CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
+                    FechaExp = x.FechaExp,
                 });
             });
 
