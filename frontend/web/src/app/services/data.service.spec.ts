@@ -77,11 +77,11 @@ describe('DataService', () => {
       expect(resultQfbToPlace.userName).toEqual('name');
       expect(resultQfbToPlace.list).toEqual([1, 20]);
       expect(resultQfbToPlace.assignType).toEqual('manual');
-      expect(resultQfbToPlace.countTotal).toEqual(2);
+      expect(resultQfbToPlace.countTotalPieces).toEqual(2);
       expect(resultQfbToPlace.modalType).toEqual('Pedido');
     });
     service.setQbfToPlace({userId: 'userId', list: [1, 20], userName: 'name',
-      assignType: 'manual', countTotal: 2, modalType: 'Pedido'});
+      assignType: 'manual', countTotalPieces: 2, modalType: 'Pedido'});
   });
   it('should getIsLogin true', () => {
     const service: DataService = TestBed.get(DataService);
