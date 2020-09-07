@@ -371,6 +371,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// if needs the large description.
+        /// </summary>
+        public const string NeedsLargeDsc = "Ldsc";
+
+        /// <summary>
         /// const for offset.
         /// </summary>
         public const string Offset = "offset";
