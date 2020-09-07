@@ -49,6 +49,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   subscriptionCallHttp = new Subscription();
   isThereOrdersToCancel = false;
   isThereOrdersToFinalize = false;
+  isThereOrdersToReassign = false;
   pageIndex = 0;
   constructor(
     private pedidosService: PedidosService,
@@ -109,6 +110,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToPlace = false;
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
+        this.isThereOrdersToReassign = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -188,15 +190,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
     this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
+    this.isThereOrdersToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrders);
   }
-  /*getIsThereOnData(status: string, isFromCancelOrder = false) {
-    if (!isFromCancelOrder) {
-      return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
-    } else {
-      return this.dataSource.data.filter(t => (t.isChecked &&
-          (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
-    }
-  }*/
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
   }
@@ -234,5 +229,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.getPedidos();
+  }
+
+  reassignOrders() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+          FromToFilter.fromOrdersReassign).map(order => order.docNum)
+      , isFromReassign: true});
   }
 }

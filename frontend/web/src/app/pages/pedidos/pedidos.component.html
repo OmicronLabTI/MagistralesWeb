@@ -36,6 +36,10 @@
                 &nbsp; Asignar &nbsp;
             </button>
 
+            <button [disabled]="!isThereOrdersToReassign" mat-raised-button [ngClass]="isThereOrdersToReassign ? 'button-blue' : 'disable-button'" (click)="reassignOrders()">
+                &nbsp; Reasignar &nbsp;
+            </button>
+
             &nbsp;<button [disabled]="!isThereOrdersToCancel" mat-raised-button [ngClass]="isThereOrdersToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()">
                   Cancelar
             </button>

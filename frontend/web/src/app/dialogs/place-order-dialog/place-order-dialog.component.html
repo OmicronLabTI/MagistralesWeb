@@ -12,7 +12,7 @@
         <mat-card-content class="content-card-container-custom">
         <div class="options-content">
             <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button" (click)="changePlaceManual()" >Manual</button>
-            <button *ngIf="placeData.placeOrdersData.modalType === 'Pedido'"
+            <button *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && !placeData.placeOrdersData.isFromReassign"
                     mat-button class="btn-add-modal btn-manual-place btn--modal"
                     (click)="placeOrderAutomatic()"
                     >Automático</button>

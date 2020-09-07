@@ -111,6 +111,7 @@ export const ComponentSearch = {
 
 export enum FromToFilter {
     fromOrders,
+    fromOrdersReassign,
     fromOrdersCancel,
     fromDetailOrder,
     fromOrdersIsolated,

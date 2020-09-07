@@ -207,8 +207,6 @@ export class FabordersListComponent implements OnInit, OnDestroy {
                                                                       FromToFilter.fromOrderIsolatedReassign);
   }
   reAssignOrder() {
-    console.log('proccessToReAssign: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data,
-        FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId)))
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
                                 FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))

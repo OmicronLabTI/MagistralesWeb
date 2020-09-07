@@ -286,6 +286,8 @@ export class DataService {
       case FromToFilter.fromOrderIsolatedReassignItems:
         return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
             || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)));
+      case FromToFilter.fromOrdersReassign:
+        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.liberado));
     }
   }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {

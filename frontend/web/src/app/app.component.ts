@@ -116,7 +116,6 @@ export class AppComponent implements OnDestroy , OnInit {
   }
 
   onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
-      console.log('obApp: ', qfbToPlace)
     if (qfbToPlace.userId) {
       this.dataService.presentToastCustom(
           qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
@@ -207,7 +206,6 @@ export class AppComponent implements OnDestroy , OnInit {
 
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string, isFromOrderIsolated: boolean) {
-      console.log('response reassign: ', resPlaceOrders)
       if (resPlaceOrders.success && resPlaceOrders.response !== null && resPlaceOrders.response.length > CONST_NUMBER.zero) {
           const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
           this.callHttpAboutModalFrom(modalType, isFromOrderIsolated);
