@@ -21,8 +21,12 @@ class OrderDetailFormViewController:  FormViewController {
     var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
     var disposeBag = DisposeBag()
-    var baseQuantity: DecimalRow? = nil
-    var requiredQuantity: DecimalRow? = nil
+    var baseQuantity: TextRow? = nil
+    var requiredQuantity: TextRow? = nil
+    
+    
+//    var baseQuantityToSave: Decimal? = nil
+//    var requiredQuantity:Decimal? = nil
     var werehouse: PickerInlineRow<String>? = nil
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
    
@@ -38,52 +42,52 @@ class OrderDetailFormViewController:  FormViewController {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
             cell.textLabel?.textColor = .white
-            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-            cell.textLabel?.textAlignment = .right
+            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 9)
+            cell.textLabel?.textAlignment = .left
+            cell.textLabel?.numberOfLines = 2
         }
-        
+
         TextRow.defaultCellUpdate = { cell, row in
             if !row.isValid {
                 cell.titleLabel?.textColor = .red
             }
         }
         
-        let fieldShouldNotNegativeNumbers = RuleClosure<Double> { rowValue in
+        let fieldShouldNotNegativeNumbers = RuleClosure<String> { rowValue in
             let range = NSRange(location: 0, length: rowValue?.description.utf16.count ?? 0)
-            let regex = try! NSRegularExpression(pattern: "[-][0-9]{1,9}(?:.[0-9]{1,9})?$")
-            return (regex.firstMatch(in: rowValue?.description ?? "", options: [], range: range) != nil) ? ValidationError(msg: "No debe contener números negativos") : nil
+            let regex = try! NSRegularExpression(pattern: "^([0-9]+)?(\\.([0-9]{1,6})?)?$")
+            return !(regex.firstMatch(in: rowValue?.description ?? "", options: [], range: range) != nil) ? ValidationError(msg: "No se permite números negativos, caracteres o más de 6 decimas") : nil
         }
         
-        let fieldNoEmpty = RuleClosure<Double> { rowValue in
-            return rowValue == nil ? ValidationError(msg: "El campo no puede ir vacio") : nil
+        let fieldNoEmpty = RuleClosure<String> { rowValue in
+        return (rowValue == nil || rowValue!.isEmpty) ? ValidationError(msg: "El campo no puede ir vacio") : nil
         }
         
         form
               
             +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
             
-            <<< DecimalRow() {
+            <<< TextRow() {
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                $0.value = Double(self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!)
-                $0.formatter = self.formatter
+                $0.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!) : self.formatter.string(from: NSNumber(value: self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!))
                 $0.cellSetup{cell, row in
-                    row.formatter = self.formatter
-                }
-                $0.onCellSelection{ cell, row in
-                    row.formatter = self.formatter
+                    cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
-                    if (row.value != nil) {
-                        let ss = self.form.rowBy(tag: "requiredQuantity") as? DecimalRow
-                        let requiredQuantity  = Double((self.dataOfTable?.plannedQuantity)!) * row.value!
-                        ss?.value = requiredQuantity
-                        ss?.reload()
+                
+                    if (row.value != nil && self.canOperation(rowValue: row.value ?? "f")) {
+                        let requireQuantityField = self.form.rowBy(tag: "requiredQuantity") as? TextRow
+                        let baseQuantity = Decimal(string: row.value ?? "0")
+                        let requiredQuantity = Decimal(self.dataOfTable?.plannedQuantity ?? 0)
+                        let result = baseQuantity! * requiredQuantity
+                        requireQuantityField?.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+                        requireQuantityField?.reload()
                     }
                 }
                 
                 // Validaciones
-                var rules = RuleSet<Double>()
+                var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
                 $0.add(ruleSet: rules)
@@ -103,7 +107,7 @@ class OrderDetailFormViewController:  FormViewController {
                     for (index, validationMsg) in row.validationErrors.map({ $0.msg }).enumerated() {
                         let labelRow = LabelRow() {
                             $0.title = validationMsg
-                            $0.cell.height = { 30 }
+                            $0.cell.height = { 28 }
                         }
                         let indexPath = row.indexPath!.row + index + 1
                         row.section?.insert(labelRow, at: indexPath)
@@ -113,27 +117,27 @@ class OrderDetailFormViewController:  FormViewController {
                 }
             }
             
-            <<< DecimalRow() {
+            <<< TextRow() {
                 $0.title = "Cantidad requerida: "
-                $0.value = Double( self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity! )
+                $0.value =  self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity!) : self.formatter.string(from: NSNumber(value: self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity!))
                 $0.tag = "requiredQuantity"
-                $0.formatter = self.formatter
                 $0.cellSetup{cell, row in
-                    row.formatter = self.formatter
-                }
-                $0.onCellSelection{ cell, row in
-                    row.formatter = self.formatter
+                    cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
-                                   if (row.value ??  1 > 0 &&  row.value != nil ) {
-                                       let baseQuantity  =  row.value! / Double((self.dataOfTable?.plannedQuantity)!)
-                                       let ss = self.form.rowBy(tag: "baseQuantity") as? DecimalRow
-                                       ss?.value = baseQuantity
-                                       ss?.reload()
-                                   }
-                               }
+                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && self.canOperation(rowValue: row.value ?? "d")) {
+                        let requiredQuantity = Decimal(string: row.value ?? "0")
+                        let baseQuantity = Decimal((self.dataOfTable?.plannedQuantity)!)
+                        let result = requiredQuantity!  / baseQuantity
+                        let baseQuantityField = self.form.rowBy(tag: "baseQuantity") as? TextRow
+                        baseQuantityField?.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+                        baseQuantityField?.reload()
+                    }
+                }
+                
+                
                 // Validaciones
-                var rules = RuleSet<Double>()
+                var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
                 $0.add(ruleSet: rules)
@@ -144,20 +148,22 @@ class OrderDetailFormViewController:  FormViewController {
                     cell.titleLabel?.textColor = .red
                 }
             }
-            .onRowValidationChanged { cell, row in
+                        .onRowValidationChanged { cell, row in
                 let rowIndex = row.indexPath!.row
                 while row.section!.count > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
                     row.section?.remove(at: rowIndex + 1)
                 }
-                if row.isValid {
-                    for (index,  message) in row.validationErrors.map({ $0.msg }).enumerated() {
+                if !row.isValid {
+                    for (index, validationMsg) in row.validationErrors.map({ $0.msg }).enumerated() {
                         let labelRow = LabelRow() {
-                            $0.title = message
-                            $0.cell.height = { 30 }
+                            $0.title = validationMsg
+                            $0.cell.height = { 28 }
                         }
                         let indexPath = row.indexPath!.row + index + 1
                         row.section?.insert(labelRow, at: indexPath)
                     }
+                } else {
+                    row.cleanValidationErrors()
                 }
             }
             
@@ -203,7 +209,13 @@ class OrderDetailFormViewController:  FormViewController {
     }
     
     func saveChanges () {
-        self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantity!.value!, requiredQuantity: requiredQuantity!.value!, werehouse: (werehouse?.value)!)
+//        self.baseQuantity.
+        
+        if(self.canOperation(rowValue: self.baseQuantity?.value ?? "f") && self.canOperation(rowValue: (self.requiredQuantity?.value) ?? "r")) {
+            let requiredQuantityValue = Double( self.requiredQuantity?.value ?? "0.0")
+            let baseQuantityValue = Double(self.baseQuantity?.value ?? "0.0")
+            self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected, data: self.dataOfTable!, baseQuantity: baseQuantityValue ?? 0.0, requiredQuantity: requiredQuantityValue ?? 0.0, werehouse: (werehouse?.value)!)
+        }
     }
     
     func viewModelBinding () -> Void {
@@ -234,5 +246,11 @@ class OrderDetailFormViewController:  FormViewController {
     
     func refreshOrderDetail() {
         self.dismiss(animated: true)
+    }
+    
+    func canOperation(rowValue: String) -> Bool {
+        let range = NSRange(location: 0, length: rowValue.description.utf16.count)
+        let regex = try! NSRegularExpression(pattern: "^([0-9]+)?(\\.([0-9]{1,6})?)?$")
+        return regex.firstMatch(in: rowValue.description , options: [], range: range) != nil
     }
 }
