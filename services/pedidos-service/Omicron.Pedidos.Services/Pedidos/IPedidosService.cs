@@ -19,13 +19,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     public interface IPedidosService
     {
         /// <summary>
-        /// process the orders.
-        /// </summary>
-        /// <param name="pedidosId">the ids of the orders.</param>
-        /// <returns>the result.</returns>
-        Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId);
-
-        /// <summary>
         /// returns the orders ids.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
@@ -79,13 +72,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <returns>the conection.</returns>
         Task<ResultModel> ConnectDiApi();
-
-        /// <summary>
-        /// Process by order.
-        /// </summary>
-        /// <param name="processByOrder">the orders.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
 
         /// <summary>
         /// Change order status to finish.

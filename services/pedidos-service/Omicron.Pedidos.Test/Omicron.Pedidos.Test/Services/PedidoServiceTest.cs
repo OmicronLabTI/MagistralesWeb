@@ -94,44 +94,6 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task ProcessOrders()
-        {
-            // arrange
-            var process = new ProcessOrderModel
-            {
-                ListIds = new List<int> { 100 },
-                User = "abc",
-            };
-
-            var localSapAdapter = new Mock<ISapAdapter>();
-            localSapAdapter
-                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
-                .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
-
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            mockSaDiApi
-                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ResultModel()));
-
-            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
-
-            // act
-            var response = await pedidosServiceLocal.ProcessOrders(process);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// the processs.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
         public async Task GetUserOrderBySalesOrder()
         {
             // arrange
@@ -271,45 +233,6 @@ namespace Omicron.Pedidos.Test.Services
         {
             // act
             var response = await this.pedidosService.ConnectDiApi();
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// the processs.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
-        public async Task ProcessByOrder()
-        {
-            // arrange
-            var process = new ProcessByOrderModel
-            {
-                UserId = "abc",
-                ProductId = new List<string> { "Aspirina" },
-                PedidoId = 100,
-            };
-
-            var localSapAdapter = new Mock<ISapAdapter>();
-            localSapAdapter
-                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
-                .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
-
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            mockSaDiApi
-                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ResultModel()));
-
-            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
-
-            // act
-            var response = await pedidosServiceLocal.ProcessByOrder(process);
 
             // assert
             Assert.IsNotNull(response);
