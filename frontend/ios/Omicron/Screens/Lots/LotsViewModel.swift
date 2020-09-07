@@ -56,7 +56,7 @@ class LotsViewModel {
             }
             
             if let existing = self?.selectedBatches.first(where: { batch in
-                return batch.itemCode == product.codigoProducto && batch.batchNumber == available.numeroLote
+                return batch.itemCode == product.codigoProducto && batch.batchNumber == available.numeroLote && batch.action != "delete"
             }) {
                 if existing.action == nil {
                     existing.action = "delete"
@@ -112,7 +112,7 @@ class LotsViewModel {
                 return b.batchNumber == batch?.numeroLote
             }) {
                 if (existing.action != nil) {
-                    if let index = self?.selectedBatches.firstIndex(where: { $0.batchNumber == existing.batchNumber }) {
+                    if let index = self?.selectedBatches.firstIndex(where: { $0.batchNumber == existing.batchNumber && $0.action != "delete" }) {
                         self?.selectedBatches.remove(at: index)
                         let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
                         self?.dataLotsSelected.onNext(newSelected)
