@@ -111,6 +111,8 @@ struct ImageButtonNames {
     static let logout = "logout.png"
     static let addLot = "proximo.png"
     static let removeLot = "espalda.png"
+    static let similarityView = "square.grid.2x2"
+    static let normalView = "rectangle.on.rectangle"
 }
 
 struct IndicatorImageStatus {

@@ -14,6 +14,8 @@ class  InboxViewModel {
     var finishedDidTap = PublishSubject<Void>()
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
+    var normalViewDidTap = PublishSubject<Void>()
+    var similarityViewDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
     var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
@@ -46,6 +48,16 @@ class  InboxViewModel {
                 self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
             }
         }).disposed(by: disposeBag)
+        
+        self.similarityViewDidTap.subscribe(onNext: { [weak self]  _ in
+            print("Se pintó el botón para agruopar por similarydad ")
+        }).disposed(by: self.disposeBag)
+        
+        
+        self.normalViewDidTap.subscribe(onNext: { [weak self] _ in
+            print("Se pintó el botón para mostra vista normal")
+        }).disposed(by: self.disposeBag)
+        
     }
     
     func setSelection(index: Int, section: SectionOrder) -> Void {
