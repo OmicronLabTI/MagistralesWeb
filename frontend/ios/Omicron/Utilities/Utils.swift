@@ -66,6 +66,7 @@ class UtilsManager {
     func formatterDoublesTo6Decimals() ->  NumberFormatter {
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 6
+        formatter.numberStyle = .decimal
         return formatter
     }
     
