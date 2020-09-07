@@ -14,15 +14,10 @@
      {{dataService.getDetailOrderDescription()}}
     </div>
     <div class="table-toolbar">
-        <div class="table-toolbar-search">
-
-        </div>
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
-            &nbsp; Lotes &nbsp; 
+            &nbsp; Lotes
             </button>
-            &nbsp;
-            &nbsp;
             <!--<button mat-raised-button class="button-blue">
             &nbsp; Mi lista de componentes &nbsp; 
             </button>
@@ -31,18 +26,14 @@
             <button mat-raised-button class="button-blue">
             &nbsp; Crear lista de componentes &nbsp; 
             </button>-->
-            &nbsp;
-            &nbsp;
             <button mat-raised-button class="button-blue" (click)="openDialog()">
             &nbsp; Agregar componente &nbsp; 
             </button>
-            &nbsp;
-            &nbsp;
+
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
             &nbsp; Eliminar componente &nbsp; 
             </button>
-            &nbsp;
-            &nbsp;
+
             <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
             &nbsp; Guardar &nbsp; 
             </button>
@@ -192,7 +183,6 @@
                     <ng-container matColumnDef="almacen">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> ALMACÉN </th>
                     <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen">
-                       <!-- {{element.warehouse}}-->
                         <mat-form-field appearance="fill">
                         <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)">
                               <mat-option value="AMP" >
@@ -269,7 +259,6 @@
                 </ng-template>
                 <div class="comments-container">
                     <div class="title-comments">
-                        <span>Comentarios</span>
                     </div>
                     <div class="text-area-comments">
                         <textarea class="text-area-formula" cols="100" rows="12"

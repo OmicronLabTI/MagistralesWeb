@@ -161,8 +161,6 @@ body {
 
 .table-toolbar{
   width: 100%;
-  display: flex;
-  align-items: flex-end;
   margin-top: 20px;
 }
 
@@ -170,11 +168,15 @@ body {
   width: 10%;
   float: left;
 }
+.button-container {
+  margin-left: 0;
+  margin-right: 0;
+}
 
 .table-toolbar .table-toolbar-buttons{
-  width: 90%;
-  float: right;
-  text-align: right;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .table-toolbar .table-toolbar-buttons button{
@@ -184,12 +186,12 @@ body {
 .table-toolbar .table-toolbar-buttons .button-blue{
   background-color: #6C90B3 !important;
   color: #fff !important;
-  margin-left: 10px;
+  margin-left: 15px !important;
 }
 .disable-button {
   background-color: #dbdfe4 !important;
   color: #424040 !important;
-  margin-left: 10px !important;
+  margin-left: 15px !important;
 }
 
 table {

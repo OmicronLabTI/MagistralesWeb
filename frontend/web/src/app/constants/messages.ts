@@ -1,6 +1,6 @@
 export const Messages = {
   success: 'Proceso realizado con éxito',
-  generic: 'Lo sentimos, ocurrió un error inesperado',
+  generic: 'No es posible establecer conexión, intenta más tarde',
   connectionRefused: 'Ocurrió un error, no hay conexión con el servidor ',
   credentialsInvalid: 'Credenciales inválidas',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',

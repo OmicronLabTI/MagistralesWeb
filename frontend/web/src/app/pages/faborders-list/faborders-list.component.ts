@@ -81,11 +81,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrdersModal(resultSearchOrdersModal);
       }
     }));
-    this.subscriptionObservables = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
-      if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
-        this.getOrders();
-      }
-    });
+    this.subscriptionObservables.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+          if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
+            this.getOrders();
+          }
+        }));
   }
 
   updateAllComplete() {
