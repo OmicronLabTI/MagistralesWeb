@@ -66,5 +66,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string ItemCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Destiny { get; set; }
     }
 }

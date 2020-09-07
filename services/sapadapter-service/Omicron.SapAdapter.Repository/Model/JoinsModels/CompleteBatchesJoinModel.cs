@@ -8,6 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
+    using System;
+
     /// <summary>
     /// the batches join model between OTBN and OTBQ.
     /// </summary>
@@ -36,5 +38,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public int SysNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string FechaExp { get; set; }
     }
 }

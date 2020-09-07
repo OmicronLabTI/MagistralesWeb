@@ -386,6 +386,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string NuevoLeon = "Nuevo León";
+
+        /// <summary>
+        /// the foreign value.
+        /// </summary>
+        public const string Foraneo = "Foráneo";
+
+        /// <summary>
+        /// the local status.
+        /// </summary>
+        public const string Local = "Local";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
