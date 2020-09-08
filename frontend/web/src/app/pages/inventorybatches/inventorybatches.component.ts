@@ -75,6 +75,7 @@ export class InventorybatchesComponent implements OnInit {
         if (item.selected){
           item.selected = BOOLEANS.falso;
         }
+        return item;
       });
       element.selected = !element.selected;
       this.getBatchesFromSelected(element.codigoProducto);
