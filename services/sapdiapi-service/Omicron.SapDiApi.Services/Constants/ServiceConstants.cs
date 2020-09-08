@@ -69,6 +69,16 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string FindBatchCodeForItem = "SELECT TOP 1 AbsEntry FROM OBTN WHERE DistNumber = '{0}' AND ItemCode = '{1}'";
 
         /// <summary>
+        /// Select manual exit 
+        /// </summary>
+        public const string FindManualExit = "SELECT ItemCode, LineNum, PlannedQty, warehouse FROM wor1 where docentry={0} and issuetype='M'";
+
+        /// <summary>
+        /// Select batch code by item code, warehouse and quantity  
+        /// </summary>
+        public const string FindBatchCodeForIssueForProduction = "SELECT TOP 1 BatchNum FROM OIBT WHERE ItemCode = '{0}' AND ExpDate > getdate() AND Quantity > {1} AND WhsCode ='{2}' ORDER BY Quantity DESC";
+
+        /// <summary>
         /// the value to delete the conmponent.
         /// </summary>
         public const string DeleteComponent = "delete";
@@ -111,6 +121,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Fail reason.
         /// </summary>
+        public const string FailReasonNotGetExitCreated = "No se ha podido generar la entrega de componentes a producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
         public const string FailReasonProductCodeNotExists = "El producto con código {0} no existe.";
 
         /// <summary>
@@ -123,5 +138,9 @@ namespace Omicron.SapDiApi.Services.Constants
         /// </summary>
         public const string FailReasonBatchAlreadyExists = "El lote {0} ya existe para el producto {1}.";
 
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedError = "Ocurrió un error inesperado en SAP.";
     }
 }
