@@ -646,6 +646,26 @@ a.breadcrumblink:hover{
   border: 1px solid #e7515a !important;
 }
 
+.mat-stroked-button.finalizado {
+  color: red !important;
+  border: 1px solid #E7515a !important;
+}
+
+.mat-stroked-button.pdabierto {
+  color: black !important;
+  border: 1px solid black !important;
+}
+
+.mat-stroked-button.pdreasignado {
+  color: #5c1ac3 !important;
+  border: 1px solid #5c1ac3 !important;
+}
+
+.mat-stroked-button.pdfinalizado {
+  color: #8D594E !important;
+  border: 1px solid #8D594E !important;
+}
+
 .is-loading {
   width: 100%;
   height: 100%;
