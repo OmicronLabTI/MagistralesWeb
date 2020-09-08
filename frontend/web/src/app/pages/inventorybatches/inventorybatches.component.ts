@@ -49,6 +49,7 @@ export class InventorybatchesComponent implements OnInit {
     'seleccionada',
     'opciones'
   ];
+  today = new Date();
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
@@ -67,7 +68,7 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   setSelectedTr(element?: ILotesFormulaReq){
-    if (element !== undefined){
+    if (element !== undefined) {
       this.dataSelected = element;
       this.indexSelected = this.dataSourceDetails.data.indexOf(element);
       this.dataSourceDetails.data.filter(item => {
@@ -133,7 +134,8 @@ export class InventorybatchesComponent implements OnInit {
           cantidadSeleccionada: element.cantidadSeleccionada,
           sysNumber: element.sysNumber,
           action: CONST_DETAIL_FORMULA.insert,
-          noidb: BOOLEANS.verdadero
+          noidb: BOOLEANS.verdadero,
+          isValid: element.isValid
         };
         if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
           this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = [];
@@ -172,13 +174,15 @@ export class InventorybatchesComponent implements OnInit {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: parseFloat(suma.toFixed(6))
+              cantidadSeleccionada: parseFloat(suma.toFixed(6)),
+              isValid: elementA.isValid
             }
           } else {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: elementA.cantidadSeleccionada
+              cantidadSeleccionada: elementA.cantidadSeleccionada,
+              isValid: elementA.isValid
             };
           }
           arrayObjetos.push(objetoLoteAsignado);
@@ -212,6 +216,7 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   deleteDetails(element?: ILotesAsignadosReq){
     if (element !== undefined) {
       let tomarEnCuenta = false;
@@ -226,7 +231,7 @@ export class InventorybatchesComponent implements OnInit {
           }
         }
       });
-      if (tomarEnCuenta){
+      if (tomarEnCuenta) {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push({
           numeroLote: element.numeroLote,
           noidb: BOOLEANS.falso,
@@ -280,6 +285,7 @@ export class InventorybatchesComponent implements OnInit {
     let objectToSave = this.objectToSave;
     objectToSave = [];
     const ordenFabricacionId = this.ordenFabricacionId;
+    // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null){
         element.lotesSeleccionados.forEach((lote, index) => {
@@ -326,5 +332,17 @@ export class InventorybatchesComponent implements OnInit {
 
   goToOrdenFab(urlPath: string[]) {
     this.dataService.setPathUrl(urlPath);
+  }
+
+  // tslint:disable-next-line: no-shadowed-variable
+  isDue(element: ILotesReq) {
+    if (element.fechaExp !== null && element.fechaExp !== undefined) {
+      const strFechaExp = String(element.fechaExp).split('/');
+      const dtFechaExp = new Date(parseInt(strFechaExp[2]), parseInt(strFechaExp[1]) - 1, parseInt(strFechaExp[0]));
+      element.isValid = false;
+      return dtFechaExp < this.today;
+    }
+    element.isValid = true;
+    return false;
   }
 }
