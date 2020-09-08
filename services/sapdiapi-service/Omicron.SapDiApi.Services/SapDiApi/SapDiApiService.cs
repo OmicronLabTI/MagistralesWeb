@@ -19,6 +19,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using Omicron.SapDiApi.Services.Utils;
     using SAPbobsCOM;
     using Omicron.SapDiApi.Log;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// clas for the data to sap.
@@ -346,106 +347,47 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultModel> FinishOrder(List<CloseProductionOrderModel> productionOrders)
+        public ResultModel FinishOrder(List<CloseProductionOrderModel> productionOrders)
         {
             var results = new Dictionary<int, string>();
-            foreach (var productionOrder in productionOrders)
+            foreach (var productionOrderConfig in productionOrders)
             {
-                var productionOrderId = productionOrder.OrderId;
-                
-                _loggerProxy.Debug($"Production order to finish: { productionOrderId }.");
-                var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
-
-                if (!orderReference.GetByKey( productionOrder.OrderId ))
+                var productionOrderId = productionOrderConfig.OrderId;
+                try
                 {
-                    _loggerProxy.Debug($"The production order { productionOrderId } doesn´t exists.");
-                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
-                }
+                    var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
 
-                if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposClosed)
-                {
-                    _loggerProxy.Debug($"The production order { productionOrderId } already closed.");
-                    continue;
-                }
-
-                if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
-                {
-                    _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
-                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
-                }
-                
-                // Get related product
-                var product = this.GetProductByCode(orderReference.ItemNo);
-                
-                // Production order info
-                _loggerProxy.Debug($"Data production order { productionOrderId }.");
-                _loggerProxy.Debug($"DocumentNumber: { orderReference.DocumentNumber }.");
-                _loggerProxy.Debug($"PlannedQuantity: { orderReference.PlannedQuantity }.");
-                _loggerProxy.Debug($"Warehouse: { orderReference.Warehouse }.");
-                _loggerProxy.Debug($"Managed batch numbers: { product.ManageBatchNumbers }.");
-                _loggerProxy.Debug($"Managed serial numbers: { product.ManageSerialNumbers }.");
-
-                // Create a new receipt production order
-                var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
-
-                if (product.ManageBatchNumbers == BoYesNoEnum.tYES && productionOrder.Batches != null)
-                {
-                    int counter = 0;
-                    bool batchError = false;
-                    foreach (var batchConfig in productionOrder.Batches)
+                    if (!orderReference.GetByKey(productionOrderConfig.OrderId))
                     {
-                        var existingBatch = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
-                        existingBatch.DoQuery(string.Format(ServiceConstants.FindBatchCodeForItem, batchConfig.BatchCode, product.ItemCode));
-
-                        if (existingBatch.RecordCount != 0)
-                        {
-                            _loggerProxy.Debug($"An error has ocurred on create batch { batchConfig.BatchCode } for item {product.ItemCode}, the batch already exists.");
-                            batchError = true;
-                            results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batchConfig.BatchCode, product.ItemCode));
-                            break;
-                        }
-
-                        if (counter > 0)
-                            receiptProduction.Lines.BatchNumbers.Add();
-                        receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
-                        receiptProduction.Lines.BatchNumbers.BatchNumber = batchConfig.BatchCode;
-                        receiptProduction.Lines.BatchNumbers.ManufacturingDate = batchConfig.ManufacturingDate;
-                        receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate; 
-                        receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
-                        counter += 1;
+                        results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
                     }
 
-                    if (batchError)
+                    if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposClosed)
                     {
                         continue;
                     }
+
+                    if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
+                    {
+                        results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
+                    }
+
+                    this.ValidateNewBatches(orderReference.ItemNo, productionOrderConfig.Batches);
+
+                    this.CreateoGoodIssueForProductionByOrderId(productionOrderId);
+                    
+                    this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig);
+                    
+                    this.CloseProductionOrder(productionOrderId);
                 }
-
-                receiptProduction.Lines.BaseEntry = orderReference.DocumentNumber;
-                receiptProduction.Lines.BaseType = 202;
-                receiptProduction.Lines.Quantity = orderReference.PlannedQuantity;
-                receiptProduction.Lines.TransactionType = BoTransactionTypeEnum.botrntComplete;
-                receiptProduction.Lines.WarehouseCode = orderReference.Warehouse;
-                receiptProduction.Lines.Add();
-
-                // Save receipt production
-                if (receiptProduction.Add() > 0)
+                catch (ValidationException ex)
                 {
-                    this.company.GetLastError(out int errorCode, out string errorMessage);
-                    _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
-                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
-                    continue;
+                    results.Add(productionOrderId, ex.Message);
                 }
-
-                // Set closed status 
-                orderReference.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
-
-                if (orderReference.Update() > 0)
+                catch (Exception ex)
                 {
-                    this.company.GetLastError(out int errorCode, out string errorMessage);
-                    _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
-                    results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrderId ));
-                    continue;
+                    _loggerProxy.Error(ex.StackTrace, ex);
+                    results.Add(productionOrderId, ServiceConstants.FailReasonUnexpectedError);
                 }
             }
 
@@ -558,6 +500,210 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return item;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Validate new batches.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="batches">New batches.</param>
+        private void ValidateNewBatches(string itemCode, List<BatchesConfigurationModel> batches)
+        {
+            if (batches == null)
+            {
+                return;
+            }
+
+            foreach (var batche in batches)
+            {
+                var existingBatch = this.ExecuteQuery(ServiceConstants.FindBatchCodeForItem, batche.BatchCode, itemCode);
+                if (existingBatch.RecordCount != 0)
+                {
+                    throw new ValidationException(string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batche.BatchCode, itemCode));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create good issue for production order id.
+        /// </summary>
+        /// <param name="productionOrderId">The production order id.</param>
+        private void CreateoGoodIssueForProductionByOrderId(int productionOrderId)
+        {
+            var recordSet = this.ExecuteQuery(ServiceConstants.FindManualExit, productionOrderId);
+            var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
+
+            for (var i = 0; i < recordSet.RecordCount; i++)
+            {
+                inventoryGenExit.Lines.SetCurrentLine(i);
+                inventoryGenExit.Lines.BaseType = (int)BoObjectTypes.oProductionOrders;
+                inventoryGenExit.Lines.BaseEntry = productionOrderId;
+                inventoryGenExit.Lines.BaseLine = int.Parse(recordSet.Fields.Item("LineNum").Value.ToString());
+                inventoryGenExit.Lines.Quantity = double.Parse(recordSet.Fields.Item("PlannedQty").Value.ToString());
+                inventoryGenExit.Lines.WarehouseCode = recordSet.Fields.Item("warehouse").Value.ToString();
+                this.SetBatchNumbersToGoodIssueForProduction(ref inventoryGenExit, recordSet.Fields.Item("ItemCode").Value.ToString());
+                inventoryGenExit.Lines.Add();
+                recordSet.MoveNext();
+            }
+
+            if (recordSet.RecordCount > 0 && inventoryGenExit.Add() > 0)
+            {
+                this.company.GetLastError(out int errorCode, out string errorMessage);
+                _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
+                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId));
+            }
+        }
+
+        /// <summary>
+        /// Create receipt from production order id.
+        /// </summary>
+        /// <param name="productionOrderId">The production order id.</param>
+        /// <param name="closeConfiguration">Configuration for close order.</param>
+        private void CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderModel closeConfiguration) {
+
+            var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+            var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
+
+            productionOrder.GetByKey(productionOrderId);
+            var product = this.GetProductByCode(productionOrder.ItemNo);
+
+            if (product.ManageBatchNumbers == BoYesNoEnum.tYES && closeConfiguration.Batches != null)
+            {
+                int counter = 0;
+                foreach (var batchConfig in closeConfiguration.Batches)
+                {
+                    receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
+                    receiptProduction.Lines.BatchNumbers.BatchNumber = batchConfig.BatchCode;
+                    receiptProduction.Lines.BatchNumbers.ManufacturingDate = batchConfig.ManufacturingDate;
+                    receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate;
+                    receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
+                    receiptProduction.Lines.BatchNumbers.Add();
+                    counter += 1;
+                }
+            }
+
+            receiptProduction.Lines.BaseEntry = productionOrder.DocumentNumber;
+            receiptProduction.Lines.BaseType = 202;
+            receiptProduction.Lines.Quantity = productionOrder.PlannedQuantity;
+            receiptProduction.Lines.TransactionType = BoTransactionTypeEnum.botrntComplete;
+            receiptProduction.Lines.WarehouseCode = productionOrder.Warehouse;
+            receiptProduction.Lines.Add();
+
+            if (receiptProduction.Add() > 0)
+            {
+                this.company.GetLastError(out int errorCode, out string errorMessage);
+                _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
+                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
+            }
+        }
+
+        /// <summary>
+        /// Close production order
+        /// </summary>
+        /// <param name="productionOrderId"></param>
+        private void CloseProductionOrder(int productionOrderId)
+        {
+            var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+            productionOrder.GetByKey(productionOrderId);
+            productionOrder.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
+
+            if (productionOrder.Update() > 0)
+            {
+                this.company.GetLastError(out int errorCode, out string errorMessage);
+                _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
+                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber));
+            }
+        }
+
+        /// <summary>
+        /// Set batch numbers for good issue line.
+        /// </summary>
+        /// <param name="goodIssue">Good issue.</param>
+        /// <param name="itemCode">Item code.</param>
+        private void SetBatchNumbersToGoodIssueForProduction(ref Documents goodIssue, string itemCode)
+        {
+            Items product = this.GetProductByCode(itemCode);
+            if (product.ManageBatchNumbers != BoYesNoEnum.tYES)
+            {
+                return;
+            }
+
+            var assignedBatches = this.GetAssignmentBatches(goodIssue.Lines.BaseEntry, itemCode, goodIssue.Lines.WarehouseCode);
+            var batchCounter = 0;
+            foreach (var batch in assignedBatches)
+            {
+                goodIssue.Lines.BatchNumbers.SetCurrentLine(batchCounter);
+                goodIssue.Lines.BatchNumbers.BatchNumber = batch.Key;
+                goodIssue.Lines.BatchNumbers.Quantity = batch.Value;
+                goodIssue.Lines.BatchNumbers.Add();
+                batchCounter += 1;
+            }
+        }
+
+        /// <summary>
+        /// Get last invetory log entry for item code in a document.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="docNumber">Doc number.</param>
+        /// <returns>Last log entry.</returns>
+        private long GetLastInventoryLogEntry(string itemCode, int docNumber)
+        {
+            var results = this.ExecuteQuery(ServiceConstants.FindLastInventoryLogEntry, itemCode, docNumber);
+            return long.Parse(results.Fields.Item("LogEntry").Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Get batch code by item code, warehouse and sysNumber.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="wharehouse">Wharehouse code.</param>
+        /// <param name="sysNumber">SysNumber.</param>
+        /// <returns>Batch code.</returns>
+        private string GetBatchCode(string itemCode, string wharehouse, int sysNumber)
+        {
+            var results = this.ExecuteQuery(ServiceConstants.FindBatchCode, itemCode, wharehouse, sysNumber);
+            return results.Fields.Item("DistNumber").Value.ToString();
+        }
+
+        /// <summary>
+        /// Get assignment batches to item in a document.
+        /// </summary>
+        /// <param name="docNumber">Document number.</param>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="warehouse">Warehouse code.</param>
+        /// <returns>Assignment batches.</returns>
+        private Dictionary<string, double> GetAssignmentBatches(int docNumber, string itemCode, string warehouse)
+        {
+            var results = new Dictionary<string, double>();
+            long lastTransaction = this.GetLastInventoryLogEntry(itemCode, docNumber);
+            var assignments = this.ExecuteQuery(ServiceConstants.FindAssignedBatchesByLogEntry, lastTransaction);
+
+            for (var i = 0; i < assignments.RecordCount; i++)
+            {
+                int sysNumber = int.Parse(assignments.Fields.Item("SysNumber").Value.ToString());
+                var quantity = double.Parse(assignments.Fields.Item("AllocQty").Value.ToString());
+                string batchCode = this.GetBatchCode(itemCode, warehouse, sysNumber);
+                
+                results.Add(batchCode, quantity);
+                
+                assignments.MoveNext();
+            }
+
+            return results;
+        }
+        
+        /// <summary>
+        /// Execute query.
+        /// </summary>
+        /// <param name="query">Query to execute.</param>
+        /// <param name="parameters">Parameters.</param>
+        /// <returns>Recordset.</returns>
+        private Recordset ExecuteQuery(string query, params object[] parameters)
+        {
+            query = string.Format(query, parameters);
+            var recordSet = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+            recordSet.DoQuery(query);
+            return recordSet;
         }
     }
 }

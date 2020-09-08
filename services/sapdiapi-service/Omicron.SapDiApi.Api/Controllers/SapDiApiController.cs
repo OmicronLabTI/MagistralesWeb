@@ -105,9 +105,9 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// <returns>the reult.</returns>
         [HttpPost]
         [Route("finishProducionOrders")]
-        public async Task<IHttpActionResult> FinishProductionOrders([FromBody] List<CloseProductionOrderDto> productionOrdes)
+        public IHttpActionResult FinishProductionOrders([FromBody] List<CloseProductionOrderDto> productionOrdes)
         {
-            var result = await this.sapFacade.FinishOrder(productionOrdes);
+            var result = this.sapFacade.FinishOrder(productionOrdes);
             return this.Ok(result);
         }
 
