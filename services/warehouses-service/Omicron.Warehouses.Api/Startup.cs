@@ -9,8 +9,6 @@
 namespace Omicron.Warehouses.Api
 {
     using System;
-    using Omicron.Warehouses.Api.Filters;
-    using Omicron.Warehouses.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -18,9 +16,11 @@ namespace Omicron.Warehouses.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.OpenApi.Models;
+    using Omicron.Warehouses.Api.Filters;
+    using Omicron.Warehouses.DependencyInjection;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Discovery.Client;
 
@@ -29,8 +29,6 @@ namespace Omicron.Warehouses.Api
     /// </summary>
     public class Startup
     {
-        private const string AXITYURL = "https://www.axity.com/";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -69,7 +67,6 @@ namespace Omicron.Warehouses.Api
             DependencyInjector.AddDbContext(this.Configuration);
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
-                .WriteTo.RollingFile("log-{Date}.txt", LogEventLevel.Information)
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
 
@@ -88,12 +85,12 @@ namespace Omicron.Warehouses.Api
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Api Users",
-                    Description = "Api para información de usuarios",
+                    Title = "Api Warehouses",
+                    Description = "Api para información de almacenes.",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(AXITYURL),
+                        Url = new System.Uri(this.Configuration["AXITYURL"]),
                     },
                 });
             });
@@ -111,11 +108,26 @@ namespace Omicron.Warehouses.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                var basepath = this.Configuration["SwaggerAddress"];
+
+                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    var paths = new OpenApiPaths();
+                    foreach (var path in swaggerDoc.Paths)
+                    {
+                        paths.Add(basepath + path.Key, path.Value);
+                    }
+
+                    swaggerDoc.Paths = paths;
+                });
+            });
+
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Users");
+                c.SwaggerEndpoint($"{this.Configuration["SwaggerAddress"]}/swagger/v1/swagger.json", "Api Warehouses");
                 c.RoutePrefix = string.Empty;
             });
             app.UseResponseCompression();

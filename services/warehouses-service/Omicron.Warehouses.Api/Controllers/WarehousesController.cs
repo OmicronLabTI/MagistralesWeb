@@ -25,20 +25,13 @@ namespace Omicron.Warehouses.Api.Controllers
     {
         private readonly IRequestFacade requestFacade;
 
-        private readonly IDatabase database;
-
-        private readonly IConnectionMultiplexer redis;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WarehousesController"/> class.
         /// </summary>
         /// <param name="requestFacade">Request Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
-        public WarehousesController(IRequestFacade requestFacade, IConnectionMultiplexer redis)
+        public WarehousesController(IRequestFacade requestFacade)
         {
             this.requestFacade = requestFacade ?? throw new ArgumentNullException(nameof(requestFacade));
-            this.redis = redis ?? throw new ArgumentNullException(nameof(redis));
-            this.database = redis.GetDatabase();
         }
 
         /// <summary>

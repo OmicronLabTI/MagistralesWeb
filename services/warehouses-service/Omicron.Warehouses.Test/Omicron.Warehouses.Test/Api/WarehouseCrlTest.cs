@@ -15,7 +15,6 @@ namespace Omicron.Warehouses.Test.Api
     using Omicron.Warehouses.Api.Controllers;
     using Omicron.Warehouses.Dtos.Model;
     using Omicron.Warehouses.Facade.Request;
-    using StackExchange.Redis;
 
     /// <summary>
     /// Class for tests pedidos controller.
@@ -37,9 +36,7 @@ namespace Omicron.Warehouses.Test.Api
             var mockRequestFacade = new Mock<IRequestFacade>();
             mockRequestFacade.SetReturnsDefault(Task.FromResult(resultDto));
 
-            var mockRedis = new Mock<IConnectionMultiplexer>();
-
-            this.controller = new WarehousesController(mockRequestFacade.Object, mockRedis.Object);
+            this.controller = new WarehousesController(mockRequestFacade.Object);
         }
 
         /// <summary>

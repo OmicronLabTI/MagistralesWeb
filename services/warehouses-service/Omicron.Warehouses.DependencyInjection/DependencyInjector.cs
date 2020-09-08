@@ -46,7 +46,7 @@ namespace Omicron.Warehouses.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext))));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
         /// <summary>
