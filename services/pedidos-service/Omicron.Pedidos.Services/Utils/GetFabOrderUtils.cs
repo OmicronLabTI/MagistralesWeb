@@ -110,7 +110,7 @@ namespace Omicron.Pedidos.Services.Utils
             if (dataFiltered)
             {
                 var listToReturn = new List<UserOrderModel>();
-                listOrders.ForEach(x =>
+                listOrders.Where(y => !string.IsNullOrEmpty(y.FinishDate)).ToList().ForEach(x =>
                 {
                     var dateArray = x.FinishDate.Split("/");
                     var date = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
