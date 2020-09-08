@@ -114,9 +114,8 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="users">the list of users.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
-        /// <param name="maxCountPedidos">the max count of piezas.</param>
         /// <returns>the users.</returns>
-        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter, int maxCountPedidos)
+        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter)
         {
             var validUsers = new List<AutomaticAssignUserModel>();
 
@@ -128,7 +127,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 var total = GetCountOfPlannedQtyByOrder(ordersSap);
 
-                if (total < maxCountPedidos)
+                if (total < user.Piezas)
                 {
                     var listIds = new List<string>();
                     var listProdIds = new List<int>();

@@ -433,4 +433,13 @@
     </createTable>
     <addForeignKeyConstraint baseColumnNames="rawmaterialrequestid" baseTableName="rawmaterialrequestdetail" constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id" referencedColumnNames="id" referencedTableName="rawmaterialrequest"/>
   </changeSet> 
+  <changeSet author="gramirez" id="changelog-1.45">
+	<addColumn tableName ="user">
+		<column 
+			name="asignable"
+			type="INT"
+			defaultValue="1">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 
