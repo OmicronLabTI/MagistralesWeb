@@ -35,7 +35,8 @@ export class FabordersListComponent implements OnInit {
     'fechaorden',
     'fechatermino',
     'qfbasignado',
-    'estatus'
+    'estatus',
+    'actions'
   ];
   dataSource = new MatTableDataSource<IOrdersReq>();
   pageEvent: PageEvent;
