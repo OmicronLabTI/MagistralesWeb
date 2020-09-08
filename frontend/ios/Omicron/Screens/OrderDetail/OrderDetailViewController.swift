@@ -214,6 +214,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
             //signatureVC.orderId = self.orderId
             signatureVC.titleView = titleView
+            signatureVC.originView = ViewControllerIdentifiers.orderDetailViewController
             signatureVC.modalPresentationStyle = .overCurrentContext
             self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)

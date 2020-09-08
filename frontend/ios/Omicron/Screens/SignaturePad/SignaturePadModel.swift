@@ -12,9 +12,10 @@ import UIKit
 class OrderSignature  {
     var signatureType: String
     var signature: UIImage
-    
-    init(signatureType: String, signature: UIImage) {
+    var whoRequestSignature: String
+    init(signatureType: String, signature: UIImage, whoRequestSignature: String) {
         self.signatureType = signatureType
         self.signature = signature
+        self.whoRequestSignature = whoRequestSignature
     }
 }

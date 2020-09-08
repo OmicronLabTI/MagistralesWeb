@@ -96,6 +96,36 @@ class LotsViewController: UIViewController {
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
         self.finishOrderButton.rx.tap.bind(to: self.lotsViewModel.finishOrderDidTap).disposed(by: self.disposeBag)
         
+        // Muestra la vista de la firma
+        self.lotsViewModel.showSignatureViewFromLotsView.subscribe(onNext: { [weak self] signatureTitleView in
+            let storieboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storieboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            signatureVC.titleView = signatureTitleView
+            signatureVC.originView = ViewControllerIdentifiers.lotsViewController
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self?.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        self.lotsViewModel.showSignatureView.subscribe(onNext: { [weak self] titleView in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            signatureVC.titleView = titleView
+            signatureVC.originView = ViewControllerIdentifiers.lotsViewController
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self?.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Manda el mensaje para poder finalizar la orden
+        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { [weak self] message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
+            
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self?.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
         // Se regrsa al inbox cuando se finaliza la orden
         self.lotsViewModel.backToInboxView.subscribe(onNext: { [weak self] _ in
             self?.navigationController?.popToRootViewController(animated: true)

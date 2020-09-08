@@ -40,23 +40,19 @@ class LotsViewModel {
     var backToInboxView = PublishSubject<Void>()
     private var selectedBatches: [BatchSelected] = []
     private var documentLines: [Lots] = []
+    var technicalSignatureIsGet = false
+    var qfbSignatureIsGet = false
+    var askIfUserWantToFinalizeOrder = PublishSubject<String>()
+    var showSignatureViewFromLotsView = PublishSubject<String>()
+    var sqfbSignature = ""
+    var technicalSignature = ""
+    var showSignatureView = PublishSubject<String>()
     
     init() {
         
         // Finaliza la orden
         self.finishOrderDidTap.subscribe(onNext: { [weak self] in
-            
-            self?.loading.onNext(true)
-            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self!.orderId, qfbSignature: "", technicalSignature: "")
-            
-            NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
-                self?.loading.onNext(false)
-                // Regresar al inbox
-                self?.backToInboxView.onNext(())
-                }, onError: {[weak self] error in
-                    self?.loading.onNext(false)
-                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
-            }).disposed(by: self!.disposeBag)
+            self?.askIfUserWantToFinalizeOrder.onNext("¿Deseas terminar la orden?")
         }).disposed(by: self.disposeBag)
         
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
@@ -296,5 +292,33 @@ class LotsViewModel {
         return self.selectedBatches
             .filter({ $0.itemCode == itemCode && $0.batchNumber == batchNumber && $0.action != "delete" })
             .map({ $0.toLotsSelected() })
+    }
+    
+    func validIfOrderCanBeFinalized() -> Void  {
+        self.loading.onNext(true)
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] res in
+            self?.loading.onNext(false)
+            self?.showSignatureView.onNext("Firma del  QFB")
+            }, onError: { [weak self] error in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext("La orden no puede ser terminada, revisa que todos los artículos tengan un lote asignado")
+        }).disposed(by: self.disposeBag)
+        
+    }
+    
+    func callFinishOrderService() -> Void {
+        
+        if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
+            self.loading.onNext(true)
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: "", technicalSignature: "")
+            
+            NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
+                self?.loading.onNext(false)
+                self?.backToInboxView.onNext(())
+                }, onError: {[weak self] error in
+                    self?.loading.onNext(false)
+                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
+            }).disposed(by: self.disposeBag)
+        }
     }
 }
