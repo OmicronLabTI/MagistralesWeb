@@ -312,6 +312,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Gets if the order has incomplete batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/completedBatches/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> CompletedBatches(int orderId)
+        {
+            var response = await this.pedidoFacade.CompletedBatches(orderId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Create new isolated production order.
         /// </summary>
         /// <param name="isolatedFabOrder">Isolated production order.</param>

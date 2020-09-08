@@ -39,8 +39,6 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> sapAdapter;
 
-        private ISapDiApi sapDiApi;
-
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
@@ -483,17 +481,11 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
-        /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishOrderHasError()
+        public void CompletedBatchesError()
         {
             // arrange
-            var update = new FinishOrderModel
-            {
-                FabricationOrderId = 101,
-                QfbSignature = "asdf",
-                UserId = "abc",
-            };
+            var orderId = 101;
 
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             var mockUsers = new Mock<IUsersService>();
@@ -505,7 +497,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.FinishOrder(update));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.CompletedBatches(orderId));
         }
 
         /// <summary>
@@ -720,6 +712,31 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await this.pedidosService.GetFabOrders(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CompletedBatches()
+        {
+            var orderId = 200;
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetBatches()));
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var result = await pedidoServiceLocal.CompletedBatches(orderId);
 
             // assert
             Assert.IsNotNull(result);

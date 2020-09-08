@@ -20,7 +20,7 @@ export class IFormulaReq {
     comments: string;
     productionOrderId: string;
     code: string;
-    productionDescription: string;
+    productDescription?: string;
     type: string;
     status: string;
     plannedQuantity: number;

@@ -632,14 +632,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature)
         {
-            var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, updateOrderSignature.FabricationOrderId));
-            var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
-
-            if (components.Any(x => !x.LotesAsignados.Any()))
-            {
-                throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
-            }
-
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
             orders = orders == null ? new UserOrderModel() : orders;
 
@@ -754,6 +746,24 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
             var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, total);
+        }
+
+        /// <summary>
+        /// Gets the completed batch.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> CompletedBatches(int orderId)
+        {
+            var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, orderId));
+            var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
+
+            if (components.Any(x => !x.LotesAsignados.Any()))
+            {
+                throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
         }
 
         /// <summary>

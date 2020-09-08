@@ -27,6 +27,7 @@ export class ILotesSelectedReq {
     sysNumber: number;
     action?: string;
     noidb?: boolean;
+    isValid?: boolean;
 }
 
 export class ILotesReq {
@@ -35,6 +36,8 @@ export class ILotesReq {
     cantidadAsignada: number;
     cantidadSeleccionada?: number;
     sysNumber: number;
+    fechaExp: Date;
+    isValid?: boolean;
 }
 
 export class ILotesAsignadosReq {
@@ -43,6 +46,7 @@ export class ILotesAsignadosReq {
     sysNumber: number;
     action?: string;
     noidb?: boolean;
+    isValid?: boolean;
 }
 
 export class ILotesToSaveReq {
