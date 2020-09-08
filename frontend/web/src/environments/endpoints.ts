@@ -37,6 +37,9 @@ export const Endpoints = {
   },
   orders: {
     getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+  },
+  productivity: {
+    getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
   }
 };
 

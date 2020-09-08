@@ -11,10 +11,9 @@ import RxSwift
 import RxCocoa
 
 class  InboxViewModel {
-    
-    var finishedDidTab = PublishSubject<Void>();
-    var pendingDidTab = PublishSubject<Void>();
-    var processDidTab = PublishSubject<Void>();
+    var finishedDidTap = PublishSubject<Void>()
+    var pendingDidTap = PublishSubject<Void>()
+    var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
     var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
@@ -29,15 +28,15 @@ class  InboxViewModel {
     var disposeBag = DisposeBag();
     init() {
         // Funcionalidad para el botón de Terminar
-        finishedDidTab.subscribe(onNext: { () in
+        finishedDidTap.subscribe(onNext: { () in
         }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de pendiente
-        pendingDidTab.subscribe(onNext: {
+        pendingDidTap.subscribe(onNext: {
         }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de En Proceso
-        processDidTab.subscribe(onNext: {
+        processDidTap.subscribe(onNext: {
              self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
             }).disposed(by: disposeBag)
         
@@ -71,11 +70,6 @@ class  InboxViewModel {
             let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: ordersTemp[index.row].productionOrderId!, status: "Proceso")
             orders.append(order)
         }
-        
-        for index in indexPath {
-            ordersTemp.remove(at: index.row)
-        }
-        self.statusData.accept(ordersTemp)
         
         NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
             self.loading.onNext(false)

@@ -130,10 +130,6 @@ describe('PedidosComponent', () => {
     expect(component.offset).toEqual(0);
     expect(component.limit).toEqual(5);
   });
-  it('should getDateFormatted', () => {
-    expect(component.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
-    expect(component.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
-  });
   it('should openPlaceOrdersDialog', () => {
     component.dataSource.data = [];
     component.openPlaceOrdersDialog();

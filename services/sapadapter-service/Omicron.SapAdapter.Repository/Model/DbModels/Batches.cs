@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -45,5 +46,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("DistNumber")]
         public string DistNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("ExpDate")]
+        public DateTime? ExpDate { get; set; }
     }
 }
