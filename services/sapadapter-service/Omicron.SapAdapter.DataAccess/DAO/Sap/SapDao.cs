@@ -364,12 +364,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             querybatches.ForEach(x =>
             {
                 var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
+                batch = batch == null ? new Batches() : batch;
                 listToReturn.Add(new CompleteBatchesJoinModel
                 {
                     CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
                     Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
-                    DistNumber = batch == null ? string.Empty : batch.DistNumber,
+                    DistNumber = batch.DistNumber == null ? string.Empty : batch.DistNumber,
                     SysNumber = x.SysNumber,
+                    FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
                 });
             });
 

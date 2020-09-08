@@ -53,7 +53,9 @@ export class QfbSelect {
 export  class QfbWithNumber {
     userId?: string;
     userName?: string;
-    countTotal?: number;
+    countTotalFabOrders?: number;
+    countTotalOrders?: number;
+    countTotalPieces?: number;
     modalType?: string;
     list?: number[];
     assignType?: string;

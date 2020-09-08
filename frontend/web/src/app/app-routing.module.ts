@@ -35,6 +35,12 @@ const routes: Routes = [
   {
     path: 'ordenes',
     loadChildren: () => import('./pages/faborders-list/faborder-list.module').then(m => m.FaborderListModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'productividad',
+    loadChildren: () => import('./pages/productivity/productivity.module').then(m => m.ProductivityModule),
+    canActivate: [GuardService]
   },
   {
     path: '**',

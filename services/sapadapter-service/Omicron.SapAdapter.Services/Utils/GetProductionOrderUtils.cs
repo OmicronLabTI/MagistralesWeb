@@ -33,7 +33,8 @@ namespace Omicron.SapAdapter.Services.Utils
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                return (await sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
+                var orders = (await sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
+                return await CompleteOrder(orders, sapDao);
             }
 
             var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
@@ -89,6 +90,23 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return listToReturn.DistinctBy(x => x.OrdenId).ToList();
+        }
+
+        /// <summary>
+        /// Completes the order with the large description.
+        /// </summary>
+        /// <param name="listOrders">the orders.</param>
+        /// <param name="sapDao">the sapDao.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<OrdenFabricacionModel>> CompleteOrder(List<OrdenFabricacionModel> listOrders, ISapDao sapDao)
+        {
+            foreach (var order in listOrders)
+            {
+                var item = (await sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
+                order.ProdName = item == null ? order.ProdName : item.LargeDescription;
+            }
+
+            return listOrders;
         }
     }
 }

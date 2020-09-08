@@ -1,0 +1,53 @@
+<div class="container-list-page">
+    <div class="header-page">
+      <div class="title-list-container">
+        <span>Productividad</span>
+      </div>
+      <div class="filter-select">
+        
+      </div>
+    </div>
+    <div class="table-toolbar">
+        <div class="table-toolbar-search">
+
+        </div>
+        <div class="table-toolbar-buttons">
+            <form [formGroup]="productivityForm" class="form-orders" autocomplete="off">
+                <div class="fecha">
+                    Rango de fecha de orden de fabricación:
+                    <mat-form-field class="date-picker-custom generalinput center" appearance="fill">
+                        <input matInput [matDatepicker]="dp3" formControlName="fini" readonly [min]="minDate" [max]="productivityForm.get('ffin').value" (dateChange)="getProductivityData()">
+                        <mat-datepicker-toggle matSuffix [for]="dp3" ></mat-datepicker-toggle>
+                        <mat-datepicker #dp3></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field class="date-picker-custom generalinput center" appearance="fill">
+                        <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
+                            [min]="productivityForm.get('fini').value" [max]="today" (dateChange)="minDateIni($event.value)">
+                        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+                        <mat-datepicker #dp2 ></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="list-users-container">
+        <mat-tab-group>
+            <mat-tab label="Gráfica">
+                <canvas #productivityChart width="100%" height="33">
+                    asdadasdasd
+                </canvas>
+            </mat-tab>
+            <mat-tab label="Datos">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                    <ng-container *ngFor="let col of monthColumns; let colIndex = index" matColumnDef="{{col}}">
+                        <th mat-header-cell *matHeaderCellDef class="centered">{{col}}</th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center consecutivo"> {{element[colIndex]}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="monthColumns" class="color-text-intables"></tr>
+                    <tr mat-row *matRowDef="let row; columns: monthColumns;"></tr>
+                </table>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+  </div>
