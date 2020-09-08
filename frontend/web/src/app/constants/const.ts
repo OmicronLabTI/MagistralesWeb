@@ -74,7 +74,7 @@ export const ConstStatus = {
     pendiente: 'Pendiente',
     asignado: 'Asignado',
     terminado: 'Terminado',
-    reasingado: 'Reasingado',
+    reasingado: 'Reasignado',
 };
 export const HttpStatus = {
     ok: 200,
@@ -111,6 +111,17 @@ export const ComponentSearch = {
     createOrderIsolated: 'createOrder'
 };
 
+export enum FromToFilter {
+    fromOrders,
+    fromOrdersReassign,
+    fromOrdersCancel,
+    fromDetailOrder,
+    fromOrdersIsolated,
+    fromOrdersIsolatedCancel,
+    fromOrderIsolatedReassign,
+    fromOrderIsolatedReassignItems,
+    fromDefault
+}
 export const Colors = [
     'rgba(70, 61, 242, 95)',
     'rgba(5, 112, 255, 100)',

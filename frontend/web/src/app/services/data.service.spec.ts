@@ -111,11 +111,6 @@ describe('DataService', () => {
     });
     service.setMessageGeneralCallHttp({title: 'title', icon: 'success', isButtonAccept: true});
   });
-  it('should getDetailOrderDescription', () => {
-    const service: DataService = TestBed.get(DataService);
-    service.setDetailOrderDescription('anyDescription');
-    expect(service.getDetailOrderDescription()).toEqual('anyDescription');
-  });
   it('should getUrlActive', () => {
     const service: DataService = TestBed.get(DataService);
     service.getUrlActive().subscribe(urlActive => {
@@ -191,5 +186,14 @@ describe('DataService', () => {
     const service: DataService = TestBed.get(DataService);
     expect(service.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
     expect(service.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
+  });
+  it('should getNewSearchOrdersModal', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.getNewSearchOrdersModal().subscribe(newSearchOrdersModal => {
+      expect(newSearchOrdersModal).toEqual({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'),
+        ffin: new Date('01/12/2020'), status: 'Finalizado'});
+    });
+    service.setNewSearchOrderModal({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'), ffin: new Date('01/12/2020'),
+      status: 'Finalizado'});
   });
 });
