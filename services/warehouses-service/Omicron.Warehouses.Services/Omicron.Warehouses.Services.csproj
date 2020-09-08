@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCop\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omicron.Warehouses.DataAccess\Omicron.Warehouses.DataAccess.csproj" />
+    <ProjectReference Include="..\Omicron.Warehouses.Dtos\Omicron.Warehouses.Dtos.csproj" />
+    <ProjectReference Include="..\Omicron.Warehouses.Repository\Omicron.Warehouses.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
