@@ -52,7 +52,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
             guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
-            self?.hideButtons(index: statusId)
+            self?.hideButtons(id: statusId)
         }).disposed(by: disposeBag)
         
         inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -175,7 +175,24 @@ class InboxViewController: UIViewController {
         case 4:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         default:
-            print("")
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        }
+    }
+    
+    private func hideButtons(id: Int) {
+        switch id {
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 2:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 3:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 4:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 5:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        default:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         }
     }
     
