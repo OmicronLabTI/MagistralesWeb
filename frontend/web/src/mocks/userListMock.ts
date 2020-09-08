@@ -11,7 +11,7 @@ export const UserListMock = {
             id: 'cda94a8a-366e-46c9-b120-68c6edce3c44',
             isChecked: false,
             lastName: 'Alvarado',
-            password: 'Passw0rd',
+            password: 'faskdhjfldkhjsaflk',
             role: 1,
             userName: 'beni',
         },
@@ -21,7 +21,7 @@ export const UserListMock = {
             id: '00ed2f9f-3eb2-49c4-909c-06af680d1f10',
             isChecked: false,
             lastName: 'cruz',
-            password: 'Passw0rd',
+            password: 'faskdhjfldkhjsaflk',
             role: 2,
             userName: 'gabox',
         }

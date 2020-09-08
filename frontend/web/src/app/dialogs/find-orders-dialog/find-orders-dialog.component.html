@@ -32,8 +32,8 @@
                             <mat-select formControlName="dateType" >
                                 <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
                                 <mat-option *ngIf="isFromSearchOrders" value="1">Finalización</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="0">fabri</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="1">qfb</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="0">Orden fabricación</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="1">Término QFB</mat-option>
                             </mat-select>
                             <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
                                 Tipo de fecha es <strong>requerido</strong>

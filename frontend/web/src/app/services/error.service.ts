@@ -20,6 +20,7 @@ export class ErrorService {
         this.dataService.setMessageGeneralCallHttp({title: Messages.timeout, icon: 'error', isButtonAccept: true});
         break;
       case HttpStatus.connectionRefused:
+        this.dataService.setMessageGeneralCallHttp({title: Messages.connectionRefused, icon: 'error', isButtonAccept: true});
         break;
       default:
         this.dataService.setMessageGeneralCallHttp({title: Messages.generic, icon: 'error', isButtonAccept: true});

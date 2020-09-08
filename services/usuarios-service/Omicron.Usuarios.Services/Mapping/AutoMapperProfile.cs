@@ -27,8 +27,6 @@ namespace Omicron.Usuarios.Services.Mapping
             this.CreateMap<UserDto, UserModel>();
             this.CreateMap<ResultDto, ResultModel>();
             this.CreateMap<ResultModel, ResultDto>();
-            this.CreateMap<LoginDto, LoginModel>();
-            this.CreateMap<LoginModel, LoginDto>();
         }
     }
 }

@@ -41,6 +41,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// if needs the large description.
+        /// </summary>
+        public const string NeedsLargeDsc = "Ldsc";
+
+        /// <summary>
         /// the key for cliente.
         /// </summary>
         public const string Cliente = "cliente";
