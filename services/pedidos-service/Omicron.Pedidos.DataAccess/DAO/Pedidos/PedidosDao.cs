@@ -107,7 +107,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             orderByFinishDate.ForEach(x =>
             {
-                DateTime.TryParse(x.FinishDate, out var finishDate);
+                var dateArray = x.FinishDate.Split("/");
+                var finishDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
 
                 if(finishDate >= fechaInicio  && finishDate <= fechaFin)
                 {
