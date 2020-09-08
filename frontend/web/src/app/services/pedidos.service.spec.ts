@@ -5,7 +5,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {Observable} from 'rxjs';
 import {IPlaceOrdersReq} from '../model/http/users';
 import {IComponentsSaveReq} from '../model/http/detalleformula';
-import {CancelOrderReq, IPlaceOrdersAutomaticReq, ProcessOrdersDetailReq} from '../model/http/pedidos';
+import {
+    CancelOrderReq,
+    CreateIsolatedOrderReq,
+    IPlaceOrdersAutomaticReq,
+    ProcessOrdersDetailReq
+} from '../model/http/pedidos';
 
 describe('PedidosService', () => {
   beforeEach(() => {
@@ -50,11 +55,13 @@ describe('PedidosService', () => {
         placeOlderReq.orderType = 'Type orden [Pedido, Orden]';
         placeOlderReq.userId = 'idUser to place orders';
         placeOlderReq.userLogistic = 'Id user logueado';
-        expect(service.postPlaceOrders(placeOlderReq) instanceof Observable).toBeTruthy();
+        expect(service.postPlaceOrders(placeOlderReq , true) instanceof Observable).toBeTruthy();
+      expect(service.postPlaceOrders(placeOlderReq , false) instanceof Observable).toBeTruthy();
     });
   it('should getComponents', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         expect(service.getComponents('anyQueryStringToGetComponents', false) instanceof Observable).toBeTruthy();
+        expect(service.getComponents('anyQueryStringToGetComponents', true) instanceof Observable).toBeTruthy();
     });
   it('should updateFormula', () => {
         const service: PedidosService = TestBed.get(PedidosService);
@@ -85,11 +92,18 @@ describe('PedidosService', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         const cancelOrderReq: CancelOrderReq[] = []; // {idOrder: 234, userId: 'user logueado'} // to cancel
         expect(service.putCancelOrders(cancelOrderReq, true) instanceof Observable).toBeTruthy();
+        expect(service.putCancelOrders(cancelOrderReq, false) instanceof Observable).toBeTruthy();
     });
   it('should putFinalizeOrders', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         const cancelOrderReq: CancelOrderReq[] = []; // {idOrder: 234, userId: 'user logueado'} // to finalize
         expect(service.putFinalizeOrders(cancelOrderReq, true) instanceof Observable).toBeTruthy();
+        expect(service.putFinalizeOrders(cancelOrderReq, false) instanceof Observable).toBeTruthy();
+    });
+  it('should createIsolatedOrder', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        const createIsolatedOrder = new CreateIsolatedOrderReq(); // {idOrder: 234, userId: 'user logueado'} // to finalize
+        expect(service.createIsolatedOrder(createIsolatedOrder) instanceof Observable).toBeTruthy();
     });
 });
 
