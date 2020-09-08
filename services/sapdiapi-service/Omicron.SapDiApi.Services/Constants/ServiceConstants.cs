@@ -74,9 +74,24 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string FindManualExit = "SELECT ItemCode, LineNum, PlannedQty, warehouse FROM wor1 where docentry={0} and issuetype='M'";
 
         /// <summary>
-        /// Select batch code by item code, warehouse and quantity  
+        /// Select batch code by item code, warehouse and quantity.
         /// </summary>
         public const string FindBatchCodeForIssueForProduction = "SELECT TOP 1 BatchNum FROM OIBT WHERE ItemCode = '{0}' AND ExpDate > getdate() AND Quantity > {1} AND WhsCode ='{2}' ORDER BY Quantity DESC";
+
+        /// <summary>
+        /// Select last invetory log entry for item code in a document.
+        /// </summary>
+        public const string FindLastInventoryLogEntry = "SELECT ISNULL(MAX(LogEntry), 0) LogEntry FROM OITL WHERE ItemCode = '{0}' AND DocNum = {1}";
+
+        /// <summary>
+        /// Select batch code by item code, warehouse code and sys number.
+        /// </summary>
+        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity > 0 AND A.SysNumber = {2}";
+
+        /// <summary>
+        /// Select assigned batches by log entry.
+        /// </summary>
+        public const string FindAssignedBatchesByLogEntry = "SELECT SysNumber, AllocQty FROM  ITL1 WHERE LogEntry = {0} ";
 
         /// <summary>
         /// the value to delete the conmponent.

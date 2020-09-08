@@ -20,7 +20,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using SAPbobsCOM;
     using Omicron.SapDiApi.Log;
     using Omicron.LeadToCash.Resources.Exceptions;
-    using System.Diagnostics.Eventing.Reader;
 
     /// <summary>
     /// clas for the data to sap.
@@ -348,7 +347,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultModel> FinishOrder(List<CloseProductionOrderModel> productionOrders)
+        public ResultModel FinishOrder(List<CloseProductionOrderModel> productionOrders)
         {
             var results = new Dictionary<int, string>();
             foreach (var productionOrderConfig in productionOrders)
@@ -356,25 +355,20 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var productionOrderId = productionOrderConfig.OrderId;
                 try
                 {
-
-                    _loggerProxy.Debug($"Production order to finish: { productionOrderId }.");
                     var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
 
                     if (!orderReference.GetByKey(productionOrderConfig.OrderId))
                     {
-                        _loggerProxy.Debug($"The production order { productionOrderId } doesn´t exists.");
                         results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotExistsProductionOrder, productionOrderId));
                     }
 
                     if (orderReference.ProductionOrderStatus == BoProductionOrderStatusEnum.boposClosed)
                     {
-                        _loggerProxy.Debug($"The production order { productionOrderId } already closed.");
                         continue;
                     }
 
                     if (orderReference.ProductionOrderStatus != BoProductionOrderStatusEnum.boposReleased)
                     {
-                        _loggerProxy.Debug($"The production order { productionOrderId } isn't released.");
                         results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
                     }
 
@@ -522,7 +516,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             foreach (var batche in batches)
             {
-                var existingBatch = this.ExecuteQuery(string.Format(ServiceConstants.FindBatchCodeForItem, batche.BatchCode, itemCode));
+                var existingBatch = this.ExecuteQuery(ServiceConstants.FindBatchCodeForItem, batche.BatchCode, itemCode);
                 if (existingBatch.RecordCount != 0)
                 {
                     throw new ValidationException(string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batche.BatchCode, itemCode));
@@ -536,7 +530,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="productionOrderId">The production order id.</param>
         private void CreateoGoodIssueForProductionByOrderId(int productionOrderId)
         {
-            var recordSet = this.ExecuteQuery(string.Format(ServiceConstants.FindManualExit, productionOrderId));
+            var recordSet = this.ExecuteQuery(ServiceConstants.FindManualExit, productionOrderId);
             var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
 
             for (var i = 0; i < recordSet.RecordCount; i++)
@@ -621,6 +615,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
         }
 
+        /// <summary>
+        /// Set batch numbers for good issue line.
+        /// </summary>
+        /// <param name="goodIssue">Good issue.</param>
+        /// <param name="itemCode">Item code.</param>
         private void SetBatchNumbersToGoodIssueForProduction(ref Documents goodIssue, string itemCode)
         {
             Items product = this.GetProductByCode(itemCode);
@@ -641,27 +640,43 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
         }
 
+        /// <summary>
+        /// Get last invetory log entry for item code in a document.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="docNumber">Doc number.</param>
+        /// <returns>Last log entry.</returns>
         private long GetLastInventoryLogEntry(string itemCode, int docNumber)
         {
-            var results = this.ExecuteQuery(string.Format("SELECT ISNULL(MAX(LogEntry), 0) LogEntry FROM OITL WHERE ItemCode = '{0}' AND DocNum = {1}", itemCode, docNumber));
-            var fieldResult = results.Fields.Item("LogEntry").Value.ToString();
-
-            this._loggerProxy.Debug(fieldResult);
-
-            return long.Parse(fieldResult, System.Globalization.CultureInfo.InvariantCulture);
+            var results = this.ExecuteQuery(ServiceConstants.FindLastInventoryLogEntry, itemCode, docNumber);
+            return long.Parse(results.Fields.Item("LogEntry").Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Get batch code by item code, warehouse and sysNumber.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="wharehouse">Wharehouse code.</param>
+        /// <param name="sysNumber">SysNumber.</param>
+        /// <returns>Batch code.</returns>
         private string GetBatchCode(string itemCode, string wharehouse, int sysNumber)
         {
-            var results = this.ExecuteQuery(string.Format("SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity > 0 AND A.SysNumber = {2}", itemCode, wharehouse, sysNumber));
+            var results = this.ExecuteQuery(ServiceConstants.FindBatchCode, itemCode, wharehouse, sysNumber);
             return results.Fields.Item("DistNumber").Value.ToString();
         }
 
+        /// <summary>
+        /// Get assignment batches to item in a document.
+        /// </summary>
+        /// <param name="docNumber">Document number.</param>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="warehouse">Warehouse code.</param>
+        /// <returns>Assignment batches.</returns>
         private Dictionary<string, double> GetAssignmentBatches(int docNumber, string itemCode, string warehouse)
         {
             var results = new Dictionary<string, double>();
             long lastTransaction = this.GetLastInventoryLogEntry(itemCode, docNumber);
-            var assignments = this.ExecuteQuery(string.Format("SELECT SysNumber, AllocQty FROM  ITL1 WHERE LogEntry = {0} ", lastTransaction));
+            var assignments = this.ExecuteQuery(ServiceConstants.FindAssignedBatchesByLogEntry, lastTransaction);
 
             for (var i = 0; i < assignments.RecordCount; i++)
             {
@@ -669,22 +684,23 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var quantity = double.Parse(assignments.Fields.Item("AllocQty").Value.ToString());
                 string batchCode = this.GetBatchCode(itemCode, warehouse, sysNumber);
                 
-                this._loggerProxy.Debug($"Assigned batch: {batchCode} - {sysNumber} - {quantity} on transaction {lastTransaction}");
                 results.Add(batchCode, quantity);
+                
                 assignments.MoveNext();
             }
 
             return results;
         }
-
+        
         /// <summary>
         /// Execute query.
         /// </summary>
         /// <param name="query">Query to execute.</param>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>Recordset.</returns>
-        private Recordset ExecuteQuery(string query)
+        private Recordset ExecuteQuery(string query, params object[] parameters)
         {
-            this._loggerProxy.Debug($"Executing query: {query}");
+            query = string.Format(query, parameters);
             var recordSet = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
             recordSet.DoQuery(query);
             return recordSet;
