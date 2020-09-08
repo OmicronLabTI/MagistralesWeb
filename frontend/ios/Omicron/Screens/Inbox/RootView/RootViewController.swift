@@ -24,7 +24,7 @@ class RootViewController: UIViewController {
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var lottieManager: LottieManager
-    var dataStatusOfService: [SectionOrder] = []
+    
     var refreshControl = UIRefreshControl()
     
     // MARK: Life Cycles
@@ -32,15 +32,21 @@ class RootViewController: UIViewController {
         super.viewDidLoad()
         self.initComponents()
         self.viewModelBinding()
-       self.viewTable.refreshControl = refreshControl
+        self.viewTable.refreshControl = refreshControl
         self.setTitleCustom()
         // Configure Refresh Control
-       self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
+        self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.searchOrdesSearchBar.text = ""
+        self.rootViewModel.resetFilter()
     }
     
     // MARK: Functions
@@ -76,17 +82,6 @@ class RootViewController: UIViewController {
             UIApplication.shared.windows.first?.makeKeyAndVisible()
         }).disposed(by: self.disposeBag)
         
-        rootViewModel.dataStatus.observeOn(MainScheduler.instance).subscribe(onNext: { data in
-            self.dataStatusOfService = data
-        }).disposed(by: disposeBag)
-        
-        rootViewModel.refreshSelection.subscribe(onNext: {
-            if (self.dataStatusOfService.count > 0) {
-                self.viewTable.selectRow(at: IndexPath(row: self.rootViewModel.selectedRow, section: 0), animated: true, scrollPosition: .none)
-                self.inboxViewModel.setSelection(index: self.rootViewModel.selectedRow, section: self.dataStatusOfService[self.rootViewModel.selectedRow])
-            }
-        }).disposed(by: self.disposeBag)
-        
         // Muestra los datos de la sección "Mis ordenes"
         rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) {
             row, data, cell in
@@ -95,28 +90,63 @@ class RootViewController: UIViewController {
             cell.indicatorStatusNumber.text = String(data.numberTask)
         }.disposed(by: disposeBag)
         
-        rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { loadingResponse in
+        rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] loadingResponse in
             if (loadingResponse) {
-                self.lottieManager.showLoading()
+                self?.lottieManager.showLoading()
             } else {
-                self.lottieManager.hideLoading()
+                self?.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
         
-        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: {error in
+        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
             AlertManager.shared.showAlert(message: error, view: self)
         }).disposed(by: self.disposeBag)
         
         // Detecta el evento cuando se selecciona un status de la tabla
-        viewTable.rx.itemSelected.subscribe( onNext: { indexPath in
-            self.rootViewModel.selectedRow = indexPath.row
-            self.inboxViewModel.setSelection(index: indexPath.row, section: self.dataStatusOfService[indexPath.row])
+        viewTable.rx.modelSelected(SectionOrder.self).subscribe(onNext: { [weak self] data in
+            self?.inboxViewModel.setSelection(section: data)
+        }).disposed(by: disposeBag)
+
+        viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
+        
+        //Selecciona el primer elemento de estatus cuando termina la carga de datos
+        self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow).subscribe(onNext: { [weak self] row in
+            let data = self?.rootViewModel.sections ?? []
+            if data.count > 0, let selectedRow = row {
+                let section = data[selectedRow.row]
+                self?.viewTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
+                self?.inboxViewModel.setSelection(section: section)
+            } else if data.count > 0 {
+                let firstRow = IndexPath(row: 0, section: 0)
+                let section = data[firstRow.row]
+                self?.viewTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
+                self?.inboxViewModel.setSelection(section: section)
+            }
         }).disposed(by: disposeBag)
         
         // Muestra u oculta el refreshControl en la tabla
-        rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.refreshControl.endRefreshing()
+        rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
+        
+        // Búsqueda de órdenes
+        self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
+        
+        self.rootViewModel.dataFilter.withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
+            let selection = lastRow ?? IndexPath(row: 0, section: 0)
+            if data == nil {
+                self?.viewTable.alpha = 1.0
+                self?.viewTable.isUserInteractionEnabled = true
+                guard let section = self?.rootViewModel.sections[selection.row] else { return }
+                self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
+                self?.inboxViewModel.setSelection(section: section)
+                return
+            }
+            self?.viewTable.alpha = 0.25
+            self?.viewTable.isUserInteractionEnabled = false
+            self?.viewTable.deselectRow(at: selection, animated: false)
+            self?.inboxViewModel.setFilter(orders: data ?? [])
+        }).subscribe().disposed(by: disposeBag)
     }
     
     func initComponents() {
@@ -126,7 +156,7 @@ class RootViewController: UIViewController {
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
         
-        self.searchOrdesSearchBar.text = CommonStrings.searchOrden
+        self.searchOrdesSearchBar.placeholder = CommonStrings.searchOrden
         self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
         self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
         

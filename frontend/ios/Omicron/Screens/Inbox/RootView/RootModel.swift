@@ -98,6 +98,7 @@ class Order {
     var startDate: String?
     var finishDate: String?
     var descriptionProduct: String?
+    var statusId: Int?
     required init?(map: Map) {}
 }
 
@@ -116,15 +117,20 @@ extension Order: Mappable {
 
 
 struct SectionOrder {
+    var statusId: Int
     var statusName: String
     var numberTask: Int
     var imageIndicatorStatus: String
     var orders: [Order]
     
-    init(statusName: String, numberTask: Int, imageIndicatorStatus: String, orders: [Order]) {
+    init(statusId: Int, statusName: String, numberTask: Int, imageIndicatorStatus: String, orders: [Order]) {
         self.statusName = statusName
         self.numberTask = numberTask
         self.imageIndicatorStatus = imageIndicatorStatus
-        self.orders = orders
+        self.orders = orders.map({
+            $0.statusId = statusId
+            return $0
+        })
+        self.statusId = statusId
     }
 }
