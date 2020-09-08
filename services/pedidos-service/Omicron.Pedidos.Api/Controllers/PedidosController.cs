@@ -247,13 +247,13 @@ namespace Omicron.Pedidos.Api.Controllers
             switch (signatureType)
             {
                 case "logistic":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
                     break;
                 case "technical":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.TECHNICAL, orderSignature);
                     break;
                 case "qfb":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.QFB, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.QFB, orderSignature);
                     break;
             }
 
@@ -421,7 +421,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

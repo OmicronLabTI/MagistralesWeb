@@ -33,15 +33,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
         {
-            var orders = new List<CompleteDetailOrderModel>();
-            var listToUpdate = new List<UpdateFabOrderModel>();
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
-            listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
+            var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -253,7 +250,7 @@ namespace Omicron.Pedidos.Services.Utils
                     users.AddRange(usersFormulaAvailable.Where(z => z.ItemCodes.Any(a => a.Contains(d))).ToList());
                 });
 
-            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList().FirstOrDefault();
+            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).AsEnumerable().FirstOrDefault();
 
             if (user != null)
             {

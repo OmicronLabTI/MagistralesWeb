@@ -38,13 +38,13 @@ namespace Omicron.Pedidos.Services.SapAdapter
         /// <summary>
         /// get orders with the data.
         /// </summary>
-        /// <param name="listPedidos">the orders.</param>
+        /// <param name="dataToSend">the orders.</param>
         /// <param name="route">the route.</param>
         /// <returns>the return.</returns>
-        public async Task<ResultModel> PostSapAdapter(object listPedidos, string route)
+        public async Task<ResultModel> PostSapAdapter(object dataToSend, string route)
         {
             ResultModel result;
-            var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");
+            var stringContent = new StringContent(JsonConvert.SerializeObject(dataToSend), UnicodeEncoding.UTF8, "application/json");
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
