@@ -59,7 +59,7 @@
                 </ng-container>
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">#</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center documento"> {{i+1}} </td>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center consecutivo"> {{(i + 1) + (pageIndex * limit)}} </td>
                     <td mat-footer-cell *matFooterCellDef></td>
                 </ng-container>
 
@@ -70,31 +70,33 @@
 
                 <ng-container matColumnDef="orden">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  N° DE ORDEN DE FABRICACIÓN </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide cliente"> {{element.fabOrderId}} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide orden"> {{element.fabOrderId}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="codigoproducto">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CÓDIGO DEL PRODUCTO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide medico"> {{element.itemCode}} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto"> {{element.itemCode}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="descripcion">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  DESCRIPCIÓN DEL PRODUCTO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide asesor"> {{element.description}} </td>
+                    <td mat-cell matTooltip="{{element.description}}"
+                    matTooltipPosition="right"
+                    aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcion"> {{ (element.description.length > 42) ? (element.description | slice: 0:42) + '...' : element.description }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="cantidadplanificada">
-                    <th mat-header-cell *matHeaderCellDef class="mobile-hide">  CANTIDAD PLANIFICADA </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide asesor"> {{element.quantity}} </td>
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CANTIDAD PLANIFICADA </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide cantplan tdcell-center"> {{element.quantity}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="fechaorden">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA ÓRDEN DE FABRICACIÓN </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechainicio"> {{element.createDate.substring(10, 0)}} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.createDate.substring(10, 0)}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="fechatermino">
-                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA DE TERMINO (QFB) </th>
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA DE TÉRMINO (QFB) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.finishDate.substring(10, 0)}} </td>
                 </ng-container>
 
@@ -107,6 +109,15 @@
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS DE LA ORDEN </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status"> <button mat-stroked-button [ngClass]="element.class">{{element.status}}</button> </td>
                 </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions"> 
+                        <button mat-icon-button class="ico-col-pri" *ngIf="element.ordenFabricacionId !== 0" [routerLink]="['/ordenfabricacion', element.fabOrderId]">
+                          <mat-icon ><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z" fill="#626262"></path></svg></mat-icon>
+                        </button>
+                    </td>
+                  </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
