@@ -518,7 +518,7 @@ namespace Omicron.Pedidos.Test.Api
         public void Ping()
         {
             // Act
-            var result = this.controller.Ping().Result as OkObjectResult;
+            var result = this.controller.Ping() as OkObjectResult;
 
             // Assert
             Assert.AreEqual("Pong", result.Value as string);

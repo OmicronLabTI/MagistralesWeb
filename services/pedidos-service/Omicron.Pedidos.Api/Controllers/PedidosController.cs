@@ -247,13 +247,13 @@ namespace Omicron.Pedidos.Api.Controllers
             switch (signatureType)
             {
                 case "logistic":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
                     break;
                 case "technical":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.TECHNICAL, orderSignature);
                     break;
                 case "qfb":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.QFB, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.QFB, orderSignature);
                     break;
             }
 
@@ -308,6 +308,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> FinishOrder(FinishOrderDto orderSignature)
         {
             var response = await this.pedidoFacade.FinishOrder(orderSignature);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets if the order has incomplete batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/completedBatches/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> CompletedBatches(int orderId)
+        {
+            var response = await this.pedidoFacade.CompletedBatches(orderId);
             return this.Ok(response);
         }
 
@@ -434,7 +447,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

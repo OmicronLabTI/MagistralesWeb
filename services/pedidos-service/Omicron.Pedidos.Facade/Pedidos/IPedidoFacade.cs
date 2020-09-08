@@ -142,7 +142,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="signatureType">The signature type.</param>
         /// <param name="signatureModel">The signature info.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel);
+        Task<ResultDto> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureDto signatureModel);
 
         /// <summary>
         /// Get production order signatures.
@@ -207,5 +207,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the filters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets if the order has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>if the batches are completed.</returns>
+        Task<ResultDto> CompletedBatches(int orderId);
     }
 }

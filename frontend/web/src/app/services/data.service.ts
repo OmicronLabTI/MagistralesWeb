@@ -3,8 +3,11 @@ import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
   CONST_NUMBER,
-  CONST_STRING, ConstOrders,
+  CONST_STRING,
+  ConstOrders,
+  ConstStatus,
   ConstToken,
+  FromToFilter,
   HttpServiceTOCall,
   MessageType,
   MODAL_FIND_ORDERS
@@ -110,12 +113,6 @@ export class DataService {
    getUrlActive() {
     return this.urlActive;
    }
-  setDetailOrderDescription(description: string) {
-    localStorage.setItem('descriptionDetail', description || CONST_STRING.empty);
-  }
-  getDetailOrderDescription(): string {
-    return localStorage.getItem('descriptionDetail');
-  }
   setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
     this.messageGenericCallHttp.next(messageGeneral);
   }
@@ -214,9 +211,13 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean, isProductivity: boolean = false) {
     if (isBeginDate) {
-      initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+      if (isProductivity) {
+        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
+      } else {
+        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+      }
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
@@ -256,6 +257,37 @@ export class DataService {
     }
     return errorOrders;
   }
+  getIsThereOnData(dataToSearch: any[], status: string, fromToFilter: FromToFilter) {
+    switch (fromToFilter) {
+      case FromToFilter.fromOrders:
+        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+      case FromToFilter.fromOrdersCancel:
+        return dataToSearch.filter(t => (t.isChecked &&
+            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
+      case FromToFilter.fromDetailOrder:
+        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
+            && t.status !== ConstStatus.abierto)).length > 0;
+      case FromToFilter.fromOrdersIsolated:
+        break;
+      case FromToFilter.fromOrderIsolatedReassign:
+        return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
+            || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)).length > 0;
+      case FromToFilter.fromOrdersIsolatedCancel:
+        return dataToSearch.filter(t => (t.isChecked &&
+            (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
+      default:
+        return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
+    }
+  }
+  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter) {
+    switch (fromToFilter) {
+      case FromToFilter.fromOrderIsolatedReassignItems:
+        return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
+            || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)));
+      case FromToFilter.fromOrdersReassign:
+        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.liberado));
+    }
+  }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
     let isSearchWithFilter = false;
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
@@ -293,7 +325,7 @@ export class DataService {
       queryString = `?docNum=${resultSearchOrderModal.docNum}`;
     } else {
       if (resultSearchOrderModal.dateType) {
-        filterDataOrders.dateType = resultSearchOrderModal.dateType; // se puede manejar localmente
+        filterDataOrders.dateType = resultSearchOrderModal.dateType;
         rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
         if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
           queryString = `?fini=${rangeDate}`;

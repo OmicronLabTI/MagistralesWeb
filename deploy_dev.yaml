@@ -69,12 +69,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: apimanager-svc
+  labels:
+    app: apimanager-svc
 spec:
   type: LoadBalancer
   ports:
   - port: 8000
     targetPort: 8000
     protocol: TCP
+    name: apimanager
   externalIPs:
     - 192.168.0.101
   selector:

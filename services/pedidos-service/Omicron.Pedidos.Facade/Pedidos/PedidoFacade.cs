@@ -38,6 +38,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IFormulaPedidosService formulaPedidosService;
 
+        private readonly IProcessOrdersService processOrdersService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidoFacade"/> class.
         /// </summary>
@@ -47,13 +49,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productivityService">The productivity services.</param>
         /// <param name="cancelPedidosService">The cancel pedidos service.</param>
         /// <param name="formulaPedidosService">The formula pedidos service.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService, IFormulaPedidosService formulaPedidosService)
+        /// <param name="processOrdersService">Proces Order service.</param>
+        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService, IFormulaPedidosService formulaPedidosService, IProcessOrdersService processOrdersService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
             this.cancelPedidosService = cancelPedidosService ?? throw new ArgumentNullException(nameof(cancelPedidosService));
             this.productivityService = productivityService ?? throw new ArgumentNullException(nameof(productivityService));
             this.formulaPedidosService = formulaPedidosService ?? throw new ArgumentNullException(nameof(formulaPedidosService));
+            this.processOrdersService = processOrdersService ?? throw new ArgumentNullException(nameof(processOrdersService));
             this.mapper = mapper;
         }
 
@@ -64,7 +68,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultDto> ProcessOrders(ProcessOrderDto orderDto)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessOrders(this.mapper.Map<ProcessOrderModel>(orderDto)));
+            return this.mapper.Map<ResultDto>(await this.processOrdersService.ProcessOrders(this.mapper.Map<ProcessOrderModel>(orderDto)));
         }
 
         /// <summary>
@@ -163,7 +167,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the order.</returns>
         public async Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));
+            return this.mapper.Map<ResultDto>(await this.processOrdersService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));
         }
 
         /// <summary>
@@ -232,7 +236,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="signatureType">The signature type.</param>
         /// <param name="signatureModel">The signature info.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel)
+        public async Task<ResultDto> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureDto signatureModel)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateOrderSignature(signatureType, this.mapper.Map<UpdateOrderSignatureModel>(signatureModel)));
         }
@@ -260,11 +264,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Create new isolated production order.
         /// </summary>
-        /// <param name="isolateFabOrder">Isolated production order.</param>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolateFabOrder)
+        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolateFabOrder)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolatedFabOrder)));
         }
 
         /// <summary>
@@ -326,6 +330,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.productivityService.GetWorkLoad(parameters));
+        }
+
+        /// <summary>
+        /// Gets if the order has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>if the batches are completed.</returns>
+        public async Task<ResultDto> CompletedBatches(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CompletedBatches(orderId));
         }
     }
 }

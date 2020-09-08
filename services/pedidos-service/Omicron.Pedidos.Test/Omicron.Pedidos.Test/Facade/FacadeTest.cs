@@ -10,8 +10,6 @@ namespace Omicron.Pedidos.Test.Facade
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
@@ -43,10 +41,6 @@ namespace Omicron.Pedidos.Test.Facade
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             var mapper = mapperConfiguration.CreateMapper();
 
-            var mockServices = new Mock<IUsersService>();
-            var user = this.GetUserDto();
-            IEnumerable<UserDto> listUser = new List<UserDto> { user };
-
             var response = new ResultModel
             {
                 Success = true,
@@ -61,8 +55,9 @@ namespace Omicron.Pedidos.Test.Facade
             var mockServicesPedidos = new Mock<IPedidosService>();
             var mockCancelPedidosServices = new Mock<ICancelPedidosService>();
             var mockFormulasPedidosServices = new Mock<IFormulaPedidosService>();
+            var mockProcess = new Mock<IProcessOrdersService>();
 
-            mockServicesPedidos
+            mockProcess
                 .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
                 .Returns(Task.FromResult(response));
 
@@ -102,7 +97,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CancelFabricationOrders(It.IsAny<List<OrderIdModel>>()))
                 .Returns(Task.FromResult(response));
 
-            mockServicesPedidos
+            mockProcess
                 .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
                 .Returns(Task.FromResult(response));
 
@@ -111,7 +106,7 @@ namespace Omicron.Pedidos.Test.Facade
                             .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureType>(), It.IsAny<UpdateOrderSignatureModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -170,13 +165,18 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.CompletedBatches(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
                 mockerAssignPedidosService.Object,
                 mockCancelPedidosServices.Object,
                 mockProductivityService.Object,
-                mockFormulasPedidosServices.Object);
+                mockFormulasPedidosServices.Object,
+                mockProcess.Object);
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             // act
-            var response = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+            var response = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
 
             // Assert
             Assert.IsNotNull(response);
@@ -801,6 +801,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetWorkLoad(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task CompletedBatches()
+        {
+            // arrange
+            var orderId = 1;
+
+            // act
+            var response = await this.pedidoFacade.CompletedBatches(orderId);
 
             // Assert
             Assert.IsNotNull(response);

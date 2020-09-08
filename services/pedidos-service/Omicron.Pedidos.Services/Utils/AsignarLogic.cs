@@ -33,15 +33,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
         {
-            var orders = new List<CompleteDetailOrderModel>();
-            var listToUpdate = new List<UpdateFabOrderModel>();
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
-            listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
+            var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -90,7 +87,6 @@ namespace Omicron.Pedidos.Services.Utils
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -118,9 +114,8 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="users">the list of users.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
-        /// <param name="maxCountPedidos">the max count of piezas.</param>
         /// <returns>the users.</returns>
-        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter, int maxCountPedidos)
+        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter)
         {
             var validUsers = new List<AutomaticAssignUserModel>();
 
@@ -132,7 +127,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 var total = GetCountOfPlannedQtyByOrder(ordersSap);
 
-                if (total < maxCountPedidos)
+                if (total < user.Piezas)
                 {
                     var listIds = new List<string>();
                     var listProdIds = new List<int>();
@@ -213,15 +208,12 @@ namespace Omicron.Pedidos.Services.Utils
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
-
-                        if (!string.IsNullOrEmpty(o.Salesorderid))
-                        {
-                            var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
-                            pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
-                            pedido.Userid = user;
-                            listToUpdate.Add(o);
-                        }
                     });
+
+                    var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
+                    pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
+                    pedido.Userid = user;
+                    listToUpdate.Add(pedido);
                 });
 
             return listToUpdate;
@@ -257,7 +249,7 @@ namespace Omicron.Pedidos.Services.Utils
                     users.AddRange(usersFormulaAvailable.Where(z => z.ItemCodes.Any(a => a.Contains(d))).ToList());
                 });
 
-            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList().FirstOrDefault();
+            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).AsEnumerable().FirstOrDefault();
 
             if (user != null)
             {

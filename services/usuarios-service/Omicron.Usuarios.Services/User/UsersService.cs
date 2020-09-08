@@ -153,6 +153,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Role = user.Role;
             usertoUpdate.Activo = user.Activo;
             usertoUpdate.Piezas = user.Piezas;
+            usertoUpdate.Asignable = user.Asignable;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -234,6 +235,7 @@ namespace Omicron.Usuarios.Services.User
                         CountTotalFabOrders = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
                         CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
                         CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
+                        Asignable = x.Asignable,
                     });
                 }
             }));
