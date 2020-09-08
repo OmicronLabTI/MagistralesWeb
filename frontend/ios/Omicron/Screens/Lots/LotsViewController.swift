@@ -39,10 +39,14 @@ class LotsViewController: UIViewController {
     
     @IBOutlet weak var saveLotsButton: UIButton!
     
-    
     @IBOutlet weak var lineDocTable: UITableView!
     @IBOutlet weak var lotsAvailablesTable: UITableView!
     @IBOutlet weak var lotsSelectedTable: UITableView!
+    
+    @IBOutlet weak var codeDescriptionLabel: UILabel!
+    @IBOutlet weak var orderNumberLabel: UILabel!
+    @IBOutlet weak var manufacturingOrderLabel: UILabel!
+    
     
     // MARK: -Variables
     @Injected var lotsViewModel: LotsViewModel
@@ -51,6 +55,9 @@ class LotsViewController: UIViewController {
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var statusType = ""
+    var codeDescription = ""
+    var orderNumber = ""
+    var manufacturingOrder = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -183,6 +190,10 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        self.codeDescriptionLabel.text = self.codeDescription
+        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 17)
+        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(self.orderNumber)", textToBold: "Número de pedido:")
+        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(self.manufacturingOrder)", textToBold: "Orden de fabricación:")
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)

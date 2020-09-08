@@ -124,6 +124,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             if (self?.orderId != nil && self?.statusType != nil) {
                 lotsVC.orderId = self!.orderId
                 lotsVC.statusType = self!.statusType
+                if let order = self?.orderDetail.first {
+                    if (order.productDescription != nil && order.code != nil && order.productionOrderID != nil && order.baseDocument != nil) {
+                        lotsVC.orderNumber =  "\(order.baseDocument!)"
+                        lotsVC.manufacturingOrder = "\(order.productionOrderID!)"
+                        lotsVC.codeDescription = "\(order.code!)  \(order.productDescription!)"
+                    }
+                }
                 self?.navigationController?.pushViewController(lotsVC, animated: true)
             }
         }).disposed(by: self.disposeBag)
