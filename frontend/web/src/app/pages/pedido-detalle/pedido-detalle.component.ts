@@ -168,10 +168,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         } );
   }
 
-  setDescription(productCodeId: string, descriptionProduct: string) {
-    this.dataService.setDetailOrderDescription(`${productCodeId} ${descriptionProduct}`);
-  }
-
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
       (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {

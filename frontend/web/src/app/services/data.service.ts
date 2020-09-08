@@ -113,12 +113,6 @@ export class DataService {
    getUrlActive() {
     return this.urlActive;
    }
-  setDetailOrderDescription(description: string) {
-    localStorage.setItem('descriptionDetail', description || CONST_STRING.empty);
-  }
-  getDetailOrderDescription(): string {
-    return localStorage.getItem('descriptionDetail');
-  }
   setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
     this.messageGenericCallHttp.next(messageGeneral);
   }
