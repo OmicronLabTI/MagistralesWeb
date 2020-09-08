@@ -39,8 +39,9 @@ export class PedidosService {
   getQfbsWithOrders() {
     return this.consumeService.httpGet<IQfbWithNumberRes>(`${Endpoints.users.qfbsWithOrders}`);
   }
-  postPlaceOrders(placeOrder: IPlaceOrdersReq) {
-    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>(Endpoints.pedidos.placeOrders, placeOrder);
+  postPlaceOrders(placeOrder: IPlaceOrdersReq, isFromReassign: boolean) {
+    return this.consumeService.httpPost<IPlaceOrdersAutomaticRes>( !isFromReassign ? Endpoints.pedidos.placeOrders :
+        Endpoints.pedidos.reAssignManual, placeOrder);
   }
   getComponents(queryStringComponents: string, isFromSearchComponents) {
     return this.consumeService.httpGet<IComponentsRes>(`${isFromSearchComponents ? Endpoints.pedidos.getComponents :

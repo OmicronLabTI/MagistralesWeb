@@ -1,6 +1,6 @@
 export const Messages = {
   success: 'Proceso realizado con éxito',
-  generic: 'Lo sentimos, ocurrió un error inesperado',
+  generic: 'No es posible establecer conexión, intenta más tarde',
   connectionRefused: 'Ocurrió un error, no hay conexión con el servidor ',
   credentialsInvalid: 'Credenciales inválidas',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
@@ -8,8 +8,10 @@ export const Messages = {
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s) ?',
   processOrdersDetail: '¿Deseas cambiar a estatus planificado los registros seleccionados?',
   placeOrder: '¿Deseas asignar el(los) pedido(s) seleccionado(s) a',
+  reassignOrder: '¿Deseas reasignar el(los) pedido(s) seleccionado(s) a',
   placeOrderAutomatic: '¿Deseas asignar el(los) pedido(s) de forma automática ?',
   placeOrderDetail: '¿Deseas asignar la(las) orden(es) seleccionada(s) a',
+  reassignOrderDetail: '¿Deseas reasignar la(las) orden(es) seleccionada(s) a',
   deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s) ?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados ?',
   leftWithoutSave: 'Existen cambios sin guardar, ¿Deseas salir sin guardar los cambios?',
