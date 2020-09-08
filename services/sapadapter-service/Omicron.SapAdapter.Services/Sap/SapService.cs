@@ -96,7 +96,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listUsers = await this.GetUsers(userOrders);
 
-            details.ToList().ForEach(async x =>
+            foreach (var x in details)
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
@@ -110,7 +110,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
-            });
+            }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
         }
