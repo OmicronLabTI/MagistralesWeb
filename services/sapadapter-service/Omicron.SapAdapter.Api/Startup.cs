@@ -95,7 +95,7 @@ namespace Omicron.SapAdapter.Api
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Api Users",
+                    Title = "Api Sap Adapter",
                     Description = "Api para información de Sap Adapter",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
