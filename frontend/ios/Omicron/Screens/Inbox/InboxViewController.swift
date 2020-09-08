@@ -94,9 +94,9 @@ class InboxViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         
         [
-            finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTab),
-            pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTab),
-            processButton.rx.tap.bind(to: inboxViewModel.processDidTab)
+            finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTap),
+            pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTap),
+            processButton.rx.tap.bind(to: inboxViewModel.processDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
      
         // Lógica cuando se seleciona un item de la tabla
@@ -232,7 +232,7 @@ extension InboxViewController: CardCellDelegate {
     // Chec this
     func detailTapped(row: Int) {
         self.inboxViewModel.statusData.subscribe(onNext: { res in
-            if (res.count > 0 ) {
+            if (res.count > 0 && res.count > row) {
                 self.orderId = res[row].productionOrderId!
             }
         }).disposed(by: self.disposeBag)

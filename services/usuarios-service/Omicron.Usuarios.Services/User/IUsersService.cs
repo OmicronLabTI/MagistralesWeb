@@ -39,13 +39,6 @@ namespace Omicron.Usuarios.Services.User
         Task<bool> InsertUser(UserDto user);
 
         /// <summary>
-        /// Method for validating the login.
-        /// </summary>
-        /// <param name="login">the login object.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<ResultModel> ValidateCredentials(LoginModel login);
-
-        /// <summary>
         /// Method to create a user.
         /// </summary>
         /// <param name="userModel">the user model.</param>

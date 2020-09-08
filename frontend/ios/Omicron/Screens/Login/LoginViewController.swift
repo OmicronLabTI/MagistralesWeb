@@ -114,6 +114,8 @@ class LoginViewController: UIViewController {
         self.loginButtonDescriptionLabel.textColor = OmicronColors.blue
         self.loginButtonDescriptionLabel.textColor = UIColor.black
         
+        self.loginButton.imageView?.contentMode = .scaleAspectFit
+        
         self.userLabel.text = CommonStrings.user
         self.userLabel.textColor = UIColor.black
         self.userLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
@@ -130,7 +132,7 @@ class LoginViewController: UIViewController {
         self.passwordTextField.rightView = button
         self.passwordTextField.rightViewMode = .always
         
-         button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
+        button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
     }
         
     @objc func keyBoardActions(notification: Notification) {

@@ -17,6 +17,7 @@ namespace Omicron.Usuarios.DependencyInjection
     using Omicron.Usuarios.Facade.Catalogs.Users;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -39,6 +40,7 @@ namespace Omicron.Usuarios.DependencyInjection
             Services.AddTransient<IUserDao, UserDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IPedidosService, PedidosService>();
+            Services.AddTransient<ISapAdapter, SapAdapter>();
             return Services;
         }
 

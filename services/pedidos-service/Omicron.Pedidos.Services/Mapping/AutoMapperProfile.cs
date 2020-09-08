@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.Mapping
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
     /// Class Automapper.
@@ -57,6 +58,14 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<CloseProductionOrderModel, CloseProductionOrderDto>();
             this.CreateMap<BatchesConfigurationDto, BatchesConfigurationModel>();
             this.CreateMap<BatchesConfigurationModel, BatchesConfigurationDto>();
+            this.CreateMap<CustomComponentListModel, CustomComponentListDto>();
+            this.CreateMap<CustomComponentListDto, CustomComponentListModel>();
+            this.CreateMap<ComponentCustomComponentListModel, ComponentCustomComponentListDto>();
+            this.CreateMap<ComponentCustomComponentListDto, ComponentCustomComponentListModel>();
+            this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>().ForMember(x => x.Signature, opt => opt.ConvertUsing<ConverterBase64ToByteArray, string>());
+            this.CreateMap<RawMaterialRequestModel, RawMaterialRequestDto>();
+            this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
+            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
         }
     }
 }

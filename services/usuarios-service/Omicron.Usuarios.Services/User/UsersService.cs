@@ -21,6 +21,7 @@ namespace Omicron.Usuarios.Services.User
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Omicron.Usuarios.Services.Utils;
 
     /// <summary>
@@ -34,17 +35,21 @@ namespace Omicron.Usuarios.Services.User
 
         private readonly IPedidosService pedidoService;
 
+        private readonly ISapAdapter sapService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
         /// <param name="mapper">Object to mapper.</param>
         /// <param name="userDao">Object to userDao.</param>
         /// <param name="pedidoService">The pedido service.</param>
-        public UsersService(IMapper mapper, IUserDao userDao, IPedidosService pedidoService)
+        /// <param name="sapAdapter">The sap adapter.</param>
+        public UsersService(IMapper mapper, IUserDao userDao, IPedidosService pedidoService, ISapAdapter sapAdapter)
         {
             this.mapper = mapper;
             this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
+            this.sapService = sapAdapter ?? throw new ArgumentException(nameof(sapAdapter));
         }
 
         /// <inheritdoc/>
@@ -66,28 +71,6 @@ namespace Omicron.Usuarios.Services.User
         }
 
         /// <summary>
-        /// Method for validating the login.
-        /// </summary>
-        /// <param name="login">the login object.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultModel> ValidateCredentials(LoginModel login)
-        {
-            var user = await this.userDao.GetUserByUserName(login.Username);
-
-            if (user == null || user.UserName == null)
-            {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.UserDontExist, null, null, null);
-            }
-
-            if (!user.Password.Equals(login.Password))
-            {
-                return ServiceUtils.CreateResult(false, ServiceConstants.LogicError, ServiceConstants.IncorrectPass, null, null, null);
-            }
-
-            return ServiceUtils.CreateResult(true, ServiceConstants.StatusOk, null, JsonConvert.SerializeObject(user), null, null);
-        }
-
-        /// <summary>
         /// Method to create a user.
         /// </summary>
         /// <param name="userModel">the user model.</param>
@@ -103,12 +86,7 @@ namespace Omicron.Usuarios.Services.User
 
             userModel.Id = Guid.NewGuid().ToString("D");
             userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
-            var dataBaseResponse = await this.userDao.InsertUser(userModel);
-
-            if (!dataBaseResponse)
-            {
-                throw new CustomServiceException(ServiceConstants.ErrorWhileInsertingUser, HttpStatusCode.InternalServerError);
-            }
+            await this.userDao.InsertUser(userModel);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null, null);
         }
@@ -174,6 +152,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
             usertoUpdate.Role = user.Role;
             usertoUpdate.Activo = user.Activo;
+            usertoUpdate.Piezas = user.Piezas;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -226,7 +205,7 @@ namespace Omicron.Usuarios.Services.User
             var userIdList = users.Select(x => x.Id);
             var pedidosResponse = await this.pedidoService.PostPedidos(userIdList, ServiceConstants.QfbOrders);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
-            var userWithCount = this.GroupUserWithOrderCount(users, userOrders);
+            var userWithCount = await this.GroupUserWithOrderCount(users, userOrders);
 
             return ServiceUtils.CreateResult(true, 200, null, userWithCount, null, null);
         }
@@ -237,23 +216,46 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="users">the users.</param>
         /// <param name="orders">the orders.</param>
         /// <returns>the relationship.</returns>
-        private List<UserWithOrderCountModel> GroupUserWithOrderCount(List<UserModel> users, List<UserOrderModel> orders)
+        private async Task<List<UserWithOrderCountModel>> GroupUserWithOrderCount(List<UserModel> users, List<UserOrderModel> orders)
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            users.ForEach(x =>
+            await Task.WhenAll(users.Select(async x =>
             {
-                var count = orders.Where(y => y.Userid.Equals(x.Id) && !string.IsNullOrEmpty(y.Productionorderid) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList().Count;
+                var usersOrders = orders.Where(y => y.Userid.Equals(x.Id) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList();
+                var sapOrders = await this.GetFabOrders(usersOrders);
 
-                listToReturn.Add(new UserWithOrderCountModel
+                lock (listToReturn)
                 {
-                    UserId = x.Id,
-                    UserName = $"{x.FirstName} {x.LastName}",
-                    CountTotal = count,
-                });
-            });
+                    listToReturn.Add(new UserWithOrderCountModel
+                    {
+                        UserId = x.Id,
+                        UserName = $"{x.FirstName} {x.LastName}",
+                        CountTotalFabOrders = usersOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).ToList().Count,
+                        CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
+                        CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
+                    });
+                }
+            }));
 
             return listToReturn.OrderBy(x => x.UserName).ToList();
+        }
+
+        /// <summary>
+        /// Gets the sap response for the orders.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<FabricacionOrderModel>> GetFabOrders(List<UserOrderModel> orders)
+        {
+            if (!orders.Any())
+            {
+                return new List<FabricacionOrderModel>();
+            }
+
+            var ids = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
+            var sapResponse = await this.sapService.PostSapAdapter(ids, ServiceConstants.GetFabOrders);
+            return JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
         }
     }
 }

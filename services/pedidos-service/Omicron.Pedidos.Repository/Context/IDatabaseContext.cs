@@ -8,8 +8,9 @@
 
 namespace Omicron.Pedidos.Entities.Context
 {
-    using Omicron.Pedidos.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
     /// Interface IDataBaseContext.
@@ -47,5 +48,37 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object UserModel UserOrderSignature.
         /// </value>
         DbSet<UserOrderSignatureModel> UserOrderSignatureModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets custom component lists.
+        /// </summary>
+        /// <value>
+        /// Object custom lists.
+        /// </value>
+        DbSet<CustomComponentListModel> CustomComponentLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets components of custom lists .
+        /// </summary>
+        /// <value>
+        /// Object componets of custom lists.
+        /// </value>
+        DbSet<ComponentCustomComponentListModel> ComponentsCustomComponentLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material requests.
+        /// </summary>
+        /// <value>
+        /// Object requests.
+        /// </value>
+        DbSet<RawMaterialRequestModel> RawMaterialRequests { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material request details.
+        /// </summary>
+        /// <value>
+        /// Object request details.
+        /// </value>
+        DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetails { get; set; }
     }
 }

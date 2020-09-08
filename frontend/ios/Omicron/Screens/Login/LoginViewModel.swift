@@ -35,7 +35,7 @@ class LoginViewModel {
             .map({
                 Login(username: $0, password: $1, redirectUri: "", clientId2: "", origin: "app")
             })
-            .subscribe(onNext: { data in
+            .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
                 NetworkManager.shared.login(data: data)
                     .flatMap({ res -> Observable<UserInfoResponse> in

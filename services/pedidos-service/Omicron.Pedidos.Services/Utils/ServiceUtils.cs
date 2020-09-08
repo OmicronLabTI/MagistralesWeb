@@ -196,6 +196,8 @@ namespace Omicron.Pedidos.Services.Utils
 
                         if (sapOrder != null)
                         {
+                            var destiny = sapOrder.DestinyAddress.Split(",");
+
                             var order = new FabOrderDetail
                             {
                                 BaseDocument = sapOrder.BaseDocument,
@@ -207,6 +209,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
                                 ItemCode = sapOrder.Code,
+                                Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                             };
 
                             ordersDetail.Add(order);

@@ -336,6 +336,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string IsolatedProductionOrderCreated = "La orden de fabricación {0} ha sido creada.";
 
         /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string ReasonUnexpectedError = "Ocurrió un error inesperado.";
+
+        /// <summary>
+        /// Reason custom formula already exists.
+        /// </summary>
+        public const string ReasonCustomListAlreadyExists = "La lista {0} ya existe para el producto {1}.";
+
+        /// <summary>
+        /// Reason raw material request already exists.
+        /// </summary>
+        public const string ReasonRawMaterialRequestAlreadyExists = "La solicitud de materia prima para la orden de fabricación {0} ya existe.";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string FechaInicio = "fini";
@@ -371,6 +386,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string NuevoLeon = "Nuevo León";
+
+        /// <summary>
+        /// the foreign value.
+        /// </summary>
+        public const string Foraneo = "Foráneo";
+
+        /// <summary>
+        /// the local status.
+        /// </summary>
+        public const string Local = "Local";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -379,6 +409,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusAvoidReasignar { get; } = new List<string>
         {
             "Finalizado",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusWorkload { get; } = new List<string>
+        {
+            Asignado,
+            Proceso,
+            Pendiente,
+            Terminado,
+            Finalizado,
+            Reasignado,
         };
     }
 }

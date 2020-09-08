@@ -77,11 +77,11 @@ describe('DataService', () => {
       expect(resultQfbToPlace.userName).toEqual('name');
       expect(resultQfbToPlace.list).toEqual([1, 20]);
       expect(resultQfbToPlace.assignType).toEqual('manual');
-      expect(resultQfbToPlace.countTotal).toEqual(2);
+      expect(resultQfbToPlace.countTotalPieces).toEqual(2);
       expect(resultQfbToPlace.modalType).toEqual('Pedido');
     });
     service.setQbfToPlace({userId: 'userId', list: [1, 20], userName: 'name',
-      assignType: 'manual', countTotal: 2, modalType: 'Pedido'});
+      assignType: 'manual', countTotalPieces: 2, modalType: 'Pedido'});
   });
   it('should getIsLogin true', () => {
     const service: DataService = TestBed.get(DataService);
@@ -146,6 +146,8 @@ describe('DataService', () => {
         .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
     expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
         .toEqual('Hubo un error \n');
+    expect(service.getMessageTitle(['1234'], MessageType.saveBatches))
+        .toEqual('Error al asignar lotes a  1234 , por favor verificar \n');
   });
   it('should getRefreshToken', () => {
     const service: DataService = TestBed.get(DataService);
@@ -184,5 +186,10 @@ describe('DataService', () => {
       expect(finalizeOrders).toEqual({list: [{orderId: 123}], cancelType: 'pedidos'});
     });
     service.setFinalizeOrders({list: [{orderId: 123}], cancelType: 'pedidos'});
+  });
+  it('should getDateFormatted', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
+    expect(service.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
   });
 });

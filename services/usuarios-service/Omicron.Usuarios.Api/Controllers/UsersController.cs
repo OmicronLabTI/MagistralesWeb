@@ -9,15 +9,13 @@
 namespace Omicron.Usuarios.Api.Controllers
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json;
     using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Facade.Catalogs.Users;
-    using StackExchange.Redis;
 
     /// <summary>
     /// Class User Controller.
@@ -28,29 +26,13 @@ namespace Omicron.Usuarios.Api.Controllers
     {
         private readonly IUserFacade userFacade;
 
-        private readonly IDatabase database;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userFacade">User Facade.</param>
-        /// <param name="redis">Redis Cache.</param>
         public UsersController(IUserFacade userFacade)
         {
             this.userFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
-        }
-
-        /// <summary>
-        /// Method to validate the credentials.
-        /// </summary>
-        /// <param name="loginDto">the loginDto.</param>
-        /// <returns>If the result of validation.</returns>
-        [HttpPost]
-        [Route("/validatecredentials")]
-        public async Task<IActionResult> ValidateCredentials([FromBody] LoginDto loginDto)
-        {
-            var response = await this.userFacade.ValidateCredentials(loginDto);
-            return this.Ok(response);
         }
 
         /// <summary>

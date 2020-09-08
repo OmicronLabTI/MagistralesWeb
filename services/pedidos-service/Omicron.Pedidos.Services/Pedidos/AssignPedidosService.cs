@@ -110,7 +110,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (userSaleOrder.ContainsKey(saleOrderInt))
                 {
-                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
+                    var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
+                    x.Status = asignable ? ServiceConstants.Asignado : x.Status;
+                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
                     x.Userid = userSaleOrder[saleOrderInt];
 
                     var orderId = string.IsNullOrEmpty(x.Productionorderid) ? saleOrderInt : productionId;
@@ -189,7 +191,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
 
-            await this.pedidosDao.UpdateUserOrders(orders);
+            await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);

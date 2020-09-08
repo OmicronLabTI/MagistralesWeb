@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 {
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -100,5 +101,33 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="userOrderId">User order to find.</param>
         /// <returns>Operation result</returns>
         Task<UserOrderSignatureModel> GetSignaturesByUserOrderId(int userOrderId);
+
+        /// <summary>
+        /// Insert new custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        Task<bool> InsertCustomComponentList(CustomComponentListModel customComponentList);
+
+        /// <summary>
+        /// Insert new components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns>
+        Task<bool> InsertComponentsOfCustomList(List<ComponentCustomComponentListModel> components);
+
+        /// <summary>
+        /// Get all custom component lists for product id.
+        /// </summary>
+        /// <param name="productId">Te product id.</param>
+        /// <returns>Related lists.</returns>
+        Task<List<CustomComponentListModel>> GetCustomComponentListByProduct(string productId);
+
+        /// <summary>
+        /// Get all component for custom list id.
+        /// </summary>
+        /// <param name="customListId">Te custom list id.</param>
+        /// <returns>Related components.</returns>
+        Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId);
     }
 }

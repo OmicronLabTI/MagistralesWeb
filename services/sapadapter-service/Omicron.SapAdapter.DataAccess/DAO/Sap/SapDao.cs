@@ -292,34 +292,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value)
         {
             var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)).ToListAsync();
-            var listIds = products.Select(x => x.ProductoId).ToList();
-            var listToReturn = new List<CompleteDetalleFormulaModel>();
-
-            if (products.Any())
-            {
-                var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
-
-                products.ForEach(p =>
-                {
-                    var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
-                    var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
-                    listToReturn.Add(new CompleteDetalleFormulaModel
-                    {
-                        ProductId = p.ProductoId,
-                        Description = p.LargeDescription,
-                        Consumed = 0,
-                        Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
-                        Unit = p.Unit,
-                        Warehouse = "MN",
-                        Stock = p.OnHand,
-                        WarehouseQuantity = datoToAssign.OnHand,
-                    });
-                });
-
-                return listToReturn;
-            }
-
-            return new List<CompleteDetalleFormulaModel>();
+            return await this.GetComponentes(products);
         }
 
         /// <summary>
@@ -330,33 +303,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
         {
             var products = await this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)).ToListAsync();
-            var listIds = products.Select(x => x.ProductoId).ToList();
-            var listToReturn = new List<CompleteDetalleFormulaModel>();
-            if (products.Any())
-            {
-                var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
-
-                products.ForEach(p =>
-                {
-                    var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
-                    var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
-                    listToReturn.Add(new CompleteDetalleFormulaModel
-                    {
-                        ProductId = p.ProductoId,
-                        Description = p.LargeDescription,
-                        Consumed = 0,
-                        Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
-                        Unit = p.Unit,
-                        Warehouse = "MN",
-                        Stock = p.OnHand,
-                        WarehouseQuantity = datoToAssign.OnHand,
-                    });                    
-                });
-
-                return listToReturn;
-            }
-
-            return new List<CompleteDetalleFormulaModel>();
+            return await this.GetComponentes(products);
         }
 
         /// <summary>
@@ -417,12 +364,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             querybatches.ForEach(x =>
             {
                 var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
+                batch = batch == null ? new Batches() : batch;
                 listToReturn.Add(new CompleteBatchesJoinModel
                 {
                     CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
                     Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
-                    DistNumber = batch == null ? string.Empty : batch.DistNumber,
+                    DistNumber = batch.DistNumber == null ? string.Empty : batch.DistNumber,
                     SysNumber = x.SysNumber,
+                    FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
                 });
             });
 
@@ -458,11 +407,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<string> GetMaxBatchCode(string batchCodePattern, string productCode)
         { 
-            return (from    batch in this.databaseContext.Batches
+            return await (from    batch in this.databaseContext.Batches
                                 where   batch.ItemCode.Equals(productCode)
                                 &&      EF.Functions.Like(batch.DistNumber, batchCodePattern)
                                 orderby batch.DistNumber descending
-                                select  batch.DistNumber).Take(1).FirstOrDefault();
+                                select  batch.DistNumber).Take(1).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -483,7 +432,44 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             select  product;
             }
              
-            return results.ToList();
+            return await results.ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the componenents from the product.
+        /// </summary>
+        /// <param name="products">the products.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<CompleteDetalleFormulaModel>> GetComponentes(List<ProductoModel> products)
+        {
+            var listToReturn = new List<CompleteDetalleFormulaModel>();
+
+            if (!products.Any())
+            {
+                return new List<CompleteDetalleFormulaModel>();
+            }
+
+            var listIds = products.Select(x => x.ProductoId).ToList();
+            var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
+
+            products.ForEach(p =>
+            {
+                var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
+                var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
+                listToReturn.Add(new CompleteDetalleFormulaModel
+                {
+                    ProductId = p.ProductoId,
+                    Description = p.LargeDescription,
+                    Consumed = 0,
+                    Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
+                    Unit = p.Unit,
+                    Warehouse = "MN",
+                    Stock = p.OnHand,
+                    WarehouseQuantity = datoToAssign.OnHand,
+                });
+            });
+
+            return listToReturn;
         }
     }
 }

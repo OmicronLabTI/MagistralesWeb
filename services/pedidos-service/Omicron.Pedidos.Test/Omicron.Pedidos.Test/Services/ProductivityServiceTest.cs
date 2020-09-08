@@ -98,5 +98,27 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetWorkLoad()
+        {
+            // arrange
+            var assign = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
+            };
+
+            var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetWorkLoad(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

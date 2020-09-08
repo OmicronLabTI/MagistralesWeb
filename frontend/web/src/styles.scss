@@ -184,10 +184,12 @@ body {
 .table-toolbar .table-toolbar-buttons .button-blue{
   background-color: #6C90B3 !important;
   color: #fff !important;
+  margin-left: 10px;
 }
 .disable-button {
   background-color: #dbdfe4 !important;
   color: #424040 !important;
+  margin-left: 10px;
 }
 
 table {
@@ -293,6 +295,7 @@ th.centered {
   flex-direction: row;
   justify-content: space-between;
   border-bottom: #3b3f5c solid 1px;
+  font-family: 'Quicksand', serif !important;
 }
 .mat-card-title {
   font-weight: 400 !important;

@@ -22,6 +22,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;
+    using Omicron.Usuarios.Services.SapAdapter;
     using Omicron.Usuarios.Services.User;
 
     /// <summary>
@@ -35,8 +36,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         private IMapper mapper;
 
         private IUserDao userDao;
-
-        private IPedidosService pedidosService;
 
         private DatabaseContext context;
 
@@ -63,8 +62,13 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultFabOrders()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object);
         }
 
         /// <summary>
@@ -112,71 +116,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         }
 
         /// <summary>
-        /// Validate credentials.
-        /// </summary>
-        /// <returns>returns nothing.</returns>
-        [Test]
-        public async Task ValidateCredentials()
-        {
-            // arrange
-            var login = new LoginModel
-            {
-                Password = "QXhpdHkyMDIw",
-                Username = "Benji",
-            };
-
-            // act
-            var response = await this.userServices.ValidateCredentials(login);
-
-            // Assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// Validate credentials.
-        /// </summary>
-        /// <returns>returns nothing.</returns>
-        [Test]
-        public async Task ValidateCredentialsUserNotExist()
-        {
-            // arrange
-            var login = new LoginModel
-            {
-                Password = "abcde",
-                Username = "Gustavo",
-            };
-
-            // act
-            var response = await this.userServices.ValidateCredentials(login);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsFalse(response.Success);
-        }
-
-        /// <summary>
-        /// Validate credentials.
-        /// </summary>
-        /// <returns>returns nothing.</returns>
-        [Test]
-        public async Task ValidateCredentialsPasswordIncorrect()
-        {
-            // arrange
-            var login = new LoginModel
-            {
-                Password = "abcde",
-                Username = "Benji",
-            };
-
-            // act
-            var response = await this.userServices.ValidateCredentials(login);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsFalse(response.Success);
-        }
-
-        /// <summary>
         /// Test To create user.
         /// </summary>
         /// <returns>return nothing.</returns>
@@ -198,46 +137,14 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
-        /// <returns>returns nothing.</returns>
         [Test]
-        public async Task CreateUserErrorByRepeatedUsername()
+        public void CreateUserErrorByRepeatedUsername()
         {
             // arrange
             var user = this.GetUserModel();
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await this.userServices.CreateUser(user));
-        }
-
-        /// <summary>
-        /// creates the user with error the user exist.
-        /// </summary>
-        /// <returns>returns nothing.</returns>
-        [Test]
-        public async Task CreateUserErrorByDataBase()
-        {
-            // arrange
-            var user = this.GetUserModel();
-            user.UserName = "test";
-            var mockUser = new Mock<IUserDao>();
-
-            mockUser
-                .Setup(x => x.GetUserByUserName(It.IsAny<string>()))
-                .Returns(Task.FromResult<UserModel>(null));
-
-            mockUser
-                .Setup(x => x.InsertUser(It.IsAny<UserModel>()))
-                .Returns(Task.FromResult(false));
-
-            var mockPedidoService = new Mock<IPedidosService>();
-            mockPedidoService
-                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            var userServiceMock = new UsersService(this.mapper, mockUser.Object, mockPedidoService.Object);
-
-            // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await userServiceMock.CreateUser(user));
         }
 
         /// <summary>
@@ -287,6 +194,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var user = this.GetUserModel();
             user.Id = "1";
             user.UserName = "userName1";
+            user.Piezas = 10;
 
             // act
             var response = await this.userServices.UpdateUser(user);
@@ -298,9 +206,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Updates the user.
         /// </summary>
-        /// <returns>the user.</returns>
         [Test]
-        public async Task UpdateUserUserNotExist()
+        public void UpdateUserUserNotExist()
         {
             // arrange
             var user = this.GetUserModel();
@@ -354,6 +261,47 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task GetUsersById()
+        {
+            // arrange
+            var listIds = new List<string> { "1" };
+
+            // act
+            var response = await this.userServices.GetUsersById(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        [Test]
+        public void UserWithOrderCountModelTest()
+        {
+            // arrange
+            var data = new UserWithOrderCountModel
+            {
+                CountTotalFabOrders = 10,
+                CountTotalOrders = 10,
+                CountTotalPieces = 10,
+                UserId = "asd",
+                UserName = "asd",
+            };
+
+            // assert
+            Assert.IsNotNull(data.CountTotalFabOrders);
+            Assert.IsNotNull(data.CountTotalOrders);
+            Assert.IsNotNull(data.CountTotalPieces);
+            Assert.IsNotNull(data.UserId);
+            Assert.IsNotNull(data.UserName);
         }
     }
 }
