@@ -100,7 +100,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="signatureType">The signature type.</param>
         /// <param name="signatureModel">The signature info.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel);
+        Task<ResultModel> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureModel signatureModel);
 
         /// <summary>
         /// Get production order signatures.

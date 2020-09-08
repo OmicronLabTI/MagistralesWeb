@@ -39,8 +39,6 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> sapAdapter;
 
-        private ISapDiApi sapDiApi;
-
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
@@ -256,7 +254,7 @@ namespace Omicron.Pedidos.Test.Services
             };
 
             // act
-            var response = await this.pedidosService.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, signatures);
+            var response = await this.pedidosService.UpdateOrderSignature(SignatureType.LOGISTICS, signatures);
 
             // assert
             Assert.IsNotNull(response);
@@ -408,7 +406,7 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishOrderHasError()
+        public void FinishOrderHasError()
         {
             // arrange
             var update = new FinishOrderModel

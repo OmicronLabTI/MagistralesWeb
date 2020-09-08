@@ -185,7 +185,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return null;
             }
 
-            var listOrderLogs = new List<OrderLogModel>();
             fabOrderToUpdate.Comments = comments;
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { fabOrderToUpdate });
             return fabOrderToUpdate;
@@ -391,7 +390,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionOrders = relatedOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
                 if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)))
                 {
-                    var salesOrder = relatedOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).First();
+                    var salesOrder = relatedOrders.First(x => string.IsNullOrEmpty(x.Productionorderid));
                     salesOrder.CloseUserId = userId;
                     salesOrder.CloseDate = DateTime.Now.FormatedDate();
                     salesOrder.Status = ServiceConstants.Finalizado;
@@ -432,7 +431,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="signatureType">the type.</param>
         /// <param name="signatureModel">the model.</param>
         /// <returns>the value.</returns>
-        public async Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel)
+        public async Task<ResultModel> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureModel signatureModel)
         {
             var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };
             var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
@@ -453,13 +452,13 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 switch (signatureType)
                 {
-                    case SignatureTypeEnum.LOGISTICS:
+                    case SignatureType.LOGISTICS:
                         orderSignatures.LogisticSignature = newSignatureAsByte;
                         break;
-                    case SignatureTypeEnum.TECHNICAL:
+                    case SignatureType.TECHNICAL:
                         orderSignatures.TechnicalSignature = newSignatureAsByte;
                         break;
-                    case SignatureTypeEnum.QFB:
+                    case SignatureType.QFB:
                         orderSignatures.QfbSignature = newSignatureAsByte;
                         break;
                 }
@@ -566,12 +565,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Create new isolated production order.
         /// </summary>
-        /// <param name="isolateFabOrder">Isolated production order.</param>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolateFabOrder)
+        public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
             var logs = new List<OrderLogModel>();
-            var payload = new { ProductCode = isolateFabOrder.ProductCode };
+            var payload = new { ProductCode = isolatedFabOrder.ProductCode };
             var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
 
             if (!diapiResult.Success)
@@ -585,18 +584,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (!string.IsNullOrEmpty(resultMessage.Key))
             {
                 // Get new production order id
-                var route = $"{ServiceConstants.GetLastIsolatedProductionOrderId}?productId={isolateFabOrder.ProductCode}&uniqueId={resultMessage.Key}";
+                var route = $"{ServiceConstants.GetLastIsolatedProductionOrderId}?productId={isolatedFabOrder.ProductCode}&uniqueId={resultMessage.Key}";
                 var result = await this.sapAdapter.GetSapAdapter(route);
                 productionOrderId = int.Parse(result.Response.ToString());
 
                 UserOrderModel newProductionOrder = new UserOrderModel();
                 newProductionOrder.Salesorderid = string.Empty;
                 newProductionOrder.Productionorderid = productionOrderId.ToString();
-                newProductionOrder.CreatorUserId = isolateFabOrder.UserId;
+                newProductionOrder.CreatorUserId = isolatedFabOrder.UserId;
                 newProductionOrder.CreationDate = DateTime.Now.FormatedLargeDate();
                 newProductionOrder.Status = ServiceConstants.Planificado;
 
-                logs.AddRange(ServiceUtils.CreateOrderLog(isolateFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
+                logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
 
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 await this.pedidosDao.InsertOrderLog(logs);
@@ -628,8 +627,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(sapOrdersId)).ToList();
             var usersId = userOrders.Select(x => x.Userid).ToList();
 
-            var userService = await this.userService.PostSimpleUsers(usersId, ServiceConstants.GetUsersById);
-            var users = JsonConvert.DeserializeObject<List<UserModel>>(userService.Response.ToString());
+            var userResponse = await this.userService.PostSimpleUsers(usersId, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
 
             var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
             var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();

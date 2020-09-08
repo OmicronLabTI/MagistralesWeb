@@ -236,7 +236,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="signatureType">The signature type.</param>
         /// <param name="signatureModel">The signature info.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultDto> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureDto signatureModel)
+        public async Task<ResultDto> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureDto signatureModel)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateOrderSignature(signatureType, this.mapper.Map<UpdateOrderSignatureModel>(signatureModel)));
         }
@@ -264,11 +264,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Create new isolated production order.
         /// </summary>
-        /// <param name="isolateFabOrder">Isolated production order.</param>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
         /// <returns>Operation result.</returns>
-        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolateFabOrder)
+        public async Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolateFabOrder)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateIsolatedProductionOrder(this.mapper.Map<CreateIsolatedFabOrderModel>(isolatedFabOrder)));
         }
 
         /// <summary>

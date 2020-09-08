@@ -109,7 +109,7 @@ namespace Omicron.Pedidos.Test.Facade
                             .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureTypeEnum>(), It.IsAny<UpdateOrderSignatureModel>()))
+                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureType>(), It.IsAny<UpdateOrderSignatureModel>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
@@ -508,7 +508,7 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             // act
-            var response = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+            var response = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
 
             // Assert
             Assert.IsNotNull(response);
