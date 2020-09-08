@@ -216,7 +216,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (active)
             {
-                return allUsers.Where(x => x.Activo == 1).ToList();
+                return allUsers.Where(x => x.Activo == 1 && x.Asignable == 1).ToList();
             }
 
             return allUsers;

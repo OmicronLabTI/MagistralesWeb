@@ -68,5 +68,21 @@ namespace Omicron.Pedidos.Entities.Model
         /// String Active.
         /// </value>
         public int Activo { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public int Piezas { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public int Asignable { get; set; }
     }
 }
