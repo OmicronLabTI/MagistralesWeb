@@ -421,7 +421,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

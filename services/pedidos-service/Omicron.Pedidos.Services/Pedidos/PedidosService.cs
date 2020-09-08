@@ -132,8 +132,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             ordersList.ForEach(x =>
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
-                x.Status = order == null ? x.Status : order.Status;
-                x.Userid = order == null ? x.Userid : order.UserId;
+                order = order ?? new UpdateStatusOrderModel();
+                x.Status = order.Status ?? x.Status;
+                x.Userid = order.UserId ?? x.Userid;
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
