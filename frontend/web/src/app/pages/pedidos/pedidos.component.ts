@@ -5,8 +5,13 @@ import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_NUMBER,
-  CONST_STRING, ConstOrders, ConstStatus,
-  HttpServiceTOCall, HttpStatus, MessageType,
+  CONST_STRING,
+  ConstStatus,
+  FromToFilter,
+  HttpServiceTOCall,
+  HttpStatus,
+  MessageType,
+  ConstOrders,
   MODAL_NAMES,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
@@ -44,6 +49,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   subscriptionCallHttp = new Subscription();
   isThereOrdersToCancel = false;
   isThereOrdersToFinalize = false;
+  isThereOrdersToReassign = false;
   pageIndex = 0;
   constructor(
     private pedidosService: PedidosService,
@@ -104,6 +110,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToPlace = false;
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
+        this.isThereOrdersToReassign = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -178,18 +185,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
-    this.isThereOrdersToFinalize = this.getIsThereOnData(ConstStatus.terminado);
-    this.isThereOrdersToPlan = this.getIsThereOnData(ConstStatus.abierto);
-    this.isThereOrdersToPlace = this.getIsThereOnData(ConstStatus.planificado);
-    this.isThereOrdersToCancel = this.getIsThereOnData(ConstStatus.finalizado , true);
-  }
-  getIsThereOnData(status: string, isFromCancelOrder = false) {
-    if (!isFromCancelOrder) {
-      return this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
-    } else {
-      return this.dataSource.data.filter(t => (t.isChecked &&
-          (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
-    }
+    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
+        ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
+    this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
+    this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
+    this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
+    this.isThereOrdersToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrders);
   }
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
@@ -228,5 +229,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.getPedidos();
+  }
+
+  reassignOrders() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+          FromToFilter.fromOrdersReassign).map(order => order.docNum)
+      , isFromReassign: true});
   }
 }

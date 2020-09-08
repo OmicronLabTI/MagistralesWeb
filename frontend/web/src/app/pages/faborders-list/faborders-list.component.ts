@@ -1,20 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   ComponentSearch,
   CONST_NUMBER,
-  CONST_STRING, ConstOrders, ConstStatus, HttpServiceTOCall,
+  CONST_STRING,
+  ConstOrders,
+  ConstStatus,
+  FromToFilter,
+  HttpServiceTOCall,
   HttpStatus,
-  MODAL_FIND_ORDERS
+  MODAL_FIND_ORDERS,
+  MODAL_NAMES
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {Title} from '@angular/platform-browser';
 import {MatTableDataSource} from '@angular/material';
-import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
-import { ErrorHttpInterface } from 'src/app/model/http/commons';
-import { OrdersService } from 'src/app/services/orders.service';
-import { ParamsPedidos } from 'src/app/model/http/pedidos';
+import {IOrdersReq} from 'src/app/model/http/ordenfabricacion';
+import {ErrorHttpInterface} from 'src/app/model/http/commons';
+import {OrdersService} from 'src/app/services/orders.service';
+import {CancelOrderReq, ParamsPedidos} from 'src/app/model/http/pedidos';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -22,7 +27,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './faborders-list.component.html',
   styleUrls: ['./faborders-list.component.scss']
 })
-export class FabordersListComponent implements OnInit {
+export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
   displayedColumns: string[] = [
     'seleccion',
@@ -46,12 +51,14 @@ export class FabordersListComponent implements OnInit {
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  // rangeDate = CONST_STRING.empty;
   isDateInit =  true;
   filterDataOrders = new ParamsPedidos();
   pageIndex = 0;
   subscriptionObservables = new Subscription();
   isSearchOrderWithFilter = false;
+  isThereOrdersIsolatedToCancel = false;
+  isAssignOrderIsolated = false;
+  isReAssignOrderIsolated = false;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -59,7 +66,6 @@ export class FabordersListComponent implements OnInit {
     private titleService: Title
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    // this.rangeDate = this.getDateFormatted(new Date(), new Date(), true);
     this.filterDataOrders.isFromOrders = false;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
     this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
@@ -76,10 +82,16 @@ export class FabordersListComponent implements OnInit {
         this.onSuccessSearchOrdersModal(resultSearchOrdersModal);
       }
     }));
+    this.subscriptionObservables.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+          if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
+            this.getOrders();
+          }
+        }));
   }
 
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.getButtonsOrdersIsolatedToUnLooked();
   }
 
   someComplete(): boolean {
@@ -92,6 +104,7 @@ export class FabordersListComponent implements OnInit {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.getButtonsOrdersIsolatedToUnLooked();
   }
 
   getOrders() {
@@ -118,6 +131,9 @@ export class FabordersListComponent implements OnInit {
               break;
           }
         });
+        this.isThereOrdersIsolatedToCancel = false;
+        this.isAssignOrderIsolated = false;
+        this.isReAssignOrderIsolated = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -167,5 +183,37 @@ export class FabordersListComponent implements OnInit {
     this.pageIndex = 0;
     this.offset = 0;
     this.limit = 10;
+  }
+
+  cancelOrder() {
+    this.dataService.setCancelOrders({list: this.dataSource.data.filter
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = Number(order.fabOrderId);
+        return cancelOrder;
+      }),
+      cancelType: MODAL_NAMES.placeOrdersDetail, isFromCancelIsolated: true});
+  }
+  assignOrderIsolated() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId))
+      , isFromOrderIsolated: true});
+  }
+  private getButtonsOrdersIsolatedToUnLooked() {
+    this.isThereOrdersIsolatedToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+                                                                           FromToFilter.fromOrdersIsolatedCancel);
+    this.isAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+        FromToFilter.fromDefault);
+    this.isReAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+                                                                      FromToFilter.fromOrderIsolatedReassign);
+  }
+  reAssignOrder() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+                                FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
+      , isFromOrderIsolated: true, isFromReassign: true});
+  }
+  ngOnDestroy() {
+    this.subscriptionObservables.unsubscribe();
   }
 }
