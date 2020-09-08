@@ -591,16 +591,16 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="4Kz-Jc-YBq">
-                                                        <rect key="frame" x="0.0" y="50" width="706" height="10"/>
+                                                        <rect key="frame" x="0.0" y="50" width="806" height="10"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iul-oN-jUD">
-                                                                <rect key="frame" x="0.0" y="0.0" width="353" height="10"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="403" height="10"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IWA-wL-2La">
-                                                                <rect key="frame" x="353" y="0.0" width="353" height="10"/>
+                                                                <rect key="frame" x="403" y="0.0" width="403" height="10"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -612,7 +612,7 @@
                                                 <constraints>
                                                     <constraint firstItem="GEg-D8-nwi" firstAttribute="top" secondItem="qmS-D4-yW0" secondAttribute="top" id="2oh-uW-TTD"/>
                                                     <constraint firstAttribute="trailing" secondItem="GEg-D8-nwi" secondAttribute="trailing" id="53S-yn-65a"/>
-                                                    <constraint firstAttribute="trailing" secondItem="4Kz-Jc-YBq" secondAttribute="trailing" constant="400" id="6ZG-w7-RPE"/>
+                                                    <constraint firstAttribute="trailing" secondItem="4Kz-Jc-YBq" secondAttribute="trailing" constant="300" id="6ZG-w7-RPE"/>
                                                     <constraint firstItem="4Kz-Jc-YBq" firstAttribute="top" secondItem="GEg-D8-nwi" secondAttribute="bottom" id="Gvj-Yf-n32"/>
                                                     <constraint firstAttribute="bottom" secondItem="4Kz-Jc-YBq" secondAttribute="bottom" id="I8s-zW-Qmg"/>
                                                     <constraint firstItem="4Kz-Jc-YBq" firstAttribute="leading" secondItem="qmS-D4-yW0" secondAttribute="leading" id="kpy-h4-RZN"/>
