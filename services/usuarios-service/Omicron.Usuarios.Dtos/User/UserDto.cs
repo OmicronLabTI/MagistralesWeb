@@ -76,5 +76,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// String Activo.
         /// </value>
         public int Piezas { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public int Asignable { get; set; }
     }
 }
