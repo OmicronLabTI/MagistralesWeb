@@ -66,5 +66,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets measurement of unit.
+        /// </summary>
+        /// <value>The measurement of unit.</value>
+        public string Unit { get; set; }
     }
 }
