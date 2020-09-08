@@ -36,10 +36,29 @@ class LotsViewModel {
     
     var itemLotSelected:LotsSelected? = nil
     
+    var finishOrderDidTap = PublishSubject<Void>()
+    var backToInboxView = PublishSubject<Void>()
     private var selectedBatches: [BatchSelected] = []
     private var documentLines: [Lots] = []
     
     init() {
+        
+        // Finaliza la orden
+        self.finishOrderDidTap.subscribe(onNext: { [weak self] in
+            
+            self?.loading.onNext(true)
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self!.orderId, qfbSignature: "", technicalSignature: "")
+            
+            NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
+                self?.loading.onNext(false)
+                // Regresar al inbox
+                self?.backToInboxView.onNext(())
+                }, onError: {[weak self] error in
+                    self?.loading.onNext(false)
+                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
+            }).disposed(by: self!.disposeBag)
+        }).disposed(by: self.disposeBag)
+        
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in

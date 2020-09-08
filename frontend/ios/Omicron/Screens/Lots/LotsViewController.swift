@@ -46,7 +46,7 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var codeDescriptionLabel: UILabel!
     @IBOutlet weak var orderNumberLabel: UILabel!
     @IBOutlet weak var manufacturingOrderLabel: UILabel!
-    
+    @IBOutlet weak var finishOrderButton: UIButton!
     
     // MARK: -Variables
     @Injected var lotsViewModel: LotsViewModel
@@ -94,6 +94,12 @@ class LotsViewController: UIViewController {
         self.addLotButton.rx.tap.bind(to: self.lotsViewModel.addLotDidTap).disposed(by: self.disposeBag)
         self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
+        self.finishOrderButton.rx.tap.bind(to: self.lotsViewModel.finishOrderDidTap).disposed(by: self.disposeBag)
+        
+        // Se regrsa al inbox cuando se finaliza la orden
+        self.lotsViewModel.backToInboxView.subscribe(onNext: { [weak self] _ in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }).disposed(by: self.disposeBag)
         
         self.addLotButton.rx.tap.subscribe(onNext: { [weak self] _ in
             if let indexPath = self?.lotsAvailablesTable.indexPathForSelectedRow, let cell = self?.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
@@ -170,6 +176,8 @@ class LotsViewController: UIViewController {
     }
     
     func initComponents() {
+        UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
+        
         self.title = "Lotes"
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: "#", fontSize: 15)
