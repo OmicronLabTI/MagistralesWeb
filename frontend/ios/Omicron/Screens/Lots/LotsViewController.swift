@@ -223,7 +223,7 @@ class LotsViewController: UIViewController {
     
     func initComponents() {
         if let detail = self.orderDetail.first {
-            let iconName = detail.comments == CommonStrings.Emty ? "message":"message.fill"
+            let iconName = (detail.comments == CommonStrings.Emty) || (detail.comments == nil) ? "message":"message.fill"
             let commentsIcons = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
             self.navigationItem.rightBarButtonItem = commentsIcons
         }
@@ -300,6 +300,16 @@ class LotsViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+    
+    @objc func goToCommentsViewController() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
+        commentsVC.orderDetail = self.orderDetail
+        commentsVC.originView = ViewControllerIdentifiers.lotsViewController
+        commentsVC.modalPresentationStyle = .overCurrentContext
+        self.present(commentsVC, animated: true, completion: nil)
+    
     }
 }
 

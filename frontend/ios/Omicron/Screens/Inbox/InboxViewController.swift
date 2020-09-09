@@ -18,8 +18,6 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var similarityViewButton: UIButton!
-    @IBOutlet weak var normalViewButton: UIButton!
     
     // MARK:  Variables
     @Injected var inboxViewModel: InboxViewModel
@@ -40,7 +38,6 @@ class InboxViewController: UIViewController {
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         finishedButton.isHidden = true
-        self.normalViewButton.isEnabled = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -58,16 +55,8 @@ class InboxViewController: UIViewController {
             self?.hideButtons(id: statusId)
         }).disposed(by: disposeBag)
         
-<<<<<<< HEAD
-        self.similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewDidTap).disposed(by: self.disposeBag)
-        self.normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewDidTap).disposed(by: self.disposeBag)
-        
-        inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.rootViewModel.getOrders()
-=======
         inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.rootViewModel.getOrders()
->>>>>>> 8f2c3357905f8ed00d3d1fc0001533df6691585c
         }).disposed(by: self.disposeBag)
         
         // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
@@ -166,11 +155,6 @@ class InboxViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
-        
-        self.similarityViewButton.setTitle("", for: .normal)
-        self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
-        self.normalViewButton.setTitle("", for: .normal)
-        self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
     }
     
     func chageStatusName(index: Int) -> Void {
