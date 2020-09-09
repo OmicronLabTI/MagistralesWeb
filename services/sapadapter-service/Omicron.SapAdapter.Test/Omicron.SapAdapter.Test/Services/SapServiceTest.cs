@@ -253,7 +253,7 @@ namespace Omicron.SapAdapter.Test.Services
             var listIds = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, true);
+            var result = await this.sapService.GetOrderFormula(listIds, true, true);
 
             // assert
             Assert.IsNotNull(result);
@@ -270,7 +270,7 @@ namespace Omicron.SapAdapter.Test.Services
             var listIds = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, false);
+            var result = await this.sapService.GetOrderFormula(listIds, false, true);
 
             // assert
             Assert.IsNotNull(result);
