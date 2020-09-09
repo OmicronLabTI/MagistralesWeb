@@ -25,6 +25,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     {
         private readonly IDatabaseContext databaseContext;
 
+        private readonly string CloseDate = "CloseDate";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosDao"/> class.
         /// </summary>
@@ -102,21 +104,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaFin(DateTime fechaInicio, DateTime fechaFin)
         {
-            var listToReturn = new List<UserOrderModel>();
             var orderByFinishDate = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.FinishDate)).ToListAsync();
-
-            orderByFinishDate.ForEach(x =>
-            {
-                var dateArray = x.FinishDate.Split("/");
-                var finishDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
-
-                if(finishDate >= fechaInicio  && finishDate <= fechaFin)
-                {
-                    listToReturn.Add(x);
-                }
-            });
-
-            return listToReturn;
+            return this.GetDataByDateConvert(orderByFinishDate, fechaInicio, fechaFin, "finishDate");
         }
 
         /// <summary>
@@ -127,20 +116,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin)
         {
-            var listToReturn = new List<UserOrderModel>();
             var orderByFinishDate = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.CloseDate)).ToListAsync();
-
-            orderByFinishDate.ForEach(x =>
-            {
-                DateTime.TryParse(x.CloseDate, out var finishDate);
-
-                if (finishDate >= fechaInicio && finishDate <= fechaFin)
-                {
-                    listToReturn.Add(x);
-                }
-            });
-
-            return listToReturn;
+            return this.GetDataByDateConvert(orderByFinishDate, fechaInicio, fechaFin, this.CloseDate);
         }
 
         /// <summary>
@@ -233,6 +210,35 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId)
         {
             return await this.databaseContext.ComponentsCustomComponentLists.Where(x => x.CustomListId.Equals(customListId)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the fields with the dates.
+        /// </summary>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="fechaInicio">the init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <param name="field">the field to look.</param>
+        /// <returns>teh data.</returns>
+        private IEnumerable<UserOrderModel> GetDataByDateConvert(List<UserOrderModel> userOrders, DateTime fechaInicio, DateTime fechaFin, string field)
+        {
+            var listToReturn = new List<UserOrderModel>();
+
+            Parallel.ForEach(userOrders, user =>
+            {
+                var dateArray = field.Equals(this.CloseDate) ? user.CloseDate.Split("/") : user.FinishDate.Split("/");
+                var finishDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
+
+                if (finishDate >= fechaInicio && finishDate <= fechaFin)
+                {
+                    lock (listToReturn)
+                    {
+                        listToReturn.Add(user);
+                    }
+                }
+            });
+
+            return listToReturn;
         }
     }
 }
