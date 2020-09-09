@@ -153,6 +153,7 @@ class LotsViewController: UIViewController {
                 return
             }
             self?.lottieManager.hideLoading()
+            self?.showMoreIndicators()
         }).disposed(by: self.disposeBag)
         
         // Muestra un AlertMessage
@@ -160,6 +161,13 @@ class LotsViewController: UIViewController {
             guard let weakSelf = self else { return }
             AlertManager.shared.showAlert(message: message, view: weakSelf)
         }).disposed(by: self.disposeBag)
+    }
+    
+    func showMoreIndicators() {
+        let count = lineDocTable.dataSource?.tableView(lineDocTable, numberOfRowsInSection: 0)
+        if count ?? 0 > lineDocTable.visibleCells.count {
+            lineDocTable.addMoreIndicator()
+        }
     }
     
     func initComponents() {
@@ -207,7 +215,6 @@ class LotsViewController: UIViewController {
             self.removeLotButton.isEnabled = false
             self.saveLotsButton.isEnabled = false
         }
-        
     }
     
     func setStyleView(view: UIView) {
@@ -234,7 +241,6 @@ class LotsViewController: UIViewController {
 }
 
 extension LotsViewController: UITableViewDelegate {
-    
     // Pinta una fila o otra no en la tabla
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let customView = UIView()
@@ -245,5 +251,10 @@ extension LotsViewController: UITableViewDelegate {
         } else {
             cell.backgroundColor = .white
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let tableView = scrollView as? UITableView else { return }
+        tableView.removeMoreIndicator()
     }
 }
