@@ -178,7 +178,7 @@
             <objects>
                 <viewController storyboardIdentifier="InboxViewController" id="jwh-yn-yGS" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="i2U-wQ-yxQ">
-                        <rect key="frame" x="0.0" y="0.0" width="990.5" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="990" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HTk-p1-6Au">
@@ -241,12 +241,12 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="jGm-0l-bDk">
                                         <rect key="frame" x="870.5" y="0.0" width="80" height="40"/>
                                         <subviews>
-                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UNM-JG-4xw">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="30"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UNM-JG-4xw">
+                                                <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
                                                 <state key="normal" title="Button"/>
                                             </button>
-                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMB-nN-aT4">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="30"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMB-nN-aT4">
+                                                <rect key="frame" x="40" y="0.0" width="40" height="40"/>
                                                 <state key="normal" title="Button"/>
                                             </button>
                                         </subviews>
@@ -283,8 +283,10 @@
                     <connections>
                         <outlet property="collectionView" destination="HTk-p1-6Au" id="PXP-7D-xfI"/>
                         <outlet property="finishedButton" destination="Sk7-Zh-BjH" id="Ku5-i1-a9a"/>
+                        <outlet property="normalViewButton" destination="WMB-nN-aT4" id="3SL-BN-5e7"/>
                         <outlet property="pendingButton" destination="Jev-kI-Spn" id="KEe-ko-tuK"/>
                         <outlet property="processButton" destination="7P0-go-amH" id="Dpc-G5-zPv"/>
+                        <outlet property="similarityViewButton" destination="UNM-JG-4xw" id="ldK-jN-Oji"/>
                         <segue destination="Dvp-ad-RrX" kind="show" identifier="OrderDetailViewController" id="Wlv-14-Wdl"/>
                     </connections>
                 </viewController>

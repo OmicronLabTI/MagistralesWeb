@@ -23,8 +23,12 @@ class  InboxViewModel {
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
     weak var selectedOrder: Order?
-
     var disposeBag = DisposeBag();
+    var similarityViewButtonDidTap = PublishSubject<Void>()
+    var similarityViewButtonIsEnable = PublishSubject<Bool>()
+    var normalViewButtonDidTap = PublishSubject<Void>()
+    var normalViewButtonIsEnable = PublishSubject<Bool>()
+    
     init() {
         // Funcionalidad para el botón de Terminar
         finishedDidTap.subscribe(onNext: { () in
@@ -37,17 +41,50 @@ class  InboxViewModel {
         // Funcionalidad para el botón de En Proceso
         processDidTap.subscribe(onNext: {
              self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
-            }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
+        
+        // Funcionalidad para agrupar los cards por similitud
+        similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            if (self?.ordersTemp != nil) {
+                let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+                
+                for order in ordering! {
+                    let itemCodeInArray = order.itemCode?.components(separatedBy: "   ")
+                    if let codeProduct = itemCodeInArray?.first {
+                        order.productCode = codeProduct
+                    } else {
+                        order.productCode = ""
+                    }
+                }
+                //var  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
+                
+                //print(groupBySimilarity)
+            }
+            
+            
+            
+            self?.similarityViewButtonIsEnable.onNext(false)
+            self?.normalViewButtonIsEnable.onNext(true)
+        }).disposed(by: self.disposeBag)
+        
+        // Funcionalidad para mostrar la vista normal en los cards
+        normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+            self?.statusData.onNext(ordering ?? [])
+            self?.similarityViewButtonIsEnable.onNext(true)
+            self?.normalViewButtonIsEnable.onNext(false)
+        }).disposed(by: self.disposeBag)
     }
     
     func setSelection(section: SectionOrder) -> Void {
-        let ordering = section.orders.sorted  {
-            switch ($0, $1) {
-            // Order errors by code
-            case let (aCode, bCode):
-                return aCode.baseDocument! < bCode.baseDocument!
-            }
-        }
+        let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
+//        let ordering = section.orders.sorted  {
+//            switch ($0, $1) {
+//            // Order errors by code
+//            case let (aCode, bCode):
+//                return aCode.baseDocument! < bCode.baseDocument!
+//            }
+//        }
 
         self.statusData.onNext(ordering)
         self.title.onNext(section.statusName)
@@ -55,17 +92,27 @@ class  InboxViewModel {
     }
     
     func setFilter(orders: [Order]) -> Void {
-        let ordering = orders.sorted  {
-            switch ($0, $1) {
-            // Order errors by code
-            case let (aCode, bCode):
-                return aCode.baseDocument! < bCode.baseDocument!
-            }
-        }
+        let ordering = self.sortByBaseBocumentAscending(orders: orders)
+//        let ordering = orders.sorted  {
+//            switch ($0, $1) {
+//            // Order errors by codeorders
+//            case let (aCode, bCode):
+//                return aCode.baseDocument! < bCode.baseDocument!
+//            }
+//        }
 
         self.statusData.onNext(ordering)
         self.title.onNext("Búsqueda")
         self.ordersTemp = ordering
+    }
+    
+    func sortByBaseBocumentAscending(orders: [Order]) -> [Order]{
+        orders.sorted  {
+            switch ($0, $1) {
+            case let (aCode, bCode):
+                return aCode.baseDocument! < bCode.baseDocument!
+            }
+        }
     }
     
     func changeStatus(indexPath: [IndexPath]) -> Void {
