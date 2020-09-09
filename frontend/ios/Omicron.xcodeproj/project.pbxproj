@@ -70,6 +70,7 @@
 		980F234524DA11AE0073E2C8 /* login.json in Resources */ = {isa = PBXBuildFile; fileRef = 980F234424DA11AE0073E2C8 /* login.json */; };
 		98532B2F24B390A80015BBC6 /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 98532B2E24B390A80015BBC6 /* loading.json */; };
 		98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98532B3124B3933C0015BBC6 /* LottieManager.swift */; };
+		986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986EA24625083BF200ACE26A /* ExtensionsUI.swift */; };
 		98B7845A24DA228A005A38FC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B7845924DA228A005A38FC /* Persistence.swift */; };
 		98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03024AFBD4100018A88 /* LoginViewModel.swift */; };
 		98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03224AFBD4C00018A88 /* LoginViewController.swift */; };
@@ -169,6 +170,7 @@
 		980F234424DA11AE0073E2C8 /* login.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = login.json; sourceTree = "<group>"; };
 		98532B2E24B390A80015BBC6 /* loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = loading.json; sourceTree = "<group>"; };
 		98532B3124B3933C0015BBC6 /* LottieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieManager.swift; sourceTree = "<group>"; };
+		986EA24625083BF200ACE26A /* ExtensionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsUI.swift; sourceTree = "<group>"; };
 		98B7845924DA228A005A38FC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		98C8C03024AFBD4100018A88 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		98C8C03224AFBD4C00018A88 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -483,6 +485,7 @@
 				98C8C03D24AFCC9200018A88 /* Config.swift */,
 				98B7845924DA228A005A38FC /* Persistence.swift */,
 				7CCC6A4724F880E200ACBBE8 /* FileManager.swift */,
+				986EA24625083BF200ACE26A /* ExtensionsUI.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -774,6 +777,7 @@
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
+				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
 				7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,

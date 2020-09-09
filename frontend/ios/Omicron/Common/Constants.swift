@@ -17,6 +17,7 @@ struct Constants {
     
     enum Tags: Int {
         case loading = 101
+        case moreIndicator = 201
     }
 }
 
