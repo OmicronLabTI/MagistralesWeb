@@ -1,19 +1,20 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatTableDataSource} from '@angular/material';
+import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import { IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
-import { ActivatedRoute } from '@angular/router';
+import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import {ActivatedRoute} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
   ClassNames,
   CONST_STRING,
   ConstStatus,
+  FromToFilter,
   HttpServiceTOCall,
   MessageType,
   MODAL_NAMES
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -47,6 +48,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   detailsOrderToProcess = new ProcessOrdersDetailReq();
   isThereOrdersDetailToCancel = false;
   isThereOrdersDetailToFinalize = false;
+  isThereOrdersDetailToReassign = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService) {
@@ -54,16 +56,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
-      if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
-        this.getDetallePedido();
-      }
-    });
     this.route.paramMap.subscribe(params => {
       this.docNum = params.get('id');
       this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
+    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+      if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
+        this.getDetallePedido();
+      }
+    });
   }
 
   getDetallePedido() {
@@ -72,23 +74,23 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.dataSource.data = pedidoDetalleRes.response;
         this.dataSource.data.forEach(element => {
           this.docStatus = element.pedidoStatus;
-          element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
+          element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
+          element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
-          switch (element.status) {
-            case ConstStatus.abierto:
-              element.class = 'green';
+          switch (element.status.toUpperCase()) {
+            case ConstStatus.abierto.toUpperCase():
+              element.class = 'pdabierto';
               break;
-            case ConstStatus.asignado:
+            case ConstStatus.asignado.toUpperCase():
               element.class = 'asignado';
               break;
-            case ConstStatus.pendiente:
+            case ConstStatus.pendiente.toUpperCase():
               element.class = 'pendiente';
               break;
-            case ConstStatus.terminado:
+            case ConstStatus.terminado.toUpperCase():
               element.class = 'terminado';
               break;
-              case ConstStatus.enProceso:
+              case ConstStatus.enProceso.toUpperCase():
                 element.class = 'proceso';
                 break;
           }
@@ -97,6 +99,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
         this.isThereOrdersDetailToFinalize = false;
+        this.isThereOrdersDetailToReassign = false;
       }, error => this.errorService.httpError(error));
   }
 
@@ -127,20 +130,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToPlan = this.getIsThereOnData(ConstStatus.abierto);
-    this.isThereOrdersDetailToPlace = this.getIsThereOnData(ConstStatus.planificado);
-    this.isThereOrdersDetailToCancel = this.getIsThereOnData(ConstStatus.finalizado, true);
-    this.isThereOrdersDetailToFinalize = this.getIsThereOnData(ConstStatus.terminado);
+    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+        FromToFilter.fromDetailOrder);
+    this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+                                                                        FromToFilter.fromDefault);
+    this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
+                                                                           FromToFilter.fromDefault);
+    this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
+    this.isThereOrdersDetailToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+        FromToFilter.fromOrderIsolatedReassign);
   }
-  getIsThereOnData(status: string, isFromCancelOrder = false) {
-    if (!isFromCancelOrder) {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status === status)).length > 0;
-    } else {
-      return this.dataSource.data.filter(t => (t.isChecked && t.status !== status && t.status !== ConstStatus.cancelado
-          && t.status !== ConstStatus.abierto)).length > 0;
-    }
-  }
-
   ngOnDestroy() {
     this.subscriptionCallHttpDetail.unsubscribe();
   }
@@ -169,10 +168,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         } );
   }
 
-  setDescription(productCodeId: string, descriptionProduct: string) {
-    this.dataService.setDetailOrderDescription(`${productCodeId} ${descriptionProduct}`);
-  }
-
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
       (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
@@ -190,5 +185,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         cancelOrder.orderId = order.ordenFabricacionId;
         return cancelOrder;
       }), cancelType: MODAL_NAMES.placeOrdersDetail});
+  }
+
+  reassignOrderDetail() {
+    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+          FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
+      , isFromReassign: true});
   }
 }

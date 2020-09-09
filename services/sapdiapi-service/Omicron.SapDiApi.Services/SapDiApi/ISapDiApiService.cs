@@ -57,7 +57,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultModel> FinishOrder(List<CloseProductionOrderModel> productionOrders);
+        ResultModel FinishOrder(List<CloseProductionOrderModel> productionOrders);
 
         /// <summary>
         /// Create new isolated production order.

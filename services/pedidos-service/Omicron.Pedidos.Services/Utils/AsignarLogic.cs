@@ -212,15 +212,12 @@ namespace Omicron.Pedidos.Services.Utils
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
-
-                        if (!string.IsNullOrEmpty(o.Salesorderid))
-                        {
-                            var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == o.Salesorderid && string.IsNullOrEmpty(x.Productionorderid));
-                            pedido.Status = missing ? ServiceConstants.Planificado : ServiceConstants.Liberado;
-                            pedido.Userid = user;
-                            listToUpdate.Add(o);
-                        }
                     });
+
+                    var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
+                    pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
+                    pedido.Userid = user;
+                    listToUpdate.Add(pedido);
                 });
 
             return listToUpdate;

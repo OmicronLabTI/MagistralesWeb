@@ -29,7 +29,8 @@ export const Endpoints = {
     finalizeOrders: `${environment.baseUrl}/api/pedidos/salesOrder/finish`,
     finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish`,
     getProducts: `${environment.baseUrl}/api/sapadapter/products`,
-    createIsolatedOrder: `${environment.baseUrl}/api/pedidos/fabOrder/isolated`
+    createIsolatedOrder: `${environment.baseUrl}/api/pedidos/fabOrder/isolated`,
+    reAssignManual: `${environment.baseUrl}/api/pedidos/reasignar/manual`
   },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
@@ -37,6 +38,9 @@ export const Endpoints = {
   },
   orders: {
     getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+  },
+  productivity: {
+    getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
   }
 };
 

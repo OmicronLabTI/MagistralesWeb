@@ -8,7 +8,6 @@
 
 namespace Omicron.Usuarios.Entities.Model
 {
-    using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -81,5 +80,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("activo")]
         public int Activo { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        [Column("pieces")]
+        public int Piezas { get; set; }
     }
 }

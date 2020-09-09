@@ -161,8 +161,6 @@ body {
 
 .table-toolbar{
   width: 100%;
-  display: flex;
-  align-items: flex-end;
   margin-top: 20px;
 }
 
@@ -170,11 +168,15 @@ body {
   width: 10%;
   float: left;
 }
+.button-container {
+  margin-left: 0;
+  margin-right: 0;
+}
 
 .table-toolbar .table-toolbar-buttons{
-  width: 90%;
-  float: right;
-  text-align: right;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .table-toolbar .table-toolbar-buttons button{
@@ -184,12 +186,12 @@ body {
 .table-toolbar .table-toolbar-buttons .button-blue{
   background-color: #6C90B3 !important;
   color: #fff !important;
-  margin-left: 10px;
+  margin-left: 15px !important;
 }
 .disable-button {
   background-color: #dbdfe4 !important;
   color: #424040 !important;
-  margin-left: 10px;
+  margin-left: 15px !important;
 }
 
 table {
@@ -204,7 +206,6 @@ th{
   word-wrap: break-word !important;
   white-space: unset !important;
   overflow-wrap: break-word;
-  word-wrap: break-word;
   word-break: break-word;
   -ms-hyphens: auto;
   -moz-hyphens: auto;
@@ -231,7 +232,6 @@ th.centered {
   white-space: unset !important;
   flex: 0 0 28% !important;
   overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
   word-break: break-word !important;
   -ms-hyphens: auto !important;
   -moz-hyphens: auto !important;
@@ -639,9 +639,34 @@ a.breadcrumblink:hover{
   border: 1px solid #2196f3 !important;
 }
 
+.mat-stroked-button.pterminado {
+  color: #94396F !important;
+  border: 1px solid #94396F !important;
+}
+
 .mat-stroked-button.cerrado {
   color: #e7515a !important;
   border: 1px solid #e7515a !important;
+}
+
+.mat-stroked-button.finalizado {
+  color: red !important;
+  border: 1px solid red !important;
+}
+
+.mat-stroked-button.pdabierto {
+  color: black !important;
+  border: 1px solid black !important;
+}
+
+.mat-stroked-button.pdreasignado {
+  color: #5c1ac3 !important;
+  border: 1px solid #5c1ac3 !important;
+}
+
+.mat-stroked-button.pdfinalizado {
+  color: #8D594E !important;
+  border: 1px solid #8D594E !important;
 }
 
 .is-loading {

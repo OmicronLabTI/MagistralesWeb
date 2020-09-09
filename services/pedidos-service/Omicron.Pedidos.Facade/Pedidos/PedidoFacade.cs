@@ -327,5 +327,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.productivityService.GetWorkLoad(parameters));
         }
+
+        /// <summary>
+        /// Gets if the order has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>if the batches are completed.</returns>
+        public async Task<ResultDto> CompletedBatches(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CompletedBatches(orderId));
+        }
     }
 }

@@ -6,7 +6,8 @@ export const CONST_NUMBER = {
     five: 5,
     ten: 10,
     timeToast: 2000,
-    nulo: null
+    nulo: null,
+    six: 6,
 };
 export const CONST_STRING = {
     empty: ''
@@ -42,7 +43,8 @@ export enum HttpServiceTOCall {
     DETAIL_ORDERS,
     USERS,
     DETAIL_FORMULA,
-    ORDERS_ISOLATED
+    ORDERS_ISOLATED,
+    PRODUCTIVITY
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -68,11 +70,11 @@ export const ConstStatus = {
     finalizado: 'Finalizado',
     cancelado: 'Cancelado',
     liberado: 'Liberado',
-    enProceso: 'En proceso',
+    enProceso: 'En Proceso',
     pendiente: 'Pendiente',
     asignado: 'Asignado',
     terminado: 'Terminado',
-    reasingado: 'Reasingado',
+    reasingado: 'Reasignado',
 };
 export const HttpStatus = {
     ok: 200,
@@ -108,3 +110,35 @@ export const ComponentSearch = {
     searchComponent: 'searchComponent',
     createOrderIsolated: 'createOrder'
 };
+
+export enum FromToFilter {
+    fromOrders,
+    fromOrdersReassign,
+    fromOrdersCancel,
+    fromDetailOrder,
+    fromOrdersIsolated,
+    fromOrdersIsolatedCancel,
+    fromOrderIsolatedReassign,
+    fromOrderIsolatedReassignItems,
+    fromDefault
+}
+export const Colors = [
+    'rgba(70, 61, 242, 95)',
+    'rgba(5, 112, 255, 100)',
+    'rgba(69, 216, 230, 90)',
+    'rgba(63, 252, 171, 99)',
+    'rgba(61, 242, 70, 95)',
+    'rgba(242, 141, 206, 95)',
+    'rgba(160, 230, 146, 90)',
+    'rgba(146, 200, 252, 99)',
+    'rgba(242, 141, 225, 95)',
+    'rgba(242, 99, 85, 95)',
+    'rgba(255, 223, 107, 100)',
+    'rgba(92, 230, 106, 90)',
+    'rgba(122, 179, 255, 100)',
+    'rgba(242, 85, 236, 95)',
+    'rgba(82, 233, 242, 95)',
+    'rgba(82, 100, 242, 95)',
+    'rgba(230, 176, 90, 90)',
+    'rgba(71, 255, 78, 100)'
+];

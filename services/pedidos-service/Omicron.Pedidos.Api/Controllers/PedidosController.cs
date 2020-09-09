@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Facade.Request;
     using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
@@ -24,14 +25,17 @@ namespace Omicron.Pedidos.Api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly IPedidoFacade pedidoFacade;
+        private readonly IRequestFacade requestFacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
-        public PedidosController(IPedidoFacade pedidoFacade)
+        /// <param name="requestFacade">the request facade.</param>
+        public PedidosController(IPedidoFacade pedidoFacade, IRequestFacade requestFacade)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
+            this.requestFacade = requestFacade ?? throw new ArgumentNullException(nameof(requestFacade));
         }
 
         /// <summary>
@@ -308,6 +312,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Gets if the order has incomplete batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/completedBatches/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> CompletedBatches(int orderId)
+        {
+            var response = await this.pedidoFacade.CompletedBatches(orderId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Create new isolated production order.
         /// </summary>
         /// <param name="isolatedFabOrder">Isolated production order.</param>
@@ -395,6 +412,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetWorkLoad([FromQuery] Dictionary<string, string> parameters)
         {
             var response = await this.pedidoFacade.GetWorkLoad(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Create a raw material request.
+        /// </summary>
+        /// <param name="requests">New request to add.</param>
+        /// <returns>List with successfuly and failed creations.</returns>
+        [HttpPost]
+        [Route("/request/rawmaterial")]
+        public async Task<IActionResult> CreateRawMaterialRequest(UserActionDto<List<RawMaterialRequestDto>> requests)
+        {
+            var response = await this.requestFacade.CreateRawMaterialRequest(requests.UserId, requests.Data);
             return this.Ok(response);
         }
 

@@ -207,5 +207,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the filters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets if the order has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>if the batches are completed.</returns>
+        Task<ResultDto> CompletedBatches(int orderId);
     }
 }

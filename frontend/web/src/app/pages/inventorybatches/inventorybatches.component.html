@@ -64,7 +64,7 @@
             <div class="title-list-container">
                 <span>Lotes disponibles</span>
             </div>
-            <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8" style="margin-bottom: 20px !important;">
+            <table mat-table [dataSource]="dataSourceLotes" class="mat-elevation-z8 item-batches" style="margin-bottom: 20px !important;">
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">LOTE</th>
                     <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center lotesconsecutivo"> {{element.numeroLote}} </td>
@@ -101,7 +101,7 @@
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="lotesColumns" class="color-text-intables"></tr>
-                <tr mat-row *matRowDef="let row; columns: lotesColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: lotesColumns;" [ngClass]="isDue(row) ? 'caduco' : ''"></tr>
             </table>
         </div>
         <div class="column-b">
@@ -126,7 +126,7 @@
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="lotesSelectedColumns" class="color-text-intables"></tr>
-                <tr mat-row *matRowDef="let row; columns: lotesSelectedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: lotesSelectedColumns;" [ngClass]="getIsValid(row) ? '' : 'caduco'"></tr>
             </table>
         </div>
     </div>
