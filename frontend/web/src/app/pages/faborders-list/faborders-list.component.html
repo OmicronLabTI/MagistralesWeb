@@ -33,7 +33,8 @@
             </button>
             <button [disabled]="!isReAssignOrderIsolated" mat-raised-button
                     [ngClass]="isReAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="reAssignOrder()" >Reasignar</button>
-            <button mat-raised-button class="button-blue" (click)="finalizeOrder()" >Finalizar</button>
+            <button [disabled]="!isFinalizeOrderIsolated" mat-raised-button
+                    [ngClass]="isFinalizeOrderIsolated ? 'button-blue' : 'disable-button'" (click)="finalizeOrder()" >Finalizar</button>
 
             <button [disabled]="!isThereOrdersIsolatedToCancel" mat-raised-button
                     [ngClass]="isThereOrdersIsolatedToCancel ? 'button-blue' : 'disable-button'"

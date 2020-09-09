@@ -18,6 +18,9 @@ export class ICancelOrdersRes extends BaseResponseHttp {
 export class ICreateIsolatedOrderRes extends BaseResponseHttp {
     response: number;
 }
+export class IGetNewBachCodeRes extends BaseResponseHttp {
+    response: string;
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
@@ -64,6 +67,14 @@ export class CancelOrderReq {
     userId?: string;
     orderId: number;
     reason?: string;
+    batches?: Batches[];
+}
+
+export class Batches {
+    batchCode: string;
+    quantity: string;
+    expirationDate: string;
+    manufacturingDate: string;
 }
 export class ResponseCancel {
     failed: CancelOrderReq[];

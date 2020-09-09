@@ -16,6 +16,11 @@ export class IOrdersReq {
     qfb?: string;
     status?: string;
     class?: string;
+    unit?: string;
+    batche?: string;
+    quantityFinish: number;
+    endDate?: Date;
+    fabDate?: Date;
 }
 
 export class ParamsOrders {

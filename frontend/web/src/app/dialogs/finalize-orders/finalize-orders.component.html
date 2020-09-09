@@ -1,0 +1,89 @@
+
+<div class="finalize-orders-container">
+    <mat-card class="add-user-card">
+        <mat-card-header class="card-header-container">
+            <mat-card-title > Crear lotes
+            </mat-card-title>
+            <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
+        </mat-card-header>
+        <mat-card-content class="content-card-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 margin-table">
+
+                <ng-container matColumnDef="nOrder">
+                    <th mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN</th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> {{element.fabOrderId}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="codProduct">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto"> {{element.itemCode}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="desProduct">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN </th>
+                    <td mat-cell matTooltip="{{element.description}}"
+                        matTooltipPosition="right"
+                        aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto-custom cursor-pointer "> {{ (element.description.length > 15) ? (element.description | slice:0:15) + '...' : element.description }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lote">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> LOTE</th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide cantplan">
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text"
+                                   class="number color-number" placeholder="Lote"
+                                   [(ngModel)]="element.batche"
+                                   (ngModelChange)="onBatchesChange($event, i)">
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD</th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden">
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text"
+                                   class="number color-number" placeholder="Cantidad"
+                                   [(ngModel)]="element.quantityFinish"
+                                   (ngModelChange)="onQuantityFinishChange($event, i)">
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="unit">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">UNIDAD</th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino">{{element.unit}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fabDate">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA ORDEN </th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide status">
+                        <mat-form-field color="accent" appearance="outline">
+                            <input matInput [matDatepicker]="picker2" [(ngModel)]="element.fabDate" (ngModelChange)="onFabDateChange($event, i)">
+                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2 color="primary"></mat-datepicker>
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+                <<ng-container matColumnDef="endDate">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">FECHA VENCIMIENTO</th>
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
+                        <mat-form-field appearance="outline">
+                            <input matInput [matDatepicker]="picker3" [(ngModel)]="element.endDate" (ngModelChange)="onEndDateChange($event, i)">
+                            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                            <mat-datepicker #picker3 color="primary"></mat-datepicker>
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+        <mat-card-actions class="options-footer">
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-add-modal btn--modal">Aceptar</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

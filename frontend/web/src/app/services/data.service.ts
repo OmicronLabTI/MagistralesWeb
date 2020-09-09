@@ -279,13 +279,15 @@ export class DataService {
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }
   }
-  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter) {
+  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter, status?: string) {
     switch (fromToFilter) {
       case FromToFilter.fromOrderIsolatedReassignItems:
         return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
             || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)));
       case FromToFilter.fromOrdersReassign:
         return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.liberado));
+      default:
+        return dataToSearch.filter(t => (t.isChecked && t.status === status));
     }
   }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
