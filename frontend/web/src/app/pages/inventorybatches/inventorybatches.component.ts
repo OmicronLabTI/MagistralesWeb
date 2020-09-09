@@ -75,6 +75,7 @@ export class InventorybatchesComponent implements OnInit {
         if (item.selected){
           item.selected = BOOLEANS.falso;
         }
+        return item;
       });
       element.selected = !element.selected;
       this.getBatchesFromSelected(element.codigoProducto);
@@ -339,7 +340,7 @@ export class InventorybatchesComponent implements OnInit {
     if (element.fechaExp !== null && element.fechaExp !== undefined) {
       const strFechaExp = String(element.fechaExp).split('/');
       const dtFechaExp = new Date(parseInt(strFechaExp[2]), parseInt(strFechaExp[1]) - 1, parseInt(strFechaExp[0]));
-      element.isValid = false;
+      element.isValid = !(dtFechaExp < this.today);
       return dtFechaExp < this.today;
     }
     element.isValid = true;
