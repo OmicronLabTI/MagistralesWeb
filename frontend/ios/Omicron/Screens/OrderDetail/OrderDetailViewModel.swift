@@ -156,8 +156,7 @@ class OrderDetailViewModel {
             //self?.validSignatures()
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-//                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
-                            self?.showSignatureView.onNext("Firma del  QFB")
+                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
         }).disposed(by: self.disposeBag)
     }
 }

@@ -47,6 +47,8 @@ class LotsViewModel {
     var sqfbSignature = ""
     var technicalSignature = ""
     var showSignatureView = PublishSubject<String>()
+    var updateComments = PublishSubject<OrderDetail>()
+    @Injected var orderDetail: OrderDetailViewModel
     
     init() {
         
@@ -322,5 +324,19 @@ class LotsViewModel {
                     self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
             }).disposed(by: self.disposeBag)
         }
+    }
+    
+    // Se actualiza order detail para obtener los comentarios
+    func updateOrderDetail() {
+        loading.onNext(true)
+        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.loading.onNext(false)
+            if (res.response != nil) {
+                self?.updateComments.onNext(res.response!)
+            }
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+        }).disposed(by: self.disposeBag)
     }
 }

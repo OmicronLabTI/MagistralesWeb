@@ -58,6 +58,8 @@ class LotsViewController: UIViewController {
     var codeDescription = ""
     var orderNumber = ""
     var manufacturingOrder = ""
+    var comments = ""
+    var orderDetail:[OrderDetail] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,6 +108,12 @@ class LotsViewController: UIViewController {
             self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
+        // Actualizan los comentarios
+        self.lotsViewModel.updateComments.subscribe(onNext: {[weak self] orderDetail in
+            self?.orderDetail = [orderDetail]
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra el componente de firma
         self.lotsViewModel.showSignatureView.subscribe(onNext: { [weak self] titleView in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
@@ -189,7 +197,7 @@ class LotsViewController: UIViewController {
         //Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         
-        // Muestra o coulta el loading
+        // Muestra u oculta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
                 self?.lottieManager.showLoading()
@@ -205,7 +213,23 @@ class LotsViewController: UIViewController {
         }).disposed(by: self.disposeBag)
     }
     
+    @objc func goToCommentsViewController() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
+        commentsVC.orderDetail = self.orderDetail
+        commentsVC.originView = ViewControllerIdentifiers.lotsViewController
+        commentsVC.modalPresentationStyle = .overCurrentContext
+        self.present(commentsVC, animated: true, completion: nil)
+    
+    }
+    
     func initComponents() {
+        if let detail = self.orderDetail.first {
+            let iconName = detail.comments == CommonStrings.Emty ? "message":"message.fill"
+            let commentsIcons = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItem = commentsIcons
+        }
+        
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         
         self.title = "Lotes"

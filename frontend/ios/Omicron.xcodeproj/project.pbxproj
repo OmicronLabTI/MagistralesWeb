@@ -975,6 +975,7 @@
 			baseConfigurationReference = DDD0E5DA09C7E1BCDA531700 /* Pods-Omicron.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -985,6 +986,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -995,6 +997,7 @@
 			baseConfigurationReference = 2CB66FAA4E49873A00418BE5 /* Pods-Omicron.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -1005,6 +1008,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;

@@ -90,6 +90,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
         commentsVC.orderDetail = self.orderDetail
+        commentsVC.originView = ViewControllerIdentifiers.orderDetailViewController
         commentsVC.modalPresentationStyle = .overCurrentContext
         self.present(commentsVC, animated: true, completion: nil)
     
@@ -121,9 +122,10 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
-            if (self?.orderId != nil && self?.statusType != nil) {
+            if (self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil) {
                 lotsVC.orderId = self!.orderId
                 lotsVC.statusType = self!.statusType
+                lotsVC.orderDetail = self!.orderDetail
                 if let order = self?.orderDetail.first {
                     if (order.productDescription != nil && order.code != nil && order.productionOrderID != nil && order.baseDocument != nil) {
                         lotsVC.orderNumber =  "\(order.baseDocument!)"
