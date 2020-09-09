@@ -126,7 +126,7 @@ namespace Omicron.Pedidos.Services.Utils
             listWithError.ForEach(x =>
             {
                 var order = x.Split("-");
-                if (order.Count() > 2)
+                if (order.Length > 2)
                 {
                     listToReturn.Add($"{order[1]}-{order[2]}");
                 }
@@ -188,7 +188,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
                                 ItemCode = sapOrder.Code,
-                                Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                                Destiny = destiny.Length < 3 || destiny[destiny.Length - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                             };
 
                             ordersDetail.Add(order);

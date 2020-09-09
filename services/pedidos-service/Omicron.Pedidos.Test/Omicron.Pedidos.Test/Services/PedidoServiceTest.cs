@@ -143,7 +143,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
-            var response = await pedidosServiceLocal.GetFabOrderByUserID(id);
+            var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
 
             // assert
             Assert.IsNotNull(response);

@@ -98,7 +98,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <returns>the list to returns.</returns>
         public async Task<ResultDto> GetFabOrderByUserID(string userId)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.GetFabOrderByUserID(userId));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetFabOrderByUserId(userId));
         }
 
         /// <summary>

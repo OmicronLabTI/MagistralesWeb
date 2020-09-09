@@ -65,7 +65,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Matrix = matrix,
             };
 
-            return ServiceUtils.CreateResult(true, 200, null, productivite, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, productivite, null);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
 
             var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders);
-            return ServiceUtils.CreateResult(true, 200, null, workLoad, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
                 listToReturn.AddRange(JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString()));
 
-                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString()) : 0;
+                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString() ?? throw new InvalidOperationException()) : 0;
                 offset += 8000;
             }
             while (total > 0 && offset < total);

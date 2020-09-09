@@ -176,11 +176,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string TypePedido = "Pedido";
 
         /// <summary>
-        /// if the type is fabrication order.
-        /// </summary>
-        public const string TypeFabOrder = "Orden de Fabricación";
-
-        /// <summary>
         /// Status liberado.
         /// </summary>
         public const string StatusSapLiberado = "R";
