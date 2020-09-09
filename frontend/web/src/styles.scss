@@ -639,6 +639,11 @@ a.breadcrumblink:hover{
   border: 1px solid #2196f3 !important;
 }
 
+.mat-stroked-button.pterminado {
+  color: #94396F !important;
+  border: 1px solid #94396F !important;
+}
+
 .mat-stroked-button.cerrado {
   color: #e7515a !important;
   border: 1px solid #e7515a !important;
@@ -646,7 +651,7 @@ a.breadcrumblink:hover{
 
 .mat-stroked-button.finalizado {
   color: red !important;
-  border: 1px solid #E7515a !important;
+  border: 1px solid red !important;
 }
 
 .mat-stroked-button.pdabierto {
