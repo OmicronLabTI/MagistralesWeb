@@ -294,6 +294,7 @@ class LotsViewModel {
             .map({ $0.toLotsSelected() })
     }
     
+    // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() -> Void  {
         self.loading.onNext(true)
         NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] res in
@@ -306,6 +307,7 @@ class LotsViewModel {
         
     }
     
+    // Valida si el usuario obtuvo las firmas y finaliza la orden 
     func callFinishOrderService() -> Void {
         
         if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {

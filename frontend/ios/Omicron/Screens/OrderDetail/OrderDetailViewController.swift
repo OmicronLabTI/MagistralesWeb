@@ -152,7 +152,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self?.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.showQfbSignatureView()})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -324,9 +324,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.changeStatus()
     }
     
-    func showQfbSignatureView() {
-        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
-    }
+//    func showQfbSignatureView() {
+//        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
+//    }
     
 //    func showSignatureView(title: String) {
 //        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
