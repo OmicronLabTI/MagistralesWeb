@@ -9,6 +9,7 @@ namespace Omicron.Pedidos.Services.Request
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Omicron.Pedidos.DataAccess.DAO.Request;
     using Omicron.Pedidos.Entities.Model;
@@ -59,6 +60,31 @@ namespace Omicron.Pedidos.Services.Request
         }
 
         /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="requests">Requests data.</param>
+        /// <returns>List with successfuly and failed updates.</returns>
+        public async Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests)
+        {
+            var results = new SuccessFailResults<RawMaterialRequestModel>();
+            foreach (var request in requests)
+            {
+                var creationResult = await this.UpdateRequest(userId, request);
+                if (creationResult.Item1)
+                {
+                    results.AddSuccesResult(creationResult.Item2);
+                }
+                else
+                {
+                    results.AddFailedResult(request, creationResult.Item3);
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
@@ -83,6 +109,44 @@ namespace Omicron.Pedidos.Services.Request
             }
 
             var message = string.Format(ServiceConstants.ReasonRawMaterialRequestAlreadyExists, request.ProductionOrderId);
+            return (false, null, message);
+        }
+
+        /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="request">Request data.</param>
+        /// <returns>
+        /// Return tuple with creation result.
+        /// Item1 = Operation status.
+        /// Item2 = Updated request.
+        /// Item3 = Error message.
+        /// </returns>
+        public async Task<(bool, RawMaterialRequestModel, string)> UpdateRequest(string userId, RawMaterialRequestModel request)
+        {
+            var existingRequest = await this.GetRawMaterialRequestByProductionOrder(request.ProductionOrderId);
+            if (existingRequest != null)
+            {
+                existingRequest.Observations = request.Observations;
+                if (!request.Signature.SequenceEqual(new byte[0]) && !request.Signature.SequenceEqual(existingRequest.Signature))
+                {
+                    existingRequest.SigningUserId = userId;
+                    existingRequest.Signature = request.Signature;
+                }
+
+                await this.requestDao.UpdateRawMaterialRequest(existingRequest);
+
+                // Create details.
+                await this.CreateDetail(existingRequest.Id, request.OrderedProducts.Where(x => x.Id == 0).ToList());
+
+                // Update details.
+                await this.requestDao.UpdateDetailsOfRawMaterialRequest(request.OrderedProducts.Where(x => x.Id > 0 && x.ProductId.Equals(existingRequest.Id)).ToList());
+
+                return (true, existingRequest, null);
+            }
+
+            var message = string.Format(ServiceConstants.ReasonRawMaterialRequestNotExists, request.ProductionOrderId);
             return (false, null, message);
         }
 
