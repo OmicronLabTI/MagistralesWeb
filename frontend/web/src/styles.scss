@@ -206,7 +206,6 @@ th{
   word-wrap: break-word !important;
   white-space: unset !important;
   overflow-wrap: break-word;
-  word-wrap: break-word;
   word-break: break-word;
   -ms-hyphens: auto;
   -moz-hyphens: auto;
@@ -233,7 +232,6 @@ th.centered {
   white-space: unset !important;
   flex: 0 0 28% !important;
   overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
   word-break: break-word !important;
   -ms-hyphens: auto !important;
   -moz-hyphens: auto !important;
@@ -641,6 +639,11 @@ a.breadcrumblink:hover{
   border: 1px solid #2196f3 !important;
 }
 
+.mat-stroked-button.pterminado {
+  color: #94396F !important;
+  border: 1px solid #94396F !important;
+}
+
 .mat-stroked-button.cerrado {
   color: #e7515a !important;
   border: 1px solid #e7515a !important;
@@ -648,7 +651,7 @@ a.breadcrumblink:hover{
 
 .mat-stroked-button.finalizado {
   color: red !important;
-  border: 1px solid #E7515a !important;
+  border: 1px solid red !important;
 }
 
 .mat-stroked-button.pdabierto {

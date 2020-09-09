@@ -170,6 +170,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<string> GetMaxBatchCode(string batchCodePattern, string productCode);
 
         /// <summary>
+        /// Get batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the product code.</param>
+        /// <returns>the data.</returns>
+        Task<string> GetBatchCode(string productCode, string batchCode);
+
+        /// <summary>
         /// Gets the value for the item code by filters. 
         /// </summary>
         /// <param name="criterials">the values to look.</param>

@@ -130,6 +130,17 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Validate if exists batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the batch code.</param>
+        /// <returns>the validation result.</returns>
+        public async Task<ResultDto> ValidateIfExistsBatchCodeByItemCode(string productCode, string batchCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.ValidateIfExistsBatchCodeByItemCode(productCode, batchCode));
+        }
+
+        /// <summary>
         /// Look for the orders.
         /// </summary>
         /// <param name="orderFabDto">the parameters.</param>

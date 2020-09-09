@@ -96,7 +96,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listUsers = await this.GetUsers(userOrders);
 
-            details.ToList().ForEach(x =>
+            foreach (var x in details)
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
@@ -109,7 +109,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
                 x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
-            });
+                x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+            }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
         }
@@ -366,6 +367,18 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var nextCode = $"{batchCodePrefix}{max.ToString().PadLeft(batchCodeNumberPositions, '0')}";
             return ServiceUtils.CreateResult(true, 200, null, nextCode, null, null);
+        }
+
+        /// <summary>
+        /// Validate if exists batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the batch code.</param>
+        /// <returns>the validation result.</returns>
+        public async Task<ResultModel> ValidateIfExistsBatchCodeByItemCode(string productCode, string batchCode)
+        {
+            var existingBatchCode = await this.sapDao.GetBatchCode(productCode, batchCode);
+            return ServiceUtils.CreateResult(true, 200, null, !string.IsNullOrEmpty(existingBatchCode), null, null);
         }
 
         /// <summary>
