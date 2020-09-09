@@ -294,19 +294,20 @@ export class InventorybatchesComponent implements OnInit {
     const ordenFabricacionId = this.ordenFabricacionId;
     // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data.forEach(element => {
-      if (element.lotesSeleccionados != null){
+      if (element.lotesSeleccionados != null) {
         element.lotesSeleccionados.forEach((lote, index) => {
-          if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert))
-          {
-            const objectSAP: ILotesToSaveReq = {
-              // tslint:disable-next-line: radix
-              orderId: parseInt(ordenFabricacionId),
-              itemCode: element.codigoProducto,
-              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
-              action: lote.action,
-              batchNumber: lote.numeroLote
-            };
-            objectToSave.push(objectSAP);
+          if (lote.action !== undefined) {
+            if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert)) {
+              const objectSAP: ILotesToSaveReq = {
+                // tslint:disable-next-line: radix
+                orderId: parseInt(ordenFabricacionId),
+                itemCode: element.codigoProducto,
+                assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
+                action: lote.action,
+                batchNumber: lote.numeroLote
+              };
+              objectToSave.push(objectSAP);
+            }
           }
         });
       }
@@ -353,5 +354,15 @@ export class InventorybatchesComponent implements OnInit {
     }
     element.isValid = true;
     return false;
+  }
+
+  // tslint:disable-next-line: no-shadowed-variable
+  getIsValid(element: ILotesReq) {
+    this.dataSourceLotes.data.forEach(ele => {
+      if (ele.numeroLote === element.numeroLote) {
+        element.isValid = ele.isValid;
+      }
+    });
+    return element.isValid;
   }
 }
