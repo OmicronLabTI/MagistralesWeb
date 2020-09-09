@@ -43,8 +43,6 @@ namespace Omicron.Pedidos.Test.Dto
             new UpdateStatusOrderDto(),
             new UserActionDto<CustomComponentListDto>(),
             new UserDto(),
-            new RawMaterialRequestDto(),
-            new RawMaterialRequestDetailDto(),
         };
 
         /// <summary>
