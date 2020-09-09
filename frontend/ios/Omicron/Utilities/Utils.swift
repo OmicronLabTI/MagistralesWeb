@@ -46,7 +46,7 @@ class UtilsManager {
         let att = NSMutableAttributedString(string: s as String)
         let r = s.range(of: textToBold!, options: .regularExpression, range: NSMakeRange(0,s.length))
         if r.length > 0 { att.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: r)
-            att.addAttribute(NSAttributedString.Key.font, value: UIFont(name: FontsNames.SFProDisplayBold, size: 17) as Any, range: r)
+            att.addAttribute(NSAttributedString.Key.font, value: UIFont(name: FontsNames.SFProDisplayBold, size: 19) as Any, range: r)
         }
         return att
     }

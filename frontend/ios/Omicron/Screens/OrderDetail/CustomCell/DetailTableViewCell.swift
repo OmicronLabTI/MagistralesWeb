@@ -27,17 +27,19 @@ class DetailTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.requiredQuantityLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: 14)
-        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: 14)
+        let fontSize = CGFloat(17)
+        
+        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.requiredQuantityLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: fontSize)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
