@@ -10,6 +10,7 @@ import {ComponentSearch, CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} 
 import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
+import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -252,6 +253,21 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
   setPathUrlService(urlPath: any[]) {
     this.dataService.setPathUrl(urlPath);
+  }
+
+  openMiListaDialog() {
+    const dialogRef = this.dialog.open(MiListaComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+          data: this.dataSource.data,
+          code: this.oldDataFormulaDetail.code,
+          description: this.oldDataFormulaDetail.productDescription
+      }
+  }).afterClosed().subscribe((result) => {
+    if (result) {
+        this.dataService.setNewSearchOrderModal(result);
+    }
+ });
   }
 }
 
