@@ -30,6 +30,7 @@ class SignaturePadViewController: UIViewController {
     let diposeBag = DisposeBag()
     //var orderId: Int = -1
     var titleView = ""
+    var originView = ""
     
     // MARK: -Life Cycles
     override func viewDidLoad() {
@@ -57,6 +58,7 @@ class SignaturePadViewController: UIViewController {
     }
     
     func viewModelBinding() {
+        self.signaturePadViewModel.whoRequestSignature.onNext(self.originView)
         self.acceptButton.rx.tap.bind(to: signaturePadViewModel.acceptDidTap).disposed(by: self.diposeBag)
         self.signaturePadViewModel.canGetSignature.drive(self.acceptButton.rx.isEnabled).disposed(by: self.diposeBag)
                         
