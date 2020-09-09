@@ -337,7 +337,6 @@ export class InventorybatchesComponent implements OnInit {
 
   // tslint:disable-next-line: no-shadowed-variable
   isDue(element: ILotesReq) {
-    console.log(element);
     if (element.fechaExp !== null && element.fechaExp !== undefined) {
       const strFechaExp = String(element.fechaExp).split('/');
       const dtFechaExp = new Date(parseInt(strFechaExp[2]), parseInt(strFechaExp[1]) - 1, parseInt(strFechaExp[0]));
