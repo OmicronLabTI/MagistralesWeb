@@ -39,10 +39,14 @@ class LotsViewController: UIViewController {
     
     @IBOutlet weak var saveLotsButton: UIButton!
     
-    
     @IBOutlet weak var lineDocTable: UITableView!
     @IBOutlet weak var lotsAvailablesTable: UITableView!
     @IBOutlet weak var lotsSelectedTable: UITableView!
+    
+    @IBOutlet weak var codeDescriptionLabel: UILabel!
+    @IBOutlet weak var orderNumberLabel: UILabel!
+    @IBOutlet weak var manufacturingOrderLabel: UILabel!
+    @IBOutlet weak var finishOrderButton: UIButton!
     
     // MARK: -Variables
     @Injected var lotsViewModel: LotsViewModel
@@ -51,6 +55,11 @@ class LotsViewController: UIViewController {
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var statusType = ""
+    var codeDescription = ""
+    var orderNumber = ""
+    var manufacturingOrder = ""
+    var comments = ""
+    var orderDetail:[OrderDetail] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +96,48 @@ class LotsViewController: UIViewController {
         self.addLotButton.rx.tap.bind(to: self.lotsViewModel.addLotDidTap).disposed(by: self.disposeBag)
         self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
+        self.finishOrderButton.rx.tap.bind(to: self.lotsViewModel.finishOrderDidTap).disposed(by: self.disposeBag)
+        
+        // Muestra la vista de la firma
+        self.lotsViewModel.showSignatureViewFromLotsView.subscribe(onNext: { [weak self] signatureTitleView in
+            let storieboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storieboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            signatureVC.titleView = signatureTitleView
+            signatureVC.originView = ViewControllerIdentifiers.lotsViewController
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self?.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Actualizan los comentarios
+        self.lotsViewModel.updateComments.subscribe(onNext: {[weak self] orderDetail in
+            self?.orderDetail = [orderDetail]
+        }).disposed(by: self.disposeBag)
+        
+        // Muestra el componente de firma
+        self.lotsViewModel.showSignatureView.subscribe(onNext: { [weak self] titleView in
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
+            signatureVC.titleView = titleView
+            signatureVC.originView = ViewControllerIdentifiers.lotsViewController
+            signatureVC.modalPresentationStyle = .overCurrentContext
+            self?.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Manda el mensaje para poder finalizar la orden
+        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { [weak self] message in
+            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
+            
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self?.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Se regrsa al inbox cuando se finaliza la orden
+        self.lotsViewModel.backToInboxView.subscribe(onNext: { [weak self] _ in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }).disposed(by: self.disposeBag)
         
         self.addLotButton.rx.tap.subscribe(onNext: { [weak self] _ in
             if let indexPath = self?.lotsAvailablesTable.indexPathForSelectedRow, let cell = self?.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
@@ -146,7 +197,7 @@ class LotsViewController: UIViewController {
         //Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         
-        // Muestra o coulta el loading
+        // Muestra u oculta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
                 self?.lottieManager.showLoading()
@@ -171,6 +222,14 @@ class LotsViewController: UIViewController {
     }
     
     func initComponents() {
+        if let detail = self.orderDetail.first {
+            let iconName = (detail.comments == CommonStrings.Emty) || (detail.comments == nil) ? "message":"message.fill"
+            let commentsIcons = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItem = commentsIcons
+        }
+        
+        UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
+        
         self.title = "Lotes"
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: "#", fontSize: 15)
@@ -191,6 +250,10 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        self.codeDescriptionLabel.text = self.codeDescription
+        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 17)
+        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(self.orderNumber)", textToBold: "Número de pedido:")
+        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(self.manufacturingOrder)", textToBold: "Orden de fabricación:")
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
@@ -237,6 +300,16 @@ class LotsViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardActions(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+    
+    @objc func goToCommentsViewController() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
+        commentsVC.orderDetail = self.orderDetail
+        commentsVC.originView = ViewControllerIdentifiers.lotsViewController
+        commentsVC.modalPresentationStyle = .overCurrentContext
+        self.present(commentsVC, animated: true, completion: nil)
+    
     }
 }
 
