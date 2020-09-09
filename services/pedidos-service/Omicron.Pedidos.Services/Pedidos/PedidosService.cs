@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetFabOrderByUserID(string userId)
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
             var resultFormula = await this.GetSapOrders(userOrders);
 
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);
@@ -653,19 +653,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<List<CompleteFormulaWithDetalle>> GetSapOrders(List<UserOrderModel> userOrders)
         {
             var resultFormula = new List<CompleteFormulaWithDetalle>();
+            var listsOfData = ServiceUtils.GetGroupsOfList(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList(), 5);
 
-            await Task.WhenAll(userOrders.Select(async x =>
+            await Task.WhenAll(listsOfData.Select(async x =>
             {
-                if (!string.IsNullOrEmpty(x.Productionorderid))
-                {
-                    var route = $"{ServiceConstants.GetFormula}{x.Productionorderid}";
-                    var result = await this.sapAdapter.GetSapAdapter(route);
+                var route = $"{ServiceConstants.GetFormula}";
+                var listIds = x.Select(y => int.Parse(y.Productionorderid)).ToList();
+                var result = await this.sapAdapter.PostSapAdapter(listIds, route);
 
-                    lock (resultFormula)
-                    {
-                        var formula = JsonConvert.DeserializeObject<CompleteFormulaWithDetalle>(JsonConvert.SerializeObject(result.Response));
-                        resultFormula.Add(formula);
-                    }
+                lock (resultFormula)
+                {
+                    var formula = JsonConvert.DeserializeObject<List<CompleteFormulaWithDetalle>>(JsonConvert.SerializeObject(result.Response));
+                    resultFormula.AddRange(formula);
                 }
             }));
 

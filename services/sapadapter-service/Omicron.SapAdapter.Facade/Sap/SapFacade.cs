@@ -81,11 +81,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// gets the formula.
         /// </summary>
         /// <param name="orderId">the order id.</param>
+        /// <param name="returnFirst">If it will return the first.</param>
+        /// <param name="returnDetails">if it will look for details.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> GetOrderFormula(int orderId)
+        public async Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails)
         {
-            var listToSend = new List<int> { orderId };
-            return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(listToSend, true));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(orderId, returnFirst, returnDetails));
         }
 
         /// <summary>

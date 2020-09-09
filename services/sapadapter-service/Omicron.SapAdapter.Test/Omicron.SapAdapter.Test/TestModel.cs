@@ -124,7 +124,7 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void CompleteDetailOrderModel()
         {
-            var asesor = new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", DescripcionCorta = "corta", PedidoStatus = "S", QtyPlannedDetalle = 10 };
+            var asesor = new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", DescripcionCorta = "corta", PedidoStatus = "S", QtyPlannedDetalle = 10, HasMissingStock = false };
 
             Assert.IsNotNull(asesor.CodigoProducto);
             Assert.IsNotNull(asesor.DescripcionCorta);
@@ -138,6 +138,7 @@ namespace Omicron.SapAdapter.Test
             Assert.IsNotNull(asesor.QtyPlanned);
             Assert.IsNotNull(asesor.QtyPlannedDetalle);
             Assert.IsNotNull(asesor.Status);
+            Assert.IsNotNull(asesor.HasMissingStock);
         }
 
         /// <summary>

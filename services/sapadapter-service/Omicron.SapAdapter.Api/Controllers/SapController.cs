@@ -79,7 +79,20 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrderFormula(int ordenId)
         {
-            var result = await this.sapFacade.GetOrderFormula(ordenId);
+            var result = await this.sapFacade.GetOrderFormula(new List<int> { ordenId }, true, true);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/qfb/formula")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrderQfbFormula(List<int> ordenId)
+        {
+            var result = await this.sapFacade.GetOrderFormula(ordenId, false, false);
             return this.Ok(result);
         }
 
