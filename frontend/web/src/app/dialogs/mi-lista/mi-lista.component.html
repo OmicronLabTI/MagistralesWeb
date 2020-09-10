@@ -9,15 +9,18 @@
                 <div class="form-field-full">
                     <mat-form-field appearance="outline" class="custom-field-full generalinput">
                         <mat-label>{{data.code + data.description}}</mat-label>
-                        <input matInput [placeholder]="'Nombre de la lista'" />
+                        <input matInput [placeholder]="'Nombre de la lista'" [formControl]="name" required/>
+                        <mat-error *ngIf="name.invalid">
+                            Este campo es <strong>requerido</strong>
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal with-button-cancel">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal">
-                <span>Guardar</span>
+            <button mat-button class="btn-add-modal btn--modal" [disabled]="name.invalid" (click)="saveMyList()">
+                <span>Guardar lista</span>
             </button>
         </mat-card-actions>
     </mat-card>
