@@ -18,22 +18,49 @@
                     >Automático</button>
         </div>
           <div class="qfbs-container scroll-visible" *ngIf="isPlaceManual">
-              <div class="qfb-with-orders" *ngFor="let qfb of qfbs">
-                  <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom" (click)="placeOrder(qfb.userId, qfb.userName)">
-                      <div class="qfb-name">
-                      <span class="margin-left-options">
-                          {{qfb.userName}}
-                      </span>
+              <div class="qfb-with-orders position-fixed">
+                  <mat-card class="mat-card-custom">
+                      <div class="qfb-name color-like-table">
+                          <span class="margin-left-options">
+                              NOMBRE DEL QFB
+                          </span>
                       </div>
-                      <div class="orders-number">
-                          <button mat-mini-fab class="fab-orders-number background-color-omicron">
-                              {{qfb.countTotalPieces}}
-                          </button>
+                      <div class="orders-number color-like-table">
+                          PEDIDOS
+                      </div>
+                      <div class="orders-number color-like-table">
+                          ÓRDENES
+                      </div>
+                      <div class="orders-number color-like-table">
+                          PIEZAS
                       </div>
                   </mat-card>
               </div>
+              <div class="qfb-with-orders border-custom-qfb" *ngFor="let qfb of qfbs">
+                  <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom" (click)="placeOrder(qfb.userId, qfb.userName)">
+                      <div class="qfb-name">
+                          <span class="margin-left-options">
+                              {{qfb.userName}}
+                          </span>
+                      </div>
+                      <div class="orders-number">
+                          <div class="numbers-qfb-container background-color-omicron style-number-custom color-pedidos">
+                              {{qfb.countTotalOrders}}
+                          </div>
 
-
+                      </div>
+                      <div class="orders-number">
+                          <div class="numbers-qfb-container background-color-omicron style-number-custom color-orders">
+                            {{qfb.countTotalFabOrders}}
+                          </div>
+                      </div>
+                      <div class="orders-number">
+                          <div class="numbers-qfb-container background-color-omicron style-number-custom color-piezas">
+                             {{qfb.countTotalPieces}}
+                          </div>
+                      </div>
+                  </mat-card>
+              </div>
           </div>
         </mat-card-content>
     </mat-card>

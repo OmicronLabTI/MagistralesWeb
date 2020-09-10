@@ -5,13 +5,13 @@
         </div>
         <div class="filter-select" *ngIf="!filterDataOrders.docNum || filterDataOrders.docNum === 0">
             <span class="dateType" *ngIf="isDateInit">
-                Fecha órden de fabricación
+                Fecha órden de fabricación:
             </span>
             <span class="dateType" *ngIf="!isDateInit">
-                Fecha de termino
+                Fecha de término QFB:
             </span>
             <span class="date-selected">
-             {{ filterDataOrders.dateFull}}
+              {{  filterDataOrders.dateFull}}
             </span>
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">

@@ -98,6 +98,9 @@ body {
 td{
   font-family: 'Quicksand', sans-serif !important;
 }
+th{
+  font-family: 'Quicksand', sans-serif !important;
+}
 .table-container {
   width: 100%;
   height: 90%;
@@ -676,4 +679,11 @@ a.breadcrumblink:hover{
 
 .mat-tooltip {
   font-size: 13px !important;
+}
+.font-style-omicron {
+  font-family: 'Quicksand', serif !important;
+}
+.color-number {
+  color: #0d0d0e;
+  font-weight: 600;
 }

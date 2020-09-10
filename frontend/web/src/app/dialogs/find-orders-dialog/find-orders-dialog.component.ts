@@ -29,7 +29,6 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
               private ordersServices: PedidosService,
               private errorService: ErrorService,
               private usersService: UsersService) {
-      console.log('data Receive: ', this.filterData.filterOrdersData)
       this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
@@ -89,7 +88,6 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
           this.getDisableOnlyForDocNum();
       }
       this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
-          console.log('dataChanging: ', formData)
           if (!this.isBeginInitForm) {
               if (formData.docNum !== null && formData.docNum) {
                   this.isToResetData = false;
@@ -171,7 +169,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     keyDownFunction(event: KeyboardEvent) {
         if (event.key === MODAL_FIND_ORDERS.keyEnter && ((this.findOrdersForm.get('docNum').value !== CONST_STRING.empty
             && this.findOrdersForm.get('docNum').value !== null) || (this.findOrdersForm.get('productCode').value !== CONST_STRING.empty
-            && this.findOrdersForm.get('productCode').value !== null))) {
+            && this.findOrdersForm.get('productCode').value !== null) || (this.findOrdersForm.get('clientName').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('clientName').value !== null))) {
             this.searchOrders();
       }
     }

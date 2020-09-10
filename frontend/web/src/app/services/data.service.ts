@@ -221,8 +221,12 @@ export class DataService {
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
-  transformDate(date: Date) {
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  transformDate(date: Date, isTest: boolean = false) {
+    if (!isTest) {
+      return this.datePipe.transform(date, 'dd/MM/yyyy');
+    } else {
+      return this.datePipe.transform(date, 'yyyy-MM-dd');
+    }
   }
   getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
@@ -353,7 +357,7 @@ export class DataService {
         filterDataOrders.productCode = resultSearchOrderModal.productCode;
       }
       if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
-        queryString = `${queryString}&client=${resultSearchOrderModal.clientName}`;
+        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName}`;
         filterDataOrders.clientName = resultSearchOrderModal.clientName;
       }
     }
