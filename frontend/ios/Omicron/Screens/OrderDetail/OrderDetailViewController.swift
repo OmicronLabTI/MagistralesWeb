@@ -39,13 +39,17 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var htrequiredQuantity: UILabel!
     @IBOutlet weak var htUnit: UILabel!
     @IBOutlet weak var htWerehouse: UILabel!
-    @IBOutlet weak var htConsumed: UILabel!
-    @IBOutlet weak var htAvailable: UILabel!
-    @IBOutlet weak var htAmountPendingLabel: UILabel!
-    @IBOutlet weak var htStockLabel: UILabel!
-    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var destinyLabel: UILabel!
+    
+    
+    // Comentado para ampliar el campo descripción
+//    @IBOutlet weak var htConsumed: UILabel!
+//    @IBOutlet weak var htAvailable: UILabel!
+//    @IBOutlet weak var htAmountPendingLabel: UILabel!
+//    @IBOutlet weak var htStockLabel: UILabel!
+//    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
@@ -57,6 +61,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var orderDetail: [OrderDetail] = []
     var refreshControl = UIRefreshControl()
+    var destiny = ""
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -172,9 +177,10 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self?.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
                 self?.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
                 self?.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
-                self?.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación: \(res[0].startDate!)", textToBold: "Fecha orden de fabricación:")
+                self?.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación: \(res[0].startDate!)", textToBold: "Fecha de fabricación:")
                 self?.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
                 self?.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
+                self?.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino: \(self?.destiny ?? "")", textToBold: "Destino:")
             }
                 }).disposed(by: self.disposeBag)
         
@@ -183,13 +189,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.descriptionLabel.text = data.detailDescription
             cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
             cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
-            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
-            cell.availableLabel.text =  self?.formatter.string(from: NSNumber(value: data.available ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            cell.quantityPendingLabel.text = self?.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
-            cell.stockLabel.text =  self?.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
-            cell.storedQuantity.text =  self?.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
+//            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
+//            cell.availableLabel.text =  self?.formatter.string(from: NSNumber(value: data.available ?? 0.0))
+//            cell.quantityPendingLabel.text = self?.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
+//            cell.stockLabel.text =  self?.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
+//            cell.storedQuantity.text =  self?.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
@@ -232,14 +238,16 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 19, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 19, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 19, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 19, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 19, typeFont: "bold")        
+        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 19, typeFont: "bold")
+        
+        // Comentado para ampliar campo descripción
+//        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 19, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 19, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 19, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 19, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 19, typeFont: "bold")
         
         self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
         self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase:", textToBold: "Envase")
@@ -247,8 +255,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base:", textToBold: "Documento base:")
         self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: ", textToBold: "Sumatoria de la fórmula:")
         self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
-        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación:", textToBold: "Fecha orden de fabricación:")
+        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación:", textToBold: "Fecha de fabricación:")
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
+        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino:", textToBold: "Destino:")
         self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
         self.detailTable.tableFooterView = UIView()
         

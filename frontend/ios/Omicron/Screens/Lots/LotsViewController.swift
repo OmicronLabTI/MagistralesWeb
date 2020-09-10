@@ -68,6 +68,7 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
         self.setupKeyboard()
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -251,9 +252,9 @@ class LotsViewController: UIViewController {
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         self.codeDescriptionLabel.text = self.codeDescription
-        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 17)
-        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(self.orderNumber)", textToBold: "Número de pedido:")
-        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(self.manufacturingOrder)", textToBold: "Orden de fabricación:")
+        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
+        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(self.orderNumber)", textToBold: "Número de pedido:", fontSize: 15)
+        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(self.manufacturingOrder)", textToBold: "Orden de fabricación:", fontSize: 15)
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)

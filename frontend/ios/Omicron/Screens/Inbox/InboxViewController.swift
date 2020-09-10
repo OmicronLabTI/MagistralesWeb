@@ -212,8 +212,10 @@ class InboxViewController: UIViewController {
            if let destination = segue.destination as? OrderDetailViewController {
             guard let orderId = self.inboxViewModel.selectedOrder?.productionOrderId else { return }
             guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
+            guard let destiny = self.inboxViewModel.selectedOrder?.destiny else { return }
             destination.orderId = orderId // you can pass value to destination view controller
             destination.statusType = self.inboxViewModel.getStatusName(id: statusId)
+            destination.destiny = destiny
            }
        }
     }
