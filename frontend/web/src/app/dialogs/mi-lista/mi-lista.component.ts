@@ -5,7 +5,6 @@ import { IMyNewListReq, BaseComponent, Components } from 'src/app/model/http/lis
 import { DataService } from 'src/app/services/data.service';
 import { FormControl, Validators } from '@angular/forms';
 import { OrdersService } from 'src/app/services/orders.service';
-import { MessageType } from 'src/app/constants/const';
 import { Messages } from 'src/app/constants/messages';
 
 @Component({

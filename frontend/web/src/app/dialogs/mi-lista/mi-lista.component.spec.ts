@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
@@ -20,6 +21,8 @@ describe('MiListaComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        ReactiveFormsModule,
+        FormsModule,
         HttpClientTestingModule,
         MatTableModule,
         MatDialogModule,

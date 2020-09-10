@@ -259,9 +259,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
   }).afterClosed().subscribe((result) => {
-    if (result) {
-        this.dataService.setNewSearchOrderModal(result);
-    }
+    this.isSaveToMyList = false;
  });
   }
 
