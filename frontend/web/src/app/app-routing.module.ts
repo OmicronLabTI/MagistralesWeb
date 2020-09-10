@@ -43,6 +43,11 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
+    path: 'workLoad',
+    loadChildren: () => import('./pages/productivity/productivity.module').then(m => m.ProductivityModule),
+    canActivate: [GuardService]
+  },
+  {
     path: '**',
     redirectTo: '/login'
 

@@ -40,7 +40,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       fini: ['', []],
       ffin: ['', []],
     });
-    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY)
+    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {
