@@ -41,6 +41,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var htWerehouse: UILabel!
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var destinyLabel: UILabel!
+    
+    
     // Comentado para ampliar el campo descripción
 //    @IBOutlet weak var htConsumed: UILabel!
 //    @IBOutlet weak var htAvailable: UILabel!
@@ -58,6 +61,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var orderDetail: [OrderDetail] = []
     var refreshControl = UIRefreshControl()
+    var destiny = ""
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -176,6 +180,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
                 self?.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación: \(res[0].startDate!)", textToBold: "Fecha de fabricación:")
                 self?.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
                 self?.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
+                self?.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino: \(self?.destiny ?? "")", textToBold: "Destino:")
             }
                 }).disposed(by: self.disposeBag)
         
@@ -252,6 +257,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
         self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación:", textToBold: "Fecha de fabricación:")
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
+        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino:", textToBold: "Destino:")
         self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
         self.detailTable.tableFooterView = UIView()
         
