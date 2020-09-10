@@ -20,6 +20,7 @@ enum ApiService {
     case getLots(orderId: Int)
     case finishOrder(finishOrder: FinishOrder)
     case assingLots(lotsRequest: [BatchSelected])
+    case askIfOrderCanBeFinalized(orderId: Int)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -55,6 +56,8 @@ extension ApiService: AuthorizedTargetType {
             return "pedidos/finishOrder"
         case .assingLots:
             return "/pedidos/assignBatches"
+        case .askIfOrderCanBeFinalized(let orderId):
+            return "pedidos/completedBatches/\(orderId)"
         }
     }
     
@@ -62,7 +65,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login, .renew, .finishOrder:
             return .post
-        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized:
             return .get
         case .deleteItemOfOrdenDetail, .changeStatusOrder, .assingLots:
             return .put
@@ -73,10 +76,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(let data):
             return .requestJSONEncodable(data)
-        case .getInfoUser,
-             .getStatusList,
-             .getLots,
-             .getOrdenDetail:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized:
             return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
@@ -153,7 +153,15 @@ extension ApiService: AuthorizedTargetType {
                     return Data()
             }
             return data
+            
+        case .askIfOrderCanBeFinalized:
+            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
         }
+        
     }
     var headers: [String: String]? {
         return ["Content-type": "application/json"]

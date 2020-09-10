@@ -46,7 +46,8 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (filterStatus)
             {
-                listOrders = filterQfb ? listOrders.Where(x => x.Status.Equals(parameters[ServiceConstants.Status])).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { parameters[ServiceConstants.Status] })).ToList();
+                var status = parameters[ServiceConstants.Status].ToLower() == ServiceConstants.ProcesoStatus.ToLower() ? ServiceConstants.Proceso : parameters[ServiceConstants.Status];
+                listOrders = filterQfb ? listOrders.Where(x => x.Status.Equals(status)).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { status })).ToList();
             }
 
             if (filterFechaFin)
@@ -110,9 +111,10 @@ namespace Omicron.Pedidos.Services.Utils
             if (dataFiltered)
             {
                 var listToReturn = new List<UserOrderModel>();
-                listOrders.ForEach(x =>
+                listOrders.Where(y => !string.IsNullOrEmpty(y.FinishDate)).ToList().ForEach(x =>
                 {
-                    DateTime.TryParse(x.FinishDate, out var date);
+                    var dateArray = x.FinishDate.Split("/");
+                    var date = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
 
                     if (date >= dateFilter[ServiceConstants.FechaInicio] && date <= dateFilter[ServiceConstants.FechaFin])
                     {

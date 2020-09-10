@@ -112,7 +112,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
 
   dataSets(datos) {
     const colors = this.colors;
-    const dataSet = []
+    const dataSet = [];
     datos.forEach((element, index) => {
       const objeto = {
         label: element[0],

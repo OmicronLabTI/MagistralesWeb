@@ -49,6 +49,7 @@ export class InventorybatchesComponent implements OnInit {
     'seleccionada',
     'opciones'
   ];
+  today = new Date();
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
@@ -66,12 +67,13 @@ export class InventorybatchesComponent implements OnInit {
     this.getInventoryBatches();
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   setSelectedTr(element?: ILotesFormulaReq){
-    if (element !== undefined){
+    if (element !== undefined) {
       this.dataSelected = element;
       this.indexSelected = this.dataSourceDetails.data.indexOf(element);
-      this.dataSourceDetails.data.filter(item => {
-        if (item.selected){
+      this.dataSourceDetails.data.forEach(item => {
+        if (item.selected) {
           item.selected = BOOLEANS.falso;
         }
       });
@@ -83,6 +85,7 @@ export class InventorybatchesComponent implements OnInit {
 
   getBatchesFromSelected(codigoProducto?){
     if (codigoProducto !== undefined){
+      // tslint:disable-next-line: no-shadowed-variable
       const resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
       this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
       this.dataSourceLotesAsignados.data = resultData[CONST_NUMBER.zero].lotesAsignados;
@@ -103,6 +106,7 @@ export class InventorybatchesComponent implements OnInit {
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
         this.dataSourceDetails.data = batchesRes.response;
+        // tslint:disable-next-line: no-shadowed-variable
         resultData = this.dataSourceDetails.data.filter(element => (
           element.codigoProducto === this.dataSourceDetails.data[CONST_NUMBER.zero].codigoProducto)
         );
@@ -119,6 +123,7 @@ export class InventorybatchesComponent implements OnInit {
     return true;
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   addLotes(element: ILotesReq){
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
@@ -133,7 +138,8 @@ export class InventorybatchesComponent implements OnInit {
           cantidadSeleccionada: element.cantidadSeleccionada,
           sysNumber: element.sysNumber,
           action: CONST_DETAIL_FORMULA.insert,
-          noidb: BOOLEANS.verdadero
+          noidb: BOOLEANS.verdadero,
+          isValid: element.isValid
         };
         if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
           this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = [];
@@ -159,6 +165,7 @@ export class InventorybatchesComponent implements OnInit {
       if (elementA.action !== CONST_DETAIL_FORMULA.delete){
         if (!arrayNoRepetir.includes(elementA.numeroLote)){
           arrayNoRepetir.push(elementA.numeroLote);
+          // tslint:disable-next-line: no-shadowed-variable
           const arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (
             element.numeroLote === elementA.numeroLote)
           );
@@ -172,13 +179,15 @@ export class InventorybatchesComponent implements OnInit {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: parseFloat(suma.toFixed(6))
+              cantidadSeleccionada: parseFloat(suma.toFixed(6)),
+              isValid: elementA.isValid
             }
           } else {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
               sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: elementA.cantidadSeleccionada
+              cantidadSeleccionada: elementA.cantidadSeleccionada,
+              isValid: elementA.isValid
             };
           }
           arrayObjetos.push(objetoLoteAsignado);
@@ -193,6 +202,7 @@ export class InventorybatchesComponent implements OnInit {
     });
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   deleteLotes(element?: ILotesAsignadosReq){
     if (element !== undefined){
       const indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
@@ -212,13 +222,14 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   deleteDetails(element?: ILotesAsignadosReq){
     if (element !== undefined) {
       let tomarEnCuenta = false;
       this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
         if (ele.numeroLote === element.numeroLote) {
           ele.action = CONST_DETAIL_FORMULA.delete;
-          if (ele.noidb === undefined || ele.noidb === false){
+          if (ele.noidb === undefined || ele.noidb === false) {
             tomarEnCuenta = true;
           } else {
             tomarEnCuenta = false;
@@ -226,7 +237,7 @@ export class InventorybatchesComponent implements OnInit {
           }
         }
       });
-      if (tomarEnCuenta){
+      if (tomarEnCuenta) {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push({
           numeroLote: element.numeroLote,
           noidb: BOOLEANS.falso,
@@ -266,6 +277,7 @@ export class InventorybatchesComponent implements OnInit {
   setInputNecesaryQty() {
     const dataSourceDetails = this.dataSourceDetails;
     const indexSelected = this.indexSelected;
+    // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data[this.indexSelected].lotes.forEach(element => {
       if (dataSourceDetails.data[indexSelected].totalNecesario <= element.cantidadDisponible) {
         element.cantidadSeleccionada = dataSourceDetails.data[indexSelected].totalNecesario;
@@ -280,19 +292,22 @@ export class InventorybatchesComponent implements OnInit {
     let objectToSave = this.objectToSave;
     objectToSave = [];
     const ordenFabricacionId = this.ordenFabricacionId;
+    // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data.forEach(element => {
-      if (element.lotesSeleccionados != null){
+      if (element.lotesSeleccionados != null) {
         element.lotesSeleccionados.forEach((lote, index) => {
-          if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert))
-          {
-            const objectSAP: ILotesToSaveReq = {
-              orderId: parseInt(ordenFabricacionId),
-              itemCode: element.codigoProducto,
-              assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
-              action: lote.action,
-              batchNumber: lote.numeroLote
-            };
-            objectToSave.push(objectSAP);
+          if (lote.action !== undefined) {
+            if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert)) {
+              const objectSAP: ILotesToSaveReq = {
+                // tslint:disable-next-line: radix
+                orderId: parseInt(ordenFabricacionId),
+                itemCode: element.codigoProducto,
+                assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
+                action: lote.action,
+                batchNumber: lote.numeroLote
+              };
+              objectToSave.push(objectSAP);
+            }
           }
         });
       }
@@ -326,5 +341,28 @@ export class InventorybatchesComponent implements OnInit {
 
   goToOrdenFab(urlPath: string[]) {
     this.dataService.setPathUrl(urlPath);
+  }
+
+  // tslint:disable-next-line: no-shadowed-variable
+  isDue(element: ILotesReq) {
+    if (element.fechaExp !== null && element.fechaExp !== undefined) {
+      const strFechaExp = String(element.fechaExp).split('/');
+      // tslint:disable-next-line: radix
+      const dtFechaExp = new Date(parseInt(strFechaExp[2]), parseInt(strFechaExp[1]) - 1, parseInt(strFechaExp[0]));
+      element.isValid = !(dtFechaExp < this.today);
+      return dtFechaExp < this.today;
+    }
+    element.isValid = true;
+    return false;
+  }
+
+  // tslint:disable-next-line: no-shadowed-variable
+  getIsValid(element: ILotesReq) {
+    this.dataSourceLotes.data.forEach(ele => {
+      if (ele.numeroLote === element.numeroLote) {
+        element.isValid = ele.isValid;
+      }
+    });
+    return element.isValid;
   }
 }

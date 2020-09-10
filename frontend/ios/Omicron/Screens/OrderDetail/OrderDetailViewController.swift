@@ -36,15 +36,17 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var htDescription: UILabel!
     @IBOutlet weak var htBaseQuantity: UILabel!
     @IBOutlet weak var htrequiredQuantity: UILabel!
-    @IBOutlet weak var htConsumed: UILabel!
-    @IBOutlet weak var htAvailable: UILabel!
     @IBOutlet weak var htUnit: UILabel!
     @IBOutlet weak var htWerehouse: UILabel!
-    @IBOutlet weak var htAmountPendingLabel: UILabel!
-    @IBOutlet weak var htStockLabel: UILabel!
-    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
+    
+//    Se comentó para ampliar el campo de descripción
+//    @IBOutlet weak var htConsumed: UILabel!
+//    @IBOutlet weak var htAvailable: UILabel!
+//    @IBOutlet weak var htAmountPendingLabel: UILabel!
+//    @IBOutlet weak var htStockLabel: UILabel!
+//    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
@@ -88,6 +90,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.commentsViewController) as! CommentsViewController
         commentsVC.orderDetail = self.orderDetail
+        commentsVC.originView = ViewControllerIdentifiers.orderDetailViewController
         commentsVC.modalPresentationStyle = .overCurrentContext
         self.present(commentsVC, animated: true, completion: nil)
     
@@ -119,9 +122,17 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
-            if (self?.orderId != nil && self?.statusType != nil) {
+            if (self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil) {
                 lotsVC.orderId = self!.orderId
                 lotsVC.statusType = self!.statusType
+                lotsVC.orderDetail = self!.orderDetail
+                if let order = self?.orderDetail.first {
+                    if (order.productDescription != nil && order.code != nil && order.productionOrderID != nil && order.baseDocument != nil) {
+                        lotsVC.orderNumber =  "\(order.baseDocument!)"
+                        lotsVC.manufacturingOrder = "\(order.productionOrderID!)"
+                        lotsVC.codeDescription = "\(order.code!)  \(order.productDescription!)"
+                    }
+                }
                 self?.navigationController?.pushViewController(lotsVC, animated: true)
             }
         }).disposed(by: self.disposeBag)
@@ -143,7 +154,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self?.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.showQfbSignatureView()})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -173,13 +184,14 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             cell.descriptionLabel.text = data.detailDescription
             cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
             cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
-            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
-            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
-            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
-            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
+            // Se comentó para ampliar campo descripción
+//            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
+//            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available ?? 0.0))
+//            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
+//            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
+//            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
@@ -204,6 +216,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             let signatureVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.signaturePadViewController) as! SignaturePadViewController
             //signatureVC.orderId = self.orderId
             signatureVC.titleView = titleView
+            signatureVC.originView = ViewControllerIdentifiers.orderDetailViewController
             signatureVC.modalPresentationStyle = .overCurrentContext
             self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
@@ -221,14 +234,16 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 15, typeFont: "bold")
+        
+//        Se comentó para poder ampliar el campo de descripción
+//        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 15, typeFont: "bold")
+//        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 15, typeFont: "bold")
         
         
         self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
@@ -311,9 +326,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         orderDetailViewModel.changeStatus()
     }
     
-    func showQfbSignatureView() {
-        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
-    }
+//    func showQfbSignatureView() {
+//        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
+//    }
     
 //    func showSignatureView(title: String) {
 //        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)

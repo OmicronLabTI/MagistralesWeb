@@ -23,11 +23,9 @@ class InboxViewController: UIViewController {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
-    private var typeCard: Int = 0
-    var orderId:Int = -1
-    var statusType: String = ""
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -51,46 +49,53 @@ class InboxViewController: UIViewController {
         
     // MARK: Functions
     func viewModelBinding() -> Void {
+        inboxViewModel.title.subscribe(onNext: { [weak self] title in
+            self?.title = title
+            guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
+            self?.hideButtons(id: statusId)
+        }).disposed(by: disposeBag)
         
-        inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.rootViewModel.getOrders()
+        inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.rootViewModel.getOrders()
         }).disposed(by: self.disposeBag)
         
         // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
-        collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ indexpath in
-            if self.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
-                self.processButton.isEnabled = true
+        collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ [weak self] indexpath in
+            if self?.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
+                self?.processButton.isEnabled = true
             }
         }).disposed(by: self.disposeBag)
         
-        collectionView.rx.itemDeselected.subscribe(onNext: { _ in
-            if self.collectionView.indexPathsForSelectedItems?.count == 0 {
-                self.processButton.isEnabled = false
+        collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] _ in
+            if self?.collectionView.indexPathsForSelectedItems?.count == 0 {
+                self?.processButton.isEnabled = false
             }
         }).disposed(by: disposeBag)
 
         // Muestra o oculta el loading
-        inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+        inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
-                self.lottieManager.showLoading()
+                self?.lottieManager.showLoading()
                 return
             }
-            self.lottieManager.hideLoading()
+            self?.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         // Muestra un mensaje AlertViewController
-        inboxViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        inboxViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
         // Muestra un alert para la confirmación de cambiar el status o no
-        inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self.inboxViewModel.changeStatus(indexPath: self.collectionView.indexPathsForSelectedItems!) })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
-                       alert.addAction(cancelAction)
-                       alert.addAction(okAction)
-                       self.present(alert, animated: true, completion: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
+                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems ?? [])
+            })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self?.present(alert, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
         [
@@ -99,19 +104,17 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
      
-        // Lógica cuando se seleciona un item de la tabla
-        inboxViewModel.indexSelectedOfTable
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { res in
-                self.chageStatusName(index: res)
-                self.hideButtons(index: res)
-                self.typeCard = res
-            }).disposed(by: disposeBag)
-        
+        rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
+            guard let row = index?.row else { return }
+            self?.chageStatusName(index: row)
+            self?.hideButtons(index: row)
+        }).disposed(by: disposeBag)
+
         // Pinta la cards
-        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { row, data, cell in
-            self.changepropertiesOfCard(cell: cell)
+        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { [weak self] row, data, cell in
+//            self.changepropertiesOfCard(cell: cell)
             cell.row = row
+            cell.order = data
             cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
             cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
             cell.containerDescriptionLabel.text = data.container ?? ""
@@ -120,55 +123,33 @@ class InboxViewController: UIViewController {
             cell.startDateDescriptionLabel.text = data.startDate ?? ""
             cell.finishDateDescriptionLabel.text = data.finishDate ?? ""
             cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
+            cell.delegate = self
         }.disposed(by: disposeBag)
         
         // retorna mensaje si no hay card para cada status
-        inboxViewModel.validateStatusData.observeOn(MainScheduler.instance).subscribe(onNext: { data in
-            var message: String = ""
-            if(data.orders.count == 0 && data.indexStatusSelected >= 0) {
-                switch data.indexStatusSelected {
-                case 0:
-                    message = "No tienes órdenes Asignadas"
-                case 1:
-                    message = "No tienes órdenes En proceso"
-                case 2:
-                    message = "No tienes órdenes Pendientes"
-                case 3:
-                    message = "No tienes órdenes Terminadas"
-                case 4:
-                    message = "No tienes órdenes Reasignadas"
-                default:
-                    message = ""
+        Observable.combineLatest(inboxViewModel.statusData, rootViewModel.selectedRow)
+            .subscribe(onNext: { [weak self] data, index in
+                var message: String = ""
+                if (data.count == 0 && index != nil && (index?.row ?? 0) >= 0) {
+                    switch (index?.row ?? 0) {
+                    case 0:
+                        message = "No tienes órdenes Asignadas"
+                    case 1:
+                        message = "No tienes órdenes En proceso"
+                    case 2:
+                        message = "No tienes órdenes Pendientes"
+                    case 3:
+                        message = "No tienes órdenes Terminadas"
+                    case 4:
+                        message = "No tienes órdenes Reasignadas"
+                    default:
+                        message = ""
+                    }
                 }
-            }
-            self.collectionView.setEmptyMessage(message)
-        }).disposed(by: disposeBag)
+                self?.collectionView.setEmptyMessage(message)
+            }).disposed(by: disposeBag)
     }
-    
-    // Cambiar colores para cada tipo de estatus selecionado
-    func changepropertiesOfCard(cell: CardCollectionViewCell) {
-        switch self.typeCard {
-        case 0:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.assignedStatus, iconName: ImageButtonNames.assigned)
-        case 1:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.processStatus, iconName: ImageButtonNames.inProcess)
-        case 2:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.pendingStatus, iconName: ImageButtonNames.pendding)
-        case 3:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.finishedStatus, iconName: ImageButtonNames.finished)
-        case 4:
-            self.propertyCard(cell: cell, borderColor: OmicronColors.reassignedStatus, iconName: ImageButtonNames.reasigned)
-        default:
-            print("")
-        }
-    }
-    
-    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
-        cell.assignedStyleCard(color: borderColor.cgColor)
-        cell.delegate = self
-        UtilsManager.shared.changeIconButton(button: cell.showDetail, iconName: iconName)
-    }
-    
+
     func initComponents() -> Void {
         self.processButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
@@ -177,20 +158,8 @@ class InboxViewController: UIViewController {
     }
     
     func chageStatusName(index: Int) -> Void {
-        switch index {
-        case 0:
-            self.title = StatusNameConstants.assignedStatus
-        case 1:
-             self.title = StatusNameConstants.inProcessStatus
-        case 2:
-             self.title = StatusNameConstants.penddingStatus
-        case 3:
-             self.title = StatusNameConstants.finishedStatus
-        case 4:
-             self.title = StatusNameConstants.reassignedStatus
-        default:
-            print("")
-        }
+        let name = self.inboxViewModel.getStatusName(index: index)
+        self.inboxViewModel.title.onNext(name)
     }
     
     private func hideButtons(index: Int) {
@@ -206,7 +175,24 @@ class InboxViewController: UIViewController {
         case 4:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         default:
-            print("")
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        }
+    }
+    
+    private func hideButtons(id: Int) {
+        switch id {
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 2:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 3:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 4:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        case 5:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+        default:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         }
     }
     
@@ -219,8 +205,10 @@ class InboxViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
        if segue.identifier == ViewControllerIdentifiers.orderDetailViewController {
            if let destination = segue.destination as? OrderDetailViewController {
-            destination.orderId = self.orderId // you can pass value to destination view controller
-            destination.statusType = self.statusType
+            guard let orderId = self.inboxViewModel.selectedOrder?.productionOrderId else { return }
+            guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
+            destination.orderId = orderId // you can pass value to destination view controller
+            destination.statusType = self.inboxViewModel.getStatusName(id: statusId)
            }
        }
     }
@@ -230,17 +218,9 @@ class InboxViewController: UIViewController {
 extension InboxViewController: CardCellDelegate {
     
     // Chec this
-    func detailTapped(row: Int) {
-        self.inboxViewModel.statusData.subscribe(onNext: { res in
-            if (res.count > 0 && res.count > row) {
-                self.orderId = res[row].productionOrderId!
-            }
-        }).disposed(by: self.disposeBag)
-        
-        self.inboxViewModel.nameStatus.subscribe(onNext: { statusName in
-            self.statusType = statusName
-        }).disposed(by: self.disposeBag)
-        
+    func detailTapped(order: Order) {
+        self.inboxViewModel.selectedOrder = order
+        self.view.endEditing(true)
         self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
     }
 }

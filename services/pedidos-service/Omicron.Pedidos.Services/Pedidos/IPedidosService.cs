@@ -143,5 +143,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the params.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the completed batch.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CompletedBatches(int orderId);
     }
 }

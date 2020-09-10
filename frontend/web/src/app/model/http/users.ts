@@ -23,7 +23,7 @@ export class IUserReq {
     firstName: string;
     lastName: string;
     role: number;
-    password: string;
+    password?: string;
     activo: number;
     isChecked?: boolean = false;
 }
@@ -59,4 +59,6 @@ export  class QfbWithNumber {
     modalType?: string;
     list?: number[];
     assignType?: string;
+    isFromOrderIsolated?: boolean;
+    isFromReassign?: boolean;
 }
