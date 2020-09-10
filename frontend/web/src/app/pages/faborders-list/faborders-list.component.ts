@@ -21,6 +21,8 @@ import {ErrorHttpInterface} from 'src/app/model/http/commons';
 import {OrdersService} from 'src/app/services/orders.service';
 import {CancelOrderReq, ParamsPedidos} from 'src/app/model/http/pedidos';
 import {Subscription} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
 
 @Component({
   selector: 'app-faborders-list',
@@ -59,11 +61,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   isThereOrdersIsolatedToCancel = false;
   isAssignOrderIsolated = false;
   isReAssignOrderIsolated = false;
+  isFinalizeOrderIsolated = false;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
     private errorService: ErrorService,
-    private titleService: Title
+    private titleService: Title,
+    private dialog: MatDialog,
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
     this.filterDataOrders.isFromOrders = false;
@@ -140,6 +144,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.isThereOrdersIsolatedToCancel = false;
         this.isAssignOrderIsolated = false;
         this.isReAssignOrderIsolated = false;
+        this.isFinalizeOrderIsolated = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -206,6 +211,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       , isFromOrderIsolated: true});
   }
   private getButtonsOrdersIsolatedToUnLooked() {
+    this.isFinalizeOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
     this.isThereOrdersIsolatedToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
                                                                            FromToFilter.fromOrdersIsolatedCancel);
     this.isAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -221,5 +227,14 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
+  }
+
+  finalizeOrder() {
+    this.dialog.open(FinalizeOrdersComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+        finalizeOrdersData: this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
+      }
+    }).afterClosed().subscribe(() => this.getOrders());
   }
 }

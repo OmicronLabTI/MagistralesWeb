@@ -93,6 +93,13 @@ body {
   justify-content: center;
   color: #5f606c;
   font-size: 1.5em;
+  font-family: 'Quicksand', sans-serif !important;
+}
+td{
+  font-family: 'Quicksand', sans-serif !important;
+}
+th{
+  font-family: 'Quicksand', sans-serif !important;
 }
 .table-container {
   width: 100%;
@@ -699,4 +706,11 @@ a.breadcrumblink:hover{
 
 .swal2-container {
   z-index: 100000000000000 !important;
+}
+.font-style-omicron {
+  font-family: 'Quicksand', serif !important;
+}
+.color-number {
+  color: #0d0d0e;
+  font-weight: 600;
 }
