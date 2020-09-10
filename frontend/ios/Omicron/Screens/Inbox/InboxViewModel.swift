@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 class  InboxViewModel {
     var finishedDidTap = PublishSubject<Void>()
@@ -59,6 +60,16 @@ class  InboxViewModel {
                 //var  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
                 
                 //print(groupBySimilarity)
+                
+//                let dataSourcee = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: <#(CollectionViewSectionedDataSource<SectionModel<String, [Order]>>, UICollectionView, IndexPath, SectionModel<String, [Order]>.Item) -> UICollectionViewCell#>)
+                
+                
+//
+//                let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: {dataSource;, cv, indexPath, element}, in
+//
+//
+//                )
+             
             }
             
             
