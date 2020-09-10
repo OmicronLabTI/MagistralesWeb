@@ -4,42 +4,71 @@ export const ProductivityListMock = {
     exceptionMessage: null,
     success: true,
     userError: null,
-    response: [
-        [
-            '-',
-            'julio',
-            'agosto',
-            'septiembre'
-        ],
-        [
-            'Armando Hoyos',
-            '12',
-            '13',
-            '14'
-        ],
-        [
-            'Carlos Espejel',
-            '15',
-            '16',
-            '17'
-        ],
-        [
-            'Fulano Perez',
-            '18',
-            '19',
-            '20'
-        ],
-        [
-            'Jaimito Luna',
-            '21',
-            '22',
-            '23'
-        ],
-        [
-            'Luis Mejia',
-            '24',
-            '25',
-            '26'
+    response: {
+        matrix: [
+            [
+                '-',
+                'abril',
+                'mayo',
+                'junio',
+                'julio',
+                'agosto',
+                'septiembre'
+            ],
+            [
+                'Armando Hoyos',
+                '12',
+                '13',
+                '14',
+                '0',
+                '34',
+                '29'
+            ],
+            [
+                'Carlos Espejel',
+                '15',
+                '16',
+                '17',
+                '11',
+                '0',
+                '1'
+            ],
+            [
+                'Fulano Perez',
+                '33',
+                '29',
+                '20',
+                '41',
+                '10',
+                '31'
+            ],
+            [
+                'Jaimito Luna',
+                '21',
+                '22',
+                '23',
+                '21',
+                '22',
+                '23'
+            ],
+            [
+                'Luis Mejia',
+                '38',
+                '15',
+                '19',
+                '38',
+                '15',
+                '19'
+            ],
+            [
+                'Adrian Pérez',
+                '31',
+                '29',
+                '34',
+                '31',
+                '29',
+                '34'
+            ]
         ]
-    ]
+    }
 };
