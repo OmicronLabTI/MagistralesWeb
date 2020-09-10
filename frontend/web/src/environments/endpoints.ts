@@ -38,6 +38,7 @@ export const Endpoints = {
   },
   orders: {
     getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+    saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
