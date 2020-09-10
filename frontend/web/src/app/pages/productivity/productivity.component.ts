@@ -84,6 +84,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
       datasets: this.dataSets(this.dataSource.data)
     };
+    Chart.defaults.global.defaultFontFamily = 'Quicksand';
     const myChart = new Chart(this.productivityChart.nativeElement, {
       type: 'bar',
       data: barChartData,
@@ -100,7 +101,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
           xAxes: [{
             gridLines: {
               color: 'rgba(0, 0, 0, 0)',
-            }
+            },
+            barPercentage: 1
           }]
         }
       }
