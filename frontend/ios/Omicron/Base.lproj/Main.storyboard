@@ -178,11 +178,11 @@
             <objects>
                 <viewController storyboardIdentifier="InboxViewController" id="jwh-yn-yGS" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="i2U-wQ-yxQ">
-                        <rect key="frame" x="0.0" y="0.0" width="990" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="990.5" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HTk-p1-6Au">
-                                <rect key="frame" x="20" y="140" width="950.5" height="864"/>
+                                <rect key="frame" x="20" y="175" width="950.5" height="829"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="qSm-Zi-mYZ">
                                     <size key="itemSize" width="128" height="128"/>
@@ -258,21 +258,24 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="QTt-k7-ndX"/>
-                                    <constraint firstItem="jGm-0l-bDk" firstAttribute="top" secondItem="qIT-bi-nWs" secondAttribute="top" id="YeB-xj-BAF"/>
-                                    <constraint firstAttribute="trailing" secondItem="jGm-0l-bDk" secondAttribute="trailing" id="lA4-bI-9Bt"/>
-                                    <constraint firstAttribute="bottom" secondItem="jGm-0l-bDk" secondAttribute="bottom" id="x5R-DK-9xz"/>
+                                    <constraint firstItem="jGm-0l-bDk" firstAttribute="top" secondItem="qIT-bi-nWs" secondAttribute="top" id="S7y-Fs-GLr"/>
+                                    <constraint firstAttribute="bottom" secondItem="jGm-0l-bDk" secondAttribute="bottom" id="qjZ-WS-YWV"/>
+                                    <constraint firstAttribute="trailing" secondItem="jGm-0l-bDk" secondAttribute="trailing" id="twv-Vk-hs8"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="HTk-p1-6Au" firstAttribute="top" secondItem="qIT-bi-nWs" secondAttribute="bottom" constant="10" id="0F9-AN-lHE"/>
                             <constraint firstItem="HTk-p1-6Au" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" constant="20" id="0jZ-IU-Kf7"/>
+                            <constraint firstItem="6ZC-de-fnf" firstAttribute="trailing" secondItem="qIT-bi-nWs" secondAttribute="trailing" constant="20" id="46M-V7-3qP"/>
                             <constraint firstAttribute="trailing" secondItem="5Mc-gk-gPN" secondAttribute="trailing" constant="20" id="4z9-Ai-qhC"/>
                             <constraint firstItem="5Mc-gk-gPN" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" constant="20" id="5eq-pq-RTJ"/>
                             <constraint firstItem="5Mc-gk-gPN" firstAttribute="top" secondItem="6ZC-de-fnf" secondAttribute="top" constant="20" id="MFx-P0-fxC"/>
                             <constraint firstItem="6ZC-de-fnf" firstAttribute="trailing" secondItem="HTk-p1-6Au" secondAttribute="trailing" constant="20" id="UAk-UV-P8m"/>
-                            <constraint firstItem="HTk-p1-6Au" firstAttribute="top" secondItem="5Mc-gk-gPN" secondAttribute="bottom" constant="20" id="Z22-lh-HTm"/>
+                            <constraint firstItem="qIT-bi-nWs" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" constant="20" id="fc2-0F-FkS"/>
                             <constraint firstItem="6ZC-de-fnf" firstAttribute="bottom" secondItem="HTk-p1-6Au" secondAttribute="bottom" constant="20" id="iCE-lO-QyI"/>
+                            <constraint firstItem="qIT-bi-nWs" firstAttribute="top" secondItem="5Mc-gk-gPN" secondAttribute="bottom" constant="5" id="irX-OO-SUd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6ZC-de-fnf"/>
                     </view>
@@ -289,7 +292,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i1x-Wy-ajX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2510.611510791367" y="472.66187050359713"/>
+            <point key="canvasLocation" x="2510.2489019033674" y="472.26562499999994"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PCc-Ib-ZXf">
