@@ -74,23 +74,23 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.dataSource.data = pedidoDetalleRes.response;
         this.dataSource.data.forEach(element => {
           this.docStatus = element.pedidoStatus;
-          element.fechaOf = element.fechaOf == null ? '----------' : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? '----------' : element.fechaOfFin.substring(10, 0);
+          element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
+          element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
-          switch (element.status) {
-            case ConstStatus.abierto:
-              element.class = 'green';
+          switch (element.status.toUpperCase()) {
+            case ConstStatus.abierto.toUpperCase():
+              element.class = 'pdabierto';
               break;
-            case ConstStatus.asignado:
+            case ConstStatus.asignado.toUpperCase():
               element.class = 'asignado';
               break;
-            case ConstStatus.pendiente:
+            case ConstStatus.pendiente.toUpperCase():
               element.class = 'pendiente';
               break;
-            case ConstStatus.terminado:
+            case ConstStatus.terminado.toUpperCase():
               element.class = 'terminado';
               break;
-              case ConstStatus.enProceso:
+              case ConstStatus.enProceso.toUpperCase():
                 element.class = 'proceso';
                 break;
           }

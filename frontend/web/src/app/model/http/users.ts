@@ -23,7 +23,7 @@ export class IUserReq {
     firstName: string;
     lastName: string;
     role: number;
-    password: string;
+    password?: string;
     activo: number;
     isChecked?: boolean = false;
 }

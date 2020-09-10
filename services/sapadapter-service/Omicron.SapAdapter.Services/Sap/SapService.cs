@@ -383,9 +383,10 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
                 orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.PedidoId).ToList();
+                var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
-                return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
             var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.PedidoId).ToList();

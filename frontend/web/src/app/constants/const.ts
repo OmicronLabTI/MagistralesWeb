@@ -71,7 +71,7 @@ export const ConstStatus = {
     finalizado: 'Finalizado',
     cancelado: 'Cancelado',
     liberado: 'Liberado',
-    enProceso: 'En proceso',
+    enProceso: 'En Proceso',
     pendiente: 'Pendiente',
     asignado: 'Asignado',
     terminado: 'Terminado',

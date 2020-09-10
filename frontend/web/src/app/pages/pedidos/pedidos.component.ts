@@ -104,6 +104,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
             case ConstStatus.enProceso:
               element.class = 'proceso';
               break;
+            case ConstStatus.finalizado:
+              element.class = 'finalizado';
+              break;
+            case ConstStatus.terminado:
+              element.class = 'pterminado';
           }
         });
         this.isThereOrdersToPlan = false;

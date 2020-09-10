@@ -80,9 +80,7 @@ namespace Omicron.SapAdapter.Api
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
 
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            loggerFactory.AddSerilog();
-            services.AddSingleton(loggerFactory);
+            services.AddSingleton(Log.Logger);
 
             services.AddDiscoveryClient(this.Configuration);
 
@@ -95,7 +93,7 @@ namespace Omicron.SapAdapter.Api
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Api Users",
+                    Title = "Api Sap Adapter",
                     Description = "Api para información de Sap Adapter",
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {

@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 
 protocol CardCellDelegate: NSObjectProtocol {
-    func detailTapped(row: Int)
+    func detailTapped(order: Order)
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
@@ -37,6 +37,11 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var showDetail: UIButton!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
+    weak var order: Order? {
+        didSet {
+            self.setColor()
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -65,6 +70,28 @@ class CardCollectionViewCell: UICollectionViewCell {
         UtilsManager.shared.changeIconButton(button: self.showDetail, iconName: ImageButtonNames.assigned)
     }
     
+    func setColor() {
+        switch self.order?.statusId ?? 0 {
+        case 1:
+            self.propertyCard(cell: self, borderColor: OmicronColors.assignedStatus, iconName: ImageButtonNames.assigned)
+        case 2:
+            self.propertyCard(cell: self, borderColor: OmicronColors.processStatus, iconName: ImageButtonNames.inProcess)
+        case 3:
+            self.propertyCard(cell: self, borderColor: OmicronColors.pendingStatus, iconName: ImageButtonNames.pendding)
+        case 4:
+            self.propertyCard(cell: self, borderColor: OmicronColors.finishedStatus, iconName: ImageButtonNames.finished)
+        case 5:
+            self.propertyCard(cell: self, borderColor: OmicronColors.reassignedStatus, iconName: ImageButtonNames.reasigned)
+        default:
+            print("")
+        }
+    }
+    
+    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
+        cell.assignedStyleCard(color: borderColor.cgColor)
+        UtilsManager.shared.changeIconButton(button: cell.showDetail, iconName: iconName)
+    }
+    
     func assignedStyleCard(color: CGColor)  -> Void{
         self.contentCard.layer.cornerRadius = CGFloat(20)
         self.contentCard.layer.borderColor = color 
@@ -82,6 +109,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     @IBAction func detail() {
-        self.delegate?.detailTapped(row: self.row)
+        guard let order = self.order else { return }
+        self.delegate?.detailTapped(order: order)
     }
 }

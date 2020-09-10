@@ -42,7 +42,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     'fechaorden',
     'fechatermino',
     'qfbasignado',
-    'estatus'
+    'estatus',
+    'actions'
   ];
   dataSource = new MatTableDataSource<IOrdersReq>();
   pageEvent: PageEvent;
@@ -118,19 +119,25 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           switch (element.status) {
             case ConstStatus.abierto:
-              element.class = 'green';
+              element.class = 'pdabierto';
               break;
-            case ConstStatus.planificado:
-              element.class = 'mat-primary';
+            case ConstStatus.asignado:
+              element.class = 'asignado';
               break;
-            case ConstStatus.liberado:
-              element.class = 'liberado';
+            case ConstStatus.pendiente:
+              element.class = 'pendiente';
               break;
-            case ConstStatus.cancelado:
-              element.class = 'cancelado';
+            case ConstStatus.terminado:
+              element.class = 'terminado';
               break;
             case ConstStatus.enProceso:
               element.class = 'proceso';
+              break;
+            case ConstStatus.reasingado:
+              element.class = 'pdreasignado';
+              break;
+            case ConstStatus.finalizado:
+              element.class = 'pdfinalizado';
               break;
           }
         });
