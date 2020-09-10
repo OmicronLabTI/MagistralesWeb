@@ -10,7 +10,6 @@ import { ProductivityService } from 'src/app/services/productivity.service';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
-import { ProductivityListMock } from 'src/mocks/productivityMock';
 
 @Component({
   selector: 'app-productivity',
