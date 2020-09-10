@@ -36,10 +36,27 @@ class LotsViewModel {
     
     var itemLotSelected:LotsSelected? = nil
     
+    var finishOrderDidTap = PublishSubject<Void>()
+    var backToInboxView = PublishSubject<Void>()
     private var selectedBatches: [BatchSelected] = []
     private var documentLines: [Lots] = []
+    var technicalSignatureIsGet = false
+    var qfbSignatureIsGet = false
+    var askIfUserWantToFinalizeOrder = PublishSubject<String>()
+    var showSignatureViewFromLotsView = PublishSubject<String>()
+    var sqfbSignature = ""
+    var technicalSignature = ""
+    var showSignatureView = PublishSubject<String>()
+    var updateComments = PublishSubject<OrderDetail>()
+    @Injected var orderDetail: OrderDetailViewModel
     
     init() {
+        
+        // Finaliza la orden
+        self.finishOrderDidTap.subscribe(onNext: { [weak self] in
+            self?.askIfUserWantToFinalizeOrder.onNext("¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+        
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in
@@ -277,5 +294,49 @@ class LotsViewModel {
         return self.selectedBatches
             .filter({ $0.itemCode == itemCode && $0.batchNumber == batchNumber && $0.action != "delete" })
             .map({ $0.toLotsSelected() })
+    }
+    
+    // Pregunta al server si la orden puede ser finaliada o no
+    func validIfOrderCanBeFinalized() -> Void  {
+        self.loading.onNext(true)
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] res in
+            self?.loading.onNext(false)
+            self?.showSignatureView.onNext("Firma del  QFB")
+            }, onError: { [weak self] error in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext("La orden no puede ser terminada, revisa que todos los artículos tengan un lote asignado")
+        }).disposed(by: self.disposeBag)
+        
+    }
+    
+    // Valida si el usuario obtuvo las firmas y finaliza la orden 
+    func callFinishOrderService() -> Void {
+        
+        if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
+            self.loading.onNext(true)
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: "", technicalSignature: "")
+            
+            NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
+                self?.loading.onNext(false)
+                self?.backToInboxView.onNext(())
+                }, onError: {[weak self] error in
+                    self?.loading.onNext(false)
+                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
+            }).disposed(by: self.disposeBag)
+        }
+    }
+    
+    // Se actualiza order detail para obtener los comentarios
+    func updateOrderDetail() {
+        loading.onNext(true)
+        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.loading.onNext(false)
+            if (res.response != nil) {
+                self?.updateComments.onNext(res.response!)
+            }
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+        }).disposed(by: self.disposeBag)
     }
 }

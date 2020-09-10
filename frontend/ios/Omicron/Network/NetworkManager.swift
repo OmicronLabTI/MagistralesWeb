@@ -132,6 +132,13 @@ class NetworkManager: SessionProtocol {
         let res: Observable<AssingbBatchResponse> = makeRequest(request: req)
         return res
     }
+
+    // Se pregunta si una orden  se puede finalizar o no
+    func askIfOrderCanBeFinalized(orderId: Int) -> Observable<OrderDetailResponse> {
+        let req: ApiService = ApiService.askIfOrderCanBeFinalized(orderId: orderId)
+        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        return res
+    }
     
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
