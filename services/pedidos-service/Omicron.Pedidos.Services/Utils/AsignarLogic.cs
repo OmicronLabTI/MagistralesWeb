@@ -33,15 +33,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
         {
-            var orders = new List<CompleteDetailOrderModel>();
-            var listToUpdate = new List<UpdateFabOrderModel>();
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
-            listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
+            var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -71,8 +68,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="assignModel">the assign model.</param>
         /// <param name="pedidosDao">the pedido dao.</param>
         /// <param name="sapDiApi">the di api.</param>
+        /// <param name="sapAdapter">Sap adapter.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi)
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter)
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
@@ -87,9 +85,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 listProdOrders.Add(x.ToString());
             });
-
-            var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
-            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            Dictionary<string, string> dictResult = await UpdateSapOrders(sapDiApi, listToUpdate);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -99,7 +95,10 @@ namespace Omicron.Pedidos.Services.Utils
             var listSales = userOrdersByProd.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
-            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, assignModel.UserId, ServiceConstants.Asignado);
+            var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
+            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
+
+            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado);
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
@@ -191,10 +190,11 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="listFromOrders">the list sent from front.</param>
         /// <param name="listFromSales">list from DB.</param>
+        /// <param name="sapOrders">The sapOrders.</param>
         /// <param name="user">the user to update.</param>
         /// <param name="statusOrder">Status for the order fab.</param>
         /// <returns>the data.</returns>
-        public static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, string user, string statusOrder)
+        public static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder)
         {
             var listToUpdate = new List<UserOrderModel>();
 
@@ -203,9 +203,10 @@ namespace Omicron.Pedidos.Services.Utils
                 .ToList()
                 .ForEach(y =>
                 {
+                    var orderWithDetails = sapOrders.FirstOrDefault(z => z.Order != null && z.Order.PedidoId.ToString().Equals(y.Key));
                     var currentOrdersBySale = listFromOrders.Where(z => z.Salesorderid == y.Key).ToList();
                     var currentOrders = currentOrdersBySale.Select(x => x.Productionorderid).ToList();
-                    var missing = y.Any(z => z.Status == ServiceConstants.Planificado && !string.IsNullOrEmpty(z.Productionorderid) && !currentOrders.Contains(z.Productionorderid));
+                    var missing = y.Any(z => !string.IsNullOrEmpty(z.Productionorderid) && z.Status == ServiceConstants.Planificado && !currentOrders.Contains(z.Productionorderid)) || y.Count(z => !string.IsNullOrEmpty(z.Productionorderid)) != orderWithDetails.Detalle.Count;
 
                     currentOrdersBySale.ForEach(o =>
                     {
@@ -214,10 +215,13 @@ namespace Omicron.Pedidos.Services.Utils
                         listToUpdate.Add(o);
                     });
 
-                    var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
-                    pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
-                    pedido.Userid = user;
-                    listToUpdate.Add(pedido);
+                    if (!string.IsNullOrEmpty(y.Key))
+                    {
+                        var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
+                        pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
+                        pedido.Userid = user;
+                        listToUpdate.Add(pedido);
+                    }
                 });
 
             return listToUpdate;
@@ -279,6 +283,18 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return total;
+        }
+
+        /// <summary>
+        /// Sends to update.
+        /// </summary>
+        /// <param name="sapDiApi">the di api.</param>
+        /// <param name="listToUpdate">the list to update.</param>
+        /// <returns>teh dict result.</returns>
+        private static async Task<Dictionary<string, string>> UpdateSapOrders(ISapDiApi sapDiApi, List<UpdateFabOrderModel> listToUpdate)
+        {
+            var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
         }
     }
 }

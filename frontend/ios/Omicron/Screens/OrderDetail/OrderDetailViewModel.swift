@@ -54,7 +54,7 @@ class OrderDetailViewModel {
     }
     
     deinit {
-        print("Se muere Order DetailViewController")
+        print("Se muere OrderDetailViewModel")
     }
     
     // MARK: Functions

@@ -372,6 +372,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
                     }
 
+                    this.ValidateRequiredQuantityForRetroactiveIssues(productionOrderId);
+                    
                     this.ValidateNewBatches(orderReference.ItemNo, productionOrderConfig.Batches);
 
                     this.CreateoGoodIssueForProductionByOrderId(productionOrderId);
@@ -563,13 +565,16 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
+            closeConfiguration.Batches = closeConfiguration.Batches ?? new List<BatchesConfigurationModel>();
 
             productionOrder.GetByKey(productionOrderId);
             var product = this.GetProductByCode(productionOrder.ItemNo);
+            var quantityToReceipt = productionOrder.PlannedQuantity;
 
-            if (product.ManageBatchNumbers == BoYesNoEnum.tYES && closeConfiguration.Batches != null)
+            if (product.ManageBatchNumbers == BoYesNoEnum.tYES)
             {
-                int counter = 0;
+                quantityToReceipt = closeConfiguration.Batches.Sum(x => x.Quantity);
+                var counter = 0;
                 foreach (var batchConfig in closeConfiguration.Batches)
                 {
                     receiptProduction.Lines.BatchNumbers.SetCurrentLine(counter);
@@ -584,7 +589,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             receiptProduction.Lines.BaseEntry = productionOrder.DocumentNumber;
             receiptProduction.Lines.BaseType = 202;
-            receiptProduction.Lines.Quantity = productionOrder.PlannedQuantity;
+            receiptProduction.Lines.Quantity = quantityToReceipt;
             receiptProduction.Lines.TransactionType = BoTransactionTypeEnum.botrntComplete;
             receiptProduction.Lines.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.Lines.Add();
@@ -600,7 +605,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <summary>
         /// Close production order
         /// </summary>
-        /// <param name="productionOrderId"></param>
+        /// <param name="productionOrderId">Production order id.</param>
         private void CloseProductionOrder(int productionOrderId)
         {
             var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
@@ -666,6 +671,51 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// Validate required quantities in an production order.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        private void ValidateRequiredQuantityForRetroactiveIssues(int productionOrderId)
+        {
+            var recordSet = this.ExecuteQuery(ServiceConstants.GetRetroactiveIssuesInProductionOrder, productionOrderId);
+            var missingComponents = new List<string>();
+
+            for (var i = 0; i < recordSet.RecordCount; i++)
+            {
+                var requiredQuantity = double.Parse(recordSet.Fields.Item("PlannedQty").Value.ToString());
+                var warehouse = recordSet.Fields.Item("warehouse").Value.ToString();
+                var itemCode = recordSet.Fields.Item("ItemCode").Value.ToString();
+
+                if (!this.IsAvailableRequiredQuantity(itemCode, warehouse, requiredQuantity))
+                {
+                    missingComponents.Add(itemCode);
+                }
+
+                recordSet.MoveNext();
+            }
+
+            if (!missingComponents.Any()) return;
+
+            var formated = string.Join(", ", missingComponents);
+            throw new ValidationException(string.Format(ServiceConstants.FailReasonNotAvailableRequiredQuantity, productionOrderId, formated));
+        }
+
+        /// <summary>
+        /// Is available product quantity in warehouse.
+        /// </summary>
+        /// <param name="itemCode">Item code.</param>
+        /// <param name="wharehouse">Wharehouse code.</param>
+        /// <param name="requiredQuantity">Required quantity.</param>
+        /// <returns>Flag result.</returns>
+        private bool IsAvailableRequiredQuantity(string itemCode, string wharehouse, double requiredQuantity)
+        {
+            var results = this.ExecuteQuery(ServiceConstants.QueryAvailableQuantityByWarehouse, itemCode, wharehouse);
+            var availableQuantityAsString = results.Fields.Item("Available").Value.ToString();
+            availableQuantityAsString = string.IsNullOrEmpty(availableQuantityAsString) ? "0" : availableQuantityAsString;
+            var availableQuantity = double.Parse(availableQuantityAsString);
+            return requiredQuantity < availableQuantity;
+        }
+
+        /// <summary>
         /// Get assignment batches to item in a document.
         /// </summary>
         /// <param name="docNumber">Document number.</param>
@@ -675,17 +725,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         private Dictionary<string, double> GetAssignmentBatches(int docNumber, string itemCode, string warehouse)
         {
             var results = new Dictionary<string, double>();
-            long lastTransaction = this.GetLastInventoryLogEntry(itemCode, docNumber);
+            var lastTransaction = this.GetLastInventoryLogEntry(itemCode, docNumber);
             var assignments = this.ExecuteQuery(ServiceConstants.FindAssignedBatchesByLogEntry, lastTransaction);
 
             for (var i = 0; i < assignments.RecordCount; i++)
             {
-                int sysNumber = int.Parse(assignments.Fields.Item("SysNumber").Value.ToString());
+                var sysNumber = int.Parse(assignments.Fields.Item("SysNumber").Value.ToString());
                 var quantity = double.Parse(assignments.Fields.Item("AllocQty").Value.ToString());
-                string batchCode = this.GetBatchCode(itemCode, warehouse, sysNumber);
-                
+                var batchCode = this.GetBatchCode(itemCode, warehouse, sysNumber);
                 results.Add(batchCode, quantity);
-                
                 assignments.MoveNext();
             }
 
