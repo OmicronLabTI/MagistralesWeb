@@ -25,6 +25,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   today: Date;
   minDate: Date;
   productivityForm: FormGroup;
+  myChart = undefined;
   fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
   @ViewChild('productivityChart', {static: false}) productivityChart: ElementRef;
   constructor(
@@ -58,6 +59,9 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   getProductivityData() {
+    if (this.myChart !== undefined){
+      this.myChart.destroy();
+    }
     this.queryString = `?ffin=${this.dataService.getDateFormatted(
       this.productivityForm.get('fini').value,
       this.productivityForm.get('ffin').value,
@@ -85,7 +89,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       datasets: this.dataSets(this.dataSource.data)
     };
     Chart.defaults.global.defaultFontFamily = 'Quicksand';
-    const myChart = new Chart(this.productivityChart.nativeElement, {
+    this.myChart = new Chart(this.productivityChart.nativeElement, {
       type: 'bar',
       data: barChartData,
       options: {
