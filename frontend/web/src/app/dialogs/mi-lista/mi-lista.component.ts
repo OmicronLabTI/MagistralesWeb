@@ -32,7 +32,7 @@ export class MiListaComponent implements OnInit {
         const datos = new IMyNewListReq();
         datos.userId = this.dataService.getUserId();
         datos.data = new BaseComponent();
-        datos.data.name = this.name.value;
+        datos.data.name = this.data.code + ' ' + this.name.value;
         datos.data.productId = this.data.code;
         datos.data.components = [];
         this.data.data.forEach(element => {

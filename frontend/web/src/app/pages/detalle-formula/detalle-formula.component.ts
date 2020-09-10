@@ -45,6 +45,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   componentsToDelete: IFormulaDetalleReq [] = [];
   minDate = new Date();
   subscription = new Subscription();
+  isSaveToMyList = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
@@ -63,6 +64,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.oldDataFormulaDetail.details.push(resultNewFormulaComponent);
       this.dataSource.data = this.oldDataFormulaDetail.details;
       this.getIsReadyTOSave();
+      this.elementsToSave();
     }));
   }
 
@@ -188,6 +190,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.getIsReadyTOSave();
               this.createMessageOkHttp();
               this.checkISComponentsToDelete();
+              this.elementsToSave();
             }
           });
     } else {
@@ -268,6 +271,14 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.dataService.setNewSearchOrderModal(result);
     }
  });
+  }
+
+  elementsToSave() {
+    if (this.dataSource.data.filter(element => element.action === CONST_DETAIL_FORMULA.insert).length > 0 ) {
+      this.isSaveToMyList = true;
+    } else {
+      this.isSaveToMyList = false;
+    }
   }
 }
 

@@ -17,13 +17,13 @@
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
             &nbsp; Lotes
-            </button>
+            </button>[ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'"
             <!--<button mat-raised-button class="button-blue">
             &nbsp; Mi lista de componentes &nbsp; 
             </button>
             &nbsp;
             &nbsp;-->
-            <button mat-raised-button class="button-blue" (click)="openMiListaDialog()">
+            <button mat-raised-button (click)="openMiListaDialog()" [ngClass]="isSaveToMyList ? 'button-blue' : 'disable-button'" [disabled]='!isSaveToMyList'>
                 &nbsp; Crear lista de componentes &nbsp; 
             </button>
             <button mat-raised-button class="button-blue" (click)="openDialog()">

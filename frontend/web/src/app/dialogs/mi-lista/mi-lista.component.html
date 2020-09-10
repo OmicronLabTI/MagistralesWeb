@@ -7,8 +7,8 @@
         <mat-card-content class="content-card-container">
             <div class="row-form">
                 <div class="form-field-full">
-                    <mat-form-field appearance="outline" class="custom-field-full generalinput">
-                        <mat-label>{{data.code + data.description}}</mat-label>
+                    <mat-form-field appearance="outline" class="custom-field-full generalinput fsize">
+                        <mat-label>{{data.code}}</mat-label>
                         <input matInput [placeholder]="'Nombre de la lista'" [formControl]="name" required/>
                         <mat-error *ngIf="name.invalid">
                             Este campo es <strong>requerido</strong>
