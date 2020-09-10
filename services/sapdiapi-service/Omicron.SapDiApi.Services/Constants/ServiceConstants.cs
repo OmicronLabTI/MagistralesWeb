@@ -171,6 +171,6 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Get available product quantity in warehouse.
         /// </summary>
-        public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand)- SUM(OITW.IsCommited) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
+        public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
     }
 }
