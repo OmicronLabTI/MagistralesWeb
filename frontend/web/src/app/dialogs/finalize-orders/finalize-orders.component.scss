@@ -15,3 +15,21 @@
   flex-direction: row;
   justify-content: flex-end;
 }
+table {
+  border-spacing: 0 5px !important;
+  padding: 5px;
+}
+.with-error {
+  border-bottom: 2px solid #e85c79;
+  border-top: 2px solid #e85c79;
+}
+.with-error-start {
+  border-bottom: 2px solid #e85c79;
+  border-top: 2px solid #e85c79;
+  border-left: 2px solid #e85c79;
+}
+.with-error-last {
+  border-bottom: 2px solid #e85c79;
+  border-top: 2px solid #e85c79;
+  border-right: 2px solid #e85c79;
+}

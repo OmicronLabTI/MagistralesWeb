@@ -96,6 +96,17 @@
                     </div>
                 </div>
                 <div class="row-form-order">
+                    <div class="form-field-left" *ngIf="isFromSearchOrders">
+                        <mat-form-field class="custom-field-full">
+                            <input matInput placeholder="Nombre del cliente" type="text"
+                                   maxlength="80"
+                                   class="height-input"
+                                   formControlName="clientName">
+                            <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
+                                Solo 80 caracteres
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
                     <div class="form-field-left" *ngIf="!isFromSearchOrders">
                         <mat-form-field class="custom-field-full">
                             <input matInput placeholder="Código del producto" type="text"

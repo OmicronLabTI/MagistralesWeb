@@ -29,6 +29,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
               private ordersServices: PedidosService,
               private errorService: ErrorService,
               private usersService: UsersService) {
+      console.log('data Receive: ', this.filterData.filterOrdersData)
       this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
@@ -39,10 +40,12 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
           status: ['', []],
           qfb: ['', []],
           productCode: ['', [Validators.maxLength(40)]],
+          clientName: ['', [Validators.maxLength(80)]],
     });
       this.isToResetData = // add more filter to receive
           this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
-          || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode;
+          || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode
+          || this.filterData.filterOrdersData.clientName;
   }
 
   async ngOnInit() {
@@ -77,6 +80,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('status').setValue(this.filterData.filterOrdersData.status ? this.filterData.filterOrdersData.status : '');
       this.findOrdersForm.get('productCode').setValue(this.filterData.filterOrdersData.productCode ?
           this.filterData.filterOrdersData.productCode : '');
+      this.findOrdersForm.get('clientName').setValue(this.filterData.filterOrdersData.clientName ?
+          this.filterData.filterOrdersData.clientName : '');
       this.getMaxDate();
       if (this.filterData.filterOrdersData.docNum) {
           this.getDisableForDocNum();
@@ -84,6 +89,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
           this.getDisableOnlyForDocNum();
       }
       this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
+          console.log('dataChanging: ', formData)
           if (!this.isBeginInitForm) {
               if (formData.docNum !== null && formData.docNum) {
                   this.isToResetData = false;
@@ -95,7 +101,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                   formData.ffin !== '' && formData.ffin ||
                   formData.status !== '' && formData.status ||
                   formData.qfb !== '' && formData.qfb ||
-                  formData.productCode !== '' && formData.productCode)) {
+                  formData.productCode !== '' && formData.productCode ||
+                  formData.clientName !== '' && formData.clientName)) {
                   this.changeValidatorsForDocNum();
               }
           }
@@ -126,6 +133,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('status').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('qfb').disable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('productCode').disable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('clientName').disable({onlySelf: true, emitEvent: false});
   }
   getDisableOnlyForDocNum() {
       this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
@@ -136,6 +144,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('qfb').setValue( '' );
       this.findOrdersForm.get('status').setValue('');
       this.findOrdersForm.get('productCode').setValue('');
+      this.findOrdersForm.get('clientName').setValue('');
   }
   enableAllParamsSearch() {
       this.getDisableForDocNum();
@@ -148,6 +157,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
       this.findOrdersForm.get('fini').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('ffin').enable({onlySelf: true, emitEvent: false});
       this.findOrdersForm.get('productCode').enable({onlySelf: true, emitEvent: false});
+      this.findOrdersForm.get('clientName').enable({onlySelf: true, emitEvent: false});
   }
   changeValidatorsForDocNum() {
       this.isToResetData = true;

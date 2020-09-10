@@ -293,19 +293,23 @@ export class DataService {
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
     let isSearchWithFilter = false;
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -347,6 +351,10 @@ export class DataService {
       if (resultSearchOrderModal.productCode !== '' && resultSearchOrderModal.productCode) {
         queryString = `${queryString}&code=${resultSearchOrderModal.productCode}`;
         filterDataOrders.productCode = resultSearchOrderModal.productCode;
+      }
+      if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
+        queryString = `${queryString}&client=${resultSearchOrderModal.clientName}`;
+        filterDataOrders.clientName = resultSearchOrderModal.clientName;
       }
     }
 

@@ -116,6 +116,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.lengthPaginator = ordersRes.comments;
         this.dataSource.data = ordersRes.response;
         this.dataSource.data.forEach(element => {
+          if (element.fabOrderId === 89028) { /// delete only to test
+            element.docNum = 0;
+          }
           switch (element.status) {
             case ConstStatus.abierto:
               element.class = 'green';
@@ -223,12 +226,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrder() {
-    console.log('dataToFinalize: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado))
     this.dialog.open(FinalizeOrdersComponent, {
       panelClass: 'custom-dialog-container',
       data: {
         finalizeOrdersData: this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
       }
-    });
+    }).afterClosed().subscribe(() => this.getOrders());
   }
 }

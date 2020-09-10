@@ -8,6 +8,7 @@ export const CONST_NUMBER = {
     timeToast: 2000,
     nulo: null,
     six: 6,
+    seven: 7,
 };
 export const CONST_STRING = {
     empty: ''

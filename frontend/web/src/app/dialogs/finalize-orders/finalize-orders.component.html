@@ -6,32 +6,35 @@
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
-        <mat-card-content class="content-card-container">
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 margin-table">
-
+        <mat-card-content class="content-card-container scroll-visible">
+            <table mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length > 0 && 'mat-elevation-z8'" class="margin-table">
                 <ng-container matColumnDef="nOrder">
                     <th mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN</th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> {{element.fabOrderId}} </td>
+                    <td mat-cell *matCellDef="let element" [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error-start' : ''" class="color-text-intables tdcell of"> {{element.fabOrderId}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="codProduct">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto"> {{element.itemCode}} </td>
+                    <td mat-cell *matCellDef="let element" [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''" class="color-text-intables tdcell mobile-hide codigoproducto"> {{element.itemCode}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="desProduct">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN </th>
                     <td mat-cell matTooltip="{{element.description}}"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''"
                         matTooltipPosition="right"
                         aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto-custom cursor-pointer "> {{ (element.description.length > 15) ? (element.description | slice:0:15) + '...' : element.description }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lote">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> LOTE</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide cantplan">
+                    <td mat-cell *matCellDef="let element; let i = index;"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''"
+                        class="color-text-intables tdcell tdcell-center mobile-hide cantplan">
                         <mat-form-field appearance="outline">
                             <input matInput type="text"
                                    class="number color-number" placeholder="Lote"
+                                   (focusout)="focusOutLote(i)"
                                    [(ngModel)]="element.batche"
                                    (ngModelChange)="onBatchesChange($event, i)">
                         </mat-form-field>
@@ -40,26 +43,35 @@
 
                 <ng-container matColumnDef="quantity">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden">
+                    <td mat-cell *matCellDef="let element; let i = index;"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''"
+                        class="color-text-intables tdcell tdcell-center mobile-hide fechaorden">
                         <mat-form-field appearance="outline">
-                            <input matInput type="text"
+                            <input matInput type="number"
                                    class="number color-number" placeholder="Cantidad"
                                    [(ngModel)]="element.quantityFinish"
-                                   (ngModelChange)="onQuantityFinishChange($event, i)">
+                                   (ngModelChange)="onQuantityFinishChange($event, i)" >
                         </mat-form-field>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="unit">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">UNIDAD</th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino">{{element.unit}} </td>
+                    <td mat-cell *matCellDef="let element"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''"
+                        class="color-text-intables tdcell tdcell-center mobile-hide fechatermino">{{element.unit}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="fabDate">
-                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA ORDEN </th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide status">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA FABRICACIÓN </th>
+                    <td mat-cell *matCellDef="let element; let i = index;"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error' : ''"
+                        class="color-text-intables tdcell tdcell-center mobile-hide status">
                         <mat-form-field color="accent" appearance="outline">
-                            <input matInput [matDatepicker]="picker2" [(ngModel)]="element.fabDate" (ngModelChange)="onFabDateChange($event, i)">
+                            <input matInput [matDatepicker]="picker2" [(ngModel)]="element.fabDate"
+                                   (ngModelChange)="onFabDateChange($event, i)"
+                                   [min]="toDay"
+                                   readonly>
                             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                             <mat-datepicker #picker2 color="primary"></mat-datepicker>
                         </mat-form-field>
@@ -67,9 +79,14 @@
                 </ng-container>
                 <<ng-container matColumnDef="endDate">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">FECHA VENCIMIENTO</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
+                    <td mat-cell *matCellDef="let element; let i = index;"
+                        [ngClass]="element.isWithError || element.isWithErrorBatch ? 'with-error-last' : ''"
+                        class="color-text-intables tdcell tdcell-center mobile-hide qfb">
                         <mat-form-field appearance="outline">
-                            <input matInput [matDatepicker]="picker3" [(ngModel)]="element.endDate" (ngModelChange)="onEndDateChange($event, i)">
+                            <input matInput [matDatepicker]="picker3" [(ngModel)]="element.endDate"
+                                   (ngModelChange)="onEndDateChange($event, i)"
+                                   [min]="toDay"
+                                   readonly>
                             <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
                             <mat-datepicker #picker3 color="primary"></mat-datepicker>
                         </mat-form-field>
@@ -78,12 +95,15 @@
 
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
             </table>
+            <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
+                <span>Cargando información</span>
+            </div>
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal">Aceptar</button>
+            <button mat-button class="btn-add-modal btn--modal" [disabled]="!isCorrectData" (click)="finalizeOrderSend()">Aceptar</button>
         </mat-card-actions>
     </mat-card>
 </div>

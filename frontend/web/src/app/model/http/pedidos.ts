@@ -21,6 +21,9 @@ export class ICreateIsolatedOrderRes extends BaseResponseHttp {
 export class IGetNewBachCodeRes extends BaseResponseHttp {
     response: string;
 }
+export class IExistsBachCodeRes extends BaseResponseHttp {
+    response: boolean;
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
@@ -33,6 +36,7 @@ export class ParamsPedidos {
     dateFull?: string;
     productCode?: string;
     isFromOrders?: boolean;
+    clientName?: string;
 
 }
 

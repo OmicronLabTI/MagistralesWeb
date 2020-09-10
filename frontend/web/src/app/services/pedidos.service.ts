@@ -4,9 +4,15 @@ import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
 import {
-  CancelOrderReq, CreateIsolatedOrderReq, ICancelOrdersRes, ICreateIsolatedOrderRes, IGetNewBachCodeRes,
+  CancelOrderReq,
+  CreateIsolatedOrderReq,
+  ICancelOrdersRes,
+  ICreateIsolatedOrderRes,
+  IExistsBachCodeRes,
+  IGetNewBachCodeRes,
   IPedidosListRes,
-  IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
+  IPlaceOrdersAutomaticReq,
+  IPlaceOrdersAutomaticRes,
   IProcessOrdersRes,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
@@ -69,5 +75,9 @@ export class PedidosService {
   }
   getNextBatchCode(productCode: string) {
     return this.consumeService.httpGet<IGetNewBachCodeRes>(`${Endpoints.pedidos.getNextBatchCode}?productCode=${productCode}`);
+  }
+  getIfExistsBatchCode(productCode: string, batchCode: string) {
+    return this.consumeService.httpGet<IExistsBachCodeRes>(
+        `${Endpoints.pedidos.checkIfExistsBatchCode}?productCode=${productCode}&batchCode=${batchCode}`);
   }
 }
