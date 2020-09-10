@@ -30,6 +30,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var startDateDescriptionLabel: UILabel!
     @IBOutlet weak var finishedDateDescriptionLabel: UILabel!
     @IBOutlet weak var productDescritionLabel: UILabel!
+    @IBOutlet weak var infoView: UIView!
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
@@ -38,15 +39,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var htrequiredQuantity: UILabel!
     @IBOutlet weak var htUnit: UILabel!
     @IBOutlet weak var htWerehouse: UILabel!
+    @IBOutlet weak var htConsumed: UILabel!
+    @IBOutlet weak var htAvailable: UILabel!
+    @IBOutlet weak var htAmountPendingLabel: UILabel!
+    @IBOutlet weak var htStockLabel: UILabel!
+    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
-    
-//    Se comentó para ampliar el campo de descripción
-//    @IBOutlet weak var htConsumed: UILabel!
-//    @IBOutlet weak var htAvailable: UILabel!
-//    @IBOutlet weak var htAmountPendingLabel: UILabel!
-//    @IBOutlet weak var htStockLabel: UILabel!
-//    @IBOutlet weak var htQuantityInStockLabel: UILabel!
     
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
@@ -179,19 +178,18 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             }
                 }).disposed(by: self.disposeBag)
         
-        self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){row, data, cell in
+        self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
             cell.descriptionLabel.text = data.detailDescription
-            cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
-            cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
+            cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
+            cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
+            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
+            cell.availableLabel.text =  self?.formatter.string(from: NSNumber(value: data.available ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            // Se comentó para ampliar campo descripción
-//            cell.consumedLabel.text = self.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
-//            cell.availableLabel.text =  self.formatter.string(from: NSNumber(value: data.available ?? 0.0))
-//            cell.quantityPendingLabel.text = self.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
-//            cell.stockLabel.text =  self.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
-//            cell.storedQuantity.text =  self.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
+            cell.quantityPendingLabel.text = self?.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
+            cell.stockLabel.text =  self?.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
+            cell.storedQuantity.text =  self?.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
@@ -230,21 +228,18 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton, title: StatusNameConstants.addComponent, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
-        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes: ", fontSize: 20)
-        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 15, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 15, typeFont: "bold")
-        
-//        Se comentó para poder ampliar el campo de descripción
-//        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 15, typeFont: "bold")
-//        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 15, typeFont: "bold")
-//        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 15, typeFont: "bold")
-//        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 15, typeFont: "bold")
-//        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 15, typeFont: "bold")
-        
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes: ", fontSize: 22)
+        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htAvailable, text: "Disponible", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 19, typeFont: "bold")        
         
         self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
         self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase:", textToBold: "Envase")
@@ -254,8 +249,11 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
         self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha orden de fabricación:", textToBold: "Fecha orden de fabricación:")
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
-        self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 18)
+        self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
         self.detailTable.tableFooterView = UIView()
+        
+        self.infoView.layer.cornerRadius = 10.0
+        self.infoView.backgroundColor = OmicronColors.ligthGray
     }
     
     func showButtonsByStatusType(statusType: String) -> Void {

@@ -79,12 +79,13 @@ class LotsViewModel {
                     existing.action = "delete"
                     self?.selectedBatches.append(BatchSelected(
                         orderId: existing.orderId,
-                        assignedQty: quantity,
+                        assignedQty: (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0),
                         batchNumber:
                         existing.batchNumber,
                         itemCode: existing.itemCode,
                         action: "insert",
                         sysNumber: existing.sysNumber))
+                    self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
                 } else {
                     existing.assignedQty = (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0)
                     let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
