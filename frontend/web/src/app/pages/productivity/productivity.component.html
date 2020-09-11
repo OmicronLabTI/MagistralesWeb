@@ -16,13 +16,13 @@
                 <div class="fecha">
                     Fecha de finalización:
                     <mat-form-field class="date-picker-custom generalinput center" appearance="fill">
-                        <input matInput [matDatepicker]="dp3" formControlName="fini" readonly [min]="minDate" [max]="productivityForm.get('ffin').value" (dateChange)="getProductivityData()">
+                        <input matInput [matDatepicker]="dp3" formControlName="fini" readonly [min]="minDate" [max]="productivityForm.get('ffin').value" (dateChange)="getProductivityData(); maxDateFin($event.value)">
                         <mat-datepicker-toggle matSuffix [for]="dp3" ></mat-datepicker-toggle>
                         <mat-datepicker #dp3></mat-datepicker>
                     </mat-form-field>
                     <mat-form-field class="date-picker-custom generalinput center" appearance="fill">
                         <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
-                            [min]="productivityForm.get('fini').value" [max]="today" (dateChange)="minDateIni($event.value)">
+                            [min]="productivityForm.get('fini').value" [max]="maxDate" (dateChange)="minDateIni($event.value)">
                         <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                         <mat-datepicker #dp2 ></mat-datepicker>
                     </mat-form-field>
@@ -34,8 +34,8 @@
     <div class="list-users-container">
         <mat-tab-group>
             <mat-tab label="Gráfica">
-                <canvas #productivityChart width="100%" height="33">
-                    asdadasdasd
+                <canvas #productivityChart width="100%" height="33" style="margin-top: 5px;">
+                    
                 </canvas>
             </mat-tab>
             <mat-tab label="Datos">
