@@ -96,6 +96,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     
     }
     
+    func goToComponentsViewController() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let componentsVC = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.componentsViewController) as! ComponentsViewController
+        let navigationVC = UINavigationController(rootViewController: componentsVC)
+        navigationVC.modalPresentationStyle = .formSheet
+        
+        self.present(navigationVC, animated: true, completion: nil)
+    }
+    
     // Inicia la ejecución del refresh control
     func refreshViewControl() -> Void {
         self.refreshControl.tintColor = OmicronColors.blue
@@ -140,6 +149,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
+        self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            self?.goToComponentsViewController()
+        }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
@@ -263,13 +275,13 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.assignedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
             print("")
         }

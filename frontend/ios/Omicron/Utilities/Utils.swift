@@ -69,7 +69,6 @@ class UtilsManager {
         formatter.numberStyle = .decimal
         return formatter
     }
-    
 }
 
 open class DecimalTransform: TransformType {

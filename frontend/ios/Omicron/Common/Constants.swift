@@ -11,6 +11,9 @@ import UIKit
 
 struct Constants {
     enum Errors: String {
+        case errorTitle = "Error"
+        case errorData = "Lo sentimos, ocurrió un error al obtener la información"
+        case errorSave = "Lo sentimos, ocurrió un error al guardar la información"
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
     }
@@ -18,6 +21,11 @@ struct Constants {
     enum Tags: Int {
         case loading = 101
         case moreIndicator = 201
+    }
+    
+    enum Components: Int {
+        case offset = 0
+        case limit = 20
     }
 }
 
@@ -38,6 +46,8 @@ struct ViewControllerIdentifiers {
     static let lotsSelectedTableViewCell = "LotsSelectedTableViewCell"
     static let lotsAvailableTableViewCell = "LotsAvailableTableViewCell"
     static let signaturePadViewController = "SignaturePadViewController"
+    static let componentsViewController = "ComponentsViewController"
+    static let componentsTableViewCell = "ComponentsTableViewCell"
 }
 
 struct OmicronColors {
@@ -76,9 +86,11 @@ struct CommonStrings {
     static let password = "Contraseña"
     static let Emty = ""
     static let OK = "OK"
+    static let cancel = "Cancelar"
     static let searchOrden = "Buscar orden"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
+    static let addComponentTitle = "Agregar Componentes"
 }
 
 struct FontsNames {

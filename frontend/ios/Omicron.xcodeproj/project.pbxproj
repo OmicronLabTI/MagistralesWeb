@@ -71,6 +71,11 @@
 		98532B2F24B390A80015BBC6 /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 98532B2E24B390A80015BBC6 /* loading.json */; };
 		98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98532B3124B3933C0015BBC6 /* LottieManager.swift */; };
 		986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986EA24625083BF200ACE26A /* ExtensionsUI.swift */; };
+		987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987BDFDF2509869200D9C6E4 /* ComponentsViewController.swift */; };
+		987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987BDFE12509869F00D9C6E4 /* ComponentsViewModel.swift */; };
+		987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */; };
+		987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */ = {isa = PBXBuildFile; fileRef = 987BDFE5250A863500D9C6E4 /* getComponents.json */; };
+		989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989391D8250AE174004750D8 /* ComponentFormViewController.swift */; };
 		98B7845A24DA228A005A38FC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B7845924DA228A005A38FC /* Persistence.swift */; };
 		98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03024AFBD4100018A88 /* LoginViewModel.swift */; };
 		98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03224AFBD4C00018A88 /* LoginViewController.swift */; };
@@ -171,6 +176,11 @@
 		98532B2E24B390A80015BBC6 /* loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = loading.json; sourceTree = "<group>"; };
 		98532B3124B3933C0015BBC6 /* LottieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieManager.swift; sourceTree = "<group>"; };
 		986EA24625083BF200ACE26A /* ExtensionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsUI.swift; sourceTree = "<group>"; };
+		987BDFDF2509869200D9C6E4 /* ComponentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsViewController.swift; sourceTree = "<group>"; };
+		987BDFE12509869F00D9C6E4 /* ComponentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsViewModel.swift; sourceTree = "<group>"; };
+		987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsModel.swift; sourceTree = "<group>"; };
+		987BDFE5250A863500D9C6E4 /* getComponents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getComponents.json; sourceTree = "<group>"; };
+		989391D8250AE174004750D8 /* ComponentFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentFormViewController.swift; sourceTree = "<group>"; };
 		98B7845924DA228A005A38FC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		98C8C03024AFBD4100018A88 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		98C8C03224AFBD4C00018A88 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -411,6 +421,7 @@
 				7C980E0524E3244F00D58A85 /* UserInfo.json */,
 				7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */,
 				7C82849F24F46FA30043ACE8 /* getLots.json */,
+				987BDFE5250A863500D9C6E4 /* getComponents.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -444,6 +455,17 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		987BDFDE2509867200D9C6E4 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				987BDFDF2509869200D9C6E4 /* ComponentsViewController.swift */,
+				987BDFE12509869F00D9C6E4 /* ComponentsViewModel.swift */,
+				987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */,
+				989391D8250AE174004750D8 /* ComponentFormViewController.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		98C8C02F24AFBD3000018A88 /* Login */ = {
 			isa = PBXGroup;
 			children = (
@@ -457,6 +479,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				987BDFDE2509867200D9C6E4 /* Components */,
 				7CF2EA3624F6C5DD0005602F /* SignaturePad */,
 				7C9118F924EF1C5300E2571A /* Lots */,
 				7C5C6D9F24E8F43700662508 /* OrderDetailForm */,
@@ -609,6 +632,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */,
 				7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */,
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
@@ -770,17 +794,21 @@
 				98C8C03524AFBD5900018A88 /* LoginModel.swift in Sources */,
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
+				989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
 				7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
+				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
+				987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */,
 				7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
+				987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
 				7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */,
