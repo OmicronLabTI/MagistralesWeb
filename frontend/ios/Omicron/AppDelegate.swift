@@ -42,5 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { LotsViewModel() }.scope(Resolver.shared)
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
         Resolver.register { LottieManager() }.scope(Resolver.cached)
+        Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
     }
 }
