@@ -14,7 +14,7 @@
         <div class="table-toolbar-buttons">
             <form [formGroup]="productivityForm" class="form-orders" autocomplete="off">
                 <div class="fecha">
-                    Rango de fecha de orden de fabricación:
+                    Fecha de finalización:
                     <mat-form-field class="date-picker-custom generalinput center" appearance="fill">
                         <input matInput [matDatepicker]="dp3" formControlName="fini" readonly [min]="minDate" [max]="productivityForm.get('ffin').value" (dateChange)="getProductivityData()">
                         <mat-datepicker-toggle matSuffix [for]="dp3" ></mat-datepicker-toggle>

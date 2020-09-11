@@ -261,7 +261,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                     Description = p.LargeDescription,
                                     BaseQuantity = w.BaseQuantity,
                                     RequiredQuantity = w.RequiredQty,
-                                    Consumed = (int)w.ConsumidoQty,
+                                    Consumed = w.ConsumidoQty,
                                     Available = dp.OnHand - dp.IsCommited + dp.OnOrder,
                                     Unit = w.UnidadCode,
                                     Warehouse = w.Almacen,

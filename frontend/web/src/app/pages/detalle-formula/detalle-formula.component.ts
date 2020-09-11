@@ -111,14 +111,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   openDialog() {
     this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
-    /*dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
-      if (resultComponents) {
-        resultComponents.action = CONST_DETAIL_FORMULA.insert;
-        this.oldDataFormulaDetail.details.push(resultComponents);
-        this.dataSource.data = this.oldDataFormulaDetail.details;
-        this.getIsReadyTOSave();
-      }
-    });*/
   }
 
 
