@@ -12,6 +12,7 @@ import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
 import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componentslist.component';
+import { BaseComponent, Components } from 'src/app/model/http/listacomponentes';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -280,8 +281,40 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
     }).afterClosed().subscribe((result) => {
-      this.isSaveToMyList = false;
+      console.log('al cerrar modal: ', result);
+      this.replaceComponentsWithCustomList(result.componentes);
     });
+  }
+
+  replaceComponentsWithCustomList(components: Components[]) {
+    this.componentsToDelete.push(...this.dataSource.data.filter( component => component));
+    const newData: IFormulaDetalleReq[] = [];
+    // tslint:disable-next-line: radix
+    const orderFabricacionId = parseInt(this.ordenFabricacionId);
+    components.forEach(element => {
+      newData.push({
+        isChecked: false,
+        orderFabId: orderFabricacionId,
+        productId: element.productId,
+        description: element.description,
+        baseQuantity: element.baseQuantity,
+        requiredQuantity: parseFloat((element.baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten)),
+        consumed: 0,
+        available: 0,
+        unit: 'GR',
+        warehouse: 'MG',
+        pendingQuantity: 0,
+        stock: 0,
+        warehouseQuantity: 10,
+        action: CONST_DETAIL_FORMULA.insert
+      });
+    });
+    this.dataSource.data = newData;
+    this.oldDataFormulaDetail.details = this.dataSource.data;
+    this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+    this.getIsReadyTOSave();
+    this.checkISComponentsToDelete();
+    this.elementsToSave();
   }
 }
 

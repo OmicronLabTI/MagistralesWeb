@@ -29,7 +29,6 @@ export class ComponentslistComponent implements AfterViewInit {
   }
 
   getCustomList() {
-    console.log(this.data.code);
     this.orderService.getCustomList('?productId=' + this.data.code).subscribe( result => {
       this.dataSource.data = result.response;
     });
@@ -38,8 +37,7 @@ export class ComponentslistComponent implements AfterViewInit {
   selectComponent(element: BaseComponent) {
     this.dataService.presentToastCustom(Messages.confirmReplaceWithListComponents, 'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
-        console.log('fila seleccionada: ', element.components)
-        this.dialogRef.close(element.components);
+        this.dialogRef.close({componentes: element.components});
       }
     });
   }
