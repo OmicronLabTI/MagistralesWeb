@@ -59,8 +59,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var dictResult = new Dictionary<string, string>();
             foreach(var pedido in orderWithDetail)
             {
+                var count = 0;
+
                 foreach (var orf in pedido.Detalle)
                 {
+                    
                     var plannedQty = orf.QtyPlannedDetalle == null ? "0" : orf.QtyPlannedDetalle.ToString();
                     double.TryParse(plannedQty, out double plannedQtyNumber);
 
@@ -77,13 +80,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if(inserted != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
-                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
+                        dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
                         _loggerProxy.Info($"The next order was tried to be created: {errorCode} - {errMsg} - {pedido.Order.PedidoId}");
                     }
                     else
                     {
-                        dictResult.Add(string.Format("{0}-{1}", pedido.Order.PedidoId, orf.CodigoProducto), "Ok");
+                        dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), "Ok");
                     }
+
+                    count++;
                 }
             }
 
@@ -102,7 +107,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
                 var orderFab = productionOrderObj.GetByKey(order.OrderFabId);
-
 
                 if (orderFab)
                 {
@@ -124,8 +128,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     dictResult.Add(string.Format("{0}", order.OrderFabId), string.Format("{0}-{1}", ServiceConstants.ErrorUpdateFabOrd, ServiceConstants.OrderNotFound));
                 }
-
-                
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
@@ -164,7 +166,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     var sapItemCode = components.Fields.Item("ItemCode").Value;
                     var lineNum = components.Fields.Item("VisOrder").Value;
-                    var itemCode = components.Fields.Item("ItemCode").Value;
+
                     try
                     {
                         productionOrderObj.Lines.SetCurrentLine(lineNum);
@@ -333,7 +335,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                             _loggerProxy.Info($"The next Batch was tried to be assign with status {error} - {lastMsg} - {group.Key}-{JsonConvert.SerializeObject(sg)}");
                         });
 
-                    dictResult = this.AddResult($"{group.Key}-{itemCode}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
+                    dictResult = this.AddResult($"{group.Key}-{itemCode}-{i}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
 
                     components.MoveNext();                    
                 }
