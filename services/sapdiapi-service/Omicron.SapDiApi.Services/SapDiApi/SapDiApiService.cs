@@ -153,6 +153,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
             productionOrderObj.DueDate = updateFormula.FechaFin;
             productionOrderObj.PlannedQuantity = plannedQuantity;
+            productionOrderObj.Warehouse = updateFormula.Warehouse;
 
             var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
             components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId.ToString()));
