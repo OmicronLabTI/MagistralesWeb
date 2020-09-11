@@ -278,6 +278,7 @@ class LotsViewController: UIViewController {
             self.addLotButton.isEnabled = false
             self.removeLotButton.isEnabled = false
             self.saveLotsButton.isEnabled = false
+            self.finishOrderButton.isHidden = true
         }
     }
     
