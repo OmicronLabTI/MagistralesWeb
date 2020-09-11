@@ -75,7 +75,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetCustomComponentListByProductId(string productId)
         {
             var customLists = await this.pedidosDao.GetCustomComponentListByProduct(productId);
-            customLists.ForEach(async (x) => x.Components = await this.pedidosDao.GetComponentsByCustomListId(x.Id));
+            var allDetails = await this.pedidosDao.GetComponentsByCustomListId(customLists.Select(x => x.Id).ToList());
+
+            foreach (var list in customLists)
+            {
+                list.Components = allDetails.Where(x => x.CustomListId.Equals(list.Id)).ToList();
+            }
+
             return ServiceUtils.CreateResult(true, 200, null, customLists, null);
         }
 

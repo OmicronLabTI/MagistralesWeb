@@ -311,12 +311,11 @@ class LotsViewModel {
     }
     
     // Valida si el usuario obtuvo las firmas y finaliza la orden 
-    func callFinishOrderService() -> Void {
-        
+    func callFinishOrderService() -> Void {        
         if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
             self.loading.onNext(true)
-            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: "", technicalSignature: "")
-            
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature:technicalSignature)
+
             NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())

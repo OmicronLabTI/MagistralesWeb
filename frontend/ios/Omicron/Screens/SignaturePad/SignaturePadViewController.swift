@@ -63,8 +63,8 @@ class SignaturePadViewController: UIViewController {
         self.signaturePadViewModel.canGetSignature.drive(self.acceptButton.rx.isEnabled).disposed(by: self.diposeBag)
                         
         // Si el cambio del status a finalización fue éxitosa se regresa a Inbox
-        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.dismiss(animated: true)
+        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self?.dismiss(animated: true)
         }).disposed(by: self.diposeBag)
     }
     

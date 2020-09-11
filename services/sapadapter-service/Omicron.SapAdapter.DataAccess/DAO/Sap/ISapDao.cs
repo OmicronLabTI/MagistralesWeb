@@ -57,7 +57,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="pedidoId">the product id.</param>
         /// <param name="productId">the product id.</param>
         /// <returns>the data.</returns>
-        Task<OrdenFabricacionModel> GetProdOrderByOrderProduct(int pedidoId, string productId);
+        Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId);
 
         /// <summary>
         /// gets the orders by orderid.
