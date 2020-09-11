@@ -41,6 +41,8 @@ namespace Omicron.Pedidos.Test.Services
             return new List<CustomComponentListModel>
             {
                 new CustomComponentListModel { Id = 1, Name = "001 PRES 20 ML USER IDENTIFIER I", ProductId = "001", CreationUserId = this.userId },
+                new CustomComponentListModel { Id = 2, Name = "001 PRES 20 ML USER IDENTIFIER III", ProductId = "001", CreationUserId = this.userId },
+                new CustomComponentListModel { Id = 3, Name = "002 PRES 20 ML USER IDENTIFIER I", ProductId = "002", CreationUserId = this.userId },
             };
         }
 
@@ -54,6 +56,8 @@ namespace Omicron.Pedidos.Test.Services
             {
                 new ComponentCustomComponentListModel { Id = 1, CustomListId = 1, ProductId = "003", Description = "COMP 003", BaseQuantity = 10 },
                 new ComponentCustomComponentListModel { Id = 2, CustomListId = 1, ProductId = "004", Description = "COMP 004", BaseQuantity = 11 },
+                new ComponentCustomComponentListModel { Id = 3, CustomListId = 2, ProductId = "005", Description = "COMP 005", BaseQuantity = 11 },
+                new ComponentCustomComponentListModel { Id = 4, CustomListId = 3, ProductId = "006", Description = "COMP 006", BaseQuantity = 11 },
             };
         }
 
@@ -86,7 +90,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 2, 4));
+            Assert.IsTrue(this.CheckAction(response, true, 4, 6));
         }
 
         /// <summary>
@@ -104,7 +108,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 1, 2));
+            Assert.IsTrue(this.CheckAction(response, true, 3, 4));
             Assert.Zero(int.Parse(response.Response.ToString()));
         }
 
@@ -124,8 +128,9 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             var listsInResponse = (List<CustomComponentListModel>)response.Response;
             Assert.IsTrue(response.Success);
-            Assert.AreEqual(listsInResponse.Count, 1);
+            Assert.AreEqual(listsInResponse.Count, 2);
             Assert.AreEqual(listsInResponse[0].Components.Count, 2);
+            Assert.AreEqual(listsInResponse[1].Components.Count, 1);
         }
 
         /// <summary>
