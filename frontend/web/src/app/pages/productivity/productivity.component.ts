@@ -24,6 +24,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   queryString = CONST_STRING.empty;
   today: Date;
   minDate: Date;
+  maxDate: Date;
   productivityForm: FormGroup;
   myChart = undefined;
   fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
@@ -49,9 +50,14 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.today = new Date();
     this.minDate = new Date();
+    this.maxDate = new Date();
     const initDateTrans = this.fullDate[0].split('/');
     const finishDateTrans = this.fullDate[1].split('/');
-    this.productivityForm.get('fini').setValue(new Date(`${initDateTrans[1]}/${initDateTrans[0]}/${initDateTrans[2]}`));
+    this.productivityForm.get('fini').setValue(new Date(
+      this.today.getFullYear(),
+      this.today.getMonth() - CONST_NUMBER.two,
+      CONST_NUMBER.one
+    ));
     this.productivityForm.get('ffin').setValue(new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`));
     this.minDateIni(this.today, false);
     this.cdRef.detectChanges();
@@ -88,7 +94,15 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
       datasets: this.dataSets(this.dataSource.data)
     };
-    Chart.defaults.global.defaultFontFamily = 'Quicksand';
+    Chart.defaults.global.defaultFontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.legend.position = 'bottom';
+    Chart.defaults.global.legend.align = 'start';
+    Chart.defaults.global.title.display = true;
+    Chart.defaults.global.title.text = 'Productividad por cada QFB';
+    Chart.defaults.global.title.fontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.title.fontSize = 14;
+    Chart.defaults.global.title.fontColor = '#3b3f5c';
+    Chart.defaults.global.defaultFontStyle = '600';
     this.myChart = new Chart(this.productivityChart.nativeElement, {
       type: 'bar',
       data: barChartData,
@@ -135,7 +149,18 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       fecha.getMonth() - CONST_NUMBER.six,
       fecha.getDate()
     );
-    if (getData){
+    if (getData) {
+      this.getProductivityData();
+    }
+  }
+
+  maxDateFin(fecha: Date, getDate = true) {
+    this.maxDate = new Date(
+      fecha.getFullYear(),
+      fecha.getMonth() + CONST_NUMBER.six,
+      fecha.getDate()
+    );
+    if (getDate) {
       this.getProductivityData();
     }
   }
