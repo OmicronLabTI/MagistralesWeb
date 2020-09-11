@@ -24,6 +24,7 @@ class ComponentsViewModel {
     var saveSuccess = PublishSubject<Void>()
     
     @Injected var inboxViewModel: InboxViewModel
+    @Injected var orderDetailViewModel: OrderDetailViewModel
     
     init() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
@@ -51,8 +52,9 @@ class ComponentsViewModel {
         
         saveDidTap.withLatestFrom(selectedComponent, resultSelector: { [weak self] values, data in
             guard let comp = data else { return }
+            guard let order = self?.inboxViewModel.selectedOrder else { return }
             let component = Component(
-                orderFabID: comp.orderFabId ?? 0,
+                orderFabID: order.productionOrderId ?? 0,
                 productId: comp.productId ?? "",
                 componentDescription: comp.description ?? "",
                 baseQuantity: values.baseQuantity,
@@ -66,12 +68,10 @@ class ComponentsViewModel {
                 warehouseQuantity: NSDecimalNumber(decimal: comp.warehouseQuantity ?? 0).doubleValue,
                 action: "insert")
             
-            guard let order = self?.inboxViewModel.selectedOrder else { return }
-            
             let orderDetailReq = OrderDetailRequest(
                 fabOrderID: component.orderFabId,
                 plannedQuantity: order.plannedQuantity ?? 0,
-                fechaFin: order.finishDate ?? "",
+                fechaFin: (order.finishDate != nil ? UtilsManager.shared.formattedDateFromString(dateString: order.finishDate!, withFormat: "yyyy-MM-dd") : "") ?? "",
                 comments: "",
                 components: [component])
             
@@ -84,6 +84,7 @@ class ComponentsViewModel {
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.saveSuccess.onNext(())
+            self?.orderDetailViewModel.getOrdenDetail(isRefresh: true)
         }, onError: { [weak self] _ in
             self?.loading.onNext(false)
             self?.dataError.onNext(Constants.Errors.errorSave.rawValue)

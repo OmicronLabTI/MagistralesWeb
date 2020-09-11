@@ -73,13 +73,13 @@ class ComponentFormViewController: FormViewController {
                     cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
-                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false)) {
-                        let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = Decimal(order.plannedQuantity ?? 0)
-                        let result = requiredQuantity!  / baseQuantity
-                        let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
-                        baseQuantityField?.value = component.unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
-                        baseQuantityField?.reload()
+                    if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false) {
+                        let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
+                        let baseQuantity = Decimal(string: row.value ?? "0")
+                        let requiredQuantity = Decimal(order.plannedQuantity ?? 0)
+                        let result = baseQuantity! * requiredQuantity
+                        requireQuantityField?.value = component.unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+                        requireQuantityField?.reload()
                     }
                 }
                 
