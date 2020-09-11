@@ -7,7 +7,7 @@ import {
   CancelOrderReq, CreateIsolatedOrderReq, ICancelOrdersRes, ICreateIsolatedOrderRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
-  IProcessOrdersRes,
+  IProcessOrdersRes, IWorkLoadRes,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
@@ -66,5 +66,8 @@ export class PedidosService {
   }
   createIsolatedOrder(createOrder: CreateIsolatedOrderReq) {
     return this.consumeService.httpPost<ICreateIsolatedOrderRes>(Endpoints.pedidos.createIsolatedOrder, createOrder);
+  }
+  getWorLoad(queryString: string) {
+    return this.consumeService.httpGet<IWorkLoadRes>(`${Endpoints.productivity.getWorkLoad}?fini=${queryString}`);
   }
 }

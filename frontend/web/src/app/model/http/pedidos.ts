@@ -18,6 +18,9 @@ export class ICancelOrdersRes extends BaseResponseHttp {
 export class ICreateIsolatedOrderRes extends BaseResponseHttp {
     response: number;
 }
+export class IWorkLoadRes extends BaseResponseHttp {
+    response: WorkLoad[];
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
@@ -71,4 +74,17 @@ export class ResponseCancel {
 export class CreateIsolatedOrderReq {
     userId: string;
     productCode: string;
+}
+export class WorkLoad {
+    user: string;
+    totalPossibleAssign: number;
+    assigned: number;
+    processed: number;
+    pending: number;
+    finished: number;
+    finalized: number;
+    reassigned: number;
+    totalOrders: number;
+    totalFabOrders: number;
+    totalPieces: number;
 }
