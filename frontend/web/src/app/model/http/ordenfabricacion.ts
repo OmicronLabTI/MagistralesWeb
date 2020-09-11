@@ -7,7 +7,7 @@ export class IOrdersRes extends BaseResponseHttp {
 export class IOrdersReq {
     isChecked?: boolean;
     docNum: number;
-    fabOrderId: string;
+    fabOrderId: number;
     itemCode: string;
     description: string;
     quantity: number;
@@ -16,6 +16,13 @@ export class IOrdersReq {
     qfb?: string;
     status?: string;
     class?: string;
+    unit?: string;
+    batche?: string;
+    quantityFinish: number;
+    endDate?: Date;
+    fabDate?: Date;
+    isWithError?: boolean;
+    isWithErrorBatch?: boolean;
 }
 
 export class ParamsOrders {

@@ -10,6 +10,7 @@ import {ComponentSearch, CONST_DETAIL_FORMULA, CONST_NUMBER, HttpServiceTOCall} 
 import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
+import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -44,6 +45,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   componentsToDelete: IFormulaDetalleReq [] = [];
   minDate = new Date();
   subscription = new Subscription();
+  isSaveToMyList = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
@@ -62,6 +64,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.oldDataFormulaDetail.details.push(resultNewFormulaComponent);
       this.dataSource.data = this.oldDataFormulaDetail.details;
       this.getIsReadyTOSave();
+      this.elementsToSave();
     }));
   }
 
@@ -111,14 +114,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   openDialog() {
     this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
-    /*dialogRef.afterClosed().subscribe((resultComponents: IFormulaDetalleReq) => {
-      if (resultComponents) {
-        resultComponents.action = CONST_DETAIL_FORMULA.insert;
-        this.oldDataFormulaDetail.details.push(resultComponents);
-        this.dataSource.data = this.oldDataFormulaDetail.details;
-        this.getIsReadyTOSave();
-      }
-    });*/
   }
 
 
@@ -187,6 +182,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.getIsReadyTOSave();
               this.createMessageOkHttp();
               this.checkISComponentsToDelete();
+              this.elementsToSave();
             }
           });
     } else {
@@ -252,6 +248,27 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
   setPathUrlService(urlPath: any[]) {
     this.dataService.setPathUrl(urlPath);
+  }
+
+  openMiListaDialog() {
+    const dialogRef = this.dialog.open(MiListaComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+          data: this.dataSource.data,
+          code: this.oldDataFormulaDetail.code,
+          description: this.oldDataFormulaDetail.productDescription
+      }
+  }).afterClosed().subscribe((result) => {
+    this.isSaveToMyList = false;
+ });
+  }
+
+  elementsToSave() {
+    if (this.dataSource.data.filter(element => element.action === CONST_DETAIL_FORMULA.insert).length > 0 ) {
+      this.isSaveToMyList = true;
+    } else {
+      this.isSaveToMyList = false;
+    }
   }
 }
 

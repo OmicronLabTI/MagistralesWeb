@@ -13,14 +13,13 @@ PODS:
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
-  - RxDataSources (4.0.1):
-    - Differentiator (~> 4.0)
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SignaturePad (1.0.3)
+  - TagListView (1.4.1)
 
 DEPENDENCIES:
   - Eureka
@@ -32,6 +31,7 @@ DEPENDENCIES:
   - RxDataSources
   - RxSwift
   - SignaturePad (~> 1.0.3)
+  - TagListView (~> 1.0)
 
 SPEC REPOS:
   trunk:
@@ -47,6 +47,7 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - SignaturePad
+    - TagListView
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd

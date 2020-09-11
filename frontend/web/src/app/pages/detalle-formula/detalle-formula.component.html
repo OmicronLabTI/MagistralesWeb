@@ -22,12 +22,12 @@
             &nbsp; Mi lista de componentes &nbsp; 
             </button>
             &nbsp;
-            &nbsp;
-            <button mat-raised-button class="button-blue">
-            &nbsp; Crear lista de componentes &nbsp; 
-            </button>-->
+            &nbsp;-->
+            <button mat-raised-button (click)="openMiListaDialog()" [ngClass]="isSaveToMyList ? 'button-blue' : 'disable-button'" [disabled]='!isSaveToMyList'>
+                &nbsp; Crear lista de componentes &nbsp; 
+            </button>
             <button mat-raised-button class="button-blue" (click)="openDialog()">
-            &nbsp; Agregar componente &nbsp; 
+                &nbsp; Agregar componente &nbsp; 
             </button>
 
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
@@ -147,12 +147,14 @@
                 
                     <ng-container matColumnDef="cantbase">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide "> CANTIDAD BASE </th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell mobile-hide cantbase"> <mat-form-field appearance="outline">
-                        <input matInput type="number"
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell mobile-hide cantbase">
+                        <mat-form-field appearance="outline">
+                             <input matInput type="number"
                                class="number color-number" placeholder="Cantidad base"
                                [(ngModel)]="element.baseQuantity"
                                (ngModelChange)="onBaseQuantityChange($event, i)">
-                      </mat-form-field> </td>
+                       </mat-form-field>
+                    </td>
                     </ng-container>
             
                     <ng-container matColumnDef="cantreq">
