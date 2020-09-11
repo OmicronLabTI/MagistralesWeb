@@ -329,6 +329,18 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Gets the orders with their details.
+        /// </summary>
+        /// <param name="sapAdapter">the sapAdapter.</param>
+        /// <param name="salesOrdersId">the "Pedido" id.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<OrderWithDetailModel>> GetOrdersWithFabOrders(ISapAdapter sapAdapter, List<int> salesOrdersId)
+        {
+            var sapResponse = await sapAdapter.PostSapAdapter(salesOrdersId, ServiceConstants.GetOrderWithDetail);
+            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

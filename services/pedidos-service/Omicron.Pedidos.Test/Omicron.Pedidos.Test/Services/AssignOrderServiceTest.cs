@@ -136,7 +136,12 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
-            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -219,8 +224,24 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abc",
             };
 
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            mockSaDiApi
+                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ResultModel()));
+
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+
             // act
-            var result = await this.pedidosService.ReassignOrder(reassign);
+            var result = await pedidosServiceLocal.ReassignOrder(reassign);
 
             // assert
             Assert.IsNotNull(result);
