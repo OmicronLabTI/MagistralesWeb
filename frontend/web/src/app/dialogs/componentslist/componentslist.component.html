@@ -7,24 +7,19 @@
         <mat-card-content class="content-card-container">
             <div class="table-container-components scroll-custom">
                 <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8' : ''">
-                    <ng-container matColumnDef="codigo">
-                        <th mat-header-cell *matHeaderCellDef class=""> CÓDIGO</th>
-                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell numero">asdasd</td>
-                    </ng-container>
-        
                     <ng-container matColumnDef="nombre">
-                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> NOMBRE DE LA LISTA </th>
-                    <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> asdasdasd </td>
+                        <th mat-header-cell *matHeaderCellDef class="mobile-hide"> NOMBRE DE LA LISTA </th>
+                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.name}} </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" (click)="selectComponent(row)"></tr>
                 </table>
                 <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
                     <span>No hay resultados</span>
                 </div>
             </div>        
-            <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
-                <mat-paginator
+            <div class="paginator-container">
+                <mat-paginator #paginator
                         [pageSizeOptions]="[5, 10, 15, 20]" showFirstLastButtons 
                 ></mat-paginator>
             </div>
