@@ -44,7 +44,7 @@ const routes: Routes = [
   },
   {
     path: 'workLoad',
-    loadChildren: () => import('./pages/productivity/productivity.module').then(m => m.ProductivityModule),
+    loadChildren: () => import('./pages/work-load/work-load.module').then(m => m.WorkLoadModule),
     canActivate: [GuardService]
   },
   {
