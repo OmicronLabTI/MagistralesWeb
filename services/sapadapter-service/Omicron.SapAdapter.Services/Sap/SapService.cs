@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
             listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
 
-            listToProcess.ForEach(x =>
+            foreach (var x in listToProcess)
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
