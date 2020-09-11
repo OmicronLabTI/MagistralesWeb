@@ -703,6 +703,10 @@ a.breadcrumblink:hover{
 .mat-tooltip {
   font-size: 13px !important;
 }
+
+.swal2-container {
+  z-index: 100000000000000 !important;
+}
 .font-style-omicron {
   font-family: 'Quicksand', serif !important;
 }
