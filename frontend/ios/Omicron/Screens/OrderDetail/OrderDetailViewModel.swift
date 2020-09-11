@@ -46,7 +46,7 @@ class OrderDetailViewModel {
         
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: disposeBag)
         
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             self?.goToSeeLotsViewController.onNext(())

@@ -205,11 +205,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Get all component for custom list id.
         /// </summary>
-        /// <param name="customListId">Te custom list id.</param>
+        /// <param name="customListIds">Te custom list ids.</param>
         /// <returns>Related components.</returns>
-        public async Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(int customListId)
+        public async Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(List<int> customListIds)
         {
-            return await this.databaseContext.ComponentsCustomComponentLists.Where(x => x.CustomListId.Equals(customListId)).ToListAsync();
+            return await this.databaseContext.ComponentsCustomComponentLists.Where(x => customListIds.Contains(x.CustomListId)).ToListAsync();
         }
 
         /// <summary>
