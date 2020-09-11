@@ -215,7 +215,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var workLoadModel = new WorkLoadModel();
             workLoadModel.User = $"{user.FirstName} {user.LastName}";
-            workLoadModel.TotalPossibleAssign = 200;
+            workLoadModel.TotalPossibleAssign = user.Piezas;
 
             workLoadModel = this.GetTotals(usersOrders, sapOrders, workLoadModel);
             return workLoadModel;

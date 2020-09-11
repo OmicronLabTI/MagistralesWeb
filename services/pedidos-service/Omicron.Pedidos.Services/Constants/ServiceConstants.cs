@@ -198,7 +198,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// gets the formula for each order.
         /// </summary>
-        public const string GetFormula = "formula/";
+        public const string GetFormula = "qfb/formula";
 
         /// <summary>
         /// gets the last isolated production order id.
@@ -349,6 +349,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Reason raw material request already exists.
         /// </summary>
         public const string ReasonRawMaterialRequestAlreadyExists = "La solicitud de materia prima para la orden de fabricación {0} ya existe.";
+
+        /// <summary>
+        /// Reason raw material request not exists.
+        /// </summary>
+        public const string ReasonRawMaterialRequestNotExists = "La solicitud de materia prima para la orden de fabricación {0} no existe.";
 
         /// <summary>
         /// the filter for orders.

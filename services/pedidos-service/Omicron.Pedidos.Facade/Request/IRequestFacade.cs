@@ -24,5 +24,13 @@ namespace Omicron.Pedidos.Facade.Request
         /// <param name="requests">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
         Task<ResultDto> CreateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests);
+
+        /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <param name="userId">The user id.</param>
+        /// <param name="requests">Requests data.</param>
+        /// <returns>List with successfuly and failed updates.</returns>
+        Task<ResultDto> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests);
     }
 }

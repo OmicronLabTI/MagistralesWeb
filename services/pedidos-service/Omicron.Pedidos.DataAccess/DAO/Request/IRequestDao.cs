@@ -22,11 +22,25 @@ namespace Omicron.Pedidos.DataAccess.DAO.Request
         Task<bool> InsertRawMaterialRequest(RawMaterialRequestModel request);
 
         /// <summary>
+        /// Method for update raw material request
+        /// </summary>
+        /// <param name="request">Request to update.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> UpdateRawMaterialRequest(RawMaterialRequestModel request);
+
+        /// <summary>
         /// Method for add detail of raw material request.
         /// </summary>
         /// <param name="detail">Raw material request detail to add.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> InsertDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail);
+
+        /// <summary>
+        /// Method for update detail of raw material request.
+        /// </summary>
+        /// <param name="detail">Raw material request detail to update.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> UpdateDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail);
 
         /// <summary>
         /// Get request for production order id.

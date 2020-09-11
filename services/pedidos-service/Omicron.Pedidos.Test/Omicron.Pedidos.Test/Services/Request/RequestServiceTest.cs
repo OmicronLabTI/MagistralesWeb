@@ -8,12 +8,16 @@
 
 namespace Omicron.Pedidos.Test.Services.Request
 {
+    using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Request;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
+    using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Request;
 
     /// <summary>
@@ -38,6 +42,7 @@ namespace Omicron.Pedidos.Test.Services.Request
             var request = AutoFixtureProvider.CreateList<RawMaterialRequestModel>(1);
             request[0].Id = 1;
             request[0].ProductionOrderId = 1;
+            request[0].Signature = new byte[0];
             request[0].OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(1);
             request[0].OrderedProducts[0].Id = 1;
             request[0].OrderedProducts[0].RequestId = 1;
@@ -126,6 +131,36 @@ namespace Omicron.Pedidos.Test.Services.Request
             // assert
             Assert.IsTrue(response.Success);
             Assert.IsNull(response.Response);
+        }
+
+        /// <summary>
+        /// Update raw material request.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task UpdateRawMaterialRequest_ExistingRequest_SuccessResult()
+        {
+            // arrange
+            ConverterBase64ToByteArray converter = new ConverterBase64ToByteArray();
+            var existingItem = await this.requestDao.GetRawMaterialRequestByProductionOrderId(1);
+
+            var request = JsonConvert.DeserializeObject<RawMaterialRequestModel>(JsonConvert.SerializeObject(existingItem));
+            request.ProductionOrderId = 1;
+            request.Signature = converter.Convert(File.ReadAllText("SignatureBase64.txt"), null);
+            request.Observations = "New comments.";
+            request.OrderedProducts[0].RequestQuantity = 199;
+            request.OrderedProducts.Add(new RawMaterialRequestDetailModel
+            {
+                RequestQuantity = 1,
+                ProductId = "P0002",
+                Description = "Desc 002",
+            });
+
+            // act
+            var response = await this.requestService.UpdateRawMaterialRequest(this.userId, new List<RawMaterialRequestModel> { request });
+
+            // assert
+            Assert.IsTrue(this.CheckAction(response, true, 1, 0));
         }
 
         /// <summary>

@@ -164,8 +164,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <param name="returnFirst">if it returns only the first.</param>
+        /// <param name="returnDetails">Return the details.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst)
+        public async Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails)
         {
             var ordenFab = (await this.sapDao.GetFabOrderById(listIds)).ToList();
             var listToReturn = new List<CompleteFormulaWithDetalle>();
@@ -191,6 +192,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
+
+                var details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList();
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
@@ -219,7 +222,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
                     HasBatches = batches.Any(y => y.LotesAsignados.Any()),
-                    Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
+                    HasMissingStock = details.Any(y => y.Stock == 0),
+                    Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
                 };
 
                 listToReturn.Add(formulaDetalle);

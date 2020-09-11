@@ -499,6 +499,22 @@ namespace Omicron.Pedidos.Test.Api
         /// Action tests.
         /// </summary>
         [Test]
+        public void UpdateRawMaterialRequest()
+        {
+            // Arrange.
+            var request = this.fixture.Create<UserActionDto<List<RawMaterialRequestDto>>>();
+
+            // Act
+            var result = this.controller.UpdateRawMaterialRequest(request).Result as OkObjectResult;
+
+            // Assert
+            Assert.IsTrue((result.Value as ResultDto).Success);
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
         public void Ping()
         {
             // Act
