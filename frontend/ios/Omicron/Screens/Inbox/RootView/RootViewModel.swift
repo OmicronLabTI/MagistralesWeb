@@ -12,79 +12,95 @@ import Moya // Borrar cuando se consuma bien el servicio
 class RootViewModel {
     
     // MARK: Variables
-    var assignedOrders: [Order] = []
-    var inProcessOrdes: [Order] = []
-    var penddingOrders: [Order] = []
-    var finishedOrders: [Order] = []
-    var reassignedOrders: [Order] = []
-    var selectedRow = 0
+    var sections: [SectionOrder] = []
+    var selectedRow: BehaviorSubject<IndexPath?> = BehaviorSubject<IndexPath?>(value: nil)
     
     public var dataStatus: BehaviorSubject<[SectionOrder]> = BehaviorSubject(value: [])
+    var dataFilter = PublishSubject<[Order]?>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
-    var refreshSelection: PublishSubject<Void> = PublishSubject()
+    var refreshSelection: PublishSubject<Int> = PublishSubject()
     var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
-    var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showRefreshControl: PublishSubject<Void> = PublishSubject<Void>()
     var logoutDidTap = PublishSubject<Void>()
     var goToLoginViewController = PublishSubject<Void>()
+    var searchFilter = PublishSubject<String>()
+    
     init() {
-        
-        self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.loading.onNext(true)
+        self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.loading.onNext(true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 Persistence.shared.removePersistenceData()
-                 self.goToLoginViewController.onNext(())
-                 self.loading.onNext(false)
+                self?.goToLoginViewController.onNext(())
+                self?.loading.onNext(false)
             }
         }).disposed(by: self.disposeBag)
         
+        self.searchFilter.subscribe(onNext: { [weak self] text in
+            if text.count == 0 {
+                self?.dataFilter.onNext(nil)
+                return
+            }
+            let orders = self?.sections.map({ $0.orders }).reduce([], +)
+            let filter = orders?.filter({ order in
+                guard let orderId = order.productionOrderId else { return false }
+                guard let baseDocument = order.baseDocument else { return false }
+                return String(orderId).contains(text) || String(baseDocument).contains(text)
+            })
+            self?.dataFilter.onNext(filter ?? [])
+        }).disposed(by: disposeBag)
     }
-
+    
     // MARK: Functions
     
     func getOrders(isUpdate: Bool = false) -> Void {
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             self.loading.onNext(true)
             NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
+                let sections = res.response?.status.map({ status in
+                    return status.map({ detail -> SectionOrder? in
+                        let orders = detail.orders ?? []
+                        if let statusId = detail.statusId {
+                            switch statusId {
+                            case 1:
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.assignedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: orders)
+                            case 2:
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.inProcessStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: orders)
+                            case 3:
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.penddingStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders: orders)
+                            case 4:
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.finishedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: orders)
+                            case 5:
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.reassignedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: orders)
+                            default:
+                                break
+                            }
+                        }
+                        
+                        return nil
+                    })
+                })?.compactMap({ $0 }) ?? []
                 
-                for status in res.response!.status! {
-                    switch status.statusId {
-                    case 1:
-                        self!.assignedOrders = status.orders!
-                    case 2:
-                        self!.inProcessOrdes = status.orders!
-                    case 3:
-                        self!.penddingOrders = status.orders!
-                    case 4:
-                        self!.finishedOrders = status.orders!
-                    case 5:
-                        self!.reassignedOrders = status.orders!
-                    default:
-                        print("")
-                    }
-                }
-                let data = [
-                    SectionOrder(statusName: StatusNameConstants.assignedStatus, numberTask:  self!.assignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: self!.assignedOrders),
-                    SectionOrder(statusName: StatusNameConstants.inProcessStatus, numberTask: self!.inProcessOrdes.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: self!.inProcessOrdes),
-                    SectionOrder(statusName: StatusNameConstants.penddingStatus, numberTask: self!.penddingOrders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders:  self!.penddingOrders),
-                    SectionOrder(statusName: StatusNameConstants.finishedStatus, numberTask: self!.finishedOrders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: self!.finishedOrders),
-                    SectionOrder(statusName: StatusNameConstants.reassignedStatus, numberTask: self!.reassignedOrders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: self!.reassignedOrders)
-                ]
-                self?.dataStatus.onNext(data)
-                self?.refreshSelection.onNext(())
+                self?.sections = sections
+                
+                self?.dataStatus.onNext(sections)
+                self?.refreshSelection.onNext(sections.count)
                 self?.loading.onNext(false)
                 if(isUpdate) {
                     self?.showRefreshControl.onNext(())
                 }
-            }, onError: { err in
-                print(err)
-                self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
-                self.loading.onNext(false)
+                }, onError: { err in
+                    print(err)
+                    self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
+                    self.loading.onNext(false)
             }).disposed(by: disposeBag)
         } else {
             self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
             self.showRefreshControl.onNext(())
         }
+    }
+    
+    func resetFilter() {
+        self.dataFilter.onNext(nil)
     }
 }

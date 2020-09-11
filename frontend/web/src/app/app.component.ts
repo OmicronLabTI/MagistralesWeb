@@ -262,7 +262,7 @@ export class AppComponent implements OnDestroy , OnInit {
     onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean) {
         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
             const titleFinalizeWithError = this.dataService.getMessageTitle(
-                resultCancelHttp.response.failed, MessageType.finalizeOrder, isFromOrderIsolated);
+                resultCancelHttp.response.failed, MessageType.finalizeOrder, true);
             this.callHttpAboutModalFrom(fromCall, isFromOrderIsolated);
             this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);

@@ -157,5 +157,20 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Fail reason.
         /// </summary>
         public const string FailReasonUnexpectedError = "Ocurrió un error inesperado en SAP.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotAvailableRequiredQuantity = "No se ha podido generar recibo de producción para la orden de fabricación {0}, no hay componentes disponibles ({1}).";
+
+        /// <summary>
+        /// Select retroactive issue for production order detail.
+        /// </summary>
+        public const string GetRetroactiveIssuesInProductionOrder = "SELECT ItemCode, LineNum, PlannedQty, warehouse FROM wor1 where docentry = {0} and issuetype = 'B'";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
     }
 }

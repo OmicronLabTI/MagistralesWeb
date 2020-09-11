@@ -63,7 +63,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
             else
             {
-                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi);
+                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi, this.sapAdapter);
             }
         }
 
@@ -186,7 +186,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSales = orders.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrdersBySale = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
-            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, assignModel.UserId, ServiceConstants.Reasignado);
+            var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
+            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
+
+            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado);
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));

@@ -13,7 +13,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
-
 @NgModule({
   declarations: [
     AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent

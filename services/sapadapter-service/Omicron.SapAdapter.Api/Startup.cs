@@ -80,9 +80,7 @@ namespace Omicron.SapAdapter.Api
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
 
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            loggerFactory.AddSerilog();
-            services.AddSingleton(loggerFactory);
+            services.AddSingleton(Log.Logger);
 
             services.AddDiscoveryClient(this.Configuration);
 
