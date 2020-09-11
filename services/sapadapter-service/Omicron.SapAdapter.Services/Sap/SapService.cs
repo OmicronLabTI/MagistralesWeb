@@ -96,7 +96,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listUsers = await this.GetUsers(userOrders);
 
-            details.ToList().ForEach(x =>
+            var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
+            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+
+            listToProcess.ForEach(x =>
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
@@ -111,7 +114,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
             });
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
         }
 
         /// <summary>
@@ -129,8 +132,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
                 var detail = await this.sapDao.GetAllDetails(x);
 
+                var listToProcess = detail.Where(y => y.OrdenFabricacionId == 0).ToList();
+                listToProcess.AddRange(detail.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+
                 data.Order = order;
-                data.Detalle = detail.ToList();
+                data.Detalle = listToProcess;
                 listData.Add(data);
             }
 
@@ -151,9 +157,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var data = o.Split("-");
                 int.TryParse(data[0], out int pedidoId);
 
-                var order = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
-                result.Add(order);
+                var orders = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
+                result.AddRange(orders);
             }
+
+            result = result.DistinctBy(x => x.OrdenId).ToList();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(result), null, null);
         }

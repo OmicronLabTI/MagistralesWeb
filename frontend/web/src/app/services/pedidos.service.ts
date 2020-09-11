@@ -4,7 +4,12 @@ import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
 import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
 import {
-  CancelOrderReq, CreateIsolatedOrderReq, ICancelOrdersRes, ICreateIsolatedOrderRes,
+  CancelOrderReq,
+  CreateIsolatedOrderReq,
+  ICancelOrdersRes,
+  ICreateIsolatedOrderRes,
+  IExistsBachCodeRes,
+  IGetNewBachCodeRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
   IProcessOrdersRes, IWorkLoadRes,
@@ -67,7 +72,15 @@ export class PedidosService {
   createIsolatedOrder(createOrder: CreateIsolatedOrderReq) {
     return this.consumeService.httpPost<ICreateIsolatedOrderRes>(Endpoints.pedidos.createIsolatedOrder, createOrder);
   }
+
   getWorLoad(queryString: string) {
     return this.consumeService.httpGet<IWorkLoadRes>(`${Endpoints.productivity.getWorkLoad}?fini=${queryString}`);
+  }
+  getNextBatchCode(productCode: string) {
+    return this.consumeService.httpGet<IGetNewBachCodeRes>(`${Endpoints.pedidos.getNextBatchCode}?productCode=${productCode}`);
+  }
+  getIfExistsBatchCode(productCode: string, batchCode: string) {
+    return this.consumeService.httpGet<IExistsBachCodeRes>(
+        `${Endpoints.pedidos.checkIfExistsBatchCode}?productCode=${productCode}&batchCode=${batchCode}`);
   }
 }

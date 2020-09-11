@@ -140,6 +140,13 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
+    // Obtiene listado de componentes
+    func getComponents(data: ComponentRequest) -> Observable<ComponentResponse> {
+        let req: ApiService = ApiService.getComponents(data: data)
+        let res: Observable<ComponentResponse> = makeRequest(request: req)
+        return res
+    }
+    
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?

@@ -25,7 +25,14 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => this.qfbs = resultQfbs.response)
+    await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => {
+        resultQfbs.response.forEach( qfb => {
+            qfb.countTotalOrders = new Intl.NumberFormat().format(Number(qfb.countTotalOrders));
+            qfb.countTotalFabOrders = new Intl.NumberFormat().format(Number(qfb.countTotalFabOrders));
+            qfb.countTotalPieces = new Intl.NumberFormat().format(Number(qfb.countTotalPieces));
+        });
+        this.qfbs = resultQfbs.response;
+    })
         .catch(error => {
             this.errorService.httpError(error);
             this.dialogRef.close();
