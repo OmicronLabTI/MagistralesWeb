@@ -22,12 +22,12 @@
             &nbsp; Mi lista de componentes &nbsp; 
             </button>
             &nbsp;
-            &nbsp;
-            <button mat-raised-button class="button-blue">
-            &nbsp; Crear lista de componentes &nbsp; 
-            </button>-->
+            &nbsp;-->
+            <button mat-raised-button (click)="openMiListaDialog()" [ngClass]="isSaveToMyList ? 'button-blue' : 'disable-button'" [disabled]='!isSaveToMyList'>
+                &nbsp; Crear lista de componentes &nbsp; 
+            </button>
             <button mat-raised-button class="button-blue" (click)="openDialog()">
-            &nbsp; Agregar componente &nbsp; 
+                &nbsp; Agregar componente &nbsp; 
             </button>
 
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">

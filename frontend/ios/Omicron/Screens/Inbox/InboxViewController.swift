@@ -18,6 +18,8 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var similarityViewButton: UIButton!
+    @IBOutlet weak var normalViewButton: UIButton!
     
     // MARK:  Variables
     @Injected var inboxViewModel: InboxViewModel
@@ -26,6 +28,7 @@ class InboxViewController: UIViewController {
 
     let disposeBag = DisposeBag()
     private let cardWidth = UIScreen.main.bounds.width / 2.5
+    
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -86,6 +89,14 @@ class InboxViewController: UIViewController {
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
+        inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
+            self?.similarityViewButton.isEnabled = isEnabled
+        }).disposed(by: self.disposeBag)
+        
+        inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
+            self?.normalViewButton.isEnabled = isEnabled
+        }).disposed(by: self.disposeBag)
+        
         // Muestra un alert para la confirmación de cambiar el status o no
         inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
@@ -101,7 +112,9 @@ class InboxViewController: UIViewController {
         [
             finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTap),
             pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTap),
-            processButton.rx.tap.bind(to: inboxViewModel.processDidTap)
+            processButton.rx.tap.bind(to: inboxViewModel.processDidTap),
+            similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
+            normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
         ].forEach({ $0.disposed(by: disposeBag) })
      
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
@@ -125,6 +138,8 @@ class InboxViewController: UIViewController {
             cell.delegate = self
         }.disposed(by: disposeBag)
         
+//        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(dataSource: RxCollectionViewDataSourceType & UICollectionViewDataSource))
+        
         // retorna mensaje si no hay card para cada status
         inboxViewModel.title.withLatestFrom(inboxViewModel.statusData, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
@@ -141,6 +156,10 @@ class InboxViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
+        self.similarityViewButton.setTitle("", for: .normal)
+        self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
+        self.normalViewButton.setTitle("", for: .normal)
+        self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
     }
     
     func chageStatusName(index: Int) -> Void {
@@ -193,8 +212,10 @@ class InboxViewController: UIViewController {
            if let destination = segue.destination as? OrderDetailViewController {
             guard let orderId = self.inboxViewModel.selectedOrder?.productionOrderId else { return }
             guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
+            guard let destiny = self.inboxViewModel.selectedOrder?.destiny else { return }
             destination.orderId = orderId // you can pass value to destination view controller
             destination.statusType = self.inboxViewModel.getStatusName(id: statusId)
+            destination.destiny = destiny
            }
        }
     }
