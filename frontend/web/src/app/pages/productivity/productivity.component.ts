@@ -48,6 +48,37 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    Chart.defaults.global.defaultFontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.legend.position = 'bottom';
+    Chart.defaults.global.legend.align = 'start';
+    Chart.defaults.global.title.display = true;
+    Chart.defaults.global.title.text = 'Productividad por cada QFB';
+    Chart.defaults.global.title.fontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.title.fontSize = 14;
+    Chart.defaults.global.title.fontColor = '#3b3f5c';
+    Chart.defaults.global.defaultFontStyle = '600';
+    this.myChart = new Chart(this.productivityChart.nativeElement, {
+      type: 'bar',
+      data: {},
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            },
+            gridLines: {
+              color: 'rgba(0, 0, 0, 0)',
+            }
+          }],
+          xAxes: [{
+            gridLines: {
+              color: 'rgba(0, 0, 0, 0)',
+            },
+            barPercentage: 1
+          }]
+        }
+      }
+    });
     this.today = new Date();
     this.minDate = new Date();
     this.maxDate = new Date();
@@ -65,9 +96,6 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   getProductivityData() {
-    if (this.myChart !== undefined){
-      this.myChart.destroy();
-    }
     this.queryString = `?ffin=${this.dataService.getDateFormatted(
       this.productivityForm.get('fini').value,
       this.productivityForm.get('ffin').value,
@@ -94,37 +122,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
       datasets: this.dataSets(this.dataSource.data)
     };
-    Chart.defaults.global.defaultFontFamily = `'Quicksand', sans serif`;
-    Chart.defaults.global.legend.position = 'bottom';
-    Chart.defaults.global.legend.align = 'start';
-    Chart.defaults.global.title.display = true;
-    Chart.defaults.global.title.text = 'Productividad por cada QFB';
-    Chart.defaults.global.title.fontFamily = `'Quicksand', sans serif`;
-    Chart.defaults.global.title.fontSize = 14;
-    Chart.defaults.global.title.fontColor = '#3b3f5c';
-    Chart.defaults.global.defaultFontStyle = '600';
-    this.myChart = new Chart(this.productivityChart.nativeElement, {
-      type: 'bar',
-      data: barChartData,
-      options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            },
-            gridLines: {
-              color: 'rgba(0, 0, 0, 0)',
-            }
-          }],
-          xAxes: [{
-            gridLines: {
-              color: 'rgba(0, 0, 0, 0)',
-            },
-            barPercentage: 1
-          }]
-        }
-      }
-    });
+    this.myChart.data = barChartData;
+    this.myChart.update();
   }
 
   dataSets(datos) {
