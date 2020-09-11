@@ -14,10 +14,11 @@ import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-orde
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 import { MiListaComponent } from './dialogs/mi-lista/mi-lista.component';
+import { ComponentslistComponent } from './dialogs/componentslist/componentslist.component';
 
 @NgModule({
   declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent
+    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent, ComponentslistComponent
   ],
     imports: [
         BrowserModule,
@@ -36,6 +37,12 @@ import { MiListaComponent } from './dialogs/mi-lista/mi-lista.component';
     Title
   ],
   bootstrap: [AppComponent],
-    entryComponents: [PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent]
+    entryComponents: [
+      PlaceOrderDialogComponent,
+      ComponentSearchComponent,
+      FindOrdersDialogComponent,
+      MiListaComponent,
+      ComponentslistComponent
+    ]
 })
 export class AppModule { }

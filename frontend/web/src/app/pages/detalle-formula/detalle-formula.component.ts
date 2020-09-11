@@ -11,6 +11,7 @@ import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
+import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componentslist.component';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -258,9 +259,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           code: this.oldDataFormulaDetail.code,
           description: this.oldDataFormulaDetail.productDescription
       }
-  }).afterClosed().subscribe((result) => {
-    this.isSaveToMyList = false;
- });
+    }).afterClosed().subscribe((result) => {
+      this.isSaveToMyList = false;
+    });
   }
 
   elementsToSave() {
@@ -269,6 +270,18 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     } else {
       this.isSaveToMyList = false;
     }
+  }
+
+  openCustomList() {
+    const dialogRef = this.dialog.open(ComponentslistComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+          code: this.oldDataFormulaDetail.code,
+          description: this.oldDataFormulaDetail.productDescription
+      }
+    }).afterClosed().subscribe((result) => {
+      this.isSaveToMyList = false;
+    });
   }
 }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IOrdersRes} from '../model/http/ordenfabricacion';
-import { IMyListRes } from '../model/http/listacomponentes';
+import { IMyListRes, IMyCustomListRes } from '../model/http/listacomponentes';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +17,9 @@ export class OrdersService {
 
   saveMyListComponent(myList) {
     return this.consumeService.httpPost<IMyListRes>(Endpoints.orders.saveMyList, myList);
+  }
+
+  getCustomList(code) {
+    return this.consumeService.httpGet<IMyCustomListRes>(Endpoints.orders.saveMyList + code);
   }
 }
