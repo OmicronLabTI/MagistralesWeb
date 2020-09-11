@@ -15,15 +15,14 @@ class  InboxViewModel {
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
-    var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
-    var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
-    var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
-    let rootViewModel = RootViewModel()
+    var statusData: BehaviorSubject<[Order]> = BehaviorSubject(value: [])
     var ordersTemp: [Order] = []
     var loading =  PublishSubject<Bool>()
     var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
+    var title = PublishSubject<String>()
+    weak var selectedOrder: Order?
 
     var disposeBag = DisposeBag();
     init() {
@@ -39,16 +38,9 @@ class  InboxViewModel {
         processDidTap.subscribe(onNext: {
              self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
             }).disposed(by: disposeBag)
-        
-        rootViewModel.dataStatus.subscribe(onNext: { data in
-            if let assignedData = data.first?.orders {
-                self.statusData.accept(assignedData)
-                self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
-            }
-        }).disposed(by: disposeBag)
     }
     
-    func setSelection(index: Int, section: SectionOrder) -> Void {
+    func setSelection(section: SectionOrder) -> Void {
         let ordering = section.orders.sorted  {
             switch ($0, $1) {
             // Order errors by code
@@ -56,11 +48,24 @@ class  InboxViewModel {
                 return aCode.baseDocument! < bCode.baseDocument!
             }
         }
-        self.indexSelectedOfTable.onNext(index)
-        self.statusData.accept(ordering)
-        self.nameStatus.accept(section.statusName)
+
+        self.statusData.onNext(ordering)
+        self.title.onNext(section.statusName)
         self.ordersTemp = ordering
-        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: ordering))
+    }
+    
+    func setFilter(orders: [Order]) -> Void {
+        let ordering = orders.sorted  {
+            switch ($0, $1) {
+            // Order errors by code
+            case let (aCode, bCode):
+                return aCode.baseDocument! < bCode.baseDocument!
+            }
+        }
+
+        self.statusData.onNext(ordering)
+        self.title.onNext("Búsqueda")
+        self.ordersTemp = ordering
     }
     
     func changeStatus(indexPath: [IndexPath]) -> Void {
@@ -78,5 +83,57 @@ class  InboxViewModel {
             self.loading.onNext(false)
             self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    func getStatusName(index: Int) -> String {
+        switch index {
+        case 0:
+            return StatusNameConstants.assignedStatus
+        case 1:
+            return StatusNameConstants.inProcessStatus
+        case 2:
+            return StatusNameConstants.penddingStatus
+        case 3:
+            return StatusNameConstants.finishedStatus
+        case 4:
+            return StatusNameConstants.reassignedStatus
+        default:
+            return ""
+        }
+    }
+    
+    func getStatusName(id: Int) -> String {
+        switch id {
+        case 1:
+            return StatusNameConstants.assignedStatus
+        case 2:
+            return StatusNameConstants.inProcessStatus
+        case 3:
+            return StatusNameConstants.penddingStatus
+        case 4:
+            return StatusNameConstants.finishedStatus
+        case 5:
+            return StatusNameConstants.reassignedStatus
+        default:
+            return ""
+        }
+    }
+    
+    
+    func getStatusId(name: String) -> Int {
+        switch name {
+        case StatusNameConstants.assignedStatus:
+            return 1
+        case StatusNameConstants.inProcessStatus:
+            return 2
+        case StatusNameConstants.penddingStatus:
+            return 3
+        case StatusNameConstants.finishedStatus:
+            return 4
+        case StatusNameConstants.reassignedStatus:
+            return 5
+        default:
+            return -1
+        }
     }
 }

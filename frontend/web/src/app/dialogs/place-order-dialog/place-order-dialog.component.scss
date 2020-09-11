@@ -1,5 +1,5 @@
 .place-order-container-with-data {
-  width: 35rem;
+  width: 48rem;
   height: 30rem;
 }
 .place-order-container-no-data {
@@ -60,24 +60,48 @@
   margin-right: 15px ;
 }
 .qfb-name {
-  width: 90%;
+  width: 49%;
   height: 100%;
   display: flex;
   align-items: center;
 }
 .orders-number{
-  width: 10%;
+  width: 17%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+.numbers-qfb-container {
+  padding: 5px;
+}
+.style-number-custom {
+  font-weight: 800;
+  border-radius: 10px;
+}
+.color-like-table {
+  color: #3e6993 !important;
+  font-weight: 800;
+}
+.color-pedidos {
+  background-color: #BEB7B7 ;
+}
+.color-orders {
+  background-color: #ADA1A1;
+}
+.color-piezas {
+  background-color: #968e8e;
+}
 .mat-card-custom {
   cursor: pointer;
   width: 100%;
+  height: 3rem;
   display: flex;
   flex-direction: row;
   padding: .5%;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Quicksand', serif !important;
 }
 .fab-orders-number{
   width: 80%;
@@ -89,4 +113,7 @@
 .content-card-container-custom {
   width: 100%;
   height: 90%;
+}
+.mat-card{
+  border-radius: 0;
 }

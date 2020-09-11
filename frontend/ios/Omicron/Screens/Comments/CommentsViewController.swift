@@ -26,8 +26,10 @@ class CommentsViewController: UIViewController {
     @Injected var commentsViewModel: CommentsViewModel
     @Injected var orderDetailVC: OrderDetailViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var lotsViewModel: LotsViewModel
     var orderDetail: [OrderDetail] = []
     var disposeBag = DisposeBag()
+    var originView = ""
     
     // MARK: - LifeCycles
     override func viewDidLoad() {
@@ -43,18 +45,24 @@ class CommentsViewController: UIViewController {
     //MARK: - Functions
     
     @IBAction func cancelButtonAction(_ sender: Any) {
-        self.backToOrderDetail()
+        self.dismissCommentsView()
     }
     
-    func backToOrderDetail() -> Void {
+    func dismissCommentsView() -> Void {
         self.dismiss(animated: true)
     }
     
     
     func viewModelBinding() -> Void {
+        self.commentsViewModel.originView = self.originView
         self.commentsViewModel.backToOrderDetail.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.backToOrderDetail()
+            self.dismissCommentsView()
             self.orderDetailVC.getOrdenDetail()
+        }).disposed(by: self.disposeBag)
+        
+        self.commentsViewModel.backToLots.subscribe(onNext:{ [weak self] _ in
+            self?.dismissCommentsView()
+            self?.lotsViewModel.updateOrderDetail()
         }).disposed(by: self.disposeBag)
         
         self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)

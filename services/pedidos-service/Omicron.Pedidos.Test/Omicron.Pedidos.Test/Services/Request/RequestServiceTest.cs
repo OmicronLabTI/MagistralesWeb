@@ -64,7 +64,6 @@ namespace Omicron.Pedidos.Test.Services.Request
         /// Create new raw material request.
         /// </summary>
         /// <returns>Nothing.</returns>
-        [Test]
         public async Task CreateRawMaterialRequest_CreateRequest_SuccessResults()
         {
             // arrange
