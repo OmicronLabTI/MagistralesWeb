@@ -122,33 +122,28 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var validUsers = new List<AutomaticAssignUserModel>();
 
-            foreach (var user in users)
+            await Task.WhenAll(users.Select(async user =>
             {
-                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id)).Select(y => int.Parse(y.Salesorderid)).Distinct().ToList();
-                var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
-                var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
+                var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById);
+                var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
 
-                var total = GetCountOfPlannedQtyByOrder(ordersSap);
+                var total = ordersSap.Sum(x => x.Quantity);
 
                 if (total < maxCountPedidos)
                 {
-                    var listIds = new List<string>();
-                    var listProdIds = new List<int>();
-                    ordersSap.ForEach(x =>
+                    lock (validUsers)
                     {
-                        listIds.AddRange(x.Detalle.Select(y => y.CodigoProducto).ToList());
-                        listProdIds.AddRange(x.Detalle.Select(y => y.OrdenFabricacionId).ToList());
-                    });
-
-                    validUsers.Add(new AutomaticAssignUserModel
-                    {
-                        User = user,
-                        TotalCount = total,
-                        ItemCodes = listIds,
-                        ProductionOrders = listProdIds,
-                    });
+                        validUsers.Add(new AutomaticAssignUserModel
+                        {
+                            User = user,
+                            TotalCount = (int)total,
+                            ItemCodes = ordersSap.Select(x => x.ProductoId).ToList(),
+                            ProductionOrders = ordersSap.Select(x => x.OrdenId).ToList(),
+                        });
+                    }
                 }
-            }
+            }));
 
             return validUsers.OrderBy(x => x.TotalCount).ThenBy(y => y.User.FirstName).ToList();
         }
@@ -267,22 +262,6 @@ namespace Omicron.Pedidos.Services.Utils
 
             pedidoUser.Add(pedidoId, defaultUser);
             return pedidoUser;
-        }
-
-        /// <summary>
-        /// Gets the total of pieces by all the pedidos.
-        /// </summary>
-        /// <param name="listPedidos">the list of pedidos.</param>
-        /// <returns>the total.</returns>
-        private static int GetCountOfPlannedQtyByOrder(List<OrderWithDetailModel> listPedidos)
-        {
-            var total = 0;
-            listPedidos.ForEach(x =>
-            {
-                total += x.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value);
-            });
-
-            return total;
         }
 
         /// <summary>
