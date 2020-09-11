@@ -13,6 +13,8 @@ PODS:
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
+  - RxDataSources (4.0.1):
+    - Differentiator (~> 4.0)
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
   - RxRelay (5.1.1):
@@ -62,7 +64,8 @@ SPEC CHECKSUMS:
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
+  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: ddc65cef10f57aad036f2bb3e020bca92ef94816
+PODFILE CHECKSUM: c5821e53380df0671da1595ff5d8f152e923d592
 
 COCOAPODS: 1.9.3
