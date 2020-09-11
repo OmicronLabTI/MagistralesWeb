@@ -16,6 +16,7 @@ PODS:
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SignaturePad (1.0.3)
+  - TagListView (1.4.1)
 
 DEPENDENCIES:
   - Eureka
@@ -26,6 +27,7 @@ DEPENDENCIES:
   - RxCocoa
   - RxSwift
   - SignaturePad (~> 1.0.3)
+  - TagListView (~> 1.0)
 
 SPEC REPOS:
   trunk:
@@ -39,6 +41,7 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - SignaturePad
+    - TagListView
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
@@ -51,7 +54,8 @@ SPEC CHECKSUMS:
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
+  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: d876e6379c3697bf8c4b53922088eca15104a4e6
+PODFILE CHECKSUM: 2f58aeb0450d54d21033be6a898058c461982a9f
 
 COCOAPODS: 1.9.3
