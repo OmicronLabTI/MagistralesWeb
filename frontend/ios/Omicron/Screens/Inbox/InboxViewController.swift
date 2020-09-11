@@ -112,7 +112,6 @@ class InboxViewController: UIViewController {
 
         // Pinta la cards
         inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { [weak self] row, data, cell in
-//            self.changepropertiesOfCard(cell: cell)
             cell.row = row
             cell.order = data
             cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
@@ -127,27 +126,14 @@ class InboxViewController: UIViewController {
         }.disposed(by: disposeBag)
         
         // retorna mensaje si no hay card para cada status
-        Observable.combineLatest(inboxViewModel.statusData, rootViewModel.selectedRow)
-            .subscribe(onNext: { [weak self] data, index in
-                var message: String = ""
-                if (data.count == 0 && index != nil && (index?.row ?? 0) >= 0) {
-                    switch (index?.row ?? 0) {
-                    case 0:
-                        message = "No tienes órdenes Asignadas"
-                    case 1:
-                        message = "No tienes órdenes En proceso"
-                    case 2:
-                        message = "No tienes órdenes Pendientes"
-                    case 3:
-                        message = "No tienes órdenes Terminadas"
-                    case 4:
-                        message = "No tienes órdenes Reasignadas"
-                    default:
-                        message = ""
-                    }
-                }
-                self?.collectionView.setEmptyMessage(message)
-            }).disposed(by: disposeBag)
+        inboxViewModel.title.withLatestFrom(inboxViewModel.statusData, resultSelector: { [weak self] title, data in
+            let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
+            var message: String = ""
+            if (data.count == 0 && statusId != -1) {
+                message = "No tienes órdenes \(title)"
+            }
+            self?.collectionView.setEmptyMessage(message)
+        }).subscribe().disposed(by: disposeBag)
     }
 
     func initComponents() -> Void {

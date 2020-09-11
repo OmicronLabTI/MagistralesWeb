@@ -59,7 +59,7 @@ namespace Omicron.Pedidos.Api.Filters
             response.WriteAsync(message);
 
             var logMessage = $"ErrorType: {context.Exception.GetType()} Message: {context.Exception.Message}";
-            this.logger.Error(logMessage);
+            this.logger.Error(context.Exception, logMessage);
         }
     }
 }
