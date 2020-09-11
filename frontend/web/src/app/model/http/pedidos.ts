@@ -92,14 +92,14 @@ export class CreateIsolatedOrderReq {
 }
 export class WorkLoad {
     user: string;
-    totalPossibleAssign: number;
-    assigned: number;
-    processed: number;
-    pending: number;
-    finished: number;
-    finalized: number;
-    reassigned: number;
-    totalOrders: number;
-    totalFabOrders: number;
-    totalPieces: number;
+    totalPossibleAssign: any;
+    assigned: any;
+    processed: any;
+    pending: any;
+    finished: any;
+    finalized: any;
+    reassigned: any;
+    totalOrders: any;
+    totalFabOrders: any;
+    totalPieces: any;
 }

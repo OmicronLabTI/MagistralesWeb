@@ -9,7 +9,7 @@
     </div>
     <div class="table-toolbar-work-load">
         <div class="only-space-work-load">
-            fgsad
+
         </div>
         <div class="table-toolbar-buttons-load">
             <div class="indicators-container">
@@ -66,7 +66,7 @@
 
     <div class="list-users-container">
         <div class="list-cards-container row">
-            <div class="card-work-load-container col-sm-12 col-md-6 col-lg-4" *ngFor="let workLoad of workLoads">
+            <div class="card-work-load-container col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let workLoad of workLoads">
                 <mat-card class="example-card">
                     <mat-card-header class="card-header-container border-header">
                         <mat-card-title class="style-title">{{workLoad.user}}
@@ -81,7 +81,7 @@
                        <div class="first-line-numbers row">
                            <div class="color-assign col-sm-12 col-md-6 col-lg-4">
                                <div class="only-number-work-load">
-                                   {{workLoad.assigned}},1234
+                                   {{workLoad.assigned}}
                                </div>
                            </div>
                            <div class="color-in-process col-sm-12 col-md-6 col-lg-4">
@@ -115,7 +115,7 @@
                         </div>
                     </mat-card-content>
                     <mat-card-actions>
-                       <div class="totals-work-load fo">
+                       <div class="totals-work-load font-style-omicron">
                            <div class="total-orders">
                                {{workLoad.totalOrders}} Pedidos
                            </div>

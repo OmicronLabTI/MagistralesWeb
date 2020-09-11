@@ -4,7 +4,6 @@
 .table-toolbar-buttons-load {
   width: 90%;
   display: flex;
-  border: black 1px solid;
 }
 .table-toolbar-work-load {
   width: 100%;
@@ -20,9 +19,10 @@
 .indicators-work-load {
   width: 15%;
   height: 46%;
+  font-weight: 600;
   color: #fff;
   margin-right: 5px;
-  border-radius: 5px;
+  border-radius: 10px;
   text-align: center;
   padding: 3px;
 }
@@ -69,7 +69,6 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  border: black 1px solid;
 
 }
 .data-title {
@@ -77,7 +76,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-bottom: 15px;
+  padding-bottom: 18px;
 }
 .dates-components {
   width: 70%;
@@ -95,16 +94,16 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  border: black 1px solid;
 }
 .list-cards-container {
   margin-top: 10px;
   width: 100%;
-  height: 100%;
+  height: 70%;
+  max-height: 70%;
   padding-left: 30px;
 }
 .card-work-load-container {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 .title-work-load-container {
   width: 100%;
@@ -112,7 +111,6 @@
   display: flex;
   justify-content: center;
   flex-direction: row;
-  border: black 1px solid;
 
 }
 .title-user {
@@ -131,6 +129,7 @@
   align-items: center;
 }
 .rectangle-number {
+  font-weight: 600;
   color: #fff;
   padding: 5px;
   border-radius: 5px;
@@ -151,18 +150,19 @@
 
 }
 .only-number-work-load {
-  /*width: 100%;*/
-  width: 100px;
+  width: 100%;
+/*  width: 100px;
   height: 100px;
-  border-radius: 50%;
-  font-size: 2em;
-  font-weight: 600;
+  border-radius: 50%;*/
+  font-size: 28px;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 13px 0;
+  border-radius: 10px;
   border: 5px solid #fff;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   -webkit-box-shadow: 0px 0px 8px 2px #e0e6ed;
   box-shadow: 0px 0px 8px 2px #e0e6ed;
 
@@ -174,9 +174,15 @@
   justify-content: center;
 }
 .total-orders {
+  display: flex;
+  justify-content: center;
   font-size: 1em;
   font-weight: 700;
   margin-bottom: 4px;
   color: #009688;
+}
+.mat-card {
+  border: #6C90B3 2px solid;
+  border-radius: 10px;
 }
 

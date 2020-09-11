@@ -47,6 +47,18 @@ export class WorkLoadComponent implements OnInit {
   private getWorkLoad() {
     this.ordersService.getWorLoad(this.dataService.getDateFormatted(this.startDate, this.finishDate, false))
         .subscribe(workLoadRes => {
+             workLoadRes.response.forEach( workLoad => {
+               workLoad.totalPossibleAssign =  new Intl.NumberFormat().format(Number(workLoad.totalPossibleAssign));
+               workLoad.assigned = this.dataService.getFormattedNumber(workLoad.assigned);
+               workLoad.processed = this.dataService.getFormattedNumber(workLoad.processed);
+               workLoad.pending = this.dataService.getFormattedNumber(workLoad.pending);
+               workLoad.finished = this.dataService.getFormattedNumber(workLoad.finished);
+               workLoad.reassigned = this.dataService.getFormattedNumber(workLoad.reassigned);
+               workLoad.finalized = this.dataService.getFormattedNumber(workLoad.finalized);
+               workLoad.totalOrders = this.dataService.getFormattedNumber(workLoad.totalOrders);
+               workLoad.totalFabOrders = this.dataService.getFormattedNumber(workLoad.totalFabOrders);
+               workLoad.totalPieces = this.dataService.getFormattedNumber(workLoad.totalPieces);
+             });
              this.workLoads = workLoadRes.response;
              console.log('workLoads: ', this.workLoads)
             }
