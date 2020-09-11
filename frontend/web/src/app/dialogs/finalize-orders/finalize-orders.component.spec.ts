@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FinalizeOrdersComponent } from './finalize-orders.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {MATERIAL_COMPONENTS} from "../../app.material";
-import {FormsModule} from "@angular/forms";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {HttpClientTestingModule} from "@angular/common/http/testing";
-import {DatePipe} from "@angular/common";
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MATERIAL_COMPONENTS} from '../../app.material';
+import {FormsModule} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {DatePipe} from '@angular/common';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;

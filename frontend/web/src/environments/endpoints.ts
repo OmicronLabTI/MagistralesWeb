@@ -44,6 +44,7 @@ export const Endpoints = {
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
+    getWorkLoad: `${environment.baseUrl}/api/pedidos/qfb/workload`,
   }
 };
 

@@ -10,6 +10,7 @@ export class IComponentsRes extends BaseResponseHttp {
 export class IComponentsSaveReq {
     fabOrderId: number;
     plannedQuantity: number;
+    warehouse: string;
     fechaFin: string;
     comments: string;
     components: IFormulaDetalleReq[];
@@ -38,6 +39,7 @@ export class IFormulaReq {
     realEndDate: string;
     productLabel?: string;
     container?: string;
+    hasBatches?: boolean;
     details: IFormulaDetalleReq[];
 }
 

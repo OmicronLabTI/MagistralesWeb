@@ -5,7 +5,7 @@ import { MatTableDataSource} from '@angular/material';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
-import { Colors, CONST_STRING, HttpStatus, MODAL_FIND_ORDERS, CONST_NUMBER, HttpServiceTOCall } from 'src/app/constants/const';
+import { Colors, CONST_STRING, HttpStatus, CONST_NUMBER, HttpServiceTOCall } from 'src/app/constants/const';
 import { ProductivityService } from 'src/app/services/productivity.service';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -41,7 +41,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
       fini: ['', []],
       ffin: ['', []],
     });
-    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY)
+    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {
