@@ -364,4 +364,7 @@ export class DataService {
 
     return [filterDataOrders, queryString];
   }
+  getFormattedNumber(numberToFormatted: any) {
+    return new Intl.NumberFormat().format(Number(numberToFormatted));
+  }
 }

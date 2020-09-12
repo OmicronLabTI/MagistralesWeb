@@ -80,6 +80,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var sapOrders = await this.GetSapFabOrders(parameters);
             var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
+            userOrders = userOrders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
 
             var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders);
             return ServiceUtils.CreateResult(true, 200, null, workLoad, null, null);
@@ -264,7 +265,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             workLoadModel.TotalFabOrders = userOrders.DistinctBy(y => y.Productionorderid).ToList().Count;
-            workLoadModel.TotalOrders = userOrders.DistinctBy(y => y.Salesorderid).ToList().Count;
+            workLoadModel.TotalOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(y => y.Salesorderid).ToList().Count;
 
             var ordersId = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
             workLoadModel.TotalPieces = sapOrders.Where(x => ordersId.Any(y => y == x.OrdenId)).Sum(y => (int)y.Quantity);
