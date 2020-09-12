@@ -1,0 +1,135 @@
+<div class="container-list-page">
+    <div class="header-page-custom">
+        <div class="title-list-container">
+            <span>Carga de trabajo</span>
+        </div>
+        <div class="filter-select">
+
+        </div>
+    </div>
+    <div class="table-toolbar-work-load">
+        <div class="only-space-work-load">
+
+        </div>
+        <div class="table-toolbar-buttons-load">
+            <div class="indicators-container">
+                <div class="indicators-work-load background-color-assign">
+                    Asignado
+                </div>
+                <div class="indicators-work-load background-color-in-process">
+                    En proceso
+                </div>
+                <div class="indicators-work-load background-color-pending">
+                    Pendiente
+                </div>
+                <div class="indicators-work-load background-color-finish">
+                    Terminado
+                </div>
+                <div class="indicators-work-load background-color-re-assign">
+                    Reasignado
+                </div>
+                <div class="indicators-work-load background-color-finished">
+                    Finalizado
+                </div>
+            </div>
+            <div class="data-range-container">
+                <div class="date-range-container">
+                    <div class="data-title">
+                     Rango de fechas
+                    </div>
+                    <div class="dates-components">
+                        <mat-form-field color="accent" appearance="outline" class="custom-date">
+                            <input matInput [matDatepicker]="picker2"
+                                   [(ngModel)]="startDate"
+                                   [min]="minStartDate"
+                                   [max]="finishDate"
+                                   (ngModelChange)="onDataChange()"
+                                   readonly >
+                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2 color="primary"></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field color="accent" appearance="outline" class="custom-date">
+                            <input matInput [matDatepicker]="picker3"
+                                   [(ngModel)]="finishDate"
+                                   [min]="startDate"
+                                   [max]="maxFinishDate"
+                                   (ngModelChange)="onDataChange()"
+                                   readonly>
+                            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                            <mat-datepicker #picker3 color="primary"></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-users-container">
+        <div class="list-cards-container row">
+            <div class="card-work-load-container col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let workLoad of workLoads">
+                <mat-card class="example-card">
+                    <mat-card-header class="card-header-container border-header">
+                        <mat-card-title class="style-title">{{workLoad.user}}
+                        </mat-card-title>
+                            <div class="number-user-container">
+                                <div *ngIf="workLoad.user !== 'Total'" class="rectangle-number background-color-omicron">
+                                    {{workLoad.totalPossibleAssign}}
+                                </div>
+                            </div>
+                    </mat-card-header>
+                    <mat-card-content>
+                       <div class="first-line-numbers row">
+                           <div class="color-assign col-sm-12 col-md-6 col-lg-4">
+                               <div class="only-number-work-load">
+                                   {{workLoad.assigned}}
+                               </div>
+                           </div>
+                           <div class="color-in-process col-sm-12 col-md-6 col-lg-4">
+                               <div class="only-number-work-load">
+                                   {{workLoad.processed}}
+                               </div>
+                           </div>
+                           <div class="color-pending col-sm-12 col-md-6 col-lg-4">
+                               <div class="only-number-work-load">
+                                   {{workLoad.pending}}
+                               </div>
+                           </div>
+                       </div>
+                        <div class="first-line-numbers row">
+                            <div class="color-finish col-sm-12 col-md-6 col-lg-4">
+                                <div class="only-number-work-load">
+                                    {{workLoad.finished}}
+                                </div>
+                            </div>
+                            <div class="color-re-assign col-sm-12 col-md-6 col-lg-4">
+                                <div class="only-number-work-load">
+                                    {{workLoad.reassigned}}
+                                </div>
+                            </div>
+                            <div class="color-finished col-sm-12 col-md-6 col-lg-4">
+                                <div class="only-number-work-load">
+                                    {{workLoad.finalized}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                       <div class="totals-work-load font-style-omicron">
+                           <div class="total-orders">
+                               {{workLoad.totalOrders}} Pedidos
+                           </div>
+                           <div class="total-orders">
+                               {{workLoad.totalFabOrders}} Órdenes
+                           </div>
+                           <div class="total-orders">
+                               {{workLoad.totalPieces}} Piezas
+                           </div>
+                       </div>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>
+
