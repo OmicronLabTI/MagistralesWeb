@@ -188,12 +188,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
     this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
-    this.getFullQueryString();
-    this.getOrders();
-    this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
     this.pageIndex = 0;
     this.offset = 0;
     this.limit = 10;
+    this.getFullQueryString();
+    this.getOrders();
+    this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
   }
 
   cancelOrder() {

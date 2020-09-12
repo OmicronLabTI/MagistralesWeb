@@ -29,7 +29,7 @@
             <button mat-raised-button class="button-blue"
                     (click)="createOrderIsolated()" >Crear orden</button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
-                &nbsp; Asignar
+            Asignar
             </button>
             <button [disabled]="!isReAssignOrderIsolated" mat-raised-button
                     [ngClass]="isReAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="reAssignOrder()" >Reasignar</button>
