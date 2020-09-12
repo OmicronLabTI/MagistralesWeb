@@ -138,7 +138,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   }
   saveFormulaDetail() {
-    if (this.getIsThereNull()) {
+    if (this.getIsThereNull() && (this.oldDataFormulaDetail.plannedQuantity !== null && this.oldDataFormulaDetail.plannedQuantity > 0)) {
       this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
           .then( (resultSaveMessage: any) => {
             if (resultSaveMessage.isConfirmed) {
@@ -194,7 +194,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
     detailComponentsTOSave.fabOrderId = Number(this.ordenFabricacionId);
-    detailComponentsTOSave.plannedQuantity = this.oldDataFormulaDetail.plannedQuantity;
+    detailComponentsTOSave.plannedQuantity = Number(this.oldDataFormulaDetail.plannedQuantity);
+    detailComponentsTOSave.warehouse = this.oldDataFormulaDetail.warehouse;
 
     const endDateToString = this.dataService.transformDate(this.endDateGeneral).split('/');
     detailComponentsTOSave.fechaFin = `${endDateToString[2]}-${endDateToString[1]}-${endDateToString[0]}`;
