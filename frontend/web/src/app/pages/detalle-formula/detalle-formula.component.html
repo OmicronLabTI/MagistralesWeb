@@ -16,26 +16,24 @@
     <div class="table-toolbar">
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
-            &nbsp; Lotes
+            Lotes
             </button>
             <button mat-raised-button class="button-blue" (click)="openCustomList()">
-            &nbsp; Mi lista de componentes &nbsp; 
+            Mi lista de componentes
             </button>
             &nbsp;
             &nbsp;
             <button mat-raised-button (click)="openMiListaDialog()" [ngClass]="isSaveToMyList ? 'button-blue' : 'disable-button'" [disabled]='!isSaveToMyList'>
-                &nbsp; Crear lista de componentes &nbsp; 
+            Crear lista de componentes
             </button>
             <button mat-raised-button class="button-blue" (click)="openDialog()">
-                &nbsp; Agregar componente &nbsp; 
+            Agregar componente
             </button>
-
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
-            &nbsp; Eliminar componente &nbsp; 
+            Eliminar componente
             </button>
-
             <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
-            &nbsp; Guardar &nbsp; 
+            Guardar
             </button>
         </div>
     </div>

@@ -90,9 +90,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             case ConstStatus.terminado.toUpperCase():
               element.class = 'terminado';
               break;
-              case ConstStatus.enProceso.toUpperCase():
-                element.class = 'proceso';
-                break;
+            case ConstStatus.enProceso.toUpperCase():
+              element.class = 'proceso';
+              break;
+            case ConstStatus.finalizado.toUpperCase():
+              element.class = 'pdfinalizado';
+              break;
           }
         });
         this.isThereOrdersDetailToPlan = false;
