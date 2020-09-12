@@ -187,12 +187,12 @@ export class DataService {
   userIsAuthenticated(): boolean {
     return !!localStorage.getItem(ConstToken.accessToken);
   }
-  presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
+  presentToastCustom(title: string, icon: SweetAlertIcon, html: string = CONST_STRING.empty,
                      showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
     return new Promise (resolve => {
       Swal.fire({
         title,
-        text,
+        html,
         icon,
         timer: showConfirmButton ? CONST_NUMBER.zero : CONST_NUMBER.timeToast,
         showConfirmButton,
@@ -363,5 +363,8 @@ export class DataService {
     }
 
     return [filterDataOrders, queryString];
+  }
+  getFormattedNumber(numberToFormatted: any) {
+    return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
 }

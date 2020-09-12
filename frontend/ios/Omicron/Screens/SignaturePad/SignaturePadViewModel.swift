@@ -33,19 +33,19 @@ class SignaturePadViewModel  {
         let isValid = self.signatureIsDone.map({$0})
         self.canGetSignature = isValid.asDriver(onErrorJustReturn: false)
     
-        self.acceptDidTap.withLatestFrom(input).map({OrderSignature(signatureType: $0, signature: $1, whoRequestSignature: $2)}).subscribe(onNext: { data in
+        self.acceptDidTap.withLatestFrom(input).map({OrderSignature(signatureType: $0, signature: $1, whoRequestSignature: $2)}).subscribe(onNext: { [weak self] data in
             if (data.signatureType == CommonStrings.signatureViewTitleQFB) {
                 //self.orderDetailVC.qfbSignatureIsGet = true
-                                self.dismissSignatureView.onNext(())
+                                self?.dismissSignatureView.onNext(())
                 switch data.whoRequestSignature {
                 case ViewControllerIdentifiers.orderDetailViewController:
-                    self.orderDetailVC.qfbSignatureIsGet = true
-                    self.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? ""
-                    self.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+                    self?.orderDetailVC.qfbSignatureIsGet = true
+                    self?.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? ""
+                    self?.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
                 case ViewControllerIdentifiers.lotsViewController:
-                    self.lotsViewModel.qfbSignatureIsGet = true
-                    self.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? ""
-                    self.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+                    self?.lotsViewModel.qfbSignatureIsGet = true
+                    self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? ""
+                    self?.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
                 default:
                     print("")
                 }
@@ -56,18 +56,18 @@ class SignaturePadViewModel  {
             if(data.signatureType == CommonStrings.signatureViewTitleTechnical)  {
                 switch data.whoRequestSignature {
                 case ViewControllerIdentifiers.orderDetailViewController:
-                    self.orderDetailVC.technicalSignatureIsGet = true
-                    self.orderDetailVC.technicalSignature = data.signature.toBase64() ?? ""
-                    self.orderDetailVC.validSignatures()
+                    self?.orderDetailVC.technicalSignatureIsGet = true
+                    self?.orderDetailVC.technicalSignature = data.signature.toBase64() ?? ""
+                    self?.orderDetailVC.validSignatures()
                 case ViewControllerIdentifiers.lotsViewController:
-                    self.lotsViewModel.technicalSignatureIsGet = true
-                    self.lotsViewModel.technicalSignature = data.signature.toBase64() ?? ""
-                    self.lotsViewModel.callFinishOrderService()
+                    self?.lotsViewModel.technicalSignatureIsGet = true
+                    self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? ""
+                    self?.lotsViewModel.callFinishOrderService()
                 default:
                     print("")
                 }
                 //self.orderDetailVC.technicalSignatureIsGet = true
-                self.dismissSignatureView.onNext(())
+                self?.dismissSignatureView.onNext(())
                 // guarda la firma en el storage del ipad
 //                FileManagerApp.shared.saveSignatureOnIpad(signature: data.signature, name: FileManagerConstants.technicalSignatureName)
             }

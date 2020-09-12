@@ -13,9 +13,12 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import {PlaceOrderDialogComponent} from './dialogs/place-order-dialog/place-order-dialog.component';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
+import { MiListaComponent } from './dialogs/mi-lista/mi-lista.component';
+import { ComponentslistComponent } from './dialogs/componentslist/componentslist.component';
+
 @NgModule({
   declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent
+    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent, ComponentslistComponent
   ],
     imports: [
         BrowserModule,
@@ -34,6 +37,12 @@ import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-order
     Title
   ],
   bootstrap: [AppComponent],
-    entryComponents: [PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent]
+    entryComponents: [
+      PlaceOrderDialogComponent,
+      ComponentSearchComponent,
+      FindOrdersDialogComponent,
+      MiListaComponent,
+      ComponentslistComponent
+    ]
 })
 export class AppModule { }

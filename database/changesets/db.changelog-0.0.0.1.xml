@@ -432,5 +432,10 @@
       </column>  
     </createTable>
     <addForeignKeyConstraint baseColumnNames="rawmaterialrequestid" baseTableName="rawmaterialrequestdetail" constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id" referencedColumnNames="id" referencedTableName="rawmaterialrequest"/>
-  </changeSet> 
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.50"> 
+	<sql endDelimiter=";">
+        ALTER TABLE customcomponentlistscomponents ALTER COLUMN description TYPE VARCHAR(255)
+    </sql>
+  </changeSet>
 </databaseChangeLog> 

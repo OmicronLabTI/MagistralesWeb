@@ -18,11 +18,11 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet weak var requiredQuantityLabel: UILabel!
     @IBOutlet weak var unitLabel: UILabel!
     @IBOutlet weak var werehouseLabel: UILabel!
-    @IBOutlet weak var consumedLabel: UILabel!
-    @IBOutlet weak var availableLabel: UILabel!
-    @IBOutlet weak var quantityPendingLabel: UILabel!
-    @IBOutlet weak var stockLabel: UILabel!
-    @IBOutlet weak var storedQuantity: UILabel!
+//    @IBOutlet weak var consumedLabel: UILabel!
+//    @IBOutlet weak var availableLabel: UILabel!
+//    @IBOutlet weak var quantityPendingLabel: UILabel!
+//    @IBOutlet weak var stockLabel: UILabel!
+//    @IBOutlet weak var storedQuantity: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,14 +32,15 @@ class DetailTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.requiredQuantityLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: fontSize)
+        // Se comentó para poder ampliar el campo descripción
+//        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: fontSize)
+//        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: fontSize)
+//        UtilsManager.shared.labelsStyle(label: self.quantityPendingLabel, text: "", fontSize: fontSize)
+//        UtilsManager.shared.labelsStyle(label: self.stockLabel, text: "", fontSize: fontSize)
+//        UtilsManager.shared.labelsStyle(label: self.storedQuantity, text: "", fontSize: fontSize)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
