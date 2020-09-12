@@ -44,6 +44,12 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string Warehouse { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public List<CompleteDetalleFormulaDto> Components { get; set; }
     }
 }

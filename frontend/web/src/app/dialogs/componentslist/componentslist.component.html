@@ -1,0 +1,31 @@
+<div class="find-component-container">
+    <mat-card class="component-card">
+        <mat-card-header class="card-header-container">
+            <mat-card-title>Lista de componentes para <span style="font-weight: bolder;">{{data.code}}</span></mat-card-title>
+            <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
+        </mat-card-header>
+        <mat-card-content class="content-card-container">
+            <div class="table-container-components scroll-custom">
+                <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8' : ''">
+                    <ng-container matColumnDef="nombre">
+                        <th mat-header-cell *matHeaderCellDef class="mobile-hide"> NOMBRE DE LA LISTA </th>
+                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.name | uppercase}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" (click)="selectComponent(row)"></tr>
+                </table>
+                <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
+                    <span>No hay resultados</span>
+                </div>
+            </div>        
+            <div class="paginator-container" *ngIf="dataSource.data.length === 0">
+                
+            </div>
+            <div class="paginator-container" *ngIf="dataSource.data.length > 0">
+                <mat-paginator #paginator
+                        [pageSizeOptions]="[5, 10, 15, 20]" showFirstLastButtons 
+                ></mat-paginator>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

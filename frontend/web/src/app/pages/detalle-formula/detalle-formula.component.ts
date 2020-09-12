@@ -11,6 +11,8 @@ import {Messages} from '../../constants/messages';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
+import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componentslist.component';
+import { BaseComponent, Components } from 'src/app/model/http/listacomponentes';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -136,7 +138,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   }
   saveFormulaDetail() {
-    if (this.getIsThereNull()) {
+    if (this.getIsThereNull() && (this.oldDataFormulaDetail.plannedQuantity !== null && this.oldDataFormulaDetail.plannedQuantity > 0)) {
       this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
           .then( (resultSaveMessage: any) => {
             if (resultSaveMessage.isConfirmed) {
@@ -192,7 +194,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
     detailComponentsTOSave.fabOrderId = Number(this.ordenFabricacionId);
-    detailComponentsTOSave.plannedQuantity = this.oldDataFormulaDetail.plannedQuantity;
+    detailComponentsTOSave.plannedQuantity = Number(this.oldDataFormulaDetail.plannedQuantity);
+    detailComponentsTOSave.warehouse = this.oldDataFormulaDetail.warehouse;
 
     const endDateToString = this.dataService.transformDate(this.endDateGeneral).split('/');
     detailComponentsTOSave.fechaFin = `${endDateToString[2]}-${endDateToString[1]}-${endDateToString[0]}`;
@@ -258,9 +261,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           code: this.oldDataFormulaDetail.code,
           description: this.oldDataFormulaDetail.productDescription
       }
-  }).afterClosed().subscribe((result) => {
-    this.isSaveToMyList = false;
- });
+    }).afterClosed().subscribe((result) => {
+      this.isSaveToMyList = false;
+    });
   }
 
   elementsToSave() {
@@ -269,6 +272,50 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     } else {
       this.isSaveToMyList = false;
     }
+  }
+
+  openCustomList() {
+    const dialogRef = this.dialog.open(ComponentslistComponent, {
+      panelClass: 'custom-dialog-container',
+      data: {
+          code: this.oldDataFormulaDetail.code,
+          description: this.oldDataFormulaDetail.productDescription
+      }
+    }).afterClosed().subscribe((result) => {
+      console.log('al cerrar modal: ', result);
+      this.replaceComponentsWithCustomList(result.componentes);
+    });
+  }
+
+  replaceComponentsWithCustomList(components: Components[]) {
+    this.componentsToDelete.push(...this.dataSource.data.filter( component => component));
+    const newData: IFormulaDetalleReq[] = [];
+    // tslint:disable-next-line: radix
+    const orderFabricacionId = parseInt(this.ordenFabricacionId);
+    components.forEach(element => {
+      newData.push({
+        isChecked: false,
+        orderFabId: orderFabricacionId,
+        productId: element.productId,
+        description: element.description,
+        baseQuantity: element.baseQuantity,
+        requiredQuantity: parseFloat((element.baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten)),
+        consumed: 0,
+        available: 0,
+        unit: 'GR',
+        warehouse: 'MG',
+        pendingQuantity: 0,
+        stock: 0,
+        warehouseQuantity: 10,
+        action: CONST_DETAIL_FORMULA.insert
+      });
+    });
+    this.dataSource.data = newData;
+    this.oldDataFormulaDetail.details = this.dataSource.data;
+    this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+    this.getIsReadyTOSave();
+    this.checkISComponentsToDelete();
+    this.elementsToSave();
   }
 }
 
