@@ -17,6 +17,7 @@ class  InboxViewModel {
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusData: BehaviorSubject<[Order]> = BehaviorSubject(value: [])
+    var statusDataGrouped: BehaviorSubject<[SectionModel<String, Order>]> = BehaviorSubject(value: [])
     var ordersTemp: [Order] = []
     var loading =  PublishSubject<Bool>()
     var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
@@ -57,22 +58,18 @@ class  InboxViewModel {
                         order.productCode = ""
                     }
                 }
-                //var  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
                 
-                //print(groupBySimilarity)
+                let  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
                 
-//                let dataSourcee = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: <#(CollectionViewSectionedDataSource<SectionModel<String, [Order]>>, UICollectionView, IndexPath, SectionModel<String, [Order]>.Item) -> UICollectionViewCell#>)
+                let sectionsModels = groupBySimilarity.map({ (orders) -> SectionModel<String, Order> in
+                    
+                    return SectionModel(model: orders.key ?? "", items: orders.value)
+                    
+                })
                 
-                
-//
-//                let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: {dataSource;, cv, indexPath, element}, in
-//
-//
-//                )
-             
+                self?.statusDataGrouped.onNext(sectionsModels)
+
             }
-            
-            
             
             self?.similarityViewButtonIsEnable.onNext(false)
             self?.normalViewButtonIsEnable.onNext(true)

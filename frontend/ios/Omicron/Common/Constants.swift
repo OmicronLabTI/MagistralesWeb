@@ -48,6 +48,8 @@ struct ViewControllerIdentifiers {
     static let signaturePadViewController = "SignaturePadViewController"
     static let componentsViewController = "ComponentsViewController"
     static let componentsTableViewCell = "ComponentsTableViewCell"
+    static let headerCollectionViewCell = "HeaderCollectionViewCell"
+    static let headerReuseIdentifier = "header"
 }
 
 struct OmicronColors {
