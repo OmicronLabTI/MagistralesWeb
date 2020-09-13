@@ -367,4 +367,11 @@ export class DataService {
   getFormattedNumber(numberToFormatted: any) {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
+
+  getMaxMinDate(date: Date, moths: number , isAdd: boolean) {
+    return new Date(
+        date.getFullYear(),
+         isAdd ? date.getMonth() + moths : date.getMonth() - moths ,
+        date.getDate());
+  }
 }
