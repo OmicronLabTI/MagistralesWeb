@@ -437,6 +437,11 @@ namespace Omicron.Pedidos.Test.Services
             localSapAdapter
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetBatches()));
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
@@ -469,6 +474,11 @@ namespace Omicron.Pedidos.Test.Services
             localSapAdapter
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetBatches()));
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
@@ -516,6 +526,10 @@ namespace Omicron.Pedidos.Test.Services
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             var mockUsers = new Mock<IUsersService>();
             var mockSapAdapter = new Mock<ISapAdapter>();
+
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
             var mockResult = new ResultModel();
             mockResult.Success = true;
