@@ -287,7 +287,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
             print("")
         }
