@@ -374,4 +374,7 @@ export class DataService {
          isAdd ? date.getMonth() + moths : date.getMonth() - moths ,
         date.getDate());
   }
+  getStringUpperCase(stringToUpperCase: string) {
+    return stringToUpperCase.toUpperCase();
+  }
 }
