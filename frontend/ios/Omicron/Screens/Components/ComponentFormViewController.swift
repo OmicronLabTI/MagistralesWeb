@@ -61,6 +61,13 @@ class ComponentFormViewController: FormViewController {
             return (rowValue == nil || rowValue!.isEmpty) ? ValidationError(msg: "El campo no puede ir vacio") : nil
         }
         
+        let shouldNotBeZero = RuleClosure<String> { rowValue in
+            if let doubleNumber = Double(rowValue ?? "0"), rowValue != nil {
+                return doubleNumber > 0 ? nil : ValidationError(msg: "Debe contener números mayores a 0")
+            }
+            return ValidationError(msg: "Debe contener números mayores a 0")
+        }
+        
         form
             +++ Section(header: component.description, footer: "")
             
@@ -86,6 +93,7 @@ class ComponentFormViewController: FormViewController {
                 var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
+                rules.add(rule: shouldNotBeZero)
                 $0.add(ruleSet: rules)
                 $0.validationOptions = .validatesOnChangeAfterBlurred
             }
@@ -136,6 +144,7 @@ class ComponentFormViewController: FormViewController {
                 var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
+                rules.add(rule: shouldNotBeZero)
                 $0.add(ruleSet: rules)
                 $0.validationOptions = .validatesOnChangeAfterBlurred
             }
