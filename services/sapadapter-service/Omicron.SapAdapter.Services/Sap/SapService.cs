@@ -190,8 +190,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
-                var batchesCall = await this.GetBatchesComponents(o.OrdenId);
-                var batches = (List<BatchesComponentModel>)batchesCall.Response;
+                var details = await this.GetDetailsByOrder(o.OrdenId);
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
@@ -225,8 +224,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     Container = pedido == null ? string.Empty : pedido.Container,
                     DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
-                    HasBatches = batches.Any(y => y.LotesAsignados.Any()),
-                    Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
+                    HasBatches = details.Any(x => x.HasBatches),
+                    Details = details,
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -491,7 +490,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
-            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0);
+            var lastTransaction = batchTransactions.Any() ? batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
 
             if (lastTransaction == null)
             {
@@ -529,6 +528,23 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(limit, out int limitNumber);
 
             return orders.Skip(offsetNumber).Take(limitNumber).ToList();
+        }
+
+        /// <summary>
+        /// Gets if the details has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<CompleteDetalleFormulaModel>> GetDetailsByOrder(int orderId)
+        {
+            var details = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
+
+            foreach (var detail in details)
+            {
+                detail.HasBatches = (await this.GetTransacitionBatches(orderId, detail.ProductId, new List<ValidBatches>())).Any();
+            }
+
+            return details;
         }
     }
 }
