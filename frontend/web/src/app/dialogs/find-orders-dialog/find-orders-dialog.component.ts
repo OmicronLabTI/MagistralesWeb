@@ -1,12 +1,13 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_NUMBER, CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbSelect} from '../../model/http/users';
 import {Subscription} from 'rxjs';
 import {UsersService} from '../../services/users.service';
+import {DataService} from '../../services/data.service';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   fullDate: string [] = [];
   qfbsSelect: QfbSelect[] = [];
   maxDate = new Date();
+  minDate = new Date();
   isBeginInitForm = true;
   isToResetData = false;
   subscriptionForm = new Subscription();
@@ -28,7 +30,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
               private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
               private ordersServices: PedidosService,
               private errorService: ErrorService,
-              private usersService: UsersService) {
+              private usersService: UsersService,
+              private dataService: DataService) {
       this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
       this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
       this.findOrdersForm = this.formBuilder.group({
@@ -115,7 +118,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
   }
 
   getMaxDate() {
-      this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
+      this.minDate = this.dataService.getMaxMinDate(this.findOrdersForm.get('ffin').value, CONST_NUMBER.three, false);
+      this.maxDate = this.dataService.getMaxMinDate(this.findOrdersForm.get('fini').value, CONST_NUMBER.three, true);
   }
     resetSearchParams() {
       this.getDisableForDocNum();

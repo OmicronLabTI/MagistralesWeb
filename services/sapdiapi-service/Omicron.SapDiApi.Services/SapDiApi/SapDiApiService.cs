@@ -150,19 +150,31 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
             }
 
+            if (!this.DeleteComponentsToFormula(updateFormula))
+            {
+                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, -1, company, dictResult);
+                return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+            }
+
+            updateFormula.Components = updateFormula.Components.Where(x => !x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
+
+            // Reload fab order.
+            productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+            productionOrderObj.GetByKey(updateFormula.FabOrderId);
+
             double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
             productionOrderObj.DueDate = updateFormula.FechaFin;
             productionOrderObj.PlannedQuantity = plannedQuantity;
             productionOrderObj.Warehouse = updateFormula.Warehouse;
 
-            var components = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
-            components.DoQuery(string.Format(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId.ToString()));
-            
+            var components = this.ExecuteQuery(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId);
+
             var listIdsUpdated = new List<string>();
-            var listToDelete = new List<int>();
+            var counter = 0;
 
             if (components.RecordCount != 0)
             {
+                counter = components.RecordCount;
                 for (var i = 0; i < components.RecordCount; i++)
                 {
                     var sapItemCode = components.Fields.Item("ItemCode").Value;
@@ -183,44 +195,35 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         components.MoveNext();
                         continue;
-                    }
+                    } 
 
-                    if (component.Action.Equals(ServiceConstants.DeleteComponent))
-                    {
-                        listToDelete.Add(lineNum);
-                        listIdsUpdated.Add(sapItemCode);
-                        components.MoveNext();
-                        continue;
-                    }
+                    _loggerProxy.Info($"Item to update: { sapItemCode } on line { lineNum }.");
 
                     double.TryParse(component.BaseQuantity.ToString(), out double baseQuantity);
                     double.TryParse(component.RequiredQuantity.ToString(), out double issuedQuantity);
                     productionOrderObj.Lines.BaseQuantity = baseQuantity;
                     productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
                     productionOrderObj.Lines.Warehouse = component.Warehouse;
-
                     listIdsUpdated.Add(sapItemCode);
                     components.MoveNext();
                 }
             }
 
             var listNotInserted = updateFormula.Components.Where(x => !listIdsUpdated.Contains(x.ProductId));
+            
             foreach (var line in listNotInserted)
             {
+                _loggerProxy.Info($"Item to insert: { line.ProductId } on line { counter }.");
+
                 double.TryParse(line.BaseQuantity.ToString(), out double baseQuantity);
                 double.TryParse(line.RequiredQuantity.ToString(), out double issuedQuantity);
-
                 productionOrderObj.Lines.Add();
+                productionOrderObj.Lines.SetCurrentLine(counter);
                 productionOrderObj.Lines.ItemNo = line.ProductId;
                 productionOrderObj.Lines.Warehouse = line.Warehouse;
                 productionOrderObj.Lines.BaseQuantity = baseQuantity;
                 productionOrderObj.Lines.PlannedQuantity = issuedQuantity;
-            }
-
-            foreach (var lineDel in listToDelete.OrderByDescending(x => x))
-            {
-                productionOrderObj.Lines.SetCurrentLine(lineDel);
-                productionOrderObj.Lines.Delete();
+                counter += 1;
             }
 
             var updated = productionOrderObj.Update();
@@ -233,6 +236,70 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
+        /// Delete components to formula.
+        /// </summary>
+        /// <param name="updateFormula">the formula.</param>
+        /// <returns></returns>
+        public bool DeleteComponentsToFormula(UpdateFormulaModel updateFormula)
+        {
+            var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+            productionOrderObj.GetByKey(updateFormula.FabOrderId);
+
+            double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
+            productionOrderObj.DueDate = updateFormula.FechaFin;
+            productionOrderObj.PlannedQuantity = plannedQuantity;
+            productionOrderObj.Warehouse = updateFormula.Warehouse;
+
+            var components = this.ExecuteQuery(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId);
+            var linesToDelete = new List<int>();
+            
+            if (components.RecordCount != 0)
+            {
+                for (var i = 0; i < components.RecordCount; i++)
+                {
+                    var sapItemCode = components.Fields.Item("ItemCode").Value;
+                    var lineNum = components.Fields.Item("VisOrder").Value;
+
+                    try
+                    {
+                        productionOrderObj.Lines.SetCurrentLine(lineNum);
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+
+                    var component = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode) && x.Action.Equals(ServiceConstants.DeleteComponent));
+                    var anotherComponent = updateFormula.Components.FirstOrDefault(x => x.ProductId.Equals(sapItemCode) && !x.Action.Equals(ServiceConstants.DeleteComponent));
+
+                    if (component != null && component.Action.Equals(ServiceConstants.DeleteComponent) && anotherComponent == null)
+                    {
+                        _loggerProxy.Info($"Item to delete: { sapItemCode } on line { lineNum }.");
+                        linesToDelete.Add(lineNum);
+                    }
+
+                    components.MoveNext();
+                }
+            }
+ 
+            foreach (var lineToDelete in linesToDelete.OrderByDescending(x => x))
+            {
+                productionOrderObj.Lines.SetCurrentLine(lineToDelete);
+                productionOrderObj.Lines.Delete();
+            }
+
+            var updatedResult = productionOrderObj.Update();
+
+            if (updatedResult != 0)
+            {
+                company.GetLastError(out int errorCode, out string errMsg);
+                _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {JsonConvert.SerializeObject(updateFormula)}");
+            }
+
+            return updatedResult == 0;
         }
 
         /// <summary>

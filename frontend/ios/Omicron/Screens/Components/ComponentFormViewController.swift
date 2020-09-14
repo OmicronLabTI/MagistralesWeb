@@ -20,9 +20,9 @@ class ComponentFormViewController: FormViewController {
     @Injected var inboxViewModel: InboxViewModel
     
     var disposeBag = DisposeBag()
-    var baseQuantity: TextRow? = nil
-    var requiredQuantity: TextRow? = nil
-    var warehouse: PickerInlineRow<String>? = nil
+    weak var baseQuantity: TextRow? = nil
+    weak var requiredQuantity: TextRow? = nil
+    weak var warehouse: PickerInlineRow<String>? = nil
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     
     deinit {
@@ -61,19 +61,25 @@ class ComponentFormViewController: FormViewController {
             return (rowValue == nil || rowValue!.isEmpty) ? ValidationError(msg: "El campo no puede ir vacio") : nil
         }
         
+        let shouldNotBeZero = RuleClosure<String> { rowValue in
+            if let doubleNumber = Double(rowValue ?? "0"), rowValue != nil {
+                return doubleNumber > 0 ? nil : ValidationError(msg: "Debe contener números mayores a 0")
+            }
+            return ValidationError(msg: "Debe contener números mayores a 0")
+        }
+        
         form
             +++ Section(header: component.description, footer: "")
             
             <<< TextRow() { [weak self] in
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                let baseQty = component.baseQuantity ?? 0.0
-                $0.value = (component.unit == "Pieza") ? String(format: "%.0f", baseQty as NSDecimalNumber) : self?.formatter.string(from: baseQty as NSDecimalNumber)
+                $0.value = ""
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
-                    if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false) {
+                    if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false && !row.value!.isEmpty) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
                         let requiredQuantity = Decimal(order.plannedQuantity ?? 0)
@@ -87,6 +93,7 @@ class ComponentFormViewController: FormViewController {
                 var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
+                rules.add(rule: shouldNotBeZero)
                 $0.add(ruleSet: rules)
                 $0.validationOptions = .validatesOnChangeAfterBlurred
             }
@@ -116,13 +123,13 @@ class ComponentFormViewController: FormViewController {
             
             <<< TextRow() { [weak self] in
                 $0.title = "Cantidad requerida: "
-                $0.value = component.unit == "Pieza" ? String(format: "%.0f", (component.requiredQuantity ?? 0) as CVarArg) : self?.formatter.string(from: NSDecimalNumber(decimal: component.requiredQuantity ?? 0))
+                $0.value = ""
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
-                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false)) {
+                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false && !row.value!.isEmpty)) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
                         let baseQuantity = Decimal(order.plannedQuantity ?? 0)
                         let result = requiredQuantity!  / baseQuantity
@@ -137,6 +144,7 @@ class ComponentFormViewController: FormViewController {
                 var rules = RuleSet<String>()
                 rules.add(rule: fieldNoEmpty)
                 rules.add(rule: fieldShouldNotNegativeNumbers)
+                rules.add(rule: shouldNotBeZero)
                 $0.add(ruleSet: rules)
                 $0.validationOptions = .validatesOnChangeAfterBlurred
             }
@@ -187,7 +195,7 @@ class ComponentFormViewController: FormViewController {
                     self?.requiredQuantity = self?.form.rowBy(tag: "requiredQuantity")
                     self?.warehouse = self?.form.rowBy(tag: "warehouse")
                     
-                    let alert = UIAlertController(title: CommonStrings.Emty, message: "¿Deseas guardar los cambios ingresados?", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?", message: nil, preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self?.saveChanges()})
                     alert.addAction(cancelAction)

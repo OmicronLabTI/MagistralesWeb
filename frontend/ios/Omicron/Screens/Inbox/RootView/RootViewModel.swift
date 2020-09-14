@@ -89,10 +89,10 @@ class RootViewModel {
                 if(isUpdate) {
                     self?.showRefreshControl.onNext(())
                 }
-                }, onError: { err in
+                }, onError: { [weak self] err in
                     print(err)
-                    self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
-                    self.loading.onNext(false)
+                    self?.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
+                    self?.loading.onNext(false)
             }).disposed(by: disposeBag)
         } else {
             self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
