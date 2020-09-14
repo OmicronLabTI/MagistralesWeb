@@ -126,7 +126,7 @@ class LotsViewController: UIViewController {
         
         // Manda el mensaje para poder finalizar la orden
         self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             

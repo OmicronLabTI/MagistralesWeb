@@ -106,6 +106,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
               element.class = 'reasignado';
               break;
           }
+          element.descripcionProducto = this.dataService.getStringUpperCase(element.descripcionProducto);
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -205,4 +206,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
       , isFromReassign: true});
   }
+
+    goToOrders(urlPath: string[]) {
+      this.dataService.setPathUrl(urlPath);
+    }
 }

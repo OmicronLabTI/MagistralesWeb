@@ -382,4 +382,8 @@ export class DataService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
+
+  getStringUpperCase(stringToUpperCase: string) {
+    return stringToUpperCase.toUpperCase();
+  }
 }

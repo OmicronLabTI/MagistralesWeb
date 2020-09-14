@@ -114,7 +114,7 @@ class InboxViewController: UIViewController {
         
         // Muestra un alert para la confirmación de cambiar el status o no
         inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
                 self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems)

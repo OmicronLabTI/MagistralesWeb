@@ -157,7 +157,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.changeStatusToProcess()})
             alert.addAction(cancelAction)
@@ -167,7 +167,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         // Muestra un mensaje de confirmación para poner la orden en status finalizado
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self?.dismiss(animated: true)})
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
             alert.addAction(cancelAction)
@@ -314,7 +314,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
             
             // Logica para borrar un elemento de la tabla
             let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
-                let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
+                let alert = UIAlertController(title: "El componente será eliminado, ¿quieres continuar?", message: nil, preferredStyle: .alert)
                 let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
                 let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
                 alert.addAction(cancelAction)

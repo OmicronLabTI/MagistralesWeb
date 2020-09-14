@@ -50,6 +50,7 @@ export class IFormulaDetalleReq {
     orderFabId?: number;
     productId: string;
     description: string;
+    productoName?: string;
     baseQuantity: number;
     requiredQuantity: number;
     consumed: number;

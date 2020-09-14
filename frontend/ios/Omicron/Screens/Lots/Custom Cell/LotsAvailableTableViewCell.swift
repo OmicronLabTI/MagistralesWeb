@@ -29,6 +29,10 @@ class LotsAvailableTableViewCell: UITableViewCell {
         super.awakeFromNib()
         
         // Initialization code
+        lotsLabel.textColor = UIColor.red
+        quantityAvailableLabel.textColor = UIColor.red
+        quantitySelected.textColor = UIColor.red
+        quantityAssignedLabel.textColor = UIColor.red
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAvailableLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAssignedLabel, text: "", fontSize: 14)
