@@ -427,6 +427,19 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// the status.
         /// </value>
+        public static List<string> ValidStatusTerminar { get; } = new List<string>
+        {
+            Terminado,
+            Finalizado,
+            Cancelled,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
         public static List<string> StatusWorkload { get; } = new List<string>
         {
             Asignado,
