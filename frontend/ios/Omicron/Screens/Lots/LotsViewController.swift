@@ -151,7 +151,7 @@ class LotsViewController: UIViewController {
             cell.row = row
             cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
-            cell.descriptionLabel.text = data.descripcionProducto
+            cell.descriptionLabel.text = data.descripcionProducto?.uppercased()
             cell.warehouseCodeLabel.text = data.almacen
             cell.totalNeededLabel.text =  self?.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
             cell.totalSelectedLabel.text = self?.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
