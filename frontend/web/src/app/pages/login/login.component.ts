@@ -58,13 +58,18 @@ export class LoginComponent implements OnInit {
           userRes => {
               this.dataService.setUserId(userRes.response.id);
               this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
+              this.dataService.setUserRole(userRes.response.role);
           }
       ).catch((error) => {
           this.errorService.httpError(error);
           this.dataService.setGeneralNotificationMessage('Error al obtener usuario');
       });
       this.dataService.setIsLogin(true);
-      this.goToPedidos();
+      if (this.dataService.getUserRole() === '3') {
+        this.goToPedidos();
+      } else {
+        this.goToUsers();
+      }
     }).catch( (error: ErrorHttpInterface) => {
         switch (error.status) {
             case HttpStatus.serverError:
@@ -80,6 +85,10 @@ export class LoginComponent implements OnInit {
   }
   goToPedidos() {
     this.router.navigate(['pedidos']);
+  }
+
+  goToUsers(){
+    this.router.navigate(['userList']);
   }
   keyDownFunction(event: KeyboardEvent) {
         if (event.key === MODAL_FIND_ORDERS.keyEnter && this.formLogin.valid) {

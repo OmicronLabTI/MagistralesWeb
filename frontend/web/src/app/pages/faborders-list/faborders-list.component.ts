@@ -119,7 +119,10 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           switch (element.status) {
             case ConstStatus.abierto:
-              element.class = 'pdabierto';
+              element.class = 'abierto';
+              break;
+            case ConstStatus.planificado:
+              element.class = 'planificado';
               break;
             case ConstStatus.asignado:
               element.class = 'asignado';
@@ -134,10 +137,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
               element.class = 'proceso';
               break;
             case ConstStatus.reasingado:
-              element.class = 'pdreasignado';
+              element.class = 'reasignado';
               break;
             case ConstStatus.finalizado:
-              element.class = 'pdfinalizado';
+              element.class = 'finalizado';
+              break;
+            case ConstStatus.cancelado.toUpperCase():
+              element.class = 'cancelado';
               break;
           }
         });

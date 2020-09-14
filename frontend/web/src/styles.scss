@@ -464,9 +464,9 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
   border: 1px solid #2196f3 !important;
 }
 
-.mat-stroked-button.green {
-  color: #8dbf42 !important;
-  border: 1px solid #8dbf42 !important;
+.mat-stroked-button.abierto {
+  color: #000 !important;
+  border: 1px solid #000 !important;
 }
 
 table .mat-form-field-wrapper {
@@ -617,18 +617,18 @@ a.breadcrumblink:hover{
   flex-direction: column;
 }
 .mat-stroked-button.liberado {
-  color: #EF7F1A !important;
-  border: 1px solid #EF7F1A !important;
+  color: #203764 !important;
+  border: 1px solid #203764 !important;
 }
 
 .mat-stroked-button.cancelado {
-  color: #3b3f5c !important;
-  border: 1px solid #3b3f5c !important;
+  color: gray !important;
+  border: 1px solid gray !important;
 }
 
 .mat-stroked-button.proceso {
-  color: #e7515a !important;
-  border: 1px solid #e7515a !important;
+  color: red !important;
+  border: 1px solid red !important;
 }
 
 .mat-stroked-button.asignado {
@@ -637,8 +637,8 @@ a.breadcrumblink:hover{
 }
 
 .mat-stroked-button.pendiente {
-  color: #3b3f5c !important;
-  border: 1px solid #3b3f5c !important;
+  color: yellow !important;
+  border: 1px solid yellow !important;
 }
 
 .mat-stroked-button.terminado {
@@ -657,8 +657,8 @@ a.breadcrumblink:hover{
 }
 
 .mat-stroked-button.finalizado {
-  color: red !important;
-  border: 1px solid red !important;
+  color: #8D594E !important;
+  border: 1px solid #8D594E !important;
 }
 
 .mat-stroked-button.pdabierto {
@@ -666,7 +666,7 @@ a.breadcrumblink:hover{
   border: 1px solid black !important;
 }
 
-.mat-stroked-button.pdreasignado {
+.mat-stroked-button.reasignado {
   color: #5c1ac3 !important;
   border: 1px solid #5c1ac3 !important;
 }
@@ -674,6 +674,11 @@ a.breadcrumblink:hover{
 .mat-stroked-button.pdfinalizado {
   color: #8D594E !important;
   border: 1px solid #8D594E !important;
+}
+
+.mat-stroked-button.planificado {
+  color: #6C90B3 !important;
+  border: 1px solid #6C90B3 !important;
 }
 
 .is-loading {

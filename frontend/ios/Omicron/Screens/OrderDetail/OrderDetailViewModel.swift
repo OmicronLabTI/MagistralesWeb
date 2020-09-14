@@ -61,16 +61,18 @@ class OrderDetailViewModel {
     func getOrdenDetail(isRefresh: Bool = false) -> Void {
         loading.onNext(true)
         NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
-            self?.orderDetailData.accept([res.response!])
-            self?.tableData.onNext(res.response!.details!)
-            self?.auxTabledata = res.response!.details!
-            self?.tempOrderDetailData = res.response!
-            self?.loading.onNext(false)
-            self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
-            let iconName = res.response?.comments != nil ? "message.fill": "message"
-            self?.showIconComments.onNext(iconName)
-            if(isRefresh) {
-                self?.endRefreshing.onNext(())
+            if (res.response != nil) {
+                self?.orderDetailData.accept([res.response!])
+                self?.tableData.onNext(res.response!.details!)
+                self?.auxTabledata = res.response!.details!
+                self?.tempOrderDetailData = res.response!
+                self?.loading.onNext(false)
+                self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
+                let iconName = res.response?.comments != nil ? "message.fill": "message"
+                self?.showIconComments.onNext(iconName)
+                if(isRefresh) {
+                    self?.endRefreshing.onNext(())
+                }
             }
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
