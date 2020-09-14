@@ -21,7 +21,7 @@ export class InventorybatchesComponent implements OnInit {
   cantidadNecesariaInput = 0;
   indexSelected = 0;
   dataSelected: ILotesFormulaReq;
-  document: string;
+  document: number;
   ordenFabricacionId: string;
   dataSourceDetails = new MatTableDataSource<ILotesFormulaReq>();
   dataSourceLotes = new MatTableDataSource<ILotesReq>();
@@ -60,7 +60,7 @@ export class InventorybatchesComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.document = params.get('document');
+      this.document = Number(params.get('document'));
       this.ordenFabricacionId = params.get('ordenid');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
     });
@@ -105,6 +105,8 @@ export class InventorybatchesComponent implements OnInit {
     let resultData: ILotesFormulaReq[];
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
+        batchesRes.response.forEach( batches => batches.descripcionProducto =
+            this.dataService.getStringUpperCase(batches.descripcionProducto));
         this.dataSourceDetails.data = batchesRes.response;
         // tslint:disable-next-line: no-shadowed-variable
         resultData = this.dataSourceDetails.data.filter(element => (
@@ -365,4 +367,8 @@ export class InventorybatchesComponent implements OnInit {
     });
     return element.isValid;
   }
+
+    goToOrders(urlPath: string[]) {
+      this.dataService.setPathUrl(urlPath);
+    }
 }
