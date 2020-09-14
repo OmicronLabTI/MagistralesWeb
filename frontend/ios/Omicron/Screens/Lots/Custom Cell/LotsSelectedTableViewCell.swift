@@ -18,7 +18,9 @@ class LotsSelectedTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+
+    lotsLabel.textColor = UIColor.red
+    quantitySelectedLabel.textColor = UIColor.red
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantitySelectedLabel, text: "", fontSize: 14)
     }
