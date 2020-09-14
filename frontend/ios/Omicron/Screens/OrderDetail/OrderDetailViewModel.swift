@@ -15,7 +15,7 @@ class OrderDetailViewModel {
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
-    var tempOrderDetailData: OrderDetail? = nil
+    weak var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmationProcess = PublishSubject<String>()
