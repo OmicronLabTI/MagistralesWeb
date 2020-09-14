@@ -79,6 +79,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
         this.dataSource.data = this.oldDataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {
+          detail.description = this.dataService.getStringUpperCase(detail.description);
           detail.isChecked = false;
           const warehouseSplit = detail.warehouseQuantity.toString().split('.');
           const stockSplit = detail.stock.toString().split('.');
