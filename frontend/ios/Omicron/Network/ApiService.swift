@@ -20,6 +20,8 @@ enum ApiService {
     case getLots(orderId: Int)
     case finishOrder(finishOrder: FinishOrder)
     case assingLots(lotsRequest: [BatchSelected])
+    case askIfOrderCanBeFinalized(orderId: Int)
+    case getComponents(data: ComponentRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -55,6 +57,10 @@ extension ApiService: AuthorizedTargetType {
             return "pedidos/finishOrder"
         case .assingLots:
             return "/pedidos/assignBatches"
+        case .askIfOrderCanBeFinalized(let orderId):
+            return "pedidos/completedBatches/\(orderId)"
+        case .getComponents:
+            return "sapadapter/componentes"
         }
     }
     
@@ -62,7 +68,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login, .renew, .finishOrder:
             return .post
-        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized, .getComponents:
             return .get
         case .deleteItemOfOrdenDetail, .changeStatusOrder, .assingLots:
             return .put
@@ -73,10 +79,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(let data):
             return .requestJSONEncodable(data)
-        case .getInfoUser,
-             .getStatusList,
-             .getLots,
-             .getOrdenDetail:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized:
             return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
@@ -88,6 +91,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .assingLots(let data):
             return .requestJSONEncodable(data)
+        case .getComponents(let data):
+            return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         }
     }
     
@@ -149,6 +154,20 @@ extension ApiService: AuthorizedTargetType {
             
         case .assingLots:
             guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+            
+        case .askIfOrderCanBeFinalized:
+            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        
+        case .getComponents:
+            guard let url = Bundle.main.url(forResource: "getComponents", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

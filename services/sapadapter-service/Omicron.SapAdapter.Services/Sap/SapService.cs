@@ -96,7 +96,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listUsers = await this.GetUsers(userOrders);
 
-            foreach (var x in details)
+            var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
+            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+
+            foreach (var x in listToProcess)
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
@@ -112,7 +115,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, details, null, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
         }
 
         /// <summary>
@@ -130,8 +133,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
                 var detail = await this.sapDao.GetAllDetails(x);
 
+                var listToProcess = detail.Where(y => y.OrdenFabricacionId == 0).ToList();
+                listToProcess.AddRange(detail.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+
                 data.Order = order;
-                data.Detalle = detail.ToList();
+                data.Detalle = listToProcess;
                 listData.Add(data);
             }
 
@@ -152,9 +158,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var data = o.Split("-");
                 int.TryParse(data[0], out int pedidoId);
 
-                var order = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
-                result.Add(order);
+                var orders = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
+                result.AddRange(orders);
             }
+
+            result = result.DistinctBy(x => x.OrdenId).ToList();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(result), null, null);
         }
@@ -164,8 +172,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <param name="returnFirst">if it returns only the first.</param>
+        /// <param name="returnDetails">Return the details.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst)
+        public async Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails)
         {
             var ordenFab = (await this.sapDao.GetFabOrderById(listIds)).ToList();
             var listToReturn = new List<CompleteFormulaWithDetalle>();
@@ -191,6 +200,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
+
+                var details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList();
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
@@ -219,7 +230,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
                     HasBatches = batches.Any(y => y.LotesAsignados.Any()),
-                    Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
+                    HasMissingStock = details.Any(y => y.Stock == 0),
+                    Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -396,9 +408,10 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
                 orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.PedidoId).ToList();
+                var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
-                return ServiceUtils.CreateResult(true, 200, null, orders, null, orders.Count);
+                return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
             var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.PedidoId).ToList();

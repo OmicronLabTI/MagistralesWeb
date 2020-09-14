@@ -9,23 +9,27 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 class  InboxViewModel {
     var finishedDidTap = PublishSubject<Void>()
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
-    var statusData: BehaviorRelay<[Order]> = BehaviorRelay(value: [])
-    var nameStatus: BehaviorRelay<String> = BehaviorRelay(value: "")
-    var validateStatusData: BehaviorRelay<ValidStatusData> = BehaviorRelay(value: ValidStatusData(indexStatusSelected: -1, orders: []))
-    let rootViewModel = RootViewModel()
+    var statusData: BehaviorSubject<[Order]> = BehaviorSubject(value: [])
     var ordersTemp: [Order] = []
     var loading =  PublishSubject<Bool>()
     var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
-
+    var title = PublishSubject<String>()
+    weak var selectedOrder: Order?
     var disposeBag = DisposeBag();
+    var similarityViewButtonDidTap = PublishSubject<Void>()
+    var similarityViewButtonIsEnable = PublishSubject<Bool>()
+    var normalViewButtonDidTap = PublishSubject<Void>()
+    var normalViewButtonIsEnable = PublishSubject<Bool>()
+    
     init() {
         // Funcionalidad para el botón de Terminar
         finishedDidTap.subscribe(onNext: { () in
@@ -38,29 +42,88 @@ class  InboxViewModel {
         // Funcionalidad para el botón de En Proceso
         processDidTap.subscribe(onNext: {
              self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
-            }).disposed(by: disposeBag)
-        
-        rootViewModel.dataStatus.subscribe(onNext: { data in
-            if let assignedData = data.first?.orders {
-                self.statusData.accept(assignedData)
-                self.validateStatusData.accept(ValidStatusData(indexStatusSelected: 0, orders: assignedData))
-            }
         }).disposed(by: disposeBag)
+        
+        // Funcionalidad para agrupar los cards por similitud
+        similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            if (self?.ordersTemp != nil) {
+                let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+                
+                for order in ordering! {
+                    let itemCodeInArray = order.itemCode?.components(separatedBy: "   ")
+                    if let codeProduct = itemCodeInArray?.first {
+                        order.productCode = codeProduct
+                    } else {
+                        order.productCode = ""
+                    }
+                }
+                //var  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
+                
+                //print(groupBySimilarity)
+                
+//                let dataSourcee = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: <#(CollectionViewSectionedDataSource<SectionModel<String, [Order]>>, UICollectionView, IndexPath, SectionModel<String, [Order]>.Item) -> UICollectionViewCell#>)
+                
+                
+//
+//                let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: {dataSource;, cv, indexPath, element}, in
+//
+//
+//                )
+             
+            }
+            
+            
+            
+            self?.similarityViewButtonIsEnable.onNext(false)
+            self?.normalViewButtonIsEnable.onNext(true)
+        }).disposed(by: self.disposeBag)
+        
+        // Funcionalidad para mostrar la vista normal en los cards
+        normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+            self?.statusData.onNext(ordering ?? [])
+            self?.similarityViewButtonIsEnable.onNext(true)
+            self?.normalViewButtonIsEnable.onNext(false)
+        }).disposed(by: self.disposeBag)
     }
     
-    func setSelection(index: Int, section: SectionOrder) -> Void {
-        let ordering = section.orders.sorted  {
+    func setSelection(section: SectionOrder) -> Void {
+        let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
+//        let ordering = section.orders.sorted  {
+//            switch ($0, $1) {
+//            // Order errors by code
+//            case let (aCode, bCode):
+//                return aCode.baseDocument! < bCode.baseDocument!
+//            }
+//        }
+
+        self.statusData.onNext(ordering)
+        self.title.onNext(section.statusName)
+        self.ordersTemp = ordering
+    }
+    
+    func setFilter(orders: [Order]) -> Void {
+        let ordering = self.sortByBaseBocumentAscending(orders: orders)
+//        let ordering = orders.sorted  {
+//            switch ($0, $1) {
+//            // Order errors by codeorders
+//            case let (aCode, bCode):
+//                return aCode.baseDocument! < bCode.baseDocument!
+//            }
+//        }
+
+        self.statusData.onNext(ordering)
+        self.title.onNext("Búsqueda")
+        self.ordersTemp = ordering
+    }
+    
+    func sortByBaseBocumentAscending(orders: [Order]) -> [Order]{
+        orders.sorted  {
             switch ($0, $1) {
-            // Order errors by code
             case let (aCode, bCode):
                 return aCode.baseDocument! < bCode.baseDocument!
             }
         }
-        self.indexSelectedOfTable.onNext(index)
-        self.statusData.accept(ordering)
-        self.nameStatus.accept(section.statusName)
-        self.ordersTemp = ordering
-        self.validateStatusData.accept(ValidStatusData(indexStatusSelected: index, orders: ordering))
     }
     
     func changeStatus(indexPath: [IndexPath]) -> Void {
@@ -78,5 +141,57 @@ class  InboxViewModel {
             self.loading.onNext(false)
             self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    func getStatusName(index: Int) -> String {
+        switch index {
+        case 0:
+            return StatusNameConstants.assignedStatus
+        case 1:
+            return StatusNameConstants.inProcessStatus
+        case 2:
+            return StatusNameConstants.penddingStatus
+        case 3:
+            return StatusNameConstants.finishedStatus
+        case 4:
+            return StatusNameConstants.reassignedStatus
+        default:
+            return ""
+        }
+    }
+    
+    func getStatusName(id: Int) -> String {
+        switch id {
+        case 1:
+            return StatusNameConstants.assignedStatus
+        case 2:
+            return StatusNameConstants.inProcessStatus
+        case 3:
+            return StatusNameConstants.penddingStatus
+        case 4:
+            return StatusNameConstants.finishedStatus
+        case 5:
+            return StatusNameConstants.reassignedStatus
+        default:
+            return ""
+        }
+    }
+    
+    
+    func getStatusId(name: String) -> Int {
+        switch name {
+        case StatusNameConstants.assignedStatus:
+            return 1
+        case StatusNameConstants.inProcessStatus:
+            return 2
+        case StatusNameConstants.penddingStatus:
+            return 3
+        case StatusNameConstants.finishedStatus:
+            return 4
+        case StatusNameConstants.reassignedStatus:
+            return 5
+        default:
+            return -1
+        }
     }
 }

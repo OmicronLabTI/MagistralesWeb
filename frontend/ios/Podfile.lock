@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.2.1)
+  - Differentiator (4.0.1)
   - Eureka (5.2.1)
   - lottie-ios (3.1.8)
   - Moya/Core (14.0.0):
@@ -12,10 +13,15 @@ PODS:
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
+  - RxDataSources (4.0.1):
+    - Differentiator (~> 4.0)
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SignaturePad (1.0.3)
+  - TagListView (1.4.1)
 
 DEPENDENCIES:
   - Eureka
@@ -24,34 +30,42 @@ DEPENDENCIES:
   - ObjectMapper
   - Resolver
   - RxCocoa
+  - RxDataSources
   - RxSwift
   - SignaturePad (~> 1.0.3)
+  - TagListView (~> 1.0)
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Differentiator
     - Eureka
     - lottie-ios
     - Moya
     - ObjectMapper
     - Resolver
     - RxCocoa
+    - RxDataSources
     - RxRelay
     - RxSwift
     - SignaturePad
+    - TagListView
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
+  Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   Eureka: c883105488e05bc65539f583246ecf9657cabbfe
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
   Resolver: 1f4c046255cbadfa97094692e16e940d4329779f
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
+  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: d876e6379c3697bf8c4b53922088eca15104a4e6
+PODFILE CHECKSUM: c5821e53380df0671da1595ff5d8f152e923d592
 
 COCOAPODS: 1.9.3

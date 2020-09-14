@@ -30,6 +30,7 @@ class SignaturePadViewController: UIViewController {
     let diposeBag = DisposeBag()
     //var orderId: Int = -1
     var titleView = ""
+    var originView = ""
     
     // MARK: -Life Cycles
     override func viewDidLoad() {
@@ -57,12 +58,13 @@ class SignaturePadViewController: UIViewController {
     }
     
     func viewModelBinding() {
+        self.signaturePadViewModel.whoRequestSignature.onNext(self.originView)
         self.acceptButton.rx.tap.bind(to: signaturePadViewModel.acceptDidTap).disposed(by: self.diposeBag)
         self.signaturePadViewModel.canGetSignature.drive(self.acceptButton.rx.isEnabled).disposed(by: self.diposeBag)
                         
         // Si el cambio del status a finalización fue éxitosa se regresa a Inbox
-        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            self.dismiss(animated: true)
+        self.signaturePadViewModel.dismissSignatureView.observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self?.dismiss(animated: true)
         }).disposed(by: self.diposeBag)
     }
     

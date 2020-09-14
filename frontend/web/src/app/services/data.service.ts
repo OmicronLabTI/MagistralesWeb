@@ -187,12 +187,12 @@ export class DataService {
   userIsAuthenticated(): boolean {
     return !!localStorage.getItem(ConstToken.accessToken);
   }
-  presentToastCustom(title: string, icon: SweetAlertIcon, text: string = CONST_STRING.empty,
+  presentToastCustom(title: string, icon: SweetAlertIcon, html: string = CONST_STRING.empty,
                      showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
     return new Promise (resolve => {
       Swal.fire({
         title,
-        text,
+        html,
         icon,
         timer: showConfirmButton ? CONST_NUMBER.zero : CONST_NUMBER.timeToast,
         showConfirmButton,
@@ -221,8 +221,12 @@ export class DataService {
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
-  transformDate(date: Date) {
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  transformDate(date: Date, isTest: boolean = false) {
+    if (!isTest) {
+      return this.datePipe.transform(date, 'dd/MM/yyyy');
+    } else {
+      return this.datePipe.transform(date, 'yyyy-MM-dd');
+    }
   }
   getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
@@ -279,31 +283,37 @@ export class DataService {
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }
   }
-  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter) {
+  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter, status?: string) {
     switch (fromToFilter) {
       case FromToFilter.fromOrderIsolatedReassignItems:
         return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
             || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)));
       case FromToFilter.fromOrdersReassign:
         return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.liberado));
+      default:
+        return dataToSearch.filter(t => (t.isChecked && t.status === status));
     }
   }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
     let isSearchWithFilter = false;
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === '')) {
+        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -346,8 +356,15 @@ export class DataService {
         queryString = `${queryString}&code=${resultSearchOrderModal.productCode}`;
         filterDataOrders.productCode = resultSearchOrderModal.productCode;
       }
+      if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
+        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName}`;
+        filterDataOrders.clientName = resultSearchOrderModal.clientName;
+      }
     }
 
     return [filterDataOrders, queryString];
+  }
+  getFormattedNumber(numberToFormatted: any) {
+    return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
 }

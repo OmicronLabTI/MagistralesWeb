@@ -173,10 +173,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="pedidoId">the product id.</param>
         /// <param name="productId">the product id.</param>
         /// <returns>the data.</returns>
-        public async Task<OrdenFabricacionModel> GetProdOrderByOrderProduct(int pedidoId, string productId)
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId)
         {
-            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O").ToListAsync();
-            return query.FirstOrDefault();
+            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O").ToListAsync();
         }
 
         /// <summary>
@@ -261,11 +260,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                     Description = p.LargeDescription,
                                     BaseQuantity = w.BaseQuantity,
                                     RequiredQuantity = w.RequiredQty,
-                                    Consumed = (int)w.ConsumidoQty,
+                                    Consumed = w.ConsumidoQty,
                                     Available = dp.OnHand - dp.IsCommited + dp.OnOrder,
                                     Unit = w.UnidadCode,
                                     Warehouse = w.Almacen,
-                                    PendingQuantity = w.RequiredQty,
+                                    PendingQuantity = w.RequiredQty - w.ConsumidoQty,
                                     Stock = p.OnHand,
                                     WarehouseQuantity = dp.OnHand
                                 }).ToListAsync();

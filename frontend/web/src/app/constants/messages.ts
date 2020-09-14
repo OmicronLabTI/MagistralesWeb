@@ -32,5 +32,8 @@ export const Messages = {
   saveBatches: '¿Deseas guardar la configuración de Lotes para esta orden?',
   batchesNotAvailableQty: 'No hay cantidad disponible para asignar',
   successBatchesSave: 'Se guardó la información con éxito',
-  createIsolatedOrder: '¿Deseas crear la orden de fabricación con el producto '
+  createIsolatedOrder: '¿Deseas crear la orden de fabricación con el producto ',
+  successMyList: 'La lista se ha guardado con éxito',
+  confirmSaveMyList: '¿Desea guardar la lista?',
+  confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?'
 };

@@ -30,17 +30,21 @@ export const Endpoints = {
     finalizeOrdersDetail: `${environment.baseUrl}/api/pedidos/fabOrder/finish`,
     getProducts: `${environment.baseUrl}/api/sapadapter/products`,
     createIsolatedOrder: `${environment.baseUrl}/api/pedidos/fabOrder/isolated`,
-    reAssignManual: `${environment.baseUrl}/api/pedidos/reasignar/manual`
-  },
+    reAssignManual: `${environment.baseUrl}/api/pedidos/reasignar/manual`,
+    getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
+    checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`
+},
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   },
   orders: {
     getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+    saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
+    getWorkLoad: `${environment.baseUrl}/api/pedidos/qfb/workload`,
   }
 };
 

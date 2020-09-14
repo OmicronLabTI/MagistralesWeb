@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
             var resultFormula = await this.GetSapOrders(userOrders);
 
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);
@@ -514,7 +514,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
             orders = orders == null ? new UserOrderModel() : orders;
 
-            var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
             var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
             var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature);
             var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature);
@@ -542,12 +541,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listToUpdate = new List<UserOrderModel> { orders };
 
-            var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
-            saleOrder.Status = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
+            if (!string.IsNullOrEmpty(orders.Salesorderid))
+            {
+                var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
+                var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
 
-            listToUpdate.Add(saleOrder);
+                saleOrder.Status = allOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid).Any(y => y.Status != ServiceConstants.Terminado) ? saleOrder.Status : ServiceConstants.Terminado;
+                listToUpdate.Add(saleOrder);
+            }
+
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
-
             var orderLogs = ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
             await this.pedidosDao.InsertOrderLog(orderLogs);
 
@@ -653,19 +656,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<List<CompleteFormulaWithDetalle>> GetSapOrders(List<UserOrderModel> userOrders)
         {
             var resultFormula = new List<CompleteFormulaWithDetalle>();
+            var listsOfData = ServiceUtils.GetGroupsOfList(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList(), 5);
 
-            await Task.WhenAll(userOrders.Select(async x =>
+            await Task.WhenAll(listsOfData.Select(async x =>
             {
-                if (!string.IsNullOrEmpty(x.Productionorderid))
-                {
-                    var route = $"{ServiceConstants.GetFormula}{x.Productionorderid}";
-                    var result = await this.sapAdapter.GetSapAdapter(route);
+                var route = $"{ServiceConstants.GetFormula}";
+                var listIds = x.Select(y => int.Parse(y.Productionorderid)).ToList();
+                var result = await this.sapAdapter.PostSapAdapter(listIds, route);
 
-                    lock (resultFormula)
-                    {
-                        var formula = JsonConvert.DeserializeObject<CompleteFormulaWithDetalle>(JsonConvert.SerializeObject(result.Response));
-                        resultFormula.Add(formula);
-                    }
+                lock (resultFormula)
+                {
+                    var formula = JsonConvert.DeserializeObject<List<CompleteFormulaWithDetalle>>(JsonConvert.SerializeObject(result.Response));
+                    resultFormula.AddRange(formula);
                 }
             }));
 

@@ -49,8 +49,10 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// gets the formula.
         /// </summary>
         /// <param name="orderId">the order id.</param>
+        /// <param name="returnFirst">If it will return the first.</param>
+        /// <param name="returnDetails">if it will look for details.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetOrderFormula(int orderId);
+        Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails);
 
         /// <summary>
         /// Gets the componenets based in the dic.

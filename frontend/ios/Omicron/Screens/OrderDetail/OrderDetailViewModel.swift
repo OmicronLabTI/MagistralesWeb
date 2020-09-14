@@ -46,7 +46,7 @@ class OrderDetailViewModel {
         
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: disposeBag)
         
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             self?.goToSeeLotsViewController.onNext(())
@@ -54,7 +54,7 @@ class OrderDetailViewModel {
     }
     
     deinit {
-        print("Se muere Order DetailViewController")
+        print("Se muere OrderDetailViewModel")
     }
     
     // MARK: Functions
@@ -132,9 +132,11 @@ class OrderDetailViewModel {
         return self.tempOrderDetailData!
     }
     
+    // Valida si el usuario obtuvo las firmas y finaliza la orden
     func validSignatures() -> Void {
+        
         if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
-            
+            self.loading.onNext(true)
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
 
             NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -142,8 +144,19 @@ class OrderDetailViewModel {
                 self?.backToInboxView.onNext(())
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
             }).disposed(by: self.disposeBag)
         }
+    }
+    
+    func validIfOrderCanBeFinalized() -> Void {
+        self.loading.onNext(true)
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
+            self?.loading.onNext(false)
+            self?.showSignatureView.onNext("Firma del  QFB")
+            //self?.validSignatures()
+            }, onError: { [weak self] error in
+                self?.loading.onNext(false)
+                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+        }).disposed(by: self.disposeBag)
     }
 }

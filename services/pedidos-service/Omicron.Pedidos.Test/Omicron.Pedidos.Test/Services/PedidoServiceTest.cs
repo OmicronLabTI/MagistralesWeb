@@ -131,16 +131,18 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var id = "abc";
 
-            this.sapAdapter
-                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetFormulaDetalle()));
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListFormulaDetalle()));
 
             var mockSaDiApi = new Mock<ISapDiApi>();
             mockSaDiApi
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetFabOrderByUserId(id);

@@ -193,7 +193,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// gets the formula for each order.
         /// </summary>
-        public const string GetFormula = "formula/";
+        public const string GetFormula = "qfb/formula";
 
         /// <summary>
         /// gets the last isolated production order id.

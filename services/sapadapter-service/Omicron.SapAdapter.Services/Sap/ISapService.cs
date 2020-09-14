@@ -51,8 +51,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <param name="returnFirst">if it returns only the first.</param>
+        /// <param name="returnDetails">Return the details.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst);
+        Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails);
 
         /// <summary>
         /// gets the items from the dict.

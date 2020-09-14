@@ -188,7 +188,8 @@ namespace Omicron.Pedidos.Services.Utils
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
                                 ItemCode = sapOrder.Code,
-                                Destiny = destiny.Length < 3 || destiny[destiny.Length - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                                HasMissingStock = sapOrder.HasMissingStock,
+                                Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                             };
 
                             ordersDetail.Add(order);
@@ -314,6 +315,29 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Gets a list divided in sublists.
+        /// </summary>
+        /// <typeparam name="Tsource">the original list.</typeparam>
+        /// <param name="listToSplit">the original list to split.</param>
+        /// <param name="maxCount">the max count per group.</param>
+        /// <returns>the list of list.</returns>
+        public static List<List<Tsource>> GetGroupsOfList<Tsource>(List<Tsource> listToSplit, int maxCount)
+        {
+            var listToReturn = new List<List<Tsource>>();
+            var offset = 0;
+
+            while (offset < listToSplit.Count)
+            {
+                var sublist = new List<Tsource>();
+                sublist.AddRange(listToSplit.Skip(offset).Take(maxCount).ToList());
+                listToReturn.Add(sublist);
+                offset += maxCount;
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// gets the date filter for sap.
         /// </summary>
         /// <param name="filter">the dictionary.</param>
@@ -326,6 +350,18 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return new Dictionary<string, DateTime>();
+        }
+
+        /// <summary>
+        /// Gets the orders with their details.
+        /// </summary>
+        /// <param name="sapAdapter">the sapAdapter.</param>
+        /// <param name="salesOrdersId">the "Pedido" id.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<OrderWithDetailModel>> GetOrdersWithFabOrders(ISapAdapter sapAdapter, List<int> salesOrdersId)
+        {
+            var sapResponse = await sapAdapter.PostSapAdapter(salesOrdersId, ServiceConstants.GetOrderWithDetail);
+            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>

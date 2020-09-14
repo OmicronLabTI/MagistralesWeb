@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockSapServices
-                .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>(), It.IsAny<bool>()))
+                .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>(), It.IsAny<bool>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(response));
 
             mockSapServices
@@ -199,10 +199,10 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetOrderFormula()
         {
             // arrange
-            var ordenId = 1;
+            var ordenId = new List<int> { 1 };
 
             // act
-            var response = await this.sapFacade.GetOrderFormula(ordenId);
+            var response = await this.sapFacade.GetOrderFormula(ordenId, true, true);
 
             // Assert
             Assert.IsNotNull(response);

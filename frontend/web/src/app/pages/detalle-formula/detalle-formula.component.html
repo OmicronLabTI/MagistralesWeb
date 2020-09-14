@@ -6,7 +6,7 @@
         <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / <a class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a> / Fórmula </div>
       </div>
       <div class="filter-select">
-        <div class="docbase">Número de pedido: <span class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
+          <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido:</span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
@@ -16,26 +16,24 @@
     <div class="table-toolbar">
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
-            &nbsp; Lotes
+            Lotes
             </button>
-            <!--<button mat-raised-button class="button-blue">
-            &nbsp; Mi lista de componentes &nbsp; 
+            <button mat-raised-button class="button-blue" (click)="openCustomList()">
+            Mi lista de componentes
             </button>
             &nbsp;
             &nbsp;
-            <button mat-raised-button class="button-blue">
-            &nbsp; Crear lista de componentes &nbsp; 
-            </button>-->
+            <button mat-raised-button (click)="openMiListaDialog()" [ngClass]="isSaveToMyList ? 'button-blue' : 'disable-button'" [disabled]='!isSaveToMyList'>
+            Crear lista de componentes
+            </button>
             <button mat-raised-button class="button-blue" (click)="openDialog()">
-            &nbsp; Agregar componente &nbsp; 
+            Agregar componente
             </button>
-
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
-            &nbsp; Eliminar componente &nbsp; 
+            Eliminar componente
             </button>
-
             <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'" [disabled]="!isReadyToSave" (click)="saveFormulaDetail()">
-            &nbsp; Guardar &nbsp; 
+            Guardar
             </button>
         </div>
     </div>
@@ -54,16 +52,61 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                         <mat-label>Cantidad planificada</mat-label>
-                        <input matInput placeholder="Cantidad planificada" disabled value="{{oldDataFormulaDetail.plannedQuantity}}">
+                        <input matInput
+                               [disabled]="oldDataFormulaDetail.hasBatches"
+                               type="number"
+                               placeholder="Cantidad planificada"
+                               [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
+                               (ngModelChange)="changeData()">
+
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Nombre de</mat-label>
                         <input matInput placeholder="Nombre de" disabled value="{{oldDataFormulaDetail.unit}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
-                        <mat-label>Almacén</mat-label>
-                        <input matInput placeholder="Almacén" disabled value="{{oldDataFormulaDetail.warehouse}}">
-                    </mat-form-field>
+                            <mat-select [(ngModel)]="oldDataFormulaDetail.warehouse" (ngModelChange)="changeData()">
+                                <mat-option value="AMP" >
+                                    AMP
+                                </mat-option>
+                                <mat-option value="BE">
+                                    BE
+                                </mat-option>
+                                <mat-option value="GENERAL">
+                                    GENERAL
+                                </mat-option>
+                                <mat-option value="INCI">
+                                    INCI
+                                </mat-option>
+                                <mat-option value="MER">
+                                    MER
+                                </mat-option>
+                                <mat-option value="MG">
+                                    MG
+                                </mat-option>
+                                <mat-option value="MN">
+                                    MN
+                                </mat-option>
+                                <mat-option value="MP">
+                                    MP
+                                </mat-option>
+                                <mat-option value="PROD">
+                                    PROD
+                                </mat-option>
+                                <mat-option value="PRONATUR">
+                                    PRONATUR
+                                </mat-option>
+                                <mat-option value="PT">
+                                    PT
+                                </mat-option>
+                                <mat-option value="TALLERES">
+                                    TALLERES
+                                </mat-option>
+                                <mat-option value="WEB">
+                                    WEB
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>N°</mat-label>
                         <input matInput placeholder="N°" disabled value="{{ordenFabricacionId}}">
@@ -98,17 +141,21 @@
                         <mat-label>Origen</mat-label>
                         <input matInput placeholder="Origen" disabled value="{{oldDataFormulaDetail.origin}}">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 24%;">
+                    <mat-form-field *ngIf="oldDataFormulaDetail.baseDocument !== 0" appearance="outline" class="generalinput disabled" style="width: 24%;">
                         <mat-label>Pedido de cliente</mat-label>
                         <input matInput placeholder="Pedido de cliente" disabled value="{{oldDataFormulaDetail.number}}">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.7%;">
+                    <mat-form-field *ngIf="oldDataFormulaDetail.baseDocument !== 0" appearance="outline" class="generalinput disabled" style="width: 32.7%;">
                         <mat-label>Cliente</mat-label>
                         <input matInput placeholder="Cliente" disabled value="{{oldDataFormulaDetail.client}}">
                     </mat-form-field>
+                    <mat-form-field *ngIf="oldDataFormulaDetail.baseDocument === 0" appearance="outline" class="generalinput disabled" style="width: 32.5%;">
+                        <mat-label>Cantidad completada</mat-label>
+                        <input matInput placeholder="Cantidad completada" disabled value="{{oldDataFormulaDetail.completeQuantity}}">
+                    </mat-form-field>
                 </div>
                 <div style="margin-top: 10px;">
-                    <mat-form-field appearance="outline" class="generalinput disabled" style="width: 32.5%;">
+                    <mat-form-field *ngIf="oldDataFormulaDetail.baseDocument !== 0" appearance="outline" class="generalinput disabled" style="width: 32.5%;">
                         <mat-label>Cantidad completada</mat-label>
                         <input matInput placeholder="Cantidad completada" disabled value="{{oldDataFormulaDetail.completeQuantity}}">
                     </mat-form-field>
@@ -147,12 +194,14 @@
                 
                     <ng-container matColumnDef="cantbase">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide "> CANTIDAD BASE </th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell mobile-hide cantbase"> <mat-form-field appearance="outline">
-                        <input matInput type="number"
+                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell mobile-hide cantbase">
+                        <mat-form-field appearance="outline">
+                             <input matInput type="number"
                                class="number color-number" placeholder="Cantidad base"
                                [(ngModel)]="element.baseQuantity"
                                (ngModelChange)="onBaseQuantityChange($event, i)">
-                      </mat-form-field> </td>
+                       </mat-form-field>
+                    </td>
                     </ng-container>
             
                     <ng-container matColumnDef="cantreq">
