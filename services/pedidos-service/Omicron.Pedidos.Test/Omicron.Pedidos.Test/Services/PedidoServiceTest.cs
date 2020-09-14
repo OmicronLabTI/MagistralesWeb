@@ -514,6 +514,9 @@ namespace Omicron.Pedidos.Test.Services
             };
             var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
             var mockResult = new ResultModel();
             mockResult.Success = true;
             mockResult.Code = 200;
@@ -523,9 +526,54 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+
+            // act
+            var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CloseSalesOrders_SalesOrderWithPreProductionOrders_FailedResult()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdModel>
+            {
+                new OrderIdModel { OrderId = 104, UserId = "abc", },
+            };
+
+            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
             var mockUsers = new Mock<IUsersService>();
-            var localSapAdapter = new Mock<ISapAdapter>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockResult = new ResultModel();
+            mockResult.Success = true;
+            mockResult.Code = 200;
+            mockResult.Response = JsonConvert.SerializeObject(mockContent);
+
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResult));
+
+            var result = this.GetResultModelCompleteDetailModel();
+            var responseOrders = (List<OrderWithDetailModel>)result.Response;
+            responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 101, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = null });
+            responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 102, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = string.Empty });
+            result.Response = responseOrders;
+
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(result));
+
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
             var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
@@ -547,8 +595,11 @@ namespace Omicron.Pedidos.Test.Services
             {
                 new CloseProductionOrderModel { OrderId = 107, UserId = "abc", },
             };
-            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+
+            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockResult = new ResultModel();
             mockResult.Success = true;
             mockResult.Code = 200;
@@ -558,9 +609,17 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
-            var mockUsers = new Mock<IUsersService>();
-            var localSapAdapter = new Mock<ISapAdapter>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+            var result = this.GetResultModelCompleteDetailModel();
+            var responseOrders = (List<OrderWithDetailModel>)result.Response;
+            responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 101, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = null });
+            responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 102, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = string.Empty });
+            result.Response = responseOrders;
+
+            mockSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(result));
+
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
             var response = await pedidoServiceLocal.CloseFabOrders(salesOrders);
