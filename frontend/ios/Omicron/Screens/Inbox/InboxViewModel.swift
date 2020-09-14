@@ -16,7 +16,6 @@ class  InboxViewModel {
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
-    var statusData: BehaviorSubject<[Order]> = BehaviorSubject(value: [])
     var statusDataGrouped: BehaviorSubject<[SectionModel<String, Order>]> = BehaviorSubject(value: [])
     var ordersTemp: [Order] = []
     var loading =  PublishSubject<Bool>()
@@ -111,7 +110,7 @@ class  InboxViewModel {
     
     func setFilter(orders: [Order]) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
-        self.statusData.onNext(ordering)
+        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
         self.title.onNext("Búsqueda")
         self.ordersTemp = ordering
     }
