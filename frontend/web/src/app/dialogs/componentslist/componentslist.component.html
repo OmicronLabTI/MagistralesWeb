@@ -18,14 +18,6 @@
                     <span>No hay resultados</span>
                 </div>
             </div>        
-            <div class="paginator-container" *ngIf="dataSource.data.length === 0">
-                
-            </div>
-            <div class="paginator-container" *ngIf="dataSource.data.length > 0">
-                <mat-paginator #paginator
-                        [pageSizeOptions]="[5, 10, 15, 20]" showFirstLastButtons 
-                ></mat-paginator>
-            </div>
         </mat-card-content>
     </mat-card>
 </div>
