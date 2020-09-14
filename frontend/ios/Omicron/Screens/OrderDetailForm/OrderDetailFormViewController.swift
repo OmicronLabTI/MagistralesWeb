@@ -18,16 +18,16 @@ class OrderDetailFormViewController:  FormViewController {
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var orderDetailFormViewModel: OrderDetailFormViewModel
     @Injected var lottieManager: LottieManager
-    var dataOfTable: OrderDetail? = nil
+    weak var dataOfTable: OrderDetail? = nil
     var indexOfItemSelected: Int = -1
     var disposeBag = DisposeBag()
-    var baseQuantity: TextRow? = nil
-    var requiredQuantity: TextRow? = nil
+    weak var baseQuantity: TextRow? = nil
+    weak var requiredQuantity: TextRow? = nil
     
     
 //    var baseQuantityToSave: Decimal? = nil
 //    var requiredQuantity:Decimal? = nil
-    var werehouse: PickerInlineRow<String>? = nil
+    weak var werehouse: PickerInlineRow<String>? = nil
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
    
     // MARK: Life cycles
@@ -189,9 +189,9 @@ class OrderDetailFormViewController:  FormViewController {
                     self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
                     self.werehouse = self.form.rowBy(tag: "werehouse")
                     
-                    let alert = UIAlertController(title: CommonStrings.Emty, message: "¿Deseas guardar los cambios ingresados?", preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in self.dismiss(animated: true)})
-                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.saveChanges()})
+                    let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?", message: nil, preferredStyle: .alert)
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {[weak self] _ in self?.dismiss(animated: true)})
+                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {[weak self] res in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)
                     self.present(alert, animated: true, completion: nil)
@@ -229,18 +229,18 @@ class OrderDetailFormViewController:  FormViewController {
             self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
-        orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { message in
+        orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {_ in self.refreshOrderDetail()})
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {_ in self?.refreshOrderDetail()})
             alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
+            self?.present(alert, animated: true, completion: nil)
             
         }).disposed(by: self.disposeBag)
         
         // Aqui es en donde se hace el manda a llamar el servicio para volver a traer los datos de detalle de la fórmnula
-        orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { orderId in
-            self.orderDetailViewModel.getOrdenDetail()
+        orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] orderId in
+            self?.orderDetailViewModel.getOrdenDetail()
         }).disposed(by: self.disposeBag)
     }
     

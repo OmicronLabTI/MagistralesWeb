@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Resolver
+import RxDataSources
 
 class InboxViewController: UIViewController {
     
@@ -40,6 +41,7 @@ class InboxViewController: UIViewController {
         self.initComponents()
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
+        collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
     }
     
@@ -74,6 +76,11 @@ class InboxViewController: UIViewController {
                 self?.processButton.isEnabled = false
             }
         }).disposed(by: disposeBag)
+        
+        // Habilita o deshabilita el botón para cambiar a proceso
+        inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
+            self?.processButton.isEnabled = isEnable
+        }).disposed(by: self.disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -89,20 +96,28 @@ class InboxViewController: UIViewController {
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
+        // Habilita o deshabilita el botón de agrupamiento por similaridad
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             self?.similarityViewButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
+        // Habilita o deshabilita el botón de agrupamiento por vista normal
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             self?.normalViewButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
+        // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
+        inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
+            self?.similarityViewButton.isHidden = isHidden
+            self?.normalViewButton.isHidden = isHidden
+        }).disposed(by: self.disposeBag)
+        
         // Muestra un alert para la confirmación de cambiar el status o no
         inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
-                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems ?? [])
+                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems)
             })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
             alert.addAction(cancelAction)
             alert.addAction(okAction)
@@ -124,24 +139,52 @@ class InboxViewController: UIViewController {
         }).disposed(by: disposeBag)
 
         // Pinta la cards
-        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { [weak self] row, data, cell in
-            cell.row = row
-            cell.order = data
-            cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
-            cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
-            cell.containerDescriptionLabel.text = data.container ?? ""
-            cell.tagDescriptionLabel.text = data.tag ?? ""
-            cell.plannedQuantityDescriptionLabel.text = "\(data.plannedQuantity ?? 0)"
-            cell.startDateDescriptionLabel.text = data.startDate ?? ""
-            cell.finishDateDescriptionLabel.text = data.finishDate ?? ""
-            cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
+        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { (dataSource, cv, indexPath, element) in
+            
+            let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
+            cell.row = indexPath.row
+            cell.order = element
+            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+            cell.baseDocumentDescriptionLabel.text = "\(element.baseDocument ?? 0)"
+            cell.containerDescriptionLabel.text = element.container ?? ""
+            cell.tagDescriptionLabel.text = element.tag ?? ""
+            cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
+            cell.startDateDescriptionLabel.text = element.startDate ?? ""
+            cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
+            cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
             cell.delegate = self
-        }.disposed(by: disposeBag)
+            return cell
+            
+        })
+        
+        dataSource.configureSupplementaryView = {(dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier, for: indexPath) as! HeaderCollectionViewCell
+            header.productID.text = dataSource.sectionModels[indexPath.section].identity
+            return header
+        }
+        
+        inboxViewModel.statusDataGrouped
+            .bind(to: collectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+//        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { [weak self] row, data, cell in
+//            cell.row = row
+//            cell.order = data
+//            cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
+//            cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
+//            cell.containerDescriptionLabel.text = data.container ?? ""
+//            cell.tagDescriptionLabel.text = data.tag ?? ""
+//            cell.plannedQuantityDescriptionLabel.text = "\(data.plannedQuantity ?? 0)"
+//            cell.startDateDescriptionLabel.text = data.startDate ?? ""
+//            cell.finishDateDescriptionLabel.text = data.finishDate ?? ""
+//            cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
+//            cell.delegate = self
+//        }.disposed(by: disposeBag)
         
 //        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(dataSource: RxCollectionViewDataSourceType & UICollectionViewDataSource))
         
         // retorna mensaje si no hay card para cada status
-        inboxViewModel.title.withLatestFrom(inboxViewModel.statusData, resultSelector: { [weak self] title, data in
+        inboxViewModel.title.withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
             var message: String = ""
             if (data.count == 0 && statusId != -1) {
@@ -151,7 +194,7 @@ class InboxViewController: UIViewController {
         }).subscribe().disposed(by: disposeBag)
     }
 
-    func initComponents() -> Void {
+    func initComponents() {
         self.processButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
@@ -160,6 +203,12 @@ class InboxViewController: UIViewController {
         self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
         self.normalViewButton.setTitle("", for: .normal)
         self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 80)
+        layout.itemSize = CGSize(width: 300, height: 250)
+        collectionView.setCollectionViewLayout(layout, animated: true)
+        
     }
     
     func chageStatusName(index: Int) -> Void {

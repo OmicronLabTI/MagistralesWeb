@@ -422,9 +422,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<string> GetBatchCode(string productCode, string batchCode)
         {
             return await (from batch in this.databaseContext.Batches
-                          where batch.ItemCode.Equals(productCode)
-                          && batch.DistNumber.Equals(batchCode)
-                          select batch.DistNumber).Take(1).FirstOrDefaultAsync();
+                            where batch.ItemCode.Equals(productCode)
+                                && batch.DistNumber.Equals(batchCode)
+                            select batch.DistNumber).Take(1).FirstOrDefaultAsync();
         }
 
         /// <summary>

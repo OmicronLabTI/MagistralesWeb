@@ -31,13 +31,13 @@ class  OrderDetailFormViewModel {
         
         let order = OrderDetailRequest(fabOrderID: (data.productionOrderID)!, plannedQuantity: (data.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
         
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { res in
-            self.loading.onNext(false)
-             self.showAlert.onNext("Se registraron los cambios correctamente")
-           self.success.onNext(data.details![index].orderFabID!)
-        }, onError: {  error in
-            self.loading.onNext(false)
-            self.showAlert.onNext("Hubo un error al editar el elemento,  intente de nuevo")
+        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+            self?.loading.onNext(false)
+             self?.showAlert.onNext("Se registraron los cambios correctamente")
+           self?.success.onNext(data.details![index].orderFabID!)
+        }, onError: {  [weak self] error in
+            self?.loading.onNext(false)
+            self?.showAlert.onNext("Hubo un error al editar el elemento,  intente de nuevo")
         }).disposed(by: self.disposeBag)
     }
 }

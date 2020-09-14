@@ -15,7 +15,7 @@ class OrderDetailViewModel {
     // MARK: Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
-    var tempOrderDetailData: OrderDetail? = nil
+    weak var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmationProcess = PublishSubject<String>()
@@ -153,7 +153,6 @@ class OrderDetailViewModel {
         NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.showSignatureView.onNext("Firma del  QFB")
-            //self?.validSignatures()
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
                 self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
