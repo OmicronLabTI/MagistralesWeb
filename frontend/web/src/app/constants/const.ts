@@ -95,6 +95,7 @@ export const ConstToken = {
     rememberSession: 'session-re',
     userId: 'userId',
     userName: 'userName',
+    userRole: 'role'
 };
 export const BOOLEANS = {
     verdadero: true,

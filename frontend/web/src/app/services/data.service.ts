@@ -374,4 +374,12 @@ export class DataService {
          isAdd ? date.getMonth() + moths : date.getMonth() - moths ,
         date.getDate());
   }
+
+  setUserRole(role: number) {
+    localStorage.setItem(ConstToken.userRole, role);
+  }
+
+  getUserRole() {
+    return localStorage.getItem(ConstToken.userRole);
+  }
 }
