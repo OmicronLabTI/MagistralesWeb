@@ -5,7 +5,7 @@ import { BaseComponent } from 'src/app/model/http/listacomponentes';
 import { DataService } from 'src/app/services/data.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
-import { MatPaginator, MatTableDataSource} from '@angular/material';
+import { MatTableDataSource} from '@angular/material';
 
 @Component({
   selector: 'app-componentslist',
@@ -15,7 +15,7 @@ import { MatPaginator, MatTableDataSource} from '@angular/material';
 export class ComponentslistComponent implements AfterViewInit {
   displayedColumns: string[] = ['nombre'];
   dataSource = new MatTableDataSource<BaseComponent>();
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+
   constructor(
     private dialogRef: MatDialogRef<ComponentslistComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -24,7 +24,6 @@ export class ComponentslistComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.getCustomList();
   }
 

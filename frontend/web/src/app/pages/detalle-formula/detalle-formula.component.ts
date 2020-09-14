@@ -153,7 +153,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
-              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
+              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( (res) => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
               }, error => {
@@ -262,7 +262,11 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
     }).afterClosed().subscribe((result) => {
-      this.isSaveToMyList = false;
+      if (result) {
+        this.isSaveToMyList = false;
+      } else {
+        this.isSaveToMyList = true;
+      }
     });
   }
 
@@ -282,13 +286,15 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
     }).afterClosed().subscribe((result) => {
-      console.log('al cerrar modal: ', result);
       this.replaceComponentsWithCustomList(result.componentes);
     });
   }
 
   replaceComponentsWithCustomList(components: Components[]) {
-    this.componentsToDelete.push(...this.dataSource.data.filter( component => component));
+    this.componentsToDelete.push(...this.dataSource.data.filter(
+      component =>
+        (component.isInDb === undefined)
+    ));
     const newData: IFormulaDetalleReq[] = [];
     // tslint:disable-next-line: radix
     const orderFabricacionId = parseInt(this.ordenFabricacionId);
@@ -307,7 +313,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         pendingQuantity: 0,
         stock: 0,
         warehouseQuantity: 10,
-        action: CONST_DETAIL_FORMULA.insert
+        action: CONST_DETAIL_FORMULA.insert,
+        isInDb: false
       });
     });
     this.dataSource.data = newData;
