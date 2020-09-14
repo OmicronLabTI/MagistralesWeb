@@ -48,9 +48,10 @@ class  InboxViewModel {
         // Funcionalidad para agrupar los cards por similitud
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             if (self?.ordersTemp != nil) {
-                let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+                var sectionModels:[SectionModel<String, Order>] = []
+                //let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
                 
-                for order in ordering! {
+                for order in self!.ordersTemp {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: "   ")
                     if let codeProduct = itemCodeInArray?.first {
                         order.productCode = codeProduct
@@ -58,17 +59,32 @@ class  InboxViewModel {
                         order.productCode = ""
                     }
                 }
+                            
+                // Se agrupa las ordenes por código de producto
+                let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
                 
-                let  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
+                // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
+                let groupBySimilarity = dataGroupedByProductCode.filter{$0.value.count > 1}
+                if (groupBySimilarity.count > 0) {
+                    let sectionsModelsBySimilarity = groupBySimilarity.map( { (orders) -> SectionModel<String, Order> in
+                        return SectionModel(model: "Producto: \(orders.key ?? "")", items: self!.sortByBaseBocumentAscending(orders: orders.value))
+                    })
+                    sectionModels.append(contentsOf: sectionsModelsBySimilarity)
+                }
                 
-                let sectionsModels = groupBySimilarity.map({ (orders) -> SectionModel<String, Order> in
+                // Se extraen las ordenes que solo contengan una coincidencia por código de producto y agruparlas por "Sin similitud"
+                let groupWithoutSimilarity = dataGroupedByProductCode.filter{$0.value.count == 1}
+                if (groupWithoutSimilarity.count > 0) {
+                    var orders:[Order] = []
+                    for order in groupWithoutSimilarity {
+                        orders.append(contentsOf: order.value)
+                    }
                     
-                    return SectionModel(model: orders.key ?? "", items: orders.value)
-                    
-                })
-                
-                self?.statusDataGrouped.onNext(sectionsModels)
-
+                    let orderedCars = self?.sortByBaseBocumentAscending(orders: orders)
+                    sectionModels.append(SectionModel(model: "Sin similitud", items: orderedCars ?? []))
+                }
+            
+                self?.statusDataGrouped.onNext(sectionModels)
             }
             
             self?.similarityViewButtonIsEnable.onNext(false)
@@ -86,29 +102,15 @@ class  InboxViewModel {
     
     func setSelection(section: SectionOrder) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
-//        let ordering = section.orders.sorted  {
-//            switch ($0, $1) {
-//            // Order errors by code
-//            case let (aCode, bCode):
-//                return aCode.baseDocument! < bCode.baseDocument!
-//            }
-//        }
-
-        self.statusData.onNext(ordering)
+        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
         self.title.onNext(section.statusName)
         self.ordersTemp = ordering
+        self.similarityViewButtonIsEnable.onNext(true)
+        self.normalViewButtonIsEnable.onNext(false)
     }
     
     func setFilter(orders: [Order]) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
-//        let ordering = orders.sorted  {
-//            switch ($0, $1) {
-//            // Order errors by codeorders
-//            case let (aCode, bCode):
-//                return aCode.baseDocument! < bCode.baseDocument!
-//            }
-//        }
-
         self.statusData.onNext(ordering)
         self.title.onNext("Búsqueda")
         self.ordersTemp = ordering

@@ -126,7 +126,6 @@ class InboxViewController: UIViewController {
         }).disposed(by: disposeBag)
 
         // Pinta la cards
-        
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { (dataSource, cv, indexPath, element) in
             
             let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
@@ -172,7 +171,7 @@ class InboxViewController: UIViewController {
 //        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(dataSource: RxCollectionViewDataSourceType & UICollectionViewDataSource))
         
         // retorna mensaje si no hay card para cada status
-        inboxViewModel.title.withLatestFrom(inboxViewModel.statusData, resultSelector: { [weak self] title, data in
+        inboxViewModel.title.withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
             var message: String = ""
             if (data.count == 0 && statusId != -1) {
