@@ -58,13 +58,13 @@ class ComponentsViewController: UIViewController {
             cell.textLabel?.text = data.description
         }.disposed(by: disposeBag)
         
-        self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { data in
-            self.componentsViewModel.selectedComponent.onNext(data)
+        self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
+            self?.componentsViewModel.selectedComponent.onNext(data)
             let compFormVC = ComponentFormViewController()
-            self.navigationController?.pushViewController(compFormVC, animated: true)
+            self?.navigationController?.pushViewController(compFormVC, animated: true)
         }).disposed(by: disposeBag)
         
-        self.componentsViewModel.loading.subscribe(onNext: { loading in
+        self.componentsViewModel.loading.subscribe(onNext: {loading in
             if loading {
                 LottieManager.shared.showLoading()
                 return

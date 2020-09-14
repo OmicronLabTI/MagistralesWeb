@@ -149,14 +149,14 @@ class  InboxViewModel {
 //            orders.append(order)
 //        }
         
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
-            self.loading.onNext(false)
-            self.refreshDataWhenChangeProcessIsSucces.onNext(())
-            self.processButtonIsEnable.onNext(false)
-        }, onError: { error in
-            self.loading.onNext(false)
-            self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
-            self.processButtonIsEnable.onNext(true)
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self?.loading.onNext(false)
+            self?.refreshDataWhenChangeProcessIsSucces.onNext(())
+            self?.processButtonIsEnable.onNext(false)
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+            self?.processButtonIsEnable.onNext(true)
         }).disposed(by: self.disposeBag)
     }
     

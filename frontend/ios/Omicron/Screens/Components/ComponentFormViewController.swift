@@ -20,9 +20,9 @@ class ComponentFormViewController: FormViewController {
     @Injected var inboxViewModel: InboxViewModel
     
     var disposeBag = DisposeBag()
-    var baseQuantity: TextRow? = nil
-    var requiredQuantity: TextRow? = nil
-    var warehouse: PickerInlineRow<String>? = nil
+    weak var baseQuantity: TextRow? = nil
+    weak var requiredQuantity: TextRow? = nil
+    weak var warehouse: PickerInlineRow<String>? = nil
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     
     deinit {
