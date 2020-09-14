@@ -197,7 +197,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
-            cell.descriptionLabel.text = data.detailDescription
+            cell.descriptionLabel.text = data.detailDescription?.uppercased()
             cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
             cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
