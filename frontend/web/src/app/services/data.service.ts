@@ -376,7 +376,7 @@ export class DataService {
   }
 
   setUserRole(role: number) {
-    localStorage.setItem(ConstToken.userRole, role);
+    localStorage.setItem(ConstToken.userRole, String(role));
   }
 
   getUserRole() {
