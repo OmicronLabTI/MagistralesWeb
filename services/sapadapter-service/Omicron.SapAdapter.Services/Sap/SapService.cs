@@ -377,6 +377,18 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Validate if exists batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the batch code.</param>
+        /// <returns>the validation result.</returns>
+        public async Task<ResultModel> ValidateIfExistsBatchCodeByItemCode(string productCode, string batchCode)
+        {
+            var existingBatchCode = await this.sapDao.GetBatchCode(productCode, batchCode);
+            return ServiceUtils.CreateResult(true, 200, null, !string.IsNullOrEmpty(existingBatchCode), null, null);
+        }
+
+        /// <summary>
         /// Gets the ordersby the filter.
         /// </summary>
         /// <param name="orderFabModel">the params.</param>

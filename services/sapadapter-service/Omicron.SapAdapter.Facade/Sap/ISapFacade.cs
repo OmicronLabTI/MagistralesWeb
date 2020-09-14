@@ -82,6 +82,14 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetNextBatchCode(string productCode);
 
         /// <summary>
+        /// Validate if exists batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the batch code.</param>
+        /// <returns>the validation result.</returns>
+        Task<ResultDto> ValidateIfExistsBatchCodeByItemCode(string productCode, string batchCode);
+
+        /// <summary>
         /// Look for the orders.
         /// </summary>
         /// <param name="orderFabDto">the parameters.</param>
