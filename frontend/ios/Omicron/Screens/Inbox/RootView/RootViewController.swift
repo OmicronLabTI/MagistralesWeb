@@ -140,12 +140,14 @@ class RootViewController: UIViewController {
                 guard let section = self?.rootViewModel.sections[selection.row] else { return }
                 self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
                 self?.inboxViewModel.setSelection(section: section)
+                self?.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
             self?.viewTable.alpha = 0.25
             self?.viewTable.isUserInteractionEnabled = false
             self?.viewTable.deselectRow(at: selection, animated: false)
             self?.inboxViewModel.setFilter(orders: data ?? [])
+            self?.inboxViewModel.hideGroupingButtons.onNext(true)
         }).subscribe().disposed(by: disposeBag)
     }
     

@@ -31,6 +31,7 @@ class  InboxViewModel {
     var normalViewButtonDidTap = PublishSubject<Void>()
     var normalViewButtonIsEnable = PublishSubject<Bool>()
     var processButtonIsEnable = PublishSubject<Bool>()
+    var hideGroupingButtons = PublishSubject<Bool>()
     
     init() {
         // Funcionalidad para el botón de Terminar

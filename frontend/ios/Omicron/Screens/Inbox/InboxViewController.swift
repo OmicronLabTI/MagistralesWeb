@@ -96,12 +96,20 @@ class InboxViewController: UIViewController {
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         
+        // Habilita o deshabilita el botón de agrupamiento por similaridad
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             self?.similarityViewButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
+        // Habilita o deshabilita el botón de agrupamiento por vista normal
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             self?.normalViewButton.isEnabled = isEnabled
+        }).disposed(by: self.disposeBag)
+        
+        // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
+        inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
+            self?.similarityViewButton.isHidden = isHidden
+            self?.normalViewButton.isHidden = isHidden
         }).disposed(by: self.disposeBag)
         
         // Muestra un alert para la confirmación de cambiar el status o no
