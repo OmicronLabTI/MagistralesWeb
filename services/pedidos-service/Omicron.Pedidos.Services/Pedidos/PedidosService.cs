@@ -358,7 +358,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 // Validate with SAP pre-production orders.
-                if ((await this.GetPreProductionOrdersFromSap(salesOrder)).Any())
+                if ((await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter)).Any())
                 {
                     failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonPreProductionOrdersInSap));
                     continue;
@@ -506,7 +506,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var salesOrderIdAsInt = int.Parse(salesOrderToValidate.Value);
 
                 var (salesOrder, productionOrders) = await this.GetRelatedOrdersToSalesOrder(salesOrderIdAsInt, ServiceConstants.Cancelled);
-                var preProductionOrders = await this.GetPreProductionOrdersFromSap(salesOrder);
+                var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
 
                 if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)) && !preProductionOrders.Any())
                 {
@@ -665,7 +665,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
                 var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
                 var areInvalidOrders = allOrders.Any(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
-                var preProdOrderSap = await this.GetPreProductionOrdersFromSap(saleOrder);
+                var preProdOrderSap = await ServiceUtils.GetPreProductionOrdersFromSap(saleOrder, this.sapAdapter);
 
                 saleOrder.Status = areInvalidOrders || preProdOrderSap.Any() ? saleOrder.Status : ServiceConstants.Terminado;
                 listToUpdate.Add(saleOrder);
@@ -808,32 +808,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
 
             return (relatedOrders.FirstOrDefault(x => x.IsSalesOrder), productionOrders.ToList());
-        }
-
-        /// <summary>
-        /// Get sales order from SAP.
-        /// </summary>
-        /// <param name="salesOrderId">Sales order id.</param>
-        /// <returns>Sales order.</returns>
-        private async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId)
-        {
-            var orders = await this.sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-            var sapOrder = sapOrders.FirstOrDefault();
-            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
-            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
-            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
-        }
-
-        /// <summary>
-        /// Get sales order from SAP.
-        /// </summary>
-        /// <param name="salesOrder">Sales order in local db.</param>
-        /// <returns>Preproduction orders.</returns>
-        private async Task<List<CompleteDetailOrderModel>> GetPreProductionOrdersFromSap(UserOrderModel salesOrder)
-        {
-            var sapResults = await this.GetSalesOrdersFromSap(int.Parse(salesOrder.Salesorderid));
-            return sapResults.PreProductionOrders;
         }
     }
 }
