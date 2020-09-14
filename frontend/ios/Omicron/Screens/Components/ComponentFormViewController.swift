@@ -67,13 +67,12 @@ class ComponentFormViewController: FormViewController {
             <<< TextRow() { [weak self] in
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                let baseQty = component.baseQuantity ?? 0.0
-                $0.value = (component.unit == "Pieza") ? String(format: "%.0f", baseQty as NSDecimalNumber) : self?.formatter.string(from: baseQty as NSDecimalNumber)
+                $0.value = ""
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
-                    if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false) {
+                    if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false && !row.value!.isEmpty) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
                         let requiredQuantity = Decimal(order.plannedQuantity ?? 0)
@@ -116,13 +115,13 @@ class ComponentFormViewController: FormViewController {
             
             <<< TextRow() { [weak self] in
                 $0.title = "Cantidad requerida: "
-                $0.value = component.unit == "Pieza" ? String(format: "%.0f", (component.requiredQuantity ?? 0) as CVarArg) : self?.formatter.string(from: NSDecimalNumber(decimal: component.requiredQuantity ?? 0))
+                $0.value = ""
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
-                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false)) {
+                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false && !row.value!.isEmpty)) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
                         let baseQuantity = Decimal(order.plannedQuantity ?? 0)
                         let result = requiredQuantity!  / baseQuantity
