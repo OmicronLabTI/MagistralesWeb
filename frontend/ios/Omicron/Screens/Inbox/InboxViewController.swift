@@ -76,6 +76,11 @@ class InboxViewController: UIViewController {
                 self?.processButton.isEnabled = false
             }
         }).disposed(by: disposeBag)
+        
+        // Habilita o deshabilita el botón para cambiar a proceso
+        inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
+            self?.processButton.isEnabled = isEnable
+        }).disposed(by: self.disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -104,7 +109,7 @@ class InboxViewController: UIViewController {
             let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
-                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems ?? [])
+                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems)
             })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
             alert.addAction(cancelAction)
             alert.addAction(okAction)
