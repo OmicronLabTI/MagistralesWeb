@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -193,26 +194,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 return saleOrder.Status;
             }
-            else if (userOrders.Any(x => x.Status.Equals(ServiceConstants.Planificado)))
-            {
-                return ServiceConstants.Planificado;
-            }
-            else if (userOrders.Any(x => ServiceConstants.ValidStatusLiberado.Contains(x.Status)))
-            {
-                return ServiceConstants.Liberado;
-            }
-            else if (userOrders.Any(x => x.Status.Equals(ServiceConstants.Terminado)))
-            {
-                return ServiceConstants.Terminado;
-            }
-            else if (userOrders.Any(x => x.Status.Equals(ServiceConstants.Finalizado)))
-            {
-                return ServiceConstants.Finalizado;
-            }
-            else
-            {
-                return ServiceConstants.Cancelled;
-            }
+
+            var minValue = userOrders.OrderBy(x => x.StatusOrder).FirstOrDefault();
+            var status = ((StatusEnum)minValue.StatusOrder).ToString();
+            return ServiceConstants.ValidStatusLiberado.Contains(minValue.Status) ? ServiceConstants.Liberado : status;
         }
 
         /// <summary>
