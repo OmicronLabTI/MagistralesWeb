@@ -78,7 +78,7 @@ class  InboxViewModel {
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
-            self?.statusData.onNext(ordering ?? [])
+            self?.statusDataGrouped.onNext([SectionModel(model: "", items: ordering ?? [])])
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.normalViewButtonIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
