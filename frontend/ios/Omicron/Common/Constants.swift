@@ -48,6 +48,8 @@ struct ViewControllerIdentifiers {
     static let signaturePadViewController = "SignaturePadViewController"
     static let componentsViewController = "ComponentsViewController"
     static let componentsTableViewCell = "ComponentsTableViewCell"
+    static let headerCollectionViewCell = "HeaderCollectionViewCell"
+    static let headerReuseIdentifier = "header"
 }
 
 struct OmicronColors {
@@ -87,7 +89,7 @@ struct CommonStrings {
     static let Emty = ""
     static let OK = "OK"
     static let cancel = "Cancelar"
-    static let searchOrden = "Buscar orden"
+    static let searchOrden = "Buscar orden / pedido"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
     static let addComponentTitle = "Agregar Componentes"

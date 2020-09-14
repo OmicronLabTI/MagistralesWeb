@@ -16,8 +16,9 @@ class  InboxViewModel {
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
-    var statusData: BehaviorSubject<[Order]> = BehaviorSubject(value: [])
+    var statusDataGrouped: BehaviorSubject<[SectionModel<String, Order>]> = BehaviorSubject(value: [])
     var ordersTemp: [Order] = []
+    var sectionOrders: [SectionModel<String, Order>] = []
     var loading =  PublishSubject<Bool>()
     var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
@@ -29,6 +30,8 @@ class  InboxViewModel {
     var similarityViewButtonIsEnable = PublishSubject<Bool>()
     var normalViewButtonDidTap = PublishSubject<Void>()
     var normalViewButtonIsEnable = PublishSubject<Bool>()
+    var processButtonIsEnable = PublishSubject<Bool>()
+    var hideGroupingButtons = PublishSubject<Bool>()
     
     init() {
         // Funcionalidad para el botón de Terminar
@@ -46,10 +49,13 @@ class  InboxViewModel {
         
         // Funcionalidad para agrupar los cards por similitud
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            
+            self?.processButtonIsEnable.onNext(false)
+            
             if (self?.ordersTemp != nil) {
-                let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
-                
-                for order in ordering! {
+                var sectionModels:[SectionModel<String, Order>] = []
+
+                for order in self!.ordersTemp {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: "   ")
                     if let codeProduct = itemCodeInArray?.first {
                         order.productCode = codeProduct
@@ -57,22 +63,33 @@ class  InboxViewModel {
                         order.productCode = ""
                     }
                 }
-                //var  groupBySimilarity = Dictionary(grouping: ordering!, by: {$0.productCode})
+                            
+                // Se agrupa las ordenes por código de producto
+                let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
                 
-                //print(groupBySimilarity)
+                // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
+                let groupBySimilarity = dataGroupedByProductCode.filter{$0.value.count > 1}
+                if (groupBySimilarity.count > 0) {
+                    let sectionsModelsBySimilarity = groupBySimilarity.map( { (orders) -> SectionModel<String, Order> in
+                        return SectionModel(model: "Producto: \(orders.key ?? "")", items: self!.sortByBaseBocumentAscending(orders: orders.value))
+                    })
+                    sectionModels.append(contentsOf: sectionsModelsBySimilarity)
+                }
                 
-//                let dataSourcee = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: <#(CollectionViewSectionedDataSource<SectionModel<String, [Order]>>, UICollectionView, IndexPath, SectionModel<String, [Order]>.Item) -> UICollectionViewCell#>)
-                
-                
-//
-//                let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, [Order]>>(configureCell: {dataSource;, cv, indexPath, element}, in
-//
-//
-//                )
-             
+                // Se extraen las ordenes que solo contengan una coincidencia por código de producto y agruparlas por "Sin similitud"
+                let groupWithoutSimilarity = dataGroupedByProductCode.filter{$0.value.count == 1}
+                if (groupWithoutSimilarity.count > 0) {
+                    var orders:[Order] = []
+                    for order in groupWithoutSimilarity {
+                        orders.append(contentsOf: order.value)
+                    }
+                    
+                    let orderedCars = self?.sortByBaseBocumentAscending(orders: orders)
+                    sectionModels.append(SectionModel(model: "Sin similitud", items: orderedCars ?? []))
+                }
+                self?.sectionOrders = sectionModels
+                self?.statusDataGrouped.onNext(sectionModels)
             }
-            
-            
             
             self?.similarityViewButtonIsEnable.onNext(false)
             self?.normalViewButtonIsEnable.onNext(true)
@@ -80,8 +97,10 @@ class  InboxViewModel {
         
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            self?.processButtonIsEnable.onNext(false)
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
-            self?.statusData.onNext(ordering ?? [])
+            self?.sectionOrders = [SectionModel(model: "", items: ordering ?? [])]
+            self?.statusDataGrouped.onNext([SectionModel(model: "", items: ordering ?? [])])
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.normalViewButtonIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
@@ -89,30 +108,18 @@ class  InboxViewModel {
     
     func setSelection(section: SectionOrder) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
-//        let ordering = section.orders.sorted  {
-//            switch ($0, $1) {
-//            // Order errors by code
-//            case let (aCode, bCode):
-//                return aCode.baseDocument! < bCode.baseDocument!
-//            }
-//        }
-
-        self.statusData.onNext(ordering)
+        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
+        self.sectionOrders = [SectionModel(model: "", items: ordering)]
         self.title.onNext(section.statusName)
         self.ordersTemp = ordering
+        self.similarityViewButtonIsEnable.onNext(true)
+        self.normalViewButtonIsEnable.onNext(false)
     }
     
     func setFilter(orders: [Order]) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
-//        let ordering = orders.sorted  {
-//            switch ($0, $1) {
-//            // Order errors by codeorders
-//            case let (aCode, bCode):
-//                return aCode.baseDocument! < bCode.baseDocument!
-//            }
-//        }
-
-        self.statusData.onNext(ordering)
+        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
+        self.sectionOrders = [SectionModel(model: "", items: ordering)]
         self.title.onNext("Búsqueda")
         self.ordersTemp = ordering
     }
@@ -126,20 +133,31 @@ class  InboxViewModel {
         }
     }
     
-    func changeStatus(indexPath: [IndexPath]) -> Void {
+    func changeStatus(indexPath: [IndexPath]?) -> Void {
         self.loading.onNext(true)
-        var orders:[ChangeStatusRequest] = []
-        for index in indexPath {
-            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: ordersTemp[index.row].productionOrderId!, status: "Proceso")
+        
+        // Obtiene las ordenes a cambiar de status a proceso mediante el indexPath
+        var orders: [ChangeStatusRequest] = []
+        for index in indexPath! {
+            let card = self.sectionOrders[index.section].items[index.row]
+            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: card.productionOrderId!, status: "Proceso")
             orders.append(order)
         }
         
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {_ in
-            self.loading.onNext(false)
-            self.refreshDataWhenChangeProcessIsSucces.onNext(())
-        }, onError: { error in
-            self.loading.onNext(false)
-            self.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+//        var orders:[ChangeStatusRequest] = []
+//        for index in indexPath {
+//            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: ordersTemp[index.row].productionOrderId!, status: "Proceso")
+//            orders.append(order)
+//        }
+        
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self?.loading.onNext(false)
+            self?.refreshDataWhenChangeProcessIsSucces.onNext(())
+            self?.processButtonIsEnable.onNext(false)
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+            self?.processButtonIsEnable.onNext(true)
         }).disposed(by: self.disposeBag)
     }
     

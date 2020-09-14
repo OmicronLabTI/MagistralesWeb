@@ -75,7 +75,7 @@ class RootViewController: UIViewController {
         self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
         
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
-        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let loginViewController = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
             UIApplication.shared.windows.first?.rootViewController = loginViewController
@@ -140,12 +140,14 @@ class RootViewController: UIViewController {
                 guard let section = self?.rootViewModel.sections[selection.row] else { return }
                 self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
                 self?.inboxViewModel.setSelection(section: section)
+                self?.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
             self?.viewTable.alpha = 0.25
             self?.viewTable.isUserInteractionEnabled = false
             self?.viewTable.deselectRow(at: selection, animated: false)
             self?.inboxViewModel.setFilter(orders: data ?? [])
+            self?.inboxViewModel.hideGroupingButtons.onNext(true)
         }).subscribe().disposed(by: disposeBag)
     }
     
