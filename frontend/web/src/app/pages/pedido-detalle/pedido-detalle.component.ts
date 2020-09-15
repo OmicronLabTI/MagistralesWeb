@@ -97,7 +97,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
               element.class = 'pdfinalizado';
               break;
           }
-          element.descripcionProducto = this.dataService.getStringUpperCase(element.descripcionProducto);
+          element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
