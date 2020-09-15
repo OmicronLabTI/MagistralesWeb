@@ -26,7 +26,6 @@ class InboxViewController: UIViewController {
     // MARK:  Variables
     
     private var bindingCollectionView = true
-    private let cardWidth = UIScreen.main.bounds.width / 2.5
     
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
@@ -209,10 +208,10 @@ class InboxViewController: UIViewController {
         
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
-        layout.itemSize = CGSize(width: 300, height: 250)
+        layout.itemSize = CGSize(width: 355, height: 250)
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -40
-        
+        print(UIScreen.main.bounds.width)
     }
     
     func chageStatusName(index: Int) -> Void {
