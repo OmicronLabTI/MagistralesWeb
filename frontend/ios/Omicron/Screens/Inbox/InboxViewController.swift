@@ -22,10 +22,10 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
     
+    @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     // MARK:  Variables
     
     private var bindingCollectionView = true
-    private let cardWidth = UIScreen.main.bounds.width / 2.5
     
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
@@ -46,6 +46,7 @@ class InboxViewController: UIViewController {
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
+        pendingButton.isHidden = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -141,12 +142,15 @@ class InboxViewController: UIViewController {
         
         // Habilita o deshabilita el botón de agrupamiento por similaridad
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
-            self?.similarityViewButton.isEnabled = isEnabled
+            guard let self = self else { return }
+            self.similarityViewButton.isEnabled = isEnabled
+            self.heigthCollectionViewConstraint.constant = !isEnabled ? 8 : -40
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
-            self?.normalViewButton.isEnabled = isEnabled
+            guard let self = self else { return }
+            self.normalViewButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
@@ -203,10 +207,11 @@ class InboxViewController: UIViewController {
         self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
         
         let layout = UICollectionViewFlowLayout()
-        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 80)
-        layout.itemSize = CGSize(width: 300, height: 250)
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
+        layout.itemSize = CGSize(width: 355, height: 250)
         collectionView.setCollectionViewLayout(layout, animated: true)
-        
+        heigthCollectionViewConstraint.constant = -40
+        print(UIScreen.main.bounds.width)
     }
     
     func chageStatusName(index: Int) -> Void {
