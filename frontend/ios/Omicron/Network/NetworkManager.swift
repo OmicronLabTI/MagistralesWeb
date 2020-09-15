@@ -34,18 +34,18 @@ class NetworkManager: SessionProtocol {
     // MARK: Init
     
     // Para consumir mock
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
-    ])) {
-        self.provider = provider
-    }
-    
-//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
-//        NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
-//        ])) {
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
+//    ])) {
 //        self.provider = provider
 //    }
+    
+    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
+        NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
+        ])) {
+        self.provider = provider
+    }
     
     // MARK: Functions
     
