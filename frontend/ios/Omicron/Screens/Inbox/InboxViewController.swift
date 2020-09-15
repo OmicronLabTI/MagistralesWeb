@@ -47,8 +47,44 @@ class InboxViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
+        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
         self.splitViewController?.presentsWithGesture = false
+        
+        viewModelBindingCollectionView()
+        
+    }
+    
+    func viewModelBindingCollectionView() {
+        
+        // Pinta la cards
+        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { (dataSource, cv, indexPath, element) in
+            
+            let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
+            cell.row = indexPath.row
+            cell.order = element
+            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+            cell.baseDocumentDescriptionLabel.text = "\(element.baseDocument ?? 0)"
+            cell.containerDescriptionLabel.text = element.container ?? ""
+            cell.tagDescriptionLabel.text = element.tag ?? ""
+            cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
+            cell.startDateDescriptionLabel.text = element.startDate ?? ""
+            cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
+            cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+            cell.delegate = self
+            return cell
+            
+        })
+        
+        dataSource.configureSupplementaryView = {(dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier, for: indexPath) as! HeaderCollectionViewCell
+            header.productID.text = dataSource.sectionModels[indexPath.section].identity
+            return header
+        }
+        
+        inboxViewModel.statusDataGrouped
+            .bind(to: collectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
     }
 
         
@@ -137,52 +173,7 @@ class InboxViewController: UIViewController {
             self?.chageStatusName(index: row)
             self?.hideButtons(index: row)
         }).disposed(by: disposeBag)
-
-        // Pinta la cards
-        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { (dataSource, cv, indexPath, element) in
-            
-            let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
-            cell.row = indexPath.row
-            cell.order = element
-            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-            cell.baseDocumentDescriptionLabel.text = "\(element.baseDocument ?? 0)"
-            cell.containerDescriptionLabel.text = element.container ?? ""
-            cell.tagDescriptionLabel.text = element.tag ?? ""
-            cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
-            cell.startDateDescriptionLabel.text = element.startDate ?? ""
-            cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
-            cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
-            cell.delegate = self
-            return cell
-            
-        })
-        
-        dataSource.configureSupplementaryView = {(dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier, for: indexPath) as! HeaderCollectionViewCell
-            header.productID.text = dataSource.sectionModels[indexPath.section].identity
-            return header
-        }
-        
-        inboxViewModel.statusDataGrouped
-            .bind(to: collectionView.rx.items(dataSource: dataSource))
-            .disposed(by: disposeBag)
-        
-//        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(cellIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, cellType: CardCollectionViewCell.self)) { [weak self] row, data, cell in
-//            cell.row = row
-//            cell.order = data
-//            cell.numberDescriptionLabel.text = "\(data.productionOrderId ?? 0)"
-//            cell.baseDocumentDescriptionLabel.text = "\(data.baseDocument ?? 0)"
-//            cell.containerDescriptionLabel.text = data.container ?? ""
-//            cell.tagDescriptionLabel.text = data.tag ?? ""
-//            cell.plannedQuantityDescriptionLabel.text = "\(data.plannedQuantity ?? 0)"
-//            cell.startDateDescriptionLabel.text = data.startDate ?? ""
-//            cell.finishDateDescriptionLabel.text = data.finishDate ?? ""
-//            cell.productDescriptionLabel.text = data.descriptionProduct ?? ""
-//            cell.delegate = self
-//        }.disposed(by: disposeBag)
-        
-//        inboxViewModel.statusData.bind(to: self.collectionView.rx.items(dataSource: RxCollectionViewDataSourceType & UICollectionViewDataSource))
-        
+                
         // retorna mensaje si no hay card para cada status
         inboxViewModel.title.withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
