@@ -95,6 +95,7 @@ export const ConstToken = {
     rememberSession: 'session-re',
     userId: 'userId',
     userName: 'userName',
+    userRole: 'role'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -143,3 +144,22 @@ export const Colors = [
     'rgba(230, 176, 90, 90)',
     'rgba(71, 255, 78, 100)'
 ];
+
+export const pathRoles = {
+    admin: [
+        'userList',
+        'login',
+        '**'
+    ],
+    logistica: [
+        'pedidos',
+        'ordenes',
+        'productividad',
+        'ordenfabricacion',
+        'pdetalle',
+        'lotes',
+        'login',
+        'workLoad',
+        '**'
+    ]
+}

@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -137,7 +138,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CancelFabricationOrders_AffectSingleOrder_SuccessResults(int orderId)
         {
             // arrange
-            this.cancelPedidosService = this.BuildService(null, "Ok");
+            this.cancelPedidosService = this.BuildService(this.GetOrderWithDetailModel(), "Ok");
             var orderToUpdate = new List<OrderIdModel>
             {
                 new OrderIdModel { UserId = this.userId, OrderId = orderId },
@@ -163,7 +164,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CancelFabricationOrders_AlreadyCancelled_SuccessResults(int orderId)
         {
             // arrange
-            this.cancelPedidosService = this.BuildService(null, null);
+            this.cancelPedidosService = this.BuildService(this.GetOrderWithDetailModel(), null);
             var orderToUpdate = new List<OrderIdModel>
             {
                 new OrderIdModel { UserId = this.userId, OrderId = orderId },
@@ -287,7 +288,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CancelFabricationOrders_AffectSalesOrder_SuccessResults(int orderId)
         {
             // arrange
-            this.cancelPedidosService = this.BuildService(null, "Ok");
+            this.cancelPedidosService = this.BuildService(this.GetOrderWithDetailModel(), "Ok");
             var orderToUpdate = new List<OrderIdModel>
             {
                 new OrderIdModel { UserId = this.userId, OrderId = orderId },
@@ -298,7 +299,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(response.Success);
-            Assert.IsTrue(this.CheckAction(response, true, 1, 0, 2));
+            Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
             this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -312,7 +313,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CancelFabricationOrders_SapDiApiError_FailResults(int orderId)
         {
             // arrange
-            this.cancelPedidosService = this.BuildService(null, "Fail");
+            this.cancelPedidosService = this.BuildService(this.GetOrderWithDetailModel(), "Fail");
             var orderToUpdate = new List<OrderIdModel>
             {
                 new OrderIdModel { UserId = this.userId, OrderId = orderId },

@@ -18,7 +18,7 @@ class LotsSelectedTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantitySelectedLabel, text: "", fontSize: 14)
     }
@@ -27,6 +27,11 @@ class LotsSelectedTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func setExpiredBatches(_ expired: Bool) {
+        lotsLabel.textColor = expired ? UIColor.red : UIColor.black
+        quantitySelectedLabel.textColor = expired ? UIColor.red : UIColor.black
     }
 
 }

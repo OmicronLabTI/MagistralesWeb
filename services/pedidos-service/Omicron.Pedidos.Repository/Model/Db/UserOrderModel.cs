@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Entities.Model
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// Class OrderLog Model.
@@ -133,5 +134,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// Bool is production order.
         [NotMapped]
         public bool IsProductionOrder => !string.IsNullOrEmpty(this.Productionorderid);
+
+        /// <summary>
+        /// Gets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// the value for the status.
+        public int StatusOrder => !string.IsNullOrEmpty(this.Status) && this.IsProductionOrder ? (int)Enum.Parse(typeof(StatusEnum), this.Status) : 0;
     }
 }

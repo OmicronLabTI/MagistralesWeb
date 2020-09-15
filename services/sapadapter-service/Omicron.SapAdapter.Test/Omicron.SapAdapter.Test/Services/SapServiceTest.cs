@@ -413,6 +413,24 @@ namespace Omicron.SapAdapter.Test.Services
         }
 
         /// <summary>
+        /// Get next batch code.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task ValidateIfExistsBatchCodeByItemCode()
+        {
+            // arrange
+            var productId = "Abc Aspirina";
+            var batchCode = "Lote1";
+
+            // act
+            var result = await this.sapService.ValidateIfExistsBatchCodeByItemCode(productId, batchCode);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
         /// Get last isolated production order id.
         /// </summary>
         /// <returns>the data.</returns>

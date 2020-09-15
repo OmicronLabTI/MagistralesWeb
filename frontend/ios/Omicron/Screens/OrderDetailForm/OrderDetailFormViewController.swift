@@ -189,7 +189,7 @@ class OrderDetailFormViewController:  FormViewController {
                     self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
                     self.werehouse = self.form.rowBy(tag: "werehouse")
                     
-                    let alert = UIAlertController(title: CommonStrings.Emty, message: "¿Deseas guardar los cambios ingresados?", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?", message: nil, preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {[weak self] _ in self?.dismiss(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {[weak self] res in self?.saveChanges()})
                     alert.addAction(cancelAction)
@@ -231,7 +231,7 @@ class OrderDetailFormViewController:  FormViewController {
         
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {_ in self?.refreshOrderDetail()})
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)

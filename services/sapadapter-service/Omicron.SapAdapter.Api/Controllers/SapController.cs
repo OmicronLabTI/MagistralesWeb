@@ -164,6 +164,20 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Validate if batch code exists.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">batchCode.</param>
+        /// <returns>the data.</returns>
+        [Route("/batchcode/exists")]
+        [HttpGet]
+        public async Task<IActionResult> ValidateIfExistsBatchCodeByItemCode([FromQuery] string productCode, [FromQuery] string batchCode)
+        {
+            var result = await this.sapFacade.ValidateIfExistsBatchCodeByItemCode(productCode, batchCode);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Get the orders by the filters.
         /// </summary>
         /// <param name="orderFabDto">The orderFabDto.</param>

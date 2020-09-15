@@ -14,6 +14,7 @@ export class IComponentsSaveReq {
     fechaFin: string;
     comments: string;
     components: IFormulaDetalleReq[];
+    isInDb?: boolean;
 }
 
 export class IFormulaReq {
@@ -41,6 +42,7 @@ export class IFormulaReq {
     container?: string;
     hasBatches?: boolean;
     details: IFormulaDetalleReq[];
+    isInDb?: boolean;
 }
 
 export class IFormulaDetalleReq {
@@ -60,6 +62,7 @@ export class IFormulaDetalleReq {
     warehouseQuantity: any;
     action?: string;
     hasBatches?: boolean;
+    isInDb?: boolean;
 }
 
 
