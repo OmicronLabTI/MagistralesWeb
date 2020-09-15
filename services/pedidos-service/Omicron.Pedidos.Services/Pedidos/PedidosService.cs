@@ -747,6 +747,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userService.Response.ToString());
 
             var orderToReturn = GetFabOrderUtils.CreateModels(sapOrders, userOrders, users).OrderBy(o => o.DocNum).ToList();
+            orderToReturn = orderToReturn.OrderBy(x => x.FabOrderId).ToList();
             var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, total);
         }
