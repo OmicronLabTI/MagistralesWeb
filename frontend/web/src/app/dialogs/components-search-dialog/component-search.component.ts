@@ -9,6 +9,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
 import {DataService} from '../../services/data.service';
+import { Messages } from 'src/app/constants/messages';
 
 @Component({
   selector: 'app-component-search',
@@ -110,6 +111,18 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
+    if (this.isFromSearchComponent) {
+      if (this.data.data.filter(element => element.productId === row.productId).length === 0){
+        this.checkIsPrevious(row);
+      } else {
+        this.dataService.presentToastCustom(Messages.repeatedComponent, 'info', '', false, true)
+      }
+    } else {
+      this.checkIsPrevious(row);
+    }
+  }
+
+  checkIsPrevious(row) {
     if (row === this.rowPrevious) {
       row.chips = this.keywords;
       this.dialogRef.close(row);
