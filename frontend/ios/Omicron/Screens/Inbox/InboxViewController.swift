@@ -23,12 +23,15 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var normalViewButton: UIButton!
     
     // MARK:  Variables
+    
+    private var bindingCollectionView = true
+    private let cardWidth = UIScreen.main.bounds.width / 2.5
+    
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
 
     let disposeBag = DisposeBag()
-    private let cardWidth = UIScreen.main.bounds.width / 2.5
     
     
     // MARK: Life Cycles
@@ -50,7 +53,10 @@ class InboxViewController: UIViewController {
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
         self.splitViewController?.presentsWithGesture = false
         
-        viewModelBindingCollectionView()
+        if bindingCollectionView {
+            viewModelBindingCollectionView()
+            bindingCollectionView.toggle()
+        }
         
     }
     
@@ -90,6 +96,7 @@ class InboxViewController: UIViewController {
         
     // MARK: Functions
     func viewModelBinding() -> Void {
+        
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
             guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
