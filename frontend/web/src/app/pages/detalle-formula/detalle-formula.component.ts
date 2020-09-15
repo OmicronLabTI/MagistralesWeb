@@ -211,6 +211,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
 
   changeData() {
+    this.dataSource.data.forEach(component => {
+      component.requiredQuantity = component.baseQuantity * this.oldDataFormulaDetail.plannedQuantity;
+    });
     this.getIsReadyTOSave();
   }
   getIsReadyTOSave() {
