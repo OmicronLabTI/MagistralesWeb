@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { PassThrough } from 'stream';
 import { CONST_NUMBER, pathRoles } from '../constants/const';
 import { DataService } from './data.service';
 
