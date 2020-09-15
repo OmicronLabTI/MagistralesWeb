@@ -88,6 +88,7 @@ namespace Omicron.Pedidos.Services.Utils
                     FinishDate = userOrder.FinishDate == null ? string.Empty : userOrder.FinishDate,
                     Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
                     Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    Unit = x.Unit,
                 };
 
                 listToReturn.Add(fabOrder);

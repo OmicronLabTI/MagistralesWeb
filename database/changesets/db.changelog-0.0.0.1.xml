@@ -443,4 +443,14 @@
         update roles set roledescription = 'LOGÍSTICA' where idrole = 3
     </sql>
 </changeSet>
+<changeSet author="gramirez" id="changelog-1.52">
+    <sql endDelimiter=";">
+        update roles set roledescription = 'ADMINISTRACIÓN' where idrole = 1
+    </sql>
+</changeSet>
+<changeSet author="gramirez" id="changelog-1.53">
+    <sql endDelimiter=";">
+        update roles set roledescription = 'ADMINISTRADOR' where idrole = 1
+    </sql>
+</changeSet>
 </databaseChangeLog> 
