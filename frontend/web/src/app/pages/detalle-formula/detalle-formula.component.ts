@@ -312,7 +312,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         isChecked: false,
         orderFabId: orderFabricacionId,
         productId: element.productId,
-        description: element.description,
+        description: element.description.toUpperCase(),
         baseQuantity: element.baseQuantity,
         requiredQuantity: parseFloat((element.baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten)),
         consumed: 0,
