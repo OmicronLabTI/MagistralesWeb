@@ -112,10 +112,16 @@ export class ComponentSearchComponent implements OnInit {
 
   selectComponent(row: any) {
     if (this.isFromSearchComponent) {
-      if (this.data.data.filter(element => element.productId === row.productId).length === 0){
+      if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
-        this.dataService.presentToastCustom(Messages.repeatedComponent, 'info', '', false, true)
+        this.dataService.presentToastCustom(
+          Messages.repeatedComponent_a + row.productId + Messages.repeatedComponent_b,
+          'info',
+          '',
+          false,
+          true
+        )
       }
     } else {
       this.checkIsPrevious(row);

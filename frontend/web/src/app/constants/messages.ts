@@ -37,5 +37,6 @@ export const Messages = {
   confirmSaveMyList: '¿Desea guardar la lista?',
   confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?',
   onlyIntegerNumbers: 'Verifica que la cantidad planificada sea un número entero',
-  repeatedComponent: 'El componente seleccionado ya existe'
+  repeatedComponent_a: 'El componente ',
+  repeatedComponent_b: ' ya existe para este producto'
 };
