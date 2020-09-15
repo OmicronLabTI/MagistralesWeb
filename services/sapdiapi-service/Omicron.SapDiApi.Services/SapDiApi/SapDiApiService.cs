@@ -618,7 +618,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 recordSet.MoveNext();
             }
 
-            if (recordSet.RecordCount > 0 && inventoryGenExit.Add() > 0)
+            if (recordSet.RecordCount > 0 && inventoryGenExit.Add() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
@@ -664,7 +664,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             receiptProduction.Lines.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.Lines.Add();
 
-            if (receiptProduction.Add() > 0)
+            if (receiptProduction.Add() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
@@ -682,7 +682,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             productionOrder.GetByKey(productionOrderId);
             productionOrder.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
 
-            if (productionOrder.Update() > 0)
+            if (productionOrder.Update() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
