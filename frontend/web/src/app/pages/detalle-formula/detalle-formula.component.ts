@@ -178,7 +178,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this. isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
   deleteComponents() {
-    if (this.getIsThereNull(true)) {
       this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
           .then( (resultDeleteMessage: any) => {
             if (resultDeleteMessage.isConfirmed) {
@@ -193,9 +192,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.elementsToSave();
             }
           });
-    } else {
-      this.createMessageOnlyNumber();
-    }
   }
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
@@ -312,7 +308,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         isChecked: false,
         orderFabId: orderFabricacionId,
         productId: element.productId,
-        description: element.description,
+        description: element.description.toUpperCase(),
         baseQuantity: element.baseQuantity,
         requiredQuantity: parseFloat((element.baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten)),
         consumed: 0,
