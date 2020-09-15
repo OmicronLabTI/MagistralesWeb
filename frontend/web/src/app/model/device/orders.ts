@@ -1,3 +1,4 @@
+import { IFormulaDetalleReq } from '../http/detalleformula';
 import {CancelOrderReq, ParamsPedidos} from '../http/pedidos';
 
 export class PlaceOrders {
@@ -16,5 +17,6 @@ export class SearchComponentModal {
     modalType: string;
     chips?: string[];
     filterOrdersData?: ParamsPedidos;
+    data?: IFormulaDetalleReq[];
 }
 
