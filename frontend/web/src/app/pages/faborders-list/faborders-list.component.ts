@@ -146,6 +146,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
               element.class = 'cancelado';
               break;
           }
+          element.description = element.description.toUpperCase();
         });
         this.isThereOrdersIsolatedToCancel = false;
         this.isAssignOrderIsolated = false;

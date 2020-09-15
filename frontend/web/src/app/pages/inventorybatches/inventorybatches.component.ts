@@ -6,9 +6,8 @@ import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILo
 import { MatTableDataSource} from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
 import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING, MessageType, ClassNames } from '../../constants/const'
-import { Messages } from '../../constants/messages'
+import { Messages } from '../../constants/messages';
 import {DataService} from '../../services/data.service';
-import { element } from 'protractor';
 import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
@@ -105,8 +104,7 @@ export class InventorybatchesComponent implements OnInit {
     let resultData: ILotesFormulaReq[];
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
-        batchesRes.response.forEach( batches => batches.descripcionProducto =
-            this.dataService.getStringUpperCase(batches.descripcionProducto));
+        batchesRes.response.forEach( batches => batches.descripcionProducto = batches.descripcionProducto.toUpperCase());
         this.dataSourceDetails.data = batchesRes.response;
         // tslint:disable-next-line: no-shadowed-variable
         resultData = this.dataSourceDetails.data.filter(element => (

@@ -58,9 +58,9 @@ export class ComponentSearchComponent implements OnInit {
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
           resComponents.response.forEach( component => {
             if (this.isFromSearchComponent ) {
-              component.description = this.dataService.getStringUpperCase( component.description);
+              component.description = component.description.toUpperCase();
             } else {
-              component.productoName = this.dataService.getStringUpperCase(component.productoName);
+              component.productoName = component.productoName.toUpperCase();
             }
           });
           this.dataSource.data = resComponents.response;
