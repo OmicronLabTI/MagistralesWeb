@@ -84,7 +84,8 @@ class LotsViewModel {
                         existing.batchNumber,
                         itemCode: existing.itemCode,
                         action: "insert",
-                        sysNumber: existing.sysNumber))
+                        sysNumber: existing.sysNumber,
+                        expiredBatch: existing.expiredBatch))
                     self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
                 } else {
                     existing.assignedQty = (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0)
@@ -102,7 +103,8 @@ class LotsViewModel {
                     batchNumber: available.numeroLote,
                     itemCode: product.codigoProducto,
                     action: "insert",
-                    sysNumber: available.sysNumber))
+                    sysNumber: available.sysNumber,
+                    expiredBatch: available.expiredBatch))
                 self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
             }
             
@@ -183,7 +185,7 @@ class LotsViewModel {
                     self?.documentLines = lotsData
                     self?.selectedBatches = lotsData.map({ batch in
                         let selected: [BatchSelected] = batch.lotesSelecionados != nil ? batch.lotesSelecionados!.compactMap({ sel in
-                            return BatchSelected(orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber)
+                            return BatchSelected(orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada, batchNumber: sel.numeroLote, itemCode: batch.codigoProducto, action: nil, sysNumber: sel.sysNumber, expiredBatch: sel.expiredBatch)
                         }) : []
                         return selected
                     }).reduce([], +)
@@ -206,14 +208,25 @@ class LotsViewModel {
     
     func updateInfoSelectedBatch(lot: Lots) -> Void {
         if (lot.lotesDisponibles?.count ?? 0 > 0) {
+            for lote in lot.lotesDisponibles! {
+                lote.expiredBatch = calculateExpiredBatch(date: lote.fechaExp)
+            }
+            lot.lotesDisponibles?.sort { ($0.expiredBatch && !$1.expiredBatch) }
             self.dataLotsAvailable.onNext(lot.lotesDisponibles ?? [])
         } else {
             self.dataLotsAvailable.onNext([])
         }
         
-        let selected = self.getFilteredSelected(itemCode: lot.codigoProducto)
+        var selected = self.getFilteredSelected(itemCode: lot.codigoProducto)
         
         if(selected.count > 0) {
+            for select in selected {
+                select.expiredBatch = ((lot.lotesDisponibles?.first(where: { lote -> Bool in
+                    return lote.numeroLote == select.numeroLote && calculateExpiredBatch(date: lote.fechaExp)
+                })) != nil)
+            }
+            selected.sort { ($0.expiredBatch && !$1.expiredBatch) }
+            self.dataLotsAvailable.onNext(lot.lotesDisponibles ?? [])
             self.dataLotsSelected.onNext(selected)
         } else {
             self.dataLotsSelected.onNext([])
@@ -227,7 +240,7 @@ class LotsViewModel {
         if (lot.lotesDisponibles!.count == 1 && selected.count == 0) {
             if let firstAvailable = lot.lotesDisponibles?.first, let doc = self.documentLines.first(where: { $0.codigoProducto == lot.codigoProducto }) {
                 if ((firstAvailable.cantidadDisponible ?? 0) > 0) {
-                    let batch = BatchSelected(orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada, batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto, action: "insert", sysNumber: firstAvailable.sysNumber)
+                    let batch = BatchSelected(orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada, batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto, action: "insert", sysNumber: firstAvailable.sysNumber, expiredBatch: firstAvailable.expiredBatch)
                     doc.totalNecesario = 0
                     
                     guard let firstBatch = doc.lotesDisponibles?.first else { return }
@@ -339,4 +352,23 @@ class LotsViewModel {
             self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
     }
+    
+    //MARK: - Function Helpers
+    func calculateExpiredBatch(date: String?) -> Bool {
+        let date = date?.replacingOccurrences(of: "\"", with: "", options: String.CompareOptions.literal, range:nil)
+        if let date = date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd/MM/yyyy"
+            if let dateFormatter = formatter.date(from: date) {
+                let today = Calendar.current.date(byAdding: .day, value: 1, to: Date())
+                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: today ?? Date())
+                let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)
+                if roundedDate ?? Date() <= roundedToday ?? Date() {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
 }
