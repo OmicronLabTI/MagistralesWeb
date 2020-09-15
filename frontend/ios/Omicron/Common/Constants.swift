@@ -103,8 +103,8 @@ struct FontsNames {
 
 struct StatusNameConstants {
     static let assignedStatus = "Asignadas"
-    static let inProcessStatus = "En Proceso"
-    static let penddingStatus = "Pendientes"
+    static let inProcessStatus = "En proceso"
+    static let penddingStatus = "Pendiente"
     static let finishedStatus = "Terminado"
     static let reassignedStatus = "Reasignado"
     static let addComponent = "Agregar componente"
