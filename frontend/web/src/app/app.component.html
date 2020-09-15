@@ -74,10 +74,10 @@
   <mat-sidenav-container fxFlexFill>
     <mat-sidenav #sidenav>
       <mat-nav-list>
-        <a mat-list-item [routerLink]="['pedidos']">Pedidos</a>
-        <a mat-list-item [routerLink]="['ordenes']">Órdenes de Fabricación</a>
-        <a mat-list-item [routerLink]="['userList']">Usuarios</a>
-        <a mat-list-item [routerLink]="['productividad']">Gráficas</a>
+        <a *ngIf="role === '3'" mat-list-item [routerLink]="['pedidos']">Pedidos</a>
+        <a *ngIf="role === '3'" mat-list-item [routerLink]="['ordenes']">Órdenes de Fabricación</a>
+        <a *ngIf="role === '1'" mat-list-item [routerLink]="['userList']">Usuarios</a>
+        <a *ngIf="role === '3'" mat-list-item [routerLink]="['productividad']">Gráficas</a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content fxFlexFill>
