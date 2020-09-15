@@ -27,7 +27,11 @@ export class LoginComponent implements OnInit {
     private errorService: ErrorService
   ) {
     if (this.dataService.userIsAuthenticated()) {
-      this.goToPedidos();
+      if (this.dataService.getUserRole() === '3') {
+        this.goToPedidos();
+      } else {
+        this.goToUsers();
+      }
     }
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
@@ -87,7 +91,7 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['pedidos']);
   }
 
-  goToUsers(){
+  goToUsers() {
     this.router.navigate(['userList']);
   }
   keyDownFunction(event: KeyboardEvent) {
