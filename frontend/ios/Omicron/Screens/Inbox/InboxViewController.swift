@@ -64,7 +64,7 @@ class InboxViewController: UIViewController {
     func viewModelBindingCollectionView() {
         
         // Pinta la cards
-        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { (dataSource, cv, indexPath, element) in
+        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { [weak self] (dataSource, cv, indexPath, element) in
             
             let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
             cell.row = indexPath.row
@@ -82,7 +82,7 @@ class InboxViewController: UIViewController {
             
         })
         
-        dataSource.configureSupplementaryView = {(dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
+        dataSource.configureSupplementaryView = { (dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier, for: indexPath) as! HeaderCollectionViewCell
             header.productID.text = dataSource.sectionModels[indexPath.section].identity
             return header

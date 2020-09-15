@@ -196,7 +196,7 @@ class ComponentFormViewController: FormViewController {
                     self?.warehouse = self?.form.rowBy(tag: "warehouse")
                     
                     let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?", message: nil, preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)
