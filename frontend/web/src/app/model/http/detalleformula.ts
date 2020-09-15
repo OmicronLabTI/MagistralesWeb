@@ -61,6 +61,7 @@ export class IFormulaDetalleReq {
     stock: any;
     warehouseQuantity: any;
     action?: string;
+    hasBatches?: boolean;
     isInDb?: boolean;
 }
 
