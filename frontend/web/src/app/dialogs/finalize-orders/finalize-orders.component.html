@@ -103,7 +103,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <div class="info-error font-style-omicron">
-                *El lote marcado en color rojo ya existe, intenta con otro
+                *El lote marcado en color rojo ya existe o presenta errores de captura, favor de validar
             </div>
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
             <button mat-button class="btn-add-modal btn--modal" [disabled]="!isCorrectData" (click)="finalizeOrderSend()">Aceptar</button>

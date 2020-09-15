@@ -48,12 +48,13 @@
                         <mat-label>Estado</mat-label>
                         <input matInput placeholder="Estado" disabled value="{{oldDataFormulaDetail.status}}">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
-                        <mat-label>Cantidad planificada</mat-label>
+                    <mat-form-field appearance="outline"  class="generalinput" style="width: 15.8%;">
+                        <mat-label [ngClass]="isPlannedQuantityError ? 'input-with-error': ''" >Cantidad planificada</mat-label>
                         <input matInput
                                [disabled]="oldDataFormulaDetail.hasBatches"
                                type="number"
                                placeholder="Cantidad planificada"
+                               [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
                                (ngModelChange)="changeData()">
 
@@ -63,6 +64,7 @@
                         <input matInput placeholder="Nombre de" disabled value="{{oldDataFormulaDetail.unit}}">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
+                            <mat-label>Almacén</mat-label>
                             <mat-select [(ngModel)]="oldDataFormulaDetail.warehouse" (ngModelChange)="changeData()">
                                 <mat-option value="AMP" >
                                     AMP

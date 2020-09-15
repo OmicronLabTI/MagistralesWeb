@@ -30,21 +30,39 @@ export class FinalizeOrdersComponent implements OnInit {
 
   async ngOnInit() {
     let index = 0;
+    const ordersIsolatedFull: IOrdersReq[] = [];
     this.ordersIsolated = [...this.finalizeData.finalizeOrdersData.filter(order => order.docNum === 0)];
-    for ( const order of this.ordersIsolated) {
-      await this.orderService.getNextBatchCode(order.itemCode).toPromise().then(
-          resNewBatchCode => this.ordersIsolated[index].batche = resNewBatchCode.response
-      ).catch(error => {
-        this.errorService.httpError(error);
-        this.dialogRef.close();
-      });
-      index ++;
+
+    if (this.ordersIsolated.length > 0) {
+      const groupedList = this.groupBy(this. ordersIsolated, order => order.itemCode);
+
+      for ( const order of groupedList) {
+        await this.orderService.getNextBatchCode(order[0]).toPromise().then(
+            resNewBatchCode => {
+              const fullBatchCode = resNewBatchCode.response.split('-');
+              let count = 0;
+              order[1][0].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
+              if (order[1].length > 1) {
+                for ( const objectOrder of order[1]) {
+                  order[1][count].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
+                  count ++;
+                }
+              }
+              ordersIsolatedFull.push(...order[1]);
+            }
+        ).catch(error => {
+          this.errorService.httpError(error);
+          this.dialogRef.close();
+        });
+        index ++;
+      }
     }
-    this.dataSource.data = this.ordersIsolated;
+    this.dataSource.data = ordersIsolatedFull;
     this.ordersNoIsolated = [...this.finalizeData.finalizeOrdersData.filter(order => order.docNum !== 0)];
     if (this.ordersIsolated.length === 0 && this.ordersNoIsolated.length > 0) {
       this.finalizeOrderSend();
     }
+
 
   }
 
@@ -72,14 +90,27 @@ export class FinalizeOrdersComponent implements OnInit {
   }
 
   focusOutLote(index: number) {
-    this.orderService.getIfExistsBatchCode(this.ordersIsolated[index].itemCode, this.ordersIsolated[index].batche).subscribe(
-        resultExistsBatchCode => {
-          this.ordersIsolated[index].isWithErrorBatch = resultExistsBatchCode.response;
-        }
-        , error => {
-          this.dialogRef.close();
-          this.errorService.httpError(error);
-        });
+      if (this.dataSource.data.filter(order => order.batche === this.dataSource.data[index].batche
+          && order.itemCode === this.dataSource.data[index].itemCode). length > 1) {
+          this.ordersIsolated[index].isWithErrorBatch = true;
+          this.isCorrectDataToFinalize();
+      } else {
+          if (this.dataSource.data.filter(order => order.batche === this.dataSource.data[index].batche
+              && order.itemCode === this.dataSource.data[index].itemCode). length > 1) {
+              this.dataSource.data.filter(order => order.itemCode === this.dataSource.data[index].itemCode)
+                  .forEach(order => order.isWithErrorBatch = false);
+          }
+          this.orderService.getIfExistsBatchCode(this.ordersIsolated[index].itemCode, this.ordersIsolated[index].batche).subscribe(
+              resultExistsBatchCode => {
+                  this.ordersIsolated[index].isWithErrorBatch = resultExistsBatchCode.response;
+                  this.isCorrectDataToFinalize();
+              }
+              , error => {
+                  this.dialogRef.close();
+                  this.errorService.httpError(error);
+              });
+      }
+
   }
  isCorrectDataToFinalize() {
     this.isCorrectData = this.dataSource.data.filter(order => order.batche === '' || order.fabDate === undefined ||
@@ -123,4 +154,23 @@ export class FinalizeOrdersComponent implements OnInit {
         this.dialogRef.close();
       });
   }
+
+  groupBy(list, keyGetter) {
+    const map = new Map();
+    list.forEach((item) => {
+      const key = keyGetter(item);
+      const collection = map.get(key);
+      if (!collection) {
+        map.set(key, [item]);
+      } else {
+        collection.push(item);
+      }
+    });
+    return map;
+  }
+  getZfFll = (letterBatchCode: string, nextBatchCode: string, count: number) => (
+      `${letterBatchCode}-${this.zFill((Number(nextBatchCode) + count).toString(), CONST_NUMBER.seven)}`
+  )
+  zFill = (str: string, max: number) => str.length < max ? this.zFill ( '0' + str, max) : str;
+
 }
