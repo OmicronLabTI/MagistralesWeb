@@ -365,6 +365,33 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Get sales order from SAP.
+        /// </summary>
+        /// <param name="salesOrder">Sales order in local db.</param>
+        /// <param name="sapAdapter">The sap adapter.</param>
+        /// <returns>Preproduction orders.</returns>
+        public static async Task<List<CompleteDetailOrderModel>> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
+        {
+            var sapResults = await GetSalesOrdersFromSap(int.Parse(salesOrder.Salesorderid), sapAdapter);
+            return sapResults.PreProductionOrders;
+        }
+
+        /// <summary>
+        /// Get sales order from SAP.
+        /// </summary>
+        /// <param name="salesOrderId">Sales order id.</param>
+        /// <returns>Sales order.</returns>
+        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
+        {
+            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
+            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrder = sapOrders.FirstOrDefault();
+            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
+            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
+            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

@@ -11,6 +11,7 @@ import { ProductivityService } from 'src/app/services/productivity.service';
 import {of} from 'rxjs';
 import { ProductivityListMock } from 'src/mocks/productivityMock';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CONST_NUMBER, MODAL_FIND_ORDERS } from 'src/app/constants/const';
 
 describe('ProductivityComponent', () => {
   let component: ProductivityComponent;
@@ -26,6 +27,7 @@ describe('ProductivityComponent', () => {
     productivityServiceSpy.getProductivity.and.callFake(() => {
       return of(ProductivityListMock);
     });
+
     TestBed.configureTestingModule({
       declarations: [ ProductivityComponent ],
       imports: [
@@ -69,4 +71,5 @@ describe('ProductivityComponent', () => {
     component.getProductivityData();
     expect(productivityServiceSpy.getProductivity).toHaveBeenCalledWith(component.queryString);
   });
+
 });

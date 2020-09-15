@@ -36,12 +36,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { LoginViewModel() }
         Resolver.register { InboxViewModel() }.scope(Resolver.cached)
         Resolver.register { RootViewModel() }.scope(Resolver.cached)
-        Resolver.register { OrderDetailViewModel() }
-        Resolver.register { OrderDetailFormViewModel() }
+        Resolver.register { OrderDetailViewModel()}.scope(Resolver.shared)
+        Resolver.register { OrderDetailFormViewModel()}.scope(Resolver.shared)
         Resolver.register { CommentsViewModel() }.scope(Resolver.shared)
         Resolver.register { LotsViewModel() }.scope(Resolver.shared)
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
-        Resolver.register { LottieManager() }.scope(Resolver.cached)
+        Resolver.register { LottieManager() }.scope(Resolver.shared)
         Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
     }
 }
