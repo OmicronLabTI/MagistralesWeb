@@ -14,11 +14,9 @@ describe('GuardService', () => {
       'navigate'
     ]);
     dataSpyService = jasmine.createSpyObj<DataService>('DataService', [
-      'userIsAuthenticated', 'getUserRole', 'setUserRole'
+      'userIsAuthenticated', 'getUserRole'
     ]);
     dataSpyService.userIsAuthenticated.and.returnValue(true);
-    dataSpyService.getUserRole.and.returnValue('1');
-    dataSpyService.setUserRole('1');
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule
@@ -37,29 +35,49 @@ describe('GuardService', () => {
     expect(service).toBeTruthy();
   });
 
-  /*it('should can activate true', () => {
+  it('should can activate true', () => {
+      dataSpyService.getUserRole.and.returnValue('1');
       const service: GuardService = TestBed.get(GuardService);
-      const route = {} as ActivatedRouteSnapshot;
+      const route = {url: [{
+        path: 'userList'
+      }]} as ActivatedRouteSnapshot;
       const state = {} as RouterStateSnapshot;
-      route.url.push({
-        path: 'pedidos',
-        parameters: {
-          [
-          ]
-        },
-        parameterMap: 
-      });
       expect(service.canActivate(route, state)).toBeTruthy();
       expect(routerSpy.navigate).not.toHaveBeenCalledWith(['/login']);
-  });*/
+  });
 
-  /*it('should can activate false', () => {
+  it('should can activate false', () => {
+    dataSpyService.getUserRole.and.returnValue('1');
     const service: GuardService = TestBed.get(GuardService);
     dataSpyService.userIsAuthenticated.and.returnValue(false);
-    const route = {} as ActivatedRouteSnapshot;
+    const route = {url: [{
+      path: 'pedidos'
+    }]} as ActivatedRouteSnapshot;
     const state = {} as RouterStateSnapshot;
-    route.url[0].path = 'pedidos';
     expect(service.canActivate(route, state)).toBe(false);
     expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
-  });*/
+  });
+
+  it('should can activate true', () => {
+    dataSpyService.getUserRole.and.returnValue('3');
+    const service: GuardService = TestBed.get(GuardService);
+    const route = {url: [{
+      path: 'pedidos'
+    }]} as ActivatedRouteSnapshot;
+    const state = {} as RouterStateSnapshot;
+    expect(service.canActivate(route, state)).toBeTruthy();
+    expect(routerSpy.navigate).not.toHaveBeenCalledWith(['/login']);
+});
+
+  it('should can activate false', () => {
+    dataSpyService.getUserRole.and.returnValue('3');
+    const service: GuardService = TestBed.get(GuardService);
+    dataSpyService.userIsAuthenticated.and.returnValue(false);
+    const route = {url: [{
+      path: 'userList'
+    }]} as ActivatedRouteSnapshot;
+    const state = {} as RouterStateSnapshot;
+    expect(service.canActivate(route, state)).toBe(false);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
+  });
 });
