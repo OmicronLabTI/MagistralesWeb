@@ -144,7 +144,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.similarityViewButton.isEnabled = isEnabled
-            self.heigthCollectionViewConstraint.constant = !isEnabled ? 8 : -40
+            self.heigthCollectionViewConstraint.constant = !isEnabled ? 8 : -60
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
@@ -207,10 +207,10 @@ class InboxViewController: UIViewController {
         self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
         
         let layout = UICollectionViewFlowLayout()
-        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
         layout.itemSize = CGSize(width: 355, height: 250)
         collectionView.setCollectionViewLayout(layout, animated: true)
-        heigthCollectionViewConstraint.constant = -40
+        heigthCollectionViewConstraint.constant = -60
         print(UIScreen.main.bounds.width)
     }
     
