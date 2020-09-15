@@ -454,6 +454,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
                 catch (ValidationException ex)
                 {
+                    _loggerProxy.Error(ex.Message, ex);
                     results.Add(productionOrderId, ex.Message);
                 }
                 catch (Exception ex)
@@ -588,6 +589,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             foreach (var batche in batches)
             {
+                _loggerProxy.Debug($"Validate new batch { batche.BatchCode } - { itemCode }.");
                 var existingBatch = this.ExecuteQuery(ServiceConstants.FindBatchCodeForItem, batche.BatchCode, itemCode);
                 if (existingBatch.RecordCount != 0)
                 {
@@ -602,6 +604,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="productionOrderId">The production order id.</param>
         private void CreateoGoodIssueForProductionByOrderId(int productionOrderId)
         {
+            _loggerProxy.Debug($"Create oInventoryGenExit for { productionOrderId }.");
             var recordSet = this.ExecuteQuery(ServiceConstants.FindManualExit, productionOrderId);
             var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
 
@@ -618,7 +621,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 recordSet.MoveNext();
             }
 
-            if (recordSet.RecordCount > 0 && inventoryGenExit.Add() > 0)
+            if (recordSet.RecordCount > 0 && inventoryGenExit.Add() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
@@ -632,6 +635,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="productionOrderId">The production order id.</param>
         /// <param name="closeConfiguration">Configuration for close order.</param>
         private void CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderModel closeConfiguration) {
+            _loggerProxy.Debug($"Create oInventoryGenEntry for { productionOrderId }.");
 
             var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
@@ -664,7 +668,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             receiptProduction.Lines.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.Lines.Add();
 
-            if (receiptProduction.Add() > 0)
+            if (receiptProduction.Add() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
@@ -678,11 +682,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="productionOrderId">Production order id.</param>
         private void CloseProductionOrder(int productionOrderId)
         {
+            _loggerProxy.Debug($"Close production order { productionOrderId }.");
             var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             productionOrder.GetByKey(productionOrderId);
             productionOrder.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
 
-            if (productionOrder.Update() > 0)
+            if (productionOrder.Update() != 0)
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
@@ -746,6 +751,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="productionOrderId">Production order id.</param>
         private void ValidateRequiredQuantityForRetroactiveIssues(int productionOrderId)
         {
+            _loggerProxy.Debug($"Validate required quantities for { productionOrderId }.");
+
             var recordSet = this.ExecuteQuery(ServiceConstants.GetRetroactiveIssuesInProductionOrder, productionOrderId);
             var missingComponents = new List<string>();
 
