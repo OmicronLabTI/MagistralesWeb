@@ -52,6 +52,7 @@ export class AppComponent implements OnDestroy , OnInit {
               private pedidosService: PedidosService, private errorService: ErrorService,
               ) {
     this.getFullName();
+    this.role = this.dataService.getUserRole();
     this.isLoading = this.dataService.getIsLoading();
     this.isLogin = this.dataService.userIsAuthenticated();
     this.dataService.getIsLogin().subscribe( isLoginS => {
@@ -197,6 +198,7 @@ export class AppComponent implements OnDestroy , OnInit {
 
   getFullName() {
     this.fullName = this.dataService.getUserName();
+    this.role = this.dataService.getUserRole();
   }
 
   ngOnDestroy() {
