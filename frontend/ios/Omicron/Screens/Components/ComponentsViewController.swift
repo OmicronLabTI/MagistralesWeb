@@ -54,8 +54,9 @@ class ComponentsViewController: UIViewController {
                 view: self)
         }).disposed(by: disposeBag)
         
-        self.componentsViewModel.dataResults.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell)) { row, data, cell in
-            cell.textLabel?.text = data.description
+        self.componentsViewModel.dataResults.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell, cellType: ComponentsTableViewCell.self)) { row, data, cell in
+            cell.productCodeLabel.text = data.productId
+            cell.descriptionLabel.text = data.description
         }.disposed(by: disposeBag)
         
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
@@ -80,7 +81,7 @@ class ComponentsViewController: UIViewController {
     func initComponents() {
         self.title = CommonStrings.addComponentTitle
         self.isModalInPresentation = true
-        
+        self.tableView.delegate = self
         self.tagsView.isHidden = true
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
@@ -97,5 +98,19 @@ class ComponentsViewController: UIViewController {
 extension ComponentsViewController: TagListViewDelegate {
     func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) -> Void {
         self.componentsViewModel.removeChip.onNext(title)
+    }
+}
+
+extension ComponentsViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let customView = UIView()
+        customView.backgroundColor = OmicronColors.blue
+        cell.selectedBackgroundView = customView
+        if(indexPath.row%2 == 0) {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
     }
 }

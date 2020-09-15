@@ -70,6 +70,34 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// retruns a list od completedetailorder.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<OrderWithDetailModel> GetOrderWithDetailModel()
+        {
+            var listDetalles = new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = null },
+            };
+
+            var listOrders = new List<OrderWithDetailModel>
+            {
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = null },
+                },
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = null },
+                },
+            };
+
+            return listOrders;
+        }
+
+        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>

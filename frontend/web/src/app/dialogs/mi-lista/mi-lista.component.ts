@@ -47,7 +47,7 @@ export class MiListaComponent implements OnInit {
             this.dataService.presentToastCustom('Error al guardar la lista', 'error',
             'La lista <b>' + nameFC + '</b> ya existe.', true, false);
           } else {
-            this.dialogRef.close();
+            this.dialogRef.close(true);
             this.dataService.presentToastCustom(Messages.successMyList, 'success', '', true, false);
           }
         }, error => this.errorService.httpError(error));

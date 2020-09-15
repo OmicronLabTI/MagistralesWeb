@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 import { Title } from '@angular/platform-browser';
-import { MatTableDataSource} from '@angular/material';
+import { MatPaginator, MatTableDataSource} from '@angular/material';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
@@ -29,6 +29,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   myChart = undefined;
   fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
   @ViewChild('productivityChart', {static: true}) productivityChart: ElementRef;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  showTable = false;
   constructor(
     private titleService: Title,
     private dataService: DataService,
@@ -45,6 +47,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.titleService.setTitle('OmicronLab - Productividad');
   }
 
   ngAfterViewInit() {
@@ -85,6 +88,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
         this.dataSourceDetails = productivityRes.response.matrix;
         this.dataSource.data = productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0);
         this.monthColumns = this.dataSourceDetails[0];
+        this.dataSource.paginator = this.paginator;
         this.chartObject(productivityRes.response.matrix);
       }, (error: ErrorHttpInterface) => {
       if (error.status !== HttpStatus.notFound) {
@@ -110,6 +114,11 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
         options: {
           scales: {
             yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'NÚMERO DE PIEZAS',
+                fontStyle: 'bold'
+              },
               ticks: {
                 beginAtZero: true
               },
@@ -145,7 +154,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     return dataSet;
   }
 
-  minDateIni(fecha: Date, getData = true) {
+  minDateIni(fecha: Date, getData = true): Date {
     this.minDate = new Date(
       fecha.getFullYear(),
       fecha.getMonth() - CONST_NUMBER.six,
@@ -154,9 +163,10 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     if (getData) {
       this.getProductivityData();
     }
+    return this.minDate;
   }
 
-  maxDateFin(fecha: Date, getDate = true) {
+  maxDateFin(fecha: Date, getDate = true): Date {
     this.maxDate = new Date(
       fecha.getFullYear(),
       fecha.getMonth() + CONST_NUMBER.six,
@@ -165,5 +175,6 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     if (getDate) {
       this.getProductivityData();
     }
+    return this.maxDate;
   }
 }

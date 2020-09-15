@@ -10,7 +10,6 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

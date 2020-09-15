@@ -29,10 +29,6 @@ class LotsAvailableTableViewCell: UITableViewCell {
         super.awakeFromNib()
         
         // Initialization code
-        lotsLabel.textColor = UIColor.red
-        quantityAvailableLabel.textColor = UIColor.red
-        quantitySelected.textColor = UIColor.red
-        quantityAssignedLabel.textColor = UIColor.red
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAvailableLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAssignedLabel, text: "", fontSize: 14)
@@ -44,6 +40,14 @@ class LotsAvailableTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
+    
+    func setExpiredBatches(_ expired: Bool) {
+        lotsLabel.textColor = expired ? UIColor.red : UIColor.black
+        quantityAvailableLabel.textColor = expired ? UIColor.red : UIColor.black
+        quantitySelected.textColor = expired ? UIColor.red : UIColor.black
+        quantityAssignedLabel.textColor = expired ? UIColor.red : UIColor.black
+    }
+    
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {

@@ -8,6 +8,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {PedidosService} from '../../services/pedidos.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
+import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-component-search',
@@ -38,7 +39,8 @@ export class ComponentSearchComponent implements OnInit {
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
-              @Inject(MAT_DIALOG_DATA) public data: any) {
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private dataService: DataService) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
   }
@@ -54,6 +56,13 @@ export class ComponentSearchComponent implements OnInit {
   getComponents() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
+          resComponents.response.forEach( component => {
+            if (this.isFromSearchComponent ) {
+              component.description = component.description.toUpperCase();
+            } else {
+              component.productoName = component.productoName.toUpperCase();
+            }
+          });
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
