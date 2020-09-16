@@ -24,7 +24,7 @@ class  InboxViewModel {
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
-    weak var selectedOrder: Order?
+    var selectedOrder: Order?
     var disposeBag = DisposeBag();
     var similarityViewButtonDidTap = PublishSubject<Void>()
     var similarityViewButtonIsEnable = PublishSubject<Bool>()
