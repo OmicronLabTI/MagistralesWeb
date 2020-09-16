@@ -117,7 +117,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
+    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent, data: this.dataSource.data});
   }
 
 
