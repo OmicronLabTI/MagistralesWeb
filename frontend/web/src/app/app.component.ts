@@ -46,16 +46,19 @@ export class AppComponent implements OnDestroy , OnInit {
     isLogin = false;
     subscriptionObservables = new Subscription();
     fullName = '';
+    role = '';
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
               ) {
     this.getFullName();
+    this.role = this.dataService.getUserRole();
     this.isLoading = this.dataService.getIsLoading();
     this.isLogin = this.dataService.userIsAuthenticated();
     this.dataService.getIsLogin().subscribe( isLoginS => {
       this.getFullName();
       this.isLogin = isLoginS;
+      this.role = this.dataService.getUserRole();
     });
 
     this.dataService
@@ -195,6 +198,7 @@ export class AppComponent implements OnDestroy , OnInit {
 
   getFullName() {
     this.fullName = this.dataService.getUserName();
+    this.role = this.dataService.getUserRole();
   }
 
   ngOnDestroy() {
@@ -276,7 +280,8 @@ export class AppComponent implements OnDestroy , OnInit {
             panelClass: 'custom-dialog-container',
             data: {
                 modalType: resultSearchComponentModal.modalType,
-                chips: resultSearchComponentModal.chips
+                chips: resultSearchComponentModal.chips,
+                data: resultSearchComponentModal.data
             }
         });
 

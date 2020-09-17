@@ -35,5 +35,8 @@ export const Messages = {
   createIsolatedOrder: '¿Deseas crear la orden de fabricación con el producto ',
   successMyList: 'La lista se ha guardado con éxito',
   confirmSaveMyList: '¿Desea guardar la lista?',
-  confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?'
+  confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?',
+  onlyIntegerNumbers: 'Verifica que la cantidad planificada sea un número entero',
+  repeatedComponent_a: 'El componente ',
+  repeatedComponent_b: ' ya existe para este producto'
 };

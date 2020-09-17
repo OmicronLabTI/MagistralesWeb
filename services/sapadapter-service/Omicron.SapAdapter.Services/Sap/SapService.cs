@@ -98,6 +98,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
             listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+            listToProcess = listToProcess.OrderBy(x => x.OrdenFabricacionId).ThenBy(x => x.DescripcionProducto).ToList();
 
             listToProcess.ForEach(x =>
             {
@@ -190,8 +191,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
-                var batchesCall = await this.GetBatchesComponents(o.OrdenId);
-                var batches = (List<BatchesComponentModel>)batchesCall.Response;
+                var details = await this.GetDetailsByOrder(o.OrdenId);
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
@@ -225,8 +225,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     Container = pedido == null ? string.Empty : pedido.Container,
                     DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
-                    HasBatches = batches.Any(y => y.LotesAsignados.Any()),
-                    Details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList(),
+                    HasBatches = details.Any(x => x.HasBatches),
+                    Details = details,
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -334,6 +334,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 });
             }
 
+            listToReturn = listToReturn.OrderBy(x => x.DescripcionProducto).ToList();
+
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
 
@@ -377,6 +379,18 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Validate if exists batch code.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">the batch code.</param>
+        /// <returns>the validation result.</returns>
+        public async Task<ResultModel> ValidateIfExistsBatchCodeByItemCode(string productCode, string batchCode)
+        {
+            var existingBatchCode = await this.sapDao.GetBatchCode(productCode, batchCode);
+            return ServiceUtils.CreateResult(true, 200, null, !string.IsNullOrEmpty(existingBatchCode), null, null);
+        }
+
+        /// <summary>
         /// Gets the ordersby the filter.
         /// </summary>
         /// <param name="orderFabModel">the params.</param>
@@ -390,14 +404,14 @@ namespace Omicron.SapAdapter.Services.Sap
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.PedidoId).ToList();
+                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
                 var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.PedidoId).ToList();
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
             var total = dataBaseOrders.Count;
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
@@ -491,7 +505,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
-            var lastTransaction = batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0);
+            var lastTransaction = batchTransactions.Any() ? batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
 
             if (lastTransaction == null)
             {
@@ -529,6 +543,23 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(limit, out int limitNumber);
 
             return orders.Skip(offsetNumber).Take(limitNumber).ToList();
+        }
+
+        /// <summary>
+        /// Gets if the details has batches.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<CompleteDetalleFormulaModel>> GetDetailsByOrder(int orderId)
+        {
+            var details = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
+
+            foreach (var detail in details)
+            {
+                detail.HasBatches = (await this.GetTransacitionBatches(orderId, detail.ProductId, new List<ValidBatches>())).Any();
+            }
+
+            return details;
         }
     }
 }

@@ -367,4 +367,23 @@ export class DataService {
   getFormattedNumber(numberToFormatted: any) {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
+
+  getMaxMinDate(date: Date, moths: number , isAdd: boolean) {
+    return new Date(
+        date.getFullYear(),
+         isAdd ? date.getMonth() + moths : date.getMonth() - moths ,
+        date.getDate());
+  }
+
+  setUserRole(role: number) {
+    localStorage.setItem(ConstToken.userRole, String(role));
+  }
+
+  getUserRole() {
+    return localStorage.getItem(ConstToken.userRole);
+  }
+
+  getStringUpperCase(stringToUpperCase: string) {
+    return stringToUpperCase.toUpperCase();
+  }
 }

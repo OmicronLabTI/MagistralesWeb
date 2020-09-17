@@ -157,9 +157,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.changeStatusToProcess()})
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: {[weak self] _ in self?.dismiss(animated: true, completion: nil)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.changeStatusToProcess()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -167,9 +167,9 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         // Muestra un mensaje de confirmación para poner la orden en status finalizado
         self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: CommonStrings.Emty, message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { _ in self?.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -197,7 +197,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
             cell.codeLabel.text = "\(data.productID!)"
-            cell.descriptionLabel.text = data.detailDescription
+            cell.descriptionLabel.text = data.detailDescription?.uppercased()
             cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
             cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
@@ -287,7 +287,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
             print("")
         }
@@ -307,19 +307,26 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         
         if (self.statusType == "En Proceso") {
             // Lógica para editar un item de la tabla
-            let editItem = UIContextualAction(style: .normal, title: "Editar") {  (contextualAction, view, boolValue) in
-                self.indexOfTableToEditItem = indexPath.row
-                self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
+            let editItem = UIContextualAction(style: .normal, title: "Editar") { [weak self] (contextualAction, view, boolValue) in
+                self?.indexOfTableToEditItem = indexPath.row
+                
+//                let storyboard = UIStoryboard.init(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+//                let formVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.orderDetailFormViewController) as! OrderDetailFormViewController
+//                formVC.dataOfTable = self.orderDetailViewModel.getDataTableToEdit()
+//                formVC.indexOfItemSelected = self.indexOfTableToEditItem
+//
+                
+                self?.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
             }
             
             // Logica para borrar un elemento de la tabla
-            let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  (contextualAction, view, boolValue) in
-                let alert = UIAlertController(title: CommonStrings.Emty, message: "El componente será eliminado, ¿quieres continuar?", preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-                let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {res in self.sendIndexToDelete(index: indexPath.row)})
+            let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  [weak self] (contextualAction, view, boolValue) in
+                let alert = UIAlertController(title: "El componente será eliminado, ¿quieres continuar?", message: nil, preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
+                let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] res in self?.sendIndexToDelete(index: indexPath.row)})
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
+                self?.present(alert, animated: true)
             }
             let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
             return swipeActions

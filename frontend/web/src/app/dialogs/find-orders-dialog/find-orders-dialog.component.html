@@ -15,7 +15,7 @@
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de órden de fabricación'" type="number"
                                    maxlength="50"
                                    class="height-input"
-                                    formControlName="docNum">
+                                   formControlName="docNum">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
@@ -45,7 +45,10 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha de</mat-label>
-                                    <input matInput [matDatepicker]="dp3" disabled formControlName="fini" readonly>
+                                    <input matInput [matDatepicker]="dp3"
+                                           formControlName="fini"
+
+                                           [max]="dateFin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                                     <mat-datepicker #dp3 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
@@ -56,7 +59,7 @@
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="fill">
                                     <mat-label>fecha hasta</mat-label>
-                                    <input matInput [matDatepicker]="dp2" disabled formControlName="ffin" readonly
+                                    <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
@@ -117,6 +120,11 @@
                                 Solo 40 caracteres
                             </mat-error>
                         </mat-form-field>
+                    </div>
+                    <div class="form-field-right">
+                            <mat-error *ngIf="findOrdersForm.invalid" class="font-style-omicron">
+                            El rango de fechas debe ser menor a 3 meses
+                        </mat-error>
                     </div>
                 </div>
             </form>

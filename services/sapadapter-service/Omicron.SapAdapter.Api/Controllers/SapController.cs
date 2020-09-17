@@ -10,7 +10,6 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -160,6 +159,20 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetNextBatchCode([FromQuery] string productCode)
         {
             var result = await this.sapFacade.GetNextBatchCode(productCode);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Validate if batch code exists.
+        /// </summary>
+        /// <param name="productCode">the product code.</param>
+        /// <param name="batchCode">batchCode.</param>
+        /// <returns>the data.</returns>
+        [Route("/batchcode/exists")]
+        [HttpGet]
+        public async Task<IActionResult> ValidateIfExistsBatchCodeByItemCode([FromQuery] string productCode, [FromQuery] string batchCode)
+        {
+            var result = await this.sapFacade.ValidateIfExistsBatchCodeByItemCode(productCode, batchCode);
             return this.Ok(result);
         }
 

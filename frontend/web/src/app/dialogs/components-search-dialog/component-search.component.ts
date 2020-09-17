@@ -8,6 +8,8 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {PedidosService} from '../../services/pedidos.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
+import {DataService} from '../../services/data.service';
+import { Messages } from 'src/app/constants/messages';
 
 @Component({
   selector: 'app-component-search',
@@ -38,7 +40,8 @@ export class ComponentSearchComponent implements OnInit {
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
-              @Inject(MAT_DIALOG_DATA) public data: any) {
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private dataService: DataService) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
   }
@@ -54,6 +57,13 @@ export class ComponentSearchComponent implements OnInit {
   getComponents() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
+          resComponents.response.forEach( component => {
+            if (this.isFromSearchComponent ) {
+              component.description = component.description.toUpperCase();
+            } else {
+              component.productoName = component.productoName.toUpperCase();
+            }
+          });
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
@@ -101,6 +111,24 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
+    if (this.isFromSearchComponent) {
+      if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
+        this.checkIsPrevious(row);
+      } else {
+        this.dataService.presentToastCustom(
+          Messages.repeatedComponent_a + row.productId + Messages.repeatedComponent_b,
+          'info',
+          '',
+          false,
+          true
+        )
+      }
+    } else {
+      this.checkIsPrevious(row);
+    }
+  }
+
+  checkIsPrevious(row) {
     if (row === this.rowPrevious) {
       row.chips = this.keywords;
       this.dialogRef.close(row);

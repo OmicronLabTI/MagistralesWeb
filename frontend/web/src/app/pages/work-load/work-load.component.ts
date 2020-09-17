@@ -29,14 +29,8 @@ export class WorkLoadComponent implements OnInit {
   }
 
   private getMaxDates() {
-    this.minStartDate = new Date(
-                this.finishDate.getFullYear(),
-          this.finishDate.getMonth() - CONST_NUMBER.three,
-                this.finishDate.getDate());
-    this.maxFinishDate = new Date(
-              this.startDate.getFullYear(),
-        this.startDate.getMonth() + CONST_NUMBER.three,
-              this.startDate.getDate());
+    this.minStartDate = this.dataService.getMaxMinDate(this.finishDate, CONST_NUMBER.three, false);
+    this.maxFinishDate = this.dataService.getMaxMinDate(this.startDate, CONST_NUMBER.three, true);
     this.getWorkLoad();
   }
 
@@ -48,7 +42,7 @@ export class WorkLoadComponent implements OnInit {
     this.ordersService.getWorLoad(this.dataService.getDateFormatted(this.startDate, this.finishDate, false))
         .subscribe(workLoadRes => {
              workLoadRes.response.forEach( workLoad => {
-               workLoad.totalPossibleAssign =  new Intl.NumberFormat().format(Number(workLoad.totalPossibleAssign));
+               workLoad.totalPossibleAssign =  this.dataService.getFormattedNumber(workLoad.totalPossibleAssign);
                workLoad.assigned = this.dataService.getFormattedNumber(workLoad.assigned);
                workLoad.processed = this.dataService.getFormattedNumber(workLoad.processed);
                workLoad.pending = this.dataService.getFormattedNumber(workLoad.pending);
@@ -60,7 +54,6 @@ export class WorkLoadComponent implements OnInit {
                workLoad.totalPieces = this.dataService.getFormattedNumber(workLoad.totalPieces);
              });
              this.workLoads = workLoadRes.response;
-             console.log('workLoads: ', this.workLoads)
             }
         , error => this.errorService.httpError(error));
   }

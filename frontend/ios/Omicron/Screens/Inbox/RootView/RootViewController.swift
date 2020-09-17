@@ -75,15 +75,16 @@ class RootViewController: UIViewController {
         self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
         
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
-        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: {_ in
+        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]_ in
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let loginViewController = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
             UIApplication.shared.windows.first?.rootViewController = loginViewController
             UIApplication.shared.windows.first?.makeKeyAndVisible()
+            Resolver.cached.reset()
         }).disposed(by: self.disposeBag)
         
         // Muestra los datos de la sección "Mis ordenes"
-        rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) {
+        rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) { 
             row, data, cell in
             cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
             cell.indicatorStatusNameLabel.text = data.statusName
@@ -140,12 +141,14 @@ class RootViewController: UIViewController {
                 guard let section = self?.rootViewModel.sections[selection.row] else { return }
                 self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
                 self?.inboxViewModel.setSelection(section: section)
+                self?.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
             self?.viewTable.alpha = 0.25
             self?.viewTable.isUserInteractionEnabled = false
             self?.viewTable.deselectRow(at: selection, animated: false)
             self?.inboxViewModel.setFilter(orders: data ?? [])
+            self?.inboxViewModel.hideGroupingButtons.onNext(true)
         }).subscribe().disposed(by: disposeBag)
     }
     

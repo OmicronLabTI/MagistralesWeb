@@ -316,6 +316,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ReasonOrderNonCompleted = "La orden no se encuentra terminada.";
 
         /// <summary>
+        /// Reason pre-production orders in SAP.
+        /// </summary>
+        public const string ReasonPreProductionOrdersInSap = "El pedido aun contiene órdenes sin procesar en SAP.";
+
+        /// <summary>
         /// Reason SAP error.
         /// </summary>
         public const string ReasonSapError = "Ocurrió un error al actualizar en SAP.";
@@ -414,6 +419,33 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusAvoidReasignar { get; } = new List<string>
         {
             "Finalizado",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValidStatusTerminar { get; } = new List<string>
+        {
+            Terminado,
+            Finalizado,
+            Cancelled,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValidStatusLiberado { get; } = new List<string>
+        {
+            Asignado,
+            Reasignado,
+            Pendiente,
+            Proceso,
         };
 
         /// <summary>

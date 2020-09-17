@@ -40,6 +40,14 @@ class LotsAvailableTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
+    
+    func setExpiredBatches(_ expired: Bool) {
+        lotsLabel.textColor = expired ? UIColor.red : UIColor.black
+        quantityAvailableLabel.textColor = expired ? UIColor.red : UIColor.black
+        quantitySelected.textColor = expired ? UIColor.red : UIColor.black
+        quantityAssignedLabel.textColor = expired ? UIColor.red : UIColor.black
+    }
+    
 }
 
 extension LotsAvailableTableViewCell: UITextFieldDelegate {

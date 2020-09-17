@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CONST_NUMBER, pathRoles } from '../constants/const';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -11,11 +12,28 @@ export class GuardService implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    let pass = false;
     if (this.dataService.userIsAuthenticated()) {
-      return true;
+      switch (this.dataService.getUserRole()) {
+        case '1':
+          pass = pathRoles.admin.includes(route.url[CONST_NUMBER.zero].path);
+          if (!pass) {
+            this.router.navigate([pathRoles.admin[CONST_NUMBER.zero]]);
+            return pass;
+          }
+          break;
+        case '3':
+          pass = pathRoles.logistica.includes(route.url[CONST_NUMBER.zero].path);
+          if (!pass) {
+            this.router.navigate([pathRoles.logistica[CONST_NUMBER.zero]]);
+            return pass;
+          }
+          break;
+      }
+      return pass;
+    } else {
+      this.router.navigate(['login']);
+      return pass;
     }
-
-    this.router.navigate(['login']);
-    return false;
   }
 }

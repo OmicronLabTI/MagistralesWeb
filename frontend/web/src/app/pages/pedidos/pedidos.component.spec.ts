@@ -71,9 +71,9 @@ describe('PedidosComponent', () => {
     expect(component.lengthPaginator).toEqual(PedidosListMock.comments);
     expect(component.dataSource.data).toEqual(PedidosListMock.response);
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.abierto)
-        .forEach(pedido => expect(pedido.class).toEqual('green'));
+        .forEach(pedido => expect(pedido.class).toEqual('abierto'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.planificado)
-        .forEach(pedido => expect(pedido.class).toEqual('mat-primary'));
+        .forEach(pedido => expect(pedido.class).toEqual('planificado'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.liberado)
         .forEach(pedido => expect(pedido.class).toEqual('liberado'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.cancelado)
