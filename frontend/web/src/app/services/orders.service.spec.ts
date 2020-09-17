@@ -15,6 +15,12 @@ describe('OrdersService', () => {
     const service: OrdersService = TestBed.get(OrdersService);
     expect(service).toBeTruthy();
   });
+
+  it('should getCustomList', () => {
+    const service: OrdersService = TestBed.get(OrdersService);
+    expect(service.getCustomList('anyQueryString') instanceof Observable).toBeTruthy();
+  });
+
   it('should saveMyListComponent', () => {
     const service: OrdersService = TestBed.get(OrdersService);
     expect(service.saveMyListComponent({}) instanceof Observable).toBeTruthy();
