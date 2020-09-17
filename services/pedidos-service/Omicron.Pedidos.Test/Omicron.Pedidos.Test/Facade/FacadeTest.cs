@@ -70,7 +70,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.GetFabOrderByUserID(It.IsAny<string>()))
+                .Setup(m => m.GetFabOrderByUserId(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos

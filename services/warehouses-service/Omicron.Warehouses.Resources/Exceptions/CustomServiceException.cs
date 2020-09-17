@@ -6,7 +6,7 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.LeadToCash.Resources.Exceptions
+namespace Omicron.Warehouses.Resources.Exceptions
 {
     using System;
     using System.Runtime.Serialization;

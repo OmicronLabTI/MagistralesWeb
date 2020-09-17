@@ -27,7 +27,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
-        /// <param name="ordersToCancel">Orders to cancel.</para
+        /// <param name="ordersToCancel">Orders to cancel.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CancelFabricationOrders(List<OrderIdModel> ordersToCancel);
     }

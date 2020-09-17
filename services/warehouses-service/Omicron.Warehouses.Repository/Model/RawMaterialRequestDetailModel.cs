@@ -55,5 +55,12 @@ namespace Omicron.Warehouses.Entities.Model
         /// <value>The base quantity.</value>
         [Column("requestquantity")]
         public decimal RequestQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets measurement of unit.
+        /// </summary>
+        /// <value>The measurement unit.</value>
+        [Column("unit")]
+        public string Unit { get; set; }
     }
 }

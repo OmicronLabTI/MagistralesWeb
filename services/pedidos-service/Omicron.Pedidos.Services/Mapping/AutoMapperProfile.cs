@@ -26,7 +26,6 @@ namespace Omicron.Pedidos.Services.Mapping
         {
             this.CreateMap<UserModel, UserDto>();
             this.CreateMap<UserDto, UserModel>();
-
             this.CreateMap<ResultDto, ResultModel>();
             this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<ProcessOrderModel, ProcessOrderDto>();
@@ -62,10 +61,6 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<CustomComponentListDto, CustomComponentListModel>();
             this.CreateMap<ComponentCustomComponentListModel, ComponentCustomComponentListDto>();
             this.CreateMap<ComponentCustomComponentListDto, ComponentCustomComponentListModel>();
-            this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>().ForMember(x => x.Signature, opt => opt.ConvertUsing<ConverterBase64ToByteArray, string>());
-            this.CreateMap<RawMaterialRequestModel, RawMaterialRequestDto>();
-            this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
-            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
         }
     }
 }

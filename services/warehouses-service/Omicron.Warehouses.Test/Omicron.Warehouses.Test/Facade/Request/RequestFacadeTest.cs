@@ -85,5 +85,20 @@ namespace Omicron.Warehouses.Test.Facade.Request
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetRawMaterialRequest()
+        {
+            // act
+            var response = await this.requestFacade.GetRawMaterialRequest(1);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

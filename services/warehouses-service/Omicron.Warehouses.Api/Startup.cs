@@ -19,9 +19,11 @@ namespace Omicron.Warehouses.Api
     using Microsoft.OpenApi.Models;
     using Omicron.Warehouses.Api.Filters;
     using Omicron.Warehouses.DependencyInjection;
+    using Omicron.Warehouses.Services.Clients;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
+    using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
 
     /// <summary>
@@ -29,6 +31,8 @@ namespace Omicron.Warehouses.Api
     /// </summary>
     public class Startup
     {
+        private const string UserService = "http://usuariosservice/";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -94,6 +98,13 @@ namespace Omicron.Warehouses.Api
                     },
                 });
             });
+
+            services.AddHttpClient("users", c =>
+            {
+                c.BaseAddress = new Uri(UserService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IUsersService, UsersService>();
 
             this.AddRedis(services, Log.Logger);
 

@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="userId">the user id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetFabOrderByUserID(string userId);
+        Task<ResultModel> GetFabOrderByUserId(string userId);
 
         /// <summary>
         /// Gets the list of user orders by user id.
@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Finish fabrication orders.
         /// </summary>
-        /// <param name="finishOrders">Orders to finish.</para
+        /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders);
 

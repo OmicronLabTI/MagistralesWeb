@@ -201,8 +201,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
 
-                var details = (await this.sapDao.GetDetalleFormula(o.OrdenId)).ToList();
-
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
                     IsChecked = false,

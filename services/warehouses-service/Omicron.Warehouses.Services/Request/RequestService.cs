@@ -13,6 +13,7 @@ namespace Omicron.Warehouses.Services.Request
     using System.Threading.Tasks;
     using Omicron.Warehouses.DataAccess.DAO.Request;
     using Omicron.Warehouses.Entities.Model;
+    using Omicron.Warehouses.Services.Clients;
     using Omicron.Warehouses.Services.Constants;
     using Omicron.Warehouses.Services.Utils;
 
@@ -22,14 +23,17 @@ namespace Omicron.Warehouses.Services.Request
     public class RequestService : IRequestService
     {
         private readonly IRequestDao requestDao;
+        private readonly IUsersService usersService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestService"/> class.
         /// </summary>
         /// <param name="requestDao">request dao.</param>
-        public RequestService(IRequestDao requestDao)
+        /// <param name="usersService">users service.</param>
+        public RequestService(IRequestDao requestDao, IUsersService usersService)
         {
             this.requestDao = requestDao;
+            this.usersService = usersService;
         }
 
         /// <summary>
@@ -40,6 +44,11 @@ namespace Omicron.Warehouses.Services.Request
         /// <returns>List with successfuly and failed creations.</returns>
         public async Task<ResultModel> CreateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests)
         {
+            if (!(await this.usersService.GetUsersById(new List<string> { userId })).Any())
+            {
+                return ServiceUtils.CreateResult(false, 200, ErrorReasonConstants.UserNotExists, null, null);
+            }
+
             var results = new SuccessFailResults<RawMaterialRequestModel>();
             foreach (var request in requests)
             {
@@ -65,6 +74,11 @@ namespace Omicron.Warehouses.Services.Request
         /// <returns>List with successfuly and failed updates.</returns>
         public async Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests)
         {
+            if (!(await this.usersService.GetUsersById(new List<string> { userId })).Any())
+            {
+                return ServiceUtils.CreateResult(false, 200, ErrorReasonConstants.UserNotExists, null, null);
+            }
+
             var results = new SuccessFailResults<RawMaterialRequestModel>();
             foreach (var request in requests)
             {
@@ -140,7 +154,7 @@ namespace Omicron.Warehouses.Services.Request
             await this.CreateDetail(existingRequest.Id, request.OrderedProducts.Where(x => x.Id == 0).ToList());
 
             // Update details.
-            await this.requestDao.UpdateDetailsOfRawMaterialRequest(request.OrderedProducts.Where(x => x.Id > 0 && x.ProductId.Equals(existingRequest.Id)).ToList());
+            await this.requestDao.UpdateDetailsOfRawMaterialRequest(this.MapDetailUpdates(existingRequest, request.OrderedProducts));
 
             return (true, existingRequest, null);
         }
@@ -156,6 +170,29 @@ namespace Omicron.Warehouses.Services.Request
             detail.ForEach(x => x.RequestId = requestId);
             await this.requestDao.InsertDetailsOfRawMaterialRequest(detail);
             return detail;
+        }
+
+        /// <summary>
+        /// Map info to update in request detail.
+        /// </summary>
+        /// <param name="current">Current request.</param>
+        /// <param name="detailToUpdate">Detail to update.</param>
+        /// <returns>Updated detail.</returns>
+        public List<RawMaterialRequestDetailModel> MapDetailUpdates(RawMaterialRequestModel current, List<RawMaterialRequestDetailModel> detailToUpdate)
+        {
+            current.OrderedProducts.ForEach(x =>
+            {
+                var updateInfo = detailToUpdate.FirstOrDefault(u => u.Id.Equals(x.Id));
+                if (updateInfo != null)
+                {
+                    x.ProductId = updateInfo.ProductId;
+                    x.Description = updateInfo.Description;
+                    x.RequestQuantity = updateInfo.RequestQuantity;
+                    x.Unit = updateInfo.Unit;
+                }
+            });
+
+            return current.OrderedProducts;
         }
 
         /// <summary>

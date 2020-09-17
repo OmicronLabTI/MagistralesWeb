@@ -81,7 +81,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="userId">the user id.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetFabOrderByUserID(string userId)
+        public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
             var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
             var resultFormula = await this.GetSapOrders(userOrders);
@@ -304,7 +304,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Finish fabrication orders.
         /// </summary>
-        /// <param name="finishOrders">Orders to finish.</para
+        /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders)
         {
@@ -565,7 +565,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
             var logs = new List<OrderLogModel>();
-            var payload = new { ProductCode = isolatedFabOrder.ProductCode };
+            var payload = new { isolatedFabOrder.ProductCode };
             var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
 
             if (!diapiResult.Success)
@@ -581,7 +581,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Get new production order id
                 var route = $"{ServiceConstants.GetLastIsolatedProductionOrderId}?productId={isolatedFabOrder.ProductCode}&uniqueId={resultMessage.Key}";
                 var result = await this.sapAdapter.GetSapAdapter(route);
-                productionOrderId = int.Parse(result.Response.ToString());
+                productionOrderId = int.Parse(result.Response.ToString() ?? throw new InvalidOperationException());
 
                 UserOrderModel newProductionOrder = new UserOrderModel();
                 newProductionOrder.Salesorderid = string.Empty;
@@ -646,7 +646,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
             }
 
-            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
         /// <summary>

@@ -11,11 +11,13 @@ namespace Omicron.Warehouses.Test.Services.Request
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.Warehouses.DataAccess.DAO.Request;
     using Omicron.Warehouses.Entities.Context;
     using Omicron.Warehouses.Entities.Model;
+    using Omicron.Warehouses.Services.Clients;
     using Omicron.Warehouses.Services.Mapping;
     using Omicron.Warehouses.Services.Request;
 
@@ -26,6 +28,7 @@ namespace Omicron.Warehouses.Test.Services.Request
     public class RequestServiceTest : BaseTest
     {
         private IRequestService requestService;
+        private Mock<IUsersService> mockUsersService;
         private IRequestDao requestDao;
         private DatabaseContext context;
         private string userId = "abc";
@@ -46,11 +49,21 @@ namespace Omicron.Warehouses.Test.Services.Request
             request[0].OrderedProducts[0].Id = 1;
             request[0].OrderedProducts[0].RequestId = 1;
             request[0].OrderedProducts[0].ProductId = "P001";
+            request[0].OrderedProducts[0].Unit = "Kilogramo";
 
             this.context.RawMaterialRequests.AddRange(request);
             this.context.RawMaterialRequestDetails.AddRange(request[0].OrderedProducts);
 
             this.context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Create mock users.
+        /// </summary>
+        /// <returns>Mock users.</returns>
+        public List<UserModel> GetMockUsers()
+        {
+            return AutoFixtureProvider.CreateList<UserModel>(1);
         }
 
         /// <summary>
@@ -61,7 +74,10 @@ namespace Omicron.Warehouses.Test.Services.Request
         {
             this.InitializeInMemoryDb();
             this.requestDao = new RequestDao(this.context);
-            this.requestService = new RequestService(this.requestDao);
+            this.mockUsersService = new Mock<IUsersService>();
+            this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<List<string>>())).Returns(Task.FromResult(this.GetMockUsers()));
+
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object);
         }
 
         /// <summary>
