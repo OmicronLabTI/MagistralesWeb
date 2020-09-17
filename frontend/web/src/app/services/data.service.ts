@@ -271,8 +271,6 @@ export class DataService {
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
             && t.status !== ConstStatus.abierto)).length > 0;
-      case FromToFilter.fromOrdersIsolated:
-        break;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)).length > 0;
