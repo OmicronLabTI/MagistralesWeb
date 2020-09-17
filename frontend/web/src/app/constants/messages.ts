@@ -36,6 +36,7 @@ export const Messages = {
   successMyList: 'La lista se ha guardado con éxito',
   confirmSaveMyList: '¿Desea guardar la lista?',
   confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?',
-  onlyIntegerNumbers: 'Solo se permiten números enteros en la cantidad planificada'
-
+  onlyIntegerNumbers: 'Verifica que la cantidad planificada sea un número entero',
+  repeatedComponent_a: 'El componente ',
+  repeatedComponent_b: ' ya existe para este producto'
 };

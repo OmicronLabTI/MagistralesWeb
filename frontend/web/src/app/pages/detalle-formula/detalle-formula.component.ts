@@ -48,6 +48,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   minDate = new Date();
   subscription = new Subscription();
   isSaveToMyList = false;
+  isPlannedQuantityError = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
@@ -116,7 +117,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
+    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent, data: this.dataSource.data});
   }
 
 
@@ -139,8 +140,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   }
   saveFormulaDetail() {
-    if (this.oldDataFormulaDetail.plannedQuantity === null || this.oldDataFormulaDetail.plannedQuantity % 1 !== 0
-        || this.oldDataFormulaDetail.plannedQuantity === 0) {
+    if (this.isPlannedQuantityError) {
       this.dataService.setMessageGeneralCallHttp({title: Messages.onlyIntegerNumbers, icon: 'info', isButtonAccept: true});
       return;
     }
@@ -212,6 +212,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
 
   changeData() {
+    this.isPlannedQuantityError = this.oldDataFormulaDetail.plannedQuantity === null || this.oldDataFormulaDetail.plannedQuantity % 1 !== 0
+        || this.oldDataFormulaDetail.plannedQuantity === 0;
     this.dataSource.data.forEach(component => {
       component.requiredQuantity = component.baseQuantity * this.oldDataFormulaDetail.plannedQuantity;
     });

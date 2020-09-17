@@ -280,7 +280,8 @@ export class AppComponent implements OnDestroy , OnInit {
             panelClass: 'custom-dialog-container',
             data: {
                 modalType: resultSearchComponentModal.modalType,
-                chips: resultSearchComponentModal.chips
+                chips: resultSearchComponentModal.chips,
+                data: resultSearchComponentModal.data
             }
         });
 

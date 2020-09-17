@@ -35,6 +35,11 @@ class OrderDetailFormViewController:  FormViewController {
         super.viewDidLoad()
         self.buildForm()
         self.viewModelBinding()
+        self.isModalInPresentation = true
+    }
+    
+    deinit {
+        print("Se muere el ipad")
     }
     
     // MARK: Functions
@@ -67,21 +72,21 @@ class OrderDetailFormViewController:  FormViewController {
               
             +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
             
-            <<< TextRow() {
+            <<< TextRow() { [weak self] in
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                $0.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!) : self.formatter.string(from: NSNumber(value: self.dataOfTable!.details![self.indexOfItemSelected].baseQuantity!))
+                $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity ?? 0) : self?.formatter.string(from: NSNumber(value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity! ?? 0))
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
-                $0.onCellHighlightChanged{ cell, row in
+                $0.onCellHighlightChanged{ [weak self] cell, row in
                 
-                    if (row.value != nil && self.canOperation(rowValue: row.value ?? "f")) {
-                        let requireQuantityField = self.form.rowBy(tag: "requiredQuantity") as? TextRow
+                    if (row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) != nil)) {
+                        let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
-                        let requiredQuantity = Decimal(self.dataOfTable?.plannedQuantity ?? 0)
+                        let requiredQuantity = Decimal(self?.dataOfTable?.plannedQuantity ?? 0)
                         let result = baseQuantity! * requiredQuantity
-                        requireQuantityField?.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+                        requireQuantityField?.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         requireQuantityField?.reload()
                     }
                 }
@@ -117,20 +122,20 @@ class OrderDetailFormViewController:  FormViewController {
                 }
             }
             
-            <<< TextRow() {
+            <<< TextRow() { [weak self] in
                 $0.title = "Cantidad requerida: "
-                $0.value =  self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity!) : self.formatter.string(from: NSNumber(value: self.dataOfTable!.details![self.indexOfItemSelected].requiredQuantity!))
+                $0.value =  self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0) : self?.formatter.string(from: NSNumber(value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity! ?? 0))
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
                     cell.textField.keyboardType = .numberPad
                 }
-                $0.onCellHighlightChanged{ cell, row in
-                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && self.canOperation(rowValue: row.value ?? "d")) {
+                $0.onCellHighlightChanged{ [weak self] cell, row in
+                    if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && ((self?.canOperation(rowValue: row.value ?? "d")) != nil)) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = Decimal((self.dataOfTable?.plannedQuantity)!)
+                        let baseQuantity = Decimal((self?.dataOfTable?.plannedQuantity)!)
                         let result = requiredQuantity!  / baseQuantity
-                        let baseQuantityField = self.form.rowBy(tag: "baseQuantity") as? TextRow
-                        baseQuantityField?.value = self.dataOfTable!.details![self.indexOfItemSelected].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+                        let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
+                        baseQuantityField?.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         baseQuantityField?.reload()
                     }
                 }
@@ -167,34 +172,34 @@ class OrderDetailFormViewController:  FormViewController {
                 }
             }
             
-            <<< PickerInlineRow<String>() {
+            <<< PickerInlineRow<String>() { [weak self] in
                 $0.title = "Almacén: "
                 $0.tag = "werehouse"
                 $0.options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN", "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
-                $0.value = self.dataOfTable?.details![self.indexOfItemSelected].warehouse!
+                $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
             }
             
             +++ Section()
-            <<< ButtonRow() {
+            <<< ButtonRow() { [weak self] in
                 $0.title = "Aceptar"
                 $0.disabled = Condition.function(
-                    form.allRows.compactMap { $0.tag },
+                    self?.form.allRows.compactMap { $0.tag } ?? [""],
                 { !$0.validate().isEmpty })
             }
-            .onCellSelection { cell, row in
+            .onCellSelection { [weak self] cell, row in
                 row.section?.form?.validate()
                 if (row.isValid && !row.isDisabled) {
                     
-                    self.baseQuantity = self.form.rowBy(tag: "baseQuantity")
-                    self.requiredQuantity = self.form.rowBy(tag: "requiredQuantity")
-                    self.werehouse = self.form.rowBy(tag: "werehouse")
+                    self?.baseQuantity = self?.form.rowBy(tag: "baseQuantity")
+                    self?.requiredQuantity = self?.form.rowBy(tag: "requiredQuantity")
+                    self?.werehouse = self?.form.rowBy(tag: "werehouse")
                     
                     let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?", message: nil, preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: {[weak self] _ in self?.dismiss(animated: true)})
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: {[weak self] _ in self?.navigationController?.popViewController(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  {[weak self] res in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)
-                    self.present(alert, animated: true, completion: nil)
+                    self?.present(alert, animated: true, completion: nil)
                 }
             }
             <<< ButtonRow() {
@@ -203,8 +208,8 @@ class OrderDetailFormViewController:  FormViewController {
             .cellSetup{cell, row in
                 cell.tintColor = .red
             }
-            .onCellSelection { cell, row in
-                self.dismiss(animated: true)
+            .onCellSelection { [weak self] cell, row in
+                self?.dismiss(animated: true)
         }
     }
     
@@ -221,18 +226,18 @@ class OrderDetailFormViewController:  FormViewController {
     func viewModelBinding () -> Void {
         
         // Muestra o oculta el loading
-        orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { showLoading in
+        orderDetailFormViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if(showLoading) {
-                self.lottieManager.showLoading()
+                self?.lottieManager.showLoading()
                 return
             }
-            self.lottieManager.hideLoading()
+            self?.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {_ in self?.refreshOrderDetail()})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: {[weak self] _ in self?.refreshOrderDetail()})
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
             

@@ -29,7 +29,7 @@ class RootViewModel {
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 Persistence.shared.removePersistenceData()
                 self?.goToLoginViewController.onNext(())
                 self?.loading.onNext(false)
