@@ -25,6 +25,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public double TotalNecesario { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public List<AssignedBatches> LotesAsignados { get; set; }
     }
 }
