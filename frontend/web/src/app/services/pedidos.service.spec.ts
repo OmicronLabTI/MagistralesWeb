@@ -52,11 +52,11 @@ describe('PedidosService', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         const placeOlderReq = new IPlaceOrdersReq();
         placeOlderReq.docEntry = [1, 2, 3, 4];
-        placeOlderReq.orderType = 'Type orden [Pedido, Orden]';
+        placeOlderReq.orderType = 'Type order [Pedido, Orden]';
         placeOlderReq.userId = 'idUser to place orders';
         placeOlderReq.userLogistic = 'Id user logueado';
         expect(service.postPlaceOrders(placeOlderReq , true) instanceof Observable).toBeTruthy();
-      expect(service.postPlaceOrders(placeOlderReq , false) instanceof Observable).toBeTruthy();
+        expect(service.postPlaceOrders(placeOlderReq , false) instanceof Observable).toBeTruthy();
     });
   it('should getComponents', () => {
         const service: PedidosService = TestBed.get(PedidosService);
@@ -104,6 +104,14 @@ describe('PedidosService', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         const createIsolatedOrder = new CreateIsolatedOrderReq(); // {idOrder: 234, userId: 'user logueado'} // to finalize
         expect(service.createIsolatedOrder(createIsolatedOrder) instanceof Observable).toBeTruthy();
+    });
+  it('should getNextBatchCode', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getNextBatchCode('anyProductCode') instanceof Observable).toBeTruthy();
+    });
+  it('should getIfExistsBatchCode', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getIfExistsBatchCode('anyProductCode', 'anyBatchCode') instanceof Observable).toBeTruthy();
     });
 });
 

@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {DatePipe} from '@angular/common';
 import {DataService} from './data.service';
-import {HttpServiceTOCall, MessageType} from '../constants/const';
+import {ConstStatus, FromToFilter, HttpServiceTOCall, MessageType} from '../constants/const';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
@@ -196,4 +196,21 @@ describe('DataService', () => {
     service.setNewSearchOrderModal({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'), ffin: new Date('01/12/2020'),
       status: 'Finalizado'});
   });
+  it('should getIsThereOnData', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromOrdersIsolatedCancel)).toBeFalsy();
+  });
+  it('should getItemOnDateWithFilter', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getItemOnDateWithFilter([], FromToFilter.fromOrderIsolatedReassignItems, ConstStatus.cancelado).length).toEqual(0);
+    expect(service.getItemOnDateWithFilter([], FromToFilter.fromOrdersReassign, ConstStatus.cancelado).length).toEqual(0);
+    expect(service.getItemOnDateWithFilter([], FromToFilter.fromDefault, ConstStatus.cancelado).length).toEqual(0);
+
+  });
+  it('should getIsWithFilter', () => {
+    const service: DataService = TestBed.get(DataService);
+    // expect(service.getIsWithFilter({i})).toEqual(0);
+
+  });
+
 });
