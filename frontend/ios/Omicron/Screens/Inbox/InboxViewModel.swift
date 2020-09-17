@@ -128,7 +128,11 @@ class  InboxViewModel {
         orders.sorted  {
             switch ($0, $1) {
             case let (aCode, bCode):
-                return aCode.baseDocument! < bCode.baseDocument!
+                if aCode.baseDocument! != bCode.baseDocument! {
+                    return aCode.baseDocument! < bCode.baseDocument!
+                } else {
+                    return aCode.productionOrderId! < bCode.productionOrderId!
+                }
             }
         }
     }

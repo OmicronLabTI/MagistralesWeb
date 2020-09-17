@@ -182,7 +182,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HTk-p1-6Au">
-                                <rect key="frame" x="16" y="169" width="958.5" height="847"/>
+                                <rect key="frame" x="16" y="164" width="958.5" height="852"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="qSm-Zi-mYZ">
                                     <size key="itemSize" width="150" height="150"/>
@@ -227,6 +227,7 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="0ER-D8-Krr"/>
                                     <constraint firstAttribute="trailing" secondItem="fya-yO-RFg" secondAttribute="trailing" id="3Ka-WC-CP9"/>
@@ -236,7 +237,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qIT-bi-nWs">
-                                <rect key="frame" x="10" y="121" width="970.5" height="40"/>
+                                <rect key="frame" x="10" y="116" width="970.5" height="40"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="jGm-0l-bDk">
                                         <rect key="frame" x="890.5" y="0.0" width="80" height="40"/>
@@ -275,7 +276,7 @@
                             <constraint firstItem="6ZC-de-fnf" firstAttribute="trailing" secondItem="HTk-p1-6Au" secondAttribute="trailing" constant="16" id="UAk-UV-P8m"/>
                             <constraint firstItem="qIT-bi-nWs" firstAttribute="leading" secondItem="6ZC-de-fnf" secondAttribute="leading" constant="10" id="fc2-0F-FkS"/>
                             <constraint firstItem="6ZC-de-fnf" firstAttribute="bottom" secondItem="HTk-p1-6Au" secondAttribute="bottom" constant="8" id="iCE-lO-QyI"/>
-                            <constraint firstItem="qIT-bi-nWs" firstAttribute="top" secondItem="5Mc-gk-gPN" secondAttribute="bottom" constant="5" id="irX-OO-SUd"/>
+                            <constraint firstItem="qIT-bi-nWs" firstAttribute="top" secondItem="5Mc-gk-gPN" secondAttribute="bottom" id="irX-OO-SUd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6ZC-de-fnf"/>
                     </view>
