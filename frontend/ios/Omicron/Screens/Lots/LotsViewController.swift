@@ -112,6 +112,7 @@ class LotsViewController: UIViewController {
         // Actualizan los comentarios
         self.lotsViewModel.updateComments.subscribe(onNext: {[weak self] orderDetail in
             self?.orderDetail = [orderDetail]
+            self?.showIconMessage()
         }).disposed(by: self.disposeBag)
         
         // Muestra el componente de firma
@@ -224,7 +225,7 @@ class LotsViewController: UIViewController {
         }
     }
     
-    func initComponents() {
+    func showIconMessage() {
         if let detail = self.orderDetail.first {
             var iconName = ""
             if detail.comments != nil  {
@@ -237,6 +238,10 @@ class LotsViewController: UIViewController {
             self.navigationItem.rightBarButtonItem = commentsIcons
         
         }
+    }
+    
+    func initComponents() {
+        self.showIconMessage()
         
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         
