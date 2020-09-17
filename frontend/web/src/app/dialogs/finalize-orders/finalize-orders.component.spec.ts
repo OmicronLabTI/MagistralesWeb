@@ -18,7 +18,7 @@ describe('FinalizeOrdersComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule],
       providers: [{ provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {filterOrdersData: {dateFull: ''}} },
+        { provide: MAT_DIALOG_DATA, useValue: {filterOrdersData: []} },
         DatePipe]
 
     })
