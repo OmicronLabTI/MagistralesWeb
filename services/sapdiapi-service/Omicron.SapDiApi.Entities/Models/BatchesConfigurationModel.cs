@@ -28,7 +28,7 @@ namespace Omicron.SapDiApi.Entities.Models
         /// Gets or sets quantity in the batch
         /// </summary>
         /// <value>The batch quantity.</value>
-        public double Quantity
+        public string Quantity
         {
             get; set;
         }

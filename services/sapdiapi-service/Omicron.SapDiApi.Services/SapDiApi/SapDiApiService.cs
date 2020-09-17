@@ -636,7 +636,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="closeConfiguration">Configuration for close order.</param>
         private void CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderModel closeConfiguration) {
             _loggerProxy.Debug($"Create oInventoryGenEntry for { productionOrderId }.");
-
+            var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             var productionOrder = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             var receiptProduction = this.company.GetBusinessObject(BoObjectTypes.oInventoryGenEntry);
             closeConfiguration.Batches = closeConfiguration.Batches ?? new List<BatchesConfigurationModel>();
@@ -647,7 +647,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             if (product.ManageBatchNumbers == BoYesNoEnum.tYES)
             {
-                quantityToReceipt = closeConfiguration.Batches.Sum(x => x.Quantity);
+                _loggerProxy.Debug($"Log batches quantity with decimal separator { separator }.");
+                closeConfiguration.Batches.ForEach(x => _loggerProxy.Debug($"Batch { x.BatchCode } with quantity { x.Quantity }."));
+                closeConfiguration.Batches.ForEach(x => _loggerProxy.Debug($"Batch { x.BatchCode } with quantity { Double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)) }."));
+                _loggerProxy.Debug($"Sum { closeConfiguration.Batches.Sum(x => Double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator))) }.");
+
+                quantityToReceipt = closeConfiguration.Batches.Sum(x => Double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)));
                 var counter = 0;
                 foreach (var batchConfig in closeConfiguration.Batches)
                 {
@@ -655,7 +660,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     receiptProduction.Lines.BatchNumbers.BatchNumber = batchConfig.BatchCode;
                     receiptProduction.Lines.BatchNumbers.ManufacturingDate = batchConfig.ManufacturingDate;
                     receiptProduction.Lines.BatchNumbers.ExpiryDate = batchConfig.ExpirationDate;
-                    receiptProduction.Lines.BatchNumbers.Quantity = batchConfig.Quantity;
+                    receiptProduction.Lines.BatchNumbers.Quantity = Double.Parse(System.Text.RegularExpressions.Regex.Replace(batchConfig.Quantity, "[.,]", separator));
                     receiptProduction.Lines.BatchNumbers.Add();
                     counter += 1;
                 }
