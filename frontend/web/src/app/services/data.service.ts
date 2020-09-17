@@ -165,6 +165,7 @@ export class DataService {
     localStorage.removeItem(ConstToken.refreshToken);
     localStorage.removeItem(ConstToken.userId);
     localStorage.removeItem(ConstToken.userName);
+    localStorage.removeItem(ConstToken.isolatedOrder);
   }
 
   setUserId(userId: string) {
@@ -380,6 +381,16 @@ export class DataService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
+  setOrderIsolated(isolatedOrder: string) {
+    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
+  }
+
+  getOrderIsolated() {
+    return localStorage.getItem(ConstToken.isolatedOrder);
+  }
+   removeOrderIsolated() {
+     localStorage.removeItem(ConstToken.isolatedOrder);
+   }
 
   getStringUpperCase(stringToUpperCase: string) {
     return stringToUpperCase.toUpperCase();

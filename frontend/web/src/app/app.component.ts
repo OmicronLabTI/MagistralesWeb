@@ -100,6 +100,9 @@ export class AppComponent implements OnDestroy , OnInit {
   }
 
   goToPage(url: string[]) {
+      if (url[0] === 'ordenes' && this.dataService.getOrderIsolated()) {
+          this.dataService.removeOrderIsolated();
+      }
       this.goToPageEvaluate(url);
   }
   goToPageEvaluate(url: any[]) {
