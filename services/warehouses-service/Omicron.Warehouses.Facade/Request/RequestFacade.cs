@@ -57,5 +57,15 @@ namespace Omicron.Warehouses.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
         }
+
+        /// <summary>
+        /// Get a raw material request.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>The material request.</returns>
+        public async Task<ResultDto> GetRawMaterialRequest(int productionOrderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.requestService.GetRawMaterialRequestByProductionOrderId(productionOrderId));
+        }
     }
 }

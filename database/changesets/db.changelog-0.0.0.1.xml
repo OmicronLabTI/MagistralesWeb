@@ -511,5 +511,10 @@
     <sql endDelimiter=";">
         update roles set roledescription = 'LOGÍSTICA' where idrole = 3
     </sql>
-</changeSet>
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.54"> 
+	<addColumn schemaName= "warehouse" tableName="rawmaterialrequestdetail" >
+		<column name="unit" type="VARCHAR(50)"/>  
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

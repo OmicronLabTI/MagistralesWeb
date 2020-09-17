@@ -22,5 +22,10 @@ namespace Omicron.Warehouses.Services.Constants
         /// Reason raw material request not exists.
         /// </summary>
         public const string ReasonRawMaterialRequestNotExists = "La solicitud de materia prima para la orden de fabricación {0} no existe.";
+
+        /// <summary>
+        /// User not exists.
+        /// </summary>
+        public const string UserNotExists = "El usuario no existe.";
     }
 }

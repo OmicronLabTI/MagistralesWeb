@@ -9,7 +9,7 @@
 namespace Omicron.Warehouses.Api.Filters
 {
     using System.Net;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Warehouses.Resources.Exceptions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Serilog;

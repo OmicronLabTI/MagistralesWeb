@@ -61,6 +61,19 @@ namespace Omicron.Warehouses.Api.Controllers
         }
 
         /// <summary>
+        /// Get a raw material request.
+        /// </summary>
+        /// <param name="productionOrderId">Production order id.</param>
+        /// <returns>The material request.</returns>
+        [HttpGet]
+        [Route("/request/rawmaterial")]
+        public async Task<IActionResult> GetRawMaterialRequest([FromQuery] int productionOrderId)
+        {
+            var response = await this.requestFacade.GetRawMaterialRequest(productionOrderId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>
