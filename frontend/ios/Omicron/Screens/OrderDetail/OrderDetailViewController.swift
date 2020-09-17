@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 
-class OrderDetailViewController: UIViewController, UITableViewDelegate {
+class OrderDetailViewController: UIViewController {
 
     // Outlets
     @IBOutlet weak var processButton: UIButton!
@@ -65,15 +65,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.delegate = self
         self.title = "Detalle de la fórmula"
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.initComponents()
-        self.viewModelBinding()
         self.tableView.allowsMultipleSelectionDuringEditing = false
-        tableView.delegate = self
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
+        self.viewModelBinding()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -301,47 +301,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
         self.saveButton.isHidden = hideSaveBtn
         self.seeLotsButton.isHidden = hideSeeLotsBtn
     }
-    
-    
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        if (self.statusType == "En Proceso") {
-            // Lógica para editar un item de la tabla
-            let editItem = UIContextualAction(style: .normal, title: "Editar") { [weak self] (contextualAction, view, boolValue) in
-                self?.indexOfTableToEditItem = indexPath.row
-                
-//                let storyboard = UIStoryboard.init(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-//                let formVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.orderDetailFormViewController) as! OrderDetailFormViewController
-//                formVC.dataOfTable = self.orderDetailViewModel.getDataTableToEdit()
-//                formVC.indexOfItemSelected = self.indexOfTableToEditItem
-//
-                
-                self?.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
-            }
-            
-            // Logica para borrar un elemento de la tabla
-            let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  [weak self] (contextualAction, view, boolValue) in
-                let alert = UIAlertController(title: "El componente será eliminado, ¿quieres continuar?", message: nil, preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
-                let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] res in self?.sendIndexToDelete(index: indexPath.row)})
-                alert.addAction(cancelAction)
-                alert.addAction(okAction)
-                self?.present(alert, animated: true)
-            }
-            let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
-            return swipeActions
-        }
-        return nil
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.selectionStyle = .none
-        if(indexPath.row%2 == 0) {
-            cell.backgroundColor = OmicronColors.tableColorRow
-        } else {
-            cell.backgroundColor = .white
-        }
-    }
     
     func sendIndexToDelete(index: Int) -> Void  {
         orderDetailViewModel.deleteItemFromTable(index: index)
@@ -372,5 +332,40 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate {
            }
        }
     }
+}
+
+extension OrderDetailViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.selectionStyle = .none
+        if(indexPath.row%2 == 0) {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
+    }
+    
+        func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            if (self.statusType == StatusNameConstants.inProcessStatus) {
+                // Lógica para editar un item de la tabla
+                let editItem = UIContextualAction(style: .normal, title: "Editar") { [weak self] (contextualAction, view, boolValue) in
+                    self?.indexOfTableToEditItem = indexPath.row
+                                
+                    self?.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
+                }
+                
+                // Logica para borrar un elemento de la tabla
+                let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  [weak self] (contextualAction, view, boolValue) in
+                    let alert = UIAlertController(title: "El componente será eliminado, ¿quieres continuar?", message: nil, preferredStyle: .alert)
+                    let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
+                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] res in self?.sendIndexToDelete(index: indexPath.row)})
+                    alert.addAction(cancelAction)
+                    alert.addAction(okAction)
+                    self?.present(alert, animated: true)
+                }
+                let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
+                return swipeActions
+            }
+            return nil
+        }
 }
 
