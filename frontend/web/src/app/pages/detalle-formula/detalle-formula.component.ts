@@ -92,6 +92,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.isReadyToSave = false;
         this.componentsToDelete = [];
         this.dataService.setIsToSaveAnything(false);
+        if (this.oldDataFormulaDetail.baseDocument === 0) {
+          this.dataService.setOrderIsolated(this.ordenFabricacionId);
+        }
       }, error => this.errorService.httpError(error));
   }
 

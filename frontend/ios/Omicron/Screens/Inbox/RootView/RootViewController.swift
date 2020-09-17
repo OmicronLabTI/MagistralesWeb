@@ -80,10 +80,11 @@ class RootViewController: UIViewController {
             let loginViewController = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
             UIApplication.shared.windows.first?.rootViewController = loginViewController
             UIApplication.shared.windows.first?.makeKeyAndVisible()
+            Resolver.cached.reset()
         }).disposed(by: self.disposeBag)
         
         // Muestra los datos de la sección "Mis ordenes"
-        rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) {
+        rootViewModel.dataStatus.bind(to: viewTable.rx.items(cellIdentifier: ViewControllerIdentifiers.rootTableViewCell, cellType: RootTableViewCell.self)) { 
             row, data, cell in
             cell.indicatorStatusImageView.image = UIImage(named: data.imageIndicatorStatus)
             cell.indicatorStatusNameLabel.text = data.statusName

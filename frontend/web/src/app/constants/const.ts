@@ -95,7 +95,8 @@ export const ConstToken = {
     rememberSession: 'session-re',
     userId: 'userId',
     userName: 'userName',
-    userRole: 'role'
+    userRole: 'role',
+    isolatedOrder: 'istOrder',
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -162,4 +163,4 @@ export const pathRoles = {
         'workLoad',
         '**'
     ]
-}
+};
