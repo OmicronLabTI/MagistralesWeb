@@ -90,10 +90,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           switch (element.pedidoStatus) {
             case ConstStatus.abierto:
-              element.class = 'green';
+              element.class = 'abierto';
               break;
             case ConstStatus.planificado:
-              element.class = 'mat-primary';
+              element.class = 'planificado';
               break;
             case ConstStatus.liberado:
               element.class = 'liberado';
@@ -108,7 +108,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               element.class = 'finalizado';
               break;
             case ConstStatus.terminado:
-              element.class = 'pterminado';
+              element.class = 'mat-primary';
           }
         });
         this.isThereOrdersToPlan = false;

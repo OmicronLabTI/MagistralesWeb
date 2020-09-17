@@ -24,7 +24,7 @@ class  InboxViewModel {
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
-    weak var selectedOrder: Order?
+    var selectedOrder: Order?
     var disposeBag = DisposeBag();
     var similarityViewButtonDidTap = PublishSubject<Void>()
     var similarityViewButtonIsEnable = PublishSubject<Bool>()
@@ -35,16 +35,16 @@ class  InboxViewModel {
     
     init() {
         // Funcionalidad para el botón de Terminar
-        finishedDidTap.subscribe(onNext: { () in
-        }).disposed(by: disposeBag)
+//        finishedDidTap.subscribe(onNext: { () in
+//        }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de pendiente
-        pendingDidTap.subscribe(onNext: {
-        }).disposed(by: disposeBag)
+//        pendingDidTap.subscribe(onNext: {
+//        }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de En Proceso
-        processDidTap.subscribe(onNext: {
-             self.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+        processDidTap.subscribe(onNext: { [weak self] _ in
+             self?.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
         }).disposed(by: disposeBag)
         
         // Funcionalidad para agrupar los cards por similitud
@@ -70,7 +70,7 @@ class  InboxViewModel {
                 // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
                 let groupBySimilarity = dataGroupedByProductCode.filter{$0.value.count > 1}
                 if (groupBySimilarity.count > 0) {
-                    let sectionsModelsBySimilarity = groupBySimilarity.map( { (orders) -> SectionModel<String, Order> in
+                    let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
                         return SectionModel(model: "Producto: \(orders.key ?? "")", items: self!.sortByBaseBocumentAscending(orders: orders.value))
                     })
                     sectionModels.append(contentsOf: sectionsModelsBySimilarity)
@@ -128,7 +128,11 @@ class  InboxViewModel {
         orders.sorted  {
             switch ($0, $1) {
             case let (aCode, bCode):
-                return aCode.baseDocument! < bCode.baseDocument!
+                if aCode.baseDocument! != bCode.baseDocument! {
+                    return aCode.baseDocument! < bCode.baseDocument!
+                } else {
+                    return aCode.productionOrderId! < bCode.productionOrderId!
+                }
             }
         }
     }

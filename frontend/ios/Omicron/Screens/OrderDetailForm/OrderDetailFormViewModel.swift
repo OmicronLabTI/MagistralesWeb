@@ -22,6 +22,10 @@ class  OrderDetailFormViewModel {
         
     }
     
+    deinit {
+        print("Se muere el viewModel")
+    }
+    
     //MARK: Functions
     func editItemTable(index: Int, data: OrderDetail, baseQuantity: Double, requiredQuantity: Double, werehouse: String) -> Void {
         self.loading.onNext(true)

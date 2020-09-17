@@ -79,7 +79,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.status = element.status === '' ? ConstStatus.abierto : element.status;
           switch (element.status.toUpperCase()) {
             case ConstStatus.abierto.toUpperCase():
-              element.class = 'pdabierto';
+              element.class = 'abierto';
+              break;
+            case ConstStatus.planificado.toUpperCase():
+              element.class = 'planificado';
               break;
             case ConstStatus.asignado.toUpperCase():
               element.class = 'asignado';
@@ -94,9 +97,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
               element.class = 'proceso';
               break;
             case ConstStatus.finalizado.toUpperCase():
-              element.class = 'pdfinalizado';
+              element.class = 'finalizado';
+              break;
+            case ConstStatus.cancelado.toUpperCase():
+              element.class = 'cancelado';
+              break;
+            case ConstStatus.reasingado.toUpperCase():
+              element.class = 'reasignado';
               break;
           }
+          element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -196,4 +206,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
       , isFromReassign: true});
   }
+
+    goToOrders(urlPath: string[]) {
+      this.dataService.setPathUrl(urlPath);
+    }
 }

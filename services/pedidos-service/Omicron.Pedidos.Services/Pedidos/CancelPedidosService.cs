@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
@@ -72,7 +73,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var cancellationResults = await this.CancelExistingProductionOrders(ordersToCancel, userOrders, results);
 
-            await this.CancelSalesOrderWithAllProductionOrderCancelled(userId, cancellationResults.Item1);
+            await this.CancelSalesOrderWithAllProductionOrderCancelled(userId, cancellationResults.Item1, this.sapAdapter);
 
             return ServiceUtils.CreateResult(true, 200, null, cancellationResults.Item2.DistinctResults(), null);
         }
@@ -154,7 +155,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="userId">User id.</param>
         /// <param name="cancelledProductionOrders">Cancelled PO.</param>
         /// <returns>Nothing.</returns>
-        private async Task CancelSalesOrderWithAllProductionOrderCancelled(string userId, List<UserOrderModel> cancelledProductionOrders)
+        private async Task CancelSalesOrderWithAllProductionOrderCancelled(string userId, List<UserOrderModel> cancelledProductionOrders, ISapAdapter sapAdapter)
         {
             var logs = new List<OrderLogModel>();
             var salesOrdersToUpdate = new List<UserOrderModel>();
@@ -163,19 +164,40 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var salesOrderId in salesOrderIds.Distinct())
             {
                 var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrderId })).ToList();
-                var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
                 var salesOrder = relatedOrders.First(x => x.IsSalesOrder);
+                var sapMissingOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, sapAdapter);
+                var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
 
-                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Cancelled)) && !salesOrder.Status.Equals(ServiceConstants.Finalizado))
+                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders);
+                salesOrdersToUpdate.Add(salesOrder);
+
+                if (salesOrder.Equals(ServiceConstants.Cancelled))
                 {
-                    salesOrder.Status = ServiceConstants.Cancelled;
-                    salesOrdersToUpdate.Add(salesOrder);
                     logs.Add(this.BuildCancellationLog(userId, salesOrderId, ServiceConstants.OrdenVenta));
                 }
             }
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(logs);
+        }
+
+        /// <summary>
+        /// Gets the status for cancelling.
+        /// </summary>
+        /// <param name="saleOrder">the sale order.</param>
+        /// <param name="sapOrders">the missingsap orders.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <returns>the status.</returns>
+        private string CalculateStatus(UserOrderModel saleOrder, List<CompleteDetailOrderModel> sapOrders, List<UserOrderModel> userOrders)
+        {
+            if (sapOrders.Any())
+            {
+                return saleOrder.Status;
+            }
+
+            var minValue = userOrders.OrderBy(x => x.StatusOrder).FirstOrDefault();
+            var status = ((StatusEnum)minValue.StatusOrder).ToString();
+            return ServiceConstants.ValidStatusLiberado.Contains(minValue.Status) ? ServiceConstants.Liberado : status;
         }
 
         /// <summary>

@@ -30,7 +30,7 @@ export const MODAL_NAMES =  {
 export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
     perDay: 1000 * 3600 * 24,
-    ninetyDays: (24 * 60 * 60 * 1000) * 90,
+    ninetyDays: (24 * 60 * 60 * 1000) * 91,
     ninetyDaysDifference: 90,
     keyEnter: 'Enter'
 };
@@ -95,6 +95,7 @@ export const ConstToken = {
     rememberSession: 'session-re',
     userId: 'userId',
     userName: 'userName',
+    userRole: 'role'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -143,3 +144,22 @@ export const Colors = [
     'rgba(230, 176, 90, 90)',
     'rgba(71, 255, 78, 100)'
 ];
+
+export const pathRoles = {
+    admin: [
+        'userList',
+        'login',
+        '**'
+    ],
+    logistica: [
+        'pedidos',
+        'ordenes',
+        'productividad',
+        'ordenfabricacion',
+        'pdetalle',
+        'lotes',
+        'login',
+        'workLoad',
+        '**'
+    ]
+}

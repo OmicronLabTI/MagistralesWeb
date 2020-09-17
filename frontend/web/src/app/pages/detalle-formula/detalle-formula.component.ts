@@ -48,6 +48,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   minDate = new Date();
   subscription = new Subscription();
   isSaveToMyList = false;
+  isPlannedQuantityError = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
@@ -79,12 +80,13 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
         this.dataSource.data = this.oldDataFormulaDetail.details;
         this.dataSource.data.forEach(detail => {
+          detail.description = detail.description.toUpperCase();
           detail.isChecked = false;
           const warehouseSplit = detail.warehouseQuantity.toString().split('.');
           const stockSplit = detail.stock.toString().split('.');
           detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
               `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
-          detail.stock = stockSplit.length === 1 ? warehouseSplit[0] :
+          detail.stock = stockSplit.length === 1 ? stockSplit[0] :
               `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
         });
         this.isReadyToSave = false;
@@ -115,7 +117,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent});
+    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent, data: this.dataSource.data});
   }
 
 
@@ -138,7 +140,11 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   }
   saveFormulaDetail() {
-    if (this.getIsThereNull() && (this.oldDataFormulaDetail.plannedQuantity !== null && this.oldDataFormulaDetail.plannedQuantity > 0)) {
+    if (this.isPlannedQuantityError) {
+      this.dataService.setMessageGeneralCallHttp({title: Messages.onlyIntegerNumbers, icon: 'info', isButtonAccept: true});
+      return;
+    }
+    if (this.getIsThereNull()) {
       this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
           .then( (resultSaveMessage: any) => {
             if (resultSaveMessage.isConfirmed) {
@@ -153,7 +159,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
-              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
+              this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( (res) => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
               }, error => {
@@ -172,7 +178,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this. isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
   deleteComponents() {
-    if (this.getIsThereNull(true)) {
       this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
           .then( (resultDeleteMessage: any) => {
             if (resultDeleteMessage.isConfirmed) {
@@ -187,9 +192,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.elementsToSave();
             }
           });
-    } else {
-      this.createMessageOnlyNumber();
-    }
   }
   createDeteailTOSave() {
     const detailComponentsTOSave = new IComponentsSaveReq();
@@ -210,6 +212,11 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
 
   changeData() {
+    this.isPlannedQuantityError = this.oldDataFormulaDetail.plannedQuantity === null || this.oldDataFormulaDetail.plannedQuantity % 1 !== 0
+        || this.oldDataFormulaDetail.plannedQuantity === 0;
+    this.dataSource.data.forEach(component => {
+      component.requiredQuantity = component.baseQuantity * this.oldDataFormulaDetail.plannedQuantity;
+    });
     this.getIsReadyTOSave();
   }
   getIsReadyTOSave() {
@@ -262,7 +269,11 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
     }).afterClosed().subscribe((result) => {
-      this.isSaveToMyList = false;
+      if (result) {
+        this.isSaveToMyList = false;
+      } else {
+        this.isSaveToMyList = true;
+      }
     });
   }
 
@@ -282,13 +293,15 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           description: this.oldDataFormulaDetail.productDescription
       }
     }).afterClosed().subscribe((result) => {
-      console.log('al cerrar modal: ', result);
       this.replaceComponentsWithCustomList(result.componentes);
     });
   }
 
   replaceComponentsWithCustomList(components: Components[]) {
-    this.componentsToDelete.push(...this.dataSource.data.filter( component => component));
+    this.componentsToDelete.push(...this.dataSource.data.filter(
+      component =>
+        (component.isInDb === undefined)
+    ));
     const newData: IFormulaDetalleReq[] = [];
     // tslint:disable-next-line: radix
     const orderFabricacionId = parseInt(this.ordenFabricacionId);
@@ -297,7 +310,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         isChecked: false,
         orderFabId: orderFabricacionId,
         productId: element.productId,
-        description: element.description,
+        description: element.description.toUpperCase(),
         baseQuantity: element.baseQuantity,
         requiredQuantity: parseFloat((element.baseQuantity * this.oldDataFormulaDetail.plannedQuantity).toFixed(CONST_NUMBER.ten)),
         consumed: 0,
@@ -307,7 +320,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         pendingQuantity: 0,
         stock: 0,
         warehouseQuantity: 10,
-        action: CONST_DETAIL_FORMULA.insert
+        action: CONST_DETAIL_FORMULA.insert,
+        isInDb: false
       });
     });
     this.dataSource.data = newData;

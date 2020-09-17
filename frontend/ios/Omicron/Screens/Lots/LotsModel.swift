@@ -58,13 +58,16 @@ class LotsAvailable {
     var numeroLote: String?
     var cantidadDisponible, cantidadAsignada, cantidadSeleccionada: Decimal?
     var sysNumber: Int?
+    var fechaExp: String?
+    var expiredBatch: Bool = false
     
-    init (numeroLote: String?, cantidadDisponible: Decimal, cantidadAsignada: Decimal, cantidadSeleccionada: Decimal, sysNumber: Int) {
+    init (numeroLote: String?, cantidadDisponible: Decimal, cantidadAsignada: Decimal, cantidadSeleccionada: Decimal, sysNumber: Int, fechaExp: String?) {
         self.numeroLote = numeroLote
         self.cantidadDisponible = cantidadDisponible
         self.cantidadAsignada = cantidadAsignada
         self.cantidadSeleccionada = cantidadSeleccionada
         self.sysNumber = sysNumber
+        self.fechaExp = fechaExp
     }
     required init?(map: Map) {}
 }
@@ -75,6 +78,7 @@ extension LotsAvailable: Mappable {
         self.cantidadDisponible <- (map["cantidadDisponible"], DecimalTransform())
         self.cantidadAsignada <- (map["cantidadAsignada"], DecimalTransform())
         self.sysNumber <- map["sysNumber"]
+        self.fechaExp <- map["fechaExp"]
     }
 }
 
@@ -82,11 +86,13 @@ class LotsSelected: Codable {
     var numeroLote: String?
     var cantidadSeleccionada: Decimal?
     var sysNumber: Int?
+    var expiredBatch: Bool = false
     
-    init(numeroLote: String, cantidadSeleccionada: Decimal, sysNumber: Int) {
+    init(numeroLote: String, cantidadSeleccionada: Decimal, sysNumber: Int, expiredBatch: Bool) {
         self.numeroLote = numeroLote
         self.cantidadSeleccionada = cantidadSeleccionada
         self.sysNumber = sysNumber
+        self.expiredBatch = expiredBatch
     }
     required init?(map: Map) { }
 }
@@ -118,18 +124,20 @@ class BatchSelected: Codable {
     var itemCode: String?
     var action: String?
     var sysNumber: Int?
+    var expiredBatch: Bool = false
     
-    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?, sysNumber: Int?) {
+    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber
         self.itemCode = itemCode
         self.action = action
         self.sysNumber = sysNumber
+        self.expiredBatch = expiredBatch
     }
     
     func toLotsSelected() -> LotsSelected {
-        return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!, sysNumber: self.sysNumber!)
+        return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!, sysNumber: self.sysNumber!, expiredBatch: self.expiredBatch)
     }
 }
 
