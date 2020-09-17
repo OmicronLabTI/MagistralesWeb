@@ -181,17 +181,25 @@ class OrderDetailViewController: UIViewController {
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             
-            if((res.first) != nil) {
-                self?.orderDetail = res
-                self?.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(res[0].baseDocument!)", textToBold: "Número de pedido:")
-                self?.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(res[0].container!)", textToBold: "Envase")
-                self?.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(res[0].productLabel!)", textToBold: "Etiqueta:")
-                self?.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(res[0].productionOrderID!)", textToBold: "Orden de fabricación:")
-                self?.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(res[0].plannedQuantity!)", textToBold: "Cantidad planificada:")
-                self?.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación: \(res[0].startDate!)", textToBold: "Fecha de fabricación:")
-                self?.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(res[0].dueDate!)", textToBold: "Fecha de finalización:")
-                self?.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(res[0].code!) \(res[0].productDescription!)", textToBold: "")
-                self?.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino: \(self?.destiny ?? "")", textToBold: "Destino:")
+            guard let self = self else { return }
+            
+            if res.first != nil {
+                
+                self.orderDetail = res
+                let detail = res.first!
+                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(detail.baseDocument ?? 0)", textToBold: "Número de pedido:")
+                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(detail.container ?? "")", textToBold: "Envase")
+                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(detail.productLabel ?? "")", textToBold: "Etiqueta:")
+                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(detail.productionOrderID ?? 0)", textToBold: "Orden de fabricación:")
+                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(detail.plannedQuantity ?? 0)", textToBold: "Cantidad planificada:")
+                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación: \(detail.startDate ?? "")", textToBold: "Fecha de fabricación:")
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(detail.dueDate ?? "")", textToBold: "Fecha de finalización:")
+                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? "") \(detail.productDescription ?? "")", textToBold: "")
+                self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino: \(self.destiny)", textToBold: "Destino:")
+                if detail.baseDocument == 0 {
+                    self.destinyLabel.isHidden = true
+                }
+                
             }
                 }).disposed(by: self.disposeBag)
         
