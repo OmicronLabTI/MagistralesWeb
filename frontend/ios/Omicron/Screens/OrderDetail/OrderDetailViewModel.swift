@@ -68,7 +68,12 @@ class OrderDetailViewModel {
                 self?.tempOrderDetailData = res.response!
                 self?.loading.onNext(false)
                 self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
-                let iconName = res.response?.comments != nil ? "message.fill": "message"
+                var iconName = ""
+                if (res.response?.comments != nil) {
+                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? "message":"message.fill"
+                } else {
+                    iconName = "message"
+                }
                 self?.showIconComments.onNext(iconName)
                 if(isRefresh) {
                     self?.endRefreshing.onNext(())
