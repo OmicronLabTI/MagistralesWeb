@@ -80,6 +80,7 @@ class RootViewController: UIViewController {
             let loginViewController = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.loginViewController) as! LoginViewController
             UIApplication.shared.windows.first?.rootViewController = loginViewController
             UIApplication.shared.windows.first?.makeKeyAndVisible()
+            Resolver.cached.reset()
         }).disposed(by: self.disposeBag)
         
         // Muestra los datos de la sección "Mis ordenes"

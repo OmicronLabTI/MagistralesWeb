@@ -24,7 +24,7 @@ class  InboxViewModel {
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
-    weak var selectedOrder: Order?
+    var selectedOrder: Order?
     var disposeBag = DisposeBag();
     var similarityViewButtonDidTap = PublishSubject<Void>()
     var similarityViewButtonIsEnable = PublishSubject<Bool>()
@@ -128,7 +128,11 @@ class  InboxViewModel {
         orders.sorted  {
             switch ($0, $1) {
             case let (aCode, bCode):
-                return aCode.baseDocument! < bCode.baseDocument!
+                if aCode.baseDocument! != bCode.baseDocument! {
+                    return aCode.baseDocument! < bCode.baseDocument!
+                } else {
+                    return aCode.productionOrderId! < bCode.productionOrderId!
+                }
             }
         }
     }
