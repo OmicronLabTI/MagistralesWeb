@@ -56,7 +56,7 @@ class ComponentsViewController: UIViewController {
         
         self.componentsViewModel.dataResults.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell, cellType: ComponentsTableViewCell.self)) { row, data, cell in
             cell.productCodeLabel.text = data.productId
-            cell.descriptionLabel.text = data.description
+            cell.descriptionLabel.text = data.description?.uppercased()
         }.disposed(by: disposeBag)
         
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
