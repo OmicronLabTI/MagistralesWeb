@@ -18,9 +18,8 @@ describe('FinalizeOrdersComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule],
       providers: [{ provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {filterOrdersData: []} },
+        { provide: MAT_DIALOG_DATA, useValue: {finalizeData: {filterOrdersData: []} } },
         DatePipe]
-
     })
     .compileComponents();
   }));
