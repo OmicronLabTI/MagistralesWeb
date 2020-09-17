@@ -165,6 +165,7 @@ export class DataService {
     localStorage.removeItem(ConstToken.refreshToken);
     localStorage.removeItem(ConstToken.userId);
     localStorage.removeItem(ConstToken.userName);
+    localStorage.removeItem(ConstToken.isolatedOrder);
   }
 
   setUserId(userId: string) {
@@ -271,8 +272,6 @@ export class DataService {
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
             && t.status !== ConstStatus.abierto)).length > 0;
-      case FromToFilter.fromOrdersIsolated:
-        break;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)).length > 0;
@@ -382,6 +381,16 @@ export class DataService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
+  setOrderIsolated(isolatedOrder: string) {
+    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
+  }
+
+  getOrderIsolated() {
+    return localStorage.getItem(ConstToken.isolatedOrder);
+  }
+   removeOrderIsolated() {
+     localStorage.removeItem(ConstToken.isolatedOrder);
+   }
 
   getStringUpperCase(stringToUpperCase: string) {
     return stringToUpperCase.toUpperCase();

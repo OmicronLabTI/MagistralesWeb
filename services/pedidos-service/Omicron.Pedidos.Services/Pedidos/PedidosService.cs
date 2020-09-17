@@ -641,7 +641,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, orderId));
             var components = JsonConvert.DeserializeObject<List<BatchesComponentModel>>(sapAdapterResponse.Response.ToString());
 
-            if (components.Any(x => !x.LotesAsignados.Any()))
+            if (components.Any(x => !x.LotesAsignados.Any() || x.TotalNecesario > 0))
             {
                 throw new CustomServiceException(ServiceConstants.BatchesAreMissingError, System.Net.HttpStatusCode.BadRequest);
             }
