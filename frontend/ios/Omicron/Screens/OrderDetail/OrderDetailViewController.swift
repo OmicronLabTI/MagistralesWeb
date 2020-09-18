@@ -219,8 +219,9 @@ class OrderDetailViewController: UIViewController {
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
-            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self?.goToCommentsViewController))
-            self?.navigationItem.rightBarButtonItem = comments
+            guard let self = self else { return }
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItems = [self.getOmniconLogo(), comments]
         }).disposed(by: self.disposeBag)
         
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in

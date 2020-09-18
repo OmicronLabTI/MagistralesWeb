@@ -47,6 +47,9 @@ class InboxViewController: UIViewController {
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
         pendingButton.isHidden = true
+        
+        navigationItem.rightBarButtonItem = getOmniconLogo()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
