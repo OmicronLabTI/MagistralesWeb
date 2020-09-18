@@ -527,4 +527,10 @@
 		  <column name="unit" type="VARCHAR(50)"/>  
 	  </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.55">
+    <sql endDelimiter=";">
+        update "user" set pieces = 0 where role != 2;
+		update "user" set asignable = 0 where role != 2;
+    </sql>
+  </changeSet>
 </databaseChangeLog> 
