@@ -9,6 +9,7 @@
 namespace Omicron.Catalogos.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Catalogos.Facade.Catalogs;
@@ -40,6 +41,19 @@ namespace Omicron.Catalogos.Api.Controllers
         public async Task<IActionResult> GetAllRoles()
         {
             var response = await this.catalogFacade.GetRoles();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the value from params where contains field.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/params/contains/field")]
+        [HttpGet]
+        public async Task<IActionResult> GetParamsContainsByField([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.catalogFacade.GetParamsContains(parameters);
             return this.Ok(response);
         }
     }

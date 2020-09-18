@@ -9,17 +9,16 @@
 import Foundation
 import UIKit
 
-extension UITableView {
-    func addMoreIndicator() {
+extension UIView {
+    func addMoreIndicator(size: CGFloat = 25) {
         let img = UIImageView(image: UIImage(named: "arrowDown"))
-        let size = CGFloat(25.0)
+        let size = CGFloat(size)
         img.tag = Constants.Tags.moreIndicator.rawValue
-        img.frame = CGRect(x: (self.frame.size.width / 2) - (size / 2), y: self.frame.size.height - size, width: size, height: size)
+        img.frame = CGRect(x: (frame.size.width / 2) - (size / 2), y: frame.size.height - size, width: size, height: size)
         self.addSubview(img)
     }
     
     func removeMoreIndicator() {
-        guard let img = self.viewWithTag(Constants.Tags.moreIndicator.rawValue) else { return }
-        img.removeFromSuperview()
+        subviews.forEach({ $0.viewWithTag(Constants.Tags.moreIndicator.rawValue)?.removeFromSuperview() })
     }
 }

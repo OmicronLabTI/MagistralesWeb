@@ -8,6 +8,8 @@
 
 namespace Omicron.Catalogos.Services.Utils
 {
+    using System;
+    using System.Collections.Generic;
     using Omicron.Catalogos.Entities.Model;
 
     /// <summary>
@@ -34,6 +36,26 @@ namespace Omicron.Catalogos.Services.Utils
                 ExceptionMessage = exceptionMessage,
                 Code = code,
             };
+        }
+
+        /// <summary>
+        /// gets the distinc by.
+        /// </summary>
+        /// <typeparam name="Tsource">the list source.</typeparam>
+        /// <typeparam name="TKey">the key to look.</typeparam>
+        /// <param name="source">the sourec.</param>
+        /// <param name="keyselector">the key.</param>
+        /// <returns>the list distinc.</returns>
+        public static IEnumerable<Tsource> DistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (Tsource element in source)
+            {
+                if (seenKeys.Add(keyselector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
     }
 }
