@@ -194,12 +194,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
         {
             var listToReturn = new List<WorkLoadModel>();
-            users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList().ForEach(user =>
+            users.Where(x => x.Activo == 1).ToList().ForEach(user =>
             {
                 var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
                 var workLoadByUser = this.GetTotalsByUser(ordersByUser, sapOrders, user);
                 listToReturn.Add(workLoadByUser);
             });
+
+            listToReturn = listToReturn.OrderByDescending(x => x.Finalized).ThenBy(x => x.User).ToList();
 
             listToReturn.Add(this.GetTotalAll(userOrders, sapOrders));
             return listToReturn;
