@@ -292,7 +292,7 @@ class OrderDetailViewController: UIViewController {
         case StatusNameConstants.inProcessStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:

@@ -133,6 +133,19 @@ struct CommonStrings {
     static let orderCouldNotBeCompleted = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado"
     static let clear = "Limpiar"
     static let accept = "Aceptar"
+    static let finished = "Terminado"
+    static let batchesTitle = "Lotes"
+    static let documentsLines = "Líneas de documentos"
+    static let hashtag = "#"
+    static let articleDescription = "Descripción del artículo"
+    static let warehouseCode = "Código de almacén"
+    static let totalNedded = "Total necesario"
+    static let totalSelect = "Total Seleccionado"
+    static let batchAvailable = "Lotes Disponibles"
+    static let quantityAvailable = "Cantidad disponible"
+    static let quantitySelected = "Cantidad seleccionada"
+    static let quantityAssigned = "Cantidad asignada"
+    static let batchSelected = "Lotes seleccionados"
 }
 
 struct FontsNames {
