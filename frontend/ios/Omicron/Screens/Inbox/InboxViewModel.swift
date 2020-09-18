@@ -118,6 +118,8 @@ class  InboxViewModel {
         self.ordersTemp = ordering
         self.similarityViewButtonIsEnable.onNext(true)
         self.normalViewButtonIsEnable.onNext(false)
+        self.processButtonIsEnable.onNext(false)
+        self.pendingButtonIsEnable.onNext(false)
     }
     
     func setFilter(orders: [Order]) -> Void {
