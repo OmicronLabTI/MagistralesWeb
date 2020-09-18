@@ -183,6 +183,8 @@ class InboxViewController: UIViewController {
             guard let row = index?.row else { return }
             self?.chageStatusName(index: row)
             self?.hideButtons(index: row)
+            self?.showMoreIndicators()
+            self?.goToTop()
         }).disposed(by: disposeBag)
                 
         // retorna mensaje si no hay card para cada status
@@ -196,6 +198,10 @@ class InboxViewController: UIViewController {
             }
             self?.collectionView.setEmptyMessage(message)
         }).subscribe().disposed(by: disposeBag)
+        
+        collectionView.rx.didScroll.subscribe({ cell in
+            self.collectionView.removeMoreIndicator()
+        }).disposed(by: disposeBag)
     }
 
     func initComponents() {
@@ -219,6 +225,23 @@ class InboxViewController: UIViewController {
     func chageStatusName(index: Int) -> Void {
         let name = self.inboxViewModel.getStatusName(index: index)
         self.inboxViewModel.title.onNext(name)
+    }
+    
+    private func showMoreIndicators() {
+        let itemsCount = Array(0..<collectionView.numberOfSections)
+            .map { collectionView.numberOfItems(inSection: $0) }
+            .reduce(0, +)
+        DispatchQueue.main.async {
+            if itemsCount > 4 {
+                self.collectionView.addMoreIndicator(size: 50)
+            } else {
+                self.collectionView.removeMoreIndicator()
+            }
+        }
+    }
+    
+    private func goToTop() {
+        collectionView.setContentOffset(.zero, animated: false)
     }
     
     private func hideButtons(index: Int) {
