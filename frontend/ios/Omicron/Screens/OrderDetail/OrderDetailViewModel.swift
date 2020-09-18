@@ -128,14 +128,14 @@ class OrderDetailViewModel {
         self.loading.onNext(true)
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: status)
-        print("")
-//        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
-//            self?.loading.onNext(false)
-//            self?.backToInboxView.onNext(())
-//        }, onError: { [weak self] error in
-//            self?.loading.onNext(false)
-//            self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
-//            }).disposed(by: self.disposeBag)
+
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.loading.onNext(false)
+            self?.backToInboxView.onNext(())
+        }, onError: { [weak self] error in
+            self?.loading.onNext(false)
+            self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
+            }).disposed(by: self.disposeBag)
     }
 
     func deleteItemFromTable(index: Int) {
