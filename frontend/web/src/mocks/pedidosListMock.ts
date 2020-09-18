@@ -1,3 +1,57 @@
+export const DetalleFormulaMock = {
+    code: 200,
+    comments: 118,
+    exceptionMessage: null,
+    success: true,
+    userError: null,
+    response: {
+        productionOrderId: 89098,
+        code: '150   240 ML',
+        productDescription: 'Hialuronico 3%  Vit C 4%  crema',
+        type: 'Estandar',
+        status: 'Cancelado',
+        plannedQuantity: 1,
+        unit: 'Pieza',
+        warehouse:'PT',
+        number: 60024,
+        fabDate: '18/08/2020',
+        dueDate: '31/08/2020',
+        startDate: '18/08/2020',
+        endDate: '18/08/2020',
+        user: 'manager',
+        origin: 'Manual',
+        baseDocument: 60024,
+        client: 'C00141',
+        completeQuantity: 0,
+        realEndDate: '',
+        productLabel: 'PERSONALIZADA',
+        container: 'AMBAR',
+        isChecked: false,
+        comments: '',
+        hasBatches: false,
+        // tslint:disable-next-line: max-line-length
+        destinyAddress: 'HEB ESTANZUELA CARR. NACIONAL KM 271  \rLOMAS DEL VALLE ALTO, MONTERREY ,MONTERREY\rNuevo León, Mexico , C.P. 64988',
+        details: [
+            {
+                isChecked: false,
+                orderFabId: 89098,
+                productId: 'EN-075',
+                description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+                baseQuantity: 210.000000,
+                requiredQuantity: 210.000000,
+                consumed: 0.000000,
+                available: 0.000000,
+                unit: 'Pieza',
+                warehouse: 'PROD',
+                pendingQuantity: 210.000000,
+                stock: 1606.000000,
+                warehouseQuantity: 0.000000,
+                hasBatches: false
+            }
+        ]
+    }
+};
+
 export const PedidosListMock = {
     code: 200,
     comments: 118,

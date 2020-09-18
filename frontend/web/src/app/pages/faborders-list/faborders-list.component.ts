@@ -73,13 +73,16 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders.isFromOrders = false;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
     this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
-    this.getFullQueryString();
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
   }
 
   ngOnInit() {
+    if (this.dataService.getOrderIsolated()) {
+      this.filterDataOrders.docNum = this.dataService.getOrderIsolated();
+      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`; // init search if there fabOrderId
+      this.dataService.removeOrderIsolated();
+    }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
-    this.getOrders();
     this.dataSource.paginator = this.paginator;
     this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe( resultSearchOrdersModal => {
       if (!resultSearchOrdersModal.isFromOrders) {
@@ -91,6 +94,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrders();
           }
         }));
+    this.getFullQueryString();
+    this.getOrders();
   }
 
   updateAllComplete() {
@@ -142,7 +147,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             case ConstStatus.finalizado:
               element.class = 'finalizado';
               break;
-            case ConstStatus.cancelado.toUpperCase():
+            case ConstStatus.cancelado:
               element.class = 'cancelado';
               break;
           }
