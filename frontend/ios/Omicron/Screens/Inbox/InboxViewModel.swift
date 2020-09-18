@@ -36,10 +36,10 @@ class  InboxViewModel {
     
     init() {
         // Funcionalidad para el botón de Terminar
-//        finishedDidTap.subscribe(onNext: { () in
-//        }).disposed(by: disposeBag)
+        //        finishedDidTap.subscribe(onNext: { () in
+        //        }).disposed(by: disposeBag)
         
-//        Funcionalidad para el botón de pendiente
+        //        Funcionalidad para el botón de pendiente
         pendingDidTap.subscribe(onNext: { [weak self] _ in
             let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus, typeOfStatus: StatusNameConstants.penddingStatus)
             self?.showAlertToChangeOrderOfStatus.onNext(message)
@@ -48,7 +48,7 @@ class  InboxViewModel {
         // Funcionalidad para el botón de En Proceso
         processDidTap.subscribe(onNext: { [weak self] _ in
             let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus, typeOfStatus: StatusNameConstants.inProcessStatus)
-             self?.showAlertToChangeOrderOfStatus.onNext(message)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
         }).disposed(by: disposeBag)
         
         // Funcionalidad para agrupar los cards por similitud
@@ -58,16 +58,16 @@ class  InboxViewModel {
             
             if (self?.ordersTemp != nil) {
                 var sectionModels:[SectionModel<String, Order>] = []
-
+                
                 for order in self!.ordersTemp {
-                    let itemCodeInArray = order.itemCode?.components(separatedBy: "   ")
+                    let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
                     if let codeProduct = itemCodeInArray?.first {
                         order.productCode = codeProduct
                     } else {
-                        order.productCode = ""
+                        order.productCode = CommonStrings.Emty
                     }
                 }
-                            
+                
                 // Se agrupa las ordenes por código de producto
                 let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
                 
@@ -75,7 +75,7 @@ class  InboxViewModel {
                 let groupBySimilarity = dataGroupedByProductCode.filter{$0.value.count > 1}
                 if (groupBySimilarity.count > 0) {
                     let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
-                        return SectionModel(model: "Producto: \(orders.key ?? "")", items: self!.sortByBaseBocumentAscending(orders: orders.value))
+                        return SectionModel(model: "\(CommonStrings.product) \(orders.key ?? CommonStrings.Emty)", items: self!.sortByBaseBocumentAscending(orders: orders.value))
                     })
                     sectionModels.append(contentsOf: sectionsModelsBySimilarity)
                 }
@@ -89,7 +89,7 @@ class  InboxViewModel {
                     }
                     
                     let orderedCars = self?.sortByBaseBocumentAscending(orders: orders)
-                    sectionModels.append(SectionModel(model: "Sin similitud", items: orderedCars ?? []))
+                    sectionModels.append(SectionModel(model: CommonStrings.noSimilarity, items: orderedCars ?? []))
                 }
                 self?.sectionOrders = sectionModels
                 self?.statusDataGrouped.onNext(sectionModels)
@@ -103,8 +103,8 @@ class  InboxViewModel {
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
-            self?.sectionOrders = [SectionModel(model: "", items: ordering ?? [])]
-            self?.statusDataGrouped.onNext([SectionModel(model: "", items: ordering ?? [])])
+            self?.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering ?? [])]
+            self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering ?? [])])
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.normalViewButtonIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
@@ -112,8 +112,8 @@ class  InboxViewModel {
     
     func setSelection(section: SectionOrder) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
-        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
-        self.sectionOrders = [SectionModel(model: "", items: ordering)]
+        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering)])
+        self.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering)]
         self.title.onNext(section.statusName)
         self.ordersTemp = ordering
         self.similarityViewButtonIsEnable.onNext(true)
@@ -122,9 +122,9 @@ class  InboxViewModel {
     
     func setFilter(orders: [Order]) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
-        self.statusDataGrouped.onNext([SectionModel(model: "", items: ordering)])
-        self.sectionOrders = [SectionModel(model: "", items: ordering)]
-        self.title.onNext("Búsqueda")
+        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering)])
+        self.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering)]
+        self.title.onNext(CommonStrings.search)
         self.ordersTemp = ordering
     }
     
@@ -145,7 +145,7 @@ class  InboxViewModel {
     func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String) -> Void {
         self.loading.onNext(true)
         var status = CommonStrings.Emty
-    
+        
         switch typeOfStatus {
         case StatusNameConstants.inProcessStatus:
             status = CommonStrings.process
@@ -163,7 +163,7 @@ class  InboxViewModel {
                 let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: card.productionOrderId!, status: status)
                 orders.append(order)
             }
-
+            
             NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
                 self?.loading.onNext(false)
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
@@ -178,7 +178,7 @@ class  InboxViewModel {
             self.showAlert.onNext(CommonStrings.errorToChangeStatus)
         }
     }
-        
+    
     func getStatusName(index: Int) -> String {
         switch index {
         case 0:
@@ -192,7 +192,7 @@ class  InboxViewModel {
         case 4:
             return StatusNameConstants.reassignedStatus
         default:
-            return ""
+            return CommonStrings.Emty
         }
     }
     

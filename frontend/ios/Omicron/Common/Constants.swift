@@ -98,6 +98,10 @@ struct CommonStrings {
     static let errorToChangeStatus = "Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo"
     static let process = "Proceso"
     static let pending = "Pendiente"
+    static let product = "Producto:"
+    static let noSimilarity = "Sin similitud"
+    static let search = "Búsqueda"
+    static let separationSpaces = "   "
 }
 
 struct FontsNames {
