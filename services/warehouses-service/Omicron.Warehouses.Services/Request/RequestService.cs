@@ -24,16 +24,19 @@ namespace Omicron.Warehouses.Services.Request
     {
         private readonly IRequestDao requestDao;
         private readonly IUsersService usersService;
+        private readonly ISapAdapterService sapAdapterService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestService"/> class.
         /// </summary>
         /// <param name="requestDao">request dao.</param>
         /// <param name="usersService">users service.</param>
-        public RequestService(IRequestDao requestDao, IUsersService usersService)
+        /// <param name="sapAdapterService">sap adapter service.</param>
+        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService)
         {
             this.requestDao = requestDao;
             this.usersService = usersService;
+            this.sapAdapterService = sapAdapterService;
         }
 
         /// <summary>
@@ -138,6 +141,58 @@ namespace Omicron.Warehouses.Services.Request
         {
             var request = await this.GetRawMaterialRequestByProductionOrder(productionOrderId);
             return ServiceUtils.CreateResult(true, 200, null, request.FirstOrDefault(), null);
+        }
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        public async Task<ResultModel> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders)
+        {
+            var existingProductionOrders = await this.sapAdapterService.GetProductionOrdersByCriterial(salesOrders, productionOrders);
+            existingProductionOrders = existingProductionOrders.Where(x => x.Status.ToLower().Equals(ServiceConstants.ProductionOrderPlannedStatus.ToLower())).ToList();
+
+            var allComponentsInPO = new List<ProductionOrderComponentModel>();
+
+            existingProductionOrders.ForEach(x => allComponentsInPO.AddRange(x.Details));
+
+            var preRequest = new RawMaterialRequestModel
+            {
+                ProductionOrderIds = existingProductionOrders.Select(x => x.ProductionOrderId).ToList(),
+                OrderedProducts = this.CreateRequestDetail(allComponentsInPO),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, preRequest, null);
+        }
+
+        /// <summary>
+        /// Create request detail from production order components.
+        /// </summary>
+        /// <param name="allComponentsInPO">Production order components.</param>
+        /// <returns>Request detail.</returns>
+        private List<RawMaterialRequestDetailModel> CreateRequestDetail(List<ProductionOrderComponentModel> allComponentsInPO)
+        {
+            var results = new List<RawMaterialRequestDetailModel>();
+
+            foreach (var itemGroup in allComponentsInPO.GroupBy(x => x.ProductId))
+            {
+                var firstItem = itemGroup.FirstOrDefault();
+
+                // TODO: Calcular la cantidad requerida.
+                decimal requiredQuantity = 0M;
+
+                results.Add(new RawMaterialRequestDetailModel
+                {
+                    ProductId = itemGroup.Key,
+                    Description = firstItem.Description,
+                    RequestQuantity = requiredQuantity,
+                    Unit = firstItem.Unit,
+                });
+            }
+
+            return results;
         }
     }
 }

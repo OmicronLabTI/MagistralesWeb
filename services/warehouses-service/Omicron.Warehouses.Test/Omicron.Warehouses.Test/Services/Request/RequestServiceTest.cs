@@ -27,6 +27,7 @@ namespace Omicron.Warehouses.Test.Services.Request
     {
         private IRequestService requestService;
         private Mock<IUsersService> mockUsersService;
+        private Mock<ISapAdapterService> mockSapAdapterService;
         private IRequestDao requestDao;
         private DatabaseContext context;
         private string userId = "abc";
@@ -67,6 +68,45 @@ namespace Omicron.Warehouses.Test.Services.Request
         }
 
         /// <summary>
+        /// Create mock production orders.
+        /// </summary>
+        /// <returns>Mock users.</returns>
+        public List<ProductionOrderModel> GetMockProductionOrders()
+        {
+            var mockList = new List<ProductionOrderModel>();
+            mockList.Add(new ProductionOrderModel
+            {
+                ProductionOrderId = 1,
+                Status = "Planificado",
+                Details = new List<ProductionOrderComponentModel>()
+                {
+                    new ProductionOrderComponentModel
+                    {
+                        ProductId = "1",
+                        Description = "Prod 1",
+                        Unit = "KG",
+                    },
+                },
+            });
+            mockList.Add(new ProductionOrderModel
+            {
+                ProductionOrderId = 2,
+                Status = "Cancelado",
+                Details = new List<ProductionOrderComponentModel>()
+                {
+                    new ProductionOrderComponentModel
+                    {
+                        ProductId = "2",
+                        Description = "Prod 2",
+                        Unit = "Litro",
+                    },
+                },
+            });
+
+            return mockList;
+        }
+
+        /// <summary>
         /// The set up.
         /// </summary>
         [SetUp]
@@ -75,9 +115,12 @@ namespace Omicron.Warehouses.Test.Services.Request
             this.InitializeInMemoryDb();
             this.requestDao = new RequestDao(this.context);
             this.mockUsersService = new Mock<IUsersService>();
-            this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
+            this.mockSapAdapterService = new Mock<ISapAdapterService>();
 
-            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object);
+            this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
+            this.mockSapAdapterService.Setup(x => x.GetProductionOrdersByCriterial(It.IsAny<List<int>>(), It.IsAny<List<int>>())).Returns(Task.FromResult(this.GetMockProductionOrders()));
+
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object);
         }
 
         /// <summary>
@@ -166,6 +209,31 @@ namespace Omicron.Warehouses.Test.Services.Request
             // assert
             Assert.IsTrue(response.Success);
             Assert.IsNull(response.Response);
+        }
+
+        /// <summary>
+        /// Get raw material request.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task GetRawMaterialPreRequest()
+        {
+            // arrange
+            var productionOrderIds = new List<int> { 1, 2 };
+            var salesOrders = new List<int>();
+
+            // act
+            var response = await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrderIds);
+
+            // assert
+            Assert.IsTrue(response.Success);
+            Assert.NotNull(response.Response);
+
+            var preRequest = (RawMaterialRequestModel)response.Response;
+            Assert.AreEqual(1, preRequest.ProductionOrderIds.Count);
+            Assert.AreEqual(1, preRequest.ProductionOrderIds[0]);
+            Assert.AreEqual(1, preRequest.OrderedProducts.Count);
+            Assert.AreEqual("1", preRequest.OrderedProducts[0].ProductId);
         }
 
         /// <summary>

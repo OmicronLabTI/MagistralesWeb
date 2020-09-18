@@ -39,5 +39,13 @@ namespace Omicron.Warehouses.Facade.Request
         /// <param name="productionOrderId">Production order id.</param>
         /// <returns>The material request.</returns>
         Task<ResultDto> GetRawMaterialRequest(int productionOrderId);
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        Task<ResultDto> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders);
     }
 }

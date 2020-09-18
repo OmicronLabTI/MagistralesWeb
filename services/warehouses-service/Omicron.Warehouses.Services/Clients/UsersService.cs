@@ -14,6 +14,7 @@ namespace Omicron.Warehouses.Services.Clients
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Warehouses.Entities.Model;
+    using Omicron.Warehouses.Services.Constants;
 
     /// <summary>
     /// Class User Service.
@@ -27,7 +28,6 @@ namespace Omicron.Warehouses.Services.Clients
         public UsersService(HttpClient httpClient)
             : base(httpClient)
         {
-            httpClient.BaseAddress = new Uri("http://localhost:5101/");
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Omicron.Warehouses.Services.Clients
         /// <returns>User list.</returns>
         public async Task<List<UserModel>> GetUsersById(params string[] userIds)
         {
-            var resultModel = await this.PostAsync(userIds, "getUsersById");
+            var resultModel = await this.PostAsync(userIds, EndPointConstants.UsersGetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(resultModel.Response.ToString());
         }
     }

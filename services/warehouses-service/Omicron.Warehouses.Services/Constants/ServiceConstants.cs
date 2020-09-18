@@ -13,5 +13,9 @@ namespace Omicron.Warehouses.Services.Constants
     /// </summary>
     public static class ServiceConstants
     {
+        /// <summary>
+        /// Status of planed production orders.
+        /// </summary>
+        public const string ProductionOrderPlannedStatus = "Planificado";
     }
 }

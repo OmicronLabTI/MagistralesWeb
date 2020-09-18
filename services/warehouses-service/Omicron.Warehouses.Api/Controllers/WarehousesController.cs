@@ -14,6 +14,7 @@ namespace Omicron.Warehouses.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Warehouses.Dtos.Model;
     using Omicron.Warehouses.Facade.Request;
+    using Omicron.Warehouses.Resources.Extensions;
 
     /// <summary>
     /// Class User Controller.
@@ -69,6 +70,25 @@ namespace Omicron.Warehouses.Api.Controllers
         public async Task<IActionResult> GetRawMaterialRequest([FromQuery] int productionOrderId)
         {
             var response = await this.requestFacade.GetRawMaterialRequest(productionOrderId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material request.</returns>
+        [HttpGet]
+        [Route("/prerequest/rawmaterial")]
+        public async Task<IActionResult> GetRawMaterialPreRequest(
+            [FromQuery] string salesOrders,
+            [FromQuery] string productionOrders)
+        {
+            var salesOrdersIds = (salesOrders ?? string.Empty).ToIntList();
+            var productionOrdersIds = (productionOrders ?? string.Empty).ToIntList();
+
+            var response = await this.requestFacade.GetRawMaterialPreRequest(salesOrdersIds, productionOrdersIds);
             return this.Ok(response);
         }
 

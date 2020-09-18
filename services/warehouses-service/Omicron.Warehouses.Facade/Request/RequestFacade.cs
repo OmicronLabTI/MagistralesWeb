@@ -67,5 +67,16 @@ namespace Omicron.Warehouses.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.requestService.GetRawMaterialRequestByProductionOrderId(productionOrderId));
         }
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        public async Task<ResultDto> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrders));
+        }
     }
 }

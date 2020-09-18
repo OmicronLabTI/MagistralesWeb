@@ -88,6 +88,19 @@ namespace Omicron.Warehouses.Test.Api
         /// Action tests.
         /// </summary>
         [Test]
+        public void GetRawMaterialPreRequest()
+        {
+            // Act
+            var result = this.controller.GetRawMaterialPreRequest(string.Empty, "1").Result as OkObjectResult;
+
+            // Assert
+            Assert.IsTrue((result.Value as ResultDto).Success);
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
         public void Ping()
         {
             // Act
