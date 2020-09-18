@@ -189,8 +189,10 @@ class InboxViewController: UIViewController {
         inboxViewModel.title.withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
             var message: String = ""
-            if (data.count == 0 && statusId != -1) {
-                message = "No tienes órdenes \(title)"
+            if let orders = data.first {
+                if (orders.items.count == 0 && statusId != -1) {
+                    message = "No tienes órdenes \(title)"
+                }
             }
             self?.collectionView.setEmptyMessage(message)
         }).subscribe().disposed(by: disposeBag)

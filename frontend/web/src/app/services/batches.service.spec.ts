@@ -21,23 +21,23 @@ describe('BatchesService', () => {
 
   it('should return an observable', () =>{
     const batchesService: BatchesService = TestBed.get(BatchesService);
-    const obs = batchesService.getInventoryBatches("1234");
+    const obs = batchesService.getInventoryBatches('1234');
     expect(obs instanceof Observable).toBeTruthy();
   });
 
   it('should getBatches', () => {
     const service: BatchesService = TestBed.get(BatchesService);
-    expect(service.getInventoryBatches("anysring") instanceof Observable).toBeTruthy();
+    expect(service.getInventoryBatches('anystring') instanceof Observable).toBeTruthy();
   });
 
   it('should updateBatches', () => {
-    let objeto: ILotesToSaveReq[] = [
+    const objeto: ILotesToSaveReq[] = [
       {
-        batchNumber: "1234",
+        batchNumber: '1234',
         orderId: 1234,
         assignedQty: 222,
-        itemCode: "MP   009",
-        action: "insert"
+        itemCode: 'MP   009',
+        action: 'insert'
       }
     ]
     const service: BatchesService = TestBed.get(BatchesService);
