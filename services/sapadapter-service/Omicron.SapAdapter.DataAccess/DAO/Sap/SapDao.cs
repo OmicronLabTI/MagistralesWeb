@@ -16,8 +16,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Resources.Extensions;
+    using Omicron.SapAdapter.Entities.Model.DbModels;    
 
     /// <summary>
     /// Class for the dao.

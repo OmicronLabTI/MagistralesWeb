@@ -527,6 +527,12 @@
 		  <column name="unit" type="VARCHAR(50)"/>  
 	  </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.55">
+    <sql endDelimiter=";">
+        update "user" set pieces = 0 where role != 2;
+		update "user" set asignable = 0 where role != 2;
+    </sql>
+  </changeSet>
   <changeSet author="hmiguel" id="changelog-1.56">
     <createTable schemaName="warehouse" tableName="rawmaterialrequestorders">
       <column name="id" type="INT" autoIncrement="true">
@@ -549,5 +555,33 @@
   </changeSet>
   <changeSet  author="hmiguel"  id="changelog-1.57">  
     <dropColumn  columnName="productionorderid" schemaName="warehouse"  tableName="rawmaterialrequest" />  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.58">
+    <insert tableName="parameters"> 
+      <column name="value" value="almacenmp@o-lab.mx"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailAlmacen"/>
+    </insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.59">
+    <insert tableName="parameters"> 
+      <column name="value" value="mag2@o-lab.mx"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailLogisticaCc1"/>
+    </insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.60">
+    <insert tableName="parameters"> 
+      <column name="value" value="aescobar@o-lab.mx"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailLogisticaCc2"/>
+    </insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.61">
+    <insert tableName="parameters"> 
+      <column name="value" value="info@o-lab.mx"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailMiddleware"/>
+    </insert>
   </changeSet>
 </databaseChangeLog> 
