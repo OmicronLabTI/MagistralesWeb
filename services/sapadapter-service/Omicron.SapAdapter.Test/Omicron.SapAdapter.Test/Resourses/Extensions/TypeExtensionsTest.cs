@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="TypeExtensionsTests.cs" company="Axity">
+// <copyright file="TypeExtensionsTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -14,7 +14,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
     /// <summary>
     /// Type extensions tests.
     /// </summary>
-    public class TypeExtensionsTests
+    public class TypeExtensionsTest
     {
         /// <summary>
         /// Validate numeric type is true.

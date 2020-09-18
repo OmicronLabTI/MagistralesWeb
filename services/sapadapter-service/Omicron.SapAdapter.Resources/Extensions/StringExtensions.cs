@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Resources.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     /// <summary>
@@ -34,6 +35,17 @@ namespace Omicron.SapAdapter.Resources.Extensions
             }
 
             return newString;
+        }
+
+        /// <summary>
+        /// Convert string to list of int values.
+        /// </summary>
+        /// <param name="baseString">Base string.</param>
+        /// <param name="separator">Values separator.</param>
+        /// <returns>List of ints.</returns>
+        public static List<int> ToIntList(this string baseString, string separator = ",")
+        {
+            return baseString.Split(separator).Where(x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToList();
         }
     }
 }

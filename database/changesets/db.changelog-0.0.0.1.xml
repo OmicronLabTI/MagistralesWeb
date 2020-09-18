@@ -527,7 +527,7 @@
 		  <column name="unit" type="VARCHAR(50)"/>  
 	  </addColumn>  
   </changeSet>
-  <changeSet author="hmiguel" id="changelog-1.55">
+  <changeSet author="hmiguel" id="changelog-1.56">
     <createTable schemaName="warehouse" tableName="rawmaterialrequestorders">
       <column name="id" type="INT" autoIncrement="true">
         <constraints nullable="false" primaryKey="true" unique="true"/>
@@ -540,14 +540,14 @@
     </createTable>
     <addForeignKeyConstraint
 		baseColumnNames="rawmaterialrequestid" 
-		baseTableName="rawmaterialrequestdetail" 
+		baseTableName="rawmaterialrequestorders" 
 		baseTableSchemaName="warehouse" 
 		constraintName="fk_rawmaterialrequestorders_rawmaterialrequest_id" 
 		referencedColumnNames="id" 
 		referencedTableName="rawmaterialrequest" 
 		referencedTableSchemaName="warehouse"/>
   </changeSet>
-  <changeSet  author="hmiguel"  id="changelog-1.56">  
+  <changeSet  author="hmiguel"  id="changelog-1.57">  
     <dropColumn  columnName="productionorderid" schemaName="warehouse"  tableName="rawmaterialrequest" />  
   </changeSet>
 </databaseChangeLog> 
