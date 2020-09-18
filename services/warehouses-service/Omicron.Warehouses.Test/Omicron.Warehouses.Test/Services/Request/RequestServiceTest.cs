@@ -9,16 +9,14 @@
 namespace Omicron.Warehouses.Test.Services.Request
 {
     using System.Collections.Generic;
-    using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
     using Moq;
-    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.Warehouses.DataAccess.DAO.Request;
     using Omicron.Warehouses.Entities.Context;
     using Omicron.Warehouses.Entities.Model;
     using Omicron.Warehouses.Services.Clients;
-    using Omicron.Warehouses.Services.Mapping;
     using Omicron.Warehouses.Services.Request;
 
     /// <summary>
@@ -43,16 +41,16 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             var request = AutoFixtureProvider.CreateList<RawMaterialRequestModel>(1);
             request[0].Id = 1;
-            request[0].ProductionOrderId = 1;
             request[0].Signature = new byte[0];
+
             request[0].OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(1);
+            request[0].ProductionOrderIds = new List<int> { 1 };
             request[0].OrderedProducts[0].Id = 1;
             request[0].OrderedProducts[0].RequestId = 1;
-            request[0].OrderedProducts[0].ProductId = "P001";
-            request[0].OrderedProducts[0].Unit = "Kilogramo";
 
             this.context.RawMaterialRequests.AddRange(request);
             this.context.RawMaterialRequestDetails.AddRange(request[0].OrderedProducts);
+            this.context.RawMaterialRequestOrders.AddRange(request[0].ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { Id = 1, ProductionOrderId = 1, RequestId = 1 }));
 
             this.context.SaveChanges();
         }
@@ -63,7 +61,9 @@ namespace Omicron.Warehouses.Test.Services.Request
         /// <returns>Mock users.</returns>
         public List<UserModel> GetMockUsers()
         {
-            return AutoFixtureProvider.CreateList<UserModel>(1);
+            var users = AutoFixtureProvider.CreateList<UserModel>(1);
+            users[0].Id = this.userId;
+            return users;
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Omicron.Warehouses.Test.Services.Request
             this.InitializeInMemoryDb();
             this.requestDao = new RequestDao(this.context);
             this.mockUsersService = new Mock<IUsersService>();
-            this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<List<string>>())).Returns(Task.FromResult(this.GetMockUsers()));
+            this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
 
             this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object);
         }
@@ -88,15 +88,15 @@ namespace Omicron.Warehouses.Test.Services.Request
         public async Task CreateRawMaterialRequest_CreateRequest_SuccessResults()
         {
             // arrange
-            var request = AutoFixtureProvider.CreateList<RawMaterialRequestModel>(1);
-            request[0].ProductionOrderId = 2;
-            request[0].OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(3);
+            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.ProductionOrderIds = new List<int> { 2 };
+            request.OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(3);
 
             // act
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 1, 0));
+            this.CheckAction(response, true, 1, 0);
         }
 
         /// <summary>
@@ -107,14 +107,32 @@ namespace Omicron.Warehouses.Test.Services.Request
         public async Task CreateRawMaterialRequest_RequestAlreadyExists_FailResults()
         {
             // arrange
-            var request = AutoFixtureProvider.CreateList<RawMaterialRequestModel>(1);
-            request[0].ProductionOrderId = 1;
+            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.ProductionOrderIds = new List<int> { 1 };
 
             // act
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 0, 1));
+            this.CheckAction(response, true, 0, 1);
+        }
+
+        /// <summary>
+        /// Create new raw material request.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task CreateRawMaterialRequest_UserNotExists_FailResults()
+        {
+            // arrange
+            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.ProductionOrderIds = new List<int> { 1 };
+
+            // act
+            var response = await this.requestService.CreateRawMaterialRequest("otherUser", request);
+
+            // assert
+            Assert.AreEqual(false, response.Success);
         }
 
         /// <summary>
@@ -130,7 +148,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             // assert
             var request = (RawMaterialRequestModel)response.Response;
             Assert.IsTrue(response.Success);
-            Assert.AreEqual(1, request.ProductionOrderId);
+
+            Assert.AreEqual(1, request.ProductionOrderIds[0]);
             Assert.AreEqual(1, request.OrderedProducts.Count);
         }
 
@@ -150,68 +169,18 @@ namespace Omicron.Warehouses.Test.Services.Request
         }
 
         /// <summary>
-        /// Update raw material request.
-        /// </summary>
-        /// <returns>Nothing.</returns>
-        [Test]
-        public async Task UpdateRawMaterialRequest_ExistingRequest_SuccessResult()
-        {
-            // arrange
-            ConverterBase64ToByteArray converter = new ConverterBase64ToByteArray();
-            var existingItem = await this.requestDao.GetRawMaterialRequestByProductionOrderId(1);
-
-            var request = JsonConvert.DeserializeObject<RawMaterialRequestModel>(JsonConvert.SerializeObject(existingItem));
-            request.ProductionOrderId = 1;
-            request.Signature = converter.Convert(File.ReadAllText("SignatureBase64.txt"), null);
-            request.Observations = "New comments.";
-            request.OrderedProducts[0].RequestQuantity = 199;
-            request.OrderedProducts.Add(new RawMaterialRequestDetailModel
-            {
-                RequestQuantity = 1,
-                ProductId = "P0002",
-                Description = "Desc 002",
-            });
-
-            // act
-            var response = await this.requestService.UpdateRawMaterialRequest(this.userId, new List<RawMaterialRequestModel> { request });
-
-            // assert
-            Assert.IsTrue(this.CheckAction(response, true, 1, 0));
-        }
-
-        /// <summary>
-        /// Update raw material request.
-        /// </summary>
-        /// <returns>Nothing.</returns>
-        [Test]
-        public async Task UpdateRawMaterialRequest_NotExistingRequest_FailResult()
-        {
-            // arrange
-            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
-            request.ProductionOrderId = 99;
-
-            // act
-            var response = await this.requestService.UpdateRawMaterialRequest(this.userId, new List<RawMaterialRequestModel> { request });
-
-            // assert
-            Assert.IsTrue(this.CheckAction(response, true, 0, 1));
-        }
-
-        /// <summary>
         /// Check response results.
         /// </summary>
         /// <param name="result">Result.</param>
         /// <param name="success">Expected success.</param>
         /// <param name="numberOfSucceess">Expected success results.</param>
         /// <param name="numberOfFails">Expected fail results.</param>
-        /// <returns>Validation flag.</returns>
-        private bool CheckAction(ResultModel result, bool success, int numberOfSucceess, int numberOfFails)
+        private void CheckAction(ResultModel result, bool success, int numberOfSucceess, int numberOfFails)
         {
-            var content = (SuccessFailResults<RawMaterialRequestModel>)result.Response;
-
-            return result.Success.Equals(success) &&
-                    numberOfFails.Equals(content.Failed.Count) &&
-                    numberOfSucceess.Equals(content.Success.Count);
+            var content = (SuccessFailResults<object>)result.Response;
+            Assert.AreEqual(success, result.Success);
+            Assert.AreEqual(numberOfFails, content.Failed.Count);
+            Assert.AreEqual(numberOfSucceess, content.Success.Count);
         }
     }
 }

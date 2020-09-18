@@ -54,9 +54,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
         public async Task CreateRawMaterialRequest()
         {
             // arrange
-            var requests = AutoFixtureProvider.Create<List<RawMaterialRequestDto>>();
-            var imageData = File.ReadAllText("SignatureBase64.txt");
-            requests.ForEach(x => x.Signature = imageData);
+            var requests = AutoFixtureProvider.Create<RawMaterialRequestDto>();
+            requests.Signature = File.ReadAllText("SignatureBase64.txt");
 
             // act
             var response = await this.requestFacade.CreateRawMaterialRequest("userId", requests);
@@ -74,9 +73,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
         public async Task UpdateRawMaterialRequest()
         {
             // arrange
-            var requests = AutoFixtureProvider.Create<List<RawMaterialRequestDto>>();
-            var imageData = File.ReadAllText("SignatureBase64.txt");
-            requests.ForEach(x => x.Signature = imageData);
+            var requests = AutoFixtureProvider.Create<RawMaterialRequestDto>();
+            requests.Signature = File.ReadAllText("SignatureBase64.txt");
 
             // act
             var response = await this.requestFacade.UpdateRawMaterialRequest("userId", requests);

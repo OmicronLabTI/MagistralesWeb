@@ -27,6 +27,7 @@ namespace Omicron.Warehouses.Services.Clients
         public UsersService(HttpClient httpClient)
             : base(httpClient)
         {
+            httpClient.BaseAddress = new Uri("http://localhost:5101/");
         }
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace Omicron.Warehouses.Services.Clients
         /// </summary>
         /// <param name="userIds">User ids's.</param>
         /// <returns>User list.</returns>
-        public async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        public async Task<List<UserModel>> GetUsersById(params string[] userIds)
         {
             var resultModel = await this.PostAsync(userIds, "getUsersById");
             return JsonConvert.DeserializeObject<List<UserModel>>(resultModel.Response.ToString());

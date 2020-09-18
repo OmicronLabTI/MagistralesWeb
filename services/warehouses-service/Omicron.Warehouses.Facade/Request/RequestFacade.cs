@@ -40,22 +40,22 @@ namespace Omicron.Warehouses.Facade.Request
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
-        public async Task<ResultDto> CreateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests)
+        public async Task<ResultDto> CreateRawMaterialRequest(string userId, RawMaterialRequestDto request)
         {
-            return this.mapper.Map<ResultDto>(await this.requestService.CreateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
+            return this.mapper.Map<ResultDto>(await this.requestService.CreateRawMaterialRequest(userId, this.mapper.Map<RawMaterialRequestModel>(request)));
         }
 
         /// <summary>
         /// Update raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed updates.</returns>
-        public async Task<ResultDto> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests)
+        public async Task<ResultDto> UpdateRawMaterialRequest(string userId, RawMaterialRequestDto request)
         {
-            return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
+            return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<RawMaterialRequestModel>(request)));
         }
 
         /// <summary>

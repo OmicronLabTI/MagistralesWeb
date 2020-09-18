@@ -20,7 +20,7 @@ namespace Omicron.Warehouses.Dtos.Model
         /// <value>
         /// Id production id.
         /// </value>
-        public int ProductionOrderId { get; set; }
+        public List<int> ProductionOrderIds { get; set; }
 
         /// <summary>
         /// Gets or sets signature in byte[] representation.

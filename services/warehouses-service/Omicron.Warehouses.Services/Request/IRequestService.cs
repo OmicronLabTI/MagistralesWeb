@@ -21,17 +21,17 @@ namespace Omicron.Warehouses.Services.Request
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
-        Task<ResultModel> CreateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
+        Task<ResultModel> CreateRawMaterialRequest(string userId, RawMaterialRequestModel request);
 
         /// <summary>
         /// Update raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed updates.</returns>
-        Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
+        Task<ResultModel> UpdateRawMaterialRequest(string userId, RawMaterialRequestModel request);
 
         /// <summary>
         /// Get a raw material request for production order id.

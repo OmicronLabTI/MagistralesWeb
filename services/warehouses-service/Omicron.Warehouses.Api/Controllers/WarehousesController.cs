@@ -14,7 +14,6 @@ namespace Omicron.Warehouses.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Warehouses.Dtos.Model;
     using Omicron.Warehouses.Facade.Request;
-    using StackExchange.Redis;
 
     /// <summary>
     /// Class User Controller.
@@ -37,26 +36,26 @@ namespace Omicron.Warehouses.Api.Controllers
         /// <summary>
         /// Create a raw material request.
         /// </summary>
-        /// <param name="requests">New request to add.</param>
+        /// <param name="request">New request to add.</param>
         /// <returns>List with successfuly and failed creations.</returns>
         [HttpPost]
         [Route("/request/rawmaterial")]
-        public async Task<IActionResult> CreateRawMaterialRequest(UserActionDto<List<RawMaterialRequestDto>> requests)
+        public async Task<IActionResult> CreateRawMaterialRequest(UserActionDto<RawMaterialRequestDto> request)
         {
-            var response = await this.requestFacade.CreateRawMaterialRequest(requests.UserId, requests.Data);
+            var response = await this.requestFacade.CreateRawMaterialRequest(request.UserId, request.Data);
             return this.Ok(response);
         }
 
         /// <summary>
         /// Update a raw material request.
         /// </summary>
-        /// <param name="requests">New request to add.</param>
+        /// <param name="request">New request to add.</param>
         /// <returns>List with successfuly and failed creations.</returns>
         [HttpPut]
         [Route("/request/rawmaterial")]
-        public async Task<IActionResult> UpdateRawMaterialRequest(UserActionDto<List<RawMaterialRequestDto>> requests)
+        public async Task<IActionResult> UpdateRawMaterialRequest(UserActionDto<RawMaterialRequestDto> request)
         {
-            var response = await this.requestFacade.UpdateRawMaterialRequest(requests.UserId, requests.Data);
+            var response = await this.requestFacade.UpdateRawMaterialRequest(request.UserId, request.Data);
             return this.Ok(response);
         }
 
