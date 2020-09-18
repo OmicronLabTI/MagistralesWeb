@@ -22,5 +22,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<RoleModel>> GetAllRoles();
+
+        /// <summary>
+        /// Looks the values by field.
+        /// </summary>
+        /// <param name="fields">the data to look.</param>
+        /// <returns>the data to return.</returns>
+        Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields);
     }
 }

@@ -9,6 +9,7 @@
 namespace Omicron.Catalogos.Facade.Catalogs
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Catalogos.Dtos.Models;
@@ -44,6 +45,16 @@ namespace Omicron.Catalogos.Facade.Catalogs
         public async Task<ResultDto> GetRoles()
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetRoles());
+        }
+
+        /// <summary>
+        /// Gets the values from parameters based in the dict.
+        /// </summary>
+        /// <param name="parameters">the dictionary.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetParamsContains(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetParamsContains(parameters));
         }
     }
 }

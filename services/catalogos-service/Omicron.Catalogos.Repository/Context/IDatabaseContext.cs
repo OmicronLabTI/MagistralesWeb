@@ -31,5 +31,13 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object UserModel CatUser.
         /// </value>
         DbSet<RoleModel> RoleModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets parameters model.
+        /// </summary>
+        /// <value>
+        /// Object parameters model.
+        /// </value>
+        DbSet<ParametersModel> ParametersModel { get; set; }
     }
 }

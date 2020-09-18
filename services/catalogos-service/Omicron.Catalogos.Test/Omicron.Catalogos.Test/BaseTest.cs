@@ -61,5 +61,17 @@ namespace Omicron.Catalogos.Test
                 new RoleModel { Id = 2, Description = "QFB" },
             };
         }
+
+        /// <summary>
+        /// Gets the parameters.
+        /// </summary>
+        /// <returns>the parameters.</returns>
+        public IEnumerable<ParametersModel> GetParameters()
+        {
+            return new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Field = "Email", Type = "string", Value = "email" },
+            };
+        }
     }
 }
