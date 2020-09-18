@@ -8,7 +8,7 @@
         </mat-card-header>
         <mat-card-content class="content-card-container">
             <form [formGroup]="addUserForm" class="form-add-user" autocomplete="off">
-                <div class="row-form-user">
+                <div class="row-form-user padding-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
                             <input matInput placeholder="Ingresa usuario" formControlName="userName" maxlength="50" class="height-input">
@@ -45,7 +45,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field appearance="fill" class="custom-field margin-top-user">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
                             <mat-label>Selecciona rol</mat-label>
                             <mat-select formControlName="userTypeR">
                                 <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
@@ -70,17 +70,48 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field appearance="fill" class="custom-field margin-top-user" *ngIf="isForEditModal">
+                        <mat-form-field class="custom-field magin-top-field">
+                            <input matInput
+                                   placeholder="Piezas máximas"
+                                   type="number"
+                                   formControlName="piezas"
+                                   class="height-input">
+
+                            <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
+                                Piezas máximas es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.piezas?.errors?.maxLength">
+                                Máximo 5 digitos
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                            <mat-label>Selecciona asignación</mat-label>
+                            <mat-select formControlName="asignable">
+                                <mat-option value="1">Encendido</mat-option>
+                                <mat-option value="0">Apagado</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="!addUserForm?.controls.asignable?.errors?.required">
+                                Asignación es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user" *ngIf="isForEditModal">
                             <mat-label>Selecciona estatus</mat-label>
                             <mat-select formControlName="activo">
                                 <mat-option value="0">Inactivo</mat-option>
                                 <mat-option value="1">Activo</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="addUserForm?.controls.activo?.errors?.required">
-                                Estatus es <strong>requerido</strong>
-                            </mat-error>
                         </mat-form-field>
+                        <mat-error *ngIf="addUserForm?.controls.activo?.errors?.required">
+                            Estatus es <strong>requerido</strong>
+                        </mat-error>
                     </div>
+
                 </div>
             </form>
 

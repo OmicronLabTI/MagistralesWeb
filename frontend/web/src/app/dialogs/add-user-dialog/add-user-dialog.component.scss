@@ -46,7 +46,9 @@
 .magin-top-field{
   margin-top: 4%;
 }
-
+.padding-user {
+  padding-top: 10px;
+}
 ::ng-deep .mat-focused .mat-form-field-label {
   /*change color of label  */
   color: #6C90B3 !important;

@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import { IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
-import {CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
+import {CONST_NUMBER, CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {SweetAlertIcon} from 'sweetalert2';
@@ -34,8 +34,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       userTypeR: ['', Validators.required],
-      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord), ]],
-      activo: ['', Validators.required]
+      password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
+      activo: ['', [Validators.required]],
+      piezas: ['', [Validators.required, Validators.maxLength(5)]],
+      asignable: ['', [Validators.required]]
     });
 
   }
@@ -45,6 +47,13 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
             valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+      }
+      if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
+        this.addUserForm.get('piezas').disable({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('asignable').disable({onlySelf: true, emitEvent: false});
+      } else {
+        this.addUserForm.get('piezas').enable({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('asignable').enable({onlySelf: true, emitEvent: false});
       }
     });
     this.usersService.getRoles().subscribe(rolesRes => {
@@ -60,13 +69,15 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     });
 
     if (!this.isForEditModal) {
-      this.addUserForm.get('activo').setValue(1);
+      this.addUserForm.get('activo').setValue(CONST_NUMBER.one);
     } else {
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
       this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
       this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
       this.addUserForm.get('password').setValue(this.userToEdit.password);
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
+      this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
+      this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
 
     }
   }
@@ -76,12 +87,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
     if (!this.isForEditModal) {
       const user: IUserReq = {
-        userName: this.addUserForm.get('userName').value,
-        firstName: this.addUserForm.get('firstName').value,
-        lastName: this.addUserForm.get('lastName').value,
+        ...this.addUserForm.value,
         role: Number(this.addUserForm.get('userTypeR').value),
-        password: this.addUserForm.get('password').value,
-        activo: Number(this.addUserForm.get('activo').value)
+        asignable: Number(this.addUserForm.get('asignable').value)
       };
       this.usersService.createUser(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
@@ -89,12 +97,10 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           error => this.userExistDialog(error));
     } else {
       const user: IUserReq = {
+        ...this.addUserForm.value,
         id: this.userToEdit.id,
-        userName: this.addUserForm.get('userName').value,
-        firstName: this.addUserForm.get('firstName').value,
-        lastName: this.addUserForm.get('lastName').value,
         role: Number(this.addUserForm.get('userTypeR').value),
-        password: this.addUserForm.get('password').value,
+        asignable: Number(this.addUserForm.get('asignable').value),
         activo: Number(this.addUserForm.get('activo').value)
       };
       this.usersService.updateUser(user).subscribe( () => {
