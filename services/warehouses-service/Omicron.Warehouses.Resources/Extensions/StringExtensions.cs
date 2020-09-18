@@ -6,37 +6,16 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Resources.Extensions
+namespace Omicron.Warehouses.Resources.Extensions
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// String extension methods.
     /// </summary>
     public static class StringExtensions
     {
-        /// <summary>
-        /// Concat string N times.
-        /// </summary>
-        /// <param name="baseString">Original string.</param>
-        /// <param name="stringToConcat">String to concat.</param>
-        /// <param name="repeat">N times to concat.</param>
-        /// <returns>New string.</returns>
-        public static string Concat(this string baseString, string stringToConcat, int repeat = 1)
-        {
-            var newString = baseString;
-
-            for (int i = 0; i < repeat; i++)
-            {
-                newString += stringToConcat;
-            }
-
-            return newString;
-        }
-
         /// <summary>
         /// Convert string to list of int values.
         /// </summary>

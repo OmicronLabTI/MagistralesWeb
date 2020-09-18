@@ -207,6 +207,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// gets the fabrication orders by sales order id.
+        /// </summary>
+        /// <param name="salesOrderIds">the sales order ids.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => salesOrderIds.Contains(x.PedidoId.Value)).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
         /// gets the orders by orderid.
         /// </summary>
         /// <param name="fechaInit">initial date.</param>

@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="IUsersService.cs" company="Axity">
+// <copyright file="ISapAdapterService.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -15,13 +15,14 @@ namespace Omicron.Warehouses.Services.Clients
     /// <summary>
     /// Interface User Service.
     /// </summary>
-    public interface IUsersService
+    public interface ISapAdapterService
     {
         /// <summary>
-        /// Method for get users by id.
+        /// Method for get production orders by criterial.
         /// </summary>
-        /// <param name="userIds">User ids's.</param>
-        /// <returns>User list.</returns>
-        Task<List<UserModel>> GetUsersById(params string[] userIds);
+        /// <param name="salesOrderIds">Sales orders.</param>
+        /// <param name="productionOrderIds">ProductionOrders.</param>
+        /// <returns>Production orders.</returns>
+        Task<List<ProductionOrderModel>> GetProductionOrdersByCriterial(List<int> salesOrderIds, List<int> productionOrderIds);
     }
 }
