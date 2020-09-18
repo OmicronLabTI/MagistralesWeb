@@ -101,7 +101,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
             guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
-            self?.hideButtons(id: statusId)
+            self?.hideButtons(index: statusId)
         }).disposed(by: disposeBag)
         
         inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -238,23 +238,6 @@ class InboxViewController: UIViewController {
         }
     }
     
-    private func hideButtons(id: Int) {
-        switch id {
-        case 1:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 3:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 4:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 5:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        default:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        }
-    }
-    
     private func changePropertyIsHiddenStatusButtons(processButtonIsHidden: Bool, finishedButtonIsHidden: Bool, pendingButtonIsHidden: Bool) -> Void {
         self.processButton.isHidden = processButtonIsHidden
         self.finishedButton.isHidden = finishedButtonIsHidden
@@ -268,7 +251,7 @@ class InboxViewController: UIViewController {
             guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
             guard let destiny = self.inboxViewModel.selectedOrder?.destiny else { return }
             destination.orderId = orderId // you can pass value to destination view controller
-            destination.statusType = self.inboxViewModel.getStatusName(id: statusId)
+            destination.statusType = self.inboxViewModel.getStatusName(index: statusId - 1)
             destination.destiny = destiny
            }
        }

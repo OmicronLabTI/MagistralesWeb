@@ -182,36 +182,18 @@ class  InboxViewModel {
         }
     }
     
-    func getStatusName(id: Int) -> String {
-        switch id {
-        case 1:
-            return StatusNameConstants.assignedStatus
-        case 2:
-            return StatusNameConstants.inProcessStatus
-        case 3:
-            return StatusNameConstants.penddingStatus
-        case 4:
-            return StatusNameConstants.finishedStatus
-        case 5:
-            return StatusNameConstants.reassignedStatus
-        default:
-            return ""
-        }
-    }
-    
-    
     func getStatusId(name: String) -> Int {
         switch name {
         case StatusNameConstants.assignedStatus:
-            return 1
+            return 0
         case StatusNameConstants.inProcessStatus:
-            return 2
+            return 1
         case StatusNameConstants.penddingStatus:
-            return 3
+            return 2
         case StatusNameConstants.finishedStatus:
-            return 4
+            return 3
         case StatusNameConstants.reassignedStatus:
-            return 5
+            return 4
         default:
             return -1
         }
