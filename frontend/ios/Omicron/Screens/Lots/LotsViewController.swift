@@ -235,7 +235,7 @@ class LotsViewController: UIViewController {
             }
             
             let commentsIcons = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
-            self.navigationItem.rightBarButtonItem = commentsIcons
+            self.navigationItem.rightBarButtonItems = [getOmniconLogo(), commentsIcons]
         
         }
     }
