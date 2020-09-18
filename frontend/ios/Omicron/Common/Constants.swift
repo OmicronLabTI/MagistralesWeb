@@ -86,7 +86,7 @@ struct CommonStrings {
     static let enter = "Entrar"
     static let user = "Usuario"
     static let password = "Contraseña"
-    static let Emty = ""
+    static let empty = ""
     static let OK = "OK"
     static let cancel = "Cancelar"
     static let searchOrden = "Buscar orden / pedido"
@@ -131,6 +131,8 @@ struct CommonStrings {
     static let couldNotDeleteItem = "Hubo un error al eliminar el elemento,  intente de nuevo"
     static let qfbSignature = "Firma del  QFB"
     static let orderCouldNotBeCompleted = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado"
+    static let clear = "Limpiar"
+    static let accept = "Aceptar"
 }
 
 struct FontsNames {

@@ -76,7 +76,7 @@ class OrderDetailViewModel {
                 self?.tempOrderDetailData = res.response!
                 self?.loading.onNext(false)
                 self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
-                var iconName = CommonStrings.Emty
+                var iconName = CommonStrings.empty
                 if (res.response?.comments != nil) {
                     iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? ImageButtonNames.message : ImageButtonNames.messsageFill
                 } else {

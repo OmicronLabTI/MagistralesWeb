@@ -64,7 +64,7 @@ class  InboxViewModel {
                     if let codeProduct = itemCodeInArray?.first {
                         order.productCode = codeProduct
                     } else {
-                        order.productCode = CommonStrings.Emty
+                        order.productCode = CommonStrings.empty
                     }
                 }
                 
@@ -75,7 +75,7 @@ class  InboxViewModel {
                 let groupBySimilarity = dataGroupedByProductCode.filter{$0.value.count > 1}
                 if (groupBySimilarity.count > 0) {
                     let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
-                        return SectionModel(model: "\(CommonStrings.product) \(orders.key ?? CommonStrings.Emty)", items: self!.sortByBaseBocumentAscending(orders: orders.value))
+                        return SectionModel(model: "\(CommonStrings.product) \(orders.key ?? CommonStrings.empty)", items: self!.sortByBaseBocumentAscending(orders: orders.value))
                     })
                     sectionModels.append(contentsOf: sectionsModelsBySimilarity)
                 }
@@ -103,8 +103,8 @@ class  InboxViewModel {
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
-            self?.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering ?? [])]
-            self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering ?? [])])
+            self?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering ?? [])]
+            self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering ?? [])])
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.normalViewButtonIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
@@ -112,8 +112,8 @@ class  InboxViewModel {
     
     func setSelection(section: SectionOrder) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
-        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering)])
-        self.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering)]
+        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+        self.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
         self.title.onNext(section.statusName)
         self.ordersTemp = ordering
         self.similarityViewButtonIsEnable.onNext(true)
@@ -122,8 +122,8 @@ class  InboxViewModel {
     
     func setFilter(orders: [Order]) -> Void {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
-        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.Emty, items: ordering)])
-        self.sectionOrders = [SectionModel(model: CommonStrings.Emty, items: ordering)]
+        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+        self.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
         self.title.onNext(CommonStrings.search)
         self.ordersTemp = ordering
     }
@@ -144,7 +144,7 @@ class  InboxViewModel {
     // Cambia el estatus de una orden a proceso o pendiente
     func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String) -> Void {
         self.loading.onNext(true)
-        var status = CommonStrings.Emty
+        var status = CommonStrings.empty
         
         switch typeOfStatus {
         case StatusNameConstants.inProcessStatus:
@@ -152,7 +152,7 @@ class  InboxViewModel {
         case StatusNameConstants.penddingStatus:
             status = CommonStrings.pending
         default:
-            status = CommonStrings.Emty
+            status = CommonStrings.empty
         }
         
         if (!status.isEmpty) {
@@ -192,7 +192,7 @@ class  InboxViewModel {
         case 4:
             return StatusNameConstants.reassignedStatus
         default:
-            return CommonStrings.Emty
+            return CommonStrings.empty
         }
     }
     

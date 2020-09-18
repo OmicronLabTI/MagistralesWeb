@@ -40,11 +40,11 @@ class SignaturePadViewModel  {
                 switch data.whoRequestSignature {
                 case ViewControllerIdentifiers.orderDetailViewController:
                     self?.orderDetailVC.qfbSignatureIsGet = true
-                    self?.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? ""
+                    self?.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
                     self?.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
                 case ViewControllerIdentifiers.lotsViewController:
                     self?.lotsViewModel.qfbSignatureIsGet = true
-                    self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? ""
+                    self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
                     self?.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
                 default:
                     print("")
@@ -57,11 +57,11 @@ class SignaturePadViewModel  {
                 switch data.whoRequestSignature {
                 case ViewControllerIdentifiers.orderDetailViewController:
                     self?.orderDetailVC.technicalSignatureIsGet = true
-                    self?.orderDetailVC.technicalSignature = data.signature.toBase64() ?? ""
+                    self?.orderDetailVC.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
                     self?.orderDetailVC.validSignatures()
                 case ViewControllerIdentifiers.lotsViewController:
                     self?.lotsViewModel.technicalSignatureIsGet = true
-                    self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? ""
+                    self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
                     self?.lotsViewModel.callFinishOrderService()
                 default:
                     print("")

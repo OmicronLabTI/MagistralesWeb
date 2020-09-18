@@ -177,7 +177,7 @@ class OrderDetailViewController: UIViewController {
 //        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
-            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.sumOfFormula)\(self?.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.Emty)", textToBold: "\(CommonStrings.sumOfFormula)")
+            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.sumOfFormula)\(self?.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)", textToBold: "\(CommonStrings.sumOfFormula)")
         }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
@@ -189,13 +189,13 @@ class OrderDetailViewController: UIViewController {
                 self.orderDetail = res
                 let detail = res.first!
                 self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(detail.baseDocument ?? 0)", textToBold: CommonStrings.orderNumber)
-                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.container) \(detail.container ?? CommonStrings.Emty)", textToBold: CommonStrings.container)
-                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.tag) \(detail.productLabel ?? CommonStrings.Emty)", textToBold: CommonStrings.tag)
+                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.container) \(detail.container ?? CommonStrings.empty)", textToBold: CommonStrings.container)
+                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.tag) \(detail.productLabel ?? CommonStrings.empty)", textToBold: CommonStrings.tag)
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
-                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.Emty)", textToBold: CommonStrings.manufacturingDate)
-                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.Emty)", textToBold: CommonStrings.finishdate)
-                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.Emty) \(detail.productDescription ?? CommonStrings.Emty)", textToBold: CommonStrings.Emty)
+                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
+                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) \(detail.productDescription ?? CommonStrings.empty)", textToBold: CommonStrings.empty)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
                     self.destinyLabel.isHidden = true

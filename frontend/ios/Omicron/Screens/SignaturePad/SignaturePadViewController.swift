@@ -29,8 +29,8 @@ class SignaturePadViewController: UIViewController {
     @Injected var signaturePadViewModel: SignaturePadViewModel
     let diposeBag = DisposeBag()
     //var orderId: Int = -1
-    var titleView = ""
-    var originView = ""
+    var titleView = CommonStrings.empty
+    var originView = CommonStrings.empty
     
     // MARK: -Life Cycles
     override func viewDidLoad() {
@@ -77,14 +77,14 @@ class SignaturePadViewController: UIViewController {
         self.signatureTitleLabel.text = self.titleView
         self.signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
         
-        self.clearButton.setTitle("Limpiar", for: .normal)
+        self.clearButton.setTitle(CommonStrings.clear, for: .normal)
         self.clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
         
-        self.cancelButton.setTitle("Cancelar", for: .normal)
+        self.cancelButton.setTitle(CommonStrings.cancel, for: .normal)
         self.cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
         self.cancelButton.setTitleColor(.systemRed, for: .normal)
         
-        self.acceptButton.setTitle("Aceptar", for: .normal)
+        self.acceptButton.setTitle(CommonStrings.accept, for: .normal)
         self.acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
     }
 }
