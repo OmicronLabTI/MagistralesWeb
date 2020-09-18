@@ -76,11 +76,11 @@ class OrderDetailViewModel {
                 self?.tempOrderDetailData = res.response!
                 self?.loading.onNext(false)
                 self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
-                var iconName = ""
+                var iconName = CommonStrings.Emty
                 if (res.response?.comments != nil) {
-                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? "message":"message.fill"
+                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? ImageButtonNames.message : ImageButtonNames.messsageFill
                 } else {
-                    iconName = "message"
+                    iconName = ImageButtonNames.message
                 }
                 self?.showIconComments.onNext(iconName)
                 if(isRefresh) {
@@ -92,7 +92,7 @@ class OrderDetailViewModel {
             if(isRefresh) {
                 self?.endRefreshing.onNext(())
             }
-            self?.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+            self?.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
         }).disposed(by: self.disposeBag)
     }
     
@@ -115,7 +115,7 @@ class OrderDetailViewModel {
         var sum = 0.0
         if(tableDetails.count > 0) {
             for detail in tableDetails {
-                if(detail.unit  != "Pieza") {
+                if(detail.unit  != CommonStrings.piece) {
                     sum = sum + detail.requiredQuantity!
                 }
             }
@@ -156,7 +156,7 @@ class OrderDetailViewModel {
             }
             }, onError: {  [weak self] error in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
+                self?.showAlert.onNext(CommonStrings.couldNotDeleteItem)
         }).disposed(by: self.disposeBag)
     }
     
@@ -184,10 +184,10 @@ class OrderDetailViewModel {
         self.loading.onNext(true)
         NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
-            self?.showSignatureView.onNext("Firma del  QFB")
+            self?.showSignatureView.onNext(CommonStrings.qfbSignature)
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+                self?.showAlert.onNext(CommonStrings.orderCouldNotBeCompleted)
         }).disposed(by: self.disposeBag)
     }
 }

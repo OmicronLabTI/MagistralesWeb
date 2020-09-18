@@ -127,6 +127,10 @@ struct CommonStrings {
     static let edit = "Editar"
     static let delete = "Eliminar"
     static let deleteComponentMessage = "El componente será eliminado, ¿quieres continuar?"
+    static let formulaDetailCouldNotBeLoaded = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
+    static let couldNotDeleteItem = "Hubo un error al eliminar el elemento,  intente de nuevo"
+    static let qfbSignature = "Firma del  QFB"
+    static let orderCouldNotBeCompleted = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado"
 }
 
 struct FontsNames {
@@ -162,6 +166,8 @@ struct ImageButtonNames {
     static let removeLot = "espalda.png"
     static let similarityView = "square.grid.2x2"
     static let normalView = "rectangle.on.rectangle"
+    static let message = "message"
+    static let messsageFill = "message.fill"
 }
 
 struct IndicatorImageStatus {
