@@ -219,7 +219,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
                     BaseDocument = o.PedidoId.Value,
                     Client = o.CardCode,
-                    CompleteQuantity = (int)o.CompleteQuantity,
+                    CompleteQuantity = o.CompleteQuantity,
                     RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
