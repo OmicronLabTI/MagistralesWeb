@@ -59,7 +59,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
 
-            var matrix = await this.GetMatrix(dates, users, userOrdersByDate);
+            var tupleRespond = await this.GetMatrix(dates, users, userOrdersByDate);
+            var matrix = this.OrderMatrix(tupleRespond.Item1, tupleRespond.Item2);
+
             var productivite = new ProductivityModel
             {
                 Matrix = matrix,
@@ -104,13 +106,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="users">all the users.</param>
         /// <param name="orders">the user orders from the active users..</param>
         /// <returns>the data.</returns>
-        private async Task<List<List<string>>> GetMatrix(Dictionary<string, DateTime> dates, List<UserModel> users, List<UserOrderModel> orders)
+        private async Task<Tuple<List<List<string>>, List<ProductiityTotalsModel>>> GetMatrix(Dictionary<string, DateTime> dates, List<UserModel> users, List<UserOrderModel> orders)
         {
             var matrixToReturn = new List<List<string>>();
+            var listProductivty = new List<ProductiityTotalsModel>();
 
             matrixToReturn.Add(this.GetMonths(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]));
-            users = users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList();
-
             foreach (var u in users)
             {
                 var ordersSap = new List<FabricacionOrderModel>();
@@ -123,10 +124,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                     ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
                 }
 
-                matrixToReturn.Add(this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]));
+                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]);
+                matrixToReturn.Add(tupleResponse.Item1);
+                listProductivty.Add(tupleResponse.Item2);
             }
 
-            return matrixToReturn;
+            return new Tuple<List<List<string>>, List<ProductiityTotalsModel>>(matrixToReturn, listProductivty);
         }
 
         /// <summary>
@@ -146,6 +149,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listMonths.Add(culture.DateTimeFormat.GetMonthName(i).ToUpper());
             }
 
+            listMonths.Add("Total");
+
             return listMonths;
         }
 
@@ -158,11 +163,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        private List<string> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, DateTime initDate, DateTime endDate)
+        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, DateTime initDate, DateTime endDate)
         {
             var listToReturn = new List<string>();
             listToReturn.Add($"{user.FirstName} {user.LastName}");
 
+            var totalPieces = 0;
             for (var i = initDate.Month; i <= endDate.Month; i++)
             {
                 decimal total = 0;
@@ -178,8 +184,33 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var userOrderIds = userOrderByMonth.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
                 var orderFromSap = fabOrder.Where(x => userOrderIds.Contains(x.OrdenId)).ToList();
                 total += orderFromSap.Sum(x => x.Quantity);
+                totalPieces += (int)total;
                 listToReturn.Add(((int)total).ToString());
             }
+
+            listToReturn.Add(totalPieces.ToString());
+
+            var listUsersMatrix = new ProductiityTotalsModel { Nombre = $"{user.FirstName} {user.LastName}", TotalPiezas = totalPieces };
+
+            return new Tuple<List<string>, ProductiityTotalsModel>(listToReturn, listUsersMatrix);
+        }
+
+        /// <summary>
+        /// Orders the matrix by total pieces.
+        /// </summary>
+        /// <param name="matrix">the matrix.</param>
+        /// <param name="totals">the totals.</param>
+        /// <returns>the data.</returns>
+        private List<List<string>> OrderMatrix(List<List<string>> matrix, List<ProductiityTotalsModel> totals)
+        {
+            var listToReturn = new List<List<string>>();
+            listToReturn.Add(matrix[0]);
+
+            totals.OrderByDescending(x => x.TotalPiezas).ThenBy(x => x.Nombre).ToList().ForEach(x =>
+            {
+                var listByUser = matrix.FirstOrDefault(m => m[0].Equals(x.Nombre));
+                listToReturn.Add(listByUser);
+            });
 
             return listToReturn;
         }
@@ -194,12 +225,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
         {
             var listToReturn = new List<WorkLoadModel>();
-            users.Where(x => x.Activo == 1).OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList().ForEach(user =>
+            users.Where(x => x.Activo == 1).ToList().ForEach(user =>
             {
                 var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
                 var workLoadByUser = this.GetTotalsByUser(ordersByUser, sapOrders, user);
                 listToReturn.Add(workLoadByUser);
             });
+
+            listToReturn = listToReturn.OrderByDescending(x => x.Finalized).ThenBy(x => x.User).ToList();
 
             listToReturn.Add(this.GetTotalAll(userOrders, sapOrders));
             return listToReturn;
