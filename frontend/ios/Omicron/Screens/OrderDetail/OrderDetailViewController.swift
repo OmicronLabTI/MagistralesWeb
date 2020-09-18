@@ -353,7 +353,7 @@ extension OrderDetailViewController: UITableViewDelegate {
     }
     
         func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-            if (self.statusType == StatusNameConstants.inProcessStatus) {
+            if (self.statusType == StatusNameConstants.inProcessStatus || self.statusType == StatusNameConstants.reassignedStatus) {
                 // Lógica para editar un item de la tabla
                 let editItem = UIContextualAction(style: .normal, title: "Editar") { [weak self] (contextualAction, view, boolValue) in
                     self?.indexOfTableToEditItem = indexPath.row
