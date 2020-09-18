@@ -21,6 +21,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
+    @IBOutlet weak var groupByOrderNumberButton: UIButton!
     
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     // MARK:  Variables
