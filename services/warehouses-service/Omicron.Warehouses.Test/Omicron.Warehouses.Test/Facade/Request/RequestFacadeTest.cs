@@ -47,16 +47,15 @@ namespace Omicron.Warehouses.Test.Facade.Request
         }
 
         /// <summary>
-        /// the processOrders.
+        /// Test facade Map result.
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
         public async Task CreateRawMaterialRequest()
         {
             // arrange
-            var requests = AutoFixtureProvider.Create<List<RawMaterialRequestDto>>();
-            var imageData = File.ReadAllText("SignatureBase64.txt");
-            requests.ForEach(x => x.Signature = imageData);
+            var requests = AutoFixtureProvider.Create<RawMaterialRequestDto>();
+            requests.Signature = File.ReadAllText("SignatureBase64.txt");
 
             // act
             var response = await this.requestFacade.CreateRawMaterialRequest("userId", requests);
@@ -67,16 +66,15 @@ namespace Omicron.Warehouses.Test.Facade.Request
         }
 
         /// <summary>
-        /// the processOrders.
+        /// Test facade Map result.
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
         public async Task UpdateRawMaterialRequest()
         {
             // arrange
-            var requests = AutoFixtureProvider.Create<List<RawMaterialRequestDto>>();
-            var imageData = File.ReadAllText("SignatureBase64.txt");
-            requests.ForEach(x => x.Signature = imageData);
+            var requests = AutoFixtureProvider.Create<RawMaterialRequestDto>();
+            requests.Signature = File.ReadAllText("SignatureBase64.txt");
 
             // act
             var response = await this.requestFacade.UpdateRawMaterialRequest("userId", requests);
@@ -87,7 +85,7 @@ namespace Omicron.Warehouses.Test.Facade.Request
         }
 
         /// <summary>
-        /// the processOrders.
+        /// Test facade Map result.
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
@@ -95,6 +93,21 @@ namespace Omicron.Warehouses.Test.Facade.Request
         {
             // act
             var response = await this.requestFacade.GetRawMaterialRequest(1);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade Map result.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetRawMaterialPreRequest()
+        {
+            // act
+            var response = await this.requestFacade.GetRawMaterialPreRequest(new List<int>(), new List<int>());
 
             // arrange
             Assert.IsNotNull(response);

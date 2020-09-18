@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="DictionaryExtensionTests.cs" company="Axity">
+// <copyright file="DictionaryExtensionTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -15,7 +15,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
     /// <summary>
     /// Dictionary extensions tests.
     /// </summary>
-    public class DictionaryExtensionTests
+    public class DictionaryExtensionTest
     {
         /// <summary>
         /// Get numeric values or defaults.

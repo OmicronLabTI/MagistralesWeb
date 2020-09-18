@@ -22,6 +22,6 @@ namespace Omicron.Warehouses.Services.Clients
         /// </summary>
         /// <param name="userIds">User ids's.</param>
         /// <returns>User list.</returns>
-        Task<List<UserModel>> GetUsersById(List<string> userIds);
+        Task<List<UserModel>> GetUsersById(params string[] userIds);
     }
 }

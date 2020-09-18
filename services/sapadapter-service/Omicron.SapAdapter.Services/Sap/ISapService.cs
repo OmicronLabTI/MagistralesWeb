@@ -56,6 +56,14 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrderIds">Sales order ids.</param>
+        /// <param name="fabricationOrderIds">Production order ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds);
+
+        /// <summary>
         /// gets the items from the dict.
         /// </summary>
         /// <param name="parameters">the filters.</param>

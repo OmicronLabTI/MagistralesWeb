@@ -22,13 +22,6 @@ namespace Omicron.Warehouses.DataAccess.DAO.Request
         Task<bool> InsertRawMaterialRequest(RawMaterialRequestModel request);
 
         /// <summary>
-        /// Method for update raw material request
-        /// </summary>
-        /// <param name="request">Request to update.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> UpdateRawMaterialRequest(RawMaterialRequestModel request);
-
-        /// <summary>
         /// Method for add detail of raw material request.
         /// </summary>
         /// <param name="detail">Raw material request detail to add.</param>
@@ -36,18 +29,25 @@ namespace Omicron.Warehouses.DataAccess.DAO.Request
         Task<bool> InsertDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail);
 
         /// <summary>
-        /// Method for update detail of raw material request.
+        /// Method for add production orders related to  raw material request.
         /// </summary>
-        /// <param name="detail">Raw material request detail to update.</param>
+        /// <param name="detail">Production order ids to add.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> UpdateDetailsOfRawMaterialRequest(List<RawMaterialRequestDetailModel> detail);
+        Task<bool> InsertOrdersOfRawMaterialRequest(List<RawMaterialRequestOrderModel> orders);
 
         /// <summary>
         /// Get request for production order id.
         /// </summary>
-        /// <param name="productionOrderId">Production order id to find.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<RawMaterialRequestModel> GetRawMaterialRequestByProductionOrderId(int productionOrderId);
+        /// <param name="productionOrderIds">Production order ids to find.</param>
+        /// <returns>Raw material request related to production orders.</returns>
+        Task<List<RawMaterialRequestModel>> GetRawMaterialRequestByProductionOrderIds(params int[] productionOrderIds);
+
+        /// <summary>
+        /// Get request-orders for production order id.
+        /// </summary>
+        /// <param name="productionOrderIds">Production order ids to find.</param>
+        /// <returns>Raw material request ids related to production order ids.</returns>
+        Task<List<RawMaterialRequestOrderModel>> GetRawMaterialRequestOrdersByProductionOrderIds(params int[] productionOrderIds);
     }
 }
 

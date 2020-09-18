@@ -15,11 +15,9 @@ namespace Omicron.SapAdapter.Test.Facade
     using NUnit.Framework;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -40,8 +38,6 @@ namespace Omicron.SapAdapter.Test.Facade
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
 
-            var mockServices = new Mock<IUsersService>();
-
             var mockSapServices = new Mock<ISapService>();
 
             var response = new ResultModel
@@ -53,57 +49,7 @@ namespace Omicron.SapAdapter.Test.Facade
                 UserError = string.Empty,
             };
 
-            mockSapServices
-                .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetOrderDetails(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetPedidoWithDetail(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetProdOrderByOrderItem(It.IsAny<List<string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetOrderFormula(It.IsAny<List<int>>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetComponents(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetBatchesComponents(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetlLastIsolatedProductionOrderId(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetFabOrders(It.IsAny<GetOrderFabModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetNextBatchCode(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetProductsManagmentByBatch(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.GetFabOrdersById(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockSapServices
-                .Setup(m => m.ValidateIfExistsBatchCodeByItemCode(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
+            mockSapServices.SetReturnsDefault(Task.FromResult(response));
 
             this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
         }
@@ -119,10 +65,10 @@ namespace Omicron.SapAdapter.Test.Facade
             var dict = new Dictionary<string, string>();
 
             // Act
-            var response = this.sapFacade.GetOrders(dict);
+            var response = await this.sapFacade.GetOrders(dict);
 
-            // Assert
-            Assert.IsNotNull(response);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -138,13 +84,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetDetallePedidos(docEntry);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -160,13 +101,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetPedidoWithDetail(listDocs);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -182,13 +118,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetProdOrderByOrderItem(listDocs);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -204,13 +135,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetOrderFormula(ordenId, true, true);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -226,13 +152,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetComponents(component);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -248,13 +169,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetBatchesComponents(ordenId);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -271,13 +187,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetlLastIsolatedProductionOrderId(productId, uniqueId);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -293,13 +204,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetNextBatchCode(productId);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -319,13 +225,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetFabOrders(parameters);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -341,13 +242,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetProductsManagmentByBatch(pamameters);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -363,13 +259,8 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.GetFabOrdersById(parameters);
 
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // assert
+            this.AssertResponse(response);
         }
 
         /// <summary>
@@ -382,7 +273,30 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.sapFacade.ValidateIfExistsBatchCodeByItemCode(string.Empty, string.Empty);
 
-            // Assert
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetFormulaBySalesOrdersOrProductionOrders()
+        {
+            // act
+            var response = await this.sapFacade.GetFabricationOrdersByCriterial(new List<int>(), new List<int>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Assert response.
+        /// </summary>
+        /// <param name="response">Response to validate.</param>
+        public void AssertResponse(ResultDto response)
+        {
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
             Assert.IsNotNull(response.Response);

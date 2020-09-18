@@ -90,6 +90,17 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrderIds">Sales order ids.</param>
+        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabricationOrdersByCriterial(salesOrderIds, fabricationOrderIds));
+        }
+
+        /// <summary>
         /// Gets the componenets based in the dic.
         /// </summary>
         /// <param name="parameters">the filters.</param>

@@ -67,6 +67,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
 
         /// <summary>
+        /// gets the fabrication orders by sales order id.
+        /// </summary>
+        /// <param name="salesOrderIds">the sales order ids.</param>        
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds);
+        
+        /// <summary>
         /// gets the orders by orderid.
         /// </summary>
         /// <param name="fechaInit">initial date.</param>

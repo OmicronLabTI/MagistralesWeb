@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -221,7 +222,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Origin = ServiceConstants.DictStatusOrigin.ContainsKey(o.OriginType) ? ServiceConstants.DictStatusOrigin[o.OriginType] : o.OriginType,
                     BaseDocument = o.PedidoId.Value,
                     Client = o.CardCode,
-                    CompleteQuantity = (int)o.CompleteQuantity,
+                    CompleteQuantity = o.CompleteQuantity,
                     RealEndDate = realEndDate,
                     ProductLabel = pedido == null ? string.Empty : pedido.Label,
                     Container = pedido == null ? string.Empty : pedido.Container,
@@ -241,6 +242,38 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, listToReturn.Count);
+        }
+
+        /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrderIds">Sales order ids.</param>
+        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds)
+        {
+            var results = new List<CompleteFormulaWithDetalle>();
+            var fabricationOrders = (await this.sapDao.GetFabOrderById(fabricationOrderIds)).ToList();
+            fabricationOrders.AddRange(await this.sapDao.GetFabOrderBySalesOrderId(salesOrderIds));
+            fabricationOrders = fabricationOrders.Where(x => !string.IsNullOrEmpty(x.Status)).Distinct().ToList();
+
+            var resultUserOrders = await this.pedidosService.GetUserPedidos(fabricationOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(resultUserOrders.Response.ToString());
+
+            foreach (var fabricationOrder in fabricationOrders)
+            {
+                var components = await this.GetDetailsByOrder(fabricationOrder.OrdenId);
+                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(fabricationOrder.OrdenId.ToString()));
+
+                var fabOrderWithFormula = new CompleteFormulaWithDetalle();
+                fabOrderWithFormula.Map(fabricationOrder);
+                fabOrderWithFormula.Map(components);
+                fabOrderWithFormula.Map(userOrder);
+
+                results.Add(fabOrderWithFormula);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, results, null, results.Count);
         }
 
         /// <summary>
