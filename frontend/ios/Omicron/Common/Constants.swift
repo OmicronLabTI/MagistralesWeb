@@ -93,6 +93,11 @@ struct CommonStrings {
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
     static let addComponentTitle = "Agregar Componentes"
+    static let confirmationMessagePendingStatus = "La orden cambiará a estatus Pendiente, ¿quieres continuar?"
+    static let confirmationMessageProcessStatus = "La orden cambiará a estatus En proceso ¿quieres continuar?"
+    static let errorToChangeStatus = "Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo"
+    static let process = "Proceso"
+    static let pending = "Pendiente"
 }
 
 struct FontsNames {

@@ -287,9 +287,9 @@ class OrderDetailViewController: UIViewController {
     func showButtonsByStatusType(statusType: String) -> Void {
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: false, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.finishedStatus:

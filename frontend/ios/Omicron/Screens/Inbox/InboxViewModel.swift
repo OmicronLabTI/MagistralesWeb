@@ -20,7 +20,7 @@ class  InboxViewModel {
     var ordersTemp: [Order] = []
     var sectionOrders: [SectionModel<String, Order>] = []
     var loading =  PublishSubject<Bool>()
-    var showConfirmationAlerChangeStatusProcess = PublishSubject<String>()
+    var showAlertToChangeOrderOfStatus = PublishSubject<MessageToChangeStatus>()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
@@ -31,6 +31,7 @@ class  InboxViewModel {
     var normalViewButtonDidTap = PublishSubject<Void>()
     var normalViewButtonIsEnable = PublishSubject<Bool>()
     var processButtonIsEnable = PublishSubject<Bool>()
+    var pendingButtonIsEnable = PublishSubject<Bool>()
     var hideGroupingButtons = PublishSubject<Bool>()
     
     init() {
@@ -38,13 +39,16 @@ class  InboxViewModel {
 //        finishedDidTap.subscribe(onNext: { () in
 //        }).disposed(by: disposeBag)
         
-        // Funcionalidad para el botón de pendiente
-//        pendingDidTap.subscribe(onNext: {
-//        }).disposed(by: disposeBag)
+//        Funcionalidad para el botón de pendiente
+        pendingDidTap.subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus, typeOfStatus: StatusNameConstants.penddingStatus)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
+        }).disposed(by: disposeBag)
         
         // Funcionalidad para el botón de En Proceso
         processDidTap.subscribe(onNext: { [weak self] _ in
-             self?.showConfirmationAlerChangeStatusProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus, typeOfStatus: StatusNameConstants.inProcessStatus)
+             self?.showAlertToChangeOrderOfStatus.onNext(message)
         }).disposed(by: disposeBag)
         
         // Funcionalidad para agrupar los cards por similitud
@@ -137,34 +141,44 @@ class  InboxViewModel {
         }
     }
     
-    func changeStatus(indexPath: [IndexPath]?) -> Void {
+    // Cambia el estatus de una orden a proceso o pendiente
+    func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String) -> Void {
         self.loading.onNext(true)
-        
-        // Obtiene las ordenes a cambiar de status a proceso mediante el indexPath
-        var orders: [ChangeStatusRequest] = []
-        for index in indexPath! {
-            let card = self.sectionOrders[index.section].items[index.row]
-            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: card.productionOrderId!, status: "Proceso")
-            orders.append(order)
+        var status = CommonStrings.Emty
+    
+        switch typeOfStatus {
+        case StatusNameConstants.inProcessStatus:
+            status = CommonStrings.process
+        case StatusNameConstants.penddingStatus:
+            status = CommonStrings.pending
+        default:
+            status = CommonStrings.Emty
         }
         
-//        var orders:[ChangeStatusRequest] = []
-//        for index in indexPath {
-//            let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: ordersTemp[index.row].productionOrderId!, status: "Proceso")
-//            orders.append(order)
-//        }
-        
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
-            self?.loading.onNext(false)
-            self?.refreshDataWhenChangeProcessIsSucces.onNext(())
-            self?.processButtonIsEnable.onNext(false)
-        }, onError: { [weak self] error in
-            self?.loading.onNext(false)
-            self?.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
-            self?.processButtonIsEnable.onNext(true)
-        }).disposed(by: self.disposeBag)
+        if (!status.isEmpty) {
+            // Obtiene las ordenes a cambialas de status mediante el indexPath
+            var orders: [ChangeStatusRequest] = []
+            for index in indexPath! {
+                let card = self.sectionOrders[index.section].items[index.row]
+                let order = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: card.productionOrderId!, status: status)
+                orders.append(order)
+            }
+
+            NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+                self?.loading.onNext(false)
+                self?.refreshDataWhenChangeProcessIsSucces.onNext(())
+                self?.processButtonIsEnable.onNext(false)
+                self?.pendingButtonIsEnable.onNext(false)
+                }, onError: { [weak self] error in
+                    self?.loading.onNext(false)
+                    self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
+                    self?.processButtonIsEnable.onNext(true)
+            }).disposed(by: self.disposeBag)
+        } else {
+            self.showAlert.onNext(CommonStrings.errorToChangeStatus)
+        }
     }
-    
+        
     func getStatusName(index: Int) -> String {
         switch index {
         case 0:

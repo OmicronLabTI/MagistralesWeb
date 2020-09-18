@@ -112,12 +112,14 @@ class InboxViewController: UIViewController {
         collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ [weak self] indexpath in
             if self?.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
                 self?.processButton.isEnabled = true
+                self?.pendingButton.isEnabled = true
             }
         }).disposed(by: self.disposeBag)
         
         collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] _ in
             if self?.collectionView.indexPathsForSelectedItems?.count == 0 {
                 self?.processButton.isEnabled = false
+                self?.pendingButton.isEnabled = false
             }
         }).disposed(by: disposeBag)
         
@@ -125,6 +127,11 @@ class InboxViewController: UIViewController {
         inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
             self?.processButton.isEnabled = isEnable
         }).disposed(by: self.disposeBag)
+        
+        // Habilita o deshabilita el botón para cambiar a pendiente
+        inboxViewModel.pendingButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
+            self?.pendingButton.isEnabled = isEnable
+        }).self.disposed(by: self.disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -159,12 +166,12 @@ class InboxViewController: UIViewController {
             self?.normalViewButton.isHidden = isHidden
         }).disposed(by: self.disposeBag)
         
-        // Muestra un alert para la confirmación de cambiar el status o no
-        inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+        // Muestra un alert para la confirmación de cambio de estatus de una orden
+        inboxViewModel.showAlertToChangeOrderOfStatus.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
-                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems)
+                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems, typeOfStatus: data.typeOfStatus)
             })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
             alert.addAction(cancelAction)
             alert.addAction(okAction)
@@ -200,6 +207,7 @@ class InboxViewController: UIViewController {
 
     func initComponents() {
         self.processButton.isEnabled = false
+        self.pendingButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -224,9 +232,9 @@ class InboxViewController: UIViewController {
     private func hideButtons(index: Int) {
         switch index {
         case 0:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
         case 1:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
         case 2:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 3:
