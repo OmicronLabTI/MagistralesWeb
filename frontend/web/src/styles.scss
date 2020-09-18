@@ -460,15 +460,6 @@ body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen 
   padding: 0 5px !important;
 }
 
-.mat-stroked-button.mat-primary {
-  color: #2196f3 !important;
-  border: 1px solid #2196f3 !important;
-}
-
-.mat-stroked-button.abierto {
-  color: #000 !important;
-  border: 1px solid #000 !important;
-}
 
 table .mat-form-field-wrapper {
   padding-bottom: 0;
@@ -618,68 +609,91 @@ a.breadcrumblink:hover{
   flex-direction: column;
 }
 .mat-stroked-button.liberado {
-  color: #203764 !important;
-  border: 1px solid #203764 !important;
+  display: flex;
+  justify-content: center;
+  background-color: #203764;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.cancelado {
-  color: gray !important;
-  border: 1px solid gray !important;
+  display: flex;
+  justify-content: center;
+  background-color: gray;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.proceso {
-  color: red !important;
-  border: 1px solid red !important;
+  display: flex;
+  justify-content: center;
+  background-color: #e7515a;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.asignado {
-  color: #8dbf42 !important;
-  border: 1px solid #8dbf42 !important;
+  display: flex;
+  justify-content: center;
+  background-color: #8dbf42;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.pendiente {
-  color: yellow !important;
-  border: 1px solid yellow !important;
+  display: flex;
+  justify-content: center;
+  background-color: #e2a03f;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.terminado {
-  color: #2196f3 !important;
-  border: 1px solid #2196f3 !important;
-}
-
-.mat-stroked-button.pterminado {
-  color: #94396F !important;
-  border: 1px solid #94396F !important;
+  display: flex;
+  justify-content: center;
+  background-color: #2196f3 !important;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.cerrado {
-  color: #e7515a !important;
-  border: 1px solid #e7515a !important;
+  display: flex;
+  justify-content: center;
+  background-color: #e7515a;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.finalizado {
-  color: #8D594E !important;
-  border: 1px solid #8D594E !important;
+  display: flex;
+  justify-content: center;
+  background-color: #3b3f5c;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
-.mat-stroked-button.pdabierto {
-  color: black !important;
-  border: 1px solid black !important;
+.mat-stroked-button.abierto {
+  display: flex;
+  justify-content: center;
+  background-color: black;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.reasignado {
-  color: #5c1ac3 !important;
-  border: 1px solid #5c1ac3 !important;
-}
-
-.mat-stroked-button.pdfinalizado {
-  color: #8D594E !important;
-  border: 1px solid #8D594E !important;
+  display: flex;
+  justify-content: center;
+  background-color: #5c1ac3;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .mat-stroked-button.planificado {
-  color: #6C90B3 !important;
-  border: 1px solid #6C90B3 !important;
+  display: flex;
+  justify-content: center;
+  background-color: #6C90B3;
+  font-weight: 700 !important;
+  width: 100px;
 }
 
 .is-loading {
@@ -718,4 +732,7 @@ a.breadcrumblink:hover{
 .color-number {
   color: #0d0d0e;
   font-weight: 600;
+}
+.style-button-status {
+  color: #fff !important;
 }

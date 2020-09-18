@@ -29,6 +29,7 @@ class ComponentsViewModel {
     init() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
             .subscribe(onNext: { [weak self] text, chips in
+                guard text.count >= 2 else { return }
                 if let _ = chips.first(where: { $0 == text }) {
                     return
                 }
