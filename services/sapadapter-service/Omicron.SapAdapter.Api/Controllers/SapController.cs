@@ -251,12 +251,25 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the list of recipes.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        [Route("/recipe/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetRecipe(int orderId)
+        {
+            var result = await this.sapFacade.GetRecipe(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

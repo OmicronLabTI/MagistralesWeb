@@ -54,11 +54,11 @@ class LotsViewController: UIViewController {
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
-    var statusType = ""
-    var codeDescription = ""
-    var orderNumber = ""
-    var manufacturingOrder = ""
-    var comments = ""
+    var statusType = CommonStrings.empty
+    var codeDescription = CommonStrings.empty
+    var orderNumber = CommonStrings.empty
+    var manufacturingOrder = CommonStrings.empty
+    var comments = CommonStrings.empty
     var orderDetail:[OrderDetail] = []
     
     override func viewDidLoad() {
@@ -128,7 +128,7 @@ class LotsViewController: UIViewController {
         // Manda el mensaje para poder finalizar la orden
         self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             
             alert.addAction(cancelAction)
@@ -227,11 +227,11 @@ class LotsViewController: UIViewController {
     
     func showIconMessage() {
         if let detail = self.orderDetail.first {
-            var iconName = ""
+            var iconName = CommonStrings.empty
             if detail.comments != nil  {
-                iconName = (detail.comments!.trimmingCharacters(in: .whitespaces).isEmpty) ? "message":"message.fill"
+                iconName = (detail.comments!.trimmingCharacters(in: .whitespaces).isEmpty) ? ImageButtonNames.message : ImageButtonNames.messsageFill
             } else {
-                iconName = "message"
+                iconName = ImageButtonNames.message
             }
             
             let commentsIcons = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
@@ -245,38 +245,38 @@ class LotsViewController: UIViewController {
         
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         
-        self.title = "Lotes"
-        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Líneas de documentos", fontSize: 20)
-        UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: "#", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: "Código", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "Descripción del artículo", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.warehouseCodeLabel, text: "Código de almacén", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: "Total necesario", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "Total Seleccionado", fontSize: 15)
+        self.title = CommonStrings.batchesTitle
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.documentsLines, fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: CommonStrings.hashtag, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.codeLabel, text: CommonStrings.code, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: CommonStrings.articleDescription, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.warehouseCodeLabel, text: CommonStrings.warehouseCode, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: CommonStrings.totalNedded, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: CommonStrings.totalSelect, fontSize: 15)
         
-        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: "Lotes Disponibles", fontSize: 20)
-        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: "Lotes", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: "Cantidad disponible", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: "Cantidad seleccionada", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: "Cantidad asignada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lotsAvailableLabel, text: CommonStrings.batchAvailable, fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.laLotsLabel, text: CommonStrings.batchesTitle, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAvailableLabel, text: CommonStrings.quantityAvailable, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantitySelectedLabel, text: CommonStrings.quantitySelected, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.laQuantityAssignedLabel, text: CommonStrings.quantityAssigned, fontSize: 15)
         
-        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: "Lotes seleccionados", fontSize: 20)
-        UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: "Lotes", fontSize: 15)
-        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: "Cantidad selecionada", fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lotsSelectedLabel, text: CommonStrings.batchSelected, fontSize: 20)
+        UtilsManager.shared.labelsStyle(label: self.lsLotsLabel, text: CommonStrings.batchesTitle, fontSize: 15)
+        UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: CommonStrings.quantitySelected, fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         self.codeDescriptionLabel.text = self.codeDescription
         self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
-        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(self.orderNumber)", textToBold: "Número de pedido:", fontSize: 15)
-        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(self.manufacturingOrder)", textToBold: "Orden de fabricación:", fontSize: 15)
+        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(self.orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
+        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(self.manufacturingOrder)", textToBold: CommonStrings.manufacturingOrder, fontSize: 15)
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
-        self.addLotButton.setTitle("", for: .normal)
+        self.addLotButton.setTitle(CommonStrings.empty, for: .normal)
         
         self.removeLotButton.setImage(UIImage(named: ImageButtonNames.removeLot), for: .normal)
         self.removeLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
-        self.removeLotButton.setTitle("", for: .normal)
+        self.removeLotButton.setTitle(CommonStrings.empty, for: .normal)
         self.setStyleView(view: self.lineOfDocumentsView)
         self.setStyleView(view: self.lotsAvailable)
         self.setStyleView(view: self.lotsSelected)
@@ -288,7 +288,7 @@ class LotsViewController: UIViewController {
         self.lotsAvailablesTable.tableFooterView = UIView()
         self.lotsSelectedTable.tableFooterView = UIView()
         
-        if(self.statusType == "Terminado") {
+        if(self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending) {
             self.addLotButton.isEnabled = false
             self.removeLotButton.isEnabled = false
             self.saveLotsButton.isEnabled = false

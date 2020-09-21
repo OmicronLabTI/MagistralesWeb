@@ -291,6 +291,19 @@ namespace Omicron.SapAdapter.Test.Facade
             this.AssertResponse(response);
         }
 
+        [Test]
+        public async Task GetRecipe()
+        {
+            // arrange
+            var orderId = 1;
+
+            // act
+            var response = await this.sapFacade.GetRecipe(orderId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
         /// <summary>
         /// Assert response.
         /// </summary>
