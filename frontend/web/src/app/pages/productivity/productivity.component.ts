@@ -86,9 +86,10 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     this.productivityService.getProductivity(this.queryString).subscribe(
       productivityRes => {
         this.dataSourceDetails = productivityRes.response.matrix;
-        this.dataSource.data = productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0);
-        this.monthColumns = this.dataSourceDetails[0];
-        this.dataSource.paginator = this.paginator;
+        this.dataSource.data =
+            productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0); // filter
+        this.monthColumns = this.dataSourceDetails[0]; // filter
+        this.dataSource.paginator = this.paginator; // filter
         this.chartObject(productivityRes.response.matrix);
       }, (error: ErrorHttpInterface) => {
       if (error.status !== HttpStatus.notFound) {
@@ -101,8 +102,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
 
   chartObject(datos) {
     const barChartData = {
-      labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
-      datasets: this.dataSets(this.dataSource.data)
+      labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0), // or filter check
+      datasets: this.dataSets(this.dataSource.data)  // or filter check
     };
     if (this.myChart) {
       this.myChart.data = barChartData;
