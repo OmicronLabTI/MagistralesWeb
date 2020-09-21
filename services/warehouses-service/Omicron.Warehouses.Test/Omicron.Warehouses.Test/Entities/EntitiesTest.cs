@@ -25,6 +25,8 @@ namespace Omicron.Warehouses.Test.Entities
             new SuccessFailResults<RawMaterialRequestModel>(),
             new RawMaterialRequestModel(),
             new RawMaterialRequestDetailModel(),
+            new RawMaterialRequestOrderModel(),
+            new UserModel(),
         };
 
         /// <summary>

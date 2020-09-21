@@ -48,6 +48,9 @@ class InboxViewController: UIViewController {
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
         pendingButton.isHidden = true
+        
+        navigationItem.rightBarButtonItem = getOmniconLogo()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -260,7 +263,7 @@ class InboxViewController: UIViewController {
         case 1:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
         case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 3:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 4:

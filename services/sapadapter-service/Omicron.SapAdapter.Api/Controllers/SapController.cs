@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -92,6 +93,27 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetOrderQfbFormula(List<int> ordenId)
         {
             var result = await this.sapFacade.GetOrderFormula(ordenId, false, false);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <param name="components">Flag for get components.</param>
+        /// <returns>the object.</returns>
+        [Route("/fabOrder")]
+        [HttpGet]
+        public async Task<IActionResult> GetFabricationOrdersByCriterial(
+            [FromQuery]string salesOrders,
+            [FromQuery] string productionOrders,
+            [FromQuery] bool components)
+        {
+            var salesOrdersIds = (salesOrders ?? string.Empty).ToIntList();
+            var productionOrdersIds = (productionOrders ?? string.Empty).ToIntList();
+
+            var result = await this.sapFacade.GetFabricationOrdersByCriterial(salesOrdersIds, productionOrdersIds);
             return this.Ok(result);
         }
 

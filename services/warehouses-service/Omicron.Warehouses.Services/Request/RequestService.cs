@@ -24,76 +24,67 @@ namespace Omicron.Warehouses.Services.Request
     {
         private readonly IRequestDao requestDao;
         private readonly IUsersService usersService;
+        private readonly ISapAdapterService sapAdapterService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestService"/> class.
         /// </summary>
         /// <param name="requestDao">request dao.</param>
         /// <param name="usersService">users service.</param>
-        public RequestService(IRequestDao requestDao, IUsersService usersService)
+        /// <param name="sapAdapterService">sap adapter service.</param>
+        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService)
         {
             this.requestDao = requestDao;
             this.usersService = usersService;
+            this.sapAdapterService = sapAdapterService;
         }
 
         /// <summary>
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
-        public async Task<ResultModel> CreateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests)
+        public async Task<ResultModel> CreateRawMaterialRequest(string userId, RawMaterialRequestModel request)
         {
-            if (!(await this.usersService.GetUsersById(new List<string> { userId })).Any())
+            if (!(await this.usersService.GetUsersById(userId)).Any(x => x.Id.Equals(userId)))
             {
                 return ServiceUtils.CreateResult(false, 200, ErrorReasonConstants.UserNotExists, null, null);
             }
 
-            var results = new SuccessFailResults<RawMaterialRequestModel>();
-            foreach (var request in requests)
-            {
-                var creationResult = await this.CreateRequest(userId, request);
-                if (creationResult.Success)
-                {
-                    results.AddSuccesResult(creationResult.Request);
-                }
-                else
-                {
-                    results.AddFailedResult(request, creationResult.ErrorMessage);
-                }
-            }
+            request.SigningUserId = userId;
+            var results = new SuccessFailResults<object>();
+            var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
+            request.ProductionOrderIds = valitateExistsResults.Missing;
+            await this.CreateRequest(userId, request);
+            valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
+            valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
 
             return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
+        /// Get a raw material request for production order id.
+        /// </summary>
+        /// <param name="productionOrderIds">The production order id.</param>
+        /// <returns>Missing and existing lists.</returns>
+        public async Task<(List<int> Missing, List<int> Existing)> ValidateExistingByProductionOrderIds(List<int> productionOrderIds)
+        {
+            var relatedRequest = await this.requestDao.GetRawMaterialRequestOrdersByProductionOrderIds(productionOrderIds.ToArray());
+            return (
+                productionOrderIds.Where(x => !relatedRequest.Any(r => r.ProductionOrderId.Equals(x))).ToList(),
+                productionOrderIds.Where(x => relatedRequest.Any(r => r.ProductionOrderId.Equals(x))).ToList());
         }
 
         /// <summary>
         /// Update raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed updates.</returns>
-        public async Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests)
+        public Task<ResultModel> UpdateRawMaterialRequest(string userId, RawMaterialRequestModel request)
         {
-            if (!(await this.usersService.GetUsersById(new List<string> { userId })).Any())
-            {
-                return ServiceUtils.CreateResult(false, 200, ErrorReasonConstants.UserNotExists, null, null);
-            }
-
-            var results = new SuccessFailResults<RawMaterialRequestModel>();
-            foreach (var request in requests)
-            {
-                var creationResult = await this.UpdateRequest(userId, request);
-                if (creationResult.Success)
-                {
-                    results.AddSuccesResult(creationResult.Request);
-                }
-                else
-                {
-                    results.AddFailedResult(request, creationResult.ErrorMessage);
-                }
-            }
-
-            return ServiceUtils.CreateResult(true, 200, null, results, null);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -107,56 +98,15 @@ namespace Omicron.Warehouses.Services.Request
         /// Item2 = Created request.
         /// Item3 = Error message.
         /// </returns>
-        public async Task<(bool Success, RawMaterialRequestModel Request, string ErrorMessage)> CreateRequest(string userId, RawMaterialRequestModel request)
+        public async Task<RawMaterialRequestModel> CreateRequest(string userId, RawMaterialRequestModel request)
         {
-            if ((await this.GetRawMaterialRequestByProductionOrder(request.ProductionOrderId)) != null)
-            {
-                var message = string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, request.ProductionOrderId);
-                return (false, null, message);
-            }
-
             request.Id = 0;
             request.CreationUserId = userId;
             request.CreationDate = DateTime.Now.ToString(DateConstants.LargeFormat);
-
             await this.requestDao.InsertRawMaterialRequest(request);
+            await this.requestDao.InsertOrdersOfRawMaterialRequest(request.ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { RequestId = request.Id, ProductionOrderId = x }).ToList());
             await this.CreateDetail(request.Id, request.OrderedProducts);
-            return (true, request, null);
-        }
-
-        /// <summary>
-        /// Update raw material request.
-        /// </summary>
-        /// <param name="userId">The user id.</param>
-        /// <param name="request">Request data.</param>
-        /// <returns>
-        /// Return tuple with creation result.
-        /// </returns>
-        public async Task<(bool Success, RawMaterialRequestModel Request, string ErrorMessage)> UpdateRequest(string userId, RawMaterialRequestModel request)
-        {
-            var existingRequest = await this.GetRawMaterialRequestByProductionOrder(request.ProductionOrderId);
-            if (existingRequest == null)
-            {
-                var message = string.Format(ErrorReasonConstants.ReasonRawMaterialRequestNotExists, request.ProductionOrderId);
-                return (false, null, message);
-            }
-
-            existingRequest.Observations = request.Observations;
-            if (!request.Signature.SequenceEqual(new byte[0]) && !request.Signature.SequenceEqual(existingRequest.Signature))
-            {
-                existingRequest.SigningUserId = userId;
-                existingRequest.Signature = request.Signature;
-            }
-
-            await this.requestDao.UpdateRawMaterialRequest(existingRequest);
-
-            // Create details.
-            await this.CreateDetail(existingRequest.Id, request.OrderedProducts.Where(x => x.Id == 0).ToList());
-
-            // Update details.
-            await this.requestDao.UpdateDetailsOfRawMaterialRequest(this.MapDetailUpdates(existingRequest, request.OrderedProducts));
-
-            return (true, existingRequest, null);
+            return request;
         }
 
         /// <summary>
@@ -173,36 +123,13 @@ namespace Omicron.Warehouses.Services.Request
         }
 
         /// <summary>
-        /// Map info to update in request detail.
-        /// </summary>
-        /// <param name="current">Current request.</param>
-        /// <param name="detailToUpdate">Detail to update.</param>
-        /// <returns>Updated detail.</returns>
-        public List<RawMaterialRequestDetailModel> MapDetailUpdates(RawMaterialRequestModel current, List<RawMaterialRequestDetailModel> detailToUpdate)
-        {
-            current.OrderedProducts.ForEach(x =>
-            {
-                var updateInfo = detailToUpdate.FirstOrDefault(u => u.Id.Equals(x.Id));
-                if (updateInfo != null)
-                {
-                    x.ProductId = updateInfo.ProductId;
-                    x.Description = updateInfo.Description;
-                    x.RequestQuantity = updateInfo.RequestQuantity;
-                    x.Unit = updateInfo.Unit;
-                }
-            });
-
-            return current.OrderedProducts;
-        }
-
-        /// <summary>
         /// Get a raw material request for production order id.
         /// </summary>
-        /// <param name="productionOrderId">The production order id.</param>
+        /// <param name="productionOrderIds">The production order ids.</param>
         /// <returns>Raw material request.</returns>
-        public async Task<RawMaterialRequestModel> GetRawMaterialRequestByProductionOrder(int productionOrderId)
+        public async Task<List<RawMaterialRequestModel>> GetRawMaterialRequestByProductionOrder(params int[] productionOrderIds)
         {
-            return await this.requestDao.GetRawMaterialRequestByProductionOrderId(productionOrderId);
+            return await this.requestDao.GetRawMaterialRequestByProductionOrderIds(productionOrderIds);
         }
 
         /// <summary>
@@ -213,7 +140,59 @@ namespace Omicron.Warehouses.Services.Request
         public async Task<ResultModel> GetRawMaterialRequestByProductionOrderId(int productionOrderId)
         {
             var request = await this.GetRawMaterialRequestByProductionOrder(productionOrderId);
-            return ServiceUtils.CreateResult(true, 200, null, request, null);
+            return ServiceUtils.CreateResult(true, 200, null, request.FirstOrDefault(), null);
+        }
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        public async Task<ResultModel> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders)
+        {
+            var existingProductionOrders = await this.sapAdapterService.GetProductionOrdersByCriterial(salesOrders, productionOrders);
+            existingProductionOrders = existingProductionOrders.Where(x => x.Status.ToLower().Equals(ServiceConstants.ProductionOrderPlannedStatus.ToLower())).ToList();
+
+            var allComponentsInPO = new List<ProductionOrderComponentModel>();
+
+            existingProductionOrders.ForEach(x => allComponentsInPO.AddRange(x.Details));
+
+            var preRequest = new RawMaterialRequestModel
+            {
+                ProductionOrderIds = existingProductionOrders.Select(x => x.ProductionOrderId).ToList(),
+                OrderedProducts = this.CreateRequestDetail(allComponentsInPO),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, preRequest, null);
+        }
+
+        /// <summary>
+        /// Create request detail from production order components.
+        /// </summary>
+        /// <param name="allComponentsInPO">Production order components.</param>
+        /// <returns>Request detail.</returns>
+        private List<RawMaterialRequestDetailModel> CreateRequestDetail(List<ProductionOrderComponentModel> allComponentsInPO)
+        {
+            var results = new List<RawMaterialRequestDetailModel>();
+
+            foreach (var itemGroup in allComponentsInPO.GroupBy(x => x.ProductId))
+            {
+                var firstItem = itemGroup.FirstOrDefault();
+
+                // TODO: Calcular la cantidad requerida.
+                decimal requiredQuantity = 0M;
+
+                results.Add(new RawMaterialRequestDetailModel
+                {
+                    ProductId = itemGroup.Key,
+                    Description = firstItem.Description,
+                    RequestQuantity = requiredQuantity,
+                    Unit = firstItem.Unit,
+                });
+            }
+
+            return results;
         }
     }
 }

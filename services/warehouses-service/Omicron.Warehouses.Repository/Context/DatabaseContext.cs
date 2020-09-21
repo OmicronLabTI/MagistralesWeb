@@ -42,6 +42,14 @@ namespace Omicron.Warehouses.Entities.Context
         public virtual DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetails { get; set; }
 
         /// <summary>
+        /// Gets or sets raw material request orders.
+        /// </summary>
+        /// <value>
+        /// Object request orders.
+        /// </value>
+        public virtual DbSet<RawMaterialRequestOrderModel> RawMaterialRequestOrders { get; set; }
+
+        /// <summary>
         /// Set a schema name.
         /// </summary>
         /// <param name="modelBuilder">Model builder.</param>

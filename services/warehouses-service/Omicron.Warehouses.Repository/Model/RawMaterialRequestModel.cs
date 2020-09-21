@@ -33,8 +33,8 @@ namespace Omicron.Warehouses.Entities.Model
         /// <value>
         /// Id production id.
         /// </value>
-        [Column("productionorderid")]
-        public int ProductionOrderId { get; set; }
+        [NotMapped]
+        public List<int> ProductionOrderIds { get; set; }
 
         /// <summary>
         /// Gets or sets signature in byte[] representation.

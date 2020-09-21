@@ -46,7 +46,7 @@ namespace Omicron.Warehouses.Test.Api
         public void CreateRawMaterialRequest()
         {
             // Arrange.
-            var request = AutoFixtureProvider.Create<UserActionDto<List<RawMaterialRequestDto>>>();
+            var request = AutoFixtureProvider.Create<UserActionDto<RawMaterialRequestDto>>();
 
             // Act
             var result = this.controller.CreateRawMaterialRequest(request).Result as OkObjectResult;
@@ -62,7 +62,7 @@ namespace Omicron.Warehouses.Test.Api
         public void UpdateRawMaterialRequest()
         {
             // Arrange.
-            var request = AutoFixtureProvider.Create<UserActionDto<List<RawMaterialRequestDto>>>();
+            var request = AutoFixtureProvider.Create<UserActionDto<RawMaterialRequestDto>>();
 
             // Act
             var result = this.controller.UpdateRawMaterialRequest(request).Result as OkObjectResult;
@@ -79,6 +79,19 @@ namespace Omicron.Warehouses.Test.Api
         {
             // Act
             var result = this.controller.GetRawMaterialRequest(1).Result as OkObjectResult;
+
+            // Assert
+            Assert.IsTrue((result.Value as ResultDto).Success);
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
+        public void GetRawMaterialPreRequest()
+        {
+            // Act
+            var result = this.controller.GetRawMaterialPreRequest(string.Empty, "1").Result as OkObjectResult;
 
             // Assert
             Assert.IsTrue((result.Value as ResultDto).Success);

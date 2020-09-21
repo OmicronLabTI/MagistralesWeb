@@ -254,6 +254,34 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: omicron-reporting-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5105
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: seqlog-deployment
   labels:
     app: seqlog

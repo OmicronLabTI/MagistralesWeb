@@ -21,17 +21,17 @@ namespace Omicron.Warehouses.Services.Request
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
-        Task<ResultModel> CreateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
+        Task<ResultModel> CreateRawMaterialRequest(string userId, RawMaterialRequestModel request);
 
         /// <summary>
         /// Update raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed updates.</returns>
-        Task<ResultModel> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestModel> requests);
+        Task<ResultModel> UpdateRawMaterialRequest(string userId, RawMaterialRequestModel request);
 
         /// <summary>
         /// Get a raw material request for production order id.
@@ -39,5 +39,13 @@ namespace Omicron.Warehouses.Services.Request
         /// <param name="productionOrderId">The production order id.</param>
         /// <returns>Raw material request.</returns>
         Task<ResultModel> GetRawMaterialRequestByProductionOrderId(int productionOrderId);
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        Task<ResultModel> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders);
     }
 }
