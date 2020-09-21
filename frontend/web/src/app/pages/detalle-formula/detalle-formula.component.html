@@ -10,11 +10,14 @@
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-    <div class="description-container">
+    <div  [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'" class="description-container">
      {{oldDataFormulaDetail.code }} {{ oldDataFormulaDetail.productDescription}}
     </div>
     <div class="table-toolbar">
+        <div class="refresh-icon-on-toolbar">
+        </div>
         <div class="table-toolbar-buttons">
+
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
             Lotes
             </button>

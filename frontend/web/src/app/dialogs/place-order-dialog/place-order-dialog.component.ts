@@ -4,7 +4,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbWithNumber} from '../../model/http/users';
 import {DataService} from '../../services/data.service';
-import {MODAL_NAMES} from '../../constants/const';
+import {CONST_NUMBER, MODAL_NAMES} from '../../constants/const';
 
 @Component({
   selector: 'app-place-order-dialog',
@@ -26,12 +26,16 @@ export class PlaceOrderDialogComponent implements OnInit {
 
   async ngOnInit() {
     await this.ordersServices.getQfbsWithOrders().toPromise().then(resultQfbs => {
-        resultQfbs.response.forEach( qfb => {
-            qfb.countTotalOrders = new Intl.NumberFormat().format(Number(qfb.countTotalOrders));
-            qfb.countTotalFabOrders = new Intl.NumberFormat().format(Number(qfb.countTotalFabOrders));
-            qfb.countTotalPieces = new Intl.NumberFormat().format(Number(qfb.countTotalPieces));
+        const newResponse = resultQfbs.response.filter(qfb =>
+            !this.placeData.placeOrdersData.isFromReassign ? qfb.asignable === CONST_NUMBER.one :
+                qfb.asignable === CONST_NUMBER.one || qfb.asignable === CONST_NUMBER.zero );
+        newResponse.forEach( qfbNew => {
+            qfbNew.countTotalOrders = new Intl.NumberFormat().format(Number(qfbNew.countTotalOrders));
+            qfbNew.countTotalFabOrders = new Intl.NumberFormat().format(Number(qfbNew.countTotalFabOrders));
+            qfbNew.countTotalPieces = new Intl.NumberFormat().format(Number(qfbNew.countTotalPieces));
         });
-        this.qfbs = resultQfbs.response;
+
+        this.qfbs = newResponse;
     })
         .catch(error => {
             this.errorService.httpError(error);

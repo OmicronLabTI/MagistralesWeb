@@ -8,6 +8,7 @@ export class IPedidoDetalleReq {
     qtyPlanned: number;
     fechaOf: string;
     fechaOfFin: string;
+    hasMissingStock: boolean;
     qfb: string;
     status: string;
     class?: string;

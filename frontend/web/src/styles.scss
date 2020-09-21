@@ -170,6 +170,8 @@ th{
 .table-toolbar{
   width: 100%;
   margin-top: 20px;
+  display: flex;
+  flex-direction: row;
 }
 
 .table-toolbar .table-toolbar-search{
@@ -182,9 +184,12 @@ th{
 }
 
 .table-toolbar .table-toolbar-buttons{
-  width: 100%;
+  width: 90%;
   display: flex;
   justify-content: flex-end;
+}
+.refresh-icon-on-toolbar {
+  width: 10%;
 }
 
 .table-toolbar .table-toolbar-buttons button{

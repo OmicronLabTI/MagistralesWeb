@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq} from 'src/app/model/http/lotesformula';
 import { MatTableDataSource} from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
-import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, CONST_STRING, MessageType, ClassNames } from '../../constants/const'
+import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, MessageType, ClassNames } from '../../constants/const'
 import { Messages } from '../../constants/messages';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
