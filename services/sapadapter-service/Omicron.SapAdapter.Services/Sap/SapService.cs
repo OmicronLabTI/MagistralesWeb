@@ -468,6 +468,16 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetRecipe(int orderId)
+        {
+
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

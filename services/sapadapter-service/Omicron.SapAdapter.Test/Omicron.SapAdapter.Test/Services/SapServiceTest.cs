@@ -769,5 +769,22 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetRecipe()
+        {
+            // arrange
+            var orderId = 100;
+
+            // act
+            var result = await this.sapService.GetRecipe(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }
