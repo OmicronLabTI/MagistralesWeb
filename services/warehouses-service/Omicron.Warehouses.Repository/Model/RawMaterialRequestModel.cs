@@ -55,6 +55,15 @@ namespace Omicron.Warehouses.Entities.Model
         public string SigningUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets signing user name.
+        /// </summary>
+        /// <value>
+        /// String user name.
+        /// </value>
+        [NotMapped]
+        public string SigningUserName { get; set; }
+
+        /// <summary>
         /// Gets or sets observations.
         /// </summary>
         /// <value>
