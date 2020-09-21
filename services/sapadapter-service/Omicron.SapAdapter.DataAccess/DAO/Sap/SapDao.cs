@@ -459,6 +459,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Gets the attachments.
+        /// </summary>
+        /// <param name="ids">gets the attachments by id</param>
+        /// <returns>the attachaments.</returns>
+        public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
+        {
+            return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the componenents from the product.
         /// </summary>
         /// <param name="products">the products.</param>

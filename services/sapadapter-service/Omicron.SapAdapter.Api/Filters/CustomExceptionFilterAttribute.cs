@@ -39,7 +39,7 @@ namespace Omicron.SapAdapter.Api.Filters
             HttpStatusCode status;
             if (exceptionType == typeof(CustomServiceException))
             {
-                message = "Error generico";
+                message = context.Exception.Message;
                 status = HttpStatusCode.Conflict;
             }
             else
