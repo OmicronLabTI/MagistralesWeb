@@ -31,10 +31,19 @@ namespace Omicron.Warehouses.Entities.Model
         /// Gets or sets the production order id.
         /// </summary>
         /// <value>
-        /// Id production id.
+        /// Production order ids.
         /// </value>
         [NotMapped]
         public List<int> ProductionOrderIds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the production order ids with existing request.
+        /// </summary>
+        /// <value>
+        /// Production order ids.
+        /// </value>
+        [NotMapped]
+        public List<int> FailedProductionOrderIds { get; set; }
 
         /// <summary>
         /// Gets or sets signature in byte[] representation.
@@ -53,6 +62,15 @@ namespace Omicron.Warehouses.Entities.Model
         /// </value>
         [Column("signinguserid")]
         public string SigningUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets signing user name.
+        /// </summary>
+        /// <value>
+        /// String user name.
+        /// </value>
+        [NotMapped]
+        public string SigningUserName { get; set; }
 
         /// <summary>
         /// Gets or sets observations.

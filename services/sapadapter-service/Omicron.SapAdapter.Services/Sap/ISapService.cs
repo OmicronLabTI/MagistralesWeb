@@ -60,8 +60,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
         /// <param name="fabricationOrderIds">Production order ids.</param>
+        /// <param name="components">Flag for get components.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds);
+        Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components);
 
         /// <summary>
         /// gets the items from the dict.

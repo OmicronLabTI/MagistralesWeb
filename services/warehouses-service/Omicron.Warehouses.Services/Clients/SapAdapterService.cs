@@ -38,7 +38,7 @@ namespace Omicron.Warehouses.Services.Clients
         /// <returns>Production orders.</returns>
         public async Task<List<ProductionOrderModel>> GetProductionOrdersByCriterial(List<int> salesOrderIds, List<int> productionOrderIds)
         {
-            var route = $"{EndPointConstants.SapAdapterGetProductionOrders}?salesOrders={string.Join(",", salesOrderIds)}&productionOrders={string.Join(",", productionOrderIds)}";
+            var route = $"{EndPointConstants.SapAdapterGetProductionOrders}?salesOrders={string.Join(",", salesOrderIds)}&productionOrders={string.Join(",", productionOrderIds)}&components=true";
             var resultModel = await this.GetAsync(route);
             return JsonConvert.DeserializeObject<List<ProductionOrderModel>>(resultModel.Response.ToString());
         }

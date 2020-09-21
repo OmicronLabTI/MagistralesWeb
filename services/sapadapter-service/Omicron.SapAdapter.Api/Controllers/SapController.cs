@@ -113,7 +113,7 @@ namespace Omicron.SapAdapter.Api.Controllers
             var salesOrdersIds = (salesOrders ?? string.Empty).ToIntList();
             var productionOrdersIds = (productionOrders ?? string.Empty).ToIntList();
 
-            var result = await this.sapFacade.GetFabricationOrdersByCriterial(salesOrdersIds, productionOrdersIds);
+            var result = await this.sapFacade.GetFabricationOrdersByCriterial(salesOrdersIds, productionOrdersIds, components);
             return this.Ok(result);
         }
 
