@@ -249,8 +249,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
         /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <param name="components">Flag for get components.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds)
+        public async Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components)
         {
             var results = new List<CompleteFormulaWithDetalle>();
             var fabricationOrders = (await this.sapDao.GetFabOrderById(fabricationOrderIds)).ToList();
@@ -262,12 +263,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var fabricationOrder in fabricationOrders)
             {
-                var components = await this.GetDetailsByOrder(fabricationOrder.OrdenId);
+                var fabOrderComponents = components ? (await this.GetDetailsByOrder(fabricationOrder.OrdenId)) : new List<CompleteDetalleFormulaModel>();
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(fabricationOrder.OrdenId.ToString()));
 
                 var fabOrderWithFormula = new CompleteFormulaWithDetalle();
                 fabOrderWithFormula.Map(fabricationOrder);
-                fabOrderWithFormula.Map(components);
+                fabOrderWithFormula.Map(fabOrderComponents);
                 fabOrderWithFormula.Map(userOrder);
 
                 results.Add(fabOrderWithFormula);
