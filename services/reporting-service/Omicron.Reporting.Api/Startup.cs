@@ -90,7 +90,7 @@ namespace Omicron.Reporting.Api
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(this.Configuration["AXITYURL"]),
+                        Url = new System.Uri(this.Configuration["AxityURL"]),
                     },
                 });
             });
