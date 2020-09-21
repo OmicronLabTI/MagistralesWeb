@@ -1,11 +1,19 @@
 <div [ngClass]="isPlaceManual ? 'place-order-container-with-data' : 'place-order-container-no-data'">
     <mat-card class="add-user-card">
         <mat-card-header [ngClass]="isPlaceManual ? 'height-with-data ' : 'height-no-data '" class="card-header-container-custom">
-            <mat-card-title >
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">Asigna el pedido</span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">Asigna los pedidos</span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length === 1">Asigna la orden</span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length > 1">Asigna las ordenes</span>
+            <mat-card-title class="font-style-omicron">
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">
+                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} el pedido
+                </span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">
+                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} los pedidos
+                </span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length === 1">
+                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} la orden
+                </span>
+                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length > 1">
+                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} las ordenes
+                </span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
