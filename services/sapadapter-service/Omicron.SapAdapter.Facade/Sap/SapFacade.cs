@@ -98,7 +98,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <returns>the data.</returns>
         public async Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetFabricationOrdersByCriterial(salesOrderIds, fabricationOrderIds));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabricationOrdersByCriterial(salesOrderIds, fabricationOrderIds, components));
         }
 
         /// <summary>
