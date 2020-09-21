@@ -2,7 +2,7 @@ import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
-import { IUserReq, RoleUser} from '../../model/http/users';
+import {IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
 import {CONST_NUMBER, CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
 import {DataService} from '../../services/data.service';
@@ -84,14 +84,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
   saveUser() {
 
-
     if (!this.isForEditModal) {
       const user: IUserReq = {
         ...this.addUserForm.value,
         role: Number(this.addUserForm.get('userTypeR').value),
-        asignable: Number(this.addUserForm.get('asignable').value)
+        asignable: Number(this.addUserForm.get('asignable').value),
+        piezas: Number(this.addUserForm.get('piezas').value)
       };
-      this.usersService.createUser(user).subscribe( () => {
+      this.usersService.createUserService(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
           },
           error => this.userExistDialog(error));
@@ -101,7 +101,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         id: this.userToEdit.id,
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
-        activo: Number(this.addUserForm.get('activo').value)
+        activo: Number(this.addUserForm.get('activo').value),
+        piezas: Number(this.addUserForm.get('piezas').value)
       };
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
@@ -123,5 +124,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     } else {
       this.errorService.httpError(error);
     }
+  }
+  numericOnly(event): boolean {
+    const pattern = /^([0-9])$/;
+    return pattern.test(event.key);
   }
 }

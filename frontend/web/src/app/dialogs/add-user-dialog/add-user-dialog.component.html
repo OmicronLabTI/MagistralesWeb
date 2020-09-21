@@ -45,7 +45,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
                             <mat-label>Selecciona rol</mat-label>
                             <mat-select formControlName="userTypeR">
                                 <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
@@ -72,10 +72,13 @@
                     <div class="form-field">
                         <mat-form-field class="custom-field magin-top-field">
                             <input matInput
-                                   placeholder="Piezas máximas"
-                                   type="number"
                                    formControlName="piezas"
-                                   class="height-input">
+                                   placeholder="Piezas máximas"
+                                   type="text"
+                                   (keypress)="numericOnly($event)"
+                                   class="height-input"
+                                   maxlength="5"
+                                   />
 
                             <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
                                 Piezas máximas es <strong>requerido</strong>
