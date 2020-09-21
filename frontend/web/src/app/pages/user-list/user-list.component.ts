@@ -19,7 +19,7 @@ import {Subscription} from 'rxjs';
 })
 export class UserListComponent implements OnInit, OnDestroy {
     isAllComplete = false;
-    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'status', 'actions'];
+    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'pieces', 'asignable', 'status', 'actions'];
     dataSource = new MatTableDataSource<IUserReq>();
     pageSize = CONST_NUMBER.ten;
     pageEvent: PageEvent;

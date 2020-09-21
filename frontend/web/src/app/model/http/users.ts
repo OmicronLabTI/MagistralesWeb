@@ -25,6 +25,9 @@ export class IUserReq {
     role: number;
     password?: string;
     activo: number;
+    piezas?: number;
+    asignable?: number;
+    userTypeR?: string;
     isChecked?: boolean = false;
 }
 export class UserRes {

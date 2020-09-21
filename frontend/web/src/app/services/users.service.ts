@@ -11,7 +11,7 @@ export class UsersService {
   constructor(private consumeService: ConsumeService) {
   }
 
-  createUser(user: IUserReq) {
+  createUserService(user: IUserReq) {
     return this.consumeService.httpPost(Endpoints.users.createUser, user);
   }
   getRoles() {
