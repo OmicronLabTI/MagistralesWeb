@@ -87,6 +87,6 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("AtcEntry")]
-        public long AtcEntry { get; set; }
+        public int? AtcEntry { get; set; }
     }
 }
