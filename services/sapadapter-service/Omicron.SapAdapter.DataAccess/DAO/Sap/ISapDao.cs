@@ -191,5 +191,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials);
 
+        /// <summary>
+        /// Gets the attachments.
+        /// </summary>
+        /// <param name="ids">gets the attachments by id</param>
+        /// <returns>the attachaments.</returns>
+        Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
     }
 }

@@ -8,23 +8,44 @@
 
 namespace Omicron.Reporting.Api.Controllers
 {
-    using System;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json;
+    using Microsoft.Net.Http.Headers;
+    using Omicron.Reporting.Dtos.Model;
+    using Omicron.Reporting.Facade.Request;
 
     /// <summary>
-    /// Class User Controller.
+    /// Class reporting Controller.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ReportingController : ControllerBase
     {
+        private readonly IReportingFacade reportingFacade;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportingController"/> class.
         /// </summary>
-        public ReportingController()
+        /// <param name="reportingFacade">The reporting facade.</param>
+        public ReportingController(IReportingFacade reportingFacade)
         {
+            this.reportingFacade = reportingFacade;
+        }
+
+        /// <summary>
+        /// Create file preview of raw material request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Report file stream.</returns>
+        [Route("/preview/request/rawmaterial/pdf")]
+        [HttpPost]
+        public FileStreamResult GetRawMaterialRequestPdfPreview(RawMaterialRequestDto request)
+        {
+            var report = this.reportingFacade.CreateRawMaterialRequestPdf(request, true);
+
+            return new FileStreamResult(report.FileStream, new MediaTypeHeaderValue("application/pdf"))
+            {
+                FileDownloadName = report.FileName,
+            };
         }
 
         /// <summary>

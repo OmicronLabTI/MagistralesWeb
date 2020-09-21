@@ -51,7 +51,7 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             this.context.RawMaterialRequests.AddRange(request);
             this.context.RawMaterialRequestDetails.AddRange(request[0].OrderedProducts);
-            this.context.RawMaterialRequestOrders.AddRange(request[0].ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { Id = 1, ProductionOrderId = 1, RequestId = 1 }));
+            this.context.RawMaterialRequestOrders.AddRange(request[0].ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { Id = 1, ProductionOrderId = 4, RequestId = 1 }));
 
             this.context.SaveChanges();
         }
@@ -80,26 +80,28 @@ namespace Omicron.Warehouses.Test.Services.Request
                 Status = "Planificado",
                 Details = new List<ProductionOrderComponentModel>()
                 {
-                    new ProductionOrderComponentModel
-                    {
-                        ProductId = "1",
-                        Description = "Prod 1",
-                        Unit = "KG",
-                    },
+                    new ProductionOrderComponentModel { ProductId = "1", Description = "Prod 1   1KG", Unit = "KG", Warehouse = "GM", WarehouseQuantity = 10M, RequiredQuantity = 10M, },
+                    new ProductionOrderComponentModel { ProductId = "2", Description = "Prod 2   1KG", Unit = "KG", Warehouse = "GM", WarehouseQuantity = 10M, RequiredQuantity = 10M, },
+                    new ProductionOrderComponentModel { ProductId = "3", Description = "Prod 3", Unit = "KG", Warehouse = "GM", WarehouseQuantity = 5M, RequiredQuantity = 10M, },
                 },
             });
             mockList.Add(new ProductionOrderModel
             {
                 ProductionOrderId = 2,
+                Status = "Planificado",
+                Details = new List<ProductionOrderComponentModel>()
+                {
+                    new ProductionOrderComponentModel { ProductId = "1", Description = "Prod 1   2KG", Unit = "KG", Warehouse = "GM", WarehouseQuantity = 10M, RequiredQuantity = 5M, },
+                    new ProductionOrderComponentModel { ProductId = "3", Description = "Prod 3", Unit = "KG", Warehouse = "PT", WarehouseQuantity = 5M, RequiredQuantity = 10M, },
+                },
+            });
+            mockList.Add(new ProductionOrderModel
+            {
+                ProductionOrderId = 3,
                 Status = "Cancelado",
                 Details = new List<ProductionOrderComponentModel>()
                 {
-                    new ProductionOrderComponentModel
-                    {
-                        ProductId = "2",
-                        Description = "Prod 2",
-                        Unit = "Litro",
-                    },
+                    new ProductionOrderComponentModel { ProductId = "1", Description = "Prod 1", Unit = "KG", Warehouse = "GM", WarehouseQuantity = 10M, RequiredQuantity = 10M, },
                 },
             });
 
@@ -151,7 +153,7 @@ namespace Omicron.Warehouses.Test.Services.Request
         {
             // arrange
             var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
-            request.ProductionOrderIds = new List<int> { 1 };
+            request.ProductionOrderIds = new List<int> { 4 };
 
             // act
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
@@ -186,13 +188,13 @@ namespace Omicron.Warehouses.Test.Services.Request
         public async Task GetRawMaterialRequestByProductionOrderId_ExistingRequest_RequestResult()
         {
             // act
-            var response = await this.requestService.GetRawMaterialRequestByProductionOrderId(1);
+            var response = await this.requestService.GetRawMaterialRequestByProductionOrderId(4);
 
             // assert
             var request = (RawMaterialRequestModel)response.Response;
             Assert.IsTrue(response.Success);
 
-            Assert.AreEqual(1, request.ProductionOrderIds[0]);
+            Assert.AreEqual(4, request.ProductionOrderIds[0]);
             Assert.AreEqual(1, request.OrderedProducts.Count);
         }
 
@@ -219,7 +221,7 @@ namespace Omicron.Warehouses.Test.Services.Request
         public async Task GetRawMaterialPreRequest()
         {
             // arrange
-            var productionOrderIds = new List<int> { 1, 2 };
+            var productionOrderIds = new List<int> { 1, 2, 3 };
             var salesOrders = new List<int>();
 
             // act
@@ -230,10 +232,10 @@ namespace Omicron.Warehouses.Test.Services.Request
             Assert.NotNull(response.Response);
 
             var preRequest = (RawMaterialRequestModel)response.Response;
-            Assert.AreEqual(1, preRequest.ProductionOrderIds.Count);
-            Assert.AreEqual(1, preRequest.ProductionOrderIds[0]);
-            Assert.AreEqual(1, preRequest.OrderedProducts.Count);
-            Assert.AreEqual("1", preRequest.OrderedProducts[0].ProductId);
+            Assert.AreEqual(2, preRequest.ProductionOrderIds.Count);
+            Assert.IsTrue(!preRequest.ProductionOrderIds.Contains(3));
+            Assert.AreEqual(3, preRequest.OrderedProducts.Count);
+            Assert.IsTrue(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")));
         }
 
         /// <summary>

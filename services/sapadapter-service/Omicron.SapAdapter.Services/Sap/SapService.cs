@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -249,8 +250,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
         /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <param name="components">Flag for get components.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds)
+        public async Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components)
         {
             var results = new List<CompleteFormulaWithDetalle>();
             var fabricationOrders = (await this.sapDao.GetFabOrderById(fabricationOrderIds)).ToList();
@@ -262,12 +264,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var fabricationOrder in fabricationOrders)
             {
-                var components = await this.GetDetailsByOrder(fabricationOrder.OrdenId);
+                var fabOrderComponents = components ? (await this.GetDetailsByOrder(fabricationOrder.OrdenId)) : new List<CompleteDetalleFormulaModel>();
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(fabricationOrder.OrdenId.ToString()));
 
                 var fabOrderWithFormula = new CompleteFormulaWithDetalle();
                 fabOrderWithFormula.Map(fabricationOrder);
-                fabOrderWithFormula.Map(components);
+                fabOrderWithFormula.Map(fabOrderComponents);
                 fabOrderWithFormula.Map(userOrder);
 
                 results.Add(fabOrderWithFormula);
@@ -465,6 +467,46 @@ namespace Omicron.SapAdapter.Services.Sap
             var orders = (await this.sapDao.GetFabOrderById(ordersId)).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
+        }
+
+        /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetRecipe(int orderId)
+        {
+            var order = (await this.sapDao.GetOrdersById(orderId)).ToList();
+            var atcEntries = order.Where(x => x.AtcEntry.HasValue).Select(x => x.AtcEntry.Value).ToList();
+            var modelToReturn = new List<OrderRecipeModel>();
+
+            if (!atcEntries.Any())
+            {
+                return ServiceUtils.CreateResult(true, 200, ServiceConstants.NoRecipes, modelToReturn, null, null);
+            }
+
+            var attachments = await this.sapDao.GetAttachmentsById(atcEntries);
+            var baseRoute = this.configuration["OmicronRecipeAddress"];
+
+            foreach (var r in attachments)
+            {
+                var attachment = new OrderRecipeModel { Order = orderId };
+                if (string.IsNullOrEmpty(r.TargetPath) || string.IsNullOrEmpty(r.FileName) || string.IsNullOrEmpty(r.FileExt))
+                {
+                    continue;
+                }
+
+                var fileName = $"{r.FileName}.{r.FileExt}";
+                var pathArray = r.TargetPath.Split(@"\").Where(x => x.ToUpper() != "C:").ToList();
+                var completePath = new StringBuilder();
+                completePath.Append(baseRoute);
+                pathArray.ForEach(x => completePath.Append($"{x}/"));
+                completePath.Append(fileName);
+                attachment.Recipe = completePath.ToString();
+                modelToReturn.Add(attachment);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
         }
 
         /// <summary>

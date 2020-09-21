@@ -14,6 +14,8 @@ namespace Omicron.Reporting.DependencyInjection
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Reporting.Facade.Request;
+    using Omicron.Reporting.Services;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -30,6 +32,8 @@ namespace Omicron.Reporting.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
+            Services.AddTransient<IReportingFacade, ReportingFacade>();
+            Services.AddTransient<IReportingService, ReportingService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }
