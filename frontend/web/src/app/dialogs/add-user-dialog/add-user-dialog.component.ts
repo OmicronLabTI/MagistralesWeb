@@ -69,6 +69,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     });
 
     if (!this.isForEditModal) {
+      this.addUserForm.get('asignable').setValue(CONST_NUMBER.one.toString());
       this.addUserForm.get('activo').setValue(CONST_NUMBER.one);
     } else {
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
