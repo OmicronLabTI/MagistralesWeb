@@ -17,12 +17,6 @@ namespace Omicron.Warehouses.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int OrderFabId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         public string ProductId { get; set; }
 
         /// <summary>
@@ -35,25 +29,7 @@ namespace Omicron.Warehouses.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal BaseQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         public decimal RequiredQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public decimal Consumed { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public decimal Available { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -71,24 +47,6 @@ namespace Omicron.Warehouses.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal PendingQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public decimal Stock { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         public decimal WarehouseQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public bool HasBatches { get; set; }
     }
 }

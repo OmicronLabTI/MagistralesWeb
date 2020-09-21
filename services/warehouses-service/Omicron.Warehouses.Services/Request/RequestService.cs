@@ -159,13 +159,15 @@ namespace Omicron.Warehouses.Services.Request
             var existingProductionOrders = await this.sapAdapterService.GetProductionOrdersByCriterial(salesOrders, productionOrders);
             existingProductionOrders = existingProductionOrders.Where(x => x.Status.ToLower().Equals(ServiceConstants.ProductionOrderPlannedStatus.ToLower())).ToList();
 
-            var allComponentsInPO = new List<ProductionOrderComponentModel>();
+            var valitateExistingRequestsResults = await this.ValidateExistingByProductionOrderIds(existingProductionOrders.Select(x => x.ProductionOrderId).ToList());
 
-            existingProductionOrders.ForEach(x => allComponentsInPO.AddRange(x.Details));
+            var allComponentsInPO = new List<ProductionOrderComponentModel>();
+            existingProductionOrders.Where(x => valitateExistingRequestsResults.Missing.Any(y => y.Equals(x.ProductionOrderId))).ToList().ForEach(x => allComponentsInPO.AddRange(x.Details));
 
             var preRequest = new RawMaterialRequestModel
             {
-                ProductionOrderIds = existingProductionOrders.Select(x => x.ProductionOrderId).ToList(),
+                FailedProductionOrderIds = valitateExistingRequestsResults.Existing,
+                ProductionOrderIds = valitateExistingRequestsResults.Missing,
                 OrderedProducts = this.CreateRequestDetail(allComponentsInPO),
             };
 
@@ -180,24 +182,47 @@ namespace Omicron.Warehouses.Services.Request
         private List<RawMaterialRequestDetailModel> CreateRequestDetail(List<ProductionOrderComponentModel> allComponentsInPO)
         {
             var results = new List<RawMaterialRequestDetailModel>();
+            allComponentsInPO = this.RemoveItemPresentation(allComponentsInPO);
 
-            foreach (var itemGroup in allComponentsInPO.GroupBy(x => x.ProductId))
+            foreach (var group in allComponentsInPO.GroupBy(x => new { x.ProductId, x.Warehouse, }))
             {
-                var firstItem = itemGroup.FirstOrDefault();
-
-                // TODO: Calcular la cantidad requerida.
-                decimal requiredQuantity = 0M;
-
+                var firstItem = group.FirstOrDefault();
                 results.Add(new RawMaterialRequestDetailModel
                 {
-                    ProductId = itemGroup.Key,
+                    ProductId = group.Key.ProductId,
                     Description = firstItem.Description,
-                    RequestQuantity = requiredQuantity,
+                    RequestQuantity = this.CalculateRequiredQuantity(group),
                     Unit = firstItem.Unit,
                 });
             }
 
+            results = results.Where(x => x.RequestQuantity < 0).ToList();
+            results.ForEach(x => x.RequestQuantity = Math.Abs(x.RequestQuantity));
+
             return results;
+        }
+
+        /// <summary>
+        /// Create request detail from production order components.
+        /// </summary>
+        /// <param name="allComponentsInPO">Production order components.</param>
+        /// <returns>Request detail.</returns>
+        private List<ProductionOrderComponentModel> RemoveItemPresentation(List<ProductionOrderComponentModel> allComponentsInPO)
+        {
+            allComponentsInPO.ForEach(x =>
+            {
+                x.ProductId = x.ProductId.Split("   ").First();
+            });
+
+            return allComponentsInPO;
+        }
+
+        private decimal CalculateRequiredQuantity(IGrouping<object, ProductionOrderComponentModel> group)
+        {
+            var firstItem = group.FirstOrDefault();
+            var sumRequiredQuantities = group.Sum(x => x.RequiredQuantity);
+
+            return (firstItem.WarehouseQuantity < 0) ? -sumRequiredQuantities : firstItem.WarehouseQuantity - sumRequiredQuantities;
         }
     }
 }
