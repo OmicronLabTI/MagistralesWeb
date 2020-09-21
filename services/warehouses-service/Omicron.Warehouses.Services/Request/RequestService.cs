@@ -47,16 +47,21 @@ namespace Omicron.Warehouses.Services.Request
         /// <returns>List with successfuly and failed creations.</returns>
         public async Task<ResultModel> CreateRawMaterialRequest(string userId, RawMaterialRequestModel request)
         {
-            if (!(await this.usersService.GetUsersById(userId)).Any(x => x.Id.Equals(userId)))
+            var user = (await this.usersService.GetUsersById(userId)).FirstOrDefault(x => x.Id.Equals(userId));
+            if (user == null)
             {
                 return ServiceUtils.CreateResult(false, 200, ErrorReasonConstants.UserNotExists, null, null);
             }
 
             request.SigningUserId = userId;
+            request.SigningUserName = $"{user.FirstName} {user.LastName}";
+
             var results = new SuccessFailResults<object>();
             var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
             request.ProductionOrderIds = valitateExistsResults.Missing;
+
             await this.CreateRequest(userId, request);
+
             valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
             valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
 
