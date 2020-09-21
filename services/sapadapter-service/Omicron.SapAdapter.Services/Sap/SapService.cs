@@ -481,7 +481,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (!atcEntries.Any())
             {
-                ServiceUtils.CreateResult(true, 200, ServiceConstants.NoRecipes, modelToReturn, null, null);
+                return ServiceUtils.CreateResult(true, 200, ServiceConstants.NoRecipes, modelToReturn, null, null);
             }
 
             var attachments = await this.sapDao.GetAttachmentsById(atcEntries);
