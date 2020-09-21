@@ -59,8 +59,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
         /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <param name="components">Flag for get components.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds);
+        Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components);
 
         /// <summary>
         /// Gets the componenets based in the dic.
@@ -119,5 +120,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="listOrdersId">The orders ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetFabOrdersById(List<int> listOrdersId);
+
+        /// <summary>
+        /// Gets the urls.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetRecipe(int orderId);
     }
 }

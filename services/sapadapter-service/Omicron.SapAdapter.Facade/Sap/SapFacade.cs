@@ -94,10 +94,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
         /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <param name="components">Flag for get components.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds)
+        public async Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetFabricationOrdersByCriterial(salesOrderIds, fabricationOrderIds));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetFabricationOrdersByCriterial(salesOrderIds, fabricationOrderIds, components));
         }
 
         /// <summary>
@@ -180,6 +181,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetFabOrdersById(List<int> listOrdersId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetFabOrdersById(listOrdersId));
+        }
+
+        /// <summary>
+        /// Gets the urls.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetRecipe(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetRecipe(orderId));
         }
     }
 }
