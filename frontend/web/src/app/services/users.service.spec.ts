@@ -35,7 +35,7 @@ describe('UsersService', () => {
     userReq.activo = 0;
     userReq.password = 'anyPass';
     userReq.role = 1;
-    service.createUser(userReq);
+    service.createUserService(userReq);
     expect(consumeServiceSpy.httpPost).toHaveBeenCalledWith(Endpoints.users.createUser, userReq);
   });
   it('should getRoles', () => {
