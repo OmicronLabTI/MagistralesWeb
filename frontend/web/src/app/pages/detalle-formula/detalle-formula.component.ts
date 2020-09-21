@@ -12,7 +12,7 @@ import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
 import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componentslist.component';
-import { BaseComponent, Components } from 'src/app/model/http/listacomponentes';
+import { Components } from 'src/app/model/http/listacomponentes';
 
 @Component({
   selector: 'app-detalle-formula',
