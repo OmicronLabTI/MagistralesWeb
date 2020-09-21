@@ -13,6 +13,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
     using Omicron.Catalogos.Entities.Model;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -38,6 +39,24 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         public async Task<IEnumerable<RoleModel>> GetAllRoles()
         {
             return await this.databaseContext.RoleModel.ToListAsync();
+        }
+
+        /// <summary>
+        /// Looks the values by field.
+        /// </summary>
+        /// <param name="fields">the data to look.</param>
+        /// <returns>the data to return.</returns>
+        public async Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields)
+        {
+            var listParameters = new List<ParametersModel>();
+
+            foreach (var field in fields)
+            {
+                var result = await this.databaseContext.ParametersModel.Where(x => x.Field.Contains(field)).ToListAsync();
+                listParameters.AddRange(result);
+            }
+
+            return listParameters;
         }
     }
 }

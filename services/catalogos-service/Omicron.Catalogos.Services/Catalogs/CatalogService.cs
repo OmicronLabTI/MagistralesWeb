@@ -9,6 +9,8 @@
 namespace Omicron.Catalogos.Services.Catalogs
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
@@ -40,6 +42,18 @@ namespace Omicron.Catalogos.Services.Catalogs
             var listRoles = await this.catalogDao.GetAllRoles();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listRoles, null);
+        }
+
+        /// <summary>
+        /// The values in the dictionary.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetParamsContains(Dictionary<string, string> parameters)
+        {
+            var dictKeys = parameters.Keys.ToList();
+            var dataParams = (await this.catalogDao.GetParamsByField(dictKeys)).DistinctBy(x => x.Id).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, dataParams, null);
         }
     }
 }

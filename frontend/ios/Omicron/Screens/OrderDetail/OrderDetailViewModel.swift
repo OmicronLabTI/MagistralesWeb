@@ -18,20 +18,21 @@ class OrderDetailViewModel {
     weak var tempOrderDetailData: OrderDetail? = nil
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
-    var showAlertConfirmationProcess = PublishSubject<String>()
-    var showAlertConfirmationFinished = PublishSubject<String>()
+    //var showAlertConfirmationProcess = PublishSubject<String>()
+    var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
     var auxTabledata:[Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
     var finishedButtonDidTap = PublishSubject<Void>()
+    var pendingButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
     var showIconComments = PublishSubject<String>()
     var orderId: Int = -1
     var showSignatureView = PublishSubject<String>()
-    var  qfbSignatureIsGet = false
+    var qfbSignatureIsGet = false
     var technicalSignatureIsGet = false
     var sqfbSignature = ""
     var technicalSignature = ""
@@ -41,12 +42,19 @@ class OrderDetailViewModel {
     init() {
         
         self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.showAlertConfirmationFinished.onNext("¿Deseas terminar la orden?")
+            let message = MessageToChangeStatus(message: CommonStrings.doYouWantToFinishTheOrder, typeOfStatus: StatusNameConstants.finishedStatus)
+            self?.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
         
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.showAlertConfirmationProcess.onNext("La orden cambiará a estatus En proceso ¿quieres continuar?")
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus, typeOfStatus: StatusNameConstants.inProcessStatus)
+            self?.showAlertConfirmation.onNext(message)
         }).disposed(by: disposeBag)
+        
+        self.pendingButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus, typeOfStatus: StatusNameConstants.penddingStatus)
+            self?.showAlertConfirmation.onNext(message)
+        }).disposed(by: self.disposeBag)
         
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             self?.goToSeeLotsViewController.onNext(())
@@ -68,11 +76,11 @@ class OrderDetailViewModel {
                 self?.tempOrderDetailData = res.response!
                 self?.loading.onNext(false)
                 self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
-                var iconName = ""
+                var iconName = CommonStrings.empty
                 if (res.response?.comments != nil) {
-                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? "message":"message.fill"
+                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? ImageButtonNames.message : ImageButtonNames.messsageFill
                 } else {
-                    iconName = "message"
+                    iconName = ImageButtonNames.message
                 }
                 self?.showIconComments.onNext(iconName)
                 if(isRefresh) {
@@ -84,15 +92,30 @@ class OrderDetailViewModel {
             if(isRefresh) {
                 self?.endRefreshing.onNext(())
             }
-            self?.showAlert.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+            self?.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
         }).disposed(by: self.disposeBag)
+    }
+    
+    
+    func terminateOrChangeStatusOfAnOrder(actionType: String) {
+        
+        switch actionType {
+        case StatusNameConstants.finishedStatus:        // Realiza el proceso para terminar la orden
+            self.validIfOrderCanBeFinalized()
+        case StatusNameConstants.inProcessStatus:       // Realiza el proceso para cambiar el estatus a proceso
+            self.changeStatus(actionType: actionType)
+        case StatusNameConstants.penddingStatus:        // Realiza el proceso para cambiar el status a pendiente
+            self.changeStatus(actionType: actionType)
+        default:
+            print("")
+        }
     }
     
     func sum(tableDetails: [Detail]) -> Double {
         var sum = 0.0
         if(tableDetails.count > 0) {
             for detail in tableDetails {
-                if(detail.unit  != "Pieza") {
+                if(detail.unit  != CommonStrings.piece) {
                     sum = sum + detail.requiredQuantity!
                 }
             }
@@ -101,15 +124,17 @@ class OrderDetailViewModel {
         return sum
     }
     
-    func changeStatus() {
+    func changeStatus(actionType: String) {
         self.loading.onNext(true)
-        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: "Proceso")
+        let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
+        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: status)
+
         NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
-            self?.showAlert.onNext("Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo")
+            self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
             }).disposed(by: self.disposeBag)
     }
 
@@ -131,7 +156,7 @@ class OrderDetailViewModel {
             }
             }, onError: {  [weak self] error in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("Hubo un error al eliminar el elemento,  intente de nuevo")
+                self?.showAlert.onNext(CommonStrings.couldNotDeleteItem)
         }).disposed(by: self.disposeBag)
     }
     
@@ -159,10 +184,10 @@ class OrderDetailViewModel {
         self.loading.onNext(true)
         NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
-            self?.showSignatureView.onNext("Firma del  QFB")
+            self?.showSignatureView.onNext(CommonStrings.qfbSignature)
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado")
+                self?.showAlert.onNext(CommonStrings.orderCouldNotBeCompleted)
         }).disposed(by: self.disposeBag)
     }
 }

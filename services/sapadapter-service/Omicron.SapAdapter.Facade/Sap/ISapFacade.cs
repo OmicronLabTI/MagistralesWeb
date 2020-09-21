@@ -55,6 +55,14 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrderIds">Sales order ids.</param>
+        /// <param name="fabricationOrderIds">Fabrication order ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds);
+
+        /// <summary>
         /// Gets the componenets based in the dic.
         /// </summary>
         /// <param name="parameters">the filters.</param>

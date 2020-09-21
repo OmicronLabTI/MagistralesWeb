@@ -40,22 +40,22 @@ namespace Omicron.Warehouses.Facade.Request
         /// Create raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed creations.</returns>
-        public async Task<ResultDto> CreateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests)
+        public async Task<ResultDto> CreateRawMaterialRequest(string userId, RawMaterialRequestDto request)
         {
-            return this.mapper.Map<ResultDto>(await this.requestService.CreateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
+            return this.mapper.Map<ResultDto>(await this.requestService.CreateRawMaterialRequest(userId, this.mapper.Map<RawMaterialRequestModel>(request)));
         }
 
         /// <summary>
         /// Update raw material request.
         /// </summary>
         /// <param name="userId">The user id.</param>
-        /// <param name="requests">Requests data.</param>
+        /// <param name="request">Requests data.</param>
         /// <returns>List with successfuly and failed updates.</returns>
-        public async Task<ResultDto> UpdateRawMaterialRequest(string userId, List<RawMaterialRequestDto> requests)
+        public async Task<ResultDto> UpdateRawMaterialRequest(string userId, RawMaterialRequestDto request)
         {
-            return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<List<RawMaterialRequestModel>>(requests)));
+            return this.mapper.Map<ResultDto>(await this.requestService.UpdateRawMaterialRequest(userId, this.mapper.Map<RawMaterialRequestModel>(request)));
         }
 
         /// <summary>
@@ -66,6 +66,17 @@ namespace Omicron.Warehouses.Facade.Request
         public async Task<ResultDto> GetRawMaterialRequest(int productionOrderId)
         {
             return this.mapper.Map<ResultDto>(await this.requestService.GetRawMaterialRequestByProductionOrderId(productionOrderId));
+        }
+
+        /// <summary>
+        /// Get a raw material pre-request.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <returns>The material pre-request.</returns>
+        public async Task<ResultDto> GetRawMaterialPreRequest(List<int> salesOrders, List<int> productionOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrders));
         }
     }
 }

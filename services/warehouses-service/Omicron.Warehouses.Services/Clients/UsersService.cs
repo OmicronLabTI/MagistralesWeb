@@ -14,6 +14,7 @@ namespace Omicron.Warehouses.Services.Clients
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Warehouses.Entities.Model;
+    using Omicron.Warehouses.Services.Constants;
 
     /// <summary>
     /// Class User Service.
@@ -34,9 +35,9 @@ namespace Omicron.Warehouses.Services.Clients
         /// </summary>
         /// <param name="userIds">User ids's.</param>
         /// <returns>User list.</returns>
-        public async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        public async Task<List<UserModel>> GetUsersById(params string[] userIds)
         {
-            var resultModel = await this.PostAsync(userIds, "getUsersById");
+            var resultModel = await this.PostAsync(userIds, EndPointConstants.UsersGetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(resultModel.Response.ToString());
         }
     }

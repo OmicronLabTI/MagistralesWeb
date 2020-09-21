@@ -31,5 +31,13 @@ namespace Omicron.Warehouses.Entities.Context
         /// Object request details.
         /// </value>
         DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetails { get; set; }
+
+        /// <summary>
+        /// Gets or sets raw material request orders.
+        /// </summary>
+        /// <value>
+        /// Object request orders.
+        /// </value>
+        DbSet<RawMaterialRequestOrderModel> RawMaterialRequestOrders { get; set; }
     }
 }

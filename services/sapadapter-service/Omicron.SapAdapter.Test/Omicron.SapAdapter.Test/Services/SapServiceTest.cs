@@ -751,5 +751,23 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedResults, returnItems.Count);
         }
+
+        /// <summary>
+        /// Get production orders with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFormulaBySalesOrdersOrProductionOrders()
+        {
+            // arrange
+            var productionOrders = new List<int> { 100 };
+            var salesOrders = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

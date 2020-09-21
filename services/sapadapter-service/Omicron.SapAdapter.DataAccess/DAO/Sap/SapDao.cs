@@ -16,8 +16,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Resources.Extensions;
+    using Omicron.SapAdapter.Entities.Model.DbModels;    
 
     /// <summary>
     /// Class for the dao.
@@ -204,6 +203,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> listOrders)
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => listOrders.Contains(x.OrdenId)).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
+        /// gets the fabrication orders by sales order id.
+        /// </summary>
+        /// <param name="salesOrderIds">the sales order ids.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => salesOrderIds.Contains(x.PedidoId.Value)).ToListAsync();
             return query;
         }
 

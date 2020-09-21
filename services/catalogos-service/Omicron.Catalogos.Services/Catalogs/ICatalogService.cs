@@ -8,6 +8,7 @@
 
 namespace Omicron.Catalogos.Services.Catalogs
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Catalogos.Entities.Model;
 
@@ -21,5 +22,12 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultModel> GetRoles();
+
+        /// <summary>
+        /// The values in the dictionary.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetParamsContains(Dictionary<string, string> parameters);
     }
 }

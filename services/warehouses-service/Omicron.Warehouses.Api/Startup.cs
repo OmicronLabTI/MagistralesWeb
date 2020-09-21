@@ -106,6 +106,13 @@ namespace Omicron.Warehouses.Api
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
+            services.AddHttpClient("sapadapter", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["SapAdapterURL"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ISapAdapterService, SapAdapterService>();
+
             this.AddRedis(services, Log.Logger);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
