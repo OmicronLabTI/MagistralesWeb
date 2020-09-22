@@ -155,19 +155,19 @@ class InboxViewController: UIViewController {
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.similarityViewButton.isEnabled = isEnabled
-            self.heigthCollectionViewConstraint.constant = !isEnabled ? 8 : -60
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.normalViewButton.isEnabled = isEnabled
+            self.heigthCollectionViewConstraint.constant = isEnabled ? 8 : -60
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por número de orden
-        inboxViewModel.groupedByOrderNumberIsEnable.subscribe(onNext: { [weak self] isEnable in
+        inboxViewModel.groupedByOrderNumberIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
-            self.groupByOrderNumberButton.isEnabled = isEnable
+            self.groupByOrderNumberButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
