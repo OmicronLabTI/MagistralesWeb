@@ -164,6 +164,12 @@ class InboxViewController: UIViewController {
             self.normalViewButton.isEnabled = isEnabled
         }).disposed(by: self.disposeBag)
         
+        // Habilita o deshabilita el botón de agrupamiento por número de orden
+        inboxViewModel.groupedByOrderNumberIsEnable.subscribe(onNext: { [weak self] isEnable in
+            guard let self = self else { return }
+            self.groupByOrderNumberButton.isEnabled = isEnable
+        }).disposed(by: self.disposeBag)
+        
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
         inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
             self?.similarityViewButton.isHidden = isHidden
@@ -188,6 +194,7 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTap),
             similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
+            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
      
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
@@ -225,6 +232,9 @@ class InboxViewController: UIViewController {
         self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
         self.normalViewButton.setTitle("", for: .normal)
         self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
+        self.normalViewButton.isEnabled = false
+        self.groupByOrderNumberButton.setTitle("", for: .normal)
+        self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)

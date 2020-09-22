@@ -183,6 +183,7 @@ struct ImageButtonNames {
     static let normalView = "rectangle.on.rectangle"
     static let message = "message"
     static let messsageFill = "message.fill"
+    static let rectangule3offgrid = "rectangle.3.offgrid"
 }
 
 struct IndicatorImageStatus {
