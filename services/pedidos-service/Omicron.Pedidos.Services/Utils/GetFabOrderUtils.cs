@@ -89,6 +89,7 @@ namespace Omicron.Pedidos.Services.Utils
                     Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
                     Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     Unit = x.Unit,
+                    HasMissingStock = x.HasMissingStock,
                 };
 
                 listToReturn.Add(fabOrder);
