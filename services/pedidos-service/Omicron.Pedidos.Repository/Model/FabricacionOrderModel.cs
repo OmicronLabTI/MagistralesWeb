@@ -74,5 +74,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The measurement of unit.</value>
         public string Unit { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is sales order.
+        public bool HasMissingStock { get; set; }
     }
 }

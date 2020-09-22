@@ -151,5 +151,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("Comments")]
         public string Comments { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is sales order.
+        [NotMapped]
+        public bool HasMissingStock { get; set; }
     }
 }
