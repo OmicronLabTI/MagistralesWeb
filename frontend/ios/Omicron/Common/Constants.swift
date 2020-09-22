@@ -146,6 +146,8 @@ struct CommonStrings {
     static let quantitySelected = "Cantidad seleccionada"
     static let quantityAssigned = "Cantidad asignada"
     static let batchSelected = "Lotes seleccionados"
+    static let order = "Pedido:"
+    static let ordersWithoutOrder = "Ordenes sin pedido"
 }
 
 struct FontsNames {
@@ -183,6 +185,7 @@ struct ImageButtonNames {
     static let normalView = "rectangle.on.rectangle"
     static let message = "message"
     static let messsageFill = "message.fill"
+    static let rectangule3offgrid = "rectangle.3.offgrid"
 }
 
 struct IndicatorImageStatus {

@@ -18,6 +18,8 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet weak var requiredQuantityLabel: UILabel!
     @IBOutlet weak var unitLabel: UILabel!
     @IBOutlet weak var werehouseLabel: UILabel!
+    @IBOutlet weak var hashTagLabel: UILabel!
+    
 //    @IBOutlet weak var consumedLabel: UILabel!
 //    @IBOutlet weak var availableLabel: UILabel!
 //    @IBOutlet weak var quantityPendingLabel: UILabel!
@@ -35,6 +37,7 @@ class DetailTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: fontSize)
+        UtilsManager.shared.labelsStyle(label: self.hashTagLabel, text: "", fontSize: fontSize)
         // Se comentó para poder ampliar el campo descripción
 //        UtilsManager.shared.labelsStyle(label: self.consumedLabel, text: "", fontSize: fontSize)
 //        UtilsManager.shared.labelsStyle(label: self.availableLabel, text: "", fontSize: fontSize)
