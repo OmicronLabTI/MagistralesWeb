@@ -21,6 +21,17 @@ namespace Omicron.Reporting.Services.Clients
     /// </summary>
     public class OmicronMailClient : IOmicronMailClient
     {
+        private readonly ISendMailWrapper sendMailWrapper;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OmicronMailClient"/> class.
+        /// </summary>
+        /// <param name="sendMailWrapper">The catalogs service.</param>
+        public OmicronMailClient(ISendMailWrapper sendMailWrapper)
+        {
+            this.sendMailWrapper = sendMailWrapper;
+        }
+
         /// <summary>
         /// Send mail.
         /// </summary>
@@ -44,13 +55,7 @@ namespace Omicron.Reporting.Services.Clients
                     files.Keys.ToList().ForEach(x => message.Attachments.Add(new Attachment(files[x], x)));
                 }
 
-                client.SendCompleted += (s, e) =>
-                {
-                    client.Dispose();
-                    message.Dispose();
-                };
-
-                await client.SendMailAsync(message);
+                await this.sendMailWrapper.SendMailAsync(client, message);
             }
             catch (Exception ex)
             {

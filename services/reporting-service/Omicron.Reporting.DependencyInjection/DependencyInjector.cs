@@ -37,6 +37,7 @@ namespace Omicron.Reporting.DependencyInjection
             Services.AddTransient<IReportingService, ReportingService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IOmicronMailClient, OmicronMailClient>();
+            Services.AddTransient<ISendMailWrapper, SendMailWrapper>();
             return Services;
         }
 
