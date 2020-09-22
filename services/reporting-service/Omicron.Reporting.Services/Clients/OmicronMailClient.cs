@@ -56,13 +56,13 @@ namespace Omicron.Reporting.Services.Clients
                 }
 
                 await this.sendMailWrapper.SendMailAsync(client, message);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Unable to send email. Error : " + ex);
+                return false;
             }
-
-            return true;
         }
 
         /// <summary>

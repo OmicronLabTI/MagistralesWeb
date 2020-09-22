@@ -31,8 +31,6 @@ namespace Omicron.Warehouses.Api
     /// </summary>
     public class Startup
     {
-        private const string UserService = "http://usuariosservice/";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -101,7 +99,7 @@ namespace Omicron.Warehouses.Api
 
             services.AddHttpClient("users", c =>
             {
-                c.BaseAddress = new Uri(UserService);
+                c.BaseAddress = new Uri(this.Configuration["UsersURL"]);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
@@ -112,6 +110,13 @@ namespace Omicron.Warehouses.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapAdapterService, SapAdapterService>();
+
+            services.AddHttpClient("reporting", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["ReportingURL"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IReportingService, ReportingService>();
 
             this.AddRedis(services, Log.Logger);
 

@@ -54,8 +54,8 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request)
         {
             var file = this.BuildPdfFile(request, false);
-            await this.SendRawMaterialRequestMail(file.FileStream, file.FileName);
-            return new ResultModel { Success = true, Code = 200, Response = true, Comments = file.FileName };
+            var mailStatus = await this.SendRawMaterialRequestMail(file.FileStream, file.FileName);
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
         }
 
         /// <summary>
@@ -80,11 +80,11 @@ namespace Omicron.Reporting.Services
         /// <param name="fileStream">File stream.</param>
         /// <param name="fileName">File name.</param>
         /// <returns>Nothing.</returns>
-        private async Task SendRawMaterialRequestMail(MemoryStream fileStream, string fileName)
+        private async Task<bool> SendRawMaterialRequestMail(MemoryStream fileStream, string fileName)
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
             var mailConfig = await this.catalogsService.GetRawMaterialEmailConfig();
-            await this.omicronMailClient.SendMail(
+            return await this.omicronMailClient.SendMail(
                 smtpConfig,
                 mailConfig.Addressee,
                 ServiceConstants.RawMaterialRequestEmailSubject,
