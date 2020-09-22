@@ -5,7 +5,14 @@ import { Title } from '@angular/platform-browser';
 import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq} from 'src/app/model/http/lotesformula';
 import { MatTableDataSource} from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
-import { CONST_NUMBER, BOOLEANS, CONST_DETAIL_FORMULA, MessageType, ClassNames } from '../../constants/const'
+import {
+  CONST_NUMBER,
+  BOOLEANS,
+  CONST_DETAIL_FORMULA,
+  MessageType,
+  ClassNames,
+  CONST_STRING
+} from '../../constants/const'
 import { Messages } from '../../constants/messages';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
@@ -28,6 +35,8 @@ export class InventorybatchesComponent implements OnInit {
   isReadyToSave = false;
   objectToSave: ILotesToSaveReq[] = [];
   lotesSeleccionados: ILotesSelectedReq[];
+  hasMissingStock = false;
+  description = CONST_STRING.empty;
   detailsColumns: string[] = [
     'cons',
     'codigoProducto',
@@ -61,9 +70,14 @@ export class InventorybatchesComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.document = Number(params.get('document'));
       this.ordenFabricacionId = params.get('ordenid');
+      this.hasMissingStock = Number(params.get('hasMissingStock'))  === CONST_NUMBER.one;
+      this.description = params.get('description');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
     });
     this.getInventoryBatches();
+    console.log('decription: ', this.description);
+    console.log('hasMissingLote: ', this.hasMissingStock);
+
   }
 
   // tslint:disable-next-line: no-shadowed-variable

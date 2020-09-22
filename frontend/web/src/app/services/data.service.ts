@@ -266,6 +266,9 @@ export class DataService {
     switch (fromToFilter) {
       case FromToFilter.fromOrders:
         return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+      case FromToFilter.fromOrdersReassign:
+        return dataToSearch.filter(t => (t.isChecked && (t.pedidoStatus === status
+            || t.pedidoStatus === ConstStatus.terminado))).length > 0;
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
@@ -274,7 +277,8 @@ export class DataService {
             && t.status !== ConstStatus.abierto)).length > 0;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
-            || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)).length > 0;
+            || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
+            || t.status === ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
@@ -286,9 +290,10 @@ export class DataService {
     switch (fromToFilter) {
       case FromToFilter.fromOrderIsolatedReassignItems:
         return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
-            || t.status === ConstStatus.enProceso || t.status === ConstStatus.pendiente || t.status === ConstStatus.terminado)));
+            || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
+            || t.status === ConstStatus.terminado)));
       case FromToFilter.fromOrdersReassign:
-        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.liberado));
+        return dataToSearch.filter(t => (t.isChecked && (t.pedidoStatus === status || t.pedidoStatus === ConstStatus.terminado)));
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status));
     }
@@ -391,8 +396,4 @@ export class DataService {
    removeOrderIsolated() {
      localStorage.removeItem(ConstToken.isolatedOrder);
    }
-
-  getStringUpperCase(stringToUpperCase: string) {
-    return stringToUpperCase.toUpperCase();
-  }
 }
