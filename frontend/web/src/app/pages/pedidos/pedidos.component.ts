@@ -242,4 +242,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
           FromToFilter.fromOrdersReassign).map(order => order.docNum)
       , isFromReassign: true});
   }
+
+  toSeeRecipes(docNum: number) {
+    console.log('docNum: ', docNum)
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(resultGetRecipes => console.log('resRecipes: ', resultGetRecipes)
+    , error => this.errorService.httpError(error));
+
+  }
 }

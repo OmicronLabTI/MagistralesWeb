@@ -12,7 +12,7 @@ import {
   IGetNewBachCodeRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
-  IProcessOrdersRes, IWorkLoadRes,
+  IProcessOrdersRes, IRecipesRes, IWorkLoadRes,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
@@ -82,5 +82,8 @@ export class PedidosService {
   getIfExistsBatchCode(productCode: string, batchCode: string) {
     return this.consumeService.httpGet<IExistsBachCodeRes>(
         `${Endpoints.pedidos.checkIfExistsBatchCode}?productCode=${productCode}&batchCode=${batchCode}`);
+  }
+  getRecipesByOrder(orderId: number) {
+    return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
   }
 }

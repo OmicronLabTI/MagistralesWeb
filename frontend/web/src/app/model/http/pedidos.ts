@@ -27,6 +27,13 @@ export class IGetNewBachCodeRes extends BaseResponseHttp {
 export class IExistsBachCodeRes extends BaseResponseHttp {
     response: boolean;
 }
+export class IRecipesRes extends  BaseResponseHttp {
+    response: RecipesRes[];
+}
+export class RecipesRes {
+    order: number;
+    recipe: string;
+}
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;

@@ -32,7 +32,8 @@ export const Endpoints = {
     createIsolatedOrder: `${environment.baseUrl}/api/pedidos/fabOrder/isolated`,
     reAssignManual: `${environment.baseUrl}/api/pedidos/reasignar/manual`,
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
-    checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`
+    checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
+    getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`
 },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
