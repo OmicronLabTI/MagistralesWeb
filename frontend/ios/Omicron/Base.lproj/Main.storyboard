@@ -240,19 +240,23 @@
                                 <rect key="frame" x="10" y="116" width="970.5" height="40"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="jGm-0l-bDk">
-                                        <rect key="frame" x="890.5" y="0.0" width="80" height="40"/>
+                                        <rect key="frame" x="850.5" y="0.0" width="120" height="40"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UNM-JG-4xw">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pL2-No-2Sx">
                                                 <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
                                                 <state key="normal" title="Button"/>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMB-nN-aT4">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UNM-JG-4xw">
                                                 <rect key="frame" x="40" y="0.0" width="40" height="40"/>
+                                                <state key="normal" title="Button"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMB-nN-aT4">
+                                                <rect key="frame" x="80" y="0.0" width="40" height="40"/>
                                                 <state key="normal" title="Button"/>
                                             </button>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="80" id="69c-lr-cIE"/>
+                                            <constraint firstAttribute="width" constant="120" id="69c-lr-cIE"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
@@ -284,6 +288,7 @@
                     <connections>
                         <outlet property="collectionView" destination="HTk-p1-6Au" id="PXP-7D-xfI"/>
                         <outlet property="finishedButton" destination="Sk7-Zh-BjH" id="Ku5-i1-a9a"/>
+                        <outlet property="groupByOrderNumberButton" destination="pL2-No-2Sx" id="XQb-Q1-pJa"/>
                         <outlet property="heigthCollectionViewConstraint" destination="0F9-AN-lHE" id="vUi-jJ-VS5"/>
                         <outlet property="normalViewButton" destination="WMB-nN-aT4" id="3SL-BN-5e7"/>
                         <outlet property="pendingButton" destination="Jev-kI-Spn" id="KEe-ko-tuK"/>
