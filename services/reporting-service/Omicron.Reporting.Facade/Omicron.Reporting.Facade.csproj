@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Omicron.Reporting.Services\Omicron.Reporting.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Reporting\" />
-  </ItemGroup>
-
 </Project>

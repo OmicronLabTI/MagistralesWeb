@@ -9,6 +9,8 @@
 namespace Omicron.Reporting.Services.Mapping
 {
     using AutoMapper;
+    using Omicron.Reporting.Dtos.Model;
+    using Omicron.Reporting.Entities.Model;
 
     /// <summary>
     /// Class Automapper.
@@ -20,6 +22,12 @@ namespace Omicron.Reporting.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
+            this.CreateMap<FileResultDto, FileResultModel>();
+            this.CreateMap<FileResultModel, FileResultDto>();
+            this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>();
+            this.CreateMap<RawMaterialRequestModel, RawMaterialRequestDto>();
+            this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
+            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
         }
     }
 }

@@ -23,6 +23,7 @@ export class IOrdersReq {
     fabDate?: Date;
     isWithError?: boolean;
     isWithErrorBatch?: boolean;
+    hasMissingStock?: boolean;
 }
 
 export class ParamsOrders {

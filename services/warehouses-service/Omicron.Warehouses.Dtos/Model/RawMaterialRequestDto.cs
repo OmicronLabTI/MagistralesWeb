@@ -23,10 +23,10 @@ namespace Omicron.Warehouses.Dtos.Model
         public List<int> ProductionOrderIds { get; set; }
 
         /// <summary>
-        /// Gets or sets signature in byte[] representation.
+        /// Gets or sets signature in base 64 representation.
         /// </summary>
         /// <value>
-        /// Byte[] signature.
+        /// Base 64 signature.
         /// </value>
         public string Signature { get; set; }
 

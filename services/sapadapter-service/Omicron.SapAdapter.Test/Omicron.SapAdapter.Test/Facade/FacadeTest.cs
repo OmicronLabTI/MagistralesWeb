@@ -285,7 +285,20 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetFormulaBySalesOrdersOrProductionOrders()
         {
             // act
-            var response = await this.sapFacade.GetFabricationOrdersByCriterial(new List<int>(), new List<int>());
+            var response = await this.sapFacade.GetFabricationOrdersByCriterial(new List<int>(), new List<int>(), true);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        [Test]
+        public async Task GetRecipe()
+        {
+            // arrange
+            var orderId = 1;
+
+            // act
+            var response = await this.sapFacade.GetRecipe(orderId);
 
             // assert
             this.AssertResponse(response);

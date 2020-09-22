@@ -4,7 +4,6 @@ import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
 import {PlaceOrders} from '../../model/device/orders';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

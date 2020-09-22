@@ -9,20 +9,26 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="FreeSpire.Doc" Version="7.11.0" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.2" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Omicron.Reporting.DataAccess\Omicron.Reporting.DataAccess.csproj" />
     <ProjectReference Include="..\Omicron.Reporting.Dtos\Omicron.Reporting.Dtos.csproj" />
     <ProjectReference Include="..\Omicron.Reporting.Repository\Omicron.Reporting.Entities.csproj" />
+    <ProjectReference Include="..\Omicron.Reporting.Resources\Omicron.Reporting.Resources.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Reporting\" />
+    <None Update="ReportBuilder\Templates\BASE_RM_REQUEST.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

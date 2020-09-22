@@ -123,6 +123,14 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<BatchTransacitions> BatchTransacitions { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<AttachmentModel> AttachmentModel { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>
@@ -151,6 +159,12 @@ namespace Omicron.SapAdapter.Entities.Context
                 table.LogEntry,
                 table.ItemCode,
                 table.SysNumber,
+            });
+
+            modelBuilder.Entity<AttachmentModel>().HasKey(table => new
+            {
+                table.AbsEntry,
+                table.Line,
             });
         }
     }

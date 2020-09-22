@@ -81,6 +81,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string NoChipsError = "No se encontraron filtros";
 
         /// <summary>
+        /// messages when the order doesnt have recipes.
+        /// </summary>
+        public const string NoRecipes = "No se encontraron recetas para el pedido";
+
+        /// <summary>
         /// get the chips.
         /// </summary>
         public const string ChipSeparator = ",";
