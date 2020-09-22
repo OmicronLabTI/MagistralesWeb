@@ -393,7 +393,12 @@ export class DataService {
   getOrderIsolated() {
     return localStorage.getItem(ConstToken.isolatedOrder);
   }
-   removeOrderIsolated() {
+
+  removeOrderIsolated() {
      localStorage.removeItem(ConstToken.isolatedOrder);
    }
+
+  openNewTapByUrl(url: string) {
+    window.open(url);
+  }
 }

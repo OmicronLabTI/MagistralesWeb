@@ -38,5 +38,6 @@ export const Messages = {
   confirmReplaceWithListComponents: '¿Desea reemplazar los componentes actuales con los de la lista seleccionada?',
   onlyIntegerNumbers: 'Verifica que la cantidad planificada sea un número entero',
   repeatedComponent_a: 'El componente ',
-  repeatedComponent_b: ' ya existe para este producto'
+  repeatedComponent_b: ' ya existe para este producto',
+  noHasRecipes: 'El pedido no tiene receta(s)'
 };

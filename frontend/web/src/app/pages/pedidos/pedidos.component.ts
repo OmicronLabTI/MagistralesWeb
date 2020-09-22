@@ -16,7 +16,7 @@ import {
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {CancelOrderReq, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
@@ -242,5 +242,19 @@ export class PedidosComponent implements OnInit, OnDestroy {
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
           FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
       , isFromReassign: true});
+  }
+
+  toSeeRecipes(docNum: number) {
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => this.onSuccessHttpGetRecipes(recipeByOrderRes)
+    , error => this.errorService.httpError(error));
+
+  }
+
+  onSuccessHttpGetRecipes(resultGetRecipes: IRecipesRes) {
+    if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
+      this.dataService.setMessageGeneralCallHttp({title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true});
+    } else {
+      resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe));
+    }
   }
 }
