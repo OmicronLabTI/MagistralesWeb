@@ -64,4 +64,5 @@ export  class QfbWithNumber {
     assignType?: string;
     isFromOrderIsolated?: boolean;
     isFromReassign?: boolean;
+    asignable?: number;
 }

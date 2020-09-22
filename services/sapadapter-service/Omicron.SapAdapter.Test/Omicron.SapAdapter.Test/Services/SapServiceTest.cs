@@ -766,7 +766,7 @@ namespace Omicron.SapAdapter.Test.Services
             var salesOrders = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders);
+            var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders, false);
 
             // assert
             Assert.IsNotNull(result);
