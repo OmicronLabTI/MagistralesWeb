@@ -16,7 +16,7 @@ import {
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {CancelOrderReq, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
@@ -245,8 +245,23 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   toSeeRecipes(docNum: number) {
     console.log('docNum: ', docNum)
-    this.pedidosService.getRecipesByOrder(docNum).subscribe(resultGetRecipes => console.log('resRecipes: ', resultGetRecipes)
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => this.onSuccessHttpGetRecipes(recipeByOrderRes)
     , error => this.errorService.httpError(error));
 
+  }
+
+  onSuccessHttpGetRecipes(resultGetRecipes: IRecipesRes) {
+    console.log('resRecipes: ', resultGetRecipes)
+    if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
+      this.dataService.setMessageGeneralCallHttp({title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true});
+    } else {
+      resultGetRecipes.response = [...resultGetRecipes.response, {
+        order: 123,
+        recipe: 'https://www.uv.mx/pozarica/caa-conta/files/2016/02/REGULAR-AND-IRREGULAR-VERBS.pdf'
+      }];
+      resultGetRecipes.response[0].recipe = 'http://exa.unne.edu.ar/ingenieria/computacion/Tema1.pdf';
+      console.log('new res: ', resultGetRecipes.response)
+      resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe))
+    }
   }
 }
