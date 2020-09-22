@@ -165,3 +165,6 @@ export const pathRoles = {
         '**'
     ]
 };
+export const CONST_PRODUCTIVITY = {
+  titleTotal: 'total',
+};
