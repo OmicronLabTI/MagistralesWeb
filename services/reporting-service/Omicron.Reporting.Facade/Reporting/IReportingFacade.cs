@@ -7,6 +7,7 @@
 // </summary>
 namespace Omicron.Reporting.Facade.Request
 {
+    using System.Threading.Tasks;
     using Omicron.Reporting.Dtos.Model;
 
     /// <summary>
@@ -20,6 +21,13 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public FileResultDto CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview);
+        FileResultDto CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview);
+
+        /// <summary>
+        /// Submit raw material request.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request);
     }
 }
