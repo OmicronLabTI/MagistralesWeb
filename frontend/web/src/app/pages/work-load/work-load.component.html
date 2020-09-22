@@ -39,6 +39,7 @@
                     </div>
                     <div class="dates-components">
                         <mat-form-field color="accent" appearance="outline" class="custom-date">
+                            <mat-label class="title-Date">Desde: </mat-label>
                             <input matInput [matDatepicker]="picker2"
                                    [(ngModel)]="startDate"
                                    [min]="minStartDate"
@@ -49,6 +50,7 @@
                             <mat-datepicker #picker2 color="primary"></mat-datepicker>
                         </mat-form-field>
                         <mat-form-field color="accent" appearance="outline" class="custom-date">
+                            <mat-label class="title-Date">Hasta: </mat-label>
                             <input matInput [matDatepicker]="picker3"
                                    [(ngModel)]="finishDate"
                                    [min]="startDate"
