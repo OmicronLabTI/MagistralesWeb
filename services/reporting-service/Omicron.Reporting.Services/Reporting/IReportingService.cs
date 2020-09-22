@@ -8,6 +8,7 @@
 
 namespace Omicron.Reporting.Services
 {
+    using System.Threading.Tasks;
     using Omicron.Reporting.Entities.Model;
 
     /// <summary>
@@ -21,6 +22,13 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview);
+        FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview);
+
+        /// <summary>
+        /// Submit raw material request.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request);
     }
 }

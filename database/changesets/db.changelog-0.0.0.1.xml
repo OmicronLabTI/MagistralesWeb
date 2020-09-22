@@ -584,4 +584,21 @@
       <column name="field" value="EmailMiddleware"/>
     </insert>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.62">
+    <insert tableName="parameters"> 
+      <column name="value" value="Nox23293"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailMiddlewarePassword"/>
+    </insert>
+	<insert tableName="parameters"> 
+      <column name="value" value="smtp.office365.com"/>
+      <column name="type" value="string"/>
+      <column name="field" value="SmtpServer"/>
+    </insert>
+	<insert tableName="parameters"> 
+      <column name="value" value="587"/>
+      <column name="type" value="int"/>
+      <column name="field" value="SmtpPort"/>
+    </insert>
+  </changeSet>
 </databaseChangeLog> 

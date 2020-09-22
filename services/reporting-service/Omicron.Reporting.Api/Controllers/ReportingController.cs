@@ -8,6 +8,7 @@
 
 namespace Omicron.Reporting.Api.Controllers
 {
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using Omicron.Reporting.Dtos.Model;
@@ -46,6 +47,19 @@ namespace Omicron.Reporting.Api.Controllers
             {
                 FileDownloadName = report.FileName,
             };
+        }
+
+        /// <summary>
+        /// Submit file of raw material request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/submit/request/rawmaterial/pdf")]
+        [HttpPost]
+        public async Task<IActionResult> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request)
+        {
+            var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(request);
+            return this.Ok(response);
         }
 
         /// <summary>

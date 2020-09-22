@@ -13,5 +13,9 @@ namespace Omicron.Reporting.Services.Constants
     /// </summary>
     public static class EndPointConstants
     {
+        /// <summary>
+        /// Endpoint to get parameters from catalogs service.
+        /// </summary>
+        public const string CatalogsGetParameters = "params/contains/field";
     }
 }

@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Test.Facade.Request
 {
     using System.IO;
+    using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
@@ -35,11 +36,15 @@ namespace Omicron.Reporting.Test.Facade.Request
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             var mapper = mapperConfiguration.CreateMapper();
 
-            var resultDto = AutoFixtureProvider.Create<FileResultModel>();
-            resultDto.Success = true;
+            var fileResultModel = AutoFixtureProvider.Create<FileResultModel>();
+            fileResultModel.Success = true;
+
+            var resultModel = AutoFixtureProvider.Create<ResultModel>();
+            resultModel.Success = true;
 
             var mockReportingService = new Mock<IReportingService>();
-            mockReportingService.SetReturnsDefault(resultDto);
+            mockReportingService.SetReturnsDefault(fileResultModel);
+            mockReportingService.SetReturnsDefault(Task.FromResult(resultModel));
 
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
@@ -63,6 +68,25 @@ namespace Omicron.Reporting.Test.Facade.Request
             Assert.IsNotEmpty(response.FileName);
             Assert.IsNotNull(response.FileName);
             Assert.IsNotNull(response.FileStream);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SubmitRawMaterialRequest()
+        {
+            // arrange
+            var requests = AutoFixtureProvider.Create<RawMaterialRequestDto>();
+            requests.Signature = File.ReadAllText("SignatureBase64.txt");
+
+            // act
+            var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }
