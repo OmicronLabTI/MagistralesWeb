@@ -22,5 +22,10 @@ namespace Omicron.Warehouses.Services.Constants
         /// Endpoint to get users by id from users service.
         /// </summary>
         public const string UsersGetUsersById = "getUsersById";
+
+        /// <summary>
+        /// Endpoint to submit raw material request.
+        /// </summary>
+        public const string SubmitRawMaterialRequest = "submit/request/rawmaterial/pdf";
     }
 }

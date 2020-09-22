@@ -27,6 +27,7 @@ namespace Omicron.Warehouses.Test.Services.Request
     {
         private IRequestService requestService;
         private Mock<IUsersService> mockUsersService;
+        private Mock<IReportingService> mockReportingService;
         private Mock<ISapAdapterService> mockSapAdapterService;
         private IRequestDao requestDao;
         private DatabaseContext context;
@@ -117,12 +118,14 @@ namespace Omicron.Warehouses.Test.Services.Request
             this.InitializeInMemoryDb();
             this.requestDao = new RequestDao(this.context);
             this.mockUsersService = new Mock<IUsersService>();
+            this.mockReportingService = new Mock<IReportingService>();
             this.mockSapAdapterService = new Mock<ISapAdapterService>();
 
             this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
             this.mockSapAdapterService.Setup(x => x.GetProductionOrdersByCriterial(It.IsAny<List<int>>(), It.IsAny<List<int>>())).Returns(Task.FromResult(this.GetMockProductionOrders()));
+            this.mockReportingService.SetReturnsDefault(Task.FromResult(true));
 
-            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object);
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object);
         }
 
         /// <summary>

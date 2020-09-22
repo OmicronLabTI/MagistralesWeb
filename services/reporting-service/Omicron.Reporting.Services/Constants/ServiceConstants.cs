@@ -22,5 +22,15 @@ namespace Omicron.Reporting.Services.Constants
         /// Pattern of raw material request file name.
         /// </summary>
         public const string RawMaterialRequestFileNamePattern = "Solicitud_MP_{0}.pdf";
+
+        /// <summary>
+        /// Subject of email.
+        /// </summary>
+        public const string RawMaterialRequestEmailSubject = "Solicitud de Materia Prima";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string RawMaterialRequestEmailBody = "Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.";
     }
 }

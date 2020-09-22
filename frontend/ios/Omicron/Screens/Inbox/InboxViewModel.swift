@@ -99,9 +99,9 @@ class  InboxViewModel {
             self?.processButtonIsEnable.onNext(false)
             if(self?.ordersTemp != nil ) {
                 let dataGroupedByBaseDocument = Dictionary(grouping: self!.ordersTemp, by: { "\($0.baseDocument!)" })
-                let sectionModels = self?.groupedWithSimilarityOrWithoutSimilarity(data: dataGroupedByBaseDocument, titleForOrdersWithoutSimilarity: CommonStrings.ordersWithoutOrder, titleForOrdersWithSimilarity: CommonStrings.order, isSortingByOrderNumer: true)
-                self?.sectionOrders = sectionModels ?? []
-                self?.statusDataGrouped.onNext(sectionModels ?? [])
+                let ordersGroupedAndSorted = self?.groupedByOrderNumber(data: dataGroupedByBaseDocument)
+                self?.sectionOrders = ordersGroupedAndSorted ?? []
+                self?.statusDataGrouped.onNext(ordersGroupedAndSorted ?? [])
                 
             }
             self?.normalViewButtonIsEnable.onNext(true)
@@ -111,20 +111,16 @@ class  InboxViewModel {
         
     }
     
-    // Ordenes sin pedido
-    // Pedido: [pedido]
-    
     // Se agrupan ordenes por similitud o sin similitud
-    func groupedWithSimilarityOrWithoutSimilarity(data: [String? : [Order]], titleForOrdersWithoutSimilarity: String, titleForOrdersWithSimilarity: String, isSortingByOrderNumer:Bool = false) -> [SectionModel<String, Order>] {
+    func groupedWithSimilarityOrWithoutSimilarity(data: [String? : [Order]], titleForOrdersWithoutSimilarity: String, titleForOrdersWithSimilarity: String) -> [SectionModel<String, Order>] {
         var sectionModels:[SectionModel<String, Order>] = []
         
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
         let groupBySimilarity = data.filter{$0.value.count > 1}
         if (groupBySimilarity.count > 0) {
-            var sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
+            let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
                 return SectionModel(model: "\(titleForOrdersWithSimilarity) \(orders.key ?? "")", items: self.sortByBaseBocumentAscending(orders: orders.value))
             })
-            sectionsModelsBySimilarity = isSortingByOrderNumer ? sectionsModelsBySimilarity.sorted{ $0.model < $1.model} : sectionsModelsBySimilarity
             sectionModels.append(contentsOf: sectionsModelsBySimilarity)
         }
 
@@ -140,6 +136,24 @@ class  InboxViewModel {
             sectionModels.append(SectionModel(model: titleForOrdersWithoutSimilarity, items: orderedCars ))
         }
         
+        return sectionModels
+    }
+    
+    func groupedByOrderNumber(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
+        
+        var data1 = data
+        var sectionModels:[SectionModel<String, Order>] = []
+        if let cero = data1["0"] {
+            sectionModels.append(SectionModel(model: "\(CommonStrings.ordersWithoutOrder)", items: cero))
+            data1.removeValue(forKey: "0")
+        }
+        
+        let sections = data1.map({ [unowned self] (orders) -> SectionModel<String, Order> in
+            return SectionModel(model: "\(CommonStrings.order) \(orders.key ?? "")", items: self.sortByBaseBocumentAscending(orders: orders.value))
+        })
+        
+        let sortedSections = sections.sorted{$0.model < $1.model}
+        sectionModels.append(contentsOf: sortedSections)
         return sectionModels
     }
     

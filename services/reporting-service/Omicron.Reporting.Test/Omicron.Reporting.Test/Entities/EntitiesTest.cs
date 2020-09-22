@@ -21,6 +21,10 @@ namespace Omicron.Reporting.Test.Entities
         /// </summary>
         private static readonly object[] TypeCases =
         {
+            new ParametersModel(),
+            new RawMaterialEmailConfigModel(),
+            new SmtpConfigModel(),
+            new ResultModel(),
             new FileResultModel(),
             new RawMaterialRequestModel(),
             new RawMaterialRequestDetailModel(),

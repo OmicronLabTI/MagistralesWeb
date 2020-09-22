@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Facade.Request
 {
     using System;
+    using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
@@ -43,6 +44,16 @@ namespace Omicron.Reporting.Facade.Request
         public FileResultDto CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview)
         {
             return this.mapper.Map<FileResultDto>(this.reportingService.CreateRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request), preview));
+        }
+
+        /// <summary>
+        /// Submit raw material request.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
         }
     }
 }

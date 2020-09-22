@@ -25,6 +25,7 @@ namespace Omicron.Warehouses.Services.Request
         private readonly IRequestDao requestDao;
         private readonly IUsersService usersService;
         private readonly ISapAdapterService sapAdapterService;
+        private readonly IReportingService reportingService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestService"/> class.
@@ -32,11 +33,13 @@ namespace Omicron.Warehouses.Services.Request
         /// <param name="requestDao">request dao.</param>
         /// <param name="usersService">users service.</param>
         /// <param name="sapAdapterService">sap adapter service.</param>
-        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService)
+        /// <param name="reportingService">reporting service.</param>
+        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService, IReportingService reportingService)
         {
             this.requestDao = requestDao;
             this.usersService = usersService;
             this.sapAdapterService = sapAdapterService;
+            this.reportingService = reportingService;
         }
 
         /// <summary>
@@ -60,7 +63,11 @@ namespace Omicron.Warehouses.Services.Request
             var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
             request.ProductionOrderIds = valitateExistsResults.Missing;
 
-            await this.CreateRequest(userId, request);
+            if (request.ProductionOrderIds.Any())
+            {
+                await this.CreateRequest(userId, request);
+                await this.reportingService.SubmitRequest(request);
+            }
 
             valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
             valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
@@ -217,6 +224,11 @@ namespace Omicron.Warehouses.Services.Request
             return allComponentsInPO;
         }
 
+        /// <summary>
+        /// Calculate required quantity.
+        /// </summary>
+        /// <param name="group">Item group.</param>
+        /// <returns>Required cuantity.</returns>
         private decimal CalculateRequiredQuantity(IGrouping<object, ProductionOrderComponentModel> group)
         {
             var firstItem = group.FirstOrDefault();

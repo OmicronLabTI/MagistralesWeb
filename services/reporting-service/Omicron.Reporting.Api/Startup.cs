@@ -19,9 +19,11 @@ namespace Omicron.Reporting.Api
     using Microsoft.OpenApi.Models;
     using Omicron.Reporting.Api.Filters;
     using Omicron.Reporting.DependencyInjection;
+    using Omicron.Reporting.Services.Clients;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
+    using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
 
     /// <summary>
@@ -94,6 +96,13 @@ namespace Omicron.Reporting.Api
                     },
                 });
             });
+
+            services.AddHttpClient("catalogs", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["CatalogsURL"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ICatalogsService, CatalogsService>();
 
             this.AddRedis(services, Log.Logger);
 

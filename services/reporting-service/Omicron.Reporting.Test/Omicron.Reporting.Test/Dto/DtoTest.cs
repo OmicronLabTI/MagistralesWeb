@@ -21,6 +21,7 @@ namespace Omicron.Reporting.Test.Dto
         /// </summary>
         private static readonly object[] TypeCases =
         {
+            new ResultDto(),
             new FileResultDto(),
             new RawMaterialRequestDto(),
             new RawMaterialRequestDetailDto(),
