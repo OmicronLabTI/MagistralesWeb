@@ -40,4 +40,5 @@ export class ComponentslistComponent implements AfterViewInit {
       }
     });
   }
+
 }
