@@ -393,12 +393,7 @@ export class DataService {
      localStorage.removeItem(ConstToken.isolatedOrder);
    }
   openNewTapByUrl(url: string) {
-    console.log('url: ', url)
     window.open(url);
-    setTimeout(() => {
-      console.log('executeTimeOut')
-      window.open('https://www.uv.mx/pozarica/caa-conta/files/2016/02/REGULAR-AND-IRREGULAR-VERBS.pdf');
-    }, 3500);
   }
 
   getStringUpperCase(stringToUpperCase: string) {
