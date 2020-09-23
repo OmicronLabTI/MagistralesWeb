@@ -214,7 +214,7 @@ class OrderDetailViewController: UIViewController {
                 }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
-            cell.hashTagLabel.text = "99"
+            cell.hashTagLabel.text = "\(row + 1)"
             cell.codeLabel.text = "\(data.productID!)"
             cell.descriptionLabel.text = data.detailDescription?.uppercased()
             cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
