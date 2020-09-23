@@ -102,6 +102,7 @@ class Order {
     var itemCode: String?
     var productCode: String?
     var destiny: String?
+    var hasMissingStock = false
     required init?(map: Map) {}
 }
 
@@ -117,6 +118,7 @@ extension Order: Mappable {
         descriptionProduct <- map["descriptionProduct"]
         itemCode <- map["itemCode"]
         destiny <- map["destiny"]
+        hasMissingStock <- map["hasMissingStock"]
     }
 }
 
