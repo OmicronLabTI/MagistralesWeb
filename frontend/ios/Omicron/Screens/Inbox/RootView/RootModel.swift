@@ -103,6 +103,24 @@ class Order {
     var productCode: String?
     var destiny: String?
     var hasMissingStock = false
+    
+    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Int?, startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?, productCode: String?, destiny: String?, hasMissingStock: Bool) {
+        
+        self.productionOrderId = productionOrderId
+        self.baseDocument = baseDocument
+        self.container = container
+        self.tag = tag
+        self.plannedQuantity = plannedQuantity
+        self.startDate = startDate
+        self.finishDate = finishDate
+        self.descriptionProduct = descriptionProduct
+        self.statusId = statusId
+        self.itemCode = itemCode
+        self.productCode = productCode
+        self.destiny = destiny
+        self.hasMissingStock = hasMissingStock
+    }
+    
     required init?(map: Map) {}
 }
 
