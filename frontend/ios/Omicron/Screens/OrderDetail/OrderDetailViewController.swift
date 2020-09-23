@@ -207,7 +207,7 @@ class OrderDetailViewController: UIViewController {
                 self.productDescritionLabel.attributedText = richText
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
-                    self.destinyLabel.isHidden = true
+                    self.destinyLabel.text = ""
                 }
                 
             }
