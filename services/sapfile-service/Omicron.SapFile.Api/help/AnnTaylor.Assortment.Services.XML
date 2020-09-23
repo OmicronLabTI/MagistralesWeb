@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Omicron.SapFile.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Omicron.SapFile.Api.Configuration.ArrayInputAttribute">
+            <summary>
+            ArrayInputAttribute to handle array input in GET
+            </summary>
+            <seealso cref="T:System.Web.Http.Filters.ActionFilterAttribute" />
+        </member>
+        <member name="F:Omicron.SapFile.Api.Configuration.ArrayInputAttribute.parameterName">
+            <summary>
+            The parameter name.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.ArrayInputAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.SapFile.Api.Configuration.ArrayInputAttribute"/> class.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+        </member>
+        <member name="P:Omicron.SapFile.Api.Configuration.ArrayInputAttribute.Separator">
+            <summary>
+            Gets or sets the separator.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.ArrayInputAttribute.OnActionExecuting(System.Web.Http.Controllers.HttpActionContext)">
+            <summary>
+            Occurs before the action method is invoked.
+            </summary>
+            <param name="actionContext">The action context.</param>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Configuration.BufferNonStreamedContentHandler">
+            <summary>
+            BufferNonStreamedContentHandler class
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.BufferNonStreamedContentHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            SendAsync method
+            </summary>
+            <param name="request">The request.</param>
+            <param name="cancellationToken"> The cancelation token.</param>
+            <returns>The response.</returns>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Configuration.NoBufferPolicySelector">
+            <summary>
+            The no buffer policy selector.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.NoBufferPolicySelector.UseBufferedInputStream(System.Object)">
+            <summary>
+            The use buffered input stream.
+            </summary>
+            <param name="hostContext">
+            The host context.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.NoBufferPolicySelector.UseBufferedOutputStream(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            The use buffered output stream.
+            </summary>
+            <param name="response">
+            The response.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Configuration.UnityResolver">
+            <summary>
+            IOC Resolver for wrpping the unity container
+            </summary>
+        </member>
+        <member name="F:Omicron.SapFile.Api.Configuration.UnityResolver.container">
+            <summary>
+            Unity container
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.UnityResolver.#ctor(Unity.IUnityContainer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Omicron.SapFile.Api.Configuration.UnityResolver"/> class.
+            </summary>
+            <param name="container">Unity container</param>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.UnityResolver.GetService(System.Type)">
+            <summary>
+            Creates one instance of a type
+            </summary>
+            <param name="serviceType">Service type</param>
+            <returns>Type instance</returns>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.UnityResolver.GetServices(System.Type)">
+            <summary>
+            Creates a collection of objets of the specified type
+            </summary>
+            <param name="serviceType">Service type</param>
+            <returns>Type instances</returns>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.UnityResolver.BeginScope">
+            <summary>
+            Generates a child container
+            </summary>
+            <returns>Child container</returns>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.UnityResolver.Dispose">
+            <summary>
+            Releases the managed resources
+            </summary>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Configuration.ApiConfig">
+            <summary>
+            Global API configuration
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Configuration.ApiConfig.Register">
+            <summary>
+            Initializes API Configuration
+            </summary>
+            <returns>Returns the configuration object</returns>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Controllers.BaseController">
+            <summary>
+             Base class for any controller
+            </summary>
+        </member>
+        <member name="P:Omicron.SapFile.Api.Controllers.BaseController.Mapper">
+            <summary>
+            Gets or sets Automapper instance for mappings beetwen types.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.BaseController.Dispose(System.Boolean)">
+            <summary>
+            Releases managed resources
+            </summary>
+            <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources</param>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.BaseController.HandleError(System.String,System.Exception,System.String)">
+            <summary>
+            Register an error/message to the log
+            </summary>
+            <param name="shortMessage">Brief description</param>
+            <param name="ex">Exception instance</param>
+            <param name="parameters">A string representing the parameters and values to be logged</param>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.BaseController.HandleError(System.String,System.Exception)">
+            <summary>
+            Register an error/message to the log
+            </summary>
+            <param name="shortMessage">Brief description</param>
+            <param name="ex">Exception instance</param>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Controllers.SapFileController">
+            <summary>
+            Layout Element controller for any layout element which belongs to a specific layout
+            </summary>
+        </member>
+        <member name="F:Omicron.SapFile.Api.Controllers.SapFileController.sapFacade">
+            <summary>
+            Gets or sets the sa.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.#ctor(Omicron.SapFile.Facade.Sap.ISapFacade)">
+            <summary>
+            /// Initializes a new instance of the <see cref="T:Omicron.SapFile.Api.Controllers.SapFileController"/> class.
+            </summary>
+            <param name="sapFacade">the facade.</param>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.Get">
+            <summary>
+            the ping pong.
+            </summary>
+            <returns>rturn pong.</returns>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Filters.ModelFilterAttribute">
+            <summary>
+            Filter for model validation.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Filters.ModelFilterAttribute.OnActionExecuting(System.Web.Http.Controllers.HttpActionContext)">
+            <summary>
+            It get executed before any action controller takes place.
+            </summary>
+            <param name="actionContext">the context for the current action</param>
+        </member>
+        <member name="T:Omicron.SapFile.Api.Startup">
+            <summary>
+            Starts the Owin host
+            </summary>
+        </member>
+        <member name="P:Omicron.SapFile.Api.Startup.HttpConfiguration">
+            <summary>
+            Gets The http configuration object for Owin
+            </summary>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Startup.Configuration(Owin.IAppBuilder)">
+            <summary>
+            Sets the configuration
+            </summary>
+            <param name="app">The http configuration</param>
+        </member>
+        <member name="M:Omicron.SapFile.Api.Startup.GetConfiguration">
+            <summary>
+            Get configuration
+            </summary>
+            <returns>Returns the htt configuration</returns>
+        </member>
+    </members>
+</doc>
