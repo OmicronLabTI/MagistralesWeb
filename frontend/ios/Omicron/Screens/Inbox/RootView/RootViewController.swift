@@ -18,14 +18,16 @@ class RootViewController: UIViewController {
     @IBOutlet weak var myOrdesLabel: UILabel!
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
+    @IBOutlet weak var kpiButton: UIButton!
     
     // Variables
-    let disposeBag = DisposeBag()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var lottieManager: LottieManager
     
     var refreshControl = UIRefreshControl()
+    
+    let disposeBag = DisposeBag()
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -72,7 +74,8 @@ class RootViewController: UIViewController {
     
     func viewModelBinding() {
         
-        self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
+        logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
+        kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
         
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
         self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
@@ -105,7 +108,8 @@ class RootViewController: UIViewController {
         
         // Detecta el evento cuando se selecciona un status de la tabla
         viewTable.rx.modelSelected(SectionOrder.self).subscribe(onNext: { [weak self] data in
-            self?.inboxViewModel.setSelection(section: data)
+            guard let self = self else { return }
+            self.inboxViewModel.setSelection(section: data)
         }).disposed(by: disposeBag)
 
         viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
@@ -181,4 +185,5 @@ class RootViewController: UIViewController {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
     }
+    
 }

@@ -12,6 +12,7 @@ import RxCocoa
 import RxDataSources
 
 class  InboxViewModel {
+    
     var finishedDidTap = PublishSubject<Void>()
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
@@ -35,6 +36,8 @@ class  InboxViewModel {
     var hideGroupingButtons = PublishSubject<Bool>()
     var groupByOrderNumberButtonDidTap = PublishSubject<Void>()
     var groupedByOrderNumberIsEnable = PublishSubject<Bool>();
+    var showKPIView = PublishSubject<Bool>()
+    var viewKPIDidPressed = PublishSubject<Void>()
     
     init() {
         // Funcionalidad para el botón de Terminar
@@ -108,6 +111,11 @@ class  InboxViewModel {
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.groupedByOrderNumberIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
+
+                viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            self.showKPIView.onNext(true)
+        }).disposed(by: disposeBag)
         
     }
     
@@ -155,6 +163,7 @@ class  InboxViewModel {
         let sortedSections = sections.sorted{$0.model < $1.model}
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
+
     }
     
     func setSelection(section: SectionOrder) -> Void {
@@ -168,7 +177,7 @@ class  InboxViewModel {
         self.normalViewButtonIsEnable.onNext(false)
         self.processButtonIsEnable.onNext(false)
         self.pendingButtonIsEnable.onNext(false)
-        
+        showKPIView.onNext(false)
     }
     
     func setFilter(orders: [Order]) -> Void {

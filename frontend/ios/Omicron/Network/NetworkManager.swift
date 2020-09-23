@@ -147,6 +147,13 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
+    // Obtiene la carga de trabajo
+    func getWordLoad(data: WorkloadRequest) -> Observable<WorkloadResponse> {
+        let req: ApiService = ApiService.getWorkload(data: data)
+        let res: Observable<WorkloadResponse> = makeRequest(request: req)
+        return res
+    }
+    
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let r = !request.needsAuth ?
