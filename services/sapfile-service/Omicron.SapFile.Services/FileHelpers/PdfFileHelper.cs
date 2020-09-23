@@ -5,14 +5,14 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Omicron.SapFile.Services.FileHelpers
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using iTextSharp.text;
+    using iTextSharp.text.pdf;
+
     /// <summary>
     /// Helper for pdf files
     /// </summary>
@@ -24,26 +24,28 @@ namespace Omicron.SapFile.Services.FileHelpers
         /// <param name="filePath">File path.</param>
         public static void AddPageNumber(string filePath)
         {
-            byte[] bytes = File.ReadAllBytes(filePath);
-            Font blackFont = FontFactory.GetFont("Arial", 10, Font.NORMAL, BaseColor.BLACK);
-
             using (MemoryStream stream = new MemoryStream())
             {
-                PdfReader reader = new PdfReader(bytes);
+                PdfReader reader = new PdfReader(filePath);
                 using (PdfStamper stamper = new PdfStamper(reader, stream))
                 {
                     for (int pageIndex = 1; pageIndex <= reader.NumberOfPages; pageIndex++)
                     {
-                        var pageSize = reader.GetPageSize(pageIndex);
-                        var paginationText = new Phrase($"{pageIndex} de {reader.NumberOfPages}", blackFont);
-                        ColumnText.ShowTextAligned(stamper.GetUnderContent(pageIndex), Element.ALIGN_RIGHT, paginationText, pageSize.Width - 27f, 15f, 0);
+                        var content = stamper.GetOverContent(pageIndex);
+                        var layer = new PdfLayer("paginationLayer", stamper.Writer);
+                        content.BeginLayer(layer);
+                        content.SetFontAndSize(BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED), 10);
+                        content.SetColorFill(BaseColor.BLACK);
+                        content.BeginText();
+                        content.ShowTextAligned(Element.ALIGN_RIGHT, $"{pageIndex} de {reader.NumberOfPages}", reader.GetPageSize(pageIndex).Width - 27f, 15f, 0);
+                        content.EndText();
+                        content.EndLayer();
                     }
                 }
 
-                bytes = stream.ToArray();
+                File.WriteAllBytes(SetFilePostFix(filePath, "paged"), stream.ToArray());
             }
 
-            File.WriteAllBytes(SetFilePostFix(filePath, "paged"), bytes);
         }
 
         /// <summary>

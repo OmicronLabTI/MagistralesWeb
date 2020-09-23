@@ -10,9 +10,6 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Omicron.SapFile.Services.FileHelpers;
 
@@ -29,7 +26,7 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
         public void MergeFiles()
         {
             // arrange
-            var filesToMerge = new List<string> { @"TestFiles/Pedido.pdf", @"TestFiles/Orden.pdf", @"TestFiles/Orden_II.pdf", @"TestFiles/Orden_III.pdf" };
+            var filesToMerge = new List<string> { @"TestFiles/Pedido.pdf", @"TestFiles/Orden.pdf", @"TestFiles/signatures.pdf", @"TestFiles/Orden_II.pdf", @"TestFiles/signatures.pdf", @"TestFiles/Orden_III.pdf", @"TestFiles/signatures.pdf", @"TestFiles/receta.pdf" };
             var outpufFilePath = @"Pedido_Orden_Merge.pdf";
 
             // act
@@ -46,13 +43,13 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
         public void AddPageNumber()
         {
             // arrange
-            var filePath = @"TestFiles/Pedido_Orden.pdf";
+            var filePath = @"TestFiles/Pedido_Orden_Merge.pdf";
 
             // act
             PdfFileHelper.AddPageNumber(filePath);
 
             // assert
-            Assert.IsTrue(File.Exists(@"TestFiles/Pedido_Orden_paged.pdf"));
+            Assert.IsTrue(File.Exists(@"TestFiles/Pedido_Orden_Merge_paged.pdf"));
         }
 
         /// <summary>

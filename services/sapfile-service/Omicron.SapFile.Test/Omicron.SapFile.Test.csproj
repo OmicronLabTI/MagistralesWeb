@@ -71,11 +71,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Services\FileHelpers\PdfFileHelperTest.cs" />
+    <Compile Include="Services\ReportBuilder\ProductionOrderSignaturesReportBuilderTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TestFiles\Pedido_Orden_Merge.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\receta.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\Orden_III.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -88,7 +95,7 @@
     <None Include="TestFiles\Orden.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestFiles\Pedido_Orden.pdf">
+    <None Include="TestFiles\signatures.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
