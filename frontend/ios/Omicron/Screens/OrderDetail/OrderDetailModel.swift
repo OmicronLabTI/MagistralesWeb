@@ -144,7 +144,7 @@ class ChangeStatusRequest: Codable {
 }
 
 class ChangeStatusRespose: HttpResponse {
-    var response: ChangeStatus?
+    var response: String?
     
     required init?(map: Map)  {
         super.init(map: map)
@@ -156,24 +156,24 @@ class ChangeStatusRespose: HttpResponse {
     }
 }
 
-class ChangeStatus {
-    var id: Int?
-    var userId: String?
-    var salesOrderId: String?
-    var productionOrderId: String?
-    var status: String?
-    required init?(map: Map)  {    }
-}
-
-extension ChangeStatus: Mappable {
-     func mapping(map: Map) {
-        id <- map["Id"]
-        userId <- map["Userid"]
-        salesOrderId <- map["Salesorderid"]
-        productionOrderId <- map["Productionorderid"]
-        status <- map["Status"]
-    }
-}
+//class ChangeStatus {
+//    var id: Int?
+//    var userId: String?
+//    var salesOrderId: String?
+//    var productionOrderId: String?
+//    var status: String?
+//    required init?(map: Map)  {    }
+//}
+//
+//extension ChangeStatus: Mappable {
+//     func mapping(map: Map) {
+//        id <- map["Id"]
+//        userId <- map["Userid"]
+//        salesOrderId <- map["Salesorderid"]
+//        productionOrderId <- map["Productionorderid"]
+//        status <- map["Status"]
+//    }
+//}
 
 class FinishOrder: Codable {
     var userId: String?
