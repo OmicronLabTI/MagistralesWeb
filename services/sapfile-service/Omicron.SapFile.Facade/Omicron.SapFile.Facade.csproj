@@ -53,7 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\Omicron.SapDiApi.Api\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
+      <HintPath>..\Omicron.SapFile.Api\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,7 +75,7 @@
       <Project>{34b8298c-a3ce-49c1-a9b4-e991a897fc5e}</Project>
       <Name>Omicron.SapFile.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Omicron.SapDiApi.Services\Omicron.SapFile.Services.csproj">
+    <ProjectReference Include="..\Omicron.SapFile.Services\Omicron.SapFile.Services.csproj">
       <Project>{71299035-F66A-4331-ACC3-1C2FB02D0FC2}</Project>
       <Name>Omicron.SapFile.Services</Name>
     </ProjectReference>
