@@ -150,3 +150,4 @@ iOSInjectionProject/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 services/sapdiapi-service/Omicron.SapDiApi.Api/logs/
+services/sapfile-service/Omicron.SapFile.Api/packages/StyleCop.MSBuild.5.0.0/
