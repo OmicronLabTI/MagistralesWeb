@@ -12,6 +12,10 @@
 		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
 		1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */; };
+		1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B277251B9BEC009F56FC /* ChartTest.swift */; };
+		1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */; };
+		1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27D251B9C33009F56FC /* ComponetsTest.swift */; };
+		1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27F251B9C46009F56FC /* CommentsTest.swift */; };
 		1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321B25192C5C0040DC65 /* ChartViewController.swift */; };
 		1EF0321E251931B30040DC65 /* workload.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EF0321D251931B30040DC65 /* workload.json */; };
 		1EF03220251932DA0040DC65 /* Workload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321F251932DA0040DC65 /* Workload.swift */; };
@@ -121,6 +125,10 @@
 		1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPITableViewCell.swift; sourceTree = "<group>"; };
 		1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderCollectionViewCell.xib; sourceTree = "<group>"; };
 		1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionViewCell.swift; sourceTree = "<group>"; };
+		1E72B277251B9BEC009F56FC /* ChartTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartTest.swift; sourceTree = "<group>"; };
+		1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadTest.swift; sourceTree = "<group>"; };
+		1E72B27D251B9C33009F56FC /* ComponetsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponetsTest.swift; sourceTree = "<group>"; };
+		1E72B27F251B9C46009F56FC /* CommentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsTest.swift; sourceTree = "<group>"; };
 		1EF0321B25192C5C0040DC65 /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 		1EF0321D251931B30040DC65 /* workload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = workload.json; sourceTree = "<group>"; };
 		1EF0321F251932DA0040DC65 /* Workload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workload.swift; sourceTree = "<group>"; };
@@ -429,6 +437,10 @@
 				98015CC824AFBC6D00E7772F /* Info.plist */,
 				7C56BDF924EDCF6D0039B2E7 /* OrderDetailTest.swift */,
 				7C56BDFB24EDD6720039B2E7 /* UtilsTest.swift */,
+				1E72B277251B9BEC009F56FC /* ChartTest.swift */,
+				1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */,
+				1E72B27D251B9C33009F56FC /* ComponetsTest.swift */,
+				1E72B27F251B9C46009F56FC /* CommentsTest.swift */,
 			);
 			path = OmicronTests;
 			sourceTree = "<group>";
@@ -881,10 +893,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */,
+				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
 				98015CC724AFBC6D00E7772F /* LoginTest.swift in Sources */,
+				1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */,
 				7C56BDFC24EDD6720039B2E7 /* UtilsTest.swift in Sources */,
 				7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */,
+				1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */,
 				7C56BDFA24EDCF6D0039B2E7 /* OrderDetailTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1053,7 +1069,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1075,7 +1091,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
