@@ -81,6 +81,7 @@ class InboxViewController: UIViewController {
             cell.startDateDescriptionLabel.text = element.startDate ?? ""
             cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
             cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+            cell.missingStockImage.isHidden = element.hasMissingStock
             cell.delegate = self
             return cell
             
