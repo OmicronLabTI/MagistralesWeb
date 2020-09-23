@@ -22,6 +22,7 @@ enum ApiService {
     case assingLots(lotsRequest: [BatchSelected])
     case askIfOrderCanBeFinalized(orderId: Int)
     case getComponents(data: ComponentRequest)
+    case getWorkload(data: WorkloadRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -61,6 +62,8 @@ extension ApiService: AuthorizedTargetType {
             return "pedidos/completedBatches/\(orderId)"
         case .getComponents:
             return "sapadapter/componentes"
+        case .getWorkload(let data):
+            return "/pedidos/qfb/workload"
         }
     }
     
@@ -68,7 +71,7 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login, .renew, .finishOrder:
             return .post
-        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized, .getComponents:
+        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized, .getComponents, .getWorkload:
             return .get
         case .deleteItemOfOrdenDetail, .changeStatusOrder, .assingLots:
             return .put
@@ -93,6 +96,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .getComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
+        case .getWorkload(let data):
+            return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         }
     }
     
@@ -168,6 +173,12 @@ extension ApiService: AuthorizedTargetType {
         
         case .getComponents:
             guard let url = Bundle.main.url(forResource: "getComponents", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getWorkload:
+            guard let url = Bundle.main.url(forResource: "workload", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

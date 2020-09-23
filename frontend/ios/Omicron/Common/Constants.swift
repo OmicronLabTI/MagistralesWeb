@@ -36,6 +36,7 @@ struct ViewControllerIdentifiers {
     static let cardCollectionViewCell = "CardCollectionViewCell"
     static let cardReuseIdentifier = "card"
     static let rootTableViewCell = "RootTableViewCell"
+    static let kpiCell = "KPICell"
     static let orderDetailViewController = "OrderDetailViewController"
     static let detailTableViewCell = "DetailTableViewCell"
     static let orderDetailFormViewController = "OrderDetailFormViewController"

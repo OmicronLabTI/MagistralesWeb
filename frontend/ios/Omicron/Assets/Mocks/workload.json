@@ -1,0 +1,22 @@
+{
+  "code": 200,
+  "userError": null,
+  "exceptionMessage": null,
+  "success": true,
+  "response": [
+    {
+      "user": "Vicente Cantu",
+      "totalPossibleAssign": 0,
+      "assigned": 2,
+      "processed": 1,
+      "pending": 2,
+      "finished": 0,
+      "finalized": 0,
+      "reassigned": 0,
+      "totalOrders": 1,
+      "totalFabOrders": 4,
+      "totalPieces": 5
+    }
+  ],
+  "comments": null
+}
