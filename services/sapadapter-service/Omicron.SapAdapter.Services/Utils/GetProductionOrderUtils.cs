@@ -104,6 +104,7 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 var item = (await sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
                 order.ProdName = item == null ? order.ProdName : item.LargeDescription;
+                order.HasMissingStock = item == null || item.OnHand == 0;
             }
 
             return listOrders;

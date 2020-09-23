@@ -18,7 +18,9 @@
         </div>
         <div class="table-toolbar-buttons">
 
-            <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument, ordenFabricacionId]">
+            <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
+                                                            ordenFabricacionId, oldDataFormulaDetail.code + ' ' + oldDataFormulaDetail.productDescription,
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0]">
             Lotes
             </button>
             <button mat-raised-button class="button-blue" (click)="openCustomList()">

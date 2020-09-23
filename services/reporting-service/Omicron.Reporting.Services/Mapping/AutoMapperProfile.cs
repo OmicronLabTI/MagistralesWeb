@@ -22,6 +22,8 @@ namespace Omicron.Reporting.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
+            this.CreateMap<ResultDto, ResultModel>();
+            this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<FileResultDto, FileResultModel>();
             this.CreateMap<FileResultModel, FileResultDto>();
             this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>();

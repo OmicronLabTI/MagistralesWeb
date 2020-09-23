@@ -16,7 +16,7 @@ import {
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {CancelOrderReq, IPedidoReq, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {CancelOrderReq, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
@@ -195,7 +195,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
     this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
-    this.isThereOrdersToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrders);
+    this.isThereOrdersToReassign =
+        this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
   }
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
@@ -239,7 +240,21 @@ export class PedidosComponent implements OnInit, OnDestroy {
   reassignOrders() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders,
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
-          FromToFilter.fromOrdersReassign).map(order => order.docNum)
+          FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
       , isFromReassign: true});
+  }
+
+  toSeeRecipes(docNum: number) {
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => this.onSuccessHttpGetRecipes(recipeByOrderRes)
+    , error => this.errorService.httpError(error));
+
+  }
+
+  onSuccessHttpGetRecipes(resultGetRecipes: IRecipesRes) {
+    if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
+      this.dataService.setMessageGeneralCallHttp({title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true});
+    } else {
+      resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe));
+    }
   }
 }
