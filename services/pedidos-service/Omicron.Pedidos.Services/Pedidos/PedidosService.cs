@@ -16,11 +16,13 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -37,6 +39,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IUsersService userService;
 
+        private readonly ISapFileService sapFileService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -44,12 +48,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService)
+        /// <param name="sapFileService">The sap file service.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
         }
 
         /// <summary>
@@ -210,6 +216,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
+            var listToGenPdf = new List<FinalizaGeneratePdfModel>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -271,6 +278,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.CloseDate = DateTime.Now.FormatedDate();
                         userOrder.Status = ServiceConstants.Finalizado;
 
+                        listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = orderToFinish.OrderId, FabOrderId = prodOrderId, UserOrderId = userOrder.Id });
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                     }
                 }
@@ -298,6 +306,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 success = successfuly.Distinct(),
                 failed = failed.Distinct(),
             };
+
+            // todo remove when deployed
+            listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = 60208, FabOrderId = 89581, UserOrderId = 2075 });
+
+            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, this.pedidosDao, this.sapAdapter, this.sapFileService);
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 

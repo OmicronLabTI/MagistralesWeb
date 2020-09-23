@@ -6,7 +6,7 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.BusinessModels
+namespace Omicron.Pedidos.Entities.Model
 {
     /// <summary>
     /// class for the orders recipes.

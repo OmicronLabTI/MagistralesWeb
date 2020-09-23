@@ -246,6 +246,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ConnectSapDiApi = "connect";
 
         /// <summary>
+        /// gets the recipes of a group of orders.
+        /// </summary>
+        public const string GetRecipes = "recipes/orders";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
@@ -269,6 +274,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// the route to get the users by ids.
         /// </summary>
         public const string GetUsersByOrdersById = "fabOrderId";
+
+        /// <summary>
+        /// creates the pdfs.
+        /// </summary>
+        public const string CreatePdf = "create/pdf";
 
         /// <summary>
         /// the id for qfb role.

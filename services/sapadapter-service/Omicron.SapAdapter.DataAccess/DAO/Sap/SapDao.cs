@@ -167,6 +167,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<List<OrderModel>> GetOrdersById(List<int> pedidoID)
+        {
+            var query = await this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
         /// gets the orders by product and item.
         /// </summary>
         /// <param name="pedidoId">the product id.</param>
