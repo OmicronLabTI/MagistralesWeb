@@ -18,6 +18,9 @@
             </span>
         </div>
       <div class="table-toolbar-buttons">
+          <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'" (click)="materialRequestDetail()">
+              Solicitar &nbsp;
+          </button>
         <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'" (click)="processOrdersDetail()">
           &nbsp; Planificar &nbsp;
         </button>

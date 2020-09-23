@@ -9,7 +9,7 @@ import {
   HttpServiceTOCall,
   HttpStatus,
   MODAL_FIND_ORDERS,
-  MODAL_NAMES
+  MODAL_NAMES, RouterPaths
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
@@ -23,6 +23,7 @@ import {CancelOrderReq, ParamsPedidos} from 'src/app/model/http/pedidos';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-faborders-list',
@@ -68,6 +69,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
+    private router: Router
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
     this.filterDataOrders.isFromOrders = false;
@@ -219,7 +221,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
   assignOrderIsolated() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId))
+      list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated)
       , isFromOrderIsolated: true});
   }
   private getButtonsOrdersIsolatedToUnLooked() {
@@ -249,4 +251,10 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       }
     }).afterClosed().subscribe(() => this.getOrders());
   }
+
+    materialRequestIsolatedOrder() {
+     this.router.navigate([RouterPaths.materialRequest], {
+       state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated)
+     });
+    }
 }

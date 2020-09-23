@@ -162,9 +162,14 @@ export const pathRoles = {
         'lotes',
         'login',
         'workLoad',
+        'materialRequest',
         '**'
     ]
 };
 export const CONST_PRODUCTIVITY = {
   titleTotal: 'total',
+};
+
+export const RouterPaths = {
+  materialRequest: 'materialRequest'
 };

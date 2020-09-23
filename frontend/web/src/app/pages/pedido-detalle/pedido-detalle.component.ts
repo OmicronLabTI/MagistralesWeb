@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
   ClassNames,
@@ -11,7 +11,8 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_NAMES
+  MODAL_NAMES,
+  RouterPaths
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
@@ -51,7 +52,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToReassign = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
-              private titleService: Title, private errorService: ErrorService) {
+              private titleService: Title, private errorService: ErrorService,
+              private router: Router) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -139,7 +141,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   openPlaceOrderDialog() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId)});
+      list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder)});
   }
 
   getButtonsToUnLooked() {
@@ -209,5 +211,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
     goToOrders(urlPath: string[]) {
       this.dataService.setPathUrl(urlPath);
+    }
+
+    materialRequestDetail() {
+        this.router.navigate([RouterPaths.materialRequest], {
+          state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder)
+        });
     }
 }

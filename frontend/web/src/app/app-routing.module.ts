@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GuardService } from './services/guard.service';
+import {RouterPaths} from './constants/const';
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
   {
     path: 'workLoad',
     loadChildren: () => import('./pages/work-load/work-load.module').then(m => m.WorkLoadModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: RouterPaths.materialRequest,
+    loadChildren: () => import('./pages/material-request/material-request.module').then(m => m.MaterialRequestModule),
     canActivate: [GuardService]
   },
   {

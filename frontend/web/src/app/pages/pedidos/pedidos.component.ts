@@ -6,13 +6,14 @@ import {
   ClassNames,
   CONST_NUMBER,
   CONST_STRING,
+  ConstOrders,
   ConstStatus,
   FromToFilter,
   HttpServiceTOCall,
   HttpStatus,
   MessageType,
-  ConstOrders,
   MODAL_NAMES,
+  RouterPaths,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -22,6 +23,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-pedidos',
@@ -51,12 +53,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToFinalize = false;
   isThereOrdersToReassign = false;
   pageIndex = 0;
+  isThereOrdersToRequest = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
     private errorService: ErrorService,
     private dialog: MatDialog,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.filterDataOrders.isFromOrders = true;
@@ -116,6 +120,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
         this.isThereOrdersToReassign = false;
+        this.isThereOrdersToRequest = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -186,7 +191,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.setQbfToPlace(
         {
           modalType: MODAL_NAMES.placeOrders,
-          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum)
+          list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
         });
   }
   getButtonsToUnLooked() {
@@ -256,5 +261,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
     } else {
       resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe));
     }
+  }
+
+  requestMaterial() {
+    this.router.navigate([RouterPaths.materialRequest], {
+      state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
+    });
   }
 }
