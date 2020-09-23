@@ -239,6 +239,10 @@
       <Project>{C7CCD836-3F30-4BC6-8034-16DE484D2A44}</Project>
       <Name>Omicron.SapFile.Log</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Omicron.SapFile.Services\Omicron.SapFile.Services.csproj">
+      <Project>{71299035-F66A-4331-ACC3-1C2FB02D0FC2}</Project>
+      <Name>Omicron.SapFile.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

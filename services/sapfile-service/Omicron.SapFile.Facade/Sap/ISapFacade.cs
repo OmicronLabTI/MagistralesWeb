@@ -8,11 +8,17 @@
 
 namespace Omicron.SapFile.Facade.Sap
 {
+    using Omicron.SapFile.Dtos.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     public interface ISapFacade
     {
-        
+        /// <summary>
+        /// Generates the pdfs.
+        /// </summary>
+        /// <param name="listGeneratePdf"></param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreatePdfs(List<FinalizaGeneratePdfDto> listGeneratePdf);
     }
 }

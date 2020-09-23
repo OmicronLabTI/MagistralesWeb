@@ -14,6 +14,7 @@ namespace Omicron.SapFile.Api.Configuration
     using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Facade.Sap;
     using Omicron.SapFile.Log;
+    using Omicron.SapFile.Services.SapFile;
     using Unity;    
 
     /// <summary>
@@ -36,10 +37,12 @@ namespace Omicron.SapFile.Api.Configuration
             {
                 cfg.CreateMap<ResultModel, ResultDto>();
                 cfg.CreateMap<ResultDto, ResultModel>();
+                cfg.CreateMap<FinalizaGeneratePdfDto, FinalizaGeneratePdfModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
-            container.RegisterType<ISapFacade, SapFacade>();            
+            container.RegisterType<ISapFacade, SapFacade>();
+            container.RegisterType<ISapFileService, SapFileService>();
             container.RegisterType<ILoggerProxy, LoggerProxy>();
 
             if (container == null)

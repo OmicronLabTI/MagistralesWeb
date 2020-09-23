@@ -48,6 +48,12 @@ namespace Omicron.Pedidos.Services.SapFile
 
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString);
+                }
+
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
             }
 

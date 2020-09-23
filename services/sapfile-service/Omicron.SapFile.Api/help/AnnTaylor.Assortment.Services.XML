@@ -171,6 +171,13 @@
             </summary>
             <param name="sapFacade">the facade.</param>
         </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.CreatePdfs(System.Collections.Generic.List{Omicron.SapFile.Dtos.Models.FinalizaGeneratePdfDto})">
+            <summary>
+            Method to send to generate the pdfs.
+            </summary>
+            <param name="listToGenerate">the list to generate.</param>
+            <returns>the data.</returns>
+        </member>
         <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.Get">
             <summary>
             the ping pong.

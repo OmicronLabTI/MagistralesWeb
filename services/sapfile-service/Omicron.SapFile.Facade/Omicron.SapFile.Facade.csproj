@@ -71,6 +71,10 @@
     <Compile Include="Sap\SapFacade.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Omicron.SapFile.Dtos\Omicron.SapFile.Dtos.csproj">
+      <Project>{5DE3EE7C-46BC-42D0-B974-E4475B3979C4}</Project>
+      <Name>Omicron.SapFile.Dtos</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Omicron.SapFile.Entities\Omicron.SapFile.Entities.csproj">
       <Project>{34b8298c-a3ce-49c1-a9b4-e991a897fc5e}</Project>
       <Name>Omicron.SapFile.Entities</Name>

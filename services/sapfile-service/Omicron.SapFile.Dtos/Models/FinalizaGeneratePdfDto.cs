@@ -1,24 +1,20 @@
 ﻿// <summary>
-// <copyright file="FinalizaGeneratePdfModel.cs" company="Axity">
+// <copyright file="FinalizaGeneratePdfDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Entities.Model.Db
+namespace Omicron.SapFile.Dtos.Models
 {
-    /// <summary>
-    /// Model to send to generate pdf.
-    /// </summary>
-    public class FinalizaGeneratePdfModel
-    {
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public int UserOrderId { get; set; }
+    using System;
 
+    /// <summary>
+    /// Class to generate Pdfs.
+    /// </summary>
+    public class FinalizaGeneratePdfDto
+    {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
@@ -41,7 +37,7 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -60,5 +56,17 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// </summary>
         /// <value>The code.</value>
         public string RecipeRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string OrderPdfRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string FabOrderPdfRoute { get; set; }
     }
 }

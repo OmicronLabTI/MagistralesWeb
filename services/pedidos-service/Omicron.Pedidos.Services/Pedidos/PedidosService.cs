@@ -308,9 +308,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             };
 
             // todo remove when deployed
-            listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = 60208, FabOrderId = 89581, UserOrderId = 2075 });
+            listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = 60208, FabOrderId = 89581, UserOrderId = 2075, QfbName = "6a99d277-634c-4529-a565-d5fa0e9a6dea" });
 
-            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, this.pedidosDao, this.sapAdapter, this.sapFileService);
+            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, this.pedidosDao, this.sapAdapter, this.sapFileService, this.userService);
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 

@@ -9,7 +9,6 @@ namespace Omicron.SapFile.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using AutoMapper;
     using Omicron.SapFile.Dtos.Models;
     using Omicron.SapFile.Facade.Sap;
     
@@ -31,6 +30,19 @@ namespace Omicron.SapFile.Api.Controllers
         public SapFileController(ISapFacade sapFacade)
         {
             this.sapFacade = sapFacade;
+        }
+
+        /// <summary>
+        /// Method to send to generate the pdfs.
+        /// </summary>
+        /// <param name="listToGenerate">the list to generate.</param>
+        /// <returns>the data.</returns>
+        [HttpPost]
+        [Route("create/pdf")]
+        public async Task<IHttpActionResult> CreatePdfs(List<FinalizaGeneratePdfDto> listToGenerate)
+        {
+            var response = await this.sapFacade.CreatePdfs(listToGenerate);
+            return this.Ok(response);
         }
 
         /// <summary>
