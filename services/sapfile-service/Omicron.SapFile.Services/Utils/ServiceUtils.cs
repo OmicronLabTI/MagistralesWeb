@@ -5,11 +5,10 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
-
-using Omicron.SapFile.Entities.Models;
-
 namespace Omicron.SapFile.Services.Utils
 {
+    using Omicron.SapFile.Entities.Models;
+    
     /// <summary>
     /// The class for the services.
     /// </summary>
