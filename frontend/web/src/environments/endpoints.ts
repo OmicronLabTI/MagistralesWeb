@@ -46,6 +46,9 @@ export const Endpoints = {
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
     getWorkLoad: `${environment.baseUrl}/api/pedidos/qfb/workload`,
+  },
+  materialRequest: {
+    getPreMaterialRequest: `${environment.baseUrl}/api/warehouses/prerequest/rawmaterial`
   }
 };
 

@@ -215,7 +215,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
     materialRequestDetail() {
         this.router.navigate([RouterPaths.materialRequest], {
-          state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder)
+          state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder),
+          replaceUrl: false
         });
     }
 }

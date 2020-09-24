@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
+import {MatTableDataSource} from '@angular/material/table';
+import {MaterialComponent} from '../../model/http/materialReques';
+import {MaterialRequestService} from '../../services/material-request.service';
+import {CONST_STRING} from '../../constants/const';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-material-request',
@@ -11,12 +16,25 @@ export class MaterialRequestComponent implements OnInit {
   displayedColumns: string[] = [
     'code', 'component', 'requestQuantity', 'unit'
   ];
-  constructor(private router: Router) {
+  dataSource = new MatTableDataSource<MaterialComponent>();
+  comments = CONST_STRING.empty;
+  isOrder = false;
+  constructor(private router: Router,
+              private materialReService: MaterialRequestService,
+              private errorService: ErrorService) {
     this.dataToRequest = this.router.getCurrentNavigation().extras.state;
-    console.log('dataRequest2: ', this.dataToRequest);
+    this.isOrder = this.router.getCurrentNavigation().extras.replaceUrl;
   }
 
   ngOnInit() {
+    this.getPreMaterialRequestH();
+  }
+  getPreMaterialRequestH() {
+    this.materialReService.getPreMaterialRequest(this.dataToRequest, this.isOrder).subscribe( resultMaterialRequest => {
+      console.log('resultRequest: ', resultMaterialRequest)
+      this.dataSource.data = resultMaterialRequest.response.orderedProducts;
+      console.log('dataSource: ', this.dataSource.data[0].description)
+    }, error => this.errorService.httpError(error));
   }
 
     addNewComponent() {
