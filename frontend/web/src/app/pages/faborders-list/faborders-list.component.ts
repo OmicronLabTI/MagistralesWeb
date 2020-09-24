@@ -253,9 +253,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
     materialRequestIsolatedOrder() {
-     this.router.navigate([RouterPaths.materialRequest], {
-       state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated),
-       replaceUrl: false
-     });
+     this.router.navigate([RouterPaths.materialRequest,
+                      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
+                      , CONST_NUMBER.zero.toString()]);
     }
 }

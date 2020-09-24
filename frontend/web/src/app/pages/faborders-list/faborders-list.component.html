@@ -34,7 +34,7 @@
             <button mat-raised-button class="button-blue"
                     (click)="createOrderIsolated()" >Crear orden</button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="materialRequestIsolatedOrder()" >
-                Solicitar
+                Solicitud de insumos
             </button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
             Asignar

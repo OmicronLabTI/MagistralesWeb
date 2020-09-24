@@ -21,6 +21,7 @@ export class MaterialComponent {
     requestId: number;
     productId: string;
     description: string;
-    requestQuantity: number;
+    requestQuantity: any;
     unit: string;
+    isWithError?: boolean;
 }

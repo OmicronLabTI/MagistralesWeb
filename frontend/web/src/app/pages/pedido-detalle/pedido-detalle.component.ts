@@ -5,7 +5,7 @@ import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
-  ClassNames,
+  ClassNames, CONST_NUMBER,
   CONST_STRING,
   ConstStatus,
   FromToFilter,
@@ -214,9 +214,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
 
     materialRequestDetail() {
-        this.router.navigate([RouterPaths.materialRequest], {
-          state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder),
-          replaceUrl: false
-        });
+        this.router.navigate([RouterPaths.materialRequest,
+          this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString(),
+          CONST_NUMBER.zero.toString()]);
     }
 }
