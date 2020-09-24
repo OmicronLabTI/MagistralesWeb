@@ -75,10 +75,14 @@ namespace Omicron.SapFile.Services.SapFile
                     }
 
                     order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                });
+
+                finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
+                {
                     this.CreateFabOrderReportWithSignatures(order, true);
                 });
 
-                var groupedOrders = finalizaGeneratePdfs.Where(x => x.OrderId != 0).GroupBy(x => x.OrderId);
+                var groupedOrders = finalizaGeneratePdfs.Where(order => order.OrderId != 0).GroupBy(order => order.OrderId);
                 groupedOrders.ToList().ForEach(x => this.CreateSalesOrderReportWithProductionOrders(x.ToList()));
             }
             catch(Exception ex)
