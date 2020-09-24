@@ -765,3 +765,17 @@ a.breadcrumblink:hover{
   display: flex;
   justify-content: center;
 }
+.with-error {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+}
+.with-error-start {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+  border-left: 2px solid #e85c79 !important;
+}
+.with-error-last {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+  border-right: 2px solid #e85c79 !important;
+}

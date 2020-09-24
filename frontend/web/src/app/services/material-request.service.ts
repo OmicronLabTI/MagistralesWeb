@@ -11,6 +11,6 @@ export class MaterialRequestService {
   constructor(private consumeService: ConsumeService) { }
   getPreMaterialRequest(ordersId: any, isOrder: boolean) {
     return this.consumeService.httpGet<IMaterialRequestRes>(`${Endpoints.materialRequest.getPreMaterialRequest}?${
-      isOrder ? 'salesOrders' : 'productionOrders'}=${ordersId.toString()}`);
+      isOrder ? 'salesOrders' : 'productionOrders'}=${ordersId}`);
   }
 }

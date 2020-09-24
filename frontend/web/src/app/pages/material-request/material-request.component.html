@@ -21,7 +21,7 @@
             <button mat-raised-button class="button-blue" (click)="signUser()" >
                 Firma del solicitante
             </button>
-            <button mat-raised-button class="button-blue" (click)="sendRequest()" >
+            <button mat-raised-button [disabled]="!isCorrectData" [ngClass]="isCorrectData ? 'button-blue' : 'disable-button'" (click)="sendRequest()" >
                 Enviar a almacén
             </button>
             <button mat-raised-button class="button-blue" (click)="cancelRequest()" >
@@ -37,44 +37,61 @@
 
                     <ng-container matColumnDef="code">
                         <th mat-header-cell *matHeaderCellDef class="centered">CÓDIGO</th>
-                        <td mat-cell *matCellDef="let element; let i = index" class="color-text-intables tdcell tdcell-center">
+                        <td mat-cell *matCellDef="let element; let i = index"
+                            [ngClass]="element.isWithError ? 'with-error-start' : ''"
+                            class="color-text-intables tdcell tdcell-center">
                             <mat-form-field appearance="outline">
                                 <input matInput type="text"
                                        class="color-number" placeholder="Código"
-                                       [(ngModel)]="element.productId">
+                                       [(ngModel)]="element.productId"
+                                       (ngModelChange)="onProductIdChange($event, i)">
                             </mat-form-field>
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="component">
                         <th mat-header-cell *matHeaderCellDef class="centered"> DESCRIPCIÓN</th>
-                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdcell-center td-custom numero">
+                        <td mat-cell *matCellDef="let element;let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error' : ''"
+                            class="color-text-intables tdcell tdcell-center td-custom numero">
                             <mat-form-field appearance="outline" class="input-material-custom">
                                 <input matInput type="text"
                                        class="color-number " placeholder="Descripción"
-                                       [(ngModel)]="element.description">
+                                       [(ngModel)]="element.description"
+                                       (ngModelChange)="onDescriptionChange($event, i)">
                             </mat-form-field>
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="unit">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> UNIDAD </th>
-                        <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide cantbase">
+                        <td mat-cell *matCellDef="let element; let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error' : ''"
+                            class="color-text-intables tdcell tdcell-center mobile-hide cantbase">
                             <mat-form-field appearance="outline">
                                 <input matInput type="text"
                                        class="color-number" placeholder="Unidad"
-                                       [(ngModel)]="element.unit">
+                                       [(ngModel)]="element.unit"
+                                       (ngModelChange)="onUnitChange($event, i)">
                             </mat-form-field>
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="requestQuantity">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CTD. REQUERIDA </th>
-                        <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
+                        <td mat-cell *matCellDef="let element;let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error-last' : ''"
+                            class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
-                                <input matInput type="text"
+                                <input
+                                       #quantityField
+                                        matInput
+                                       type="text"
                                        class="color-number" placeholder="Ctd. requerida"
-                                       [(ngModel)]="element.requestQuantity">
+                                       maxlength="15"
+                                       [(ngModel)]="element.requestQuantity"
+                                       (ngModelChange)="onRequestQuantityChange($event, i)"
+                                        >
                             </mat-form-field>
                         </td>
                     </ng-container>

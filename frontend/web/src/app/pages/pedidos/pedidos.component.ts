@@ -264,9 +264,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   requestMaterial() {
-    this.router.navigate([RouterPaths.materialRequest], {
-      state: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders),
-      replaceUrl: true
-    });
+    this.router.navigate([RouterPaths.materialRequest,
+      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString(),
+      CONST_NUMBER.one]);
   }
 }

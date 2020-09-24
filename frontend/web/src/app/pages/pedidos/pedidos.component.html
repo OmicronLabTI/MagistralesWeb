@@ -30,7 +30,7 @@
         <div class="table-toolbar-buttons">
             <button [disabled]="!isThereOrdersToPlace" mat-raised-button
                     [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'"
-                    (click)="requestMaterial()">Solicitar</button>
+                    (click)="requestMaterial()">Solicitud de insumos</button>
                 <button [disabled]="!isThereOrdersToPlan" mat-raised-button
                         [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"
                         (click)="processOrdersService()">Planificar</button>
