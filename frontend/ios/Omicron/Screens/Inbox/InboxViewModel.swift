@@ -124,7 +124,9 @@ class  InboxViewModel {
         var sectionModels:[SectionModel<String, Order>] = []
         
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
-        let groupBySimilarity = data.filter{$0.value.count > 1}
+        let groupBySimilarity = data
+            .filter{$0.value.count > 1}
+            .sorted { ($0.key ?? "").localizedStandardCompare($1.key ?? "") == .orderedAscending}
         if (groupBySimilarity.count > 0) {
             let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
                 return SectionModel(model: "\(titleForOrdersWithSimilarity) \(orders.key ?? "")", items: self.sortByBaseBocumentAscending(orders: orders.value))
