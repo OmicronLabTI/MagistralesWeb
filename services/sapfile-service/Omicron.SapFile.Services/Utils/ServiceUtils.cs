@@ -7,8 +7,10 @@
 // </summary>
 namespace Omicron.SapFile.Services.Utils
 {
+    using System;
+    using System.IO;
     using Omicron.SapFile.Entities.Models;
-    
+
     /// <summary>
     /// The class for the services.
     /// </summary>
@@ -33,6 +35,46 @@ namespace Omicron.SapFile.Services.Utils
                 ExceptionMessage = exceptionMessage,
                 Code = code
             };
+        }
+
+        /// <summary>
+        /// Return a bin directory.
+        /// </summary>
+        /// <returns>Bin directory.</returns>
+        public static string GetBinDirectory()
+        {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var root = Directory.GetCurrentDirectory();
+            if (root.EndsWith("\\Debug"))
+            {
+                return root;
+            }
+            return Path.Combine(Directory.GetCurrentDirectory(), "bin");
+        }
+
+        /// <summary>
+        /// Copy file with validations.
+        /// </summary>
+        /// <param name="src">Source.</param>
+        /// <param name="dest">Destination.</param>
+        public static void CopyFile(string src, string dest)
+        {
+            if (File.Exists(src))
+            {
+                var destPath = Path.GetDirectoryName(dest);
+
+                if (!Directory.Exists(destPath))
+                {
+                    Directory.CreateDirectory(destPath);
+                }
+
+                if (File.Exists(dest))
+                {
+                    File.Delete(dest);
+                }
+
+                File.Copy(src, dest);
+            }
         }
     }
 }

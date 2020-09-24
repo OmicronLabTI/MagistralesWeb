@@ -9,6 +9,7 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
 {
     using System.IO;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Services.ReportBuilder;
 
     /// <summary>
@@ -24,7 +25,13 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
         public void BuildReport()
         {
             // arrange
-            var reportBuilder = new ProductionOrderSignaturesReportBuilder(null);
+
+            var order = new FinalizaGeneratePdfModel();
+            order.QfbName = "Nombre del QFB";
+            order.QfbSignature= File.ReadAllBytes(@"TestFiles/signature.png");
+            order.TechnicalSignature = File.ReadAllBytes(@"TestFiles/signature.png");
+
+            var reportBuilder = new ProductionOrderSignaturesReportBuilder(order);
             var outpufFilePath = @"signatures.pdf";
 
             // act

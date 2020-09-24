@@ -9,6 +9,8 @@ namespace Omicron.SapFile.Services.ReportBuilder
 {
     using System.Drawing;
     using System.IO;
+    using Omicron.SapFile.Entities.Models;
+    using Omicron.SapFile.Services.Utils;
     using Spire.Doc;
     using Spire.Doc.Documents;
 
@@ -20,20 +22,16 @@ namespace Omicron.SapFile.Services.ReportBuilder
         private const string STYLEBLACKTEXT = "BlackText";
         private const string BASEDOCUMENT = @"ReportBuilder/Templates/BASE_PO_SIGNATURES.docx";
         private readonly string rootDir;
-        private readonly byte[] Signature1;
-        private readonly byte[] Signature2;
-        private readonly string Name1;
+        private readonly FinalizaGeneratePdfModel order;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrderSignaturesReportBuilder"/> class.
         /// </summary>
-        /// <param name="request">The request.</param>
-        public ProductionOrderSignaturesReportBuilder(object request)
+        /// <param name="order">The order.</param>
+        public ProductionOrderSignaturesReportBuilder(FinalizaGeneratePdfModel order)
         {
-            this.rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            this.Name1 = "Nombre del Quimico";
-            this.Signature1 = File.ReadAllBytes(@"ReportBuilder/Templates/signature.png");
-            this.Signature2 = File.ReadAllBytes(@"ReportBuilder/Templates/signature.png");
+            this.rootDir = ServiceUtils.GetBinDirectory();
+            this.order = order;
         }
 
         /// <summary>
@@ -88,7 +86,7 @@ namespace Omicron.SapFile.Services.ReportBuilder
         {
             cell.Paragraphs[0].ChildObjects.Clear();
 
-            if (imageBytes == null)
+            if (imageBytes == null || imageBytes.Length.Equals(0))
             {
                 return;
             }
@@ -116,10 +114,10 @@ namespace Omicron.SapFile.Services.ReportBuilder
             var dataRowName = table.Rows[1];
 
             // QFB signature
-            AddSignaturePicture(dataRowSignatures.Cells[0], this.Signature1);
+            AddSignaturePicture(dataRowSignatures.Cells[0], this.order.QfbSignature);
 
             // Technical signature
-            AddSignaturePicture(dataRowSignatures.Cells[2], this.Signature2);
+            AddSignaturePicture(dataRowSignatures.Cells[2], this.order.TechnicalSignature);
 
             // QFB name
             dataRowName.Cells[0].ChildObjects.Clear();
@@ -127,7 +125,7 @@ namespace Omicron.SapFile.Services.ReportBuilder
             
             Paragraph cellContent = dataRowName.Cells[0].AddParagraph();
             cellContent.Format.HorizontalAlignment = HorizontalAlignment.Center;
-            cellContent.AppendText(Name1);
+            cellContent.AppendText(this.order.QfbName);
             cellContent.ApplyStyle(STYLEBLACKTEXT);
         }
 

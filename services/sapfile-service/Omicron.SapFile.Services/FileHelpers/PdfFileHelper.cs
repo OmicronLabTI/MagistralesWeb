@@ -22,8 +22,9 @@ namespace Omicron.SapFile.Services.FileHelpers
         /// Add page number to file.
         /// </summary>
         /// <param name="filePath">File path.</param>
-        public static void AddPageNumber(string filePath)
+        public static string AddPageNumber(string filePath)
         {
+            string outputPath = SetFilePostFix(filePath, "paged");
             using (MemoryStream stream = new MemoryStream())
             {
                 PdfReader reader = new PdfReader(filePath);
@@ -43,9 +44,9 @@ namespace Omicron.SapFile.Services.FileHelpers
                     }
                 }
 
-                File.WriteAllBytes(SetFilePostFix(filePath, "paged"), stream.ToArray());
+                File.WriteAllBytes(outputPath, stream.ToArray());
             }
-
+            return outputPath;
         }
 
         /// <summary>

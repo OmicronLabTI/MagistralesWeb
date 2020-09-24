@@ -12,13 +12,15 @@ namespace Omicron.SapFile.Services.SapFile
     using CrystalDecisions.Shared;
     using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Log;
+    using Omicron.SapFile.Services.FileHelpers;
+    using Omicron.SapFile.Services.ReportBuilder;
+    using Omicron.SapFile.Services.Utils;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
-    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -36,6 +38,10 @@ namespace Omicron.SapFile.Services.SapFile
 
         private readonly string DataBase;
 
+        private readonly string ProductionDirectoryPath;
+
+        private readonly string TemporalDirectoryPath;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFileService"/> class.
         /// </summary>
@@ -46,6 +52,8 @@ namespace Omicron.SapFile.Services.SapFile
             this.DataBase = ConfigurationManager.AppSettings["SapDb"];
             this.User = ConfigurationManager.AppSettings["Usuario"];
             this.Pwd = ConfigurationManager.AppSettings["UserPwd"];
+            this.ProductionDirectoryPath = ConfigurationManager.AppSettings["ProductionFiles"];
+            this.TemporalDirectoryPath = ConfigurationManager.AppSettings["PdfCreated"];
         }
 
         /// <summary>
@@ -67,11 +75,16 @@ namespace Omicron.SapFile.Services.SapFile
                     }
 
                     order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                    this.CreateFabOrderReportWithSignatures(order, true);
                 });
+
+                var groupedOrders = finalizaGeneratePdfs.Where(x => x.OrderId != 0).GroupBy(x => x.OrderId);
+                groupedOrders.ToList().ForEach(x => this.CreateSalesOrderReportWithProductionOrders(x.ToList()));
             }
             catch(Exception ex)
             {
-                return new ResultModel();
+                this._loggerProxy.Error(ex.Message, ex);
+                return new ResultModel() { Success = false, ExceptionMessage = ex.StackTrace };
             }
 
             //To do Send to method to concatenate.
@@ -153,6 +166,76 @@ namespace Omicron.SapFile.Services.SapFile
             report.Export();
             report.Close();
             report.Dispose();
+        }
+
+        /// <summary>
+        /// Create report for fabricacion order with signatures.
+        /// </summary>
+        /// <param name="order">the order.</param>
+        /// <param name="finalReport">flag for final report (pagen and copy to production files).</param>
+        /// <returns>the file path.</returns>
+        private string CreateFabOrderReportWithSignatures(FinalizaGeneratePdfModel order, bool finalReport)
+        {
+            var signaturesFilePath = Path.Combine(TemporalDirectoryPath, $"{order.FabOrderId}_op_signatures.pdf");
+            var mergedFilePath = Path.Combine(TemporalDirectoryPath, $"{order.FabOrderId}_op_merged.pdf");
+
+            var reportBuilder = new ProductionOrderSignaturesReportBuilder(order);
+            reportBuilder.BuildReport(signaturesFilePath);
+
+            var filePaths = new List<string> { order.FabOrderPdfRoute, signaturesFilePath };
+            filePaths = filePaths.Where(x => File.Exists(x)).ToList();
+
+            PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
+
+            if (finalReport)
+            {
+                var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
+                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"ITEMCODE_{order.FabOrderId}.pdf");
+            }
+            return mergedFilePath;
+        }
+
+        /// <summary>
+        /// Create report for sales order with production orders.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <returns>the file path.</returns>
+        private string CreateSalesOrderReportWithProductionOrders(List<FinalizaGeneratePdfModel> orders)
+        {
+            var first = orders.First();
+            var recipeRoute = orders.Select(x => x.RecipeRoute).FirstOrDefault(x => !string.IsNullOrEmpty(x));
+            var orderSapPdf = orders.Select(x => x.OrderPdfRoute).FirstOrDefault(x => !string.IsNullOrEmpty(x));
+            var mergedFilePath = Path.Combine(TemporalDirectoryPath, $"{first.OrderId}_ov_merged.pdf");
+            orders = orders.OrderBy(x => x.FabOrderId).ToList();
+
+            var filePaths = new List<string>() { orderSapPdf };
+            orders.ForEach(x =>
+            {
+                filePaths.Add(this.CreateFabOrderReportWithSignatures(x, false));
+            });
+            filePaths.Add(recipeRoute);
+            filePaths = filePaths.Where(x => File.Exists(x)).ToList();
+
+            PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
+            var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
+
+            return this.CopyFileToProductionFirectory(pagedFilePath, first.CreateDate, $"{first.OrderId}_MEDICO.pdf");
+        }
+
+        /// <summary>
+        /// Copy file to production directory.
+        /// </summary>
+        /// <param name="src">Source file path.</param>
+        /// <param name="datetime">Date to format directory name.</param>
+        /// <param name="fileName">File name.</param>
+        /// <returns>Final file path.</returns>
+        private string CopyFileToProductionFirectory(string src, DateTime datetime, string fileName)
+        {
+            var directoryName = datetime.ToString("MMMMyyyy", CultureInfo.GetCultureInfo("es-MX"));
+            directoryName = char.ToUpper(directoryName[0]) + directoryName.Substring(1);
+            var finalPath = Path.Combine(this.ProductionDirectoryPath, $@"{directoryName}\{fileName}");
+            ServiceUtils.CopyFile(src, finalPath);
+            return finalPath;
         }
     }
 }

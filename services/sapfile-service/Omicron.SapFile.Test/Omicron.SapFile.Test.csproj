@@ -100,10 +100,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Omicron.SapFile.Entities\Omicron.SapFile.Entities.csproj">
+      <Project>{34B8298C-A3CE-49C1-A9B4-E991A897FC5E}</Project>
+      <Name>Omicron.SapFile.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Omicron.SapFile.Services\Omicron.SapFile.Services.csproj">
       <Project>{71299035-F66A-4331-ACC3-1C2FB02D0FC2}</Project>
       <Name>Omicron.SapFile.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\signature.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
