@@ -15,6 +15,7 @@ namespace Omicron.SapFile.Services.SapFile
     using Omicron.SapFile.Services.FileHelpers;
     using Omicron.SapFile.Services.ReportBuilder;
     using Omicron.SapFile.Services.Utils;
+    using Org.BouncyCastle.Asn1.Esf;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
@@ -63,21 +64,30 @@ namespace Omicron.SapFile.Services.SapFile
         /// <returns>the data.</returns>
         public async Task<ResultModel> CreatePdfs(List<FinalizaGeneratePdfModel> finalizaGeneratePdfs)
         {
+            var dictResult = new Dictionary<string, string>();
             try
             {
                 var dictOrdersCreated = new Dictionary<int, int>();
                 finalizaGeneratePdfs.ForEach(order =>
                 {
-                    if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
+                    try
                     {
-                        order.OrderPdfRoute = this.CreateOrderReport(order.OrderId);
-                        dictOrdersCreated.Add(order.OrderId, order.OrderId);
-                    }
+                        if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
+                        {
+                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId);
+                            dictOrdersCreated.Add(order.OrderId, order.OrderId);
+                        }
 
-                    if(order.FabOrderId != 0)
-                    {
-                        order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                        if (order.FabOrderId != 0)
+                        {
+                            order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                        }
                     }
+                    catch(Exception ex)
+                    {
+                        this._loggerProxy.Error(ex.Message, ex);
+                        dictResult.Add($"{order.OrderId}-{order.FabOrderId}", "ErrorCreatePdf");
+                    }                    
                 });
 
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
@@ -95,10 +105,11 @@ namespace Omicron.SapFile.Services.SapFile
             catch(Exception ex)
             {
                 this._loggerProxy.Error(ex.Message, ex);
-                return ServiceUtils.CreateResult(true, 200, null, false, ex.StackTrace);
+                dictResult.Add("Error Procesar Pdf - Error Procesar Pdf", "ErrorCreatePdf");
+                return ServiceUtils.CreateResult(true, 200, null, dictResult, ex.StackTrace);
             }
 
-            return ServiceUtils.CreateResult(true, 200, null, true, null);
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
 
         /// <summary>

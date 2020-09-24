@@ -12,7 +12,6 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore.Storage;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
@@ -36,8 +35,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapFileService">the sap file service.</param>
         /// <param name="usersService">the user service.</param>
+        /// <param name="onlyFinalized">if only applies to finalized.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> CreateModelGeneratePdf(List<int> ordersId, List<int> fabOrdersId, ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService)
+        public static async Task<ResultModel> CreateModelGeneratePdf(List<int> ordersId, List<int> fabOrdersId, ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, bool onlyFinalized)
         {
             var listOrdersWithDetail = new List<OrderWithDetailModel>();
             var listFabOrders = new List<FabricacionOrderModel>();
@@ -50,6 +50,7 @@ namespace Omicron.Pedidos.Services.Utils
                 listOrdersWithDetail = await GetDetails(ordersId, sapAdapter, ServiceConstants.GetOrderWithDetail);
                 var listIdString = ordersId.Select(x => x.ToString()).ToList();
                 var userSaleOrders = (await pedidosDao.GetUserOrderBySaleOrder(listIdString)).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
+                userSaleOrders = onlyFinalized ? userSaleOrders.Where(x => x.Status == ServiceConstants.Finalizado).ToList() : userSaleOrders;
                 listUserOrders.AddRange(userSaleOrders);
                 recipes = await GetRecipes(ordersId, sapAdapter, ServiceConstants.GetRecipes);
             }
@@ -105,7 +106,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 foreach (var detail in order.Detalle.Where(x => x.OrdenFabricacionId != 0).ToList())
                 {
-                    var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(detail.OrdenFabricacionId.ToString()));
+                    var userOrder = userOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).FirstOrDefault(x => x.Productionorderid.Equals(detail.OrdenFabricacionId.ToString()));
                     userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
                     var signaturesByOrder = signatures.FirstOrDefault(x => x.UserOrderId == userOrder.Id);
                     var user = users.FirstOrDefault(x => x.Id.Equals(userOrder.Userid));
