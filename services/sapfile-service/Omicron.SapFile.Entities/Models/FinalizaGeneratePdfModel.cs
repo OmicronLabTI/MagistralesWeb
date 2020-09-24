@@ -37,7 +37,7 @@ namespace Omicron.SapFile.Entities.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime CreateDate { get; set; }
+        public string CreateDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -73,7 +73,7 @@ namespace Omicron.SapFile.Entities.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime SaleOrderCreateDate { get; set; }
+        public string SaleOrderCreateDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

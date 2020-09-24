@@ -22,6 +22,7 @@ namespace Omicron.SapFile.Services.SapFile
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -211,7 +212,9 @@ namespace Omicron.SapFile.Services.SapFile
             if (finalReport)
             {
                 var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
-                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
+                var dateArray = order.CreateDate.Split('/');
+                var createDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
+                return this.CopyFileToProductionFirectory(pagedFilePath, createDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
             }
             return mergedFilePath;
         }
@@ -240,7 +243,9 @@ namespace Omicron.SapFile.Services.SapFile
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
             var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
 
-            return this.CopyFileToProductionFirectory(pagedFilePath, first.SaleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");
+            var dateArray = first.SaleOrderCreateDate.Split('/');
+            var saleOrderCreateDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
+            return this.CopyFileToProductionFirectory(pagedFilePath, saleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");
         }
 
         /// <summary>
