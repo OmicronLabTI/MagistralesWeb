@@ -77,5 +77,21 @@ class BatchesTest: XCTestCase {
         // Then
         XCTAssertFalse(result)
     }
+    
+    func testFinishOrderDidTap() -> Void {
+        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext:{ message in
+            XCTAssertTrue(message == "¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testAddLotDidTap() -> Void {
+        var productSelected = BehaviorSubject<Lots?>(value: nil)
+        var availableSelected = BehaviorSubject<LotsAvailable?>(value: nil)
+        
+        let inputs = Observable.combineLatest(productSelected, availableSelected)
+        
+        
+        
+    }
 }
 
