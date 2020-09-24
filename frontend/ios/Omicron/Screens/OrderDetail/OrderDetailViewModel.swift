@@ -38,7 +38,7 @@ class OrderDetailViewModel {
     var sqfbSignature = ""
     var technicalSignature = ""
     var endRefreshing = PublishSubject<Void>()
-    var needsRefresh = false
+    var needsRefresh = true
     
     @Injected var rootViewModel: RootViewModel
     
