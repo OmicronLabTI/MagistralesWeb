@@ -5,6 +5,8 @@ import {MaterialComponent} from '../../model/http/materialReques';
 import {MaterialRequestService} from '../../services/material-request.service';
 import {CONST_STRING} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
+import {MatDialog} from '@angular/material';
+import { RequestSignatureDialogComponent } from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
 
 @Component({
   selector: 'app-material-request',
@@ -20,6 +22,7 @@ export class MaterialRequestComponent implements OnInit {
   comments = CONST_STRING.empty;
   isOrder = false;
   constructor(private router: Router,
+              private dialog: MatDialog,
               private materialReService: MaterialRequestService,
               private errorService: ErrorService) {
     this.dataToRequest = this.router.getCurrentNavigation().extras.state;
@@ -42,7 +45,12 @@ export class MaterialRequestComponent implements OnInit {
     }
 
   signUser() {
-    console.log('signingUser')
+    this.dialog.open(RequestSignatureDialogComponent, { panelClass: 'custom-dialog-container' })
+      .afterClosed().subscribe(result => {
+        if (result) {
+          console.log('Set signature.. ', result);
+        }
+      });
   }
 
   sendRequest() {
