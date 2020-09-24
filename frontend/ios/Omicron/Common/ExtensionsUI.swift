@@ -14,7 +14,7 @@ extension UIView {
         let img = UIImageView(image: UIImage(named: "arrowDown"))
         let size = CGFloat(size)
         img.tag = Constants.Tags.moreIndicator.rawValue
-        img.frame = CGRect(x: frame.size.width / 2, y: frame.size.height - size, width: size, height: size)
+        img.frame = CGRect(x: (frame.size.width / 2) - (size / 2), y: frame.size.height - size, width: size, height: size)
         self.addSubview(img)
     }
     
