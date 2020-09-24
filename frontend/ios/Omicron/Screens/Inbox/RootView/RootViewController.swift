@@ -29,6 +29,8 @@ class RootViewController: UIViewController {
     
     let disposeBag = DisposeBag()
     
+    private var lastRow = IndexPath(row: 0, section: 0)
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,6 +113,11 @@ class RootViewController: UIViewController {
             guard let self = self else { return }
             self.inboxViewModel.setSelection(section: data)
         }).disposed(by: disposeBag)
+        
+        viewTable.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
+            guard let self = self else { return }
+            self.lastRow = indexPath
+        }).disposed(by: disposeBag)
 
         viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
         
@@ -138,22 +145,28 @@ class RootViewController: UIViewController {
         self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
         
         self.rootViewModel.dataFilter.withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
-            let selection = lastRow ?? IndexPath(row: 0, section: 0)
+            guard let self = self else { return }
+            self.lastRow = lastRow ?? IndexPath(row: 0, section: 0)
             if data == nil {
-                self?.viewTable.alpha = 1.0
-                self?.viewTable.isUserInteractionEnabled = true
-                guard let section = self?.rootViewModel.sections[selection.row] else { return }
-                self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
-                self?.inboxViewModel.setSelection(section: section)
-                self?.inboxViewModel.hideGroupingButtons.onNext(false)
+                self.viewTable.alpha = 1.0
+                self.viewTable.isUserInteractionEnabled = true
+                let section = self.rootViewModel.sections[self.lastRow.row]
+                self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
+                self.inboxViewModel.setSelection(section: section)
+                self.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
-            self?.viewTable.alpha = 0.25
-            self?.viewTable.isUserInteractionEnabled = false
-            self?.viewTable.deselectRow(at: selection, animated: false)
-            self?.inboxViewModel.setFilter(orders: data ?? [])
-            self?.inboxViewModel.hideGroupingButtons.onNext(true)
+            self.viewTable.alpha = 0.25
+            self.viewTable.isUserInteractionEnabled = false
+            self.viewTable.deselectRow(at: self.lastRow, animated: false)
+            self.inboxViewModel.setFilter(orders: data ?? [])
+            self.inboxViewModel.hideGroupingButtons.onNext(true)
         }).subscribe().disposed(by: disposeBag)
+        
+        inboxViewModel.deselectRow.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] deselect in
+            guard let self = self else { return }
+            self.viewTable.deselectRow(at: self.lastRow, animated: false)
+        }).disposed(by: disposeBag)
     }
     
     func initComponents() {
