@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 class OrderDetailViewModel {
     
@@ -37,6 +38,9 @@ class OrderDetailViewModel {
     var sqfbSignature = ""
     var technicalSignature = ""
     var endRefreshing = PublishSubject<Void>()
+    var needsRefresh = false
+    
+    @Injected var rootViewModel: RootViewModel
     
     // MARK: Init
     init() {
@@ -67,32 +71,40 @@ class OrderDetailViewModel {
     
     // MARK: Functions
     func getOrdenDetail(isRefresh: Bool = false) -> Void {
-        loading.onNext(true)
+        if needsRefresh { loading.onNext(true) }
         NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            guard let self = self else { return }
             if (res.response != nil) {
-                self?.orderDetailData.accept([res.response!])
-                self?.tableData.onNext(res.response!.details!)
-                self?.auxTabledata = res.response!.details!
-                self?.tempOrderDetailData = res.response!
-                self?.loading.onNext(false)
-                self?.sumFormula.accept(self!.sum(tableDetails: res.response!.details!))
+                self.orderDetailData.accept([res.response!])
+                self.tableData.onNext(res.response!.details!)
+                self.auxTabledata = res.response!.details!
+                self.tempOrderDetailData = res.response!
+                if self.needsRefresh {
+                    self.loading.onNext(false)
+                    self.needsRefresh.toggle()
+                }
+                self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
                 var iconName = CommonStrings.empty
                 if (res.response?.comments != nil) {
                     iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? ImageButtonNames.message : ImageButtonNames.messsageFill
                 } else {
                     iconName = ImageButtonNames.message
                 }
-                self?.showIconComments.onNext(iconName)
+                self.showIconComments.onNext(iconName)
                 if(isRefresh) {
-                    self?.endRefreshing.onNext(())
+                    self.endRefreshing.onNext(())
                 }
             }
         }, onError: { [weak self] error in
-            self?.loading.onNext(false)
-            if(isRefresh) {
-                self?.endRefreshing.onNext(())
+            guard let self = self else { return }
+            if self.needsRefresh {
+                self.loading.onNext(false)
+                self.needsRefresh.toggle()
             }
-            self?.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
+            if(isRefresh) {
+                self.endRefreshing.onNext(())
+            }
+            self.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
         }).disposed(by: self.disposeBag)
     }
     
@@ -130,6 +142,7 @@ class OrderDetailViewModel {
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: status)
 
         NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            self?.rootViewModel.needsRefresh = true
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())
         }, onError: { [weak self] error in

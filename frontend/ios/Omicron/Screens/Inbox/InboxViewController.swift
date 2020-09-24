@@ -36,6 +36,7 @@ class InboxViewController: UIViewController {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var orderDetailViewModel: OrderDetailViewModel
 
     let disposeBag = DisposeBag()
     
@@ -333,6 +334,7 @@ extension InboxViewController: CardCellDelegate {
     func detailTapped(order: Order) {
         self.inboxViewModel.selectedOrder = order
         self.view.endEditing(true)
+        orderDetailViewModel.needsRefresh = true
         self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
     }
 }
