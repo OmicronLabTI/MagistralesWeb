@@ -86,11 +86,8 @@ class InboxViewController: UIViewController {
             cell.startDateDescriptionLabel.text = element.startDate ?? ""
             cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
             cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
-            cell.missingStockImage.isHidden = element.hasMissingStock
+            cell.missingStockImage.isHidden = !element.hasMissingStock
             cell.delegate = self
-            if dataSource.sectionModels.count - 1 == indexPath.row {
-//                self?.showMoreIndicators()
-            }
             return cell
             
         })

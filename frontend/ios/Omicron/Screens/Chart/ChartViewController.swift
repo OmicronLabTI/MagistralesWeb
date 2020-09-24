@@ -58,6 +58,7 @@ class ChartViewController: UIViewController {
         }
         
         var entries: [PieChartDataEntry] = []
+        var colors: [UIColor] = []
         
         for i in 0...5 {
             
@@ -65,25 +66,30 @@ class ChartViewController: UIViewController {
             case 0:
                 guard workload.assigned ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.assigned ?? 0), label: StatusNameConstants.assignedStatus))
+                colors.append(OmicronColors.assignedStatus)
             case 1:
                 guard workload.processed ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.processed ?? 0), label: StatusNameConstants.inProcessStatus))
+                colors.append(OmicronColors.processStatus)
             case 2:
                 guard workload.pending ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.pending ?? 0), label: StatusNameConstants.penddingStatus))
+                colors.append(OmicronColors.pendingStatus)
             case 3:
                 guard workload.finalized ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.finalized ?? 0), label: StatusNameConstants.finishedStatus))
+                colors.append(OmicronColors.finishedStatus)
             case 4:
                 guard workload.reassigned ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.reassigned ?? 0), label: StatusNameConstants.reassignedStatus))
+                colors.append(OmicronColors.reassignedStatus)
             default: break
             }
             
         }
         
-        let set = PieChartDataSet(entries: entries, label: "Estatus")
-        set.colors = [OmicronColors.assignedStatus, OmicronColors.processStatus, OmicronColors.pendingStatus, OmicronColors.finishedStatus, OmicronColors.reassignedStatus]
+        let set = PieChartDataSet(entries: entries, label: "")
+        set.colors = colors
         set.sliceSpace = 2
         
         let data = PieChartData(dataSet: set)
@@ -96,8 +102,8 @@ class ChartViewController: UIViewController {
         
         chartView.data = data
         
-        let requests = "\(workload.totalFabOrders ?? 0) Pédidos"
-        let orders = "\(workload.totalOrders ?? 0) Órdenes"
+        let requests = "\(workload.totalOrders ?? 0) Pédidos"
+        let orders = "\(workload.totalFabOrders ?? 0) Órdenes"
         let pieces = "\(workload.totalPieces ?? 0 ) Piezas"
         
         let extraData = requests + "\n" + orders + "\n" + pieces
