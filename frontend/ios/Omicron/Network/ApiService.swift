@@ -131,7 +131,7 @@ extension ApiService: AuthorizedTargetType {
             return data
             
         case .deleteItemOfOrdenDetail:
-            guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "updateOrDeleteItemOfTable", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
@@ -151,14 +151,14 @@ extension ApiService: AuthorizedTargetType {
             return data
             
         case .finishOrder:
-            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "finishedOrderResponse", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
             return data
             
         case .assingLots:
-            guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "assingBatchesResponse", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

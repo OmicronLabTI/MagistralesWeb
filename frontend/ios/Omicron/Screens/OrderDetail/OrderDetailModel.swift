@@ -188,3 +188,42 @@ class FinishOrder: Codable {
         self.technicalSignature = technicalSignature
     }
 }
+
+class FinishOrderResponse: HttpResponse {
+    var response: OrderFinished?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        response <- map["response"]
+    }
+}
+
+class OrderFinished {
+    var userId: String?
+    var fabricationOrderId: String?
+    var qfbSignature: String?
+    var technicalSignature: String?
+    required init?(map: Map) { }
+}
+
+extension OrderFinished: Mappable {
+    func mapping(map: Map) {
+        self.userId <- map["userId"]
+        self.fabricationOrderId <- map["fabricationOrderId"]
+        self.qfbSignature <- map["qfbSignature"]
+        self.technicalSignature <- map["technicalSignature"]
+    }
+}
+
+class DeleteOrUpdateItemOfTableResponse: HttpResponse {
+    var response: String?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        response <- map["response"]
+    }
+}
