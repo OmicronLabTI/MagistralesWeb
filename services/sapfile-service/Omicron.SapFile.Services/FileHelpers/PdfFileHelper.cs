@@ -27,20 +27,22 @@ namespace Omicron.SapFile.Services.FileHelpers
             string outputPath = SetFilePostFix(filePath, "paged");
             using (MemoryStream stream = new MemoryStream())
             {
-                PdfReader reader = new PdfReader(filePath);
-                using (PdfStamper stamper = new PdfStamper(reader, stream))
+                using (PdfReader reader = new PdfReader(filePath))
                 {
-                    for (int pageIndex = 1; pageIndex <= reader.NumberOfPages; pageIndex++)
+                    using (PdfStamper stamper = new PdfStamper(reader, stream))
                     {
-                        var content = stamper.GetOverContent(pageIndex);
-                        var layer = new PdfLayer("paginationLayer", stamper.Writer);
-                        content.BeginLayer(layer);
-                        content.SetFontAndSize(BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED), 10);
-                        content.SetColorFill(BaseColor.BLACK);
-                        content.BeginText();
-                        content.ShowTextAligned(Element.ALIGN_RIGHT, $"{pageIndex} de {reader.NumberOfPages}", reader.GetPageSize(pageIndex).Width - 27f, 15f, 0);
-                        content.EndText();
-                        content.EndLayer();
+                        for (int pageIndex = 1; pageIndex <= reader.NumberOfPages; pageIndex++)
+                        {
+                            var content = stamper.GetOverContent(pageIndex);
+                            var layer = new PdfLayer("paginationLayer", stamper.Writer);
+                            content.BeginLayer(layer);
+                            content.SetFontAndSize(BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED), 10);
+                            content.SetColorFill(BaseColor.BLACK);
+                            content.BeginText();
+                            content.ShowTextAligned(Element.ALIGN_RIGHT, $"{pageIndex} de {reader.NumberOfPages}", reader.GetPageSize(pageIndex).Width - 27f, 15f, 0);
+                            content.EndText();
+                            content.EndLayer();
+                        }
                     }
                 }
 
@@ -55,32 +57,30 @@ namespace Omicron.SapFile.Services.FileHelpers
         /// <param name="filePath">File path.</param>
         public static void RotateFile(string filePath)
         {
-            byte[] bytes = File.ReadAllBytes(filePath);
-
             using (MemoryStream stream = new MemoryStream())
             {
-                PdfReader reader = new PdfReader(bytes);
-                using (PdfStamper stamper = new PdfStamper(reader, stream))
+                using (PdfReader reader = new PdfReader(filePath))
                 {
-                    for (int pageIndex = 1; pageIndex <= reader.NumberOfPages; pageIndex++)
+                    using (PdfStamper stamper = new PdfStamper(reader, stream))
                     {
-                        PdfDictionary page = reader.GetPageN(pageIndex);
-                        PdfNumber rotate = page.GetAsNumber(PdfName.ROTATE);
-                        if (rotate == null)
+                        for (int pageIndex = 1; pageIndex <= reader.NumberOfPages; pageIndex++)
                         {
-                            page.Put(PdfName.ROTATE, new PdfNumber(90));
-                        }
-                        else
-                        {
-                            page.Put(PdfName.ROTATE, new PdfNumber((rotate.IntValue + 90) % 360));
+                            PdfDictionary page = reader.GetPageN(pageIndex);
+                            PdfNumber rotate = page.GetAsNumber(PdfName.ROTATE);
+                            if (rotate == null)
+                            {
+                                page.Put(PdfName.ROTATE, new PdfNumber(90));
+                            }
+                            else
+                            {
+                                page.Put(PdfName.ROTATE, new PdfNumber((rotate.IntValue + 90) % 360));
+                            }
                         }
                     }
                 }
 
-                bytes = stream.ToArray();
+                File.WriteAllBytes(SetFilePostFix(filePath, "rotate"), stream.ToArray());
             }
-
-            File.WriteAllBytes(SetFilePostFix(filePath, "rotate"), bytes);
         }
 
         /// <summary>

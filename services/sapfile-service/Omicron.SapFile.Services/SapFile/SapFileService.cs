@@ -208,13 +208,13 @@ namespace Omicron.SapFile.Services.SapFile
             filePaths = filePaths.Where(x => File.Exists(x)).ToList();
 
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
+            ServiceUtils.DeleteFile(order.FabOrderPdfRoute, signaturesFilePath);
 
             if (finalReport)
             {
                 var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
-                var dateArray = order.CreateDate.Split('/');
-                var createDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
-                return this.CopyFileToProductionFirectory(pagedFilePath, createDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
+                ServiceUtils.DeleteFile(mergedFilePath);
+                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
             }
             return mergedFilePath;
         }
@@ -243,24 +243,29 @@ namespace Omicron.SapFile.Services.SapFile
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
             var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
 
-            var dateArray = first.SaleOrderCreateDate.Split('/');
-            var saleOrderCreateDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
-            return this.CopyFileToProductionFirectory(pagedFilePath, saleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");
+            filePaths.Add(mergedFilePath);
+            filePaths.Remove(recipeRoute);
+            ServiceUtils.DeleteFile(filePaths.ToArray());
+
+            return this.CopyFileToProductionFirectory(pagedFilePath, first.SaleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");
         }
 
         /// <summary>
         /// Copy file to production directory.
         /// </summary>
         /// <param name="src">Source file path.</param>
-        /// <param name="datetime">Date to format directory name.</param>
+        /// <param name="datetimeAsString">Date to format directory name.</param>
         /// <param name="fileName">File name.</param>
         /// <returns>Final file path.</returns>
-        private string CopyFileToProductionFirectory(string src, DateTime datetime, string fileName)
+        private string CopyFileToProductionFirectory(string src, string datetimeAsString, string fileName)
         {
+            var dateArray = datetimeAsString.Split('/');
+            var datetime = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
             var directoryName = datetime.ToString("MMMMyyyy", CultureInfo.GetCultureInfo("es-MX"));
             directoryName = char.ToUpper(directoryName[0]) + directoryName.Substring(1);
             var finalPath = Path.Combine(this.ProductionDirectoryPath, $@"{directoryName}\{fileName}");
             ServiceUtils.CopyFile(src, finalPath);
+            ServiceUtils.DeleteFile(src);
             return finalPath;
         }
     }

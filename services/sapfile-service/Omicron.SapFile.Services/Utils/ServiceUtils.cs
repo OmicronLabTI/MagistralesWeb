@@ -76,5 +76,24 @@ namespace Omicron.SapFile.Services.Utils
                 File.Copy(src, dest);
             }
         }
+
+        /// <summary>
+        /// Delete file with validations.
+        /// </summary>
+        /// <param name="src">Source.</param>
+        public static void DeleteFile(params string[] src)
+        {
+            foreach (var filePath in src)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    // file is currently locked
+                }
+            }
+        }
     }
 }
