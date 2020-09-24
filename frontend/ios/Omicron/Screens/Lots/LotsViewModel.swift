@@ -360,8 +360,7 @@ class LotsViewModel {
             let formatter = DateFormatter()
             formatter.dateFormat = "dd/MM/yyyy"
             if let dateFormatter = formatter.date(from: date) {
-                let today = Calendar.current.date(byAdding: .day, value: 1, to: Date())
-                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: today ?? Date())
+                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())
                 let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)
                 if roundedDate ?? Date() <= roundedToday ?? Date() {
                     return true
