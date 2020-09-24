@@ -79,20 +79,23 @@ namespace Omicron.SapFile.Services.SapFile
 
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
                 {
-                    this.CreateFabOrderReportWithSignatures(order, true);
+                    var filePath = this.CreateFabOrderReportWithSignatures(order, true);
+                    this._loggerProxy.Debug($"Create file for production order: {filePath}.");
                 });
 
                 var groupedOrders = finalizaGeneratePdfs.Where(order => order.OrderId != 0).GroupBy(order => order.OrderId);
-                groupedOrders.ToList().ForEach(x => this.CreateSalesOrderReportWithProductionOrders(x.ToList()));
+                groupedOrders.ToList().ForEach(x => {
+                    var filePath = this.CreateSalesOrderReportWithProductionOrders(x.ToList());
+                    this._loggerProxy.Debug($"Create file for sales order: {filePath}.");
+                });
             }
             catch(Exception ex)
             {
                 this._loggerProxy.Error(ex.Message, ex);
-                return new ResultModel() { Success = false, ExceptionMessage = ex.StackTrace };
+                return ServiceUtils.CreateResult(true, 200, null, false, ex.StackTrace);
             }
 
-            //To do Send to method to concatenate.
-            return new ResultModel();
+            return ServiceUtils.CreateResult(true, 200, null, true, null);
         }
 
         /// <summary>
