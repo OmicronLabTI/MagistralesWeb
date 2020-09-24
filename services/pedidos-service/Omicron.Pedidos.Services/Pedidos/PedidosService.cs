@@ -216,7 +216,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
-            var listToGenPdf = new List<FinalizaGeneratePdfModel>();
+            var listToGenPdf = new List<int>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -277,8 +277,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now.FormatedDate();
                         userOrder.Status = ServiceConstants.Finalizado;
-
-                        listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = orderToFinish.OrderId, FabOrderId = prodOrderId, UserOrderId = userOrder.Id });
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                     }
                 }
@@ -297,6 +295,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                     successfuly.Add(orderToFinish);
                 }
+
+                listToGenPdf.Add(int.Parse(salesOrder.Salesorderid));
             }
 
             await this.pedidosDao.InsertOrderLog(logs);
@@ -307,10 +307,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 failed = failed.Distinct(),
             };
 
-            // todo remove when deployed
-            listToGenPdf.Add(new FinalizaGeneratePdfModel { OrderId = 60208, FabOrderId = 89581, UserOrderId = 2075, QfbName = "6a99d277-634c-4529-a565-d5fa0e9a6dea" });
-
-            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, this.pedidosDao, this.sapAdapter, this.sapFileService, this.userService);
+            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService);
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
@@ -660,6 +657,21 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        /// <summary>
+        /// gets the data to send to print.
+        /// </summary>
+        /// <param name="ordersId">the sales orders..</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> PrintOrders(List<int> ordersId)
+        {
+            var result = await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listWithError.Any() ? ServiceConstants.ErrorCreatePdf : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
         /// <summary>

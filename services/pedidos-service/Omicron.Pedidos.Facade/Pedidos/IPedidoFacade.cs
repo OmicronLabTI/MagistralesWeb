@@ -214,5 +214,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="orderId">the order id.</param>
         /// <returns>if the batches are completed.</returns>
         Task<ResultDto> CompletedBatches(int orderId);
+
+        /// <summary>
+        /// process the orders.
+        /// </summary>
+        /// <param name="ordersId">the pedidos list.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> PrintOrders(List<int> ordersId);
     }
 }

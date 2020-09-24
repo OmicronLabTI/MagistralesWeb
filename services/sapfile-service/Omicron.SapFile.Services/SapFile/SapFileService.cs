@@ -74,7 +74,10 @@ namespace Omicron.SapFile.Services.SapFile
                         dictOrdersCreated.Add(order.OrderId, order.OrderId);
                     }
 
-                    order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                    if(order.FabOrderId != 0)
+                    {
+                        order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
+                    }
                 });
 
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
@@ -197,7 +200,7 @@ namespace Omicron.SapFile.Services.SapFile
             if (finalReport)
             {
                 var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
-                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"ITEMCODE_{order.FabOrderId}.pdf");
+                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
             }
             return mergedFilePath;
         }
@@ -226,7 +229,7 @@ namespace Omicron.SapFile.Services.SapFile
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
             var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
 
-            return this.CopyFileToProductionFirectory(pagedFilePath, first.CreateDate, $"{first.OrderId}_MEDICO.pdf");
+            return this.CopyFileToProductionFirectory(pagedFilePath, first.SaleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");
         }
 
         /// <summary>

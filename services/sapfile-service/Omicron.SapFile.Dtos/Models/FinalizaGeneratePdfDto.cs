@@ -61,6 +61,24 @@ namespace Omicron.SapFile.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string ItemCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string MedicName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public DateTime SaleOrderCreateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string OrderPdfRoute { get; set; }
 
         /// <summary>

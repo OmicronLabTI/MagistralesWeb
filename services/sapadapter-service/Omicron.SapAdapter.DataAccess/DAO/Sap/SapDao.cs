@@ -149,7 +149,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    Status = dp.Status,
-                                   IsChecked = false
+                                   IsChecked = false,
+                                   CreatedDate = dp.CreatedDate,
                                }).ToListAsync();
 
             return query;

@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Entities.Model.Db
 {
+    using System;
+
     /// <summary>
     /// Model to send to generate pdf.
     /// </summary>
@@ -60,5 +62,23 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// </summary>
         /// <value>The code.</value>
         public string RecipeRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ItemCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string MedicName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string SaleOrderCreateDate { get; set; }
     }
 }

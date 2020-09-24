@@ -151,6 +151,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
 
         /// <summary>
+        /// const for error whne inserting fab orde.
+        /// </summary>
+        public const string ErrorCreatePdf = "ErrorCreatePdf";
+
+        /// <summary>
         /// the error when update a order fab.
         /// </summary>
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
@@ -159,6 +164,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// if there were error while inserting.
         /// </summary>
         public const string ErrorAlInsertar = "Error al insertar";
+
+        /// <summary>
+        /// if there were error while inserting.
+        /// </summary>
+        public const string ErrorCrearPdf = "Error al crear PDF";
 
         /// <summary>
         /// error al asignar.
