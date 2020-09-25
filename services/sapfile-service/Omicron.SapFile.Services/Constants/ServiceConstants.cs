@@ -13,6 +13,14 @@ namespace Omicron.SapFile.Services.Constants
     /// </summary>
     public static class ServiceConstants
     {
-        
+        /// <summary>
+        /// Text for sales order reference.
+        /// </summary>
+        public const string SalesOrderReferenceText = "Pedido: {0}";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string ProductionOrderReferenceText = "Orden de fabricación: {0}";
     }
 }

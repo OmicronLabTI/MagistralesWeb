@@ -23,15 +23,14 @@ class BatchesTest: XCTestCase {
     }
     
     // MARK: -VARIABLES
+    @Injected var lotsViewModel: LotsViewModel
     let disposeBag = DisposeBag()
     let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    @Injected var lotsViewModel: LotsViewModel
+    let orderId = 0
     
     // MARK: -TEST FUNCTIONS
     
     func testGetLotsSuccess() -> Void {
-        // Given
-        let orderId = 0
         
         // When
         networkManager.getLots(orderId: orderId).subscribe(onNext: { res in
@@ -84,14 +83,29 @@ class BatchesTest: XCTestCase {
         }).disposed(by: self.disposeBag)
     }
     
-    func testAddLotDidTap() -> Void {
-        var productSelected = BehaviorSubject<Lots?>(value: nil)
-        var availableSelected = BehaviorSubject<LotsAvailable?>(value: nil)
+    func testValidIfOrderCanBeFinalizedNotNull() {
         
-        let inputs = Observable.combineLatest(productSelected, availableSelected)
-        
-        
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
+            XCTAssertNotNil(res)
+        }).disposed(by: self.disposeBag)
         
     }
+    
+    func testValidIfOrderCanBeFinalizedValidCode() {
+        
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
+            XCTAssertTrue(res.code == 200)
+        }).disposed(by: self.disposeBag)
+        
+    }
+    
+    func testValidIfOrderCanBeFinalizedValidResponseNotNull() {
+        
+        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
+            XCTAssertNotNil(res.response)
+        }).disposed(by: self.disposeBag)
+        
+    }
+    
 }
 

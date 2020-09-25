@@ -226,6 +226,27 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// Gets the fabrication orders model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetFabricacionOrderModel()
+        {
+            var listData = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { CreatedDate = DateTime.Now, OrdenId = 100, ProductoId = "Aspirina" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listData,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>

@@ -28,16 +28,37 @@ class OrderDetailTest: XCTestCase {
     let disposeBag = DisposeBag()
     let viewModel = LoginViewModel()
     let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+    let orderId = 89026
     
     // TEST FUNCTIONS
-    func testGetOrderDetail() -> Void {
-        let orderId = 89026
+    
+    func testGetOrderDetailNoNull() {
         self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
             XCTAssertNotNil(res)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testGetOrderDetailValidCode() {
+        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
             XCTAssertTrue(res.code == 200)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testGetOrderDetailResponseNotNull() {
+        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
             XCTAssertNotNil(res.response)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testGetOrderDetailValidProductID() {
+        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
             XCTAssertTrue(res.response?.productionOrderID == 89026)
-            XCTAssertTrue((res.response?.details!.count)! > 0)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testGetOrderDetailValidContainsDetails() {
+        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+            XCTAssertTrue((res.response?.details?.count)! > 0)
         }).disposed(by: self.disposeBag)
     }
     

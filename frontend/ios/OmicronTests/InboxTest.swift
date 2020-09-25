@@ -398,3 +398,4 @@ class InboxTest:  XCTestCase {
     }
     
 }
+
