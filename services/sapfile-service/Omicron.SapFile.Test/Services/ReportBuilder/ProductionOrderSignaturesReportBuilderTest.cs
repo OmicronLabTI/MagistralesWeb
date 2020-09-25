@@ -25,14 +25,39 @@ namespace Omicron.SapFile.Test.Services.FileHelpers
         public void BuildReport()
         {
             // arrange
-
             var order = new FinalizaGeneratePdfModel();
+            order.OrderId = 10;
+            order.FabOrderId = 10;
             order.QfbName = "Nombre del QFB";
             order.QfbSignature= File.ReadAllBytes(@"TestFiles/signature.png");
             order.TechnicalSignature = File.ReadAllBytes(@"TestFiles/signature.png");
 
             var reportBuilder = new ProductionOrderSignaturesReportBuilder(order);
             var outpufFilePath = @"signatures.pdf";
+
+            // act
+            reportBuilder.BuildReport(outpufFilePath);
+
+            // assert
+            Assert.IsTrue(File.Exists(outpufFilePath));
+        }
+
+        /// <summary>
+        /// Test method for build report
+        /// </summary>
+        [TestMethod]
+        public void BuildReport_IsolatedPO()
+        {
+            // arrange
+            var order = new FinalizaGeneratePdfModel();
+            order.OrderId = 0;
+            order.FabOrderId = 10;
+            order.QfbName = "Nombre del QFB";
+            order.QfbSignature = File.ReadAllBytes(@"TestFiles/signature.png");
+            order.TechnicalSignature = File.ReadAllBytes(@"TestFiles/signature.png");
+
+            var reportBuilder = new ProductionOrderSignaturesReportBuilder(order);
+            var outpufFilePath = @"signatures_isolated_po.pdf";
 
             // act
             reportBuilder.BuildReport(outpufFilePath);

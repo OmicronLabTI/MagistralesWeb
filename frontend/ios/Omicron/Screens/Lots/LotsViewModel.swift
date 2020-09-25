@@ -48,13 +48,21 @@ class LotsViewModel {
     var technicalSignature = ""
     var showSignatureView = PublishSubject<String>()
     var updateComments = PublishSubject<OrderDetail>()
+    var pendingButtonDidTap = PublishSubject<Void>()
+    var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
     @Injected var orderDetail: OrderDetailViewModel
+    @Injected var rootViewModel: RootViewModel
     
     init() {
         
         // Finaliza la orden
         self.finishOrderDidTap.subscribe(onNext: { [weak self] in
             self?.askIfUserWantToFinalizeOrder.onNext("¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+        
+        // Pone en pendiente la orden
+        self.pendingButtonDidTap.subscribe(onNext: { [weak self] _ in
+            self?.askIfUserWantChageOrderToPendigStatus.onNext(CommonStrings.confirmationMessagePendingStatus)
         }).disposed(by: self.disposeBag)
         
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
@@ -279,11 +287,13 @@ class LotsViewModel {
     func sendToServerAssignedLots(lotsToSend: [BatchSelected]) -> Void {
         self.loading.onNext(true)
         NetworkManager.shared.assignLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
-            self?.loading.onNext(false)
+            guard let self = self else { return }
+            self.loading.onNext(false)
             if(res.response!.isEmpty) {
-                self?.showMessage.onNext("Proceso realizado correctamente")
+                self.showMessage.onNext("Proceso realizado correctamente")
                 // actualiza la pantalla
-                self?.getLots()
+                self.orderDetail.needsRefresh = true
+                self.getLots()
                 return
             }
             
@@ -291,7 +301,7 @@ class LotsViewModel {
             for batch in res.response! {
                 badBatches += "\n\(batch)"
             }
-            self?.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
+            self.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
             }, onError:  { [weak self] error in
                 self?.loading.onNext(false)
                 self?.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
@@ -332,6 +342,7 @@ class LotsViewModel {
             NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
+                self?.rootViewModel.needsRefresh = true
                 }, onError: {[weak self] error in
                     self?.loading.onNext(false)
                     self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
@@ -347,10 +358,27 @@ class LotsViewModel {
             if (res.response != nil) {
                 self?.updateComments.onNext(res.response!)
             }
+            self?.orderDetail.needsRefresh = true
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
             self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    func changeOrderToPendingStatus() -> Void {
+        self.loading.onNext(true)
+        
+        let orderToChageStatus = ChangeStatusRequest(userId: Persistence.shared.getUserData()!.id!, orderId: self.orderId, status: CommonStrings.pending)
+        
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [orderToChageStatus]).subscribe(onNext: { [weak self] _ in
+            self?.loading.onNext(false)
+            self?.backToInboxView.onNext(())
+            self?.rootViewModel.needsRefresh = true
+            }, onError: { [weak self] _ in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext(CommonStrings.errorToChangeStatus)
+        }).disposed(by: self.disposeBag)
+        
     }
     
     //MARK: - Function Helpers
