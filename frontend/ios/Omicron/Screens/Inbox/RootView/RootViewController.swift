@@ -18,14 +18,18 @@ class RootViewController: UIViewController {
     @IBOutlet weak var myOrdesLabel: UILabel!
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
+    @IBOutlet weak var kpiButton: UIButton!
     
     // Variables
-    let disposeBag = DisposeBag()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var lottieManager: LottieManager
     
     var refreshControl = UIRefreshControl()
+    
+    let disposeBag = DisposeBag()
+    
+    private var lastRow = IndexPath(row: 0, section: 0)
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -72,7 +76,8 @@ class RootViewController: UIViewController {
     
     func viewModelBinding() {
         
-        self.logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: self.disposeBag)
+        logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
+        kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
         
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
         self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
@@ -105,7 +110,13 @@ class RootViewController: UIViewController {
         
         // Detecta el evento cuando se selecciona un status de la tabla
         viewTable.rx.modelSelected(SectionOrder.self).subscribe(onNext: { [weak self] data in
-            self?.inboxViewModel.setSelection(section: data)
+            guard let self = self else { return }
+            self.inboxViewModel.setSelection(section: data)
+        }).disposed(by: disposeBag)
+        
+        viewTable.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
+            guard let self = self else { return }
+            self.lastRow = indexPath
         }).disposed(by: disposeBag)
 
         viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
@@ -134,22 +145,28 @@ class RootViewController: UIViewController {
         self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
         
         self.rootViewModel.dataFilter.withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
-            let selection = lastRow ?? IndexPath(row: 0, section: 0)
+            guard let self = self else { return }
+            self.lastRow = lastRow ?? IndexPath(row: 0, section: 0)
             if data == nil {
-                self?.viewTable.alpha = 1.0
-                self?.viewTable.isUserInteractionEnabled = true
-                guard let section = self?.rootViewModel.sections[selection.row] else { return }
-                self?.viewTable.selectRow(at: selection, animated: false, scrollPosition: .none)
-                self?.inboxViewModel.setSelection(section: section)
-                self?.inboxViewModel.hideGroupingButtons.onNext(false)
+                self.viewTable.alpha = 1.0
+                self.viewTable.isUserInteractionEnabled = true
+                let section = self.rootViewModel.sections[self.lastRow.row]
+                self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
+                self.inboxViewModel.setSelection(section: section)
+                self.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
-            self?.viewTable.alpha = 0.25
-            self?.viewTable.isUserInteractionEnabled = false
-            self?.viewTable.deselectRow(at: selection, animated: false)
-            self?.inboxViewModel.setFilter(orders: data ?? [])
-            self?.inboxViewModel.hideGroupingButtons.onNext(true)
+            self.viewTable.alpha = 0.25
+            self.viewTable.isUserInteractionEnabled = false
+            self.viewTable.deselectRow(at: self.lastRow, animated: false)
+            self.inboxViewModel.setFilter(orders: data ?? [])
+            self.inboxViewModel.hideGroupingButtons.onNext(true)
         }).subscribe().disposed(by: disposeBag)
+        
+        inboxViewModel.deselectRow.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] deselect in
+            guard let self = self else { return }
+            self.viewTable.deselectRow(at: self.lastRow, animated: false)
+        }).disposed(by: disposeBag)
     }
     
     func initComponents() {
@@ -181,4 +198,5 @@ class RootViewController: UIViewController {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
     }
+    
 }
