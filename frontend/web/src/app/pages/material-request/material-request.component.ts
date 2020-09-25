@@ -8,6 +8,9 @@ import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material';
 import { RequestSignatureDialogComponent } from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
 import {isNumber} from "util";
+import { ReportingService } from 'src/app/services/reporting.service';
+import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
+import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 
 
 @Component({
@@ -30,6 +33,8 @@ export class MaterialRequestComponent implements OnInit {
   constructor(private router: Router,
               private dialog: MatDialog,
               private materialReService: MaterialRequestService,
+              private reportingService: ReportingService,
+              private fileDownloaderServie: FileDownloaderService,
               private errorService: ErrorService,
               private activeRoute: ActivatedRoute) {
   }
@@ -66,6 +71,12 @@ export class MaterialRequestComponent implements OnInit {
           console.log('Set signature.. ', result);
         }
       });
+  }
+
+  downloadPreview() {
+    console.log('download preview')
+    // var data = {};
+    // this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(data), FileTypeContentEnum.PDF, this.getFileNamePreview());
   }
 
   sendRequest() {
@@ -149,5 +160,18 @@ export class MaterialRequestComponent implements OnInit {
    // const pattern = /^\d{1,9}(\.\d{0,6})?$/;
     const pattern = /^([0-9.])$/;
     return pattern.test(event.key);
+  }
+
+  private getFileNamePreview(): string {
+    var date = new Date();
+    let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth())}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
+    return fileName;
+  }
+
+  private getStringNumberTwoDigits(number: number): string {
+    if (number < 10) {
+      return `0${number}`;
+    }
+    return `${number}`;
   }
 }

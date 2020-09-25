@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ReportBuilder\Templates\ARIAL.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ReportBuilder\Templates\BASE_RM_REQUEST.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
