@@ -412,6 +412,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Asignacion manual.
+        /// </summary>
+        /// <param name="ordersId">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/print/orders")]
+        [HttpPost]
+        public async Task<IActionResult> PrintOrders(List<int> ordersId)
+        {
+            var response = await this.pedidoFacade.PrintOrders(ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

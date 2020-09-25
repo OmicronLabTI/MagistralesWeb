@@ -291,6 +291,10 @@ namespace Omicron.SapAdapter.Test.Facade
             this.AssertResponse(response);
         }
 
+        /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
         [Test]
         public async Task GetRecipe()
         {
@@ -299,6 +303,23 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetRecipe(orderId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetRecipes()
+        {
+            // arrange
+            var orderId = new List<int>();
+
+            // act
+            var response = await this.sapFacade.GetRecipes(orderId);
 
             // assert
             this.AssertResponse(response);

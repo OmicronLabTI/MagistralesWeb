@@ -1,0 +1,19 @@
+2020-08-28 21:13:08.1795 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
+2020-08-28 21:22:09.6367 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
+2020-08-28 21:47:09.4874 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
+2020-08-28 21:50:11.8853 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89136,"AssignedQty":-0.0984,"BatchNumber":"G319120N365","ItemCode":"MPN-047","Action":"delete"}] 
+2020-08-28 21:50:56.1380 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -4014 - No es posible añadir una línea sin la selección completa de los números de serie/lote - 89136-[{"OrderId":89136,"AssignedQty":-0.0984,"BatchNumber":"G319120N365","ItemCode":"MPN-047","Action":"delete"}] 
+2020-08-28 22:18:28.1187 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
+2020-08-28 22:20:42.6080 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 22:22:00.1598 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -5002 - Se ha producido un error interno (-5002)  [??????? 131-183] - 89330-[{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 22:25:43.4910 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 22:26:01.6720 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -5002 - Se ha producido un error interno (-5002)  [??????? 131-183] - 89330-[{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:12:46.7040 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
+2020-08-28 23:13:58.2262 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89336,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:14:22.3446 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status 0- 89336-[{"OrderId":89336,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:16:01.3909 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89336,"AssignedQty":0.001,"BatchNumber":"KC CHEE A41","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:16:23.1354 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status 0- 89336-[{"OrderId":89336,"AssignedQty":0.001,"BatchNumber":"KC CHEE A41","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:18:29.9230 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:19:19.1970 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -5002- 89330-[{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:20:33.6268 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next object is going to be updated [{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 
+2020-08-28 23:20:54.9283 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -5002- 89330-[{"OrderId":89330,"AssignedQty":0.002,"BatchNumber":"KC CHEEA40","ItemCode":"MP-423","Action":"insert"}] 

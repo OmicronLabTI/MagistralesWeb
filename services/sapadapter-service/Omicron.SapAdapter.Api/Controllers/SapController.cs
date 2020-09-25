@@ -264,6 +264,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the recipes by all orders id.
+        /// </summary>
+        /// <param name="ordersId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/recipes/orders")]
+        [HttpPost]
+        public async Task<IActionResult> GetRecipes(List<int> ordersId)
+        {
+            var result = await this.sapFacade.GetRecipes(ordersId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

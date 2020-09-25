@@ -151,6 +151,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
 
         /// <summary>
+        /// const for error whne inserting fab orde.
+        /// </summary>
+        public const string ErrorCreatePdf = "ErrorCreatePdf";
+
+        /// <summary>
         /// the error when update a order fab.
         /// </summary>
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
@@ -159,6 +164,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// if there were error while inserting.
         /// </summary>
         public const string ErrorAlInsertar = "Error al insertar";
+
+        /// <summary>
+        /// if there were error while inserting.
+        /// </summary>
+        public const string ErrorCrearPdf = "Error al crear PDF";
 
         /// <summary>
         /// error al asignar.
@@ -246,6 +256,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ConnectSapDiApi = "connect";
 
         /// <summary>
+        /// gets the recipes of a group of orders.
+        /// </summary>
+        public const string GetRecipes = "recipes/orders";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
@@ -269,6 +284,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// the route to get the users by ids.
         /// </summary>
         public const string GetUsersByOrdersById = "fabOrderId";
+
+        /// <summary>
+        /// creates the pdfs.
+        /// </summary>
+        public const string CreatePdf = "create/pdf";
 
         /// <summary>
         /// the id for qfb role.

@@ -789,5 +789,22 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetRecipse()
+        {
+            // arrange
+            var listOrders = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetOriginalRouteRecipes(listOrders);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

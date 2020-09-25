@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Entities.Model.BusinessModels
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// class for the orders recipes.
     /// </summary>
