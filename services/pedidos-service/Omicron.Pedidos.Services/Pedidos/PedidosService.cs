@@ -11,16 +11,19 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -37,6 +40,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IUsersService userService;
 
+        private readonly ISapFileService sapFileService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -44,12 +49,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService)
+        /// <param name="sapFileService">The sap file service.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
         }
 
         /// <summary>
@@ -210,6 +217,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
+            var listToGenPdf = new List<int>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -270,7 +278,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now.FormatedDate();
                         userOrder.Status = ServiceConstants.Finalizado;
-
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                     }
                 }
@@ -289,6 +296,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                     successfuly.Add(orderToFinish);
                 }
+
+                listToGenPdf.Add(int.Parse(salesOrder.Salesorderid));
             }
 
             await this.pedidosDao.InsertOrderLog(logs);
@@ -298,6 +307,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 success = successfuly.Distinct(),
                 failed = failed.Distinct(),
             };
+
+            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
@@ -312,6 +323,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var successfuly = new List<object>();
             var failed = new List<object>();
             var affectedSalesOrderIds = new List<KeyValuePair<string, string>>();
+            var listIsolated = new List<int>();
+            var listSalesOrder = new List<int>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -332,6 +345,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     successfuly.Add(orderIdModel);
                     continue;
+                }
+
+                if (productionOrder.IsIsolatedProductionOrder)
+                {
+                    listIsolated.Add(int.Parse(productionOrder.Productionorderid));
                 }
 
                 // Validate completed production orders
@@ -386,6 +404,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var (salesOrder, productionOrders) = await this.GetRelatedOrdersToSalesOrder(salesOrderIdAsInt, ServiceConstants.Cancelled);
                 var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
+                listSalesOrder.Add(int.Parse(salesOrder.Salesorderid));
 
                 if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)) && !preProductionOrders.Any())
                 {
@@ -397,6 +416,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                 }
             }
+
+            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
             await this.pedidosDao.InsertOrderLog(logs);
 
@@ -647,6 +668,21 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        /// <summary>
+        /// gets the data to send to print.
+        /// </summary>
+        /// <param name="ordersId">the sales orders..</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> PrintOrders(List<int> ordersId)
+        {
+            var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listWithError.Any() ? ServiceConstants.ErrorCreatePdf : null;
+            return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
         /// <summary>
