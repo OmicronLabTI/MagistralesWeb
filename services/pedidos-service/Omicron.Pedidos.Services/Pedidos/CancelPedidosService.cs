@@ -19,6 +19,8 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// Implementations for order cancellations.
@@ -31,17 +33,25 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapDiApi sapDiApi;
 
+        private readonly ISapFileService sapFileService;
+
+        private readonly IUsersService userService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CancelPedidosService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
-        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi)
+        /// <param name="sapFileService">The sap file.</param>
+        /// <param name="usersService">The user service.</param>
+        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapFileService sapFileService, IUsersService usersService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
+            this.sapFileService = sapFileService ?? throw new ArgumentException(nameof(sapFileService));
+            this.userService = usersService ?? throw new ArgumentException(nameof(usersService));
         }
 
         /// <summary>
@@ -160,6 +170,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var logs = new List<OrderLogModel>();
             var salesOrdersToUpdate = new List<UserOrderModel>();
             var salesOrderIds = cancelledProductionOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).Select(x => x.Salesorderid);
+            var saleOrdersFinalized = new List<int>();
 
             foreach (var salesOrderId in salesOrderIds.Distinct())
             {
@@ -169,6 +180,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
 
                 salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders);
+
+                if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
+                {
+                    saleOrdersFinalized.Add(int.Parse(salesOrder.Salesorderid));
+                }
+
                 salesOrdersToUpdate.Add(salesOrder);
 
                 if (salesOrder.Equals(ServiceConstants.Cancelled))
@@ -179,6 +196,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(logs);
+
+            if (saleOrdersFinalized.Any())
+            {
+                await SendToGeneratePdfUtils.CreateModelGeneratePdf(saleOrdersFinalized, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
+            }
         }
 
         /// <summary>

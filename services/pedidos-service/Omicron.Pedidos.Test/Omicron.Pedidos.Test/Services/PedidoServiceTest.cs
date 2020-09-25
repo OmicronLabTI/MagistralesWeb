@@ -27,6 +27,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
     /// class for the test.
@@ -812,6 +813,40 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await pedidoServiceLocal.PrintOrders(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task PrintOrdersFabOrders()
+        {
+            var orderId = new List<int> { 100 };
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModel()))
+                .Returns(Task.FromResult(this.GetRecipes()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            mockSapFile
+                .Setup(m => m.PostSimple(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var mockDiApi = new Mock<ISapDiApi>();
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
+            // act
+            var result = await SendToGeneratePdfUtils.CreateModelGeneratePdf(new List<int>(), orderId, mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUsers.Object, true);
 
             // assert
             Assert.IsNotNull(result);
