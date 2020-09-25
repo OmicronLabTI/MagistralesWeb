@@ -92,5 +92,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>the value of stock.</value>
         public bool HasMissingStock { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets the value for missing stock.
+        /// </summary>
+        /// <value>the value of stock.</value>
+        public DateTime? CreatedDate { get; set; }
     }
 }

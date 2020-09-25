@@ -341,5 +341,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.CompletedBatches(orderId));
         }
+
+        /// <summary>
+        /// process the orders.
+        /// </summary>
+        /// <param name="ordersId">the pedidos list.</param>
+        /// <returns>the result.</returns>
+        public async Task<ResultDto> PrintOrders(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.PrintOrders(ordersId));
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace Omicron.Pedidos.Api
     using Omicron.Pedidos.DependencyInjection;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Prometheus;
     using Serilog;
@@ -120,6 +121,13 @@ namespace Omicron.Pedidos.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
+
+            services.AddHttpClient("sapfileService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["SapFileUrl"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ISapFileService, SapFileService>();
 
             this.AddRedis(services, Log.Logger);
 

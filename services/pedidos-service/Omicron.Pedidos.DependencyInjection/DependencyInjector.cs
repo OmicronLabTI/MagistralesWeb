@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -36,6 +37,7 @@ namespace Omicron.Pedidos.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
+            Services.AddTransient<ISapFileService, SapFileService>();
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();

@@ -167,6 +167,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Get order signature by user order id.
+        /// </summary>
+        /// <param name="userOrderId">User order to find.</param>
+        /// <returns>Operation result</returns>
+        public async Task<IEnumerable<UserOrderSignatureModel>> GetSignaturesByUserOrderId(List<int> userOrderId)
+        {
+            return await this.databaseContext.UserOrderSignatureModel.Where(x => userOrderId.Contains(x.UserOrderId)).ToListAsync();
+        }
+
+        /// <summary>
         /// Insert new custom component list.
         /// </summary>
         /// <param name="customComponentList">Custom list to insert.</param>
