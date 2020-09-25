@@ -510,6 +510,34 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="ordersId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetOriginalRouteRecipes(List<int> ordersId)
+        {
+            var order = (await this.sapDao.GetOrdersById(ordersId)).ToList();
+            var atcEntries = order.Where(x => x.AtcEntry.HasValue).Select(x => x.AtcEntry.Value).ToList();
+            var attachments = await this.sapDao.GetAttachmentsById(atcEntries);
+
+            var modelToReturn = new List<OrderRecipeModel>();
+
+            order.ForEach(o =>
+            {
+                var attach = attachments.FirstOrDefault(x => x.AbsEntry == o.AtcEntry);
+                var modelAttach = new OrderRecipeModel
+                {
+                    Order = o.PedidoId,
+                    Recipe = attach == null ? string.Empty : attach.CompletePath,
+                };
+
+                modelToReturn.Add(modelAttach);
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

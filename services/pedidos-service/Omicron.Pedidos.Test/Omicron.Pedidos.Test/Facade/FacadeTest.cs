@@ -15,14 +15,12 @@ namespace Omicron.Pedidos.Test.Facade
     using Moq;
     using NUnit.Framework;
     using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -167,6 +165,10 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.CompletedBatches(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.PrintOrders(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
@@ -819,6 +821,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CompletedBatches(orderId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task PrintOrders()
+        {
+            // arrange
+            var orderId = new List<int>();
+
+            // act
+            var response = await this.pedidoFacade.PrintOrders(orderId);
 
             // Assert
             Assert.IsNotNull(response);
