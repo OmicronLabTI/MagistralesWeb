@@ -33,7 +33,7 @@ export const Endpoints = {
     reAssignManual: `${environment.baseUrl}/api/pedidos/reasignar/manual`,
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
     checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
-    getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`
+    getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`,
 },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
@@ -41,7 +41,8 @@ export const Endpoints = {
   },
   orders: {
     getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
-    saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`
+    saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`,
+    createPdf: `${environment.baseUrl}/api/pedidos/print/orders`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,

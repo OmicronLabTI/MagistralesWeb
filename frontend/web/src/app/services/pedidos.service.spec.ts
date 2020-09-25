@@ -113,5 +113,8 @@ describe('PedidosService', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         expect(service.getIfExistsBatchCode('anyProductCode', 'anyBatchCode') instanceof Observable).toBeTruthy();
     });
+  it('should createPdfOrders', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.createPdfOrders([]) instanceof Observable).toBeTruthy();
+  });
 });
-
