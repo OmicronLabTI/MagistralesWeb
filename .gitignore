@@ -152,3 +152,4 @@ iOSInjectionProject/
 services/sapdiapi-service/Omicron.SapDiApi.Api/logs/
 services/sapfile-service/Omicron.SapFile.Api/packages/StyleCop.MSBuild.5.0.0/
 services/sapfile-service/Omicron.SapFile.Api/packages/FreeSpire.Doc.6.3/
+services/sapfile-service/Omicron.SapFile.Api/logs/

@@ -32,4 +32,5 @@ class Utils: XCTestCase {
         XCTAssertEqual(result, "2020-08-14")
         XCTAssertNotNil(result)
     }
+
 }

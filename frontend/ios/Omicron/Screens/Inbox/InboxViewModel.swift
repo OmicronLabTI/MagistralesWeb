@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import RxDataSources
+import Resolver
 
 class  InboxViewModel {
     
@@ -38,6 +39,9 @@ class  InboxViewModel {
     var groupedByOrderNumberIsEnable = PublishSubject<Bool>();
     var showKPIView = PublishSubject<Bool>()
     var viewKPIDidPressed = PublishSubject<Void>()
+    var deselectRow = PublishSubject<Bool>()
+    
+    @Injected var rootViewModel: RootViewModel
     
     init() {
         // Funcionalidad para el botón de Terminar
@@ -112,9 +116,10 @@ class  InboxViewModel {
             self?.groupedByOrderNumberIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
 
-                viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.showKPIView.onNext(true)
+            self.deselectRow.onNext(true)
         }).disposed(by: disposeBag)
         
     }
@@ -124,7 +129,9 @@ class  InboxViewModel {
         var sectionModels:[SectionModel<String, Order>] = []
         
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
-        let groupBySimilarity = data.filter{$0.value.count > 1}
+        let groupBySimilarity = data
+            .filter{$0.value.count > 1}
+            .sorted { ($0.key ?? "").localizedStandardCompare($1.key ?? "") == .orderedAscending}
         if (groupBySimilarity.count > 0) {
             let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
                 return SectionModel(model: "\(titleForOrdersWithSimilarity) \(orders.key ?? "")", items: self.sortByBaseBocumentAscending(orders: orders.value))
@@ -229,6 +236,7 @@ class  InboxViewModel {
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 self?.processButtonIsEnable.onNext(false)
                 self?.pendingButtonIsEnable.onNext(false)
+                self?.rootViewModel.needsRefresh = true
                 }, onError: { [weak self] error in
                     self?.loading.onNext(false)
                     self?.showAlert.onNext(CommonStrings.errorToChangeStatus)

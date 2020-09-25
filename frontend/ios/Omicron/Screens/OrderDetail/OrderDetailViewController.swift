@@ -195,7 +195,7 @@ class OrderDetailViewController: UIViewController {
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
-//                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
 //                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
                 let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: 22, textColor: OmicronColors.blue)
                 let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: 22, textColor: .gray)
@@ -207,7 +207,7 @@ class OrderDetailViewController: UIViewController {
                 self.productDescritionLabel.attributedText = richText
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
-                    self.destinyLabel.isHidden = true
+                    self.destinyLabel.text = ""
                 }
                 
             }

@@ -192,5 +192,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetRecipe(orderId));
         }
+
+        /// <summary>
+        /// Returns the url by order.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetRecipes(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetOriginalRouteRecipes(ordersId));
+        }
     }
 }

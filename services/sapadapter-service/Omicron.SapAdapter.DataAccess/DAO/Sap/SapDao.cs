@@ -149,7 +149,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    Status = dp.Status,
-                                   IsChecked = false
+                                   IsChecked = false,
+                                   CreatedDate = dp.CreatedDate,
                                }).ToListAsync();
 
             return query;
@@ -163,6 +164,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID).ToListAsync();
 
+            return query;
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<List<OrderModel>> GetOrdersById(List<int> pedidoID)
+        {
+            var query = await this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).ToListAsync();
             return query;
         }
 
