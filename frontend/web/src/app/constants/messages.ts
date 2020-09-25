@@ -39,5 +39,10 @@ export const Messages = {
   onlyIntegerNumbers: 'Verifica que la cantidad planificada sea un número entero',
   repeatedComponent_a: 'El componente ',
   repeatedComponent_b: ' ya existe para este producto',
-  noHasRecipes: 'El pedido no tiene receta(s)'
+  noHasRecipes: 'El pedido no tiene receta(s)',
+  successTitleCreateOrderPdf: 'Se han generado correctamente los archivos',
+  errorTitleCreateOrderPdf: 'Ocurrió un error al generar los archivos',
+  errorMessageCreateOrdersPdf: 'No se ha podido generar el PDF de las órdenes ',
+  errorMessageCreateOrderPdf: 'No se ha podido generar el PDF de la orden ',
+  confirmCreateOrderPdf: '¿Deseas generar el PDF de los pedidos seleccionados?',
 };
