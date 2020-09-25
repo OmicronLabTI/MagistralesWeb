@@ -77,5 +77,12 @@ class BatchesTest: XCTestCase {
         // Then
         XCTAssertFalse(result)
     }
+    
+    func testFinishOrderDidTap() -> Void {
+        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext:{ message in
+            XCTAssertTrue(message == "¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+    }
+    
 }
 
