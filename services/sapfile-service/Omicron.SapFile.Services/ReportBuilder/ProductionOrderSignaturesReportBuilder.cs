@@ -9,7 +9,9 @@ namespace Omicron.SapFile.Services.ReportBuilder
 {
     using System.Drawing;
     using System.IO;
+    using System.ServiceModel;
     using Omicron.SapFile.Entities.Models;
+    using Omicron.SapFile.Services.Constants;
     using Omicron.SapFile.Services.Utils;
     using Spire.Doc;
     using Spire.Doc.Documents;
@@ -64,9 +66,13 @@ namespace Omicron.SapFile.Services.ReportBuilder
             {
                 foreach (Table table in section.Tables)
                 {
-                    if (table.ChildObjects.Count > 1)
+                    if (table.Rows.Count > 2)
                     {
                         this.AddSignatures(table);
+                    } 
+                    else
+                    {
+                        this.AddOrderReferences(table);
                     }
                 }
             }
@@ -130,12 +136,46 @@ namespace Omicron.SapFile.Services.ReportBuilder
         }
 
         /// <summary>
+        /// Add order references.
+        /// </summary>
+        /// <param name="table">Table to add request items.</param>
+        /// <param name="productsSublist">Items to set.</param>
+        private void AddOrderReferences(Table table)
+        {
+            var firstReference = table.Rows[0];
+            var secondReference = table.Rows[1];
+
+            firstReference.Cells[0].ChildObjects.Clear();
+            secondReference.Cells[0].ChildObjects.Clear();
+
+            // First reference
+            Paragraph firstCellContent = firstReference.Cells[0].AddParagraph();
+            firstCellContent.ApplyStyle(STYLEBLACKTEXT);
+            firstCellContent.Format.HorizontalAlignment = HorizontalAlignment.Right;
+
+            // Second reference
+            Paragraph secondCellContent = secondReference.Cells[0].AddParagraph();
+            secondCellContent.ApplyStyle(STYLEBLACKTEXT);
+            secondCellContent.Format.HorizontalAlignment = HorizontalAlignment.Right;
+
+            if (this.order.OrderId != 0)
+            {
+                firstCellContent.AppendText(string.Format(ServiceConstants.SalesOrderReferenceText, this.order.OrderId));
+                secondCellContent.AppendText(string.Format(ServiceConstants.ProductionOrderReferenceText, this.order.FabOrderId));
+            }
+            else
+            {
+                firstCellContent.AppendText(string.Format(ServiceConstants.ProductionOrderReferenceText, this.order.FabOrderId));
+            }
+        }
+
+        /// <summary>
         /// Register styles to Document.
         /// </summary>
         /// <param name="document">Document instance to set styles.</param>
         private void RegisterStyles(Document document)
         { 
-            var blackColor = "#000000";
+            var blackColor = "#787878";
             var font = "Arial";
 
             var styleForBlackText = new ParagraphStyle(document);
