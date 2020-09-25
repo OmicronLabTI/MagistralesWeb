@@ -79,7 +79,7 @@ class InboxViewController: UIViewController {
             cell.row = indexPath.row
             cell.order = element
             cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-            cell.baseDocumentDescriptionLabel.text = "\(element.baseDocument ?? 0)"
+            cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
             cell.containerDescriptionLabel.text = element.container ?? ""
             cell.tagDescriptionLabel.text = element.tag ?? ""
             cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"

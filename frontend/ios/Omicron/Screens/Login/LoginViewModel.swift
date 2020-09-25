@@ -24,6 +24,10 @@ class LoginViewModel {
     
     private let disposeBag = DisposeBag()
     
+    deinit {
+        print("Se muere LoginViewModel")
+    }
+    
     init() {
         let input = Observable.combineLatest(username, password)
         let isValid = input.map({ $0.isEmpty == false && $1.isEmpty == false })
