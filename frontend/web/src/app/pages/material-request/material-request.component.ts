@@ -7,6 +7,7 @@ import {CONST_NUMBER, CONST_STRING, TypeProperty} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material';
 import { RequestSignatureDialogComponent } from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
+import {isNumber} from "util";
 
 
 @Component({
@@ -90,7 +91,9 @@ export class MaterialRequestComponent implements OnInit {
 
   onRequestQuantityChange(requestQuantity: number, index: number) {
 
-    console.log('quantity: ', requestQuantity)
+    console.log('quantity: ', Number(requestQuantity), 'boolean: ', isNumber(Number(requestQuantity)))
+    console.log('data: ', Number(this.dataSource.data[index].requestQuantity).toFixed(CONST_NUMBER.seven))
+    this.dataSource.data[index].isWithError = !Number(requestQuantity);
     // console.log('quantity: ', requestQuantity, 'index: ', Number(requestQuantity), ' isNumber: ', isNumber(Number(requestQuantity)))
     this.checkIsCorrectData();
   }
@@ -141,5 +144,10 @@ export class MaterialRequestComponent implements OnInit {
   }
   setFocus() {
     this.quantityField.nativeElement.focus();
+  }
+  numericOnly(event): boolean {
+   // const pattern = /^\d{1,9}(\.\d{0,6})?$/;
+    const pattern = /^([0-9.])$/;
+    return pattern.test(event.key);
   }
 }
