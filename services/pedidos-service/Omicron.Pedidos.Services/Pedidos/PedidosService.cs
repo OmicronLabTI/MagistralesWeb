@@ -681,7 +681,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
-            var userError = listWithError.Any() ? ServiceConstants.ErrorCreatePdf : null;
+            var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
