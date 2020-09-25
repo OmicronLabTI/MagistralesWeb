@@ -679,10 +679,10 @@
                                         <rect key="frame" x="0.0" y="0.0" width="1334" height="60"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qmS-D4-yW0">
-                                                <rect key="frame" x="0.0" y="0.0" width="1094" height="60"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="974" height="60"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XOC-rO-TTS">
-                                                        <rect key="frame" x="0.0" y="0.0" width="1094" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="974" height="40"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="gAR-xz-0iO"/>
                                                         </constraints>
@@ -691,16 +691,16 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Pue-7E-TsE">
-                                                        <rect key="frame" x="0.0" y="40" width="894" height="20"/>
+                                                        <rect key="frame" x="0.0" y="40" width="774" height="20"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Itd-sK-Q9X">
-                                                                <rect key="frame" x="0.0" y="0.0" width="447" height="20"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="387" height="20"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S9b-UH-bwO">
-                                                                <rect key="frame" x="447" y="0.0" width="447" height="20"/>
+                                                                <rect key="frame" x="387" y="0.0" width="387" height="20"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -720,9 +720,16 @@
                                                 </constraints>
                                             </view>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YDU-DO-GLF">
-                                                <rect key="frame" x="1114" y="0.0" width="100" height="60"/>
+                                                <rect key="frame" x="994" y="0.0" width="100" height="60"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="100" id="15v-wO-JcZ"/>
+                                                </constraints>
+                                                <state key="normal" title="Button"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UQW-Zh-CY8">
+                                                <rect key="frame" x="1114" y="0.0" width="100" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="Jwf-Ii-vqr"/>
                                                 </constraints>
                                                 <state key="normal" title="Button"/>
                                             </button>
@@ -1294,6 +1301,7 @@
                         <outlet property="lsQuantityAvailableLabel" destination="Xli-vq-G3K" id="zNz-SF-ZHq"/>
                         <outlet property="manufacturingOrderLabel" destination="S9b-UH-bwO" id="kt0-Bn-m7I"/>
                         <outlet property="orderNumberLabel" destination="Itd-sK-Q9X" id="cqI-yx-DRE"/>
+                        <outlet property="pendingButton" destination="UQW-Zh-CY8" id="L1P-dr-iNK"/>
                         <outlet property="removeLotButton" destination="yfC-mw-Bwr" id="fbH-dW-wRY"/>
                         <outlet property="saveLotsButton" destination="okf-Q7-KzI" id="ooH-mZ-9Os"/>
                         <outlet property="titleLabel" destination="kOb-1D-YSE" id="l8b-Cc-DQ1"/>

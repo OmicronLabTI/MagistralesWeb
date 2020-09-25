@@ -32,6 +32,7 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var lsQuantityAvailableLabel: UILabel!
     @IBOutlet weak var addLotButton: UIButton!
     @IBOutlet weak var removeLotButton: UIButton!
+    @IBOutlet weak var pendingButton: UIButton!
     
     @IBOutlet weak var lineOfDocumentsView: UIView!
     @IBOutlet weak var lotsAvailable: UIView!
@@ -98,7 +99,7 @@ class LotsViewController: UIViewController {
         self.removeLotButton.rx.tap.bind(to: self.lotsViewModel.removeLotDidTap).disposed(by: self.disposeBag)
         self.saveLotsButton.rx.tap.bind(to: self.lotsViewModel.saveLotsDidTap).disposed(by: self.disposeBag)
         self.finishOrderButton.rx.tap.bind(to: self.lotsViewModel.finishOrderDidTap).disposed(by: self.disposeBag)
-        
+        self.pendingButton.rx.tap.bind(to: self.lotsViewModel.pendingButtonDidTap).disposed(by: self.disposeBag)
         // Muestra la vista de la firma
         self.lotsViewModel.showSignatureViewFromLotsView.subscribe(onNext: { [weak self] signatureTitleView in
             let storieboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
@@ -131,6 +132,16 @@ class LotsViewController: UIViewController {
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self?.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Manda el mensaje para poder cambiar la orden a pendiente
+        self.lotsViewModel.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { [weak self] message in
+            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { [weak self] _ in self?.lotsViewModel.changeOrderToPendingStatus() })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -242,7 +253,6 @@ class LotsViewController: UIViewController {
     
     func initComponents() {
         self.showIconMessage()
-        
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         
         self.title = CommonStrings.batchesTitle
@@ -265,6 +275,7 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.labelsStyle(label: self.lsQuantityAvailableLabel, text: CommonStrings.quantitySelected, fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         self.codeDescriptionLabel.text = self.codeDescription
         self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
         self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(self.orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
@@ -293,6 +304,12 @@ class LotsViewController: UIViewController {
             self.removeLotButton.isEnabled = false
             self.saveLotsButton.isEnabled = false
             self.finishOrderButton.isHidden = true
+        }
+        
+        if(self.statusType == "En proceso") {
+            self.pendingButton.isHidden = false
+        } else {
+            self.pendingButton.isHidden = true
         }
     }
     
