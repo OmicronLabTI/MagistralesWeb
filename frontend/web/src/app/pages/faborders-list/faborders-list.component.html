@@ -5,7 +5,7 @@
         </div>
         <div class="filter-select" *ngIf="!filterDataOrders.docNum || filterDataOrders.docNum === 0">
             <span class="dateType" *ngIf="isDateInit">
-                Fecha órden de fabricación:
+                Fecha orden de fabricación:
             </span>
             <span class="dateType" *ngIf="!isDateInit">
                 Fecha de término QFB:
@@ -97,7 +97,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="fechaorden">
-                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA ÓRDEN DE FABRICACIÓN </th>
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA ORDEN DE FABRICACIÓN </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.createDate.substring(10, 0)}} </td>
                 </ng-container>
 
