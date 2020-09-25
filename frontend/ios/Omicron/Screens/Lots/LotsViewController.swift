@@ -278,7 +278,9 @@ class LotsViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         self.codeDescriptionLabel.text = self.codeDescription
         self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
-        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(self.orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
+        
+        let orderNumber = self.orderNumber == "0" ? CommonStrings.empty : self.orderNumber
+        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
         self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(self.manufacturingOrder)", textToBold: CommonStrings.manufacturingOrder, fontSize: 15)
         
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
