@@ -110,3 +110,6 @@ export class WorkLoad {
     totalFabOrders: any;
     totalPieces: any;
 }
+export class ICreatePdfOrdersRes extends BaseResponseHttp {
+    response: string[];
+}
