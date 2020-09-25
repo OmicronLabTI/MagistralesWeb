@@ -149,7 +149,7 @@ struct CommonStrings {
     static let quantityAssigned = "Cantidad asignada"
     static let batchSelected = "Lotes seleccionados"
     static let order = "Pedido:"
-    static let ordersWithoutOrder = "Ordenes sin pedido"
+    static let ordersWithoutOrder = "Órdenes sin pedido: "
 }
 
 struct FontsNames {

@@ -38,6 +38,10 @@ class LoginViewController: UIViewController {
         setupKeyboard()
     }
     
+    deinit {
+        print("Se muere el LoginViewControllert")
+    }
+    
     
     // MARK: - FUNCTIONS
     func viewModelBinding() {
@@ -69,10 +73,13 @@ class LoginViewController: UIViewController {
         viewModel.finishedLogin
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: {
-                let splitVC = self.getViewController(storyBoardName: ViewControllerIdentifiers.storieboardName, viewControllerName: ViewControllerIdentifiers.splitViewController) as! UISplitViewController
-                self.view.addSubview(splitVC.view)
-                self.view.bounds = splitVC.view.bounds
-                self.addChild(splitVC)
+                         
+                if let window = UIApplication.shared.windows.first {
+                    let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+                    let initialViewController = storyboard.instantiateViewController(withIdentifier: ViewControllerIdentifiers.splitViewController)
+                    window.rootViewController = initialViewController
+                    window.makeKeyAndVisible()
+                }
             })
             .disposed(by: disposeBag)
     }

@@ -48,6 +48,8 @@ class LotsViewModel {
     var technicalSignature = ""
     var showSignatureView = PublishSubject<String>()
     var updateComments = PublishSubject<OrderDetail>()
+    var pendingButtonDidTap = PublishSubject<Void>()
+    var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     
@@ -56,6 +58,11 @@ class LotsViewModel {
         // Finaliza la orden
         self.finishOrderDidTap.subscribe(onNext: { [weak self] in
             self?.askIfUserWantToFinalizeOrder.onNext("¿Deseas terminar la orden?")
+        }).disposed(by: self.disposeBag)
+        
+        // Pone en pendiente la orden
+        self.pendingButtonDidTap.subscribe(onNext: { [weak self] _ in
+            self?.askIfUserWantChageOrderToPendigStatus.onNext(CommonStrings.confirmationMessagePendingStatus)
         }).disposed(by: self.disposeBag)
         
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
@@ -356,6 +363,22 @@ class LotsViewModel {
             self?.loading.onNext(false)
             self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
         }).disposed(by: self.disposeBag)
+    }
+    
+    func changeOrderToPendingStatus() -> Void {
+        self.loading.onNext(true)
+        
+        let orderToChageStatus = ChangeStatusRequest(userId: Persistence.shared.getUserData()!.id!, orderId: self.orderId, status: CommonStrings.pending)
+        
+        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [orderToChageStatus]).subscribe(onNext: { [weak self] _ in
+            self?.loading.onNext(false)
+            self?.backToInboxView.onNext(())
+            self?.rootViewModel.needsRefresh = true
+            }, onError: { [weak self] _ in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext(CommonStrings.errorToChangeStatus)
+        }).disposed(by: self.disposeBag)
+        
     }
     
     //MARK: - Function Helpers
