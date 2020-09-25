@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -37,4 +38,39 @@ class RootView:  XCTestCase {
             XCTAssertTrue((res.response?.status!.count)! > 0)
         }).disposed(by: self.disposeBag)
     }
+    
+    func testSearchFilterShoudBeText() -> Void {
+        // Given
+        self.rootViewModel.searchFilter.onNext("89")
+        
+        // When
+        self.rootViewModel.searchFilter.subscribe(onNext: { res in
+            // Then
+            XCTAssertTrue(res == "89")
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testSearchFilterShouldBeEmpty() -> Void {
+        self.rootViewModel.searchFilter.onNext("")
+        self.rootViewModel.searchFilter.subscribe(onNext: { res in
+            XCTAssertTrue(res == "")
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testSearchFilterShouldBeEmptyWhenInputIsNotNumber() -> Void {
+        self.rootViewModel.searchFilter.onNext("sdf")
+        self.rootViewModel.searchFilter.subscribe(onNext: { res in
+            XCTAssertTrue(res == "")
+        }).disposed(by: self.disposeBag)
+    }
+    
+    
+    func testResetFilterValueShouldBeNil() -> Void {
+        self.rootViewModel.dataFilter.subscribe(onNext: { res in
+            XCTAssertNil(res)
+        }).disposed(by: self.disposeBag)
+        
+        self.rootViewModel.resetFilter()
+    }
+    
 }
