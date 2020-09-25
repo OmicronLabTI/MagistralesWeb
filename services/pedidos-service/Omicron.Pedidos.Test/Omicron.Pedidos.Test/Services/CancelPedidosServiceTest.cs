@@ -23,6 +23,8 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// class for the test.
@@ -124,7 +126,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResultDiapi));
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, this.mockDiApiService.Object);
+            var mockUserService = new Mock<IUsersService>();
+            var mockSapFile = new Mock<ISapFileService>();
+
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, this.mockDiApiService.Object, mockSapFile.Object, mockUserService.Object);
         }
 
         /// <summary>

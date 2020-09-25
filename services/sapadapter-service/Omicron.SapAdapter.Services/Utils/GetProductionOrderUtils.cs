@@ -47,8 +47,8 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
             {
-                var code = parameters[ServiceConstants.ItemCode];
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.Contains(code)).ToList() : (await sapDao.GetFabOrderByItemCode(code)).ToList();
+                var code = parameters[ServiceConstants.ItemCode].ToLower();
+                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : (await sapDao.GetFabOrderByItemCode(code)).ToList();
             }
 
             return listToReturn.DistinctBy(x => x.OrdenId).ToList();
@@ -85,8 +85,8 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
             {
-                var code = parameters[ServiceConstants.ItemCode];
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.Contains(code)).ToList() : orders.Where(x => x.ProductoId.Contains(code)).ToList();
+                var code = parameters[ServiceConstants.ItemCode].ToLower();
+                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : orders.Where(x => x.ProductoId.ToLower().Contains(code)).ToList();
             }
 
             return listToReturn.DistinctBy(x => x.OrdenId).ToList();

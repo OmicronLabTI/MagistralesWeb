@@ -15,7 +15,7 @@ import Resolver
 
 class InboxTest:  XCTestCase {
     @Injected var inboxViewModel: InboxViewModel
-    
+    @Injected var rootViewModel: RootViewModel
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -28,6 +28,7 @@ class InboxTest:  XCTestCase {
     let disposeBag = DisposeBag()
     //@Injected var inboxViewModel = InboxViewModel
     let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+    
     
     let order1 = Order(
         productionOrderId: 89284,
@@ -55,6 +56,36 @@ class InboxTest:  XCTestCase {
         statusId: 1,
         itemCode: "1027S   30 ML",
         productCode: "1027S",
+        destiny: "Local",
+        hasMissingStock: false)
+    
+    let orderTest1 = Order(
+        productionOrderId: 90006,
+        baseDocument: 60288,
+        container: "Selecciona una...",
+        tag: "Selecciona una...",
+        plannedQuantity: 2,
+        startDate: "24/09/2020",
+        finishDate: "25/09/2020",
+        descriptionProduct: "Agua de rosas 48%  agua de hamamelis 48%   propilenglicol 4%",
+        statusId: 1,
+        itemCode: "1132   120 ML",
+        productCode: nil,
+        destiny: "Local",
+        hasMissingStock: true)
+    
+    let orderTest2 = Order(
+        productionOrderId: 89997,
+        baseDocument: 60284,
+        container: "PRINCESS/DISCTOP",
+        tag: "PERSONALIZADA",
+        plannedQuantity: 1,
+        startDate: "22/09/2020",
+        finishDate: "30/09/2020",
+        descriptionProduct: "Aceite de Lima 20%, Vaselina",
+        statusId: 1,
+        itemCode: "2573   30 ML",
+        productCode: nil,
         destiny: "Local",
         hasMissingStock: false)
     // MARK: - TEST FUNCTIONS
@@ -305,4 +336,66 @@ class InboxTest:  XCTestCase {
         XCTAssertEqual(status, 4)
     }
     
+    func testPendingDidTap() -> Void  {
+        
+        self.inboxViewModel.showAlertToChangeOrderOfStatus.subscribe(onNext: { message in
+            XCTAssertTrue(message.message == CommonStrings.confirmationMessagePendingStatus)
+        }).disposed(by: self.disposeBag)
+        
+        self.inboxViewModel.pendingDidTap.onNext(())
+    }
+    
+    func testProcessDidTap() -> Void {
+        self.inboxViewModel.showAlertToChangeOrderOfStatus.subscribe(onNext: { message in
+            XCTAssertTrue(message.message == CommonStrings.confirmationMessageProcessStatus)
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func testSimilarityViewButtonDidTap() -> Void {
+        var orders:[Order] = []
+        orders.append(orderTest1)
+        orders.append(orderTest2)
+        let section = SectionOrder(statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
+
+        self.inboxViewModel.setSelection(section: section)
+
+        self.inboxViewModel.statusDataGrouped.subscribe(onNext: { res in
+            XCTAssertTrue(res.count > 0)
+        }).disposed(by: self.disposeBag)
+        
+        self.inboxViewModel.similarityViewButtonDidTap.onNext(())
+    }
+    
+    func testNormalViewButtonDidTap() -> Void {
+        var orders:[Order] = []
+        orders.append(orderTest1)
+        orders.append(orderTest2)
+        
+        let section = SectionOrder(statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
+        self.inboxViewModel.setSelection(section: section)
+        
+        self.inboxViewModel.statusDataGrouped.subscribe(onNext: { res in
+            XCTAssertTrue(res.count > 0)
+        }).disposed(by: self.disposeBag)
+        
+        self.inboxViewModel.normalViewButtonDidTap.onNext(())
+        
+    }
+    
+    func testGroupByOrderNumberButtonDidTap() -> Void {
+        var orders:[Order] = []
+        orders.append(orderTest1)
+        orders.append(orderTest2)
+        
+        let section = SectionOrder(statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
+        self.inboxViewModel.setSelection(section: section)
+        self.inboxViewModel.statusDataGrouped.subscribe(onNext: { res in
+            XCTAssertTrue(res.count > 0)
+            XCTAssertNotNil(res)
+        }).disposed(by: self.disposeBag)
+        
+        self.inboxViewModel.groupByOrderNumberButtonDidTap.onNext(())
+    }
+    
 }
+
