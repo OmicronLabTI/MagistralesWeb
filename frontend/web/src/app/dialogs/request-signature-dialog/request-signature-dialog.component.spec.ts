@@ -8,6 +8,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { RequestSignatureDialogComponent } from './request-signature-dialog.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
 describe('RequestSignatureDialogComponent', () => {
   let component: RequestSignatureDialogComponent;
@@ -19,9 +20,10 @@ describe('RequestSignatureDialogComponent', () => {
         MatTableModule,
         MatDialogModule,
         MatCheckboxModule,
-        MatFormFieldModule, MatInputModule,
+        MatFormFieldModule, 
+        MatInputModule,
         BrowserAnimationsModule],
-      declarations: [ RequestSignatureDialogComponent ],
+      declarations: [ RequestSignatureDialogComponent, SignaturePad ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         {
@@ -35,8 +37,8 @@ describe('RequestSignatureDialogComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RequestSignatureDialogComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
+    component = fixture.componentInstance;
   });
 
   it('should create', () => {
@@ -63,6 +65,6 @@ describe('RequestSignatureDialogComponent', () => {
 
   it('Get signature value with out base 64 prefix', () => {
     component.signaturePad.fromDataURL(ImageBase64Mock.src);
-    expect(component.getSignatureValue()).toEqual(ImageBase64Mock.srcWithoutPrefix);
+    expect(component.getSignatureValue().includes('data:image/png;base64,')).toBeFalsy();
   });
 });
