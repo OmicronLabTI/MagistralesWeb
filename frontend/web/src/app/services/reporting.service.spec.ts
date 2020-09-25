@@ -4,6 +4,8 @@ import { ConsumeService } from './consume.service';
 import { DatePipe } from '@angular/common';
 
 import { ReportingService } from './reporting.service';
+import { HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 describe('ReportingService', () => {
   beforeEach(() => TestBed.configureTestingModule({
@@ -14,5 +16,10 @@ describe('ReportingService', () => {
   it('should be created', () => {
     const service: ReportingService = TestBed.get(ReportingService);
     expect(service).toBeTruthy();
+  });
+
+  it('should be created', () => {
+    const service: ReportingService = TestBed.get(ReportingService);
+    expect(service.downloadPreviewRawMaterialRequest({}) instanceof Observable).toBeTruthy();
   });
 });
