@@ -21,6 +21,8 @@ class Utils: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    var utils = UtilsManager.shared
+    
     func testTransformDataToShowSuccess() -> Void {
         // given
         let testDate = "14/08/2020"
@@ -30,7 +32,19 @@ class Utils: XCTestCase {
         
         //then
         XCTAssertEqual(result, "2020-08-14")
+    }
+    
+    func testTransformDataNotNil() {
+        
+        let testDate = "14/08/2020"
+        let result = UtilsManager.shared.formattedDateFromString(dateString: testDate, withFormat: "yyyy-MM-dd")
         XCTAssertNotNil(result)
+        
+    }
+    
+    func testFormattedDateToString() {
+        let result = utils.formattedDateToString(date: Date(timeIntervalSinceReferenceDate: -123456789.0))
+        XCTAssertEqual(result, "01/02/1997")
     }
 
 }
