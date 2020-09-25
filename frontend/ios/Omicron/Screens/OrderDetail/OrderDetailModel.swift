@@ -144,7 +144,7 @@ class ChangeStatusRequest: Codable {
 }
 
 class ChangeStatusRespose: HttpResponse {
-    var response: ChangeStatus?
+    var response: String?
     
     required init?(map: Map)  {
         super.init(map: map)
@@ -156,24 +156,24 @@ class ChangeStatusRespose: HttpResponse {
     }
 }
 
-class ChangeStatus {
-    var id: Int?
-    var userId: String?
-    var salesOrderId: String?
-    var productionOrderId: String?
-    var status: String?
-    required init?(map: Map)  {    }
-}
-
-extension ChangeStatus: Mappable {
-     func mapping(map: Map) {
-        id <- map["Id"]
-        userId <- map["Userid"]
-        salesOrderId <- map["Salesorderid"]
-        productionOrderId <- map["Productionorderid"]
-        status <- map["Status"]
-    }
-}
+//class ChangeStatus {
+//    var id: Int?
+//    var userId: String?
+//    var salesOrderId: String?
+//    var productionOrderId: String?
+//    var status: String?
+//    required init?(map: Map)  {    }
+//}
+//
+//extension ChangeStatus: Mappable {
+//     func mapping(map: Map) {
+//        id <- map["Id"]
+//        userId <- map["Userid"]
+//        salesOrderId <- map["Salesorderid"]
+//        productionOrderId <- map["Productionorderid"]
+//        status <- map["Status"]
+//    }
+//}
 
 class FinishOrder: Codable {
     var userId: String?
@@ -186,5 +186,44 @@ class FinishOrder: Codable {
         self.fabricationOrderId = fabricationOrderId
         self.qfbSignature = qfbSignature
         self.technicalSignature = technicalSignature
+    }
+}
+
+class FinishOrderResponse: HttpResponse {
+    var response: OrderFinished?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        response <- map["response"]
+    }
+}
+
+class OrderFinished {
+    var userId: String?
+    var fabricationOrderId: String?
+    var qfbSignature: String?
+    var technicalSignature: String?
+    required init?(map: Map) { }
+}
+
+extension OrderFinished: Mappable {
+    func mapping(map: Map) {
+        self.userId <- map["userId"]
+        self.fabricationOrderId <- map["fabricationOrderId"]
+        self.qfbSignature <- map["qfbSignature"]
+        self.technicalSignature <- map["technicalSignature"]
+    }
+}
+
+class DeleteOrUpdateItemOfTableResponse: HttpResponse {
+    var response: String?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        response <- map["response"]
     }
 }

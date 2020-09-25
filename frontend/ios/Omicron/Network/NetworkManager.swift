@@ -106,9 +106,9 @@ class NetworkManager: SessionProtocol {
     }
     
     // Actualiza, elimina un elemento de la tabla en detalle de la formula
-    func updateDeleteItemOfTableInOrderDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<OrderDetailResponse> {
+    func updateDeleteItemOfTableInOrderDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<DeleteOrUpdateItemOfTableResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
-        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        let res: Observable<DeleteOrUpdateItemOfTableResponse> = makeRequest(request: req)
         return res
     }
     
@@ -120,9 +120,9 @@ class NetworkManager: SessionProtocol {
     }
     
     // Finaliza la order de fabricación
-    func finishOrder(order: FinishOrder) -> Observable<OrderDetailResponse> {
+    func finishOrder(order: FinishOrder) -> Observable<FinishOrderResponse> {
         let req: ApiService = ApiService.finishOrder(finishOrder: order)
-        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        let res: Observable<FinishOrderResponse> = makeRequest(request: req)
         return res
     }
     
@@ -144,6 +144,13 @@ class NetworkManager: SessionProtocol {
     func getComponents(data: ComponentRequest) -> Observable<ComponentResponse> {
         let req: ApiService = ApiService.getComponents(data: data)
         let res: Observable<ComponentResponse> = makeRequest(request: req)
+        return res
+    }
+    
+    // Obtiene la carga de trabajo
+    func getWordLoad(data: WorkloadRequest) -> Observable<WorkloadResponse> {
+        let req: ApiService = ApiService.getWorkload(data: data)
+        let res: Observable<WorkloadResponse> = makeRequest(request: req)
         return res
     }
     

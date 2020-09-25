@@ -36,6 +36,7 @@ struct ViewControllerIdentifiers {
     static let cardCollectionViewCell = "CardCollectionViewCell"
     static let cardReuseIdentifier = "card"
     static let rootTableViewCell = "RootTableViewCell"
+    static let kpiCell = "KPICell"
     static let orderDetailViewController = "OrderDetailViewController"
     static let detailTableViewCell = "DetailTableViewCell"
     static let orderDetailFormViewController = "OrderDetailFormViewController"
@@ -63,6 +64,7 @@ struct OmicronColors {
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
+    static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
 }
 
 struct UsersDefaultsConstants {

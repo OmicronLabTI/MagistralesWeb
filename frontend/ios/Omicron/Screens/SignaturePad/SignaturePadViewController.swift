@@ -69,23 +69,28 @@ class SignaturePadViewController: UIViewController {
     }
     
     func initComponents() -> Void {
-        self.signaturePadView.delegate = self
         
-        self.signatureTitleView.backgroundColor = OmicronColors.comments
-        self.buttonsView.backgroundColor = OmicronColors.comments
+        signaturePadView.delegate = self
         
-        self.signatureTitleLabel.text = self.titleView
-        self.signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        signatureTitleView.backgroundColor = UIColor.init(named: "darkGray")
+        buttonsView.backgroundColor = UIColor.init(named: "darkGray")
         
-        self.clearButton.setTitle(CommonStrings.clear, for: .normal)
-        self.clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        signatureTitleLabel.text = self.titleView
+        signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
+        signatureTitleLabel.textColor = .white
         
-        self.cancelButton.setTitle(CommonStrings.cancel, for: .normal)
-        self.cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
-        self.cancelButton.setTitleColor(.systemRed, for: .normal)
+        clearButton.setTitle(CommonStrings.clear, for: .normal)
+        clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 20)
         
-        self.acceptButton.setTitle(CommonStrings.accept, for: .normal)
-        self.acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        cancelButton.setTitle(CommonStrings.cancel.uppercased(), for: .normal)
+        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        cancelButton.setTitleColor(.white, for: .normal)
+        
+        acceptButton.setTitle(CommonStrings.accept.uppercased(), for: .normal)
+        acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        acceptButton.setTitleColor(.white, for: .normal)
+        acceptButton.backgroundColor = UIColor.systemGreen
+        
     }
 }
 

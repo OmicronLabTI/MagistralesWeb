@@ -51,6 +51,9 @@ class UtilsManager {
         return att
     }
     
+    
+    
+    
     func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
 
            let inputFormatter = DateFormatter()
@@ -61,7 +64,15 @@ class UtilsManager {
                return outputFormatter.string(from: date)
            }
            return nil
-       }
+    }
+    
+    func formattedDateToString(date: Date, withFormat format: String = "dd/MM/yyyy") -> String {
+
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = format
+        return inputFormatter.string(from: date)
+        
+    }
     
     func formatterDoublesTo6Decimals() ->  NumberFormatter {
         let formatter = NumberFormatter()

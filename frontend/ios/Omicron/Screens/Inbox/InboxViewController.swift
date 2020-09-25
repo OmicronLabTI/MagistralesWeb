@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 import RxDataSources
+import Charts
 
 class InboxViewController: UIViewController {
     
@@ -24,6 +25,10 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var groupByOrderNumberButton: UIButton!
     
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var chartViewContainer: UIView!
+    @IBOutlet weak var cardsView: UIView!
+    
     // MARK:  Variables
     
     private var bindingCollectionView = true
@@ -81,6 +86,7 @@ class InboxViewController: UIViewController {
             cell.startDateDescriptionLabel.text = element.startDate ?? ""
             cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
             cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+            cell.missingStockImage.isHidden = !element.hasMissingStock
             cell.delegate = self
             return cell
             
@@ -162,18 +168,25 @@ class InboxViewController: UIViewController {
             guard let self = self else { return }
             self.normalViewButton.isEnabled = isEnabled
             self.heigthCollectionViewConstraint.constant = isEnabled ? 8 : -60
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por número de orden
         inboxViewModel.groupedByOrderNumberIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.groupByOrderNumberButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
         inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
-            self?.similarityViewButton.isHidden = isHidden
-            self?.normalViewButton.isHidden = isHidden
+            guard let self = self else { return }
+            self.similarityViewButton.isHidden = isHidden
+            self.normalViewButton.isHidden = isHidden
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Muestra un alert para la confirmación de cambio de estatus de una orden
@@ -201,7 +214,7 @@ class InboxViewController: UIViewController {
             guard let row = index?.row else { return }
             self?.chageStatusName(index: row)
             self?.hideButtons(index: row)
-            self?.showMoreIndicators()
+//            self?.showMoreIndicators()
             self?.goToTop()
         }).disposed(by: disposeBag)
                 
@@ -219,6 +232,15 @@ class InboxViewController: UIViewController {
         
         collectionView.rx.didScroll.subscribe({ cell in
             self.collectionView.removeMoreIndicator()
+        }).disposed(by: disposeBag)
+        
+        inboxViewModel.showKPIView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] show in
+            
+            guard let self = self else { return }
+            if show { self.title = "Indicadores" }
+            self.chartViewContainer.isHidden = !show
+            self.cardsView.isHidden = show
+            
         }).disposed(by: disposeBag)
     }
 
@@ -250,6 +272,7 @@ class InboxViewController: UIViewController {
     }
     
     private func showMoreIndicators() {
+        collectionView.removeMoreIndicator()
         let itemsCount = Array(0..<collectionView.numberOfSections)
             .map { collectionView.numberOfItems(inSection: $0) }
             .reduce(0, +)

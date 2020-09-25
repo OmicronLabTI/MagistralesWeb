@@ -8,8 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		0BB57A4257C6A72E4D3CF5A4 /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C723D74196413AA0F7F3D7FE /* Pods_Omicron.framework */; };
+		1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8CD251A5C5400DF2979 /* Extensions.swift */; };
+		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
 		1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */; };
+		1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B277251B9BEC009F56FC /* ChartTest.swift */; };
+		1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */; };
+		1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27D251B9C33009F56FC /* ComponetsTest.swift */; };
+		1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27F251B9C46009F56FC /* CommentsTest.swift */; };
+		1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321B25192C5C0040DC65 /* ChartViewController.swift */; };
+		1EF0321E251931B30040DC65 /* workload.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EF0321D251931B30040DC65 /* workload.json */; };
+		1EF03220251932DA0040DC65 /* Workload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321F251932DA0040DC65 /* Workload.swift */; };
+		1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF032212519388C0040DC65 /* ChartViewModel.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
 		7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */; };
@@ -30,6 +40,10 @@
 		7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */; };
 		7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */; };
 		7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */; };
+		7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */; };
+		7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */; };
+		7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */; };
+		7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5DFB15251C82740041B2AC /* BatchTest.swift */; };
 		7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */; };
 		7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C75C32F24DC77C800CBA3C3 /* RootView.swift */; };
 		7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7DDC72251007750049B43C /* ComponentsTableViewCell.swift */; };
@@ -111,8 +125,18 @@
 
 /* Begin PBXFileReference section */
 		1321C32813E9F154A27FD4BA /* Pods-OmicronTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmicronTests.debug.xcconfig"; path = "Target Support Files/Pods-OmicronTests/Pods-OmicronTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1E07D8CD251A5C5400DF2979 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPITableViewCell.swift; sourceTree = "<group>"; };
 		1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderCollectionViewCell.xib; sourceTree = "<group>"; };
 		1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionViewCell.swift; sourceTree = "<group>"; };
+		1E72B277251B9BEC009F56FC /* ChartTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartTest.swift; sourceTree = "<group>"; };
+		1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadTest.swift; sourceTree = "<group>"; };
+		1E72B27D251B9C33009F56FC /* ComponetsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponetsTest.swift; sourceTree = "<group>"; };
+		1E72B27F251B9C46009F56FC /* CommentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsTest.swift; sourceTree = "<group>"; };
+		1EF0321B25192C5C0040DC65 /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
+		1EF0321D251931B30040DC65 /* workload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = workload.json; sourceTree = "<group>"; };
+		1EF0321F251932DA0040DC65 /* Workload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workload.swift; sourceTree = "<group>"; };
+		1EF032212519388C0040DC65 /* ChartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewModel.swift; sourceTree = "<group>"; };
 		2CB66FAA4E49873A00418BE5 /* Pods-Omicron.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.release.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.release.xcconfig"; sourceTree = "<group>"; };
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -131,6 +155,10 @@
 		7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormViewModel.swift; sourceTree = "<group>"; };
 		7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormModel.swift; sourceTree = "<group>"; };
+		7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = finishedOrderResponse.json; sourceTree = "<group>"; };
+		7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = updateOrDeleteItemOfTable.json; sourceTree = "<group>"; };
+		7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = assingBatchesResponse.json; sourceTree = "<group>"; };
+		7C5DFB15251C82740041B2AC /* BatchTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchTest.swift; sourceTree = "<group>"; };
 		7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTest.swift; sourceTree = "<group>"; };
 		7C75C32F24DC77C800CBA3C3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		7C7DDC72251007750049B43C /* ComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsTableViewCell.swift; sourceTree = "<group>"; };
@@ -229,6 +257,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1EF03223251938970040DC65 /* Chart */ = {
+			isa = PBXGroup;
+			children = (
+				1EF0321B25192C5C0040DC65 /* ChartViewController.swift */,
+				1EF032212519388C0040DC65 /* ChartViewModel.swift */,
+				1EF0321F251932DA0040DC65 /* Workload.swift */,
+			);
+			path = Chart;
+			sourceTree = "<group>";
+		};
 		71F4FDF4DE06818D4C96C7A4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +327,7 @@
 				7C844BAB24D2839400D26B96 /* RootViewModel.swift */,
 				7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */,
 				7C844BAF24D2A0FC00D26B96 /* RootModel.swift */,
+				1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */,
 			);
 			path = RootView;
 			sourceTree = "<group>";
@@ -406,6 +445,11 @@
 				98015CC824AFBC6D00E7772F /* Info.plist */,
 				7C56BDF924EDCF6D0039B2E7 /* OrderDetailTest.swift */,
 				7C56BDFB24EDD6720039B2E7 /* UtilsTest.swift */,
+				1E72B277251B9BEC009F56FC /* ChartTest.swift */,
+				1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */,
+				1E72B27D251B9C33009F56FC /* ComponetsTest.swift */,
+				1E72B27F251B9C46009F56FC /* CommentsTest.swift */,
+				7C5DFB15251C82740041B2AC /* BatchTest.swift */,
 			);
 			path = OmicronTests;
 			sourceTree = "<group>";
@@ -422,6 +466,7 @@
 		980F234124DA115E0073E2C8 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				1EF0321D251931B30040DC65 /* workload.json */,
 				980F234224DA11900073E2C8 /* refresh_token.json */,
 				980F234424DA11AE0073E2C8 /* login.json */,
 				7CA3058924DB0ACF00A7D2B5 /* Status.json */,
@@ -430,6 +475,9 @@
 				7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */,
 				7C82849F24F46FA30043ACE8 /* getLots.json */,
 				987BDFE5250A863500D9C6E4 /* getComponents.json */,
+				7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */,
+				7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */,
+				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -488,6 +536,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				1EF03223251938970040DC65 /* Chart */,
 				987BDFDE2509867200D9C6E4 /* Components */,
 				7CF2EA3624F6C5DD0005602F /* SignaturePad */,
 				7C9118F924EF1C5300E2571A /* Lots */,
@@ -518,6 +567,7 @@
 				98B7845924DA228A005A38FC /* Persistence.swift */,
 				7CCC6A4724F880E200ACBBE8 /* FileManager.swift */,
 				986EA24625083BF200ACE26A /* ExtensionsUI.swift */,
+				1E07D8CD251A5C5400DF2979 /* Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -643,19 +693,23 @@
 			files = (
 				987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */,
 				7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */,
+				7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */,
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
+				1EF0321E251931B30040DC65 /* workload.json in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
 				7C980E0624E3245000D58A85 /* UserInfo.json in Resources */,
 				7C56BE0224EDE9900039B2E7 /* requestChangeStatusProcess.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
+				7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */,
 				1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */,
 				7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */,
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
+				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
 				7C8284A024F46FA30043ACE8 /* getLots.json in Resources */,
 			);
@@ -791,8 +845,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */,
 				7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
+				1EF03220251932DA0040DC65 /* Workload.swift in Sources */,
 				7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */,
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
@@ -808,7 +864,9 @@
 				7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
 				7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */,
+				1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
+				1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
@@ -822,6 +880,7 @@
 				987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
+				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
 				7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */,
 				7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
@@ -849,10 +908,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */,
+				1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */,
+				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
 				98015CC724AFBC6D00E7772F /* LoginTest.swift in Sources */,
+				1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */,
 				7C56BDFC24EDD6720039B2E7 /* UtilsTest.swift in Sources */,
 				7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */,
+				1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */,
 				7C56BDFA24EDCF6D0039B2E7 /* OrderDetailTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1021,7 +1085,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1043,7 +1107,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

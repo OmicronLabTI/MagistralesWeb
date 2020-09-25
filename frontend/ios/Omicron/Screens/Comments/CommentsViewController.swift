@@ -82,23 +82,29 @@ class CommentsViewController: UIViewController {
     }
     
     func initComponents() -> Void {
-        self.mainView.layer.cornerRadius = 50
-        self.labelView.backgroundColor = OmicronColors.comments
-        self.buttonsView.backgroundColor = OmicronColors.comments
+    
+        mainView.layer.cornerRadius = 50
+        labelView.backgroundColor = UIColor.init(named: "darkGray")
+        buttonsView.backgroundColor = UIColor.init(named: "darkGray")
         
-        self.titleLabel.text = "Comentarios"
-        self.titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        titleLabel.text = "Comentarios"
+        titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
+        titleLabel.textColor = .white
         
-        self.cancelButton.setTitle("Cancelar", for: .normal)
-        self.cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
-        self.cancelButton.setTitleColor(.red, for: .normal)
+        cancelButton.setTitle("Cancelar".uppercased(), for: .normal)
+        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        cancelButton.setTitleColor(.white, for: .normal)
         
-        self.aceptButton.setTitle("Aceptar", for: .normal)
-        self.aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 15)
+        aceptButton.setTitle("Aceptar".uppercased(), for: .normal)
+        aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
+        aceptButton.setTitleColor(.white, for: .normal)
+        aceptButton.backgroundColor = UIColor.systemGreen
         
-        self.textView.text = ""
-        self.textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 18)
+        textView.text = ""
+        textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 23)
+        
     }
+    
 }
 
 

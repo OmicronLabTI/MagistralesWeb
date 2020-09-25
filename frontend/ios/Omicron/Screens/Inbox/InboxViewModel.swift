@@ -12,6 +12,7 @@ import RxCocoa
 import RxDataSources
 
 class  InboxViewModel {
+    
     var finishedDidTap = PublishSubject<Void>()
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
@@ -35,6 +36,9 @@ class  InboxViewModel {
     var hideGroupingButtons = PublishSubject<Bool>()
     var groupByOrderNumberButtonDidTap = PublishSubject<Void>()
     var groupedByOrderNumberIsEnable = PublishSubject<Bool>();
+    var showKPIView = PublishSubject<Bool>()
+    var viewKPIDidPressed = PublishSubject<Void>()
+    var deselectRow = PublishSubject<Bool>()
     
     init() {
         // Funcionalidad para el botón de Terminar
@@ -108,6 +112,12 @@ class  InboxViewModel {
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.groupedByOrderNumberIsEnable.onNext(false)
         }).disposed(by: self.disposeBag)
+
+        viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            self.showKPIView.onNext(true)
+            self.deselectRow.onNext(true)
+        }).disposed(by: disposeBag)
         
     }
     
@@ -116,7 +126,9 @@ class  InboxViewModel {
         var sectionModels:[SectionModel<String, Order>] = []
         
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto y se agrupan por "Producto: [productCode]"
-        let groupBySimilarity = data.filter{$0.value.count > 1}
+        let groupBySimilarity = data
+            .filter{$0.value.count > 1}
+            .sorted { ($0.key ?? "").localizedStandardCompare($1.key ?? "") == .orderedAscending}
         if (groupBySimilarity.count > 0) {
             let sectionsModelsBySimilarity = groupBySimilarity.map( { [unowned self] (orders) -> SectionModel<String, Order> in
                 return SectionModel(model: "\(titleForOrdersWithSimilarity) \(orders.key ?? "")", items: self.sortByBaseBocumentAscending(orders: orders.value))
@@ -155,6 +167,7 @@ class  InboxViewModel {
         let sortedSections = sections.sorted{$0.model < $1.model}
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
+
     }
     
     func setSelection(section: SectionOrder) -> Void {
@@ -168,7 +181,7 @@ class  InboxViewModel {
         self.normalViewButtonIsEnable.onNext(false)
         self.processButtonIsEnable.onNext(false)
         self.pendingButtonIsEnable.onNext(false)
-        
+        showKPIView.onNext(false)
     }
     
     func setFilter(orders: [Order]) -> Void {

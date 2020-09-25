@@ -195,7 +195,7 @@ class OrderDetailViewController: UIViewController {
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
                 self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
-//                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
 //                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
                 let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: 22, textColor: OmicronColors.blue)
                 let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: 22, textColor: .gray)
@@ -207,14 +207,14 @@ class OrderDetailViewController: UIViewController {
                 self.productDescritionLabel.attributedText = richText
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
-                    self.destinyLabel.isHidden = true
+                    self.destinyLabel.text = ""
                 }
                 
             }
                 }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
-            cell.hashTagLabel.text = "99"
+            cell.hashTagLabel.text = "\(row + 1)"
             cell.codeLabel.text = "\(data.productID!)"
             cell.descriptionLabel.text = data.detailDescription?.uppercased()
             cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
