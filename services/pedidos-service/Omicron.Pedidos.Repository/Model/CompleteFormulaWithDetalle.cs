@@ -121,7 +121,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int CompleteQuantity { get; set; }
+        public decimal CompleteQuantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -158,6 +158,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string DestinyAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool HasMissingStock { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

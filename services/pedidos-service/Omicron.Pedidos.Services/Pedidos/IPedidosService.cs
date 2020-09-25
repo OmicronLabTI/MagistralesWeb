@@ -19,13 +19,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     public interface IPedidosService
     {
         /// <summary>
-        /// process the orders.
-        /// </summary>
-        /// <param name="pedidosId">the ids of the orders.</param>
-        /// <returns>the result.</returns>
-        Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId);
-
-        /// <summary>
         /// returns the orders ids.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
@@ -44,7 +37,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="userId">the user id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetFabOrderByUserID(string userId);
+        Task<ResultModel> GetFabOrderByUserId(string userId);
 
         /// <summary>
         /// Gets the list of user orders by user id.
@@ -81,13 +74,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> ConnectDiApi();
 
         /// <summary>
-        /// Process by order.
-        /// </summary>
-        /// <param name="processByOrder">the orders.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder);
-
-        /// <summary>
         /// Change order status to finish.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
@@ -97,7 +83,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Finish fabrication orders.
         /// </summary>
-        /// <param name="finishOrders">Orders to finish.</para
+        /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders);
 
@@ -114,7 +100,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="signatureType">The signature type.</param>
         /// <param name="signatureModel">The signature info.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultModel> UpdateOrderSignature(SignatureTypeEnum signatureType, UpdateOrderSignatureModel signatureModel);
+        Task<ResultModel> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureModel signatureModel);
 
         /// <summary>
         /// Get production order signatures.
@@ -150,5 +136,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CompletedBatches(int orderId);
+
+        /// <summary>
+        /// gets the data to send to print.
+        /// </summary>
+        /// <param name="ordersId">the sales orders..</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> PrintOrders(List<int> ordersId);
     }
 }

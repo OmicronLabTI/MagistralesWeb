@@ -39,6 +39,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<OrderModel>> GetOrdersById(int pedidoID);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<List<OrderModel>> GetOrdersById(List<int> pedidoID);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
@@ -66,6 +72,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
 
+        /// <summary>
+        /// gets the fabrication orders by sales order id.
+        /// </summary>
+        /// <param name="salesOrderIds">the sales order ids.</param>        
+        /// <returns>the data.</returns>
+        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds);
+        
         /// <summary>
         /// gets the orders by orderid.
         /// </summary>
@@ -184,5 +197,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         Task<List<ProductoModel>> GetProductsManagmentByBatch(List<string> criterials);
 
+        /// <summary>
+        /// Gets the attachments.
+        /// </summary>
+        /// <param name="ids">gets the attachments by id</param>
+        /// <returns>the attachaments.</returns>
+        Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
     }
 }

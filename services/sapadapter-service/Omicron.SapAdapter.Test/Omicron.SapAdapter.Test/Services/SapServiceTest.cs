@@ -63,6 +63,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
             this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
+            this.context.AttachmentModel.AddRange(this.GetAttachmentModel());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -71,6 +72,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
 
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
@@ -253,7 +255,7 @@ namespace Omicron.SapAdapter.Test.Services
             var listIds = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, true);
+            var result = await this.sapService.GetOrderFormula(listIds, true, true);
 
             // assert
             Assert.IsNotNull(result);
@@ -270,7 +272,7 @@ namespace Omicron.SapAdapter.Test.Services
             var listIds = new List<int> { 100 };
 
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, false);
+            var result = await this.sapService.GetOrderFormula(listIds, false, true);
 
             // assert
             Assert.IsNotNull(result);
@@ -750,6 +752,59 @@ namespace Omicron.SapAdapter.Test.Services
             var returnItems = JsonConvert.DeserializeObject<List<ProductoModel>>(responseAsJson);
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedResults, returnItems.Count);
+        }
+
+        /// <summary>
+        /// Get production orders with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFormulaBySalesOrdersOrProductionOrders()
+        {
+            // arrange
+            var productionOrders = new List<int> { 100 };
+            var salesOrders = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders, false);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <param name="orderId">The order id.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(100)]
+        [TestCase(101)]
+        [TestCase(102)]
+        public async Task GetRecipe(int orderId)
+        {
+            // act
+            var result = await this.sapService.GetRecipe(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetRecipse()
+        {
+            // arrange
+            var listOrders = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetOriginalRouteRecipes(listOrders);
+
+            // assert
+            Assert.IsNotNull(result);
         }
     }
 }

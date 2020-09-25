@@ -1,5 +1,8 @@
 PODS:
   - Alamofire (5.2.1)
+  - Charts (3.5.0):
+    - Charts/Core (= 3.5.0)
+  - Charts/Core (3.5.0)
   - Differentiator (4.0.1)
   - Eureka (5.2.1)
   - lottie-ios (3.1.8)
@@ -24,6 +27,7 @@ PODS:
   - TagListView (1.4.1)
 
 DEPENDENCIES:
+  - Charts
   - Eureka
   - lottie-ios
   - Moya/RxSwift (~> 14.0)
@@ -38,6 +42,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Charts
     - Differentiator
     - Eureka
     - lottie-ios
@@ -53,6 +58,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
+  Charts: 40a08591df1f8ad5c223ddedfb1a06da92f24f7c
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   Eureka: c883105488e05bc65539f583246ecf9657cabbfe
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
@@ -66,6 +72,6 @@ SPEC CHECKSUMS:
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: c5821e53380df0671da1595ff5d8f152e923d592
+PODFILE CHECKSUM: f6ebcf3ea9ba35cd8f147dbd11553a9480bc52e4
 
 COCOAPODS: 1.9.3

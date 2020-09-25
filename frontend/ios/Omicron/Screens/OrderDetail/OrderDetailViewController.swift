@@ -31,6 +31,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var finishedDateDescriptionLabel: UILabel!
     @IBOutlet weak var productDescritionLabel: UILabel!
     @IBOutlet weak var infoView: UIView!
+    @IBOutlet weak var hashtagLabel: UILabel!
     
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
@@ -66,7 +67,7 @@ class OrderDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
-        self.title = "Detalle de la fórmula"
+        self.title = CommonStrings.formulaDetail
         splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.initComponents()
@@ -111,7 +112,7 @@ class OrderDetailViewController: UIViewController {
     // Inicia la ejecución del refresh control
     func refreshViewControl() -> Void {
         self.refreshControl.tintColor = OmicronColors.blue
-        self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
+        self.refreshControl.attributedTitle = NSAttributedString(string: CommonStrings.updatingData)
         refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         self.tableView.addSubview(self.refreshControl)
     }
@@ -152,31 +153,32 @@ class OrderDetailViewController: UIViewController {
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
+        self.penddingButton.rx.tap.bind(to: orderDetailViewModel.pendingButtonDidTap).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
             self?.goToComponentsViewController()
         }).disposed(by: disposeBag)
         
-        self.orderDetailViewModel.showAlertConfirmationProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: {[weak self] _ in self?.dismiss(animated: true, completion: nil)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.changeStatusToProcess()})
+        self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: {[weak self] _ in self?.dismiss(animated: true, completion: nil)})
+            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.orderDetailViewModel.terminateOrChangeStatusOfAnOrder(actionType: data.typeOfStatus)})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
         // Muestra un mensaje de confirmación para poner la orden en status finalizado
-        self.orderDetailViewModel.showAlertConfirmationFinished.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
-            alert.addAction(cancelAction)
-            alert.addAction(okAction)
-            self?.present(alert, animated: true, completion: nil)
-        }).disposed(by: self.disposeBag)
+//        self.orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+//            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+//            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
+//            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] _ in self?.orderDetailViewModel.validIfOrderCanBeFinalized()  })
+//            alert.addAction(cancelAction)
+//            alert.addAction(okAction)
+//            self?.present(alert, animated: true, completion: nil)
+//        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
-            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: \(self?.formatter.string(from: NSNumber(value: sum)) ?? "" )", textToBold: "Sumatoria de la fórmula: ")
+            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.sumOfFormula)\(self?.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)", textToBold: "\(CommonStrings.sumOfFormula)")
         }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
@@ -187,27 +189,36 @@ class OrderDetailViewController: UIViewController {
                 
                 self.orderDetail = res
                 let detail = res.first!
-                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Número de pedido: \(detail.baseDocument ?? 0)", textToBold: "Número de pedido:")
-                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase: \(detail.container ?? "")", textToBold: "Envase")
-                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta: \(detail.productLabel ?? "")", textToBold: "Etiqueta:")
-                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Orden de fabricación: \(detail.productionOrderID ?? 0)", textToBold: "Orden de fabricación:")
-                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada: \(detail.plannedQuantity ?? 0)", textToBold: "Cantidad planificada:")
-                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación: \(detail.startDate ?? "")", textToBold: "Fecha de fabricación:")
-                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización: \(detail.dueDate ?? "")", textToBold: "Fecha de finalización:")
-                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? "") \(detail.productDescription ?? "")", textToBold: "")
-                self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino: \(self.destiny)", textToBold: "Destino:")
+                self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(detail.baseDocument ?? 0)", textToBold: CommonStrings.orderNumber)
+                self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.container) \(detail.container ?? CommonStrings.empty)", textToBold: CommonStrings.container)
+                self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.tag) \(detail.productLabel ?? CommonStrings.empty)", textToBold: CommonStrings.tag)
+                self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
+                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
+                self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
+                self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
+//                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
+                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: 22, textColor: OmicronColors.blue)
+                let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: 22, textColor: .gray)
+                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: 22)
+                let richText = NSMutableAttributedString()
+                richText.append(code)
+                richText.append(pipe)
+                richText.append(description)
+                self.productDescritionLabel.attributedText = richText
+                self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
-                    self.destinyLabel.isHidden = true
+                    self.destinyLabel.text = ""
                 }
                 
             }
                 }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
+            cell.hashTagLabel.text = "\(row + 1)"
             cell.codeLabel.text = "\(data.productID!)"
             cell.descriptionLabel.text = data.detailDescription?.uppercased()
-            cell.baseQuantityLabel.text =  data.unit == "Pieza" ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
-            cell.requiredQuantityLabel.text = data.unit == "Pieza" ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
+            cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ? String(format: "%.0f", data.baseQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
+            cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
 //            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
@@ -218,8 +229,9 @@ class OrderDetailViewController: UIViewController {
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
-            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self?.goToCommentsViewController))
-            self?.navigationItem.rightBarButtonItem = comments
+            guard let self = self else { return }
+            let comments = UIBarButtonItem(image: UIImage(systemName: iconName), style: .plain, target: self, action: #selector(self.goToCommentsViewController))
+            self.navigationItem.rightBarButtonItems = [self.getOmniconLogo(), comments]
         }).disposed(by: self.disposeBag)
         
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
@@ -253,13 +265,14 @@ class OrderDetailViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton, title: StatusNameConstants.addComponent, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.saveButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
-        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: "Componentes: ", fontSize: 22)
-        UtilsManager.shared.labelsStyle(label: self.htCode, text: "Código", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: "Cant. Base", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: "Cant. requerida", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htUnit, text: "Unidad", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: "Almacén", fontSize: 19, typeFont: "bold")
-        UtilsManager.shared.labelsStyle(label: self.htDescription, text: "Descripción", fontSize: 19, typeFont: "bold")
+        UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
+        UtilsManager.shared.labelsStyle(label: self.htCode, text: CommonStrings.code, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: CommonStrings.hashtag, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.htBaseQuantity, text: CommonStrings.baseQuantity, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.htrequiredQuantity, text: CommonStrings.pQuantity, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.htUnit, text: CommonStrings.unit, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.htWerehouse, text: CommonStrings.warehouse, fontSize: 19, typeFont: CommonStrings.bold)
+        UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19, typeFont: CommonStrings.bold)
         
         // Comentado para ampliar campo descripción
 //        UtilsManager.shared.labelsStyle(label: self.htConsumed, text: "Consumido", fontSize: 19, typeFont: "bold")
@@ -268,15 +281,15 @@ class OrderDetailViewController: UIViewController {
 //        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 19, typeFont: "bold")
 //        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 19, typeFont: "bold")
         
-        self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Código:", textToBold: "Código:")
-        self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Envase:", textToBold: "Envase")
-        self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Etiqueta", textToBold: "Etiqueta:")
-        self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Documento base:", textToBold: "Documento base:")
-        self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Sumatoria de la fórmula: ", textToBold: "Sumatoria de la fórmula:")
-        self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Cantidad planificada:", textToBold: "Cantidad planificada:")
-        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de fabricación:", textToBold: "Fecha de fabricación:")
-        self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Fecha de finalización:", textToBold: "Fecha de finalización:")
-        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Destino:", textToBold: "Destino:")
+        self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingOrder, textToBold: CommonStrings.manufacturingOrder)
+        self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.container, textToBold: CommonStrings.container)
+        self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.tag, textToBold: CommonStrings.tag)
+        self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.baseDocument, textToBold: CommonStrings.baseDocument)
+        self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.sumOfFormula, textToBold: CommonStrings.sumOfFormula)
+        self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.plannedQuantity, textToBold: CommonStrings.plannedQuantity)
+        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingDate, textToBold: CommonStrings.manufacturingDate)
+        self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.finishdate, textToBold: CommonStrings.finishdate)
+        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.destiny, textToBold: CommonStrings.destiny)
         self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
         self.detailTable.tableFooterView = UIView()
         
@@ -287,11 +300,11 @@ class OrderDetailViewController: UIViewController {
     func showButtonsByStatusType(statusType: String) -> Void {
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: false, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false, hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.penddingStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.finishedStatus:
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true, hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
         case StatusNameConstants.reassignedStatus:
@@ -315,9 +328,9 @@ class OrderDetailViewController: UIViewController {
         orderDetailViewModel.deleteItemFromTable(index: index)
     }
     
-    func changeStatusToProcess() -> Void  {
-        orderDetailViewModel.changeStatus()
-    }
+//    func changeStatusToProcess() -> Void  {
+//        orderDetailViewModel.changeStatus()
+//    }
     
 //    func showQfbSignatureView() {
 //        self.orderDetailViewModel.showSignatureView.onNext("Firma del  QFB")
@@ -355,16 +368,16 @@ extension OrderDetailViewController: UITableViewDelegate {
         func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
             if (self.statusType == StatusNameConstants.inProcessStatus || self.statusType == StatusNameConstants.reassignedStatus) {
                 // Lógica para editar un item de la tabla
-                let editItem = UIContextualAction(style: .normal, title: "Editar") { [weak self] (contextualAction, view, boolValue) in
+                let editItem = UIContextualAction(style: .normal, title: CommonStrings.edit) { [weak self] (contextualAction, view, boolValue) in
                     self?.indexOfTableToEditItem = indexPath.row
                                 
                     self?.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController , sender: nil)
                 }
                 
                 // Logica para borrar un elemento de la tabla
-                let deleteItem = UIContextualAction(style: .destructive, title: "Eliminar") {  [weak self] (contextualAction, view, boolValue) in
-                    let alert = UIAlertController(title: "El componente será eliminado, ¿quieres continuar?", message: nil, preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
+                let deleteItem = UIContextualAction(style: .destructive, title: CommonStrings.delete) {  [weak self] (contextualAction, view, boolValue) in
+                    let alert = UIAlertController(title: CommonStrings.deleteComponentMessage, message: nil, preferredStyle: .alert)
+                    let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: { [weak self] _ in self?.dismiss(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { [weak self] res in self?.sendIndexToDelete(index: indexPath.row)})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)

@@ -69,12 +69,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: apimanager-svc
+  labels:
+    app: apimanager-svc
 spec:
   type: LoadBalancer
   ports:
   - port: 8000
     targetPort: 8000
     protocol: TCP
+    name: apimanager
   externalIPs:
     - 192.168.0.101
   selector:
@@ -219,6 +222,62 @@ spec:
           value: Development
         ports:
         - containerPort: 5103
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouses-deployment
+  labels:
+    app: warehouses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouses
+  template:
+    metadata:
+      labels:
+        app: warehouses
+    spec:
+      containers:
+      - name: warehouses
+        image: omicron-warehouses-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5104
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: omicron-reporting-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5105
 ---
 apiVersion: apps/v1
 kind: Deployment

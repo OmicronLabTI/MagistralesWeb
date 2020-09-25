@@ -61,8 +61,6 @@ namespace Omicron.Pedidos.Test.Entities
             new AutomaticAssingModel(),
             new CustomComponentListModel(),
             new ComponentCustomComponentListModel(),
-            new RawMaterialRequestModel(),
-            new RawMaterialRequestDetailModel(),
         };
 
         /// <summary>

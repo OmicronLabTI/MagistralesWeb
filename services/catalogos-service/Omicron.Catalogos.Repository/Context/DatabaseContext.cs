@@ -35,5 +35,13 @@ namespace Omicron.Catalogos.Entities.Context
         /// The roles tables.
         /// </value>
         public virtual DbSet<RoleModel> RoleModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets parameters model.
+        /// </summary>
+        /// <value>
+        /// Object parameters model.
+        /// </value>
+        public virtual DbSet<ParametersModel> ParametersModel { get; set; }
     }
 }

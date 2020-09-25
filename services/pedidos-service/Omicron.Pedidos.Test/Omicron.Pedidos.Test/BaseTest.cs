@@ -176,7 +176,7 @@ namespace Omicron.Pedidos.Test
         {
             var listDetalles = new List<CompleteDetailOrderModel>
             {
-                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L" },
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now },
             };
 
             var listOrders = new List<OrderWithDetailModel>
@@ -198,6 +198,28 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetRecipes()
+        {
+            var recipes = new List<OrderRecipeModel>
+            {
+                new OrderRecipeModel { Order = 107, Recipe = "C:aglo" },
+                new OrderRecipeModel { Order = 100, Recipe = "C:aglo" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = recipes,
                 Success = true,
                 UserError = string.Empty,
             };
@@ -233,7 +255,7 @@ namespace Omicron.Pedidos.Test
         {
             var listUsers = new List<UserModel>
             {
-                new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan" },
+                new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
             };
 
             return new ResultModel
@@ -356,6 +378,27 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// the values for the formulas.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetListFormulaDetalle()
+        {
+            var listFormula = new List<CompleteFormulaWithDetalle>
+            {
+                new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo León, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listFormula,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// gets the result from detail orde rmodel.
         /// </summary>
         /// <returns>the data.</returns>
@@ -384,8 +427,8 @@ namespace Omicron.Pedidos.Test
         {
             var users = new List<UserModel>
             {
-                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1" },
-                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1" },
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1 },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1 },
             };
 
             return new ResultModel

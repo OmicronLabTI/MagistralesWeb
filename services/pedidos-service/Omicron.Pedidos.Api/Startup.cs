@@ -21,10 +21,10 @@ namespace Omicron.Pedidos.Api
     using Omicron.Pedidos.DependencyInjection;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
@@ -34,12 +34,6 @@ namespace Omicron.Pedidos.Api
     /// </summary>
     public class Startup
     {
-        private const string AXITYURL = "https://www.axity.com/";
-
-        private const string SapAdapterUrl = "http://sapadapterservice/";
-
-        private const string UserUrl = "http://usuariosservice/";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -99,7 +93,7 @@ namespace Omicron.Pedidos.Api
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(AXITYURL),
+                        Url = new System.Uri(this.Configuration["AXITYURL"]),
                     },
                 });
 
@@ -109,7 +103,7 @@ namespace Omicron.Pedidos.Api
             var sapDiApiUrl = this.Configuration["DiApiAddress"];
             services.AddHttpClient("sapadapter", c =>
             {
-                c.BaseAddress = new Uri(SapAdapterUrl);
+                c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapAdapter, SapAdapter>();
@@ -123,10 +117,17 @@ namespace Omicron.Pedidos.Api
 
             services.AddHttpClient("usuariosservice", c =>
             {
-                c.BaseAddress = new Uri(UserUrl);
+                c.BaseAddress = new Uri(this.Configuration["UserUrl"]);
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
+
+            services.AddHttpClient("sapfileService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["SapFileUrl"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ISapFileService, SapFileService>();
 
             this.AddRedis(services, Log.Logger);
 

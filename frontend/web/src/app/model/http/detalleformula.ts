@@ -43,6 +43,7 @@ export class IFormulaReq {
     hasBatches?: boolean;
     details: IFormulaDetalleReq[];
     isInDb?: boolean;
+    hasMissingStock: boolean;
 }
 
 export class IFormulaDetalleReq {

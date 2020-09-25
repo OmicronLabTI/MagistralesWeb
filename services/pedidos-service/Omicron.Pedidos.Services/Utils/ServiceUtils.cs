@@ -48,27 +48,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// creates the user model from fabrication.
-        /// </summary>
-        /// <param name="dataToCreate">the data to create.</param>
-        /// <returns>the data.</returns>
-        public static List<UserOrderModel> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate)
-        {
-            var listToReturn = new List<UserOrderModel>();
-            dataToCreate.ForEach(x =>
-            {
-                listToReturn.Add(new UserOrderModel
-                {
-                    Productionorderid = x.OrdenId.ToString(),
-                    Salesorderid = x.PedidoId.ToString(),
-                    Status = ServiceConstants.Planificado,
-                });
-            });
-
-            return listToReturn;
-        }
-
-        /// <summary>
         /// Creates the order logs mode.
         /// </summary>
         /// <param name="user">the user.</param>
@@ -147,7 +126,7 @@ namespace Omicron.Pedidos.Services.Utils
             listWithError.ForEach(x =>
             {
                 var order = x.Split("-");
-                if (order.Count() > 2)
+                if (order.Length > 2)
                 {
                     listToReturn.Add($"{order[1]}-{order[2]}");
                 }
@@ -209,6 +188,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
                                 ItemCode = sapOrder.Code,
+                                HasMissingStock = sapOrder.HasMissingStock,
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                             };
 
@@ -221,34 +201,6 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// creates the order detail.
-        /// </summary>
-        /// <param name="order">the order.</param>
-        /// <param name="listToSend">list to send.</param>
-        /// <returns>the data.</returns>
-        public static OrderWithDetailModel CreateOrderWithDetail(OrderWithDetailModel order, List<CompleteDetailOrderModel> listToSend)
-        {
-            var listUpdated = new List<CompleteDetailOrderModel>();
-
-            listToSend.ForEach(x =>
-            {
-                x.DescripcionProducto = x.DescripcionCorta;
-                listUpdated.Add(x);
-            });
-
-            return new OrderWithDetailModel
-            {
-                Order = new OrderModel
-                {
-                    PedidoId = order.Order.PedidoId,
-                    FechaInicio = order.Order.FechaInicio,
-                    FechaFin = order.Order.FechaFin,
-                },
-                Detalle = new List<CompleteDetailOrderModel>(listUpdated),
-            };
         }
 
         /// <summary>
@@ -265,7 +217,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (active)
             {
-                return allUsers.Where(x => x.Activo == 1).ToList();
+                return allUsers.Where(x => x.Activo == 1 && x.Asignable == 1).ToList();
             }
 
             return allUsers;
@@ -343,47 +295,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Gets the list To update or insert.
-        /// </summary>
-        /// <param name="pedidosId">the pedidos id.</param>
-        /// <param name="dataBaseSaleOrders">the database sale orders.</param>
-        /// <returns>the first is the list to insert the second the list to update.</returns>
-        public static Tuple<List<UserOrderModel>, List<UserOrderModel>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders)
-        {
-            var listToInsert = new List<UserOrderModel>();
-            var listToUpdate = new List<UserOrderModel>();
-
-            pedidosId.ForEach(p =>
-            {
-                var insertUserOrdersale = false;
-                var saleOrder = dataBaseSaleOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(p.ToString()));
-
-                if (saleOrder == null)
-                {
-                    saleOrder = new UserOrderModel
-                    {
-                        Salesorderid = p.ToString(),
-                    };
-
-                    insertUserOrdersale = true;
-                }
-
-                saleOrder.Status = ServiceConstants.Planificado;
-
-                if (insertUserOrdersale)
-                {
-                    listToInsert.Add(saleOrder);
-                }
-                else
-                {
-                    listToUpdate.Add(saleOrder);
-                }
-            });
-
-            return new Tuple<List<UserOrderModel>, List<UserOrderModel>>(listToInsert, listToUpdate);
-        }
-
-        /// <summary>
         /// gets the distinc by.
         /// </summary>
         /// <typeparam name="Tsource">the list source.</typeparam>
@@ -401,6 +312,29 @@ namespace Omicron.Pedidos.Services.Utils
                     yield return element;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a list divided in sublists.
+        /// </summary>
+        /// <typeparam name="Tsource">the original list.</typeparam>
+        /// <param name="listToSplit">the original list to split.</param>
+        /// <param name="maxCount">the max count per group.</param>
+        /// <returns>the list of list.</returns>
+        public static List<List<Tsource>> GetGroupsOfList<Tsource>(List<Tsource> listToSplit, int maxCount)
+        {
+            var listToReturn = new List<List<Tsource>>();
+            var offset = 0;
+
+            while (offset < listToSplit.Count)
+            {
+                var sublist = new List<Tsource>();
+                sublist.AddRange(listToSplit.Skip(offset).Take(maxCount).ToList());
+                listToReturn.Add(sublist);
+                offset += maxCount;
+            }
+
+            return listToReturn;
         }
 
         /// <summary>

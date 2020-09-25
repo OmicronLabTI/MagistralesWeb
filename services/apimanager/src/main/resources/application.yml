@@ -33,6 +33,12 @@ zuul:
     pedidos:
       path: /pedidos/**
       serviceId: pedidosservice
+    warehouses:
+      path: /warehouses/**
+      serviceId: warehousesservice
+    reporting:
+      path: /reporting/**
+      serviceId: reportingservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 
 ribbon:

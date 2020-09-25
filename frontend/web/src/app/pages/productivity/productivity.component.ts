@@ -5,7 +5,14 @@ import { MatPaginator, MatTableDataSource} from '@angular/material';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
-import { Colors, CONST_STRING, HttpStatus, CONST_NUMBER, HttpServiceTOCall } from 'src/app/constants/const';
+import {
+  Colors,
+  CONST_STRING,
+  HttpStatus,
+  CONST_NUMBER,
+  HttpServiceTOCall,
+  CONST_PRODUCTIVITY
+} from 'src/app/constants/const';
 import { ProductivityService } from 'src/app/services/productivity.service';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -86,7 +93,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     this.productivityService.getProductivity(this.queryString).subscribe(
       productivityRes => {
         this.dataSourceDetails = productivityRes.response.matrix;
-        this.dataSource.data = productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0);
+        this.dataSource.data =
+            productivityRes.response.matrix.filter(element => productivityRes.response.matrix.indexOf(element) > 0); // filter
         this.monthColumns = this.dataSourceDetails[0];
         this.dataSource.paginator = this.paginator;
         this.chartObject(productivityRes.response.matrix);
@@ -101,7 +109,8 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
 
   chartObject(datos) {
     const barChartData = {
-      labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > 0),
+      labels: this.monthColumns.filter(elem => this.monthColumns.indexOf(elem) > CONST_NUMBER.zero
+          && elem.toLowerCase() !== CONST_PRODUCTIVITY.titleTotal),
       datasets: this.dataSets(this.dataSource.data)
     };
     if (this.myChart) {

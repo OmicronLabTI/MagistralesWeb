@@ -15,11 +15,9 @@ namespace Omicron.Pedidos.Test.Services
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -110,6 +108,29 @@ namespace Omicron.Pedidos.Test.Services
             var assign = new Dictionary<string, string>
             {
                 { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
+            };
+
+            var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetWorkLoad(assign);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetWorkLoadByUser()
+        {
+            // arrange
+            var assign = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
+                { ServiceConstants.Qfb, "abc" },
             };
 
             var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);

@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -78,7 +79,41 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrderFormula(int ordenId)
         {
-            var result = await this.sapFacade.GetOrderFormula(ordenId);
+            var result = await this.sapFacade.GetOrderFormula(new List<int> { ordenId }, true, true);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene las formulas de la orden de fabricacion.
+        /// </summary>
+        /// <param name="ordenId">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/qfb/formula")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrderQfbFormula(List<int> ordenId)
+        {
+            var result = await this.sapFacade.GetOrderFormula(ordenId, false, false);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrders">the sales order ids.</param>
+        /// <param name="productionOrders">the production order ids.</param>
+        /// <param name="components">Flag for get components.</param>
+        /// <returns>the object.</returns>
+        [Route("/fabOrder")]
+        [HttpGet]
+        public async Task<IActionResult> GetFabricationOrdersByCriterial(
+            [FromQuery]string salesOrders,
+            [FromQuery] string productionOrders,
+            [FromQuery] bool components)
+        {
+            var salesOrdersIds = (salesOrders ?? string.Empty).ToIntList();
+            var productionOrdersIds = (productionOrders ?? string.Empty).ToIntList();
+
+            var result = await this.sapFacade.GetFabricationOrdersByCriterial(salesOrdersIds, productionOrdersIds, components);
             return this.Ok(result);
         }
 
@@ -216,12 +251,38 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the list of recipes.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        [Route("/recipe/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetRecipe(int orderId)
+        {
+            var result = await this.sapFacade.GetRecipe(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Gets the recipes by all orders id.
+        /// </summary>
+        /// <param name="ordersId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/recipes/orders")]
+        [HttpPost]
+        public async Task<IActionResult> GetRecipes(List<int> ordersId)
+        {
+            var result = await this.sapFacade.GetRecipes(ordersId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

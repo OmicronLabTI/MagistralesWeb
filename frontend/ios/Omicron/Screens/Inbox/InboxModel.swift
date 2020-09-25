@@ -18,3 +18,14 @@ class ValidStatusData {
     }
 }
 
+
+class MessageToChangeStatus {
+    var message: String
+    var typeOfStatus: String
+    
+    init(message: String, typeOfStatus: String) {
+        self.message = message
+        self.typeOfStatus = typeOfStatus
+    }
+}
+

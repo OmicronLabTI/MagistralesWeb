@@ -16,9 +16,9 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
+    using Omicron.Pedidos.Services.SapAdapter;
 
     /// <summary>
     /// Implementations for order cancellations.
@@ -47,7 +47,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
-        /// <param name="ordersToCancel">Orders to cancel.</para
+        /// <param name="ordersToCancel">Orders to cancel.</param>
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CancelFabricationOrders(List<OrderIdModel> ordersToCancel)
         {
@@ -215,7 +215,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (sapOrder != null)
             {
-                var validationResults = await this.IsValidCancelSapSalesOrder(missingOrder, sapOrder, results);
+                var validationResults = this.IsValidCancelSapSalesOrder(missingOrder, sapOrder, results);
                 if (!validationResults.Item1)
                 {
                     return validationResults.Item2;
@@ -369,7 +369,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="sapOrder">Sap order to cancel.</param>
         /// <param name="results">Results.</param>
         /// <returns>Validation flag and results.</returns>
-        private async Task<(bool, SuccessFailResults<OrderIdModel>)> IsValidCancelSapSalesOrder(
+        private (bool, SuccessFailResults<OrderIdModel>) IsValidCancelSapSalesOrder(
             OrderIdModel orderToCancel,
             OrderWithDetailModel sapOrder,
             SuccessFailResults<OrderIdModel> results)
@@ -482,7 +482,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>New order log.</returns>
         private OrderLogModel BuildCancellationLog(string userId, object orderId, string orderType)
         {
-            int orderIdAsInt = int.Parse(orderId.ToString());
+            var orderIdAsInt = int.Parse(orderId.ToString() ?? throw new InvalidOperationException());
             var newLogs = ServiceUtils.CreateOrderLog(userId, new List<int> { orderIdAsInt }, string.Format(ServiceConstants.OrderCancelled, orderIdAsInt), orderType);
             return newLogs.FirstOrDefault();
         }

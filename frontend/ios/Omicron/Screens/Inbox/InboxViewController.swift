@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 import RxDataSources
+import Charts
 
 class InboxViewController: UIViewController {
     
@@ -21,8 +22,13 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
+    @IBOutlet weak var groupByOrderNumberButton: UIButton!
     
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var chartViewContainer: UIView!
+    @IBOutlet weak var cardsView: UIView!
+    
     // MARK:  Variables
     
     private var bindingCollectionView = true
@@ -47,6 +53,9 @@ class InboxViewController: UIViewController {
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
         pendingButton.isHidden = true
+        
+        navigationItem.rightBarButtonItem = getOmniconLogo()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -77,6 +86,7 @@ class InboxViewController: UIViewController {
             cell.startDateDescriptionLabel.text = element.startDate ?? ""
             cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
             cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+            cell.missingStockImage.isHidden = !element.hasMissingStock
             cell.delegate = self
             return cell
             
@@ -101,7 +111,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
             guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
-            self?.hideButtons(id: statusId)
+            self?.hideButtons(index: statusId)
         }).disposed(by: disposeBag)
         
         inboxViewModel.refreshDataWhenChangeProcessIsSucces.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -112,12 +122,14 @@ class InboxViewController: UIViewController {
         collectionView.rx.itemSelected.observeOn(MainScheduler.instance).subscribe(onNext:{ [weak self] indexpath in
             if self?.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
                 self?.processButton.isEnabled = true
+                self?.pendingButton.isEnabled = true
             }
         }).disposed(by: self.disposeBag)
         
         collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] _ in
             if self?.collectionView.indexPathsForSelectedItems?.count == 0 {
                 self?.processButton.isEnabled = false
+                self?.pendingButton.isEnabled = false
             }
         }).disposed(by: disposeBag)
         
@@ -125,6 +137,11 @@ class InboxViewController: UIViewController {
         inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
             self?.processButton.isEnabled = isEnable
         }).disposed(by: self.disposeBag)
+        
+        // Habilita o deshabilita el botón para cambiar a pendiente
+        inboxViewModel.pendingButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
+            self?.pendingButton.isEnabled = isEnable
+        }).self.disposed(by: self.disposeBag)
 
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -144,27 +161,40 @@ class InboxViewController: UIViewController {
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.similarityViewButton.isEnabled = isEnabled
-            self.heigthCollectionViewConstraint.constant = !isEnabled ? 8 : -60
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.normalViewButton.isEnabled = isEnabled
+            self.heigthCollectionViewConstraint.constant = isEnabled ? 8 : -60
+            self.showMoreIndicators()
+            self.goToTop()
+        }).disposed(by: self.disposeBag)
+        
+        // Habilita o deshabilita el botón de agrupamiento por número de orden
+        inboxViewModel.groupedByOrderNumberIsEnable.subscribe(onNext: { [weak self] isEnabled in
+            guard let self = self else { return }
+            self.groupByOrderNumberButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
         inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
-            self?.similarityViewButton.isHidden = isHidden
-            self?.normalViewButton.isHidden = isHidden
+            guard let self = self else { return }
+            self.similarityViewButton.isHidden = isHidden
+            self.normalViewButton.isHidden = isHidden
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
-        // Muestra un alert para la confirmación de cambiar el status o no
-        inboxViewModel.showConfirmationAlerChangeStatusProcess.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancelar", style: .cancel, handler: nil)
+        // Muestra un alert para la confirmación de cambio de estatus de una orden
+        inboxViewModel.showAlertToChangeOrderOfStatus.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler:  { _ in
-                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems)
+                self?.inboxViewModel.changeStatus(indexPath: self?.collectionView.indexPathsForSelectedItems, typeOfStatus: data.typeOfStatus)
             })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
             alert.addAction(cancelAction)
             alert.addAction(okAction)
@@ -177,12 +207,15 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTap),
             similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
+            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
      
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
             guard let row = index?.row else { return }
             self?.chageStatusName(index: row)
             self?.hideButtons(index: row)
+//            self?.showMoreIndicators()
+            self?.goToTop()
         }).disposed(by: disposeBag)
                 
         // retorna mensaje si no hay card para cada status
@@ -196,10 +229,24 @@ class InboxViewController: UIViewController {
             }
             self?.collectionView.setEmptyMessage(message)
         }).subscribe().disposed(by: disposeBag)
+        
+        collectionView.rx.didScroll.subscribe({ cell in
+            self.collectionView.removeMoreIndicator()
+        }).disposed(by: disposeBag)
+        
+        inboxViewModel.showKPIView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] show in
+            
+            guard let self = self else { return }
+            if show { self.title = "Indicadores" }
+            self.chartViewContainer.isHidden = !show
+            self.cardsView.isHidden = show
+            
+        }).disposed(by: disposeBag)
     }
 
     func initComponents() {
         self.processButton.isEnabled = false
+        self.pendingButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.processButton, title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus, titleColor: OmicronColors.processStatus)
@@ -207,6 +254,9 @@ class InboxViewController: UIViewController {
         self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
         self.normalViewButton.setTitle("", for: .normal)
         self.normalViewButton.setImage(UIImage(systemName: ImageButtonNames.normalView), for: .normal)
+        self.normalViewButton.isEnabled = false
+        self.groupByOrderNumberButton.setTitle("", for: .normal)
+        self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
@@ -221,34 +271,35 @@ class InboxViewController: UIViewController {
         self.inboxViewModel.title.onNext(name)
     }
     
-    private func hideButtons(index: Int) {
-        switch index {
-        case 0:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 1:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 3:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 4:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        default:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+    private func showMoreIndicators() {
+        collectionView.removeMoreIndicator()
+        let itemsCount = Array(0..<collectionView.numberOfSections)
+            .map { collectionView.numberOfItems(inSection: $0) }
+            .reduce(0, +)
+        DispatchQueue.main.async {
+            if itemsCount > 4 {
+                self.collectionView.addMoreIndicator(size: 50)
+            } else {
+                self.collectionView.removeMoreIndicator()
+            }
         }
     }
     
-    private func hideButtons(id: Int) {
-        switch id {
+    private func goToTop() {
+        collectionView.setContentOffset(.zero, animated: false)
+    }
+    
+    private func hideButtons(index: Int) {
+        switch index {
+        case 0:
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
         case 1:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: false)
         case 2:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
+            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: false, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 3:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         case 4:
-            self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
-        case 5:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
         default:
             self.changePropertyIsHiddenStatusButtons(processButtonIsHidden: true, finishedButtonIsHidden: true, pendingButtonIsHidden: true)
@@ -268,7 +319,7 @@ class InboxViewController: UIViewController {
             guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
             guard let destiny = self.inboxViewModel.selectedOrder?.destiny else { return }
             destination.orderId = orderId // you can pass value to destination view controller
-            destination.statusType = self.inboxViewModel.getStatusName(id: statusId)
+            destination.statusType = self.inboxViewModel.getStatusName(index: statusId - 1)
             destination.destiny = destiny
            }
        }

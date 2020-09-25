@@ -16,8 +16,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Resources.Extensions;
+    using Omicron.SapAdapter.Entities.Model.DbModels;    
 
     /// <summary>
     /// Class for the dao.
@@ -150,7 +149,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                                    Status = dp.Status,
-                                   IsChecked = false
+                                   IsChecked = false,
+                                   CreatedDate = dp.CreatedDate,
                                }).ToListAsync();
 
             return query;
@@ -164,6 +164,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID).ToListAsync();
 
+            return query;
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<List<OrderModel>> GetOrdersById(List<int> pedidoID)
+        {
+            var query = await this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).ToListAsync();
             return query;
         }
 
@@ -204,6 +214,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> listOrders)
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => listOrders.Contains(x.OrdenId)).ToListAsync();
+            return query;
+        }
+
+        /// <summary>
+        /// gets the fabrication orders by sales order id.
+        /// </summary>
+        /// <param name="salesOrderIds">the sales order ids.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => salesOrderIds.Contains(x.PedidoId.Value)).ToListAsync();
             return query;
         }
 
@@ -422,9 +443,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<string> GetBatchCode(string productCode, string batchCode)
         {
             return await (from batch in this.databaseContext.Batches
-                where batch.ItemCode.Equals(productCode)
-                      && batch.DistNumber.Equals(batchCode)
-                select batch.DistNumber).Take(1).FirstOrDefaultAsync();
+                            where batch.ItemCode.Equals(productCode)
+                                && batch.DistNumber.Equals(batchCode)
+                            select batch.DistNumber).Take(1).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -446,6 +467,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             }
              
             return await results.ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the attachments.
+        /// </summary>
+        /// <param name="ids">gets the attachments by id</param>
+        /// <returns>the attachaments.</returns>
+        public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
+        {
+            return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
         }
 
         /// <summary>

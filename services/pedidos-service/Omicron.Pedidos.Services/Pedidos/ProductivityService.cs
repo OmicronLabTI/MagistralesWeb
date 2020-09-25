@@ -67,7 +67,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Matrix = matrix,
             };
 
-            return ServiceUtils.CreateResult(true, 200, null, productivite, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, productivite, null);
         }
 
         /// <summary>
@@ -78,14 +78,20 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetWorkLoad(Dictionary<string, string> parameters)
         {
             var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
+            var specificUser = string.Empty;
+            if (parameters.ContainsKey(ServiceConstants.Qfb))
+            {
+                specificUser = parameters[ServiceConstants.Qfb];
+                parameters.Remove(ServiceConstants.Qfb);
+            }
 
             var sapOrders = await this.GetSapFabOrders(parameters);
             var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
             userOrders = userOrders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
 
-            var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders);
-            return ServiceUtils.CreateResult(true, 200, null, workLoad, null, null);
+            var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders, specificUser);
+            return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
         }
 
         /// <summary>
@@ -221,8 +227,43 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="users">the user.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <param name="sapOrders">the sap order.</param>
+        /// <param name="specificUser">the specific user to return.</param>
         /// <returns>the data.</returns>
-        private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
+        private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, string specificUser)
+        {
+            if (!string.IsNullOrEmpty(specificUser))
+            {
+                return this.GetWorkloadSpecificUser(users, userOrders, sapOrders, specificUser);
+            }
+
+            return this.GetWorloadAllUsers(users, userOrders, sapOrders);
+        }
+
+        /// <summary>
+        /// Gets the workload of a specific user.
+        /// </summary>
+        /// <param name="users">the list of users.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="specificUser">the specific user.</param>
+        /// <returns>the data.</returns>
+        private List<WorkLoadModel> GetWorkloadSpecificUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, string specificUser)
+        {
+            var user = users.FirstOrDefault(x => x.Id.Equals(specificUser));
+            user = user == null ? new UserModel { Id = specificUser } : user;
+            var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
+            var workLoad = this.GetTotalsByUser(ordersByUser, sapOrders, user);
+            return new List<WorkLoadModel> { workLoad };
+        }
+
+        /// <summary>
+        /// Gets the workload by all users.
+        /// </summary>
+        /// <param name="users">the list of users.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <returns>the data.</returns>
+        private List<WorkLoadModel> GetWorloadAllUsers(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
         {
             var listToReturn = new List<WorkLoadModel>();
             users.Where(x => x.Activo == 1).ToList().ForEach(user =>
@@ -249,7 +290,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var workLoadModel = new WorkLoadModel();
             workLoadModel.User = $"{user.FirstName} {user.LastName}";
-            workLoadModel.TotalPossibleAssign = 200;
+            workLoadModel.TotalPossibleAssign = user.Piezas;
 
             workLoadModel = this.GetTotals(usersOrders, sapOrders, workLoadModel);
             return workLoadModel;
@@ -343,7 +384,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
                 listToReturn.AddRange(JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString()));
 
-                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString()) : 0;
+                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString() ?? throw new InvalidOperationException()) : 0;
                 offset += 8000;
             }
             while (total > 0 && offset < total);

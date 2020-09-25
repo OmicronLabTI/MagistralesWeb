@@ -89,5 +89,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("pieces")]
         public int Piezas { get; set; }
+
+        /// <summary>
+        /// Gets or sets Activo.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        [Column("asignable")]
+        public int Asignable { get; set; }
     }
 }

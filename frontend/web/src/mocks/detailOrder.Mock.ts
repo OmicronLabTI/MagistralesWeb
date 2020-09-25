@@ -16,7 +16,8 @@ export const DetailOrderMock = {
             qfb: '',
             status: 'Abierto',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         },
         {
             ordenFabricacionId: 89101,
@@ -30,7 +31,8 @@ export const DetailOrderMock = {
             qfb: 'Sergio Flores',
             status: 'Asignado',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         },
         {
             ordenFabricacionId: 89102,
@@ -44,7 +46,8 @@ export const DetailOrderMock = {
             qfb: 'Sergio Flores',
             status: 'Pendiente',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         },
         {
             ordenFabricacionId: 89103,
@@ -58,7 +61,8 @@ export const DetailOrderMock = {
             qfb: 'Sergio Flores',
             status: 'Terminado',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         },
         {
             ordenFabricacionId: 89104,
@@ -72,7 +76,8 @@ export const DetailOrderMock = {
             qfb: 'Sergio Flores',
             status: 'En proceso',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         },
         {
             ordenFabricacionId: 89105,
@@ -86,7 +91,8 @@ export const DetailOrderMock = {
             qfb: 'Sergio Flores',
             status: '',
             pedidoStatus: 'Planificado',
-            isChecked: false
+            isChecked: false,
+            hasMissingStock: false
         }
     ]
 };

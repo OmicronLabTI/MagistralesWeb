@@ -14,7 +14,6 @@ namespace Omicron.Pedidos.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Facade.Request;
     using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
@@ -25,17 +24,14 @@ namespace Omicron.Pedidos.Api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly IPedidoFacade pedidoFacade;
-        private readonly IRequestFacade requestFacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
-        /// <param name="requestFacade">the request facade.</param>
-        public PedidosController(IPedidoFacade pedidoFacade, IRequestFacade requestFacade)
+        public PedidosController(IPedidoFacade pedidoFacade)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
-            this.requestFacade = requestFacade ?? throw new ArgumentNullException(nameof(requestFacade));
         }
 
         /// <summary>
@@ -247,13 +243,13 @@ namespace Omicron.Pedidos.Api.Controllers
             switch (signatureType)
             {
                 case "logistic":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.LOGISTICS, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
                     break;
                 case "technical":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.TECHNICAL, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.TECHNICAL, orderSignature);
                     break;
                 case "qfb":
-                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureTypeEnum.QFB, orderSignature);
+                    result = await this.pedidoFacade.UpdateOrderSignature(SignatureType.QFB, orderSignature);
                     break;
             }
 
@@ -416,15 +412,15 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// Create a raw material request.
+        /// Asignacion manual.
         /// </summary>
-        /// <param name="requests">New request to add.</param>
-        /// <returns>List with successfuly and failed creations.</returns>
+        /// <param name="ordersId">the assign model.</param>
+        /// <returns>la asignacion manual.</returns>
+        [Route("/print/orders")]
         [HttpPost]
-        [Route("/request/rawmaterial")]
-        public async Task<IActionResult> CreateRawMaterialRequest(UserActionDto<List<RawMaterialRequestDto>> requests)
+        public async Task<IActionResult> PrintOrders(List<int> ordersId)
         {
-            var response = await this.requestFacade.CreateRawMaterialRequest(requests.UserId, requests.Data);
+            var response = await this.pedidoFacade.PrintOrders(ordersId);
             return this.Ok(response);
         }
 
@@ -434,7 +430,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
-        public async Task<IActionResult> Ping()
+        public IActionResult Ping()
         {
             return this.Ok("Pong");
         }

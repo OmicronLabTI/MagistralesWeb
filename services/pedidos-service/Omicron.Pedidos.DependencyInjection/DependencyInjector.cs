@@ -13,15 +13,13 @@ namespace Omicron.Pedidos.DependencyInjection
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.DataAccess.DAO.Request;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Facade.Request;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.Request;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -39,6 +37,7 @@ namespace Omicron.Pedidos.DependencyInjection
         public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             Services = services;
+            Services.AddTransient<ISapFileService, SapFileService>();
             Services.AddTransient<IUsersService, UsersService>();
             Services.AddTransient<IPedidoFacade, PedidoFacade>();
             Services.AddTransient<IPedidosService, PedidosService>();
@@ -46,22 +45,12 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<ICancelPedidosService, CancelPedidosService>();
             Services.AddTransient<IProductivityService, ProductivityService>();
             Services.AddTransient<IFormulaPedidosService, FormulaPedidosService>();
+            Services.AddTransient<IProcessOrdersService, ProcessOrdersService>();
             Services.AddTransient<IPedidosDao, PedidosDao>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
-            RegisterRequestServices();
             return Services;
-        }
-
-        /// <summary>
-        /// Method to register request Services.
-        /// </summary>
-        public static void RegisterRequestServices()
-        {
-            Services.AddTransient<IRequestFacade, RequestFacade>();
-            Services.AddTransient<IRequestService, RequestService>();
-            Services.AddTransient<IRequestDao, RequestDao>();
         }
 
         /// <summary>

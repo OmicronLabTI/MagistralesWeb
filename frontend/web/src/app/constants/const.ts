@@ -3,6 +3,7 @@ export const CONST_NUMBER = {
     one: 1,
     two: 2,
     three: 3,
+    four: 4,
     five: 5,
     ten: 10,
     timeToast: 2000,
@@ -163,4 +164,7 @@ export const pathRoles = {
         'workLoad',
         '**'
     ]
+};
+export const CONST_PRODUCTIVITY = {
+  titleTotal: 'total',
 };

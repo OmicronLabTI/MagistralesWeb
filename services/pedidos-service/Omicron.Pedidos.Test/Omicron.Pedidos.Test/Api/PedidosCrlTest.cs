@@ -16,7 +16,6 @@ namespace Omicron.Pedidos.Test.Api
     using Omicron.Pedidos.Api.Controllers;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Facade.Request;
 
     /// <summary>
     /// Class for tests pedidos controller.
@@ -41,10 +40,7 @@ namespace Omicron.Pedidos.Test.Api
             var mockPedidoFacade = new Mock<IPedidoFacade>();
             mockPedidoFacade.SetReturnsDefault(Task.FromResult(resultDto));
 
-            var mockRequestFacade = new Mock<IRequestFacade>();
-            mockRequestFacade.SetReturnsDefault(Task.FromResult(resultDto));
-
-            this.controller = new PedidosController(mockPedidoFacade.Object, mockRequestFacade.Object);
+            this.controller = new PedidosController(mockPedidoFacade.Object);
         }
 
         /// <summary>
@@ -483,26 +479,10 @@ namespace Omicron.Pedidos.Test.Api
         /// Action tests.
         /// </summary>
         [Test]
-        public void CreateRawMaterialRequest()
-        {
-            // Arrange.
-            var request = this.fixture.Create<UserActionDto<List<RawMaterialRequestDto>>>();
-
-            // Act
-            var result = this.controller.CreateRawMaterialRequest(request).Result as OkObjectResult;
-
-            // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
-        }
-
-        /// <summary>
-        /// Action tests.
-        /// </summary>
-        [Test]
         public void Ping()
         {
             // Act
-            var result = this.controller.Ping().Result as OkObjectResult;
+            var result = this.controller.Ping() as OkObjectResult;
 
             // Assert
             Assert.AreEqual("Pong", result.Value as string);

@@ -116,9 +116,8 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="users">the list of users.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
-        /// <param name="maxCountPedidos">the max count of piezas.</param>
         /// <returns>the users.</returns>
-        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter, int maxCountPedidos)
+        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter)
         {
             var validUsers = new List<AutomaticAssignUserModel>();
 
@@ -130,7 +129,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 var total = ordersSap.Sum(x => x.Quantity);
 
-                if (total < maxCountPedidos)
+                if (total < user.Piezas)
                 {
                     lock (validUsers)
                     {
@@ -252,7 +251,7 @@ namespace Omicron.Pedidos.Services.Utils
                     users.AddRange(usersFormulaAvailable.Where(z => z.ItemCodes.Any(a => a.Contains(d))).ToList());
                 });
 
-            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList().FirstOrDefault();
+            var user = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).AsEnumerable().FirstOrDefault();
 
             if (user != null)
             {

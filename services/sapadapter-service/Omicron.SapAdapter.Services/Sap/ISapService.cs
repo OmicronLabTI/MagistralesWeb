@@ -51,8 +51,18 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="listIds">the ids.</param>
         /// <param name="returnFirst">if it returns only the first.</param>
+        /// <param name="returnDetails">Return the details.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst);
+        Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails);
+
+        /// <summary>
+        /// Get fabrication orders by criterial.
+        /// </summary>
+        /// <param name="salesOrderIds">Sales order ids.</param>
+        /// <param name="fabricationOrderIds">Production order ids.</param>
+        /// <param name="components">Flag for get components.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetFabricationOrdersByCriterial(List<int> salesOrderIds, List<int> fabricationOrderIds, bool components);
 
         /// <summary>
         /// gets the items from the dict.
@@ -111,5 +121,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetFabOrdersById(List<int> ordersId);
+
+        /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetRecipe(int orderId);
+
+        /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="ordersId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOriginalRouteRecipes(List<int> ordersId);
     }
 }

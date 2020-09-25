@@ -40,16 +40,19 @@ class UtilsManager {
         button.setImage(UIImage(named: iconName), for: .normal)
     }
     
-    func boldSubstring( text: String, textToBold: String?, fontSize: CGFloat = 19) -> NSMutableAttributedString {
+    func boldSubstring( text: String, textToBold: String?, fontSize: CGFloat = 19, textColor: UIColor = .black) -> NSMutableAttributedString {
         
         let s = text as NSString
         let att = NSMutableAttributedString(string: s as String)
         let r = s.range(of: textToBold!, options: .regularExpression, range: NSMakeRange(0,s.length))
-        if r.length > 0 { att.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: r)
+        if r.length > 0 { att.addAttribute(NSAttributedString.Key.foregroundColor, value: textColor, range: r)
             att.addAttribute(NSAttributedString.Key.font, value: UIFont(name: FontsNames.SFProDisplayBold, size: fontSize) as Any, range: r)
         }
         return att
     }
+    
+    
+    
     
     func formattedDateFromString(dateString: String, withFormat format: String) -> String? {
 
@@ -61,7 +64,15 @@ class UtilsManager {
                return outputFormatter.string(from: date)
            }
            return nil
-       }
+    }
+    
+    func formattedDateToString(date: Date, withFormat format: String = "dd/MM/yyyy") -> String {
+
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = format
+        return inputFormatter.string(from: date)
+        
+    }
     
     func formatterDoublesTo6Decimals() ->  NumberFormatter {
         let formatter = NumberFormatter()
