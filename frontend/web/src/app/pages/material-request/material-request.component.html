@@ -84,13 +84,13 @@
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
                                 <input
-                                       #quantityField
                                         matInput
                                        type="text"
                                        class="color-number" placeholder="Ctd. requerida"
                                        maxlength="15"
                                        [(ngModel)]="element.requestQuantity"
                                        (ngModelChange)="onRequestQuantityChange($event, i)"
+                                        (keypress)="numericOnly($event)"
                                         >
                             </mat-form-field>
                         </td>
