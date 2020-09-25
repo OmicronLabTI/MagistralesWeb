@@ -94,13 +94,13 @@ namespace Omicron.SapFile.Services.SapFile
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
                 {
                     var filePath = this.CreateFabOrderReportWithSignatures(order, true);
-                    this._loggerProxy.Debug($"Create file for production order: {filePath}.");
+                    this._loggerProxy.Info($"Create file for production order: {filePath}.");
                 });
 
                 var groupedOrders = finalizaGeneratePdfs.Where(order => order.OrderId != 0).GroupBy(order => order.OrderId);
                 groupedOrders.ToList().ForEach(x => {
                     var filePath = this.CreateSalesOrderReportWithProductionOrders(x.ToList());
-                    this._loggerProxy.Debug($"Create file for sales order: {filePath}.");
+                    this._loggerProxy.Info($"Create file for sales order: {filePath}.");
                 });
             }
             catch(Exception ex)
