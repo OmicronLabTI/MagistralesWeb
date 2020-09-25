@@ -176,7 +176,7 @@ namespace Omicron.Pedidos.Test
         {
             var listDetalles = new List<CompleteDetailOrderModel>
             {
-                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L" },
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now },
             };
 
             var listOrders = new List<OrderWithDetailModel>
@@ -198,6 +198,28 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetRecipes()
+        {
+            var recipes = new List<OrderRecipeModel>
+            {
+                new OrderRecipeModel { Order = 107, Recipe = "C:aglo" },
+                new OrderRecipeModel { Order = 100, Recipe = "C:aglo" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = recipes,
                 Success = true,
                 UserError = string.Empty,
             };

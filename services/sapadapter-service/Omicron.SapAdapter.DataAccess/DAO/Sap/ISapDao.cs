@@ -39,6 +39,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<OrderModel>> GetOrdersById(int pedidoID);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<List<OrderModel>> GetOrdersById(List<int> pedidoID);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>

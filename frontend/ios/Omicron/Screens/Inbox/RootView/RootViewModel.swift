@@ -25,6 +25,7 @@ class RootViewModel {
     var logoutDidTap = PublishSubject<Void>()
     var goToLoginViewController = PublishSubject<Void>()
     var searchFilter = PublishSubject<String>()
+    var needsRefresh = true
     
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -54,9 +55,11 @@ class RootViewModel {
     // MARK: Functions
     
     func getOrders(isUpdate: Bool = false) -> Void {
+        if isUpdate { needsRefresh = true }
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
-            self.loading.onNext(true)
+            if needsRefresh { self.loading.onNext(true) }
             NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
+                guard let self = self else { return }
                 let sections = res.response?.status.map({ status in
                     return status.map({ detail -> SectionOrder? in
                         let orders = detail.orders ?? []
@@ -81,18 +84,25 @@ class RootViewModel {
                     })
                 })?.compactMap({ $0 }) ?? []
                 
-                self?.sections = sections
+                self.sections = sections
                 
-                self?.dataStatus.onNext(sections)
-                self?.refreshSelection.onNext(sections.count)
-                self?.loading.onNext(false)
+                self.dataStatus.onNext(sections)
+                self.refreshSelection.onNext(sections.count)
+                if self.needsRefresh {
+                    self.loading.onNext(false)
+                    self.needsRefresh.toggle()
+                }
                 if(isUpdate) {
-                    self?.showRefreshControl.onNext(())
+                    self.showRefreshControl.onNext(())
                 }
                 }, onError: { [weak self] err in
+                    guard let self = self else { return }
                     print(err)
-                    self?.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
-                    self?.loading.onNext(false)
+                    self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
+                    if self.needsRefresh {
+                        self.loading.onNext(false)
+                        self.needsRefresh.toggle()
+                    }
             }).disposed(by: disposeBag)
         } else {
             self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")

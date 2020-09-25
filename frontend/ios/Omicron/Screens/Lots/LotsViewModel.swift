@@ -49,6 +49,7 @@ class LotsViewModel {
     var showSignatureView = PublishSubject<String>()
     var updateComments = PublishSubject<OrderDetail>()
     @Injected var orderDetail: OrderDetailViewModel
+    @Injected var rootViewModel: RootViewModel
     
     init() {
         
@@ -279,11 +280,13 @@ class LotsViewModel {
     func sendToServerAssignedLots(lotsToSend: [BatchSelected]) -> Void {
         self.loading.onNext(true)
         NetworkManager.shared.assignLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
-            self?.loading.onNext(false)
+            guard let self = self else { return }
+            self.loading.onNext(false)
             if(res.response!.isEmpty) {
-                self?.showMessage.onNext("Proceso realizado correctamente")
+                self.showMessage.onNext("Proceso realizado correctamente")
                 // actualiza la pantalla
-                self?.getLots()
+                self.orderDetail.needsRefresh = true
+                self.getLots()
                 return
             }
             
@@ -291,7 +294,7 @@ class LotsViewModel {
             for batch in res.response! {
                 badBatches += "\n\(batch)"
             }
-            self?.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
+            self.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
             }, onError:  { [weak self] error in
                 self?.loading.onNext(false)
                 self?.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
@@ -332,6 +335,7 @@ class LotsViewModel {
             NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
+                self?.rootViewModel.needsRefresh = true
                 }, onError: {[weak self] error in
                     self?.loading.onNext(false)
                     self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
@@ -347,6 +351,7 @@ class LotsViewModel {
             if (res.response != nil) {
                 self?.updateComments.onNext(res.response!)
             }
+            self?.orderDetail.needsRefresh = true
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
             self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
@@ -360,8 +365,7 @@ class LotsViewModel {
             let formatter = DateFormatter()
             formatter.dateFormat = "dd/MM/yyyy"
             if let dateFormatter = formatter.date(from: date) {
-                let today = Calendar.current.date(byAdding: .day, value: 1, to: Date())
-                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: today ?? Date())
+                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())
                 let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)
                 if roundedDate ?? Date() <= roundedToday ?? Date() {
                     return true

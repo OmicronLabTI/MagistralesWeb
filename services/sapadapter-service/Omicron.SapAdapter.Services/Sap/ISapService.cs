@@ -128,5 +128,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetRecipe(int orderId);
+
+        /// <summary>
+        /// Gets the recipes.
+        /// </summary>
+        /// <param name="ordersId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOriginalRouteRecipes(List<int> ordersId);
     }
 }
