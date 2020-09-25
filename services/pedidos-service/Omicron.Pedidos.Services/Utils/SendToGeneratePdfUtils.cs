@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="usersService">the user service.</param>
         /// <param name="onlyFinalized">if only applies to finalized.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> CreateModelGeneratePdf(List<int> ordersId, List<int> fabOrdersId, ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, bool onlyFinalized)
+        public static async Task<Task<ResultModel>> CreateModelGeneratePdf(List<int> ordersId, List<int> fabOrdersId, ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, bool onlyFinalized)
         {
             var listOrdersWithDetail = new List<OrderWithDetailModel>();
             var listFabOrders = new List<FabricacionOrderModel>();
@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.Services.Utils
             listToSend.AddRange(GetModelsByOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
             listToSend.AddRange(GetModelBySaleOrder(listFabOrders, users, orderSignature, listUserOrders));
 
-            return await sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
+            return sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Omicron.Pedidos.Services.Utils
                     {
                         OrderId = order.Order.PedidoId,
                         SaleOrderCreateDate = order.Order.FechaInicio.ToString("dd/MM/yyyy"),
-                        MedicName = order.Order.Medico,
+                        MedicName = NormalizeMedicName(order.Order.Medico),
                         RecipeRoute = recipe == null ? string.Empty : recipe.Recipe,
                     };
 
@@ -108,6 +108,12 @@ namespace Omicron.Pedidos.Services.Utils
                 {
                     var userOrder = userOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).FirstOrDefault(x => x.Productionorderid.Equals(detail.OrdenFabricacionId.ToString()));
                     userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
+
+                    if (userOrder.Id == -1)
+                    {
+                        continue;
+                    }
+
                     var signaturesByOrder = signatures.FirstOrDefault(x => x.UserOrderId == userOrder.Id);
                     var user = users.FirstOrDefault(x => x.Id.Equals(userOrder.Userid));
 
@@ -116,7 +122,7 @@ namespace Omicron.Pedidos.Services.Utils
                         CreateDate = detail.CreatedDate.HasValue ? detail.CreatedDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"),
                         FabOrderId = detail.OrdenFabricacionId,
                         ItemCode = detail.CodigoProducto,
-                        MedicName = order.Order.Medico,
+                        MedicName = NormalizeMedicName(order.Order.Medico),
                         OrderId = order.Order.PedidoId,
                         QfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                         QfbSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.QfbSignature,
@@ -145,10 +151,16 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var listToReturn = new List<FinalizaGeneratePdfModel>();
 
-            orders.ForEach(order =>
+            foreach (var order in orders)
             {
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(order.OrdenId.ToString()));
                 userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
+
+                if (userOrder.Id == -1)
+                {
+                    continue;
+                }
+
                 var signaturesByOrder = signatures.FirstOrDefault(x => x.UserOrderId == userOrder.Id);
                 var user = users.FirstOrDefault(x => x.Id.Equals(userOrder.Userid));
 
@@ -167,9 +179,23 @@ namespace Omicron.Pedidos.Services.Utils
                 };
 
                 listToReturn.Add(model);
-            });
+            }
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Normalize the medic name.
+        /// </summary>
+        /// <param name="medicName">the medic.</param>
+        /// <returns>the data.</returns>
+        private static string NormalizeMedicName(string medicName)
+        {
+            medicName = medicName.Replace("*", string.Empty);
+            medicName = medicName.Replace(":", string.Empty);
+            medicName = medicName.Replace("/", string.Empty);
+            medicName = medicName.Replace(@"\", string.Empty);
+            return medicName;
         }
 
         /// <summary>
@@ -181,7 +207,7 @@ namespace Omicron.Pedidos.Services.Utils
         private static async Task<List<OrderRecipeModel>> GetRecipes(List<int> orderIds, ISapAdapter sapAdapter, string route)
         {
             var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
-            return JsonConvert.DeserializeObject<List<OrderRecipeModel>>(sapResponse.Response.ToString());
+            return JsonConvert.DeserializeObject<List<OrderRecipeModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>
@@ -193,7 +219,7 @@ namespace Omicron.Pedidos.Services.Utils
         private static async Task<List<OrderWithDetailModel>> GetDetails(List<int> orderIds, ISapAdapter sapAdapter, string route)
         {
             var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
-            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(sapResponse.Response.ToString());
+            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>
@@ -205,7 +231,7 @@ namespace Omicron.Pedidos.Services.Utils
         private static async Task<List<FabricacionOrderModel>> GetFabOrders(List<int> fabOrdersId, ISapAdapter sapAdapter)
         {
             var sapResponse = await sapAdapter.PostSapAdapter(fabOrdersId, ServiceConstants.GetUsersByOrdersById);
-            return JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+            return JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>
