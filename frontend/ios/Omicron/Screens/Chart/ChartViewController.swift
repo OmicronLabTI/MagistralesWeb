@@ -76,13 +76,17 @@ class ChartViewController: UIViewController {
                 entries.append(PieChartDataEntry(value: Double(workload.pending ?? 0), label: StatusNameConstants.penddingStatus))
                 colors.append(OmicronColors.pendingStatus)
             case 3:
-                guard workload.finalized ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(value: Double(workload.finalized ?? 0), label: StatusNameConstants.finishedStatus))
+                guard workload.finished ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(value: Double(workload.finished ?? 0), label: StatusNameConstants.finishedStatus))
                 colors.append(OmicronColors.finishedStatus)
             case 4:
                 guard workload.reassigned ?? 0 > 0 else { break }
                 entries.append(PieChartDataEntry(value: Double(workload.reassigned ?? 0), label: StatusNameConstants.reassignedStatus))
                 colors.append(OmicronColors.reassignedStatus)
+            case 5:
+                guard workload.finalized ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(value: Double(workload.finalized ?? 0), label: StatusNameConstants.finalizedStatus))
+                colors.append(UIColor.init(named: "finalized") ?? .black)
             default: break
             }
             
@@ -102,7 +106,7 @@ class ChartViewController: UIViewController {
         
         chartView.data = data
         
-        let requests = "\(workload.totalOrders ?? 0) Pédidos"
+        let requests = "\(workload.totalOrders ?? 0) Pedidos"
         let orders = "\(workload.totalFabOrders ?? 0) Órdenes"
         let pieces = "\(workload.totalPieces ?? 0 ) Piezas"
         

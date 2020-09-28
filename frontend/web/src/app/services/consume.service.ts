@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpHeaders, HttpClient, HttpParams} from '@angular/common/http';
+import {HttpHeaders, HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -47,6 +47,18 @@ export class ConsumeService {
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.post<any>(url, body, { headers: objHeaders })
+        .subscribe(response => {
+          this.successObserver(observer, response);
+        }, err => {
+          this.onErrorObserver(observer, err);
+        });
+    });
+  }
+
+  httpDownloadFilePost(url: string, body: any, headers?): Observable<HttpResponse<Blob>> {
+    this.dataService.setIsLoading(true);
+    return new Observable<HttpResponse<Blob>>(observer => {
+      this.http.post<Blob>(url, body, { headers, observe: 'response', responseType: 'blob' as 'json' })
         .subscribe(response => {
           this.successObserver(observer, response);
         }, err => {

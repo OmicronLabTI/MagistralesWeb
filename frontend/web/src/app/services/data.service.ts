@@ -401,4 +401,14 @@ export class DataService {
   openNewTapByUrl(url: string) {
     window.open(url);
   }
+  getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {
+    switch (type) {
+      case FromToFilter.fromOrders:
+        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum);
+      case FromToFilter.fromDetailOrder:
+        return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId);
+      case FromToFilter.fromOrdersIsolated:
+        return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
+    }
+  }
 }

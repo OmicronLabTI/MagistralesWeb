@@ -37,6 +37,7 @@ export class InventorybatchesComponent implements OnInit {
   lotesSeleccionados: ILotesSelectedReq[];
   hasMissingStock = false;
   description = CONST_STRING.empty;
+  element: any;
   detailsColumns: string[] = [
     'cons',
     'codigoProducto',

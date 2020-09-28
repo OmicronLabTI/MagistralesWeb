@@ -62,6 +62,7 @@ class OrderDetailViewController: UIViewController {
     var orderDetail: [OrderDetail] = []
     var refreshControl = UIRefreshControl()
     var destiny = ""
+    var isolatedOrder = false
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -178,7 +179,23 @@ class OrderDetailViewController: UIViewController {
 //        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
-            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.sumOfFormula)\(self?.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)", textToBold: "\(CommonStrings.sumOfFormula)")
+            
+            guard let self = self else { return }
+            
+            if !self.isolatedOrder {
+                self.sumFormulaDescriptionLabel.attributedText = UtilsManager
+                    .shared
+                    .boldSubstring(
+                        text: "\(CommonStrings.sumOfFormula)\(self.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)",
+                        textToBold: "\(CommonStrings.sumOfFormula)")
+            } else {
+                self.tagDescriptionLabel.attributedText = UtilsManager
+                    .shared
+                    .boldSubstring(
+                        text: "\(CommonStrings.sumOfFormula)\(self.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)",
+                        textToBold: "\(CommonStrings.sumOfFormula)")
+            }
+            
         }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
@@ -209,7 +226,12 @@ class OrderDetailViewController: UIViewController {
                 self.productDescritionLabel.attributedText = richText
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
+                    self.isolatedOrder = true
                     self.destinyLabel.text = ""
+                    self.codeDescriptionLabel.isHidden = true
+                    self.containerDescriptionLabel.isHidden = true
+                    self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
+                    self.quantityPlannedDescriptionLabel.text = ""
                 }
                 
             }
