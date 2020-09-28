@@ -106,7 +106,7 @@ class ChartViewController: UIViewController {
         
         chartView.data = data
         
-        let requests = "\(workload.totalOrders ?? 0) Pédidos"
+        let requests = "\(workload.totalOrders ?? 0) Pedidos"
         let orders = "\(workload.totalFabOrders ?? 0) Órdenes"
         let pieces = "\(workload.totalPieces ?? 0 ) Piezas"
         
