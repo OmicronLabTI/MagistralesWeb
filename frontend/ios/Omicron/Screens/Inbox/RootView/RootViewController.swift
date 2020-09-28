@@ -156,6 +156,8 @@ class RootViewController: UIViewController {
                 self.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
+            let section = self.rootViewModel.sections[self.lastRow.row]
+            self.inboxViewModel.setSelection(section: section)
             self.viewTable.alpha = 0.25
             self.viewTable.isUserInteractionEnabled = false
             self.viewTable.deselectRow(at: self.lastRow, animated: false)

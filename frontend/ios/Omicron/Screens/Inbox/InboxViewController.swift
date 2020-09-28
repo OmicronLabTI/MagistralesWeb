@@ -177,6 +177,8 @@ class InboxViewController: UIViewController {
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.similarityViewButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
@@ -201,6 +203,7 @@ class InboxViewController: UIViewController {
             guard let self = self else { return }
             self.similarityViewButton.isHidden = isHidden
             self.normalViewButton.isHidden = isHidden
+            self.groupByOrderNumberButton.isHidden = isHidden
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
@@ -242,6 +245,8 @@ class InboxViewController: UIViewController {
                 if (orders.items.count == 0 && statusId != -1) {
                     message = "No tienes órdenes \(title)"
                 }
+            } else {
+                message = "No tienes órdenes \(title)"
             }
             self?.collectionView.setEmptyMessage(message)
         }).subscribe().disposed(by: disposeBag)
