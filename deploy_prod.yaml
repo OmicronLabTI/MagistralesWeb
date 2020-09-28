@@ -1,0 +1,330 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apimanager-deployment
+  labels:
+    app: apimanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apimanager
+  template:
+    metadata:
+      labels:
+        app: apimanager
+    spec:
+      containers:
+      - name: apimanager
+        image: omicron.azurecr.io/omicron-apimanager-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        ports:
+        - containerPort: 8000
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apimanager-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.83
+  selector:
+    app: apimanager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauthserver-deployment
+  labels:
+    app: oauthserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauthserver
+  template:
+    metadata:
+      labels:
+        app: oauthserver
+    spec:
+      containers:
+      - name: oauthserver
+        image: omicron.azurecr.io/omicron-oauthserver-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
+        ports:
+        - containerPort: 8090
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogos-deployment
+  labels:
+    app: catalogos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogos
+  template:
+    metadata:
+      labels:
+        app: catalogos
+    spec:
+      containers:
+      - name: catalogos
+        image: omicron.azurecr.io/omicron-catalogos-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 9010
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  labels:
+    app: usuarios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+      - name: usuarios
+        image: omicron.azurecr.io/omicron-usuarios-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5101
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+      - name: sapadapter
+        image: omicron.azurecr.io/omicron-sapadapter-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5102
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedidos-deployment
+  labels:
+    app: pedidos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pedidos
+  template:
+    metadata:
+      labels:
+        app: pedidos
+    spec:
+      containers:
+      - name: pedidos
+        image: omicron.azurecr.io/omicron-pedidos-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5103
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seqlog-deployment
+  labels:
+    app: seqlog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seqlog
+  template:
+    metadata:
+      labels:
+        app: seqlog
+    spec:
+      containers:
+      - name: seqlog
+        image: datalust/seq:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 80
+          name: intra
+        - containerPort: 5341
+          name: extra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seqlog-svc
+  labels:
+    app: seqlog
+spec:
+  type: LoadBalancer
+  ports:
+  - name: default
+    port: 81
+    targetPort: 80
+    protocol: TCP
+  - name: alt
+    port: 5341
+    targetPort: 5341
+    protocol: TCP
+  externalIPs:
+    - 192.168.0.83
+  selector:
+    app: seqlog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouses-deployment
+  labels:
+    app: warehouses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouses
+  template:
+    metadata:
+      labels:
+        app: warehouses
+    spec:
+      containers:
+      - name: warehouses
+        image: omicron.azurecr.io/omicron-warehouses-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5104
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: omicron.azurecr.io/omicron-reporting-repository:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5105
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
