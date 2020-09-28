@@ -76,7 +76,7 @@ class ComponentFormViewController: FormViewController {
                 $0.tag = "baseQuantity"
                 $0.value = ""
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
                     if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false && !row.value!.isEmpty) {
@@ -126,7 +126,7 @@ class ComponentFormViewController: FormViewController {
                 $0.value = ""
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
                     if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false && !row.value!.isEmpty)) {
