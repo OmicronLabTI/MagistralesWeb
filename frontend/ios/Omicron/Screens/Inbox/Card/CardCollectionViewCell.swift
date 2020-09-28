@@ -52,7 +52,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         makeRoundedMissingStockImage()
     }
     
-    func initLabels() -> Void {
+    func initLabels(){
         UtilsManager.shared.labelsStyle(label: numberLabel, text: "Orden de fabricación:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: baseDocumentLabel, text: "Número de pedido:", fontSize: 13)

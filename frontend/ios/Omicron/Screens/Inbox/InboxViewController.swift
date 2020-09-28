@@ -50,6 +50,8 @@ class InboxViewController: UIViewController {
         self.initComponents()
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
+        collectionView.register(UINib(nibName:
+            ViewControllerIdentifiers.cardIsolatedOrderCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier)
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
         pendingButton.isHidden = true
@@ -75,20 +77,34 @@ class InboxViewController: UIViewController {
         // Pinta la cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { [weak self] (dataSource, cv, indexPath, element) in
             
-            let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
-            cell.row = indexPath.row
-            cell.order = element
-            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-            cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
-            cell.containerDescriptionLabel.text = element.container ?? ""
-            cell.tagDescriptionLabel.text = element.tag ?? ""
-            cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
-            cell.startDateDescriptionLabel.text = element.startDate ?? ""
-            cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
-            cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
-            cell.missingStockImage.isHidden = !element.hasMissingStock
-            cell.delegate = self
-            return cell
+            if element.baseDocument != 0 {
+                let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
+                cell.row = indexPath.row
+                cell.order = element
+                cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+                cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
+                cell.containerDescriptionLabel.text = element.container ?? ""
+                cell.tagDescriptionLabel.text = element.tag ?? ""
+                cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? ""
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+                cell.missingStockImage.isHidden = !element.hasMissingStock
+                cell.delegate = self
+                return cell
+            } else {
+                let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier, for: indexPath) as! CardIsolatedOrderCollectionViewCell
+                cell.row = indexPath.row
+                cell.order = element
+                cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+                cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? ""
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+                cell.missingStockImage.isHidden = !element.hasMissingStock
+                cell.delegate = self
+                return cell
+            }
             
         })
         
