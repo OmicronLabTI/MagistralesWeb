@@ -30,6 +30,7 @@ export class ComponentSearchComponent implements OnInit {
   displayedColumns: string[] = ['numero', 'descripcion'];
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
+  minimumCharacters = CONST_NUMBER.two;
   limit = CONST_NUMBER.ten;
   queryStringComponents = '';
   isDisableSearch = false;
@@ -85,9 +86,10 @@ export class ComponentSearchComponent implements OnInit {
   addChip(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
+    const valueTrim = (value || '').trim();
 
-    if ((value || '').trim()) {
-      this.keywords.push(value.trim());
+    if (valueTrim && valueTrim.length >= this.minimumCharacters) {
+      this.keywords.push(valueTrim);
       this.getQueryString();
       this.getComponents();
     }
