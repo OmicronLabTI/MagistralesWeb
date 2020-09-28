@@ -104,7 +104,8 @@
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
-                                   formControlName="clientName">
+                                   formControlName="clientName"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
@@ -115,7 +116,8 @@
                             <input matInput placeholder="Código del producto" type="text"
                                    maxlength="40"
                                    class="height-input"
-                                   formControlName="productCode">
+                                   formControlName="productCode"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
                                 Solo 40 caracteres
                             </mat-error>

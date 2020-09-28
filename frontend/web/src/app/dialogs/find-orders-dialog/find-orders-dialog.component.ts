@@ -114,6 +114,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     searchOrders() {
+        this.trimFilterValues();
         this.dialogRef.close({...this.findOrdersForm.value, isFromOrders: this.filterData.filterOrdersData.isFromOrders});
     }
 
@@ -178,5 +179,10 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             && this.findOrdersForm.get('clientName').value !== null))) {
             this.searchOrders();
         }
+    }
+
+    trimFilterValues() {
+        this.findOrdersForm.get('clientName').setValue((this.findOrdersForm.get('clientName').value || '').trim());
+        this.findOrdersForm.get('productCode').setValue((this.findOrdersForm.get('productCode').value || '').trim());
     }
 }
