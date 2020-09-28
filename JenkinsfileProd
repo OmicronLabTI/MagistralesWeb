@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'OmicronProd'
+        label 'OmicronQA'
     }
     tools {
         maven 'M3'
