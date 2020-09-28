@@ -167,6 +167,12 @@ class LotsViewController: UIViewController {
             cell.warehouseCodeLabel.text = data.almacen
             cell.totalNeededLabel.text =  self?.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
             cell.totalSelectedLabel.text = self?.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
+            
+            guard let orderDetail = self?.orderDetail.first else { return }
+            if orderDetail.baseDocument == 0 {
+                self?.orderNumberLabel.isHidden = true
+            }
+            
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles

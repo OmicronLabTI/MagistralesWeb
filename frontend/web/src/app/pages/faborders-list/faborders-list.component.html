@@ -33,6 +33,9 @@
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue"
                     (click)="createOrderIsolated()" >Crear orden</button>
+            <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="materialRequestIsolatedOrder()" >
+                Solicitud de insumos
+            </button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
             Asignar
             </button>
