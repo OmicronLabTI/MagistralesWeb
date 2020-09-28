@@ -123,7 +123,7 @@ pipeline {
                 echo 'Running Kubernetes'
                 sh 'sudo kubectl apply -f deploy_dev.yaml'
             }
-        }
+        }*/
         stage('Database') {
             steps {
                 dir ('database/'){
@@ -132,7 +132,7 @@ pipeline {
                     echo 'Applying Db changes'
                 }
             }
-        }*/
+        }
         stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
