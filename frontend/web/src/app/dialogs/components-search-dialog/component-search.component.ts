@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {IFormulaDetalleReq} from '../../model/http/detalleformula';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -25,6 +25,7 @@ export class ComponentSearchComponent implements OnInit {
   keywords: string[] = [];
   allComplete = false;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild('chipsInput', {static: false}) chipsInput: ElementRef;
   pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   displayedColumns: string[] = ['numero', 'descripcion'];
@@ -68,10 +69,12 @@ export class ComponentSearchComponent implements OnInit {
           this.dataSource.data = resComponents.response;
           this.lengthPaginator = resComponents.comments;
           this.isDisableSearch = false;
+          this.setFocusToChipsInput();
         }
         , error => {
           this.errorService.httpError(error);
           this.dialogRef.close();
+          this.setFocusToChipsInput();
         });
   }
 
@@ -137,5 +140,11 @@ export class ComponentSearchComponent implements OnInit {
     } else {
       this.rowPrevious = row;
     }
+  }
+
+  setFocusToChipsInput() {
+    setTimeout(() => {
+      this.chipsInput.nativeElement.focus();
+    }, 200)
   }
 }
