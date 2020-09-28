@@ -38,8 +38,8 @@ class LotsViewModel {
     
     var finishOrderDidTap = PublishSubject<Void>()
     var backToInboxView = PublishSubject<Void>()
-    private var selectedBatches: [BatchSelected] = []
-    private var documentLines: [Lots] = []
+    var selectedBatches: [BatchSelected] = []
+    var documentLines: [Lots] = []
     var technicalSignatureIsGet = false
     var qfbSignatureIsGet = false
     var askIfUserWantToFinalizeOrder = PublishSubject<String>()
