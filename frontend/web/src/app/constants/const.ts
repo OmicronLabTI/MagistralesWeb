@@ -10,6 +10,8 @@ export const CONST_NUMBER = {
     nulo: null,
     six: 6,
     seven: 7,
+    fifty: 50,
+    oneHundred: 100
 };
 export const CONST_STRING = {
     empty: ''
@@ -162,9 +164,20 @@ export const pathRoles = {
         'lotes',
         'login',
         'workLoad',
+        'materialRequest',
         '**'
     ]
 };
 export const CONST_PRODUCTIVITY = {
   titleTotal: 'total',
 };
+
+export const RouterPaths = {
+  materialRequest: 'materialRequest'
+};
+export enum TypeProperty {
+    code,
+    unit,
+    description,
+    requestQuantity
+}
