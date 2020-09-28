@@ -39,13 +39,18 @@ pipeline {
                 dir ('frontend/web/'){
                     sh 'npm install'
 					sh 'npm run build --prod'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-web-repository:latest ."    
+                    }
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
-                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."    
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-web-repository:latest"
                     }
                 }
             }
         }
+		/*
         stage('Build Federated Services') {
             steps {
                 echo 'Building Fedetared Services'
@@ -117,7 +122,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         /*stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
