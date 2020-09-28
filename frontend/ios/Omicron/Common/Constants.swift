@@ -164,6 +164,7 @@ struct StatusNameConstants {
     static let penddingStatus = "Pendiente"
     static let finishedStatus = "Terminado"
     static let reassignedStatus = "Reasignado"
+    static let finalizedStatus = "Finalizado"
     static let addComponent = "Agregar componente"
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
