@@ -25,7 +25,10 @@
     </div>
 
     <div class="table-toolbar">
-        <div class="refresh-icon-on-toolbar">
+        <div class="refresh-icon-on-toolbar" (click)="getPedidos()">
+            <span class="material-icons color-omicron cursor-pointer">
+                refresh
+            </span>
         </div>
         <div class="table-toolbar-buttons">
                 <span class="material-icons icon-button-toolbar " [ngClass]="isCheckedOrders ? 'color-omicron cursor-pointer' : 'disabled'" (click)="printOrderAsPdfFile()"  matTooltip="Generar PDF"
