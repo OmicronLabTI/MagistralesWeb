@@ -54,5 +54,36 @@ namespace Omicron.Pedidos.Test
 
             return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient });
         }
+
+        /// <summary>
+        /// Create a new client.
+        /// </summary>
+        /// <returns>Client.</returns>
+        public T CreateClientFailure()
+        {
+            var fixture = new Fixture();
+            var result = fixture.Create<ResultModel>();
+            result.Success = true;
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock.Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.BadRequest,
+                   Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(result)),
+               })
+               .Verifiable();
+
+            var httpClient = new HttpClient(handlerMock.Object)
+            {
+                BaseAddress = new Uri("http://test.com/"),
+            };
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient });
+        }
     }
 }

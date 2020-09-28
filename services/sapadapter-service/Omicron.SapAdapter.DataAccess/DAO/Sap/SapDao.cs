@@ -247,7 +247,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode)
         {
-            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.ProductoId.Contains(itemCode)).ToListAsync();
+            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.ProductoId.ToLower().Contains(itemCode)).ToListAsync();
         }
 
         /// <summary>

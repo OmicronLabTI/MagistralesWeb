@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
@@ -17,7 +17,7 @@ import {
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {CancelOrderReq, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {CancelOrderReq, ICreatePdfOrdersRes, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
@@ -47,6 +47,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
   isThereOrdersToPlan = false;
+  isCheckedOrders = false;
   isThereOrdersToPlace = false;
   subscriptionCallHttp = new Subscription();
   isThereOrdersToCancel = false;
@@ -60,7 +61,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private changeDetector: ChangeDetectorRef
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.filterDataOrders.isFromOrders = true;
@@ -134,10 +136,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsToUnLooked();
+    this.validateCheckedItems();
   }
 
   someComplete(): boolean {
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
+    this.validateCheckedItems();
   }
 
   setAll(completed: boolean) {
@@ -267,5 +271,53 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.router.navigate([RouterPaths.materialRequest,
       this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString(),
       CONST_NUMBER.one]);
+  }
+
+  printOrderAsPdfFile() {
+    if (this.isCheckedOrders) {
+      this.dataService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
+      .then( (res: any) => {
+        if (res.isConfirmed) {
+          this.printOrderAsPdfFileConfirmedAction();
+        }
+      })
+    }
+  }
+
+  printOrderAsPdfFileConfirmedAction() {
+    var documentNumbers = this.dataSource.data.filter(t => (t.isChecked)).map(i => { return i.docNum });
+    this.pedidosService.createPdfOrders(documentNumbers)
+    .subscribe((response : ICreatePdfOrdersRes) => {
+      if (response.userError) {
+        var formatedNumbers = response.response.join(', ');
+        var message = '';
+        if (response.response.length > 1) {
+          message = `${Messages.errorMessageCreateOrdersPdf}${formatedNumbers}`;
+        }
+        else {
+          message = `${Messages.errorMessageCreateOrderPdf}${formatedNumbers}`;
+        }
+        this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
+      } else {
+        this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false, ClassNames.popupCustom);
+      }
+      this.uncheckedItems();
+    },
+    (error: ErrorHttpInterface) => {
+      if (error.status !== HttpStatus.notFound) {
+        this.errorService.httpError(error);
+      }
+      this.uncheckedItems();
+    });
+  }
+
+  validateCheckedItems() {
+    this.isCheckedOrders = this.dataSource.data.filter(t => (t.isChecked)).length > 0;
+  }
+
+  uncheckedItems() {
+    this.dataSource.data.forEach(i => i.isChecked = false);
+    this.allComplete = false;
+    this.changeDetector.detectChanges();
   }
 }

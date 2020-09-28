@@ -5,6 +5,7 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Pedidos.Test.Services.SapDiApi
 {
     using NUnit.Framework;

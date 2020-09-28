@@ -356,6 +356,15 @@ th.centered {
 .color-omicron {
   color: #6C90B3!important;
 }
+
+.icon-button-toolbar {
+  font-size: 32px !important;
+  padding: 3px;
+  &.disabled {
+    color: #dbdfe4 !important;
+  }
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -8,6 +8,7 @@ import {
   CreateIsolatedOrderReq,
   ICancelOrdersRes,
   ICreateIsolatedOrderRes,
+  ICreatePdfOrdersRes,
   IExistsBachCodeRes,
   IGetNewBachCodeRes,
   IPedidosListRes,
@@ -85,5 +86,8 @@ export class PedidosService {
   }
   getRecipesByOrder(orderId: number) {
     return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
+  }
+  createPdfOrders(orderIds: number[]) {
+    return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.createPdf}`, orderIds);
   }
 }
