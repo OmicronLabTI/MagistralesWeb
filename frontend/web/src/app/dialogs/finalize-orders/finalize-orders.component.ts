@@ -25,7 +25,7 @@ export class FinalizeOrdersComponent implements OnInit {
               private errorService: ErrorService,
               private dataService: DataService,
               private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
-
+    this.finalizeData = finalizeData || new Array();
   }
 
   async ngOnInit() {
@@ -44,6 +44,10 @@ export class FinalizeOrdersComponent implements OnInit {
               order[1][0].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
               if (order[1].length > 1) {
                 for ( const objectOrder of order[1]) {
+                  // set default dates
+                  order[1][count].fabDate = this.toDay;
+                  order[1][count].endDate = new Date(new Date().setMonth(this.toDay.getMonth()+6));
+                  // set default batch code
                   order[1][count].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
                   count ++;
                 }
