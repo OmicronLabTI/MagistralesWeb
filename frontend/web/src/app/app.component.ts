@@ -289,8 +289,14 @@ export class AppComponent implements OnDestroy , OnInit {
         });
 
         dialogRef.afterClosed().subscribe((resultComponents: any) => {
-            if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent)) {
-                this.dataService.setNewFormulaComponent(resultComponents);
+            if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent
+                || resultSearchComponentModal.modalType === ComponentSearch.addComponent)) {
+                if (resultSearchComponentModal.modalType === ComponentSearch.searchComponent) {
+                    this.dataService.setNewFormulaComponent(resultComponents);
+                }
+                if (resultSearchComponentModal.modalType === ComponentSearch.addComponent) {
+                    this.dataService.setNewMaterialComponent(resultComponents);
+                }
             } else if (resultComponents) {
                 this.dataService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
                     'question', CONST_STRING.empty, true, true)

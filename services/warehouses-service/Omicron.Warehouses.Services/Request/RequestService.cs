@@ -63,15 +63,23 @@ namespace Omicron.Warehouses.Services.Request
             var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
             request.ProductionOrderIds = valitateExistsResults.Missing;
 
-            if (request.ProductionOrderIds.Any())
+            if (!request.ProductionOrderIds.Any())
             {
-                await this.CreateRequest(userId, request);
-                await this.reportingService.SubmitRequest(request);
+                valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
+                return ServiceUtils.CreateResult(true, 200, null, results, null);
             }
 
+            await this.InsertRequest(userId, request);
+
+            var mailResult = await this.reportingService.SubmitRequest(request);
+            if (!mailResult)
+            {
+                return ServiceUtils.CreateResult(true, 200, ErrorReasonConstants.ErrorToSubmitFile, null, null);
+            }
+
+            await this.InsertRequestDetail(request);
             valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
             valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
-
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
@@ -105,17 +113,26 @@ namespace Omicron.Warehouses.Services.Request
         /// <param name="userId">The user id.</param>
         /// <param name="request">Request data.</param>
         /// <returns>
-        /// Return tuple with creation result.
-        /// Item1 = Operation status.
-        /// Item2 = Created request.
-        /// Item3 = Error message.
+        /// Return inserted request.
         /// </returns>
-        public async Task<RawMaterialRequestModel> CreateRequest(string userId, RawMaterialRequestModel request)
+        public async Task<RawMaterialRequestModel> InsertRequest(string userId, RawMaterialRequestModel request)
         {
             request.Id = 0;
             request.CreationUserId = userId;
             request.CreationDate = DateTime.Now.ToString(DateConstants.LargeFormat);
             await this.requestDao.InsertRawMaterialRequest(request);
+            return request;
+        }
+
+        /// <summary>
+        /// Insert raw material request details.
+        /// </summary>
+        /// <param name="request">Request data.</param>
+        /// <returns>
+        /// Return updated request.
+        /// </returns>
+        public async Task<RawMaterialRequestModel> InsertRequestDetail(RawMaterialRequestModel request)
+        {
             await this.requestDao.InsertOrdersOfRawMaterialRequest(request.ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { RequestId = request.Id, ProductionOrderId = x }).ToList());
             await this.CreateDetail(request.Id, request.OrderedProducts);
             return request;

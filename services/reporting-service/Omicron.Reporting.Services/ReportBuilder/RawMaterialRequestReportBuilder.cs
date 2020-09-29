@@ -26,7 +26,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
         private const string STYLEGRAYTEXT = "GrayText";
         private const string STYLESMALLGRAYTEXT = "SmallGrayText";
         private const string BASEDOCUMENT = @"ReportBuilder/Templates/BASE_RM_REQUEST.docx";
-        private const string ARIALFONT = @"ReportBuilder/Templates/ARIAL.TTF";
+        private const string ARIALFONT = @"ReportBuilder/Templates/arial.ttf";
         private readonly string rootDir;
         private readonly string creationDate;
         private readonly RawMaterialRequestModel request;
@@ -237,7 +237,9 @@ namespace Omicron.Reporting.Services.ReportBuilder
         {
             var grayColor = "#a9a9a9";
             var whiteColor = "#FFFFFF";
-            var fontPrivate = "ArialPrivate";
+            var fontPrivate = "Arial";
+
+            document.PrivateFontList.Add(new PrivateFontPath(fontPrivate, Path.Combine(this.rootDir, ARIALFONT)));
 
             var styleForGrayText = new ParagraphStyle(document);
             styleForGrayText.Name = STYLEGRAYTEXT;
@@ -260,8 +262,6 @@ namespace Omicron.Reporting.Services.ReportBuilder
             styleForSmallGrayText.CharacterFormat.FontName = fontPrivate;
 
             document.Styles.Add(styleForSmallGrayText);
-
-            document.PrivateFontList.Add(new PrivateFontPath(fontPrivate, Path.Combine(this.rootDir, ARIALFONT)));
         }
     }
 }
