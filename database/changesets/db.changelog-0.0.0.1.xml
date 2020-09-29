@@ -601,4 +601,9 @@
       <column name="field" value="SmtpPort"/>
     </insert>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.63">
+    <sql endDelimiter=";">
+        ALTER TABLE warehouse.rawmaterialrequestdetail ALTER COLUMN description TYPE VARCHAR(255)
+    </sql>
+  </changeSet>
 </databaseChangeLog> 

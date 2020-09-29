@@ -13,6 +13,7 @@ import { RequestSignatureDialogComponent } from '../../dialogs/request-signature
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { FaborderListModule } from '../faborders-list/faborder-list.module';
 
 @NgModule({
   declarations: [ MaterialRequestComponent, RequestSignatureDialogComponent ],
@@ -27,7 +28,8 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
       FormsModule,
       MatInputModule,
       MATERIAL_COMPONENTS,
-      SignaturePadModule
+      SignaturePadModule,
+      FaborderListModule
   ],
   entryComponents: [RequestSignatureDialogComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

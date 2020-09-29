@@ -50,6 +50,7 @@ export const Endpoints = {
   },
   materialRequest: {
     getPreMaterialRequest: `${environment.baseUrl}/api/warehouses/prerequest/rawmaterial`,
+    postMaterialRequest: `${environment.baseUrl}/api/warehouses/request/rawmaterial`
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`

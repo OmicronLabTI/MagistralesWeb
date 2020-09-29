@@ -223,6 +223,62 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: warehouses-deployment
+  labels:
+    app: warehouses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouses
+  template:
+    metadata:
+      labels:
+        app: warehouses
+    spec:
+      containers:
+      - name: warehouses
+        image: omicron-warehouses-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5104
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: omicron-reporting-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        ports:
+        - containerPort: 5105
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: seqlog-deployment
   labels:
     app: seqlog

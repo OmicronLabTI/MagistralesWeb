@@ -27,5 +27,10 @@ namespace Omicron.Warehouses.Services.Constants
         /// User not exists.
         /// </summary>
         public const string UserNotExists = "El usuario no existe.";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorToSubmitFile = "Ocurrió un error al enviar la solicitud.";
     }
 }

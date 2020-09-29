@@ -64,7 +64,9 @@ export enum MessageType {
     cancelOrder,
     cancelDetailOrder,
     finalizeOrder,
-    saveBatches
+    saveBatches,
+    materialRequest,
+    default
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -115,7 +117,8 @@ export const ConstOrders = {
 
 export const ComponentSearch = {
     searchComponent: 'searchComponent',
-    createOrderIsolated: 'createOrder'
+    createOrderIsolated: 'createOrder',
+    addComponent: 'addComponent'
 };
 
 export enum FromToFilter {
@@ -129,6 +132,11 @@ export enum FromToFilter {
     fromOrderIsolatedReassignItems,
     fromDefault
 }
+
+export const MaterialRequestPage = {
+    onlyNumberPatter: /^([0-9.])$/
+};
+
 export const Colors = [
     'rgba(70, 61, 242, 95)',
     'rgba(5, 112, 255, 100)',
