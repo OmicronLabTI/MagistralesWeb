@@ -36,7 +36,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       userTypeR: ['', Validators.required],
       password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
       activo: ['', [Validators.required]],
-      piezas: ['', [Validators.required, Validators.maxLength(5)]],
+      piezas: [CONST_USER_DIALOG.defaultNumberOfPieces, [Validators.required, Validators.maxLength(5)]],
       asignable: ['', [Validators.required]]
     });
 
