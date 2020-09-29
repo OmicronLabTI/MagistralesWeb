@@ -46,4 +46,10 @@ export const Messages = {
   errorMessageCreateOrdersPdf: 'No se ha podido generar el PDF de las órdenes ',
   errorMessageCreateOrderPdf: 'No se ha podido generar el PDF de la orden ',
   confirmCreateOrderPdf: '¿Deseas generar el PDF de los pedidos seleccionados?',
+  existRequest: 'Ya se ha generado una solicitud para',
+  nextOrder: 'la siguiente órden: ',
+  nextOrders: 'las siguientes órdenes: ',
+  requestOrderWithFailOrders: 'Únicamente se generará solicitud para ',
+  requestOrdersOnlyOk: 'Se genera solicitud para ',
+  thereNoOrderProcess: 'No existen ordenes Planificadas para los pedidos seleccionados'
 };

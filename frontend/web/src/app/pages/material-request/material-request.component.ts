@@ -7,8 +7,7 @@ import {
   ClassNames,
   ComponentSearch,
   CONST_NUMBER,
-  CONST_STRING,
-  MaterialRequestPage,
+  CONST_STRING, HttpServiceTOCall,
   MessageType
 } from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
@@ -58,26 +57,43 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
       this.getPreMaterialRequestH();
+      this.dataService.setUrlActive(this.isOrder ? HttpServiceTOCall.ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
     });
     this.subscription.add(this.dataService.getNewMaterialComponent().subscribe( resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {...resultNewMaterialComponent,
                                                           id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
       this.checkIsCorrectData();
-      this.checkToDelete();
+      this.checkToDownload();
     }));
   }
   getPreMaterialRequestH() {
+    let titleStatusOrders = CONST_STRING.empty;
     this.materialReService.getPreMaterialRequest(this.dataToRequest, this.isOrder).subscribe( resultMaterialRequest => {
-      console.log('rsult: ', resultMaterialRequest)
-      if (resultMaterialRequest.response.failedProductionOrderIds.length > CONST_NUMBER.zero) {
-        this.onDataError(resultMaterialRequest.response.failedProductionOrderIds, true);
+      const lengthFailOrders = resultMaterialRequest.response.failedProductionOrderIds.length;
+      const lengthOkOrders = resultMaterialRequest.response.productionOrderIds.length;
+      if ( lengthFailOrders > CONST_NUMBER.zero) {
+        titleStatusOrders = `${Messages.existRequest} ${
+                                lengthFailOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} \n\n`;
+        titleStatusOrders = `${titleStatusOrders} ${ resultMaterialRequest.response.failedProductionOrderIds.toString()} \n\n`;
       }
+      if (lengthOkOrders > CONST_NUMBER.zero) {
+        titleStatusOrders = `${titleStatusOrders} ${
+          lengthFailOrders > CONST_NUMBER.one ?
+              `${Messages.requestOrderWithFailOrders }${
+                                              lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
+              : `${Messages.requestOrdersOnlyOk} ${ lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
+        titleStatusOrders = `${titleStatusOrders} \n\n ${resultMaterialRequest.response.productionOrderIds.toString()}`;
+      }
+
+      this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
+          titleStatusOrders, 'info', '', true, false, ClassNames.popupCustom);
+
       if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
         this.oldData = resultMaterialRequest.response;
         this.dataSource.data = resultMaterialRequest.response.orderedProducts;
         this.dataService.setIsToSaveAnything(false);
         this.checkIsCorrectData();
-        this.checkToDelete();
+        this.checkToDownload();
       } else {
         this.goBack();
       }
@@ -161,9 +177,6 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.dataService.setIsToSaveAnything(true);
   }
 
-  numericOnly(event): boolean {
-    return MaterialRequestPage.onlyNumberPatter.test(event.key);
-  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
@@ -172,12 +185,14 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   checkToDelete() {
     this.isThereToDelete = this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero;
+  }
+  checkToDownload() {
     this.isToDownload = this.dataSource.data.length > CONST_NUMBER.zero;
   }
 
   deleteComponents() {
     this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
-    this.checkToDelete();
+    this.checkToDownload();
   }
 
   private goBack() {
