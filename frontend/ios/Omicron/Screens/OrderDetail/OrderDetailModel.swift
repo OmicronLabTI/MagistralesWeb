@@ -25,7 +25,7 @@ class OrderDetailResponse: HttpResponse {
 class OrderDetail {
     var productionOrderID: Int?
     var code, productDescription, type, status: String?
-    var plannedQuantity: Int?
+    var plannedQuantity: Decimal?
     var unit, warehouse: String?
     var number: Int?
     var fabDate, dueDate, startDate, endDate: String?
@@ -38,7 +38,7 @@ class OrderDetail {
     var details: [Detail]?
     
     
-    init(productionOrderID: Int, code: String, productDescription: String, type: String, status: String, plannedQuantity: Int, unit: String, warehouse: String, number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String, user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int, realEndDate: String, productLabel: String, container: String, comments: String, isChecked: Bool, details: [Detail]) {
+    init(productionOrderID: Int, code: String, productDescription: String, type: String, status: String, plannedQuantity: Decimal, unit: String, warehouse: String, number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String, user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int, realEndDate: String, productLabel: String, container: String, comments: String, isChecked: Bool, details: [Detail]) {
         self.productionOrderID = productionOrderID
         self.code = code
         self.productDescription = productDescription
@@ -75,7 +75,7 @@ extension OrderDetail: Mappable {
         self.productDescription <- map["productDescription"]
         self.type <- map["type"]
         self.status <- map["status"]
-        self.plannedQuantity <- map["plannedQuantity"]
+        self.plannedQuantity <- (map["plannedQuantity"], DecimalTransform())
         self.unit <- map["unit"]
         self.warehouse <- map["warehouse"]
         self.number <- map["number"]
@@ -139,11 +139,12 @@ extension Detail: Mappable {
 }
 
 class OrderDetailRequest: Codable {
-    let fabOrderID, plannedQuantity: Int
+    let fabOrderID: Int
+    let plannedQuantity: Decimal
     let fechaFin, comments: String
     let components: [Component]
     
-    init(fabOrderID: Int, plannedQuantity: Int, fechaFin: String, comments: String, components:[Component]) {
+    init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String, comments: String, components:[Component]) {
         self.fabOrderID = fabOrderID
         self.plannedQuantity = plannedQuantity
         self.fechaFin = fechaFin

@@ -34,7 +34,7 @@ class  OrderDetailFormViewModel {
         
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (data.dueDate)!, withFormat: "yyyy-MM-dd")
         
-        let order = OrderDetailRequest(fabOrderID: (data.productionOrderID)!, plannedQuantity: (data.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
+        let order = OrderDetailRequest(fabOrderID: (data.productionOrderID)!, plannedQuantity: data.plannedQuantity ?? 0.0, fechaFin: fechaFinFormated!, comments: "", components: componets)
         
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             self?.loading.onNext(false)
