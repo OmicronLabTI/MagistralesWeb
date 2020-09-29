@@ -32,21 +32,6 @@ spec:
             cpu: 200m
             memory: 256Mi
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: apimanager-svc
-  name: apimanager-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8000
-    protocol: TCP  
-  selector:
-    app: apimanager
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -216,58 +201,6 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: seqlog-deployment
-  labels:
-    app: seqlog
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: seqlog
-  template:
-    metadata:
-      labels:
-        app: seqlog
-    spec:
-      containers:
-      - name: seqlog
-        image: datalust/seq:latest
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        - name: ACCEPT_EULA
-          value: "Y"
-        ports:
-        - containerPort: 80
-          name: intra
-        - containerPort: 5341
-          name: extra
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: seqlog-svc
-  labels:
-    app: seqlog-svc
-spec:
-  type: LoadBalancer
-  ports:
-  - name: default
-    port: 80
-    targetPort: 80
-    protocol: TCP
-  - name: alt
-    port: 5341
-    targetPort: 5341
-    protocol: TCP
-  selector:
-    app: seqlog
 ---
 apiVersion: apps/v1
 kind: Deployment
