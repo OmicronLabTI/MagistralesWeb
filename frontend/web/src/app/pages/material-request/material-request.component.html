@@ -89,7 +89,8 @@
                                        maxlength="15"
                                        [(ngModel)]="element.requestQuantity"
                                        (ngModelChange)="onRequestQuantityChange($event, i)"
-                                        (keypress)="numericOnly($event)"
+                                        appDigitDecimalNumber
+                                        decimalPlaces="6"
                                         >
                             </mat-form-field>
                         </td>
