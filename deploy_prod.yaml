@@ -39,8 +39,9 @@ metadata:
     app: apimanager-svc
   name: apimanager-svc
 spec:
+  type: LoadBalancer
   ports:
-  - port: 8000
+  - port: 80
     targetPort: 8000
     protocol: TCP  
   selector:
@@ -258,7 +259,7 @@ spec:
   type: LoadBalancer
   ports:
   - name: default
-    port: 81
+    port: 80
     targetPort: 80
     protocol: TCP
   - name: alt
