@@ -17,7 +17,6 @@ class ChartViewController: UIViewController {
     @IBOutlet weak var possibleAssingLabel: UILabel!
     
     @Injected var chartViewModel: ChartViewModel
-    @Injected var lottieManager: LottieManager
     
     var disposeBag: DisposeBag = DisposeBag()
     
@@ -32,17 +31,6 @@ class ChartViewController: UIViewController {
         
         chartViewModel.getWorkload()
         
-        chartViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
-            
-            guard let self = self else { return }
-            if showLoading {
-                self.lottieManager.showLoading()
-            } else {
-                self.lottieManager.hideLoading()
-            }
-            
-        }).disposed(by: disposeBag)
-        
         chartViewModel.workloadData.bind(onNext: { [weak self] data in
             guard let self = self else { return }
             self.setDataToChart(data.first)
@@ -52,10 +40,7 @@ class ChartViewController: UIViewController {
     
     private func setDataToChart(_ workload: Workload?) {
         
-        guard let workload = workload else {
-            self.lottieManager.hideLoading()
-            return
-        }
+        guard let workload = workload else { return }
         
         var entries: [PieChartDataEntry] = []
         var colors: [UIColor] = []
@@ -101,7 +86,7 @@ class ChartViewController: UIViewController {
         data.setValueTextColor(.white)
         
         let pFormatter = NumberFormatter()
-        pFormatter.numberStyle = .none
+        pFormatter.numberStyle = .decimal
         data.setValueFormatter(DefaultValueFormatter(formatter: pFormatter))
         
         chartView.data = data
@@ -115,7 +100,8 @@ class ChartViewController: UIViewController {
         
         chartView.centerAttributedText = myAttrString
         
-        possibleAssingLabel.text = "\(workload.totalPossibleAssign ?? 0)"
+        let totalPossibleAssing = pFormatter.string(from: NSNumber(value: workload.totalPossibleAssign ?? 0))
+        possibleAssingLabel.text = totalPossibleAssing
         
     }
     

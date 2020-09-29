@@ -43,6 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
         Resolver.register { LottieManager() }.scope(Resolver.shared)
         Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
-        Resolver.register { ChartViewModel() }
+        Resolver.register { ChartViewModel() }.scope(Resolver.shared)
     }
 }
