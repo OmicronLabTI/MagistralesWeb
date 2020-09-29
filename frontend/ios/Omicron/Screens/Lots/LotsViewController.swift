@@ -110,6 +110,11 @@ class LotsViewController: UIViewController {
             self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         
+        // Cambia de color los labels a negro cuando ya termino de cargar toda la información
+        self.lotsViewModel.changeColorLabels.subscribe(onNext: { [weak self] _ in
+            self?.changeTextColorOfLabels(color: .black)
+        }).disposed(by: self.disposeBag)
+        
         // Actualizan los comentarios
         self.lotsViewModel.updateComments.subscribe(onNext: {[weak self] orderDetail in
             self?.orderDetail = [orderDetail]
@@ -260,7 +265,6 @@ class LotsViewController: UIViewController {
     func initComponents() {
         self.showIconMessage()
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
-        
         self.title = CommonStrings.batchesTitle
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.documentsLines, fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: CommonStrings.hashtag, fontSize: 15)
@@ -290,7 +294,7 @@ class LotsViewController: UIViewController {
         let orderNumber = self.orderNumber == "0" ? CommonStrings.empty : self.orderNumber
         self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
         self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(self.manufacturingOrder)", textToBold: CommonStrings.manufacturingOrder, fontSize: 15)
-        
+        self.changeTextColorOfLabels(color: .white)
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
         self.addLotButton.setTitle(CommonStrings.empty, for: .normal)
@@ -321,6 +325,29 @@ class LotsViewController: UIViewController {
         } else {
             self.pendingButton.isHidden = true
         }
+    }
+    
+    
+    func changeTextColorOfLabels(color: UIColor) -> Void {
+        self.titleLabel.textColor = color
+        self.hashtagLabel.textColor = color
+        self.codeLabel.textColor = color
+        self.descriptionLabel.textColor = color
+        self.warehouseCodeLabel.textColor = color
+        self.totalNeededLabel.textColor = color
+        self.totalSelectedLabel.textColor = color
+        
+        self.lotsAvailableLabel.textColor = color
+        self.laLotsLabel.textColor = color
+        self.laQuantityAvailableLabel.textColor = color
+        self.laQuantitySelectedLabel.textColor = color
+        self.laQuantityAssignedLabel.textColor = color
+        self.lotsSelectedLabel.textColor = color
+        self.lsLotsLabel.textColor = color
+        self.lsQuantityAvailableLabel.textColor = color
+        self.codeDescriptionLabel.textColor = color
+        self.orderNumberLabel.textColor = color
+        self.manufacturingOrderLabel.textColor = color
     }
     
     func setStyleView(view: UIView) {
