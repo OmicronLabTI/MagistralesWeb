@@ -33,8 +33,8 @@ pipeline {
                 sh 'sudo kubectl delete deploy --all --grace-period=0 --force'
 				sh 'sudo docker system prune -f'
             }
-        }
-        /*stage('Build Front Web') {
+        }/*
+        stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
@@ -50,7 +50,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('Build Federated Services') {
             steps {
                 echo 'Building Fedetared Services'
@@ -92,7 +92,7 @@ pipeline {
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-catalogos-repository:latest"
                     }
                 }
-				echo 'Building Usuarios'
+				/*echo 'Building Usuarios'
                 dir ('services/usuarios-service/'){
                     sh 'dotnet publish Omicron.Usuarios.Api/Omicron.Usuarios.Api.csproj -c Release -o app/'
 					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -151,9 +151,9 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-reporting-repository:latest"
                     }
-                }
+                }*/
             }
-        }*/
+        }
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
