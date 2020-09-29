@@ -92,7 +92,7 @@ pipeline {
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-catalogos-repository:latest"
                     }
                 }
-				/*echo 'Building Usuarios'
+				echo 'Building Usuarios'
                 dir ('services/usuarios-service/'){
                     sh 'dotnet publish Omicron.Usuarios.Api/Omicron.Usuarios.Api.csproj -c Release -o app/'
 					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -151,7 +151,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-reporting-repository:latest"
                     }
-                }*/
+                }
             }
         }
         stage('Kubernetes Up') {
