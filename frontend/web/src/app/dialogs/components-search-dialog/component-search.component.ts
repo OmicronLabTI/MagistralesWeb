@@ -117,7 +117,7 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
-    if (this.isFromSearchComponent && this.data.modalType === ComponentSearch.searchComponent) {
+    if (this.isFromSearchComponent) {
       if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
@@ -146,6 +146,6 @@ export class ComponentSearchComponent implements OnInit {
   setFocusToChipsInput() {
     setTimeout(() => {
       this.chipsInput.nativeElement.focus();
-    }, 200)
+    }, 200);
   }
 }
