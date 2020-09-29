@@ -5,11 +5,10 @@ import {MATERIAL_COMPONENTS} from '../../app.material';
 import { ReactiveFormsModule , FormsModule} from '@angular/forms';
 import { FaborderListRoutingModule } from './faborder-list-routing.module';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
-import { DigitDecimaNumberDirective } from 'src/app/directives/digit-decima-number.directive';
-
+import { DigitDecimalNumberDirective } from 'src/app/directives/digit-decima-number.directive';
 
 @NgModule({
-  declarations: [FabordersListComponent, FinalizeOrdersComponent, DigitDecimaNumberDirective],
+  declarations: [FabordersListComponent, FinalizeOrdersComponent, DigitDecimalNumberDirective],
   imports: [
     CommonModule,
     FaborderListRoutingModule,
@@ -17,6 +16,7 @@ import { DigitDecimaNumberDirective } from 'src/app/directives/digit-decima-numb
     ReactiveFormsModule,
     FormsModule
   ],
+  exports: [DigitDecimalNumberDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [FinalizeOrdersComponent]
 })

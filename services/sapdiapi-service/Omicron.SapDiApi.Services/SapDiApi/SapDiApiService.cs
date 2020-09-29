@@ -162,9 +162,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             productionOrderObj.GetByKey(updateFormula.FabOrderId);
 
-            double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
             productionOrderObj.DueDate = updateFormula.FechaFin;
-            productionOrderObj.PlannedQuantity = plannedQuantity;
+            productionOrderObj.PlannedQuantity = updateFormula.PlannedQuantity;
             productionOrderObj.Warehouse = updateFormula.Warehouse;
 
             var components = this.ExecuteQuery(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId);
