@@ -26,14 +26,15 @@ pipeline {
         ).trim()
 	}
     stages {
-		/*stage('Kubernetes Down') {
+		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
+				sh 'sudo kubectl config use-context omicron-aks'
                 sh 'sudo kubectl delete all --all --grace-period=0 --force'
 				sh 'sudo docker system prune -f'
             }
         }
-        stage('Build Front Web') {
+        /*stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
@@ -76,10 +77,10 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         stage('Build Micro Services') {
             steps {
-                /*echo 'Building ms1'
+                echo 'Building ms1'
                 dir ('services/catalogos-service/'){
                     sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
 					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -138,7 +139,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository:latest"
                     }
-                }*/
+                }
                 echo 'Building reporting'
                 dir ('services/reporting-service/'){
                     sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
@@ -152,13 +153,13 @@ pipeline {
                     }
                 }
             }
-        }
-        /*stage('Kubernetes Up') {
+        }*/
+        stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl apply -f deploy_dev.yaml'
+                sh 'sudo kubectl apply -f deploy_prod.yaml'
             }
-        }*/
+        }
         stage('Database') {
             steps {
                 dir ('database/'){
