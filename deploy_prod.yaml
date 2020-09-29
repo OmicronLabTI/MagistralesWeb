@@ -22,12 +22,13 @@ spec:
           value: America/Mexico_City
         ports:
         - containerPort: 8000
-        limits:
-          cpu: 500m
-          memory: 512Mi
-        requests:
-          cpu: 200m
-          memory: 256Mi
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
 ---
 apiVersion: v1
 kind: Service
@@ -68,12 +69,13 @@ spec:
           value: qa
         ports:
         - containerPort: 8090
-        limits:
-          cpu: 500m
-          memory: 512Mi
-        requests:
-          cpu: 200m
-          memory: 256Mi
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -101,12 +103,13 @@ spec:
           value: Staging
         ports:
         - containerPort: 9010
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -134,12 +137,13 @@ spec:
           value: Staging
         ports:
         - containerPort: 5101
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -167,12 +171,13 @@ spec:
           value: Staging
         ports:
         - containerPort: 5102
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -200,12 +205,13 @@ spec:
           value: Staging
         ports:
         - containerPort: 5103
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -285,12 +291,13 @@ spec:
           value: Development
         ports:
         - containerPort: 5104
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -318,9 +325,10 @@ spec:
           value: Development
         ports:
         - containerPort: 5105
-        limits:
-          cpu: 250m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
