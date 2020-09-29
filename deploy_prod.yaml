@@ -33,6 +33,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    app: apimanager-svc
   name: apimanager-svc
 spec:
   ports:
@@ -249,7 +251,7 @@ kind: Service
 metadata:
   name: seqlog-svc
   labels:
-    app: seqlog
+    app: seqlog-svc
 spec:
   ports:
   - name: default
