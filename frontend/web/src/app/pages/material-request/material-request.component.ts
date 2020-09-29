@@ -18,6 +18,9 @@ import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {Location} from '@angular/common';
 import {Subscription} from 'rxjs';
+import { FileDownloaderService } from 'src/app/services/file.downloader.service';
+import { ReportingService } from 'src/app/services/reporting.service';
+import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
 
 
 @Component({
@@ -44,6 +47,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
               private errorService: ErrorService,
               private activeRoute: ActivatedRoute,
               private dataService: DataService,
+              private fileDownloaderServie: FileDownloaderService,
+              private reportingService: ReportingService,
               private  location: Location) {
   }
 
@@ -108,9 +113,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   sendRequest() {
     const newComponentsToSend = new RawRequestPost();
-    this.oldData.observations = this.comments;
-    this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
-    this.oldData.orderedProducts = this.dataSource.data;
+    this.setModelData();
     newComponentsToSend.data = this.oldData;
     newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds;
     newComponentsToSend.userId = this.dataService.getUserId();
@@ -180,11 +183,17 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
   
   downloadPreview() {
-    console.log('download preview')
-    // var data = {};
-    // this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(data), FileTypeContentEnum.PDF, this.getFileNamePreview());
+    this.setModelData();
+    this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
   }
 
+  private setModelData() {
+    this.oldData.observations = this.comments || '';
+    this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
+    this.oldData.orderedProducts = this.dataSource.data;
+    this.oldData.signature = this.oldData.signature || '';
+    this.oldData.signingUserName = 'Heriberto Miguel Tiburcio';
+  }
   private getFileNamePreview(): string {
     var date = new Date();
     let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth())}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
