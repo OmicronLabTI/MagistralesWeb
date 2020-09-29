@@ -205,6 +205,38 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: seqlog-deployment
+  labels:
+    app: seqlog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seqlog
+  template:
+    metadata:
+      labels:
+        app: seqlog
+    spec:
+      containers:
+      - name: seqlog
+        image: datalust/seq:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Staging
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 80
+          name: intra
+        - containerPort: 5341
+          name: extra
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: warehouses-deployment
   labels:
     app: warehouses
