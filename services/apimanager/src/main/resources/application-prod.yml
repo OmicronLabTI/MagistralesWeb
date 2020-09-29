@@ -1,7 +1,7 @@
 spring:
   application:
     name: eureka-service
-  profiles: dev
+  profiles: prod
 
 server:
   port: 8000
@@ -17,7 +17,7 @@ eureka:
 
 zuul:
   ignoredServices: '*'
-  prefix: /api
+  prefix: /
   routes:
     oauth:
       path: /oauth/**
