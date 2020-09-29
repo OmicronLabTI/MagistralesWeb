@@ -1,0 +1,112 @@
+<div class="container-list-page">
+    <div class="header-page">
+        <div class="title-list-container">
+            <span>Solicitud de insumos al almacén general</span>
+        </div>
+        <div class="filter-select">
+
+        </div>
+        <div class="filter-select">
+
+        </div>
+    </div>
+
+    <div class="table-toolbar">
+        <div class="refresh-icon-on-toolbar ">
+
+        </div>
+        <div class="table-toolbar-buttons">
+            <button mat-raised-button [disabled]="!isThereToDelete" [ngClass]="isThereToDelete? 'button-blue' : 'disable-button'" (click)="deleteComponents()" >
+                Eliminar componente
+            </button>
+            <button mat-raised-button class="button-blue" (click)="addNewComponent()" >
+                Agregar componente
+            </button>
+            <button mat-raised-button [disabled]="!isToDownload" [ngClass]="isToDownload? 'button-blue' : 'disable-button'" (click)="downloadPreview()">
+                Descargar PDF
+            </button>
+            <button mat-raised-button class="button-blue" (click)="signUser()" >
+                Firma del solicitante
+            </button>
+            <button mat-raised-button [disabled]="!isCorrectData" [ngClass]="isCorrectData ? 'button-blue' : 'disable-button'" (click)="sendRequest()" >
+                Enviar a almacén
+            </button>
+            <button mat-raised-button class="button-blue" (click)="cancelRequest()" >
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <div class="list-users-container">
+        <mat-tab-group>
+            <mat-tab label="Componentes">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 margin-table">
+                    <ng-container matColumnDef="check">&nbsp;
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let element;" class="seleccion">
+                            <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="code">
+                        <th mat-header-cell *matHeaderCellDef class="centered">CÓDIGO</th>
+                        <td mat-cell *matCellDef="let element; let i = index"
+                            [ngClass]="element.isWithError ? 'with-error-start' : ''"
+                            class="color-text-intables tdcell tdcell-center">
+                            {{element.productId}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="component">
+                        <th mat-header-cell *matHeaderCellDef class="centered"> DESCRIPCIÓN</th>
+                        <td mat-cell *matCellDef="let element;let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error' : ''"
+                            class="color-text-intables tdcell tdcell-center td-custom numero">
+                            {{element.description}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="unit">
+                        <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> UNIDAD </th>
+                        <td mat-cell *matCellDef="let element; let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error-last' : ''"
+                            class="color-text-intables tdcell tdcell-center mobile-hide cantbase">
+                            {{element.unit}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="requestQuantity">
+                        <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CTD. REQUERIDA </th>
+                        <td mat-cell *matCellDef="let element;let i = index;"
+                            [ngClass]="element.isWithError ? 'with-error' : ''"
+                            class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
+                            <mat-form-field appearance="outline">
+                                <input
+                                        matInput
+                                       type="number"
+                                       class="color-number" placeholder="Ctd. requerida"
+                                       [(ngModel)]="element.requestQuantity"
+                                       (ngModelChange)="onRequestQuantityChange($event, i)"
+                                        appDigitDecimalNumber
+                                        decimalPlaces="6"
+                                        >
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </mat-tab>
+            <mat-tab label="Observaciones">
+                <textarea class="text-area-formula" cols="100" rows="10"
+                          maxlength="100"
+                          [(ngModel)]="comments">
+                        </textarea>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+

@@ -1,3 +1,0 @@
-2020-09-04 11:09:44.1764 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
-2020-09-04 11:13:31.8989 INFO Omicron.SapDiApi.Log.LoggerProxy.Info SAP connection is: True 
-2020-09-04 13:30:54.3466 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status -4014 - No es posible añadir una línea sin la selección completa de los números de serie/lote - 89477-[{"OrderId":89477,"AssignedQty":0.063,"BatchNumber":"741106","ItemCode":"MP-145","Action":"insert"}] 

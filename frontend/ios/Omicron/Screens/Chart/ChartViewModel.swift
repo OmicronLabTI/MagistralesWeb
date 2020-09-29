@@ -12,14 +12,12 @@ import RxCocoa
 
 class ChartViewModel {
     
-    var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var workloadData = ReplaySubject<[Workload]>.create(bufferSize: 1)
-    var disposeBag: DisposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     init() { }
     
     func getWorkload() {
-        loading.onNext(true)
         let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
             + "-"
@@ -30,7 +28,6 @@ class ChartViewModel {
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { [weak self] workloadResponse in
                 guard let self = self else { return }
-                self.loading.onNext(false)
                 if let workload = workloadResponse.response {
                     
                     self.workloadData.onNext(workload)
@@ -38,7 +35,7 @@ class ChartViewModel {
                 
                 }, onError: { [weak self] error in
                     guard let self = self else { return }
-                    self.loading.onNext(false)
+                    print(error)
             }).disposed(by: disposeBag)
     }
     

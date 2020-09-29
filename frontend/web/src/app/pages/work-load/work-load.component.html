@@ -14,22 +14,28 @@
         <div class="table-toolbar-buttons-load">
             <div class="indicators-container">
                 <div class="indicators-work-load background-color-assign">
-                    Asignado
+                    <span>Asignado</span>
+                    <span>{{workLoadTotals[0].assigned}}</span>
                 </div>
                 <div class="indicators-work-load background-color-in-process">
-                    En proceso
+                    <span>En proceso</span>
+                    <span>{{workLoadTotals[0].processed}}</span>
                 </div>
                 <div class="indicators-work-load background-color-pending">
-                    Pendiente
+                    <span>Pendiente</span>
+                    <span>{{workLoadTotals[0].pending}}</span>
                 </div>
                 <div class="indicators-work-load background-color-finish">
-                    Terminado
+                    <span>Terminado</span>
+                    <span>{{workLoadTotals[0].finished}}</span>
                 </div>
                 <div class="indicators-work-load background-color-re-assign">
-                    Reasignado
+                    <span>Reasignado</span>
+                    <span>{{workLoadTotals[0].reassigned}}</span>
                 </div>
                 <div class="indicators-work-load background-color-finished">
-                    Finalizado
+                    <span>Finalizado</span>
+                    <span>{{workLoadTotals[0].finalized}}</span>
                 </div>
             </div>
             <div class="data-range-container">
@@ -63,6 +69,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="number-total-titles">
+        <div class="totales total-orders">
+           {{workLoadTotals[0].totalOrders}} Pedidos
+        </div>
+        <div class="totales total-orders">
+            {{workLoadTotals[0].totalFabOrders}} Órdenes
+        </div>
+        <div class="totales total-orders">
+            {{workLoadTotals[0].totalPieces}} Piezas
         </div>
     </div>
 

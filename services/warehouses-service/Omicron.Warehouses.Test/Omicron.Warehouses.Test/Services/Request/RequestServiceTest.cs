@@ -17,6 +17,7 @@ namespace Omicron.Warehouses.Test.Services.Request
     using Omicron.Warehouses.Entities.Context;
     using Omicron.Warehouses.Entities.Model;
     using Omicron.Warehouses.Services.Clients;
+    using Omicron.Warehouses.Services.Constants;
     using Omicron.Warehouses.Services.Request;
 
     /// <summary>
@@ -145,6 +146,30 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             // assert
             this.CheckAction(response, true, 1, 0);
+        }
+
+        /// <summary>
+        /// Create new raw material request.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task CreateRawMaterialRequest_FailOnSubmit_ReturnUSerError()
+        {
+            // arrange
+            this.mockReportingService = new Mock<IReportingService>();
+            this.mockReportingService.SetReturnsDefault(Task.FromResult(false));
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object);
+
+            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.ProductionOrderIds = new List<int> { 2 };
+            request.OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(3);
+
+            // act
+            var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(ErrorReasonConstants.ErrorToSubmitFile, response.UserError);
         }
 
         /// <summary>

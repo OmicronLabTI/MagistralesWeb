@@ -10,6 +10,8 @@ export const CONST_NUMBER = {
     nulo: null,
     six: 6,
     seven: 7,
+    fifty: 50,
+    oneHundred: 100
 };
 export const CONST_STRING = {
     empty: ''
@@ -62,7 +64,9 @@ export enum MessageType {
     cancelOrder,
     cancelDetailOrder,
     finalizeOrder,
-    saveBatches
+    saveBatches,
+    materialRequest,
+    default
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -113,7 +117,8 @@ export const ConstOrders = {
 
 export const ComponentSearch = {
     searchComponent: 'searchComponent',
-    createOrderIsolated: 'createOrder'
+    createOrderIsolated: 'createOrder',
+    addComponent: 'addComponent'
 };
 
 export enum FromToFilter {
@@ -127,6 +132,11 @@ export enum FromToFilter {
     fromOrderIsolatedReassignItems,
     fromDefault
 }
+
+export const MaterialRequestPage = {
+    onlyNumberPatter: /^([0-9.])$/
+};
+
 export const Colors = [
     'rgba(70, 61, 242, 95)',
     'rgba(5, 112, 255, 100)',
@@ -163,9 +173,20 @@ export const pathRoles = {
         'lotes',
         'login',
         'workLoad',
+        'materialRequest',
         '**'
     ]
 };
 export const CONST_PRODUCTIVITY = {
   titleTotal: 'total',
 };
+
+export const RouterPaths = {
+  materialRequest: 'materialRequest'
+};
+export enum TypeProperty {
+    code,
+    unit,
+    description,
+    requestQuantity
+}

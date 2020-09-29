@@ -205,9 +205,11 @@
                         <mat-form-field appearance="outline">
                              <input matInput type="number"
                                     [disabled]="element.hasBatches"
-                               class="number color-number" placeholder="Cantidad base"
-                               [(ngModel)]="element.baseQuantity"
-                               (ngModelChange)="onBaseQuantityChange($event, i)">
+                                    class="number color-number" placeholder="Cantidad base"
+                                    [(ngModel)]="element.baseQuantity"
+                                    (ngModelChange)="onBaseQuantityChange($event, i)"
+                                    appDigitDecimalNumber
+                                    decimalPlaces="6">
                        </mat-form-field>
                     </td>
                     </ng-container>
@@ -219,7 +221,9 @@
                                [disabled]="element.hasBatches"
                                class="number color-number" placeholder="Cantidad requerida"
                                [(ngModel)]="element.requiredQuantity"
-                               (ngModelChange)="onRequiredQuantityChange($event, i)">
+                               (ngModelChange)="onRequiredQuantityChange($event, i)"
+                               appDigitDecimalNumber
+                               decimalPlaces="6">
                       </mat-form-field> </td>
                     </ng-container>
         

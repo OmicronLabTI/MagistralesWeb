@@ -26,6 +26,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
         private const string STYLEGRAYTEXT = "GrayText";
         private const string STYLESMALLGRAYTEXT = "SmallGrayText";
         private const string BASEDOCUMENT = @"ReportBuilder/Templates/BASE_RM_REQUEST.docx";
+        private const string ARIALFONT = @"ReportBuilder/Templates/arial.ttf";
         private readonly string rootDir;
         private readonly string creationDate;
         private readonly RawMaterialRequestModel request;
@@ -236,19 +237,21 @@ namespace Omicron.Reporting.Services.ReportBuilder
         {
             var grayColor = "#a9a9a9";
             var whiteColor = "#FFFFFF";
-            var font = "Arial";
+            var fontPrivate = "Arial";
+
+            document.PrivateFontList.Add(new PrivateFontPath(fontPrivate, Path.Combine(this.rootDir, ARIALFONT)));
 
             var styleForGrayText = new ParagraphStyle(document);
             styleForGrayText.Name = STYLEGRAYTEXT;
             styleForGrayText.CharacterFormat.TextColor = ColorTranslator.FromHtml(grayColor);
-            styleForGrayText.CharacterFormat.FontName = font;
+            styleForGrayText.CharacterFormat.FontName = fontPrivate;
             styleForGrayText.CharacterFormat.FontSize = 9;
             document.Styles.Add(styleForGrayText);
 
             var styleForWhiteText = new ParagraphStyle(document);
             styleForWhiteText.Name = STYLEWHITETEXT;
             styleForWhiteText.CharacterFormat.TextColor = ColorTranslator.FromHtml(whiteColor);
-            styleForWhiteText.CharacterFormat.FontName = font;
+            styleForWhiteText.CharacterFormat.FontName = fontPrivate;
             styleForWhiteText.CharacterFormat.FontSize = 9;
             document.Styles.Add(styleForWhiteText);
 
@@ -256,7 +259,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
             styleForSmallGrayText.Name = STYLESMALLGRAYTEXT;
             styleForSmallGrayText.CharacterFormat.TextColor = ColorTranslator.FromHtml(grayColor);
             styleForSmallGrayText.CharacterFormat.FontSize = 7;
-            styleForSmallGrayText.CharacterFormat.FontName = font;
+            styleForSmallGrayText.CharacterFormat.FontName = fontPrivate;
 
             document.Styles.Add(styleForSmallGrayText);
         }
