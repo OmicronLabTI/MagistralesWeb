@@ -16,6 +16,7 @@ class  OrderDetailFormViewModel {
     var showAlert = PublishSubject<String>()
     var disposeBag = DisposeBag()
     var success = PublishSubject<Int>()
+    var response = PublishSubject<String>()
     
     // MARK: Init
     init() {
@@ -38,6 +39,7 @@ class  OrderDetailFormViewModel {
         NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             self?.loading.onNext(false)
              self?.showAlert.onNext("Se registraron los cambios correctamente")
+            self?.response.onNext(res.response ?? "")
            self?.success.onNext(data.details![index].orderFabID!)
         }, onError: {  [weak self] error in
             self?.loading.onNext(false)

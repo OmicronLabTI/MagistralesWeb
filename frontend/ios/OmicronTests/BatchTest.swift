@@ -177,25 +177,14 @@ class BatchesTest: XCTestCase {
     }
     
 
-//    func testSaveLotsDidTapNotChanges() {
-//        let batch: [Lots] = []
-//
-//        self.lotsViewModel.productSelected.onNext(batch)
-//        self.lotsViewModel.availableSelected.onNext([])
-//
-//        self.lotsViewModel.saveLotsDidTap.onNext(())
-//        self.lotsViewModel.showMessage.subscribe(onNext: { res in
-//            XCTAssertEqual(res, "No se han realizado modificaciones de lotes")
-//        }).disposed(by: self.disposeBag)
-//
-//
-//
-//    }
-    
+    func testSaveLotsDidTapNotChanges() {
 
-    
-    
-
+        self.lotsViewModel.saveLotsDidTap.onNext(())
+        self.lotsViewModel.showMessage.subscribe(onNext: { res in
+            XCTAssertEqual(res, "No se han realizado modificaciones de lotes")
+        }).disposed(by: self.disposeBag)
+        self.lotsViewModel.saveLotsDidTap.onNext(())
+    }
     
     
     func testValidIfOrderCanBeFinalizedNotNull() {
