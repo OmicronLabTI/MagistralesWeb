@@ -282,8 +282,10 @@ class LotsViewController: UIViewController {
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
+        
+        let titleFontSize = self.codeDescription.count > 170 ? CGFloat(11) : CGFloat(15)
         self.codeDescriptionLabel.text = self.codeDescription
-        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
+        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: titleFontSize)
         
         let orderNumber = self.orderNumber == "0" ? CommonStrings.empty : self.orderNumber
         self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
