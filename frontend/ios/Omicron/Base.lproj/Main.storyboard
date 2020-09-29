@@ -723,23 +723,23 @@
                                                 <rect key="frame" x="1034" y="0.0" width="300" height="70"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="9me-xT-a7H">
-                                                        <rect key="frame" x="0.0" y="0.0" width="300" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="300" height="50"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YDU-DO-GLF">
-                                                                <rect key="frame" x="0.0" y="0.0" width="86.5" height="40"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="86.5" height="50"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UQW-Zh-CY8">
-                                                                <rect key="frame" x="106.5" y="0.0" width="87" height="40"/>
+                                                                <rect key="frame" x="106.5" y="0.0" width="87" height="50"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="okf-Q7-KzI">
-                                                                <rect key="frame" x="213.5" y="0.0" width="86.5" height="40"/>
+                                                                <rect key="frame" x="213.5" y="0.0" width="86.5" height="50"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                         </subviews>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="40" id="PFh-R4-8rJ"/>
+                                                            <constraint firstAttribute="height" constant="50" id="PFh-R4-8rJ"/>
                                                         </constraints>
                                                     </stackView>
                                                 </subviews>
