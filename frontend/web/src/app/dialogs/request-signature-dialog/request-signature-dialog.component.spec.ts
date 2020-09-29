@@ -6,7 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { RequestSignatureDialogComponent } from './request-signature-dialog.component';
-import { MatDialogModule, MatDialogRef } from '@angular/material';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
@@ -29,7 +29,8 @@ describe('RequestSignatureDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: {}
-        }
+        },
+        { provide: MAT_DIALOG_DATA, useValue: { data: '' } } ,
       ]
     })
     .compileComponents();
@@ -46,6 +47,7 @@ describe('RequestSignatureDialogComponent', () => {
   });
 
   it('Validate signature with draw signature', () => {
+    component.signaturePad.clear();
     component.signaturePad.fromDataURL(ImageBase64Mock.src);
     component.validateSignature();
     expect(component.isValidSignature).toBeTruthy();
@@ -53,6 +55,7 @@ describe('RequestSignatureDialogComponent', () => {
   });
 
   it('Validate signature with empty signature', () => {
+    component.reset();
     component.validateSignature();
     expect(component.isValidSignature).toBeFalsy();
   });
