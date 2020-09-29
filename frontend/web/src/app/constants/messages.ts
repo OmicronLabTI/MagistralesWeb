@@ -40,6 +40,7 @@ export const Messages = {
   repeatedComponent_a: 'El componente ',
   repeatedComponent_b: ' ya existe para este producto',
   noHasRecipes: 'El pedido no tiene receta(s)',
+  cancelMaterialRequest: '¿Estás seguro de cancelar la solicitud de insumos al almacén general?',
   successTitleCreateOrderPdf: 'Se han generado correctamente los archivos',
   errorTitleCreateOrderPdf: 'Ocurrió un error al generar los archivos',
   errorMessageCreateOrdersPdf: 'No se ha podido generar el PDF de las órdenes ',

@@ -36,6 +36,7 @@ export class DataService {
   private isLogout = new Subject<boolean>();
   private searchComponentModal = new Subject<SearchComponentModal>();
   private newFormulaComponent = new Subject<any>();
+  private newMaterialComponent = new Subject<any>();
   private searchOrdersModal = new Subject<SearchComponentModal>();
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   constructor(private datePipe: DatePipe) { }
@@ -57,6 +58,12 @@ export class DataService {
   }
   getNewFormulaComponent() {
     return this.newFormulaComponent.asObservable();
+  }
+  setNewMaterialComponent(newFormulaComponent: any) {
+    this.newMaterialComponent.next(newFormulaComponent);
+  }
+  getNewMaterialComponent() {
+    return this.newMaterialComponent.asObservable();
   }
   setSearchComponentModal(searchComponentModal: SearchComponentModal) {
     this.searchComponentModal.next(searchComponentModal);
@@ -249,6 +256,10 @@ export class DataService {
       case MessageType.saveBatches:
         firstMessage = 'Error al asignar lotes a ';
         finishMessaje = ', por favor verificar \n';
+        break;
+      case MessageType.materialRequest:
+        firstMessage = 'Ya se ha generado una solicitud para la orden ';
+        finishMessaje = '\n';
         break;
     }
     if (!isFromCancel) {

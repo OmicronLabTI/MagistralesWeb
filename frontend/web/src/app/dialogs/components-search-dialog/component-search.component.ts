@@ -42,7 +42,8 @@ export class ComponentSearchComponent implements OnInit {
               private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private dataService: DataService) {
-    this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent;
+    this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
+                || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
   }
 
@@ -111,7 +112,7 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
-    if (this.isFromSearchComponent) {
+    if (this.isFromSearchComponent && this.data.modalType === ComponentSearch.searchComponent) {
       if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
@@ -121,7 +122,7 @@ export class ComponentSearchComponent implements OnInit {
           '',
           false,
           true
-        )
+        );
       }
     } else {
       this.checkIsPrevious(row);

@@ -16,8 +16,15 @@
 
         </div>
         <div class="table-toolbar-buttons">
-            <svg (click)="addNewComponent()" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2.3em" height="2.3em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="#5480A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></g></svg>
-            <svg (click)="downloadPreview()" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2.3em" height="2.3em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M8.267 14.68c-.184 0-.308.018-.372.036v1.178c.076.018.171.023.302.023c.479 0 .774-.242.774-.651c0-.366-.254-.586-.704-.586zm3.487.012c-.2 0-.33.018-.407.036v2.61c.077.018.201.018.313.018c.817.006 1.349-.444 1.349-1.396c.006-.83-.479-1.268-1.255-1.268z" fill="#ff0000"></path><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM9.498 16.19c-.309.29-.765.42-1.296.42a2.23 2.23 0 0 1-.308-.018v1.426H7v-3.936A7.558 7.558 0 0 1 8.219 14c.557 0 .953.106 1.22.319c.254.202.426.533.426.923c-.001.392-.131.723-.367.948zm3.807 1.355c-.42.349-1.059.515-1.84.515c-.468 0-.799-.03-1.024-.06v-3.917A7.947 7.947 0 0 1 11.66 14c.757 0 1.249.136 1.633.426c.415.308.675.799.675 1.504c0 .763-.279 1.29-.663 1.615zM17 14.77h-1.532v.911H16.9v.734h-1.432v1.604h-.906V14.03H17v.74zM14 9h-1V4l5 5h-4z" fill="#FF0000"></path></svg>
+            <button mat-raised-button [disabled]="!isThereToDelete" [ngClass]="isThereToDelete? 'button-blue' : 'disable-button'" (click)="deleteComponents()" >
+                Eliminar componente
+            </button>
+            <button mat-raised-button class="button-blue" (click)="addNewComponent()" >
+                Agregar componente
+            </button>
+            <button mat-raised-button class="button-blue" >
+                Descargar PDF
+            </button>
             <button mat-raised-button class="button-blue" (click)="signUser()" >
                 Firma del solicitante
             </button>
@@ -34,18 +41,20 @@
         <mat-tab-group>
             <mat-tab label="Componentes">
                 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 margin-table">
-
+                    <ng-container matColumnDef="check">&nbsp;
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let element;" class="seleccion">
+                            <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
+                        </td>
+                    </ng-container>
                     <ng-container matColumnDef="code">
                         <th mat-header-cell *matHeaderCellDef class="centered">CÓDIGO</th>
                         <td mat-cell *matCellDef="let element; let i = index"
                             [ngClass]="element.isWithError ? 'with-error-start' : ''"
                             class="color-text-intables tdcell tdcell-center">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="text"
-                                       class="color-number" placeholder="Código"
-                                       [(ngModel)]="element.productId"
-                                       (ngModelChange)="onProductIdChange($event, i)">
-                            </mat-form-field>
+                            {{element.productId}}
                         </td>
                     </ng-container>
 
@@ -54,33 +63,23 @@
                         <td mat-cell *matCellDef="let element;let i = index;"
                             [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center td-custom numero">
-                            <mat-form-field appearance="outline" class="input-material-custom">
-                                <input matInput type="text"
-                                       class="color-number " placeholder="Descripción"
-                                       [(ngModel)]="element.description"
-                                       (ngModelChange)="onDescriptionChange($event, i)">
-                            </mat-form-field>
+                            {{element.description}}
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="unit">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> UNIDAD </th>
                         <td mat-cell *matCellDef="let element; let i = index;"
-                            [ngClass]="element.isWithError ? 'with-error' : ''"
+                            [ngClass]="element.isWithError ? 'with-error-last' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantbase">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="text"
-                                       class="color-number" placeholder="Unidad"
-                                       [(ngModel)]="element.unit"
-                                       (ngModelChange)="onUnitChange($event, i)">
-                            </mat-form-field>
+                            {{element.unit}}
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="requestQuantity">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CTD. REQUERIDA </th>
                         <td mat-cell *matCellDef="let element;let i = index;"
-                            [ngClass]="element.isWithError ? 'with-error-last' : ''"
+                            [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
                                 <input
@@ -104,8 +103,7 @@
             <mat-tab label="Observaciones">
                 <textarea class="text-area-formula" cols="100" rows="10"
                           maxlength="100"
-                          [(ngModel)]="comments"
-                          (ngModelChange)="changeData()">
+                          [(ngModel)]="comments">
                         </textarea>
             </mat-tab>
         </mat-tab-group>

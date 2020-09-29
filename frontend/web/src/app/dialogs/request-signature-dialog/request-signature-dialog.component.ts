@@ -8,15 +8,13 @@ import { SignaturePad } from 'angular2-signaturepad/signature-pad';
   styleUrls: ['./request-signature-dialog.component.scss']
 })
 export class RequestSignatureDialogComponent implements OnInit {
-  
-  @ViewChild(SignaturePad, {static: false}) signaturePad: SignaturePad;
- 
-  public isValidSignature: Boolean;
 
-  public signaturePadOptions: Object = { 
-    'minWidth': 2,
-    'canvasWidth': 500,
-    'canvasHeight': 300
+  @ViewChild(SignaturePad, {static: false}) signaturePad: SignaturePad;
+  public isValidSignature: boolean;
+  public signaturePadOptions = {
+    minWidth: 2,
+    canvasWidth: 500,
+    canvasHeight: 300
   };
 
   constructor(
@@ -29,11 +27,11 @@ export class RequestSignatureDialogComponent implements OnInit {
   ngAfterViewInit() {
     this.reset();
   }
- 
+
   drawComplete() {
     this.validateSignature();
   }
- 
+
   reset() {
     this.signaturePad.clear();
     this.validateSignature();
@@ -48,7 +46,6 @@ export class RequestSignatureDialogComponent implements OnInit {
   }
 
   getSignatureValue() {
-    var result = this.signaturePad.toDataURL();
-    return result.replace('data:image/png;base64,', '');
+    return this.signaturePad.toDataURL().replace('data:image/png;base64,', '');
   }
 }
