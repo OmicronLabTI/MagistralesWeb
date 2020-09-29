@@ -211,7 +211,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductDescription = item == null ? string.Empty : item.LargeDescription,
                     Type = ServiceConstants.DictStatusType.ContainsKey(o.Type) ? ServiceConstants.DictStatusType[o.Type] : o.Type,
                     Status = ServiceConstants.DictStatus.ContainsKey(o.Status) ? ServiceConstants.DictStatus[o.Status] : o.Status,
-                    PlannedQuantity = (int)o.Quantity,
+                    PlannedQuantity = o.Quantity,
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId.Value,

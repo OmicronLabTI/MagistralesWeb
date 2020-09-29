@@ -26,7 +26,7 @@ namespace Omicron.SapDiApi.Entities.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int PlannedQuantity { get; set; }
+        public double PlannedQuantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

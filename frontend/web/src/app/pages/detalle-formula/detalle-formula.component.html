@@ -61,7 +61,9 @@
                                placeholder="Cantidad planificada"
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
-                               (ngModelChange)="changeData()">
+                               (ngModelChange)="changeData()"
+                               appDigitDecimalNumber
+                               decimalPlaces="6">
 
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
