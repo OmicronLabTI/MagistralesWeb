@@ -273,7 +273,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listToReturn.Add(workLoadByUser);
             });
 
-            listToReturn = listToReturn.OrderByDescending(x => x.Finalized).ThenBy(x => x.User).ToList();
+            listToReturn = listToReturn.OrderByDescending(x => x.TotalPieces).ThenBy(x => x.User).ToList();
 
             listToReturn.Add(this.GetTotalAll(userOrders, sapOrders));
             return listToReturn;
