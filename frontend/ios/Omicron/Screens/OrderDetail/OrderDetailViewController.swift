@@ -218,9 +218,13 @@ class OrderDetailViewController: UIViewController {
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
 //                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
-                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: 22, textColor: OmicronColors.blue)
-                let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: 22, textColor: .gray)
-                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: 22)
+                
+//                let titleFontSize = detail.productDescription?.count ?? 170 > 170 ? CGFloat(21) : CGFloat(22)
+                let titleFontSize = CGFloat(22.0)
+                self.productDescritionLabel.textColor = .black
+                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
+                let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
+                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: titleFontSize, textColor: .black)
                 let richText = NSMutableAttributedString()
                 richText.append(code)
                 richText.append(pipe)
