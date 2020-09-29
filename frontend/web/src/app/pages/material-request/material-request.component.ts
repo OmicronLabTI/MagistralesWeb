@@ -64,6 +64,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
                                                           id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
       this.checkIsCorrectData();
       this.checkToDownload();
+      this.registerChanges();
     }));
   }
   getPreMaterialRequestH() {
@@ -101,7 +102,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   addNewComponent() {
-      this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent});
+      this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data});
   }
 
   updateAllComplete() {
@@ -168,13 +169,13 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   onRequestQuantityChange(requestQuantity: number, index: number) {
     this.dataSource.data[index].isWithError = !Number(requestQuantity);
     this.checkIsCorrectData();
+    this.registerChanges();
   }
 
   checkIsCorrectData() {
     this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
         || order.requestQuantity === null || order.description === CONST_STRING.empty
         || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
-    this.dataService.setIsToSaveAnything(true);
   }
 
 
@@ -193,6 +194,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   deleteComponents() {
     this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
     this.checkToDownload();
+    this.registerChanges();
   }
 
   private goBack() {
@@ -231,5 +233,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       return `0${number}`;
     }
     return `${number}`;
+  }
+  registerChanges() {
+    this.dataService.setIsToSaveAnything(true);
   }
 }
