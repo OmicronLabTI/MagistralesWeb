@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild  } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild  } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
 @Component({
@@ -18,14 +19,21 @@ export class RequestSignatureDialogComponent implements OnInit {
   };
 
   constructor(
-    private dialogRef: MatDialogRef<RequestSignatureDialogComponent>
-  ) { }
+    @Inject(MAT_DIALOG_DATA) private data: string,
+    private dialogRef: MatDialogRef<RequestSignatureDialogComponent>,
+    private changeDetector: ChangeDetectorRef
+  ) { 
+  }
 
   ngOnInit() {
   }
 
   ngAfterViewInit() {
     this.reset();
+    if (this.data !== null && this.data !== undefined && this.data !== '') {
+      this.signaturePad.fromDataURL(`data:image/png;base64,${this.data}`);
+      this.validateSignature();
+    }
   }
 
   drawComplete() {
@@ -39,6 +47,7 @@ export class RequestSignatureDialogComponent implements OnInit {
 
   validateSignature() {
     this.isValidSignature = !this.signaturePad.isEmpty();
+    this.changeDetector.detectChanges();
   }
 
   setSignature() {

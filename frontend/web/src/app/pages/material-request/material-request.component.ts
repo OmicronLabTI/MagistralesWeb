@@ -110,7 +110,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-    this.dialog.open(RequestSignatureDialogComponent, { panelClass: 'custom-dialog-container' })
+    this.dialog.open(RequestSignatureDialogComponent, 
+      { 
+        panelClass: 'custom-dialog-container',
+        data: this.oldData.signature 
+      })
       .afterClosed().subscribe(result => {
         if (result) {
           this.oldData.signature = result;

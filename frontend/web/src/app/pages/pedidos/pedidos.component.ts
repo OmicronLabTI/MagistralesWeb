@@ -136,12 +136,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsToUnLooked();
-    this.validateCheckedItems();
+    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   someComplete(): boolean {
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
-    this.validateCheckedItems();
+    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   setAll(completed: boolean) {
@@ -285,7 +285,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   printOrderAsPdfFileConfirmedAction() {
-    var documentNumbers = this.dataSource.data.filter(t => (t.isChecked)).map(i => { return i.docNum });
+    var documentNumbers = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => { return i.docNum });
     this.pedidosService.createPdfOrders(documentNumbers)
     .subscribe((response : ICreatePdfOrdersRes) => {
       if (response.userError) {
@@ -310,9 +310,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
       this.uncheckedItems();
     });
   }
-
-  validateCheckedItems() {
-    this.isCheckedOrders = this.dataSource.data.filter(t => (t.isChecked)).length > 0;
+  
+  validateCheckedItems(ignoredStatus : string[]) {
+    this.isCheckedOrders = this.dataSource.data.filter(t => {
+      return t.isChecked && ignoredStatus.indexOf(t.pedidoStatus) < 0;
+    }).length > 0;
   }
 
   uncheckedItems() {
