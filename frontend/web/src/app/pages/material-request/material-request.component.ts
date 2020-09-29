@@ -68,10 +68,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
   getPreMaterialRequestH() {
     this.materialReService.getPreMaterialRequest(this.dataToRequest, this.isOrder).subscribe( resultMaterialRequest => {
+      console.log('rsult: ', resultMaterialRequest)
       if (resultMaterialRequest.response.failedProductionOrderIds.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialRequest.response.failedProductionOrderIds, true);
       }
-      if (resultMaterialRequest.response.orderedProducts.length !== 0) {
+      if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
         this.oldData = resultMaterialRequest.response;
         this.dataSource.data = resultMaterialRequest.response.orderedProducts;
         this.dataService.setIsToSaveAnything(false);
