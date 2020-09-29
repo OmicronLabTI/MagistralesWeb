@@ -15,12 +15,13 @@
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
                                    maxlength="50"
                                    class="height-input"
-                                   formControlName="docNum">
+                                   formControlName="docNum"
+                                   (keydown)="changeDocNumber($event)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 60 caracteres
+                                Solo 50 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -104,7 +105,8 @@
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
-                                   formControlName="clientName">
+                                   formControlName="clientName"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
@@ -115,7 +117,8 @@
                             <input matInput placeholder="Código del producto" type="text"
                                    maxlength="40"
                                    class="height-input"
-                                   formControlName="productCode">
+                                   formControlName="productCode"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
                                 Solo 40 caracteres
                             </mat-error>
