@@ -76,11 +76,10 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('Build Micro Services') {
-            
             steps {
-                echo 'Building ms1'
+                /*echo 'Building ms1'
                 dir ('services/catalogos-service/'){
                     sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
 					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -139,7 +138,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository:latest"
                     }
-                }
+                }*/
                 echo 'Building reporting'
                 dir ('services/reporting-service/'){
                     sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
@@ -153,7 +152,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         /*stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
