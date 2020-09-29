@@ -17,7 +17,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://10.0.87.17:8000/eureka
+      defaultZone: http://10.0.87.17:80/eureka
   instance:
     leaseRenewalIntervalInSeconds: 5
     preferIpAddress: true
