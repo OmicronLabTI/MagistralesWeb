@@ -20,6 +20,8 @@ spec:
         env:
         - name: TZ
           value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
         ports:
         - containerPort: 8000
         resources:
@@ -253,6 +255,7 @@ metadata:
   labels:
     app: seqlog-svc
 spec:
+  type: LoadBalancer
   ports:
   - name: default
     port: 81
