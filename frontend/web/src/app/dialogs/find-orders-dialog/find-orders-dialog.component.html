@@ -15,12 +15,13 @@
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
                                    maxlength="50"
                                    class="height-input"
-                                   formControlName="docNum">
+                                   formControlName="docNum"
+                                   (keydown)="changeDocNumber($event)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 60 caracteres
+                                Solo 50 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>

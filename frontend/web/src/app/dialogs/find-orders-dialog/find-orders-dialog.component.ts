@@ -185,4 +185,12 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').setValue((this.findOrdersForm.get('clientName').value || '').trim());
         this.findOrdersForm.get('productCode').setValue((this.findOrdersForm.get('productCode').value || '').trim());
     }
+
+    changeDocNumber(event: KeyboardEvent) {
+        let invalidChars = [ "-", "+", "e" ];
+        if (invalidChars.includes(event.key))
+        {
+            event.preventDefault();
+        }
+    }
 }
