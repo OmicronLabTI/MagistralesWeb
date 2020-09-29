@@ -41,6 +41,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   allComplete = false;
   isThereToDelete = false;
+  isToDownload = false;
   constructor(private router: Router,
               private dialog: MatDialog,
               private materialReService: MaterialRequestService,
@@ -62,6 +63,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.dataSource.data = [...this.dataSource.data, {...resultNewMaterialComponent,
                                                           id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
       this.checkIsCorrectData();
+      this.checkToDelete();
     }));
   }
   getPreMaterialRequestH() {
@@ -69,10 +71,15 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       if (resultMaterialRequest.response.failedProductionOrderIds.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialRequest.response.failedProductionOrderIds, true);
       }
-      this.oldData = resultMaterialRequest.response;
-      this.dataSource.data = resultMaterialRequest.response.orderedProducts;
-      this.dataService.setIsToSaveAnything(false);
-      this.checkIsCorrectData();
+      if (resultMaterialRequest.response.orderedProducts.length !== 0) {
+        this.oldData = resultMaterialRequest.response;
+        this.dataSource.data = resultMaterialRequest.response.orderedProducts;
+        this.dataService.setIsToSaveAnything(false);
+        this.checkIsCorrectData();
+        this.checkToDelete();
+      } else {
+        this.goBack();
+      }
     }, error => this.errorService.httpError(error));
   }
 
@@ -144,10 +151,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   checkIsCorrectData() {
     this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
-        || order.productId.trim().length > CONST_NUMBER.fifty || order.requestQuantity <= CONST_NUMBER.zero
         || order.requestQuantity === null || order.description === CONST_STRING.empty
-        || order.description.trim().length > CONST_NUMBER.oneHundred
-        || order.unit === CONST_STRING.empty || order.unit.trim().length > CONST_NUMBER.fifty
         || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
     this.dataService.setIsToSaveAnything(true);
   }
@@ -163,10 +167,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   checkToDelete() {
     this.isThereToDelete = this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero;
+    this.isToDownload = this.dataSource.data.length > CONST_NUMBER.zero;
   }
 
   deleteComponents() {
     this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
+    this.checkToDelete();
   }
 
   private goBack() {
@@ -192,7 +198,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
     this.oldData.orderedProducts = this.dataSource.data;
     this.oldData.signature = this.oldData.signature || '';
-    this.oldData.signingUserName = 'Heriberto Miguel Tiburcio';
+    this.oldData.signingUserName = this.dataService.getUserName();
   }
   private getFileNamePreview(): string {
     var date = new Date();

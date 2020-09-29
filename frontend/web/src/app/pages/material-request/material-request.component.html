@@ -22,7 +22,7 @@
             <button mat-raised-button class="button-blue" (click)="addNewComponent()" >
                 Agregar componente
             </button>
-            <button mat-raised-button class="button-blue" (click)="downloadPreview()">
+            <button mat-raised-button [disabled]="!isToDownload" [ngClass]="isToDownload? 'button-blue' : 'disable-button'" (click)="downloadPreview()">
                 Descargar PDF
             </button>
             <button mat-raised-button class="button-blue" (click)="signUser()" >
