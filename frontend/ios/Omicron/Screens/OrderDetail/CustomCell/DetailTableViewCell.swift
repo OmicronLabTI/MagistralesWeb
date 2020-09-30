@@ -52,4 +52,15 @@ class DetailTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func setEmptyStock(_ hasStock: Bool) {
+        codeLabel.textColor = hasStock ? .black : .systemOrange
+        descriptionLabel.textColor = hasStock ? .black : .systemOrange
+        baseQuantityLabel.textColor = hasStock ? .black : .systemOrange
+        requiredQuantityLabel.textColor = hasStock ? .black : .systemOrange
+        unitLabel.textColor = hasStock ? .black : .systemOrange
+        werehouseLabel.textColor = hasStock ? .black : .systemOrange
+        hashTagLabel.textColor = hasStock ? .black : .systemOrange
+        
+    }
+    
 }
