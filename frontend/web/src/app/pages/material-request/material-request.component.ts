@@ -75,7 +75,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       if ( lengthFailOrders > CONST_NUMBER.zero) {
         titleStatusOrders = `${Messages.existRequest} ${
                                 lengthFailOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} \n\n`;
-        titleStatusOrders = `${titleStatusOrders} ${ resultMaterialRequest.response.failedProductionOrderIds.toString()} \n\n`;
+        titleStatusOrders = `${titleStatusOrders} ${ this.getIdsLit(resultMaterialRequest.response.failedProductionOrderIds)} \n\n`;
       }
       if (lengthOkOrders > CONST_NUMBER.zero) {
         titleStatusOrders = `${titleStatusOrders} ${
@@ -83,7 +83,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
               `${Messages.requestOrderWithFailOrders }${
                                               lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
               : `${Messages.requestOrdersOnlyOk} ${ lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
-        titleStatusOrders = `${titleStatusOrders} \n\n ${resultMaterialRequest.response.productionOrderIds.toString()}`;
+        titleStatusOrders = `${titleStatusOrders} \n\n ${ this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
       }
 
       this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
@@ -236,5 +236,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
   registerChanges() {
     this.dataService.setIsToSaveAnything(true);
+  }
+
+  getIdsLit(idToMessage: number[]) {
+    let newIdsStrings = [];
+    idToMessage.forEach( id => newIdsStrings = [...newIdsStrings, ` ${ id.toString()}`]);
+    return newIdsStrings;
   }
 }
