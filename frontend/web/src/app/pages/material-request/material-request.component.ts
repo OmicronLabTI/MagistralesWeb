@@ -64,6 +64,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
                                                           id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
       this.checkIsCorrectData();
       this.checkToDownload();
+      this.registerChanges();
     }));
   }
   getPreMaterialRequestH() {
@@ -74,7 +75,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       if ( lengthFailOrders > CONST_NUMBER.zero) {
         titleStatusOrders = `${Messages.existRequest} ${
                                 lengthFailOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} \n\n`;
-        titleStatusOrders = `${titleStatusOrders} ${ resultMaterialRequest.response.failedProductionOrderIds.toString()} \n\n`;
+        titleStatusOrders = `${titleStatusOrders} ${ this.getIdsLit(resultMaterialRequest.response.failedProductionOrderIds)} \n\n`;
       }
       if (lengthOkOrders > CONST_NUMBER.zero) {
         titleStatusOrders = `${titleStatusOrders} ${
@@ -82,7 +83,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
               `${Messages.requestOrderWithFailOrders }${
                                               lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
               : `${Messages.requestOrdersOnlyOk} ${ lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
-        titleStatusOrders = `${titleStatusOrders} \n\n ${resultMaterialRequest.response.productionOrderIds.toString()}`;
+        titleStatusOrders = `${titleStatusOrders} \n\n ${ this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
       }
 
       this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
@@ -101,7 +102,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   addNewComponent() {
-      this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent});
+      this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data});
   }
 
   updateAllComplete() {
@@ -168,13 +169,13 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   onRequestQuantityChange(requestQuantity: number, index: number) {
     this.dataSource.data[index].isWithError = !Number(requestQuantity);
     this.checkIsCorrectData();
+    this.registerChanges();
   }
 
   checkIsCorrectData() {
     this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
         || order.requestQuantity === null || order.description === CONST_STRING.empty
         || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
-    this.dataService.setIsToSaveAnything(true);
   }
 
 
@@ -193,6 +194,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   deleteComponents() {
     this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
     this.checkToDownload();
+    this.registerChanges();
   }
 
   private goBack() {
@@ -222,7 +224,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
   private getFileNamePreview(): string {
     var date = new Date();
-    let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth())}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
+    let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth() + 1)}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
     return fileName;
   }
 
@@ -231,5 +233,14 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       return `0${number}`;
     }
     return `${number}`;
+  }
+  registerChanges() {
+    this.dataService.setIsToSaveAnything(true);
+  }
+
+  getIdsLit(idToMessage: number[]) {
+    let newIdsStrings = [];
+    idToMessage.forEach( id => newIdsStrings = [...newIdsStrings, ` ${ id.toString()}`]);
+    return newIdsStrings;
   }
 }

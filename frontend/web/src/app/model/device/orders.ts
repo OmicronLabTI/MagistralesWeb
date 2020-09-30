@@ -17,6 +17,6 @@ export class SearchComponentModal {
     modalType: string;
     chips?: string[];
     filterOrdersData?: ParamsPedidos;
-    data?: IFormulaDetalleReq[];
+    data?: any[];
 }
 
