@@ -62,6 +62,7 @@
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
                                (ngModelChange)="changeData()"
+                               step="any"
                                appDigitDecimalNumber
                                decimalPlaces="6">
 
