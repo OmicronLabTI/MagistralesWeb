@@ -32,6 +32,21 @@ spec:
             cpu: 200m
             memory: 256Mi
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apimanager-svc
+  labels:
+    app: apimanager-svc
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: apimanager
+  selector:
+    app: apimanager
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -231,6 +246,25 @@ spec:
           name: intra
         - containerPort: 5341
           name: extra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seqlog-svc
+  labels:
+    app: seqlog
+spec:
+  ports:
+  - name: default
+    port: 81
+    targetPort: 80
+    protocol: TCP
+  - name: alt
+    port: 5341
+    targetPort: 5341
+    protocol: TCP
+  selector:
+    app: seqlog
 ---
 apiVersion: apps/v1
 kind: Deployment
