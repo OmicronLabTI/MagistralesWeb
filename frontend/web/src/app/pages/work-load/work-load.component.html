@@ -98,7 +98,7 @@
             <div class="card-work-load-container col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let workLoad of workLoads">
                 <mat-card class="example-card">
                     <mat-card-header class="card-header-container border-header">
-                        <mat-card-title class="style-title">{{workLoad.user}}
+                        <mat-card-title class="style-title">{{workLoad.user | titlecase}}
                         </mat-card-title>
                             <div class="number-user-container">
                                 <div *ngIf="workLoad.user !== 'Total'" class="rectangle-number background-color-omicron">

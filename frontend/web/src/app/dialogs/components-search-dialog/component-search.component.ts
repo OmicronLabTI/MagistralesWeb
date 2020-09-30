@@ -129,8 +129,8 @@ export class ComponentSearchComponent implements OnInit {
                    Messages.repeatedComponent_b_request }`,
           'info',
           '',
-          false,
-          true
+          true,
+          false
         );
       }
     } else {
@@ -150,7 +150,7 @@ export class ComponentSearchComponent implements OnInit {
   setFocusToChipsInput() {
     setTimeout(() => {
       this.chipsInput.nativeElement.focus();
-    }, 100)
+    }, 100);
   }
 
   onKeyDown(event: KeyboardEvent): void {
