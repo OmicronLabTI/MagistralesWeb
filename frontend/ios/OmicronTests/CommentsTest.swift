@@ -14,68 +14,68 @@ import Moya
 
 class CommentsTest: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // MARK: - Variables
+    var chartViewModel: CommentsViewModel?
+    var disposeBag: DisposeBag?
+    var productionOrderID: Int?
+    var plannedQuantity: Decimal?
+    var fechaFin: String?
+    var message: String?
+    var order: OrderDetailRequest?
+    var expectation: XCTestExpectation?
+    
+    override func setUp() {
+        chartViewModel = CommentsViewModel()
+        disposeBag = DisposeBag()
+        productionOrderID = 89623
+        plannedQuantity = 1.0
+        fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "10/09/2020", withFormat: "yyyy-MM-dd") ?? ""
+        message = "Comment :D"
+        order = OrderDetailRequest(
+            fabOrderID: productionOrderID!,
+            plannedQuantity: plannedQuantity!,
+            fechaFin: fechaFin!,
+            comments: message!,
+            components: [])
+        expectation = XCTestExpectation()
     }
     
-    // MARK: - Variables
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    let chartViewModel = CommentsViewModel()
-    let disposeBag = DisposeBag()
+    override func tearDown() {
+        chartViewModel = nil
+        disposeBag = nil
+        productionOrderID = nil
+        plannedQuantity = nil
+        fechaFin = nil
+        message = nil
+        order = nil
+        expectation = nil
+    }
     
     // MARK: - Test Functions
-    
-    func testInitData() {
-        let productionOrderID = 89623
-        let plannedQuantity: Decimal = 1.0
-        let fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "10/09/2020", withFormat: "yyyy-MM-dd") ?? ""
-        let message = "Comment :D"
         
-        let order = OrderDetailRequest(
-            fabOrderID: productionOrderID,
-            plannedQuantity: plannedQuantity,
-            fechaFin: fechaFin,
-            comments: message,
-            components: [])
-        XCTAssertNotNil(order)
+    func testValidResponse() -> Void {
         
-        testValidResponse(order: order)
-        //testValidCodeNotNull(order: order)
-        testValidCode(order: order)
-    }
-    
-    func testValidResponse(order: OrderDetailRequest) {
         NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
-               XCTAssertNotNil(res.response)
-           }).disposed(by: disposeBag)
+            .shared
+            .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] res in
+                XCTAssertNotNil(res.response)
+                self?.expectation?.fulfill()
+            }).disposed(by: self.disposeBag!)
+        wait(for: [self.expectation!], timeout: 1000)
     }
-    
-//    func testValidCodeNotNull(order: OrderDetailRequest) {
-//        NetworkManager
-//               .shared
-//               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-//               .observeOn(MainScheduler.instance)
-//               .subscribe(onNext: { res in
-//                XCTAssertNotNil(res.code)
-//           }).disposed(by: disposeBag)
-//    }
-    
-    func testValidCode(order: OrderDetailRequest) {
+        
+    func testValidCode() -> Void {
         NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
+            .shared
+            .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] res in
                 XCTAssertNotNil(res.code == 200)
-           }).disposed(by: disposeBag)
+                self?.expectation?.fulfill()
+            }).disposed(by: self.disposeBag!)
+        wait(for: [self.expectation!], timeout: 1000)
     }
-
+    
 }
