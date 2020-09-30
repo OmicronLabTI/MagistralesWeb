@@ -4,7 +4,7 @@
 
 export const environment = {
   production: true,
-  baseUrl: 'http://192.168.0.83:8000', // dev
+  baseUrl: 'http://omicron-api.eastus2.cloudapp.azure.com',
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',
