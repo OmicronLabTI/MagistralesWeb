@@ -12,12 +12,21 @@ import {
 } from '@angular/material';
 import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {PedidosService} from '../../services/pedidos.service';
+import {of} from 'rxjs';
+import {ComponentSearchMock} from '../../../mocks/componentsMock';
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
   let fixture: ComponentFixture<ComponentSearchComponent>;
-
+  let ordersServiceSpy;
   beforeEach(async(() => {
+    ordersServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
+      'getComponents'
+    ]);
+    ordersServiceSpy.getComponents.and.callFake(() => {
+      return of(ComponentSearchMock);
+    });
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatTableModule,
         MatDialogModule,
@@ -29,7 +38,8 @@ describe('ComponentSearchComponent', () => {
           provide: MatDialogRef,
           useValue: {}
         },
-        { provide: MAT_DIALOG_DATA, useValue: {} }]
+        { provide: MAT_DIALOG_DATA, useValue: {modalType: 'searchComponent',
+                                                chips: ['crema']} }]
     })
     .compileComponents();
   }));
@@ -42,5 +52,6 @@ describe('ComponentSearchComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(component.isFromSearchComponent).toBeTruthy();
   });
 });
