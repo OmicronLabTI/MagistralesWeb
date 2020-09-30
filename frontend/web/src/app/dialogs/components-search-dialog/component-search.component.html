@@ -20,7 +20,7 @@
                                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                                  [matChipInputAddOnBlur]="addOnBlur"
                                  (matChipInputTokenEnd)="addChip($event)"
-                                 [disabled]="isDisableSearch">
+                                 (keydown)="onKeyDown($event)">
                         </mat-chip-list>
                     </mat-form-field>
                     <div class="table-container-components scroll-custom">
