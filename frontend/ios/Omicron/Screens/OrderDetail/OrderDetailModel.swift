@@ -25,7 +25,7 @@ class OrderDetailResponse: HttpResponse {
 class OrderDetail {
     var productionOrderID: Int?
     var code, productDescription, type, status: String?
-    var plannedQuantity: Int?
+    var plannedQuantity: Decimal?
     var unit, warehouse: String?
     var number: Int?
     var fabDate, dueDate, startDate, endDate: String?
@@ -36,6 +36,35 @@ class OrderDetail {
     var realEndDate, productLabel, container, comments: String?
     var isChecked: Bool?
     var details: [Detail]?
+    
+    
+    init(productionOrderID: Int, code: String, productDescription: String, type: String, status: String, plannedQuantity: Decimal, unit: String, warehouse: String, number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String, user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int, realEndDate: String, productLabel: String, container: String, comments: String, isChecked: Bool, details: [Detail]) {
+        self.productionOrderID = productionOrderID
+        self.code = code
+        self.productDescription = productDescription
+        self.type = type
+        self.status = status
+        self.plannedQuantity = plannedQuantity
+        self.unit = unit
+        self.warehouse = warehouse
+        self.number = number
+        self.fabDate = fabDate
+        self.dueDate = dueDate
+        self.startDate = startDate
+        self.endDate = endDate
+        self.user = user
+        self.origin = origin
+        self.baseDocument = baseDocument
+        self.client = client
+        self.completeQuantity = completeQuantity
+        self.realEndDate = realEndDate
+        self.productLabel = productLabel
+        self.container = container
+        self.comments = comments
+        self.isChecked = isChecked
+        self.details = details
+    }
+    
     required init?(map: Map) {}
 }
 
@@ -46,7 +75,7 @@ extension OrderDetail: Mappable {
         self.productDescription <- map["productDescription"]
         self.type <- map["type"]
         self.status <- map["status"]
-        self.plannedQuantity <- map["plannedQuantity"]
+        self.plannedQuantity <- (map["plannedQuantity"], DecimalTransform())
         self.unit <- map["unit"]
         self.warehouse <- map["warehouse"]
         self.number <- map["number"]
@@ -73,6 +102,22 @@ class Detail {
     var productID, detailDescription: String?
     var baseQuantity, requiredQuantity, pendingQuantity, stock, warehouseQuantity, consumed, available: Double?
     var unit, warehouse: String?
+    
+    init(orderFabID: Int,  productID: String, detailDescription: String, baseQuantity:Double, requiredQuantity:Double, pendingQuantity: Double, stock: Double, warehouseQuantity: Double, consumed: Double, available: Double, unit: String, warehouse: String) {
+        self.orderFabID = orderFabID
+        self.productID = productID
+        self.detailDescription = detailDescription
+        self.baseQuantity = baseQuantity
+        self.requiredQuantity = requiredQuantity
+        self.pendingQuantity = pendingQuantity
+        self.stock = stock
+        self.warehouseQuantity = warehouseQuantity
+        self.consumed = consumed
+        self.available = available
+        self.unit = unit
+        self.warehouse = warehouse
+    }
+    
     required init?(map: Map) { }
 }
 
@@ -94,11 +139,12 @@ extension Detail: Mappable {
 }
 
 class OrderDetailRequest: Codable {
-    let fabOrderID, plannedQuantity: Int
+    let fabOrderID: Int
+    let plannedQuantity: Decimal
     let fechaFin, comments: String
     let components: [Component]
     
-    init(fabOrderID: Int, plannedQuantity: Int, fechaFin: String, comments: String, components:[Component]) {
+    init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String, comments: String, components:[Component]) {
         self.fabOrderID = fabOrderID
         self.plannedQuantity = plannedQuantity
         self.fechaFin = fechaFin

@@ -38,8 +38,8 @@ class LotsViewModel {
     
     var finishOrderDidTap = PublishSubject<Void>()
     var backToInboxView = PublishSubject<Void>()
-    private var selectedBatches: [BatchSelected] = []
-    private var documentLines: [Lots] = []
+    var selectedBatches: [BatchSelected] = []
+    var documentLines: [Lots] = []
     var technicalSignatureIsGet = false
     var qfbSignatureIsGet = false
     var askIfUserWantToFinalizeOrder = PublishSubject<String>()
@@ -50,6 +50,7 @@ class LotsViewModel {
     var updateComments = PublishSubject<OrderDetail>()
     var pendingButtonDidTap = PublishSubject<Void>()
     var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
+    var changeColorLabels = PublishSubject<Void>()
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     
@@ -207,6 +208,7 @@ class LotsViewModel {
                 } else {
                     self?.showMessage.onNext("No hay lotes asignados")
                 }
+                self?.changeColorLabels.onNext(())
             }
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
