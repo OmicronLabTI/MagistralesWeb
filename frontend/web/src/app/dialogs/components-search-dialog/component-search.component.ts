@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource} from '@angular/material';
 import {IFormulaDetalleReq} from '../../model/http/detalleformula';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -43,7 +43,8 @@ export class ComponentSearchComponent implements OnInit {
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public data: any,
-              private dataService: DataService) {
+              private dataService: DataService,
+              private changeDetector: ChangeDetectorRef) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
                 || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
@@ -55,6 +56,7 @@ export class ComponentSearchComponent implements OnInit {
       this.getQueryString();
       this.getComponents();
     }
+    this.changeDetector.detectChanges();
   }
 
   getComponents() {
@@ -100,11 +102,11 @@ export class ComponentSearchComponent implements OnInit {
     if (input) {
       input.value = '';
     }
+    this.changeDetector.detectChanges();
   }
 
   removeChip(word): void {
     const index = this.keywords.indexOf(word);
-
     if (index >= 0) {
       this.keywords.splice(index, 1);
     }
@@ -146,6 +148,20 @@ export class ComponentSearchComponent implements OnInit {
   setFocusToChipsInput() {
     setTimeout(() => {
       this.chipsInput.nativeElement.focus();
-    }, 200)
+    }, 100)
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key.toLowerCase() == 'backspace' && this.chipsInput.nativeElement.value == '') {
+      event.preventDefault();
+      let numberOfChilds = this.chipsInput.nativeElement.parentNode.children.length;
+      if (numberOfChilds > 1) {
+        let node = this.chipsInput.nativeElement.parentNode.children[numberOfChilds - 2];
+        if (node.tagName.toLowerCase() == 'mat-chip') {
+          node.click();
+          node.focus();
+        }
+      }
+    }
   }
 }
