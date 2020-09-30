@@ -15,6 +15,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {PedidosService} from '../../services/pedidos.service';
 import {of} from 'rxjs';
 import {ComponentSearchMock} from '../../../mocks/componentsMock';
+import {DataService} from "../../services/data.service";
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
@@ -39,7 +40,8 @@ describe('ComponentSearchComponent', () => {
           useValue: {}
         },
         { provide: MAT_DIALOG_DATA, useValue: {modalType: 'searchComponent',
-                                                chips: ['crema']} }]
+                                                chips: ['crema']} },
+        { provide: PedidosService, useValue: ordersServiceSpy }]
     })
     .compileComponents();
   }));
@@ -53,5 +55,14 @@ describe('ComponentSearchComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.isFromSearchComponent).toBeTruthy();
+  });
+  it('should getComponents() ok', () => {
+    component.isFromSearchComponent = true;
+    component.getComponentsAction();
+    expect(component.isDisableSearch).toBeTruthy();
+    expect(ordersServiceSpy.getComponents).toHaveBeenCalled();
+    expect(component.dataSource.data.length).toEqual(ComponentSearchMock.response.length);
+    expect(component.lengthPaginator).toEqual(ComponentSearchMock.comments);
+    expect(component.isDisableSearch).toBeFalsy();
   });
 });

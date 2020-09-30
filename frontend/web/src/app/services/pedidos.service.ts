@@ -50,7 +50,7 @@ export class PedidosService {
         Endpoints.pedidos.reAssignManual, placeOrder);
   }
   getComponents(queryStringComponents: string, isFromSearchComponents) {
-    return this.consumeService.httpGet<IComponentsRes>(`${isFromSearchComponents ? Endpoints.pedidos.getComponents :
+    return this.consumeService.httpGet<IComponentsRes>(`${isFromSearchComponents ? Endpoints.pedidos.components :
             Endpoints.pedidos.getProducts}${queryStringComponents}`);
   }
   updateFormula(formulaTOSave: IComponentsSaveReq) {
