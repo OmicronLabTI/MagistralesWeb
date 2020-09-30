@@ -31,6 +31,7 @@ pipeline {
 		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
+				sh 'sudo kubectl config use-context kubernetes-admin@kubernetes'
                 sh 'sudo kubectl delete all --all --grace-period=0 --force'
 				sh 'sudo docker system prune -f'
             }
