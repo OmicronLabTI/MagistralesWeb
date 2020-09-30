@@ -119,12 +119,14 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
-    if (this.isFromSearchComponent && this.data.modalType === ComponentSearch.searchComponent) {
+    if (this.isFromSearchComponent) {
       if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
         this.dataService.presentToastCustom(
-          Messages.repeatedComponent_a + row.productId + Messages.repeatedComponent_b,
+          `${Messages.repeatedComponent_a }  ${row.productId} ${
+               this.data.modalType !== ComponentSearch.addComponent ? Messages.repeatedComponent_b :
+                   Messages.repeatedComponent_b_request }`,
           'info',
           '',
           false,
