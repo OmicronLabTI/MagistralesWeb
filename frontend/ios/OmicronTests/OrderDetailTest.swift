@@ -9,57 +9,65 @@
 import XCTest
 import RxSwift
 import Moya
-import Resolver
 
 @testable import Omicron
 
 class OrderDetailTest: XCTestCase {
-    @Injected var orderDetailViewModel: OrderDetailViewModel
-    
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
     // MARK: -VARIABLES
-    let disposeBag = DisposeBag()
-    let viewModel = LoginViewModel()
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    let orderId = 89026
+    var disposeBag: DisposeBag?
+    var viewModel: LoginViewModel?
+    var networkManager: NetworkManager?
+    var orderId: Int?
+    var orderDetailViewModel: OrderDetailViewModel?
+    
+    override func setUp() {
+        print("XXXX setUp OrderDetailTest")
+        disposeBag = DisposeBag()
+        viewModel = LoginViewModel()
+        networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+        orderId = 89026
+        orderDetailViewModel = OrderDetailViewModel()
+    }
+    
+    override func tearDown() {
+        print("XXXX tearDown OrderDetailTest")
+        disposeBag = nil
+        viewModel = nil
+        networkManager = nil
+        orderId = nil
+        orderDetailViewModel = nil
+    }
+    
     
     // TEST FUNCTIONS
-    
     func testGetOrderDetailNoNull() {
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testGetOrderDetailValidCode() {
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.code == 200)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testGetOrderDetailResponseNotNull() {
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res.response)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testGetOrderDetailValidProductID() {
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.response?.productionOrderID == 89026)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testGetOrderDetailValidContainsDetails() {
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId!).subscribe(onNext: { res in
             XCTAssertTrue((res.response?.details?.count)! > 0)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testFinishOrderSucess() -> Void {
@@ -71,12 +79,12 @@ class OrderDetailTest: XCTestCase {
         let finishOrder = FinishOrder(userId: userId, fabricationOrderId: fabricationOrderId, qfbSignature: qfbSignature, technicalSignature: technicalSignature)
         
         // When
-        self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { res in
+        self.networkManager!.finishOrder(order: finishOrder).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response!.userId! == userId )
             XCTAssertTrue(89830 == fabricationOrderId)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testDeleteItemOfTableOrderDetailSucces() -> Void {
@@ -86,12 +94,12 @@ class OrderDetailTest: XCTestCase {
         let order = OrderDetailRequest(fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", components: [components])
         
         // Then
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
+        self.networkManager!.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
             
             //When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testUpdateItemOfTableOrderDetailSucces() -> Void {
@@ -101,12 +109,12 @@ class OrderDetailTest: XCTestCase {
         let order = OrderDetailRequest(fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", components: [components])
         
         // Then
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
+        self.networkManager!.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
             
             //When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testSumShouldBe27dot5() -> Void  {
@@ -114,12 +122,12 @@ class OrderDetailTest: XCTestCase {
         let orderId = 89026
         
         // Then
-        self.networkManager.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.getOrdenDetail(orderId: orderId).subscribe(onNext: { res in
             
-        let resOfSum = self.orderDetailViewModel.sum(tableDetails: (res.response?.details)!)
+        let resOfSum = self.orderDetailViewModel!.sum(tableDetails: (res.response?.details)!)
             // When
             XCTAssertTrue(resOfSum == 27.5)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testValidIfOrderCanBeFinalizedSuccess() -> Void {
@@ -127,13 +135,13 @@ class OrderDetailTest: XCTestCase {
         let orderId = 89026
         
         // When
-        self.networkManager.askIfOrderCanBeFinalized(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager!.askIfOrderCanBeFinalized(orderId: orderId).subscribe(onNext: { res in
             
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.success == true)
             XCTAssertEqual(res.code, 200)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testChangeStatusOrderPendingSuccess() -> Void {
@@ -142,10 +150,10 @@ class OrderDetailTest: XCTestCase {
         let response = "[{\"Id\":400,\"Userid\":\"d125566b-6321-4854-9a42-10fb5c5e4cc1\",\"Salesorderid\":\"\",\"Productionorderid\":\"89628\",\"Status\":\"Proceso\",\"Comments\":null,\"FinishDate\":null,\"CreationDate\":\"10/09/2020 09:44:31 AM\",\"CreatorUserId\":\"14409829-caa8-42f5-83e8-bc52b1f7afa5\",\"CloseDate\":null,\"CloseUserId\":null,\"IsIsolatedProductionOrder\":true,\"IsSalesOrder\":false,\"IsProductionOrder\":true,\"StatusOrder\":5}]"
         let changeStatus = ChangeStatusRequest(userId: "", orderId: 89026, status: status)
         // When
-        networkManager.changeStatusOrder(changeStatusRequest: [changeStatus]).subscribe(onNext: { res in
+        networkManager!.changeStatusOrder(changeStatusRequest: [changeStatus]).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response == response)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
 }

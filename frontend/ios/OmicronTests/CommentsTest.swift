@@ -31,7 +31,7 @@ class CommentsTest: XCTestCase {
     
     func testInitData() {
         let productionOrderID = 89623
-        let plannedQuantity = 1
+        let plannedQuantity: Decimal = 1.0
         let fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "10/09/2020", withFormat: "yyyy-MM-dd") ?? ""
         let message = "Comment :D"
         
