@@ -138,6 +138,7 @@ class OrderDetailViewController: UIViewController {
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
             if (self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil) {
                 lotsVC.orderId = self!.orderId
+                
                 lotsVC.statusType = self!.statusType
                 lotsVC.orderDetail = self!.orderDetail
                 if let order = self?.orderDetail.first {
@@ -264,11 +265,7 @@ class OrderDetailViewController: UIViewController {
             cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-//            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
-//            cell.availableLabel.text =  self?.formatter.string(from: NSNumber(value: data.available ?? 0.0))
-//            cell.quantityPendingLabel.text = self?.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
-//            cell.stockLabel.text =  self?.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
-//            cell.storedQuantity.text =  self?.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
+            cell.setEmptyStock(data.stock ?? 0.0 > 0.0)
         }.disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
