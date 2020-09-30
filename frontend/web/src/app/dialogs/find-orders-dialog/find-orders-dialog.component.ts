@@ -212,7 +212,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         {
             event.preventDefault();
         }
-        if (this.withValue(currentValue) && `${currentValue}`.length == 6 && !isNaN(event.key as any))
+        if (this.withValue(currentValue) && `${currentValue}`.length == 7 && !isNaN(event.key as any))
         {
             event.preventDefault();
         }
