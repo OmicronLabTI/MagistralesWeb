@@ -94,7 +94,7 @@ class Order {
     var baseDocument: Int?
     var container: String?
     var tag: String?
-    var plannedQuantity: Int?
+    var plannedQuantity: Decimal?
     var startDate: String?
     var finishDate: String?
     var descriptionProduct: String?
@@ -104,7 +104,7 @@ class Order {
     var destiny: String?
     var hasMissingStock = false
     
-    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Int?, startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?, productCode: String?, destiny: String?, hasMissingStock: Bool) {
+    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?, startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?, productCode: String?, destiny: String?, hasMissingStock: Bool) {
         
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
@@ -130,7 +130,7 @@ extension Order: Mappable {
         baseDocument <- map["baseDocument"]
         container <- map["container"]
         tag <- map["tag"]
-        plannedQuantity <- map["plannedQuantity"]
+        plannedQuantity <- (map["plannedQuantity"], DecimalTransform())
         startDate <- map["startDate"]
         finishDate <- map["finishDate"]
         descriptionProduct <- map["descriptionProduct"]

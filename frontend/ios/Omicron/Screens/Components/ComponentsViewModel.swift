@@ -71,7 +71,7 @@ class ComponentsViewModel {
             
             let orderDetailReq = OrderDetailRequest(
                 fabOrderID: component.orderFabId,
-                plannedQuantity: Decimal(order.plannedQuantity ?? 0),
+                plannedQuantity: order.plannedQuantity ?? 0,
                 fechaFin: (order.finishDate != nil ? UtilsManager.shared.formattedDateFromString(dateString: order.finishDate!, withFormat: "yyyy-MM-dd") : "") ?? "",
                 comments: "",
                 components: [component])
