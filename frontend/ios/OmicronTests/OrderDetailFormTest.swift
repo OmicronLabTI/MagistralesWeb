@@ -61,7 +61,7 @@ class OrderDetailFormTest: XCTestCase {
 
         // then
         self.orderDetailFormViewModel!.editItemTable(index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
-        wait(for: [self.expectation!], timeout: 1000)
+        wait(for: [self.expectation!], timeout: 2000)
     }
 
     func testEditItemUpdateFailed() -> Void {
@@ -79,7 +79,7 @@ class OrderDetailFormTest: XCTestCase {
         }).disposed(by: self.disposeBag!)
 
         self.orderDetailFormViewModel!.editItemTable(index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
-        wait(for: [self.expectation! ], timeout: 1000)
+        wait(for: [self.expectation! ], timeout: 2000)
 
     }
 }

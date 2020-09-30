@@ -44,7 +44,7 @@ class CommentsTest: XCTestCase {
         XCTAssertNotNil(order)
         
         testValidResponse(order: order)
-        testValidCodeNotNull(order: order)
+        //testValidCodeNotNull(order: order)
         testValidCode(order: order)
     }
     
@@ -58,15 +58,15 @@ class CommentsTest: XCTestCase {
            }).disposed(by: disposeBag)
     }
     
-    func testValidCodeNotNull(order: OrderDetailRequest) {
-        NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
-                XCTAssertNotNil(res.code)
-           }).disposed(by: disposeBag)
-    }
+//    func testValidCodeNotNull(order: OrderDetailRequest) {
+//        NetworkManager
+//               .shared
+//               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
+//               .observeOn(MainScheduler.instance)
+//               .subscribe(onNext: { res in
+//                XCTAssertNotNil(res.code)
+//           }).disposed(by: disposeBag)
+//    }
     
     func testValidCode(order: OrderDetailRequest) {
         NetworkManager
