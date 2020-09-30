@@ -77,14 +77,14 @@ class OrderDetailFormViewController:  FormViewController {
                 $0.tag = "baseQuantity"
                 $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity ?? 0) : self?.formatter.string(from: NSNumber(value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity! ?? 0))
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
                 
                     if (row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) != nil)) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
-                        let requiredQuantity = Decimal(self?.dataOfTable?.plannedQuantity ?? 0)
+                        let requiredQuantity = self?.dataOfTable?.plannedQuantity ?? 0.0
                         let result = baseQuantity! * requiredQuantity
                         requireQuantityField?.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         requireQuantityField?.reload()
@@ -127,13 +127,13 @@ class OrderDetailFormViewController:  FormViewController {
                 $0.value =  self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0) : self?.formatter.string(from: NSNumber(value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity! ?? 0))
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
                     if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && ((self?.canOperation(rowValue: row.value ?? "d")) != nil)) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = Decimal((self?.dataOfTable?.plannedQuantity)!)
-                        let result = requiredQuantity!  / baseQuantity
+                        let baseQuantity = self?.dataOfTable?.plannedQuantity!
+                        let result = requiredQuantity!  / baseQuantity!
                         let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
                         baseQuantityField?.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         baseQuantityField?.reload()

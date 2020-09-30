@@ -39,6 +39,16 @@ class Lots {
     var lotesSelecionados: [LotsSelected]?
     var lotesDisponibles: [LotsAvailable]?
     
+    init(codigoProducto: String, descripcionProducto: String, almacen: String, totalNecesario: Decimal, totalSeleccionado: Decimal, lotesSelecionados: [LotsSelected], lotesDisponibles: [LotsAvailable]) {
+        self.codigoProducto = codigoProducto
+        self.descripcionProducto = descripcionProducto
+        self.almacen = almacen
+        self.totalNecesario = totalNecesario
+        self.totalSeleccionado = totalSeleccionado
+        self.lotesSelecionados = lotesSelecionados
+        self.lotesDisponibles = lotesDisponibles
+    }
+    
     required init?(map: Map) {}
 }
 
