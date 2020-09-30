@@ -2,7 +2,6 @@ apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt
-  namespace: cert-manager
 spec:
   acme:
     email: hugo.meraz@axity.com
@@ -11,4 +10,8 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
     - http01:
-        ingress: {}
+        ingress:
+          class: nginx-api
+    - http01:
+        ingress:
+          class: nginx-log
