@@ -10,16 +10,16 @@
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-    <div  [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'" class="description-container">
-     {{oldDataFormulaDetail.code }} {{ oldDataFormulaDetail.productDescription}}
+    <div class="description-container">
+        <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-omicron'">{{oldDataFormulaDetail.code}}&nbsp;&nbsp;&nbsp;&nbsp;</span> |
+         <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'">&nbsp;&nbsp;&nbsp;&nbsp;{{oldDataFormulaDetail.productDescription }}</span>
     </div>
     <div class="table-toolbar">
         <div class="refresh-icon-on-toolbar">
         </div>
         <div class="table-toolbar-buttons">
-
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
-                                                            ordenFabricacionId, oldDataFormulaDetail.code + ' ' + oldDataFormulaDetail.productDescription,
+                                                            ordenFabricacionId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
                                                             oldDataFormulaDetail.hasMissingStock ? 1 : 0]">
             Lotes
             </button>
@@ -62,6 +62,7 @@
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
                                (ngModelChange)="changeData()"
+                               step="any"
                                appDigitDecimalNumber
                                decimalPlaces="6">
 

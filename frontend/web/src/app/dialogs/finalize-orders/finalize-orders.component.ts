@@ -4,7 +4,7 @@ import {IOrdersReq} from '../../model/http/ordenfabricacion';
 import {MatTableDataSource} from '@angular/material/table';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
-import {ClassNames, CONST_NUMBER, HttpServiceTOCall, MessageType} from '../../constants/const';
+import {ClassNames, CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../../constants/const';
 import {CancelOrderReq} from '../../model/http/pedidos';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
@@ -73,8 +73,9 @@ export class FinalizeOrdersComponent implements OnInit {
   }
 
   onBatchesChange(batchesValue: string, index: number) {
-    this.dataSource.data[index].batche = batchesValue;
-    this.isCorrectDataToFinalize();
+      this.dataSource.data[index].isWithErrorBatch = batchesValue === CONST_STRING.empty;
+      this.dataSource.data[index].batche = batchesValue;
+      this.isCorrectDataToFinalize();
   }
 
   onQuantityFinishChange(quantityValueAsString: string, index: number) {

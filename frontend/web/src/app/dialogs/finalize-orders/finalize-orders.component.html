@@ -51,6 +51,7 @@
                                    class="number color-number" placeholder="Cantidad"
                                    [(ngModel)]="element.quantityFinish"
                                    (ngModelChange)="onQuantityFinishChange($event, i)" 
+                                   step="any"
                                    appDigitDecimalNumber
                                    decimalPlaces="6">
                         </mat-form-field>

@@ -1,13 +1,12 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CONST_NUMBER, CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {PedidosService} from '../../services/pedidos.service';
-import {ErrorService} from '../../services/error.service';
-import {QfbSelect} from '../../model/http/users';
-import {Subscription} from 'rxjs';
-import {UsersService} from '../../services/users.service';
-import {DataService} from '../../services/data.service';
+import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import { MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { PedidosService} from '../../services/pedidos.service';
+import { ErrorService} from '../../services/error.service';
+import { QfbSelect} from '../../model/http/users';
+import { Subscription} from 'rxjs';
+import { UsersService} from '../../services/users.service';
 
 
 @Component({
@@ -25,6 +24,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     isToResetData = false;
     subscriptionForm = new Subscription();
     isFromSearchOrders = false;
+    defaultStartDate: Date;
+    defaultEndDate: Date;
     constructor(private formBuilder: FormBuilder,
                 @Inject(MAT_DIALOG_DATA) public filterData: any,
                 private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
@@ -73,8 +74,11 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         const initDateTrans = this.fullDate[0].split('/');
         const finishDateTrans = this.fullDate[1].split('/');
 
-        this.findOrdersForm.get('fini').setValue(new Date(`${initDateTrans[1]}/${initDateTrans[0]}/${initDateTrans[2]}`));
-        this.findOrdersForm.get('ffin').setValue(new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`));
+        this.defaultStartDate = new Date(`${initDateTrans[1]}/${initDateTrans[0]}/${initDateTrans[2]}`);
+        this.defaultEndDate = new Date(`${finishDateTrans[1]}/${finishDateTrans[0]}/${finishDateTrans[2]}`);
+
+        this.findOrdersForm.get('fini').setValue(this.defaultStartDate);
+        this.findOrdersForm.get('ffin').setValue(this.defaultEndDate);
 
         this.findOrdersForm.get('dateType').setValue(this.filterData.filterOrdersData.dateType ?
             this.filterData.filterOrdersData.dateType : ConstOrders.defaultDateInit);
@@ -92,25 +96,37 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.getMaxDate();
         this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
             if (!this.isBeginInitForm) {
-                if (formData.docNum !== null && formData.docNum) {
+                if (this.withValue(formData.docNum)) {
                     this.isToResetData = false;
                     this.getDisableForDocNum();
-                } else if (formData.docNum !== null) {
+                } 
+                else if (!this.withValue(formData.docNum) && 
+                    (
+                        (this.withValue(formData.fini) && !this.isEqualDate(new Date(formData.fini), this.defaultStartDate)) ||
+                        (this.withValue(formData.ffin) && !this.isEqualDate(new Date(formData.ffin), this.defaultEndDate)) ||
+                        (this.withValue(formData.dateType) && formData.dateType != ConstOrders.defaultDateInit) ||
+                        this.withValue(formData.status) ||
+                        this.withValue(formData.qfb) ||
+                        this.withValue(formData.productCode) ||
+                        this.withValue(formData.clientName)
+                    )){
                     this.changeValidatorsForDocNum();
-                } else if (formData.docNum === '' && (formData.dateType !== '' && formData.dateType ||
-                    formData.fini !== '' && formData.fini ||
-                    formData.ffin !== '' && formData.ffin ||
-                    formData.status !== '' && formData.status ||
-                    formData.qfb !== '' && formData.qfb ||
-                    formData.productCode !== '' && formData.productCode ||
-                    formData.clientName !== '' && formData.clientName)) {
-                    this.changeValidatorsForDocNum();
+                } else {
+                    this.enableAllInputs();
                 }
             }
             this.isBeginInitForm = false;
             this.getMaxDate();
         });
+    }
 
+    isEqualDate(dateToCompare: Date, baseDate: Date){
+        return dateToCompare.getDate() === baseDate.getDate() &&
+                dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&
+                dateToCompare.getFullYear() === baseDate.getFullYear();
+    }
+    withValue(value) {
+        return value !== null && value !== undefined && value !== '';
     }
 
     searchOrders() {
@@ -119,7 +135,6 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     getMaxDate() {
-
         this.dateFin.setTime(new Date(this.findOrdersForm.get('ffin').value).getTime());
         this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
     }
@@ -154,6 +169,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.getDisableForDocNum();
         this.getDisableOnlyForDocNum();
         this.resetParamsValue();
+        this.enableAllInputs();
+    }
+    enableAllInputs() {
         this.findOrdersForm.get('dateType').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('status').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('qfb').enable({onlySelf: true, emitEvent: false});
@@ -187,8 +205,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     changeDocNumber(event: KeyboardEvent) {
-        let invalidChars = [ "-", "+", "e" ];
-        if (invalidChars.includes(event.key))
+        let invalidChars = [ "-", "+", "e", "." ];
+        let currentValue = this.findOrdersForm.get('docNum').value;
+        if (invalidChars.includes(event.key) || (event.key == '0' && !this.withValue(currentValue)))
+        {
+            event.preventDefault();
+        }
+        if (this.withValue(currentValue) && `${currentValue}`.length == 7 && !isNaN(event.key as any))
         {
             event.preventDefault();
         }
