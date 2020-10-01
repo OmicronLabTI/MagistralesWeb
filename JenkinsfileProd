@@ -162,18 +162,16 @@ pipeline {
         }
 		stage('Deploy App Service'){
 			steps{
-				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-					azureWebAppPublish(
+				azureWebAppPublish(
 					appName: 'omicronlab',
 					azureCredentialsId: 'Omicronapp',
 					skipDockerBuild: true,
 					dockerImageName: omicron-web-repository,
 					dockerImageTag: "latest",
-					dockerRegistryEndpoint: [credentialsId: '$USERNAME', url: 'https://${ACR}'],
+					dockerRegistryEndpoint: [credentialsId: 'omicron', url: 'https://omicron.azurecr.io'],
 					publishType: 'docker',
 					resourceGroup: 'OmicronProduccion'
 					)
-                }
 			}
 		}
         stage('Database') {
