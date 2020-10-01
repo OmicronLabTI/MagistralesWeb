@@ -9,11 +9,14 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 class ChartViewModel {
     
+
     var workloadData = ReplaySubject<[Workload]>.create(bufferSize: 1)
     var disposeBag = DisposeBag()
+    @Injected var networkManager: NetworkManager
     
     init() { }
     
@@ -23,9 +26,8 @@ class ChartViewModel {
             + "-"
             + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
-        NetworkManager
-            .shared
-        .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
+
+        self.networkManager.getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { [weak self] workloadResponse in
                 guard let self = self else { return }
                 if let workload = workloadResponse.response {

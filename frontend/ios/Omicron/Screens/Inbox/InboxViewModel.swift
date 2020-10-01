@@ -42,7 +42,7 @@ class  InboxViewModel {
     var deselectRow = PublishSubject<Bool>()
     
     @Injected var rootViewModel: RootViewModel
-    
+    @Injected var networkManager: NetworkManager
     var normalSort = true
     var similaritySort = false
     var groupSort = false
@@ -281,7 +281,7 @@ class  InboxViewModel {
                 orders.append(order)
             }
             
-            NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self.networkManager.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
                 self?.loading.onNext(false)
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 self?.processButtonIsEnable.onNext(false)
