@@ -13,7 +13,7 @@
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
-                                   maxlength="6"
+                                   maxlength="7"
                                    class="height-input"
                                    formControlName="docNum"
                                    (keydown)="changeDocNumber($event)">
@@ -21,7 +21,7 @@
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 6 caracteres
+                                Solo 7 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
