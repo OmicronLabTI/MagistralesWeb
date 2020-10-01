@@ -10,8 +10,9 @@
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
-    <div  [ngClass]="hasMissingStock ? 'color-missing-material' : 'color-with-material'" class="description-container">
-        {{ description }}
+    <div class="description-container">
+        <span [ngClass]="hasMissingStock ? 'color-missing-material' : 'color-omicron'">{{productId}}&nbsp;&nbsp;&nbsp;&nbsp;</span> |
+        <span [ngClass]="hasMissingStock ? 'color-missing-material' : 'color-with-material'">&nbsp;&nbsp;&nbsp;&nbsp;{{description }}</span>
     </div>
     <div class="table-toolbar">
         <div class="table-toolbar-search">
