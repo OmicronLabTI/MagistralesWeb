@@ -123,6 +123,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToFinalize = false;
         this.isThereOrdersToReassign = false;
         this.isThereOrdersToRequest = false;
+        this.allComplete = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {

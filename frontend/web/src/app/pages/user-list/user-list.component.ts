@@ -55,6 +55,7 @@ export class UserListComponent implements OnInit, OnDestroy {
                     user.isChecked = false;
                     user.piezas = this.dataService.getFormattedNumber(user.piezas);
                 });
+                this.isAllComplete = false;
             },
             error => {
                 this.errorService.httpError(error);
