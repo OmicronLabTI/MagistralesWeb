@@ -23,6 +23,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButtonDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
     @IBOutlet weak var passwordLabel: UILabel!
+    @IBOutlet weak var versionLabel: UILabel!
+    
     let button = UIButton(type: .custom)
     
     // MARK: - VARIABLES
@@ -140,6 +142,10 @@ class LoginViewController: UIViewController {
         self.passwordTextField.rightViewMode = .always
         
         button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
+        
+        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")", textToBold: "Versión: ")
+        self.versionLabel.textColor = OmicronColors.blue
+        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
     }
         
     @objc func keyBoardActions(notification: Notification) {

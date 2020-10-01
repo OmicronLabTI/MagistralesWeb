@@ -19,6 +19,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var kpiButton: UIButton!
+    @IBOutlet weak var versionLabel: UILabel!
     
     // Variables
     @Injected var rootViewModel: RootViewModel
@@ -194,6 +195,9 @@ class RootViewController: UIViewController {
         self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 260)
         self.logoutButton.titleEdgeInsets.left = 35
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
+        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")", textToBold: "Versión: ")
+        self.versionLabel.textColor = OmicronColors.blue
+        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
     }
     
     private func getUserInfo() -> String {
