@@ -164,7 +164,7 @@ pipeline {
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
 								   resourceGroup: 'OmicronProduccion', appName: 'omicronlab',
-								   dockerImageName: omicron-web-repository, dockerImageTag: 'latest',
+								   dockerImageName: 'omicron-web-repository', dockerImageTag: 'latest',
 								   dockerRegistryEndpoint: [credentialsId: 'omicron', url: 'https://omicron.azurecr.io'],
 								   skipDockerBuild: true
 			}
