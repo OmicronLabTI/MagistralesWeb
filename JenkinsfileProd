@@ -162,16 +162,11 @@ pipeline {
         }
 		stage('Deploy App Service'){
 			steps{
-				azureWebAppPublish
-					appName: 'omicronlab',
-					azureCredentialsId: 'Omicronapp',
-					skipDockerBuild: true,
-					dockerImageName: omicron-web-repository,
-					dockerImageTag: "latest",
-					dockerRegistryEndpoint: [credentialsId: 'omicron', url: 'https://omicron.azurecr.io'],
-					publishType: 'docker',
-					resourceGroup: 'OmicronProduccion'
-					
+				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
+								   resourceGroup: 'OmicronProduccion', appName: 'omicronlab',
+								   dockerImageName: omicron-web-repository, dockerImageTag: "latest",
+								   dockerRegistryEndpoint: [credentialsId: 'omicron', url: 'https://omicron.azurecr.io'],
+								   skipDockerBuild: true,
 			}
 		}
         stage('Database') {
