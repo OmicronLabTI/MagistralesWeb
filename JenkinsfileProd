@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo 'Running Kubernetes down'
 				sh 'sudo kubectl config use-context omicron-aks'
-                sh 'sudo kubectl delete deploy --all --grace-period=0 --force'
+                sh 'sudo kubectl delete -f deploy_prod.yaml --grace-period=0 --force'
 				sh 'sudo docker system prune -f'
             }
         }/*
