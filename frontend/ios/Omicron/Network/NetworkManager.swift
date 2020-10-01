@@ -28,7 +28,6 @@ protocol AuthorizedTargetType: TargetType {
 class NetworkManager: SessionProtocol {
     
     //MARK: Variables
-    static let shared: NetworkManager = NetworkManager()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     
     // MARK: Init
