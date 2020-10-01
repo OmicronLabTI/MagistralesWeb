@@ -11,7 +11,6 @@ export class ErrorService {
 
   constructor(private dataService: DataService) { }
   httpError(error: ErrorHttpInterface) {
-    console.log('error httpService: ', error);
     switch (error.status) { // status: 0 = server refused
       case HttpStatus.unauthorized:
         this.dataService.setIsLogout(true);
