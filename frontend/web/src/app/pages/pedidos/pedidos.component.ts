@@ -285,12 +285,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   printOrderAsPdfFileConfirmedAction() {
-    var documentNumbers = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => { return i.docNum });
+    let documentNumbers = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => { return i.docNum });
     this.pedidosService.createPdfOrders(documentNumbers)
     .subscribe((response : ICreatePdfOrdersRes) => {
       if (response.userError) {
-        var formatedNumbers = response.response.join(', ');
-        var message = '';
+        let errorNumbers = response.response.filter(x => !isNaN(x as any));
+        let formatedNumbers = errorNumbers.join(', ');
+        let message = '';
         if (response.response.length > 1) {
           message = `${Messages.errorMessageCreateOrdersPdf}${formatedNumbers}`;
         }

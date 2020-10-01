@@ -15,14 +15,12 @@ namespace Omicron.SapFile.Services.SapFile
     using Omicron.SapFile.Services.FileHelpers;
     using Omicron.SapFile.Services.ReportBuilder;
     using Omicron.SapFile.Services.Utils;
-    using Org.BouncyCastle.Asn1.Esf;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -214,7 +212,7 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
                 ServiceUtils.DeleteFile(mergedFilePath);
-                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"{order.ItemCode}_{order.FabOrderId}.pdf");
+                return this.CopyFileToProductionFirectory(pagedFilePath, order.CreateDate, $"{order.ItemCode}_{order.FabOrderId}.pdf", true);
             }
             return mergedFilePath;
         }
@@ -256,13 +254,15 @@ namespace Omicron.SapFile.Services.SapFile
         /// <param name="src">Source file path.</param>
         /// <param name="datetimeAsString">Date to format directory name.</param>
         /// <param name="fileName">File name.</param>
+        /// <param name="isolatedProductionOrder">Flag for isolated production orders.</param>
         /// <returns>Final file path.</returns>
-        private string CopyFileToProductionFirectory(string src, string datetimeAsString, string fileName)
+        private string CopyFileToProductionFirectory(string src, string datetimeAsString, string fileName, bool isolatedProductionOrder = false)
         {
             var dateArray = datetimeAsString.Split('/');
             var datetime = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
-            var directoryName = datetime.ToString("MMMMyyyy", CultureInfo.GetCultureInfo("es-MX"));
-            directoryName = char.ToUpper(directoryName[0]) + directoryName.Substring(1);
+            var directoryName = datetime.ToString("yyyy-MM", CultureInfo.GetCultureInfo("es-MX"));
+            directoryName = isolatedProductionOrder ? $@"{directoryName}\Otros" : directoryName;
+
             var finalPath = Path.Combine(this.ProductionDirectoryPath, $@"{directoryName}\{fileName}");
             ServiceUtils.CopyFile(src, finalPath);
             ServiceUtils.DeleteFile(src);

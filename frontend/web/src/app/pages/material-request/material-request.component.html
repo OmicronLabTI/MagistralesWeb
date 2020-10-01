@@ -88,6 +88,7 @@
                                        class="color-number" placeholder="Ctd. requerida"
                                        [(ngModel)]="element.requestQuantity"
                                        (ngModelChange)="onRequestQuantityChange($event, i)"
+                                        step="any"
                                         appDigitDecimalNumber
                                         decimalPlaces="6"
                                         >

@@ -76,8 +76,9 @@ export class InventorybatchesComponent implements OnInit {
       this.description = params.get('description');
       this.productId = params.get('code');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
+      this.getInventoryBatches();
     });
-    this.getInventoryBatches();
+
   }
 
   // tslint:disable-next-line: no-shadowed-variable

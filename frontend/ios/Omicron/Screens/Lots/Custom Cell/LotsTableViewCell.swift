@@ -34,4 +34,14 @@ class LotsTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func setEmptyStock(_ hasStock: Bool) {
+        numberLabel.textColor = hasStock ? .black : .systemOrange
+        codeLabel.textColor = hasStock ? .black : .systemOrange
+        descriptionLabel.textColor = hasStock ? .black : .systemOrange
+        warehouseCodeLabel.textColor = hasStock ? .black : .systemOrange
+        totalNeededLabel.textColor = hasStock ? .black : .systemOrange
+        totalSelectedLabel.textColor = hasStock ? .black : .systemOrange
+    }
+    
 }
