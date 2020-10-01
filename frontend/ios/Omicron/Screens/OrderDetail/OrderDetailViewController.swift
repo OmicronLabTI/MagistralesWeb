@@ -63,6 +63,7 @@ class OrderDetailViewController: UIViewController {
     var refreshControl = UIRefreshControl()
     var destiny = ""
     var isolatedOrder = false
+    var emptyStockProductId: [String] = []
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -138,6 +139,7 @@ class OrderDetailViewController: UIViewController {
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
             if (self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil) {
                 lotsVC.orderId = self!.orderId
+                if let self = self { lotsVC.emptyStockProductId = self.emptyStockProductId }
                 
                 lotsVC.statusType = self!.statusType
                 lotsVC.orderDetail = self!.orderDetail
@@ -265,8 +267,19 @@ class OrderDetailViewController: UIViewController {
             cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-            cell.setEmptyStock(data.stock ?? 0.0 > 0.0)
+            let hasStock = data.stock ?? 0.0 > 0.0
+            cell.setEmptyStock(hasStock)
+            
         }.disposed(by: disposeBag)
+        
+        
+        orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
+            guard let self = self else { return }
+            self.emptyStockProductId = details.map { detail -> String in
+                if !(detail.stock ?? 0.0 > 0.0) { return detail.productID ?? "" }
+                return ""
+            }
+        }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
             guard let self = self else { return }

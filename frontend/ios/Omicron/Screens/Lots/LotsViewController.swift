@@ -61,6 +61,7 @@ class LotsViewController: UIViewController {
     var manufacturingOrder = CommonStrings.empty
     var comments = CommonStrings.empty
     var orderDetail:[OrderDetail] = []
+    var emptyStockProductId: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -190,19 +191,27 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) { [weak self] row, data, cell in
+            
+            guard let self = self else { return }
+            
             cell.row = row
             cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto?.uppercased()
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text =  self?.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
-            cell.totalSelectedLabel.text = self?.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
-            if let order = self?.orderDetail.first {
+            cell.totalNeededLabel.text =  self.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
+            cell.totalSelectedLabel.text = self.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
+            
+            if self.emptyStockProductId.contains(data.codigoProducto ?? "-") {
+                cell.setEmptyStock(false)
+            } else {
+                cell.setEmptyStock(true)
+            }
+            
+            if let order = self.orderDetail.first {
                 if order.baseDocument == 0 {
-                    self?.orderNumberLabel.isHidden = true
+                    self.orderNumberLabel.isHidden = true
                 }
-                let orderDetail = order.details?[row]
-                cell.setEmptyStock(orderDetail?.stock ?? 0.0 > 0.0)
             }
             
             
