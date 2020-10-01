@@ -143,7 +143,7 @@ class LoginViewController: UIViewController {
         
         button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
         
-        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")", textToBold: "Versión: ")
+        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))", textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
         self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
     }
