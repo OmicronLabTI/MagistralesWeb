@@ -323,4 +323,5 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.allComplete = false;
     this.changeDetector.detectChanges();
   }
+
 }
