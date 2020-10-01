@@ -17,6 +17,7 @@ export class WorkLoadComponent implements OnInit {
   finishDate = new Date();
   maxFinishDate = new Date();
   workLoads: WorkLoad[] = [];
+  workLoadTotals: WorkLoad[] = [];
   constructor(private dataService: DataService, private ordersService: PedidosService,
               private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
@@ -53,7 +54,8 @@ export class WorkLoadComponent implements OnInit {
                workLoad.totalFabOrders = this.dataService.getFormattedNumber(workLoad.totalFabOrders);
                workLoad.totalPieces = this.dataService.getFormattedNumber(workLoad.totalPieces);
              });
-             this.workLoads = workLoadRes.response;
+             this.workLoads = workLoadRes.response.filter(workLoad => workLoad.user !== 'Total');
+             this.workLoadTotals = workLoadRes.response.filter(workLoad => workLoad.user === 'Total');
             }
         , error => this.errorService.httpError(error));
   }

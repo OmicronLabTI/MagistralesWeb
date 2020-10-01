@@ -510,7 +510,7 @@ table .mat-form-field-appearance-fill .mat-select-arrow-wrapper {
   transform: translateY(0%) !important;
 }
 
-mat-form-field{
+mat-form-field, textarea {
   font-family: "Quicksand", serif !important;
 }
 
@@ -681,7 +681,7 @@ a.breadcrumblink:hover{
 .mat-stroked-button.finalizado {
   display: flex;
   justify-content: center;
-  background-color: #3b3f5c;
+  background-color: rgba(116, 100, 104, 0.98);
   font-weight: 700 !important;
   width: 100px;
 }
@@ -773,4 +773,18 @@ a.breadcrumblink:hover{
   height: 100%;
   display: flex;
   justify-content: center;
+}
+.with-error {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+}
+.with-error-start {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+  border-left: 2px solid #e85c79 !important;
+}
+.with-error-last {
+  border-bottom: 2px solid #e85c79 !important;
+  border-top: 2px solid #e85c79 !important;
+  border-right: 2px solid #e85c79 !important;
 }

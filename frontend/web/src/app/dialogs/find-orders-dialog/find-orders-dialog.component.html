@@ -12,15 +12,16 @@
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de órden de fabricación'" type="number"
-                                   maxlength="50"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
+                                   maxlength="7"
                                    class="height-input"
-                                   formControlName="docNum">
+                                   formControlName="docNum"
+                                   (keydown)="changeDocNumber($event)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 60 caracteres
+                                Solo 7 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -50,7 +51,7 @@
 
                                            [max]="dateFin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp3 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
+                                    <mat-datepicker #dp3 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
                                         Fecha de es <strong>requerido</strong>
                                     </mat-error>
@@ -62,7 +63,7 @@
                                     <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
+                                    <mat-datepicker #dp2 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
                                         Fecha hasta es <strong>requerido</strong>
                                     </mat-error>
@@ -104,7 +105,8 @@
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
-                                   formControlName="clientName">
+                                   formControlName="clientName"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
@@ -115,7 +117,8 @@
                             <input matInput placeholder="Código del producto" type="text"
                                    maxlength="40"
                                    class="height-input"
-                                   formControlName="productCode">
+                                   formControlName="productCode"
+                                   (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
                                 Solo 40 caracteres
                             </mat-error>

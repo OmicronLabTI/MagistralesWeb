@@ -1,11 +1,19 @@
 .only-space-work-load {
-  width: 10%;
+  width: 34%;
+  display: flex;
+  justify-content: center;
+  border-width: 0 1px 0 0;
+  border-style: solid;
+  border-color: #6c90b3;
+
 }
 .table-toolbar-buttons-load {
-  width: 90%;
+  width: 66%;
+  height: 30%;
   display: flex;
 }
 .table-toolbar-work-load {
+  margin-top: .5%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -18,13 +26,39 @@
 }
 .indicators-work-load {
   width: 15%;
-  height: 46%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   font-weight: 600;
   color: #fff;
   margin-right: 5px;
   border-radius: 10px;
   text-align: center;
-  padding: 3px;
+  padding: 15px;
+}
+.indicators-work-load-totals {
+  width: 30%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-weight: 600;
+  color: #5065aa;
+  margin-right: 5px;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+}
+.indicators-work-load-totals-into-card {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-weight: 600;
+  color: #5065aa;
+  margin-right: 5px;
+  text-align: center;
 }
 .color-assign {
   color: #8dbf42;
@@ -63,6 +97,7 @@
   background-color: #3b3f5c;
 }
 .data-range-container {
+  margin-top: 1%;
   width: 40%;
 }
 .date-range-container {
@@ -89,11 +124,12 @@
   width: 40%;
 }
 .indicators-container {
-  width: 60%;
-  margin-top: 15px;
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+
 }
 .list-cards-container {
   margin-top: 10px;
@@ -138,7 +174,7 @@
   border-bottom: 1px dashed #e0e6ed;
 }
 .style-title {
-  font-size: 1em;
+  font-size: 1.3em;
   font-weight: 700 !important;
   color: #3b3f5c;
 }
@@ -151,9 +187,6 @@
 }
 .only-number-work-load {
   width: 100%;
-/*  width: 100px;
-  height: 100px;
-  border-radius: 50%;*/
   font-size: 28px;
   font-weight: 500;
   display: flex;
@@ -170,8 +203,9 @@
 .totals-work-load {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
+  margin-bottom: 10px;
 }
 .total-orders {
   display: flex;
@@ -182,7 +216,39 @@
   color: #009688;
 }
 .mat-card {
-  border: #6C90B3 2px solid;
+  border: #6c90b3 2px solid;
   border-radius: 10px;
 }
+.number-total-titles {
+  margin-left: 13%;
+  width: 88%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 
+}
+.totales{
+  margin-left: 10%;
+}
+.style-number {
+  font-weight: 900;
+  font-size: 1.8em;
+
+}
+.style-number-totals {
+  font-weight: 900;
+  font-size: 2em;
+}
+.style-number-totals-into-card {
+  font-weight: 900;
+  font-size: 2.5em;
+}
+.totals-container {
+  width: 85%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #ddddde;
+  border-radius: 10px;
+}

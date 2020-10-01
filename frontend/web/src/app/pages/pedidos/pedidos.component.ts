@@ -6,13 +6,14 @@ import {
   ClassNames,
   CONST_NUMBER,
   CONST_STRING,
+  ConstOrders,
   ConstStatus,
   FromToFilter,
   HttpServiceTOCall,
   HttpStatus,
   MessageType,
-  ConstOrders,
   MODAL_NAMES,
+  RouterPaths,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
@@ -22,6 +23,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-pedidos',
@@ -52,12 +54,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToFinalize = false;
   isThereOrdersToReassign = false;
   pageIndex = 0;
+  isThereOrdersToRequest = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
+    private router: Router,
     private changeDetector: ChangeDetectorRef
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
@@ -118,6 +122,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToCancel = false;
         this.isThereOrdersToFinalize = false;
         this.isThereOrdersToReassign = false;
+        this.isThereOrdersToRequest = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -131,12 +136,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsToUnLooked();
-    this.validateCheckedItems();
+    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   someComplete(): boolean {
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
-    this.validateCheckedItems();
+    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   setAll(completed: boolean) {
@@ -190,7 +195,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.setQbfToPlace(
         {
           modalType: MODAL_NAMES.placeOrders,
-          list: this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum)
+          list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
         });
   }
   getButtonsToUnLooked() {
@@ -262,6 +267,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
     }
   }
 
+  requestMaterial() {
+    this.router.navigate([RouterPaths.materialRequest,
+      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString(),
+      CONST_NUMBER.one]);
+  }
+
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
       this.dataService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
@@ -272,13 +283,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
       })
     }
   }
+
   printOrderAsPdfFileConfirmedAction() {
-    var documentNumbers = this.dataSource.data.filter(t => (t.isChecked)).map(i => { return i.docNum });
+    let documentNumbers = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => { return i.docNum });
     this.pedidosService.createPdfOrders(documentNumbers)
     .subscribe((response : ICreatePdfOrdersRes) => {
       if (response.userError) {
-        var formatedNumbers = response.response.join(', ');
-        var message = '';
+        let errorNumbers = response.response.filter(x => !isNaN(x as any));
+        let formatedNumbers = errorNumbers.join(', ');
+        let message = '';
         if (response.response.length > 1) {
           message = `${Messages.errorMessageCreateOrdersPdf}${formatedNumbers}`;
         }
@@ -298,9 +311,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
       this.uncheckedItems();
     });
   }
-  validateCheckedItems() {
-    this.isCheckedOrders = this.dataSource.data.filter(t => (t.isChecked)).length > 0;
+  
+  validateCheckedItems(ignoredStatus : string[]) {
+    this.isCheckedOrders = this.dataSource.data.filter(t => {
+      return t.isChecked && ignoredStatus.indexOf(t.pedidoStatus) < 0;
+    }).length > 0;
   }
+
   uncheckedItems() {
     this.dataSource.data.forEach(i => i.isChecked = false);
     this.allComplete = false;

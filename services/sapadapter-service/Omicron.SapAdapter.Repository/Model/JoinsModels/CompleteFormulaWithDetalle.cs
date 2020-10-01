@@ -49,7 +49,7 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int PlannedQuantity { get; set; }
+        public decimal PlannedQuantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

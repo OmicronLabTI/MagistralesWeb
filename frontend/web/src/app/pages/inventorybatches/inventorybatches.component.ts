@@ -76,8 +76,6 @@ export class InventorybatchesComponent implements OnInit {
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
     });
     this.getInventoryBatches();
-    console.log('decription: ', this.description);
-    console.log('hasMissingLote: ', this.hasMissingStock);
 
   }
 

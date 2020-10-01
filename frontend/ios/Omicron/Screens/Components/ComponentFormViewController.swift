@@ -76,13 +76,13 @@ class ComponentFormViewController: FormViewController {
                 $0.tag = "baseQuantity"
                 $0.value = ""
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ [weak self] cell, row in
                     if (row.value != nil && self?.canOperation(rowValue: row.value ?? "f") ?? false && !row.value!.isEmpty) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
-                        let requiredQuantity = Decimal(order.plannedQuantity ?? 0)
+                        let requiredQuantity = order.plannedQuantity ?? 0
                         let result = baseQuantity! * requiredQuantity
                         requireQuantityField?.value = component.unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         requireQuantityField?.reload()
@@ -126,12 +126,12 @@ class ComponentFormViewController: FormViewController {
                 $0.value = ""
                 $0.tag = "requiredQuantity"
                 $0.cellSetup{cell, row in
-                    cell.textField.keyboardType = .numberPad
+                    cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged{ cell, row in
                     if(!(row.value?.isEmpty ?? true) && !(row.value == "0") && (self?.canOperation(rowValue: row.value ?? "d") ?? false && !row.value!.isEmpty)) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = Decimal(order.plannedQuantity ?? 0)
+                        let baseQuantity = order.plannedQuantity ?? 0
                         let result = requiredQuantity!  / baseQuantity
                         let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
                         baseQuantityField?.value = component.unit == "Pieza" ? String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) : String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)

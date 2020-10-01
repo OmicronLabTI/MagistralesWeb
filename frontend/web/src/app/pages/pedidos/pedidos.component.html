@@ -25,13 +25,18 @@
     </div>
 
     <div class="table-toolbar">
-        <div class="refresh-icon-on-toolbar">
+        <div class="refresh-icon-on-toolbar" (click)="getPedidos()">
+            <span class="material-icons color-omicron cursor-pointer">
+                refresh
+            </span>
         </div>
         <div class="table-toolbar-buttons">
-                <span class="material-icons icon-button-toolbar " [ngClass]="isCheckedOrders ? 'color-omicron cursor-pointer' : 'disabled'" (click)="printOrderAsPdfFile()"  matTooltip="Generar PDF"
-                matTooltipPosition="above">
+                <span class="material-icons icon-button-toolbar " [ngClass]="isCheckedOrders ? 'color-omicron cursor-pointer' : 'disabled'" (click)="printOrderAsPdfFile()"  matTooltip="Generar PDF" matTooltipPosition="above">
                     print
                 </span>
+                <button [disabled]="!isThereOrdersToPlace" mat-raised-button
+                    [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'"
+                    (click)="requestMaterial()">Solicitud de insumos</button>    
                 <button [disabled]="!isThereOrdersToPlan" mat-raised-button
                         [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"
                         (click)="processOrdersService()">Planificar</button>

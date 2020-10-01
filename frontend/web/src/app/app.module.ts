@@ -18,7 +18,7 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
 
 @NgModule({
   declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent, ComponentslistComponent
+    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent, ComponentslistComponent,
   ],
     imports: [
         BrowserModule,

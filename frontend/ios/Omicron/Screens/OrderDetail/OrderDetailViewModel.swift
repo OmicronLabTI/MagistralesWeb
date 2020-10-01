@@ -22,7 +22,7 @@ class OrderDetailViewModel {
     //var showAlertConfirmationProcess = PublishSubject<String>()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
-    var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: 0)
+    var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
     var auxTabledata:[Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
     var finishedButtonDidTap = PublishSubject<Void>()
@@ -39,6 +39,7 @@ class OrderDetailViewModel {
     var technicalSignature = ""
     var endRefreshing = PublishSubject<Void>()
     var needsRefresh = true
+    var changeColorLabelsHt = PublishSubject<Void>()
     
     @Injected var rootViewModel: RootViewModel
     
@@ -94,6 +95,7 @@ class OrderDetailViewModel {
                 if(isRefresh) {
                     self.endRefreshing.onNext(())
                 }
+                self.changeColorLabelsHt.onNext(())
             }
         }, onError: { [weak self] error in
             guard let self = self else { return }

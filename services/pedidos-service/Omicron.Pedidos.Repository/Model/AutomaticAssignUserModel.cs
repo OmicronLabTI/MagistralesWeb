@@ -25,7 +25,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalCount { get; set; }
+        public decimal TotalCount { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
