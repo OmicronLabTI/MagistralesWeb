@@ -79,6 +79,8 @@
 		7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */; };
 		7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */; };
 		7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */; };
+		7CFC38952526560B00BA8AF2 /* InvalidCredentials.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CFC38942526560B00BA8AF2 /* InvalidCredentials.json */; };
+		7CFC38972526564900BA8AF2 /* UserNotExistsResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CFC38962526564900BA8AF2 /* UserNotExistsResponse.json */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
 		98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CB524AFBC6C00E7772F /* Main.storyboard */; };
@@ -197,6 +199,8 @@
 		7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewController.swift; sourceTree = "<group>"; };
 		7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewModel.swift; sourceTree = "<group>"; };
 		7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadModel.swift; sourceTree = "<group>"; };
+		7CFC38942526560B00BA8AF2 /* InvalidCredentials.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = InvalidCredentials.json; sourceTree = "<group>"; };
+		7CFC38962526564900BA8AF2 /* UserNotExistsResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserNotExistsResponse.json; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAC24AFBC6C00E7772F /* Omicron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Omicron.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -487,6 +491,8 @@
 				7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */,
 				7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */,
 				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
+				7CFC38942526560B00BA8AF2 /* InvalidCredentials.json */,
+				7CFC38962526564900BA8AF2 /* UserNotExistsResponse.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -701,6 +707,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */,
+				7CFC38972526564900BA8AF2 /* UserNotExistsResponse.json in Resources */,
 				7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */,
 				7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */,
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
@@ -719,6 +726,7 @@
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
+				7CFC38952526560B00BA8AF2 /* InvalidCredentials.json in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
 				7C8284A024F46FA30043ACE8 /* getLots.json in Resources */,

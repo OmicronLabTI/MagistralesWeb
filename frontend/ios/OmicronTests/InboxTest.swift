@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
+import RxDataSources
 
 @testable import Omicron
 
@@ -20,6 +21,7 @@ class InboxTest:  XCTestCase {
     var disposeBag: DisposeBag?
     var order1: Order?
     var order2: Order?
+    var orderItemCodeEmpty: Order?
     var orderTest1: Order?
     var orderTest2: Order?
     @Injected var networkManager: NetworkManager
@@ -54,6 +56,21 @@ class InboxTest:  XCTestCase {
             descriptionProduct: "Lactico 30% Solución",
             statusId: 1,
             itemCode: "1027S   30 ML",
+            productCode: "1027S",
+            destiny: "Local",
+            hasMissingStock: false)
+        
+        orderItemCodeEmpty = Order(
+            productionOrderId: 89995,
+            baseDocument: 60284,
+            container: "PRINCESS/ATOMIZADOR",
+            tag: "NA",
+            plannedQuantity: 1,
+            startDate: "22/09/2020",
+            finishDate: "30/09/2020",
+            descriptionProduct: "Lactico 30% Solución",
+            statusId: 1,
+            itemCode: "",
             productCode: "1027S",
             destiny: "Local",
             hasMissingStock: false)
@@ -362,7 +379,7 @@ class InboxTest:  XCTestCase {
         }).disposed(by: self.disposeBag!)
     }
     
-    func testSimilarityViewButtonDidTap() -> Void {
+    func testSimilarityViewButtonDidTapSucess() -> Void {
         var orders:[Order] = []
         orders.append(orderTest1!)
         orders.append(orderTest2!)
@@ -375,6 +392,42 @@ class InboxTest:  XCTestCase {
         }).disposed(by: self.disposeBag!)
         
         self.inboxViewModel!.similarityViewButtonDidTap.onNext(())
+    }
+    
+    func testSetSectionSimilaritySort() -> Void {
+        var orders:[Order] = []
+        orders.append(orderTest1!)
+        orders.append(orderTest2!)
+        self.inboxViewModel?.similaritySort = true
+        self.inboxViewModel?.normalSort = false
+        let section = SectionOrder(statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
+
+        self.inboxViewModel!.statusDataGrouped.subscribe(onNext: { res in
+            //XCTAssertTrue(res.count > 0)
+            if(res.count > 0 ) {
+                XCTAssertEqual(res[0].model, "Sin similitud")
+            }
+        }).disposed(by: self.disposeBag!)
+        
+        self.inboxViewModel!.setSelection(section: section)
+
+        
+        //self.inboxViewModel!.similarityViewButtonDidTap.onNext(())
+    }
+    
+    func testSimilarityViewButtonDidTapCodeProductIsEmpty() -> Void {
+        var orders:[Order] = []
+        orders.append(orderItemCodeEmpty!)
+        let section = SectionOrder(statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
+
+        self.inboxViewModel!.setSelection(section: section)
+        
+        self.inboxViewModel!.statusDataGrouped.subscribe(onNext: { res in
+            XCTAssertEqual(res[0].items[0].itemCode, CommonStrings.empty)
+        }).disposed(by: self.disposeBag!)
+        
+        self.inboxViewModel!.similarityViewButtonDidTap.onNext(())
+        
     }
     
     func testNormalViewButtonDidTap() -> Void {
@@ -407,6 +460,102 @@ class InboxTest:  XCTestCase {
         
         self.inboxViewModel!.groupByOrderNumberButtonDidTap.onNext(())
     }
+    
+    func testProcessDidTapSucess() -> Void {
+        // Then
+        self.inboxViewModel?.showAlertToChangeOrderOfStatus.subscribe(onNext: { message in
+            // When
+            XCTAssertEqual(message.message, CommonStrings.confirmationMessageProcessStatus)
+            XCTAssertEqual(message.typeOfStatus, StatusNameConstants.inProcessStatus)
+        }).disposed(by: self.disposeBag!)
+        
+        // Given
+        self.inboxViewModel?.processDidTap.onNext(())
+    }
+    
+    func testSetFilterWithOrderEmpty() -> Void {
+        
+        self.inboxViewModel?.title.subscribe(onNext: { message in
+            self.inboxViewModel?.statusDataGrouped.subscribe(onNext: { res in
+                if (res.count != 0) {
+                    XCTAssertEqual(res[0].model, CommonStrings.empty)
+                    XCTAssertTrue(res[0].items.count == 0)
+                }
+            }).disposed(by: self.disposeBag!)
+        }).disposed(by: self.disposeBag!)
+        
+        self.inboxViewModel?.setFilter(orders: [])
+    }
+    
+    func testSetFilterSuccess() -> Void {
+        self.inboxViewModel?.statusDataGrouped.subscribe(onNext: { res in
+            if (res.count != 0) {
+                XCTAssertEqual(res[0].model, CommonStrings.empty)
+                XCTAssertEqual(res[0].items[0].productionOrderId, 89284)
+            }
+        }).disposed(by: self.disposeBag!)
+        
+        self.inboxViewModel?.setFilter(orders: [self.order1!])
+    }
+    
+    
+    func testChangeStatusSuccess() -> Void {
+        
+        let indexPath = IndexPath(row: 0, section: 0)
+        let typeStatus = StatusNameConstants.inProcessStatus
+        
+        var orders: [Order] = []
+        orders.append(order1!)
+        orders.append(order2!)
+        let sectionModel = SectionModel(model: "", items: orders)
+        self.inboxViewModel?.sectionOrders = [sectionModel]
+        
+        
+        self.inboxViewModel?.processButtonIsEnable.subscribe(onNext: { res in
+            XCTAssertFalse(res)
+        }).disposed(by: self.disposeBag!)
+        
+        self.inboxViewModel?.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
+    }
+    
+    func testGetStatusNameAssignedStatusName() -> Void  {
+        let index = 0
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, StatusNameConstants.assignedStatus)
+    }
+    
+    func testGetStatusNameProcessStatusName() -> Void  {
+        let index = 1
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, StatusNameConstants.inProcessStatus)
+    }
+    
+    func testGetStatusNamePendingStatusName() -> Void  {
+        let index = 2
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, StatusNameConstants.penddingStatus)
+    }
+    
+    func testGetStatusNameFinishedStatusName() -> Void  {
+        let index = 3
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, StatusNameConstants.finishedStatus)
+    }
+    
+    func testGetStatusNameReasignedStatusName() -> Void  {
+        let index = 4
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, StatusNameConstants.reassignedStatus)
+    }
+    
+    func testGetStatusNameDefaultStatusName() -> Void  {
+        let index = 5
+        let statusName = self.inboxViewModel?.getStatusName(index: index)
+        XCTAssertEqual(statusName, CommonStrings.empty)
+    }
+    
+    
+    
     
 }
 
