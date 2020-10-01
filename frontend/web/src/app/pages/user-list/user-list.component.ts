@@ -53,6 +53,7 @@ export class UserListComponent implements OnInit, OnDestroy {
                 this.dataSource.data = userRes.response;
                 this.dataSource.data.forEach( user => {
                     user.isChecked = false;
+                    user.piezas = this.dataService.getFormattedNumber(user.piezas);
                 });
             },
             error => {
