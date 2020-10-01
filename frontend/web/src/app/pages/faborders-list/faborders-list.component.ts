@@ -159,6 +159,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.isAssignOrderIsolated = false;
         this.isReAssignOrderIsolated = false;
         this.isFinalizeOrderIsolated = false;
+        this.allComplete = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
