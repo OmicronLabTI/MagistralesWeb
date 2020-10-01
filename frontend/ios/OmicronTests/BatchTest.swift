@@ -17,14 +17,13 @@ class BatchesTest: XCTestCase {
     // MARK: -VARIABLES
     var lotsViewModel: LotsViewModel?
     var disposeBag: DisposeBag?
-    var networkManager: NetworkManager?
     var orderId: Int?
     var expectation: XCTestExpectation?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         lotsViewModel = LotsViewModel()
         disposeBag = DisposeBag()
-        networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         orderId = 0
         expectation = XCTestExpectation()
     }
@@ -32,7 +31,6 @@ class BatchesTest: XCTestCase {
     override func tearDown() {
         lotsViewModel = nil
         disposeBag = nil
-        networkManager = nil
         orderId = nil
         expectation =  nil
     }
@@ -41,7 +39,7 @@ class BatchesTest: XCTestCase {
     func testGetLotsSuccess() -> Void {
         
         // When
-        self.networkManager!.getLots(orderId: self.orderId!).subscribe(onNext: { res in
+        self.networkManager.getLots(orderId: self.orderId!).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response!.count > 0)
@@ -55,7 +53,7 @@ class BatchesTest: XCTestCase {
         batchesToSend.append(batch)
         
         // When
-        self.networkManager!.assignLots(lotsRequest: batchesToSend).subscribe(onNext: { res in
+        self.networkManager.assignLots(lotsRequest: batchesToSend).subscribe(onNext: { res in
             
             // Then
             XCTAssertNotNil(res)
@@ -195,7 +193,7 @@ class BatchesTest: XCTestCase {
     
     
     func testValidIfOrderCanBeFinalizedNotNull() {
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
             XCTAssertNotNil(res)
             self?.expectation?.fulfill()
         }).disposed(by: self.disposeBag!)
@@ -205,7 +203,7 @@ class BatchesTest: XCTestCase {
     
     func testValidIfOrderCanBeFinalizedValidCode() {
         
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
             XCTAssertTrue(res.code == 200)
             self?.expectation?.fulfill()
         }).disposed(by: self.disposeBag!)

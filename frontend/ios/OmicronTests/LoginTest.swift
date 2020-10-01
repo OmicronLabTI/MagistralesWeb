@@ -8,7 +8,7 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -16,36 +16,34 @@ class LoginTest: XCTestCase {
     
     //MARK: - VARIABLES
     var disposeBag: DisposeBag?
-    var viewModel: LoginViewModel?
-    var networkManager: NetworkManager?
+    var loginViewModel: LoginViewModel?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         print("XXXX setUp LoginTest")
-        self.networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         self.disposeBag = DisposeBag()
-        self.viewModel = LoginViewModel()
+        self.loginViewModel = LoginViewModel()
     }
     
     override func tearDown() {
         print("XXXX tearDown LoginTest")
-        self.networkManager = nil
         self.disposeBag = nil
-        self.viewModel = nil
+        self.loginViewModel = nil
     }
     
     //MARK: -TEST FUNCTIONS
     
     func testLoginValid() {
         let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY0NzM4ODAsInVzZXIiOiJzZXJjaCJ9.v3RAx7cmoBUXq8WexeGTux-1-qy_wYM-JCLmVzpsCRY"
-        self.viewModel!.username.onNext("sergio")
-        self.viewModel!.password.onNext("Passw0rd")
-        self.viewModel!.canLogin.asObservable().subscribe(onNext: { valid in
+        self.loginViewModel!.username.onNext("sergio")
+        self.loginViewModel!.password.onNext("Passw0rd")
+        self.loginViewModel!.canLogin.asObservable().subscribe(onNext: { valid in
             XCTAssertTrue(valid, testToken)
         }).disposed(by: self.disposeBag!)
     }
     
     func testLoginNotValid() {
-        self.viewModel!.canLogin.asObservable().subscribe(onNext: { valid in
+        self.loginViewModel!.canLogin.asObservable().subscribe(onNext: { valid in
             XCTAssertFalse(valid)
         }).disposed(by: self.disposeBag!)
     }
@@ -53,7 +51,7 @@ class LoginTest: XCTestCase {
     func testLoginService() -> Void {
         let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "", origin: "")
         let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY3MzM1NTgsInVzZXIiOiJzZXJnaW8ifQ.W9kstVRF9qm_s2diVt-Ki0xb4FwkXIA0QtEFSDAlXCM"
-            self.networkManager!.login(data: (data)).subscribe(onNext: { res in
+            self.networkManager.login(data: (data)).subscribe(onNext: { res in
             XCTAssertNotNil(res.access_token)
             XCTAssertEqual(res.access_token, testToken)
             }).disposed(by: self.disposeBag!)
@@ -61,7 +59,7 @@ class LoginTest: XCTestCase {
     
     func testGetInfoUsers() -> Void {
         let username = "sflores"
-        self.networkManager!.getInfoUser(username: username).subscribe(onNext: { res in
+        self.networkManager.getInfoUser(username: username).subscribe(onNext: { res in
             XCTAssertNotNil(res)
             XCTAssertTrue(res.code == 200)
             XCTAssertTrue(res.response?.id == "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb")
@@ -70,6 +68,12 @@ class LoginTest: XCTestCase {
              XCTAssertTrue(res.response?.lastName == "Flores")
         }).disposed(by: self.disposeBag!)
     }
+    
+//    func testDoLogin() -> Void {
+//        self.loginViewModel?.username.onNext("sflores")
+//        self.loginViewModel?.password.onNext("Sergio123")
+//        self.loginViewModel?.loginDidTap.onNext(())
+//    }
 }
 
 

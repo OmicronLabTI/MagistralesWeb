@@ -8,7 +8,7 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -23,6 +23,7 @@ class CommentsTest: XCTestCase {
     var message: String?
     var order: OrderDetailRequest?
     var expectation: XCTestExpectation?
+    @Injected var networkmanager: NetworkManager
     
     override func setUp() {
         chartViewModel = CommentsViewModel()
@@ -55,8 +56,7 @@ class CommentsTest: XCTestCase {
         
     func testValidResponse() -> Void {
         
-        NetworkManager
-            .shared
+        self.networkmanager
             .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] res in
@@ -67,8 +67,7 @@ class CommentsTest: XCTestCase {
     }
         
     func testValidCode() -> Void {
-        NetworkManager
-            .shared
+        self.networkmanager
             .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] res in

@@ -8,7 +8,7 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -17,6 +17,7 @@ class ComponetsTest: XCTestCase {
     //MARK: - VARIABLES
     var disposeBag: DisposeBag?
     var componentsViewModel: ComponentsViewModel?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         disposeBag = DisposeBag()
@@ -32,17 +33,17 @@ class ComponetsTest: XCTestCase {
     func testValidResponse() {
         let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
-        componentsViewModel!.dataChips.subscribe(onNext: { chips in
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
                 expectation.fulfill()
-            }).disposed(by: self.disposeBag!)
+            }).disposed(by: (self?.disposeBag)!)
             
         }).disposed(by: disposeBag!)
         
@@ -52,17 +53,17 @@ class ComponetsTest: XCTestCase {
     func testValidCodeNotNull() {
         let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
-        componentsViewModel!.dataChips.subscribe(onNext: { chips in
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
                 expectation.fulfill()
-            }).disposed(by: self.disposeBag!)
+            }).disposed(by: (self?.disposeBag)!)
             
         }).disposed(by: disposeBag!)
         
@@ -72,17 +73,17 @@ class ComponetsTest: XCTestCase {
     func testValidCode() {
         let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
-        componentsViewModel!.dataChips.subscribe(onNext: { chips in
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
                 expectation.fulfill()
-            }).disposed(by: self.disposeBag!)
+            }).disposed(by: (self?.disposeBag)!)
             
         }).disposed(by: disposeBag!)
         wait(for: [expectation], timeout: 1000)
@@ -99,9 +100,9 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
                 orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
-                NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!).subscribe(onNext: { res in
+                self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!).subscribe(onNext: { res in
                     XCTAssertNotNil(res.response)
                     expectationUpdateDeleteItemOfTableInOrderDetail.fulfill()
                 }).disposed(by: (self?.disposeBag)!)

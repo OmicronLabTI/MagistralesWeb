@@ -8,21 +8,20 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
 class ChartTest: XCTestCase {
 
     // MARK: - Variables
-    var networkManager: NetworkManager?
     var chartViewModel: ChartViewModel?
     var disposeBag: DisposeBag?
     var expectation: XCTestExpectation?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         print("XXXX setUp ChartTest")
-        networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         chartViewModel = ChartViewModel()
         disposeBag = DisposeBag()
         expectation = XCTestExpectation()
@@ -30,7 +29,6 @@ class ChartTest: XCTestCase {
     
     override func tearDown() {
         print("XXXX tearDown ChartTest")
-        networkManager = nil
         chartViewModel = nil
         disposeBag = nil
         expectation = nil
@@ -45,7 +43,7 @@ class ChartTest: XCTestCase {
     // MARK: - Test Functions
     
     func testValidResponse() {
-        networkManager!
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.response)
@@ -53,7 +51,7 @@ class ChartTest: XCTestCase {
     }
     
     func testValidCodeNotNull() {
-        networkManager!
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.code)
@@ -61,7 +59,7 @@ class ChartTest: XCTestCase {
     }
     
     func testValidCode() {
-        networkManager!
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssert(workloadResponse.code == 200)

@@ -8,7 +8,7 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -18,18 +18,17 @@ class InboxTest:  XCTestCase {
     var inboxViewModel: InboxViewModel?
     var rootViewModel: RootViewModel?
     var disposeBag: DisposeBag?
-    var networkManager: NetworkManager?
     var order1: Order?
     var order2: Order?
     var orderTest1: Order?
     var orderTest2: Order?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         print("XXXX setUp InboxTest")
         inboxViewModel = InboxViewModel()
         rootViewModel = RootViewModel()
         disposeBag = DisposeBag()
-        networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         order1 = Order(
             productionOrderId: 89284,
             baseDocument: 60067,
@@ -95,7 +94,6 @@ class InboxTest:  XCTestCase {
         inboxViewModel = nil
         rootViewModel = nil
         disposeBag = nil
-        networkManager = nil
         order1 = nil
         order2 = nil
         orderTest1 = nil
@@ -114,7 +112,7 @@ class InboxTest:  XCTestCase {
         arrayOfOrdersToChangeStatusToProgress.append(orderToChangeToChangeStatus)
         
         // When
-        networkManager!.changeStatusOrder(changeStatusRequest: arrayOfOrdersToChangeStatusToProgress).subscribe(onNext: { res in
+        networkManager.changeStatusOrder(changeStatusRequest: arrayOfOrdersToChangeStatusToProgress).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertNotNil(res.response)

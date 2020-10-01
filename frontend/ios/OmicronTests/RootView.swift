@@ -8,7 +8,7 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
@@ -16,27 +16,25 @@ import Moya
 class RootViewTest:  XCTestCase {
         
     // MARK: - VARIABLES
-    var networkManager: NetworkManager?
     var disposeBag: DisposeBag?
     var rootViewModel: RootViewModel?
+    @Injected var networkManager: NetworkManager
     
     override func setUp() {
         print("XXXX setUp RootViewTest")
-        networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
         disposeBag = DisposeBag()
         rootViewModel = RootViewModel()
     }
     
     override func tearDown() {
         print("XXXX tearDown RootViewTest")
-        networkManager = nil
         disposeBag = nil
         rootViewModel = nil
     }
 
     // MARK: - TEST FUNCTIONS
     func testGetStatusListServiceValid() -> Void {
-        self.networkManager!.getStatusList(userId: "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
+        self.networkManager.getStatusList(userId: "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
             XCTAssertNotNil(res)
             XCTAssertNotNil(res.response)
             XCTAssertTrue(res.code == 200)
