@@ -34,7 +34,6 @@ class ChartViewModel {
                 }
                 
                 }, onError: { [weak self] error in
-                    guard let self = self else { return }
                     print(error)
             }).disposed(by: disposeBag)
     }
