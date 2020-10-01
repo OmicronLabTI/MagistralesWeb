@@ -160,6 +160,32 @@ pipeline {
                 sh 'sudo kubectl apply -f deploy_prod.yaml'
             }
         }
+		stage('Deploy App Service'){
+			steps{
+				azureWebAppPublish(
+					appName: 'omicronlab',
+					azureCredentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78',
+					skipDockerBuild: true,
+					dockerImageName: ${ACR}/${COMPANY_LOWERCASE}-web-repository:latest,
+					dockerImageTag: "$tag",
+					dockerRegistryEndpoint: [credentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78', url: 'https://{ACR}'],
+					publishType: 'docker',
+					resourceGroup: 'OmicronProduccion',
+					slotName: 'staging'
+				)				
+			}
+		}
+		stage('Pass to production'){
+			steps{
+				azureWebAppSwapSlots(
+					azureCredentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78',
+					resourceGroup: 'OmicronProduccion',
+					appName: 'omicronlab',
+					sourceSlotName: 'staging',
+					targetSlotName: 'production'
+				)
+			}
+		}
         stage('Database') {
             steps {
                 dir ('database/'){
