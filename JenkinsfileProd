@@ -166,9 +166,9 @@ pipeline {
 					appName: 'omicronlab',
 					azureCredentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78',
 					skipDockerBuild: true,
-					dockerImageName: ${ACR}/${COMPANY_LOWERCASE}-web-repository,
+					dockerImageName: omicron-web-repository,
 					dockerImageTag: "$tag",
-					dockerRegistryEndpoint: [credentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78', url: 'https://{ACR}'],
+					dockerRegistryEndpoint: [credentialsId: '28a8a9b1-525e-4587-9e1f-0e692d2cfe78', url: 'https://omicron.azurecr.io'],
 					publishType: 'docker',
 					resourceGroup: 'OmicronProduccion',
 					slotName: 'staging'
