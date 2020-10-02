@@ -70,7 +70,6 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     this.today = new Date();
     this.minDate = new Date();
     this.maxDate = new Date();
-    const initDateTrans = this.fullDate[0].split('/');
     const finishDateTrans = this.fullDate[1].split('/');
     this.productivityForm.get('fini').setValue(new Date(
       this.today.getFullYear(),

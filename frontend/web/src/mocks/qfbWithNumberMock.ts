@@ -10,7 +10,6 @@ export const QfbWithNumberMock = {
             firstName: 'Vicente',
             lastName: 'Cantu',
             role: 2,
-            password: 'QXhpdHkyMDIw',
             activo: 1,
             piezas: 1000,
             asignable: 0
@@ -21,7 +20,6 @@ export const QfbWithNumberMock = {
             firstName: 'test',
             lastName: 'test',
             role: 2,
-            password: 'QXhpdHkyMDIw',
             activo: 1,
             piezas: 200,
             asignable: 0
@@ -32,7 +30,6 @@ export const QfbWithNumberMock = {
             firstName: 'Sutano',
             lastName: 'López Peréz',
             role: 2,
-            password: 'QXhpdHkyMDIw',
             activo: 1,
             piezas: 200,
             asignable: 0
@@ -43,7 +40,6 @@ export const QfbWithNumberMock = {
             firstName: 'QFBinactivo',
             lastName: 'QFBinactivo',
             role: 2,
-            password: 'VGFuaWExMj',
             activo: 0,
             piezas: 200,
             asignable: 0
