@@ -12,23 +12,27 @@ import Moya
 
 @testable import Omicron
 
-class Utils: XCTestCase {
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+class UtilsTest: XCTestCase {
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // MARK: VARIABLES
+    var utils: UtilsManager?
+    
+    override func setUp() {
+        print("XXXX setUp UtilsTest")
+        utils = UtilsManager.shared
     }
     
-    var utils = UtilsManager.shared
+    override func tearDown() {
+        print("XXXX tearDown UtilsTest")
+        utils = nil
+    }
     
     func testTransformDataToShowSuccess() -> Void {
         // given
         let testDate = "14/08/2020"
         
         // when
-        let result = UtilsManager.shared.formattedDateFromString(dateString: testDate, withFormat: "yyyy-MM-dd")
+        let result = utils!.formattedDateFromString(dateString: testDate, withFormat: "yyyy-MM-dd")
         
         //then
         XCTAssertEqual(result, "2020-08-14")
@@ -37,13 +41,13 @@ class Utils: XCTestCase {
     func testTransformDataNotNil() {
         
         let testDate = "14/08/2020"
-        let result = UtilsManager.shared.formattedDateFromString(dateString: testDate, withFormat: "yyyy-MM-dd")
+        let result = utils!.formattedDateFromString(dateString: testDate, withFormat: "yyyy-MM-dd")
         XCTAssertNotNil(result)
         
     }
     
     func testFormattedDateToString() {
-        let result = utils.formattedDateToString(date: Date(timeIntervalSinceReferenceDate: -123456789.0))
+        let result = utils!.formattedDateToString(date: Date(timeIntervalSinceReferenceDate: -123456789.0))
         XCTAssertEqual(result, "01/02/1997")
     }
 

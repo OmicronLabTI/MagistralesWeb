@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import Resolver
 
 class  OrderDetailFormViewModel {
     
@@ -17,6 +18,7 @@ class  OrderDetailFormViewModel {
     var disposeBag = DisposeBag()
     var success = PublishSubject<Int>()
     var response = PublishSubject<String>()
+    @Injected var networkManager:  NetworkManager
     
     // MARK: Init
     init() {
@@ -36,7 +38,7 @@ class  OrderDetailFormViewModel {
         
         let order = OrderDetailRequest(fabOrderID: (data.productionOrderID)!, plannedQuantity: data.plannedQuantity ?? 0.0, fechaFin: fechaFinFormated!, comments: "", components: componets)
         
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             self?.loading.onNext(false)
              self?.showAlert.onNext("Se registraron los cambios correctamente")
             self?.response.onNext(res.response ?? "")
