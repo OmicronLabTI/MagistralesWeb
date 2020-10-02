@@ -12,7 +12,7 @@ export class OrdersService {
   constructor(private consumeService: ConsumeService) { }
 
   getOrders(queryString: string) {
-    return this.consumeService.httpGet<IOrdersRes>(`${Endpoints.orders.getOrders}${queryString}`);
+    return this.consumeService.httpGet<IOrdersRes>(`${Endpoints.orders.endPointOrders}${queryString}`);
   }
 
   saveMyListComponent(myList) {
