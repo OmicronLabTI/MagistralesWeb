@@ -13,7 +13,7 @@
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
-                                   maxlength="50"
+                                   maxlength="7"
                                    class="height-input"
                                    formControlName="docNum"
                                    (keydown)="changeDocNumber($event)">
@@ -21,7 +21,7 @@
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                             <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 50 caracteres
+                                Solo 7 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -51,7 +51,7 @@
 
                                            [max]="dateFin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp3 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
+                                    <mat-datepicker #dp3 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
                                         Fecha de es <strong>requerido</strong>
                                     </mat-error>
@@ -63,7 +63,7 @@
                                     <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp2 [disabled]="findOrdersForm.get('docNum').value !== ''"></mat-datepicker>
+                                    <mat-datepicker #dp2 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                     <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
                                         Fecha hasta es <strong>requerido</strong>
                                     </mat-error>

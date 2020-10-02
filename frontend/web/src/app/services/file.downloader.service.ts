@@ -21,10 +21,8 @@ export class FileDownloaderService {
         this.downloadFileResult(response.body, fileType, fileName);
       }
       catch(err) {
-        console.log(err);
       }
     }, errorResponse => {
-      console.log(errorResponse);
     })
   }
 
@@ -35,7 +33,6 @@ export class FileDownloaderService {
     * @param {string} fileName - File name
  */
   public downloadFileResult(content: Blob, fileType, fileName: string): void {
-    console.log(content);
     const blob = new Blob([content], { type: fileType });
     const dwlLink = document.createElement('a');
     const url = URL.createObjectURL(blob);
