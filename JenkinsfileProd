@@ -103,7 +103,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-usuarios-repository:latest"
                     }
-                }*/
+                }
                 echo 'Building Pedidos'
                 dir ('services/pedidos-service/'){
                     sh 'dotnet publish Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj -c Release -o app/'
@@ -115,7 +115,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-pedidos-repository:latest"
                     }
-                }/*
+                }*/
 				echo 'Building SapAdapter'
                 dir ('services/sapadapter-service/'){
                     sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
@@ -127,7 +127,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-sapadapter-repository:latest"
                     }
-                }
+                }/*
 				echo 'Building warehouses'
                 dir ('services/warehouses-service/'){
                     sh 'dotnet publish Omicron.Warehouses.Api/Omicron.Warehouses.Api.csproj -c Release -o app/'
