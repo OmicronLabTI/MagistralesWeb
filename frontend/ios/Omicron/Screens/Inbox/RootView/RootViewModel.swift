@@ -12,11 +12,9 @@ import Moya // Borrar cuando se consuma bien el servicio
 import Resolver
 
 class RootViewModel {
-    
-    // MARK: Variables
+    // MARK: - Variables
     var sections: [SectionOrder] = []
     var selectedRow: BehaviorSubject<IndexPath?> = BehaviorSubject<IndexPath?>(value: nil)
-    
     public var dataStatus: BehaviorSubject<[SectionOrder]> = BehaviorSubject(value: [])
     var dataFilter = PublishSubject<[Order]?>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
@@ -28,10 +26,8 @@ class RootViewModel {
     var goToLoginViewController = PublishSubject<Void>()
     var searchFilter = PublishSubject<String>()
     var needsRefresh = true
-    
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
-    
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(true)
@@ -41,7 +37,6 @@ class RootViewModel {
                 self?.loading.onNext(false)
             }
         }).disposed(by: self.disposeBag)
-        
         self.searchFilter.subscribe(onNext: { [weak self] text in
             if text.count == 0 {
                 self?.dataFilter.onNext(nil)
@@ -56,9 +51,7 @@ class RootViewModel {
             self?.dataFilter.onNext(filter ?? [])
         }).disposed(by: disposeBag)
     }
-    
-    // MARK: Functions
-    
+    // MARK: - Functions
     func getOrders(isUpdate: Bool = false) -> Void {
         if isUpdate { needsRefresh = true }
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
@@ -72,33 +65,45 @@ class RootViewModel {
                         if let statusId = detail.statusId {
                             switch statusId {
                             case 1:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.assignedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.assigned, orders: orders)
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.assignedStatus,
+                                                    numberTask: orders.count,
+                                                    imageIndicatorStatus: IndicatorImageStatus.assigned, orders: orders)
                             case 2:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.inProcessStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.inProcess, orders: orders)
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.inProcessStatus,
+                                                    numberTask: orders.count,
+                                                    imageIndicatorStatus: IndicatorImageStatus.inProcess,
+                                                    orders: orders)
                             case 3:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.penddingStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.pendding, orders: orders)
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.penddingStatus,
+                                                    numberTask: orders.count,
+                                                    imageIndicatorStatus: IndicatorImageStatus.pendding,
+                                                    orders: orders)
                             case 4:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.finishedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.finished, orders: orders)
+                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.finishedStatus,
+                                                    numberTask: orders.count,
+                                                    imageIndicatorStatus: IndicatorImageStatus.finished,
+                                                    orders: orders)
                             case 5:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.reassignedStatus, numberTask: orders.count, imageIndicatorStatus: IndicatorImageStatus.reassined, orders: orders)
+                                return SectionOrder(statusId: statusId,
+                                                    statusName: StatusNameConstants.reassignedStatus,
+                                                    numberTask: orders.count,
+                                                    imageIndicatorStatus: IndicatorImageStatus.reassined,
+                                                    orders: orders)
                             default:
                                 break
                             }
                         }
-                        
                         return nil
                     })
                 })?.compactMap({ $0 }) ?? []
-                
                 self.sections = sections
-                
                 self.dataStatus.onNext(sections)
                 self.refreshSelection.onNext(sections.count)
                 if self.needsRefresh {
                     self.loading.onNext(false)
                     self.needsRefresh.toggle()
                 }
-                if(isUpdate) {
+                if isUpdate {
                     self.showRefreshControl.onNext(())
                 }
                 }, onError: { [weak self] err in

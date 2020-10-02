@@ -8,14 +8,11 @@
 
 import Foundation
 import ObjectMapper
-
-
 class AssingbBatchResponse: HttpResponse {
     var response: [String]?
     required init?(map: Map) {
         super.init(map: map)
     }
-    
     override func mapping(map: Map) {
         response <- map["response"]
     }
@@ -39,7 +36,9 @@ class Lots {
     var lotesSelecionados: [LotsSelected]?
     var lotesDisponibles: [LotsAvailable]?
     
-    init(codigoProducto: String, descripcionProducto: String, almacen: String, totalNecesario: Decimal, totalSeleccionado: Decimal, lotesSelecionados: [LotsSelected], lotesDisponibles: [LotsAvailable]) {
+    init(codigoProducto: String, descripcionProducto: String, almacen: String,
+         totalNecesario: Decimal, totalSeleccionado: Decimal,
+         lotesSelecionados: [LotsSelected], lotesDisponibles: [LotsAvailable]) {
         self.codigoProducto = codigoProducto
         self.descripcionProducto = descripcionProducto
         self.almacen = almacen
@@ -48,7 +47,6 @@ class Lots {
         self.lotesSelecionados = lotesSelecionados
         self.lotesDisponibles = lotesDisponibles
     }
-    
     required init?(map: Map) {}
 }
 
@@ -71,7 +69,8 @@ class LotsAvailable {
     var fechaExp: String?
     var expiredBatch: Bool = false
     
-    init (numeroLote: String?, cantidadDisponible: Decimal, cantidadAsignada: Decimal, cantidadSeleccionada: Decimal, sysNumber: Int, fechaExp: String?) {
+    init (numeroLote: String?, cantidadDisponible: Decimal, cantidadAsignada: Decimal,
+          cantidadSeleccionada: Decimal, sysNumber: Int, fechaExp: String?) {
         self.numeroLote = numeroLote
         self.cantidadDisponible = cantidadDisponible
         self.cantidadAsignada = cantidadAsignada
@@ -97,7 +96,6 @@ class LotsSelected: Codable {
     var cantidadSeleccionada: Decimal?
     var sysNumber: Int?
     var expiredBatch: Bool = false
-    
     init(numeroLote: String, cantidadSeleccionada: Decimal, sysNumber: Int, expiredBatch: Bool) {
         self.numeroLote = numeroLote
         self.cantidadSeleccionada = cantidadSeleccionada
@@ -120,7 +118,7 @@ class LotsAvailableInfo {
     var availableSelected: LotsAvailable?
     var quantitySelected: String
     
-    init(productSelected: Lots?, availableSelected: LotsAvailable?,  quantitySelected: String) {
+    init(productSelected: Lots?, availableSelected: LotsAvailable?, quantitySelected: String) {
         self.productSelected = productSelected
         self.availableSelected = availableSelected
         self.quantitySelected = quantitySelected
@@ -135,8 +133,8 @@ class BatchSelected: Codable {
     var action: String?
     var sysNumber: Int?
     var expiredBatch: Bool = false
-    
-    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool) {
+    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?,
+         itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber
@@ -147,7 +145,8 @@ class BatchSelected: Codable {
     }
     
     func toLotsSelected() -> LotsSelected {
-        return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!, sysNumber: self.sysNumber!, expiredBatch: self.expiredBatch)
+        return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!,
+                            sysNumber: self.sysNumber!, expiredBatch: self.expiredBatch)
     }
 }
 
@@ -157,7 +156,6 @@ class LotsRequest: Codable {
     var batchNumber: String?
     var itemCode: String?
     var action: String?
-    
     init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?) {
         self.orderId = orderId
         self.assignedQty = assignedQty
@@ -167,11 +165,9 @@ class LotsRequest: Codable {
     }
 }
 
-
-class cacheLotsSelected {
+class CacheLotsSelected {
     var indexOdLineDocumentsTableSelected: Int
     var lotsSelected: [LotsSelected]
-    
     init (indexOdLineDocumentsTableSelected: Int, lotsSelected: [LotsSelected]) {
         self.indexOdLineDocumentsTableSelected = indexOdLineDocumentsTableSelected
         self.lotsSelected = lotsSelected

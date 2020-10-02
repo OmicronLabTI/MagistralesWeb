@@ -34,11 +34,10 @@ extension ApiService: AuthorizedTargetType {
             return true
         }
     }
-    
     var baseURL: URL { return URL(string: Config.baseUrl)! }
     var path: String {
         switch self {
-        case .login(_):
+        case .login:
             return "/oauth/oauthrs/authorize"
         case .getInfoUser(let username):
             return "/usuarios/user/\(username)"
@@ -66,18 +65,26 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/qfb/workload"
         }
     }
-    
     var method: Moya.Method {
         switch self {
-        case .login, .renew, .finishOrder:
+        case .login,
+             .renew,
+             .finishOrder:
             return .post
-        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized, .getComponents, .getWorkload:
+        case .getInfoUser,
+             .getStatusList,
+             .getLots,
+             .getOrdenDetail,
+             .askIfOrderCanBeFinalized,
+             .getComponents,
+             .getWorkload:
             return .get
-        case .deleteItemOfOrdenDetail, .changeStatusOrder, .assingLots:
+        case .deleteItemOfOrdenDetail,
+             .changeStatusOrder,
+             .assingLots:
             return .put
         }
     }
-    
     var task: Task {
         switch self {
         case .login(let data):
@@ -100,7 +107,6 @@ extension ApiService: AuthorizedTargetType {
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         }
     }
-    
     var sampleData: Data {
         switch self {
         case .login:
@@ -129,7 +135,6 @@ extension ApiService: AuthorizedTargetType {
                     return Data()
             }
             return data
-            
         case .deleteItemOfOrdenDetail:
             guard let url = Bundle.main.url(forResource: "updateOrDeleteItemOfTable", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
@@ -142,35 +147,30 @@ extension ApiService: AuthorizedTargetType {
                     return Data()
             }
             return data
-            
         case .getLots:
             guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
             return data
-            
         case .finishOrder:
             guard let url = Bundle.main.url(forResource: "finishedOrderResponse", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
             return data
-            
         case .assingLots:
             guard let url = Bundle.main.url(forResource: "assingBatchesResponse", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
             return data
-            
         case .askIfOrderCanBeFinalized:
             guard let url = Bundle.main.url(forResource: "getLots", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
             return data
-        
         case .getComponents:
             guard let url = Bundle.main.url(forResource: "getComponents", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
@@ -195,7 +195,6 @@ private extension String {
     var urlEscaped: String {
         return addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
     }
-    
     var utf8Encoded: Data {
         return data(using: .utf8)!
     }

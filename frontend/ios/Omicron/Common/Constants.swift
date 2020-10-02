@@ -152,6 +152,9 @@ struct CommonStrings {
     static let batchSelected = "Lotes seleccionados"
     static let order = "Pedido:"
     static let ordersWithoutOrder = "Órdenes sin pedido: "
+    static let errorInComments = "Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo"
+    static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
 }
 
 struct FontsNames {
