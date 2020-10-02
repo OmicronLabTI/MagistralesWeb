@@ -93,11 +93,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }));
     this.subscriptionObservables.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
           if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
-            this.getOrders();
+            this.getOrdersAction();
           }
         }));
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
   }
 
   updateAllComplete() {
@@ -118,7 +118,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.getButtonsOrdersIsolatedToUnLooked();
   }
 
-  getOrders() {
+  getOrdersAction() {
     this.ordersService.getOrders(this.fullQueryString).subscribe(
       ordersRes => {
         this.lengthPaginator = ordersRes.comments;
@@ -185,7 +185,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
     return event;
   }
 
@@ -206,7 +206,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.offset = 0;
     this.limit = 10;
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
     this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
   }
 
@@ -249,7 +249,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       data: {
         finalizeOrdersData: this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
       }
-    }).afterClosed().subscribe(() => this.getOrders());
+    }).afterClosed().subscribe(() => this.getOrdersAction());
   }
 
     materialRequestIsolatedOrder() {

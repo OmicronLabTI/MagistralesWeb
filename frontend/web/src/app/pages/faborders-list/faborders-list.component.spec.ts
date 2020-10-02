@@ -9,13 +9,21 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FabordersListComponent } from './faborders-list.component';
 import {DataService} from "../../services/data.service";
 import {ConstOrders, HttpServiceTOCall} from "../../constants/const";
-import {Observable, of} from "rxjs";
+import {Observable, of, throwError} from "rxjs";
 import {RolesMock} from "../../../mocks/rolesMock";
+import {PedidosListMock} from "../../../mocks/pedidosListMock";
+import {FabOrderListMock} from "../../../mocks/fabOrderListMock";
+import {PedidosService} from "../../services/pedidos.service";
+import {OrdersService} from "../../services/orders.service";
+import {ErrorService} from "../../services/error.service";
+import {ErrorHttpInterface} from "../../model/http/commons";
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
   let fixture: ComponentFixture<FabordersListComponent>;
   let dataServiceSpy;
+  let ordersServiceSpy;
+  let errorServiceSpy;
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
@@ -23,6 +31,15 @@ describe('FabordersListComponent', () => {
         'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
         'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter'
     ]);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
+    ]);
+    ordersServiceSpy = jasmine.createSpyObj<OrdersService>('OrdersService', [
+      'getOrders'
+    ]);
+    ordersServiceSpy.getOrders.and.callFake(() => {
+      return of(FabOrderListMock);
+    });
     dataServiceSpy.getNewSearchOrdersModal.and.callFake(() => {
       return new Observable();
     });
@@ -38,6 +55,7 @@ describe('FabordersListComponent', () => {
       providers: [
         DatePipe,
         { provide: DataService, useValue: dataServiceSpy },
+        { provide: OrdersService, useValue: ordersServiceSpy }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -59,6 +77,60 @@ describe('FabordersListComponent', () => {
     // expect(component.queryString.includes('-')).toBeTruthy();
     expect(dataServiceSpy.getOrderIsolated).toHaveBeenCalled();
     expect(dataServiceSpy.removeOrderIsolated).toHaveBeenCalled();
+
+  });
+  it('should updateAllComplete', () => {
+    component.dataSource.data = FabOrderListMock.response;
+    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.updateAllComplete();
+    expect(component.allComplete).toBeFalsy();
+    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.updateAllComplete();
+    expect(component.allComplete).toBeTruthy();
+
+  });
+  it('should someComplete', () => {
+    component.dataSource.data = [];
+    component.dataSource.data = FabOrderListMock.response;
+    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.allComplete = false;
+    expect(component.someComplete()).toBeFalsy();
+    component.dataSource.data.forEach( user => user.isChecked = true);
+    expect(component.someComplete()).toBeTruthy();
+  });
+  it('should setAll', () => {
+    component.dataSource.data = null;
+    component.setAll(true);
+    expect(component.allComplete).toBeTruthy();
+    component.dataSource.data = FabOrderListMock.response;
+    component.setAll(true);
+    expect(component.allComplete).toBeTruthy();
+    expect(component.dataSource.data.every(user => user.isChecked)).toBeTruthy();
+    component.setAll(false);
+    expect(component.allComplete).toBeFalsy();
+    expect(component.dataSource.data.every(user => user.isChecked)).toBeFalsy();
+  });
+  it('should getOrdersAction()', () => {
+    component.getOrdersAction();
+    expect(component.dataSource.data).toEqual(FabOrderListMock.response);
+    expect(component.isThereOrdersIsolatedToCancel).toBeFalsy();
+    expect(component.isAssignOrderIsolated).toBeFalsy();
+    expect(component.isReAssignOrderIsolated).toBeFalsy();
+    expect(component.isFinalizeOrderIsolated).toBeFalsy();
+  });
+  it('should getOrdersAction() failed', () => {
+    ordersServiceSpy.getOrders.and.callFake(() => {
+      return throwError({ status: 500 } as ErrorHttpInterface);
+    });
+    component.getOrdersAction();
+    // expect(errorServiceSpy.httpError).toHaveBeenCalled();
+    expect(component.dataSource.data.length).toEqual(0);
+
+    ordersServiceSpy.getOrders.and.callFake(() => {
+      return throwError({ status: 404 } as ErrorHttpInterface);
+    });
+    component.getOrdersAction();
+    expect(errorServiceSpy.httpError).not.toHaveBeenCalled();
 
   });
 });

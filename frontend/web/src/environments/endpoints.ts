@@ -40,7 +40,7 @@ export const Endpoints = {
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   },
   orders: {
-    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+    endPointOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
     saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`,
     createPdf: `${environment.baseUrl}/api/pedidos/print/orders`
   },
