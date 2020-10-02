@@ -42,6 +42,7 @@ class OrderDetailViewModel {
     var changeColorLabelsHt = PublishSubject<Void>()
     
     @Injected var rootViewModel: RootViewModel
+    @Injected var networkManager: NetworkManager
     
     // MARK: Init
     init() {
@@ -73,7 +74,7 @@ class OrderDetailViewModel {
     // MARK: Functions
     func getOrdenDetail(isRefresh: Bool = false) -> Void {
         if needsRefresh { loading.onNext(true) }
-        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+        self.networkManager.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
             if (res.response != nil) {
                 self.orderDetailData.accept([res.response!])
@@ -143,7 +144,7 @@ class OrderDetailViewModel {
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: status)
 
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+        self.networkManager.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
             self?.rootViewModel.needsRefresh = true
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())
@@ -161,7 +162,7 @@ class OrderDetailViewModel {
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
         let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
 
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if(self?.tempOrderDetailData != nil ) {
                 self?.loading.onNext(false)
                 self?.tempOrderDetailData?.details?.remove(at: index)
@@ -186,7 +187,7 @@ class OrderDetailViewModel {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
 
-            NetworkManager.shared.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self.networkManager.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
             }, onError: { [weak self] error in
@@ -197,7 +198,7 @@ class OrderDetailViewModel {
     
     func validIfOrderCanBeFinalized() -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.showSignatureView.onNext(CommonStrings.qfbSignature)
             }, onError: { [weak self] error in

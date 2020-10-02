@@ -14,31 +14,36 @@ import Resolver
 @testable import Omicron
 
 class BatchesTest: XCTestCase {
-    
-    var lotsViewModel = LotsViewModel()
-    let disposeBag = DisposeBag()
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    let orderId = 0
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
     // MARK: -VARIABLES
+    var lotsViewModel: LotsViewModel?
+    var disposeBag: DisposeBag?
+    var orderId: Int?
+    var expectation: XCTestExpectation?
+    @Injected var networkManager: NetworkManager
+    
+    override func setUp() {
+        lotsViewModel = LotsViewModel()
+        disposeBag = DisposeBag()
+        orderId = 0
+        expectation = XCTestExpectation()
+    }
+    
+    override func tearDown() {
+        lotsViewModel = nil
+        disposeBag = nil
+        orderId = nil
+        expectation =  nil
+    }
     
     // MARK: -TEST FUNCTIONS
-    
     func testGetLotsSuccess() -> Void {
         
         // When
-        networkManager.getLots(orderId: orderId).subscribe(onNext: { res in
+        self.networkManager.getLots(orderId: self.orderId!).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response!.count > 0)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testAssingBatches() -> Void {
@@ -52,7 +57,7 @@ class BatchesTest: XCTestCase {
             
             // Then
             XCTAssertNotNil(res)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testCalculateExpiredBatchShoudBeFalse() -> Void {
@@ -60,7 +65,7 @@ class BatchesTest: XCTestCase {
         let dateTest = "30/11/2020"
         
         // When
-        let result = self.lotsViewModel.calculateExpiredBatch(date: dateTest)
+        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
         
         // Then
         XCTAssertFalse(result)
@@ -72,7 +77,7 @@ class BatchesTest: XCTestCase {
         let dateTest: String? = nil
         
         // When
-        let result = self.lotsViewModel.calculateExpiredBatch(date: dateTest)
+        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
         
         // Then
         XCTAssertFalse(result)
@@ -82,50 +87,50 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest: String = ""
         // Then
-        let result = self.lotsViewModel.calculateExpiredBatch(date: dateTest)
+        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
         
         // When
         XCTAssertFalse(result)
     }
     
     func testFinishOrderDidTapSuccess() -> Void {
-        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext:{ message in
+        self.lotsViewModel!.askIfUserWantToFinalizeOrder.subscribe(onNext:{ message in
             XCTAssertTrue(message == "¿Deseas terminar la orden?")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
         
-        self.lotsViewModel.finishOrderDidTap.onNext(())
+        self.lotsViewModel!.finishOrderDidTap.onNext(())
     }
     
     func testFinishOrderDidTapSuccessShoulBeFalse() -> Void {
-        self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { res in
+        self.lotsViewModel!.askIfUserWantToFinalizeOrder.subscribe(onNext: { res in
             XCTAssertFalse(res == "")
-        }).disposed(by: self.disposeBag)
-        self.lotsViewModel.finishOrderDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
+        self.lotsViewModel!.finishOrderDidTap.onNext(())
     }
     
     func testPendingOrderDidTapSuccess() -> Void {
-        self.lotsViewModel.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { res in
+        self.lotsViewModel!.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { res in
             XCTAssertTrue(res == "La orden cambiará a estatus Pendiente, ¿quieres continuar?")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
         
-        self.lotsViewModel.pendingButtonDidTap.onNext(())
+        self.lotsViewModel!.pendingButtonDidTap.onNext(())
     }
     
     func testPendingOrderDidTapShoulbBeFalse() -> Void {
-        self.lotsViewModel.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { res in
+        self.lotsViewModel!.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { res in
             XCTAssertFalse(res == "")
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
         
-        self.lotsViewModel.pendingButtonDidTap.onNext(())
+        self.lotsViewModel!.pendingButtonDidTap.onNext(())
     }
     
     func testAddLotsDidTapShoulBeNil() -> Void {
 
-        self.lotsViewModel.batchSelected.subscribe(onNext: { res in
+        self.lotsViewModel!.batchSelected.subscribe(onNext: { res in
             XCTAssertNil(res)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
         
-        self.lotsViewModel.addLotDidTap.onNext(())
+        self.lotsViewModel!.addLotDidTap.onNext(())
     }
     
     func testAddDidTapDataLotsSelectedEmpty() -> Void {
@@ -138,16 +143,16 @@ class BatchesTest: XCTestCase {
         
         let documentLines = Lots(codigoProducto: "MP-014", descripcionProducto: "Sulfato de Cobre pentahidratado USP", almacen: "MN", totalNecesario: 0.1800000, totalSeleccionado: 0.100000, lotesSelecionados: [], lotesDisponibles: [])
         
-        self.lotsViewModel.documentLines.append(documentLines)
+        self.lotsViewModel!.documentLines.append(documentLines)
         
-        self.lotsViewModel.productSelected.onNext(batch)
-        self.lotsViewModel.availableSelected.onNext(lotsAvailableSleceted)
+        self.lotsViewModel!.productSelected.onNext(batch)
+        self.lotsViewModel!.availableSelected.onNext(lotsAvailableSleceted)
         
-        self.lotsViewModel.addLotDidTap.onNext(())
+        self.lotsViewModel!.addLotDidTap.onNext(())
         
-        self.lotsViewModel.dataLotsSelected.subscribe(onNext: { res in
+        self.lotsViewModel!.dataLotsSelected.subscribe(onNext: { res in
             XCTAssertEqual(res.count, 0)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
     func testAddLotsDidTapSucess() -> Void {
@@ -161,55 +166,48 @@ class BatchesTest: XCTestCase {
         
         let documentLines = Lots(codigoProducto: "MP-014", descripcionProducto: "Sulfato de Cobre pentahidratado USP", almacen: "MN", totalNecesario: 0.1800000, totalSeleccionado: 0.108800, lotesSelecionados: [], lotesDisponibles: [])
         
-        self.lotsViewModel.documentLines.append(documentLines)
+        self.lotsViewModel!.documentLines.append(documentLines)
 
-        self.lotsViewModel.productSelected.onNext(batch)
-        self.lotsViewModel.availableSelected.onNext(lotsAvailableSleceted)
+        self.lotsViewModel!.productSelected.onNext(batch)
+        self.lotsViewModel!.availableSelected.onNext(lotsAvailableSleceted)
 
-        self.lotsViewModel.addLotDidTap.onNext(())
+        self.lotsViewModel!.addLotDidTap.onNext(())
         
-        self.lotsViewModel.dataLotsSelected.subscribe(onNext: { res in
+        self.lotsViewModel!.dataLotsSelected.subscribe(onNext: { res in
             XCTAssertTrue(res.count > 0)
             XCTAssertEqual(res[0].numeroLote, "19F02")
             XCTAssertEqual(res[0].cantidadSeleccionada, 0.108800)
             XCTAssertFalse(res[0].expiredBatch)
-        }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag!)
     }
     
 
     func testSaveLotsDidTapNotChanges() {
 
-        self.lotsViewModel.saveLotsDidTap.onNext(())
-        self.lotsViewModel.showMessage.subscribe(onNext: { res in
+        self.lotsViewModel!.saveLotsDidTap.onNext(())
+        self.lotsViewModel!.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, "No se han realizado modificaciones de lotes")
-        }).disposed(by: self.disposeBag)
-        self.lotsViewModel.saveLotsDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
+        self.lotsViewModel!.saveLotsDidTap.onNext(())
     }
     
     
     func testValidIfOrderCanBeFinalizedNotNull() {
-        
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
             XCTAssertNotNil(res)
-        }).disposed(by: self.disposeBag)
+            self?.expectation?.fulfill()
+        }).disposed(by: self.disposeBag!)
+        wait(for: [self.expectation!], timeout: 1000)
         
     }
     
     func testValidIfOrderCanBeFinalizedValidCode() {
         
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
             XCTAssertTrue(res.code == 200)
-        }).disposed(by: self.disposeBag)
-        
+            self?.expectation?.fulfill()
+        }).disposed(by: self.disposeBag!)
+        wait(for: [self.expectation!], timeout: 1000)
     }
-    
-    func testValidIfOrderCanBeFinalizedValidResponseNotNull() {
-        
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { res in
-            XCTAssertNotNil(res.response)
-        }).disposed(by: self.disposeBag)
-        
-    }
-    
 }
 
