@@ -8,93 +8,119 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
 class ComponetsTest: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
+    
     //MARK: - VARIABLES
-    let disposeBag = DisposeBag()
-    let componentsViewModel = ComponentsViewModel()
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
+    var disposeBag: DisposeBag?
+    var componentsViewModel: ComponentsViewModel?
+    @Injected var networkManager: NetworkManager
+    
+    override func setUp() {
+        disposeBag = DisposeBag()
+        componentsViewModel = ComponentsViewModel()
+    }
+    
+    override func tearDown() {
+        disposeBag = nil
+        componentsViewModel = nil
+    }
     
     //MARK: - TEST FUNCTIONS
-    
     func testValidResponse() {
-        
-        componentsViewModel.dataChips.onNext(["Base"])
-        componentsViewModel.dataChips.subscribe(onNext: { chips in
+        let expectation = XCTestExpectation(description: "ComponetsTest")
+        componentsViewModel!.dataChips.onNext(["Base"])
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
-                self.testSaveComponent(componentO: res.response)
-            }).disposed(by: self.disposeBag)
+                expectation.fulfill()
+            }).disposed(by: (self?.disposeBag)!)
             
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
+        wait(for: [expectation], timeout: 1000)
     }
     
     func testValidCodeNotNull() {
-        
-        componentsViewModel.dataChips.onNext(["Base"])
-        componentsViewModel.dataChips.subscribe(onNext: { chips in
+        let expectation = XCTestExpectation(description: "ComponetsTest")
+        componentsViewModel!.dataChips.onNext(["Base"])
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
-            }).disposed(by: self.disposeBag)
+                expectation.fulfill()
+            }).disposed(by: (self?.disposeBag)!)
             
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
+        wait(for: [expectation], timeout: 1000)
     }
     
     func testValidCode() {
-        
-        componentsViewModel.dataChips.onNext(["Base"])
-        componentsViewModel.dataChips.subscribe(onNext: { chips in
+        let expectation = XCTestExpectation(description: "ComponetsTest")
+        componentsViewModel!.dataChips.onNext(["Base"])
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips)
             
-            NetworkManager.shared.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
-            }).disposed(by: self.disposeBag)
+                expectation.fulfill()
+            }).disposed(by: (self?.disposeBag)!)
             
-        }).disposed(by: disposeBag)
-        
+        }).disposed(by: disposeBag!)
+        wait(for: [expectation], timeout: 1000)
     }
     
-    func testSaveComponent(componentO: [ComponentO]?) {
+    func testSaveComponentSuccess() -> Void {
+        let expectationGetComponents = XCTestExpectation(description: "ComponetsTest")
+        let expectationUpdateDeleteItemOfTableInOrderDetail = XCTestExpectation()
+        var orderDetailRequest:OrderDetailRequest? = nil
+        componentsViewModel!.dataChips.onNext(["Base"])
+        componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
+            
+            let request = ComponentRequest(
+                offset: Constants.Components.offset.rawValue,
+                limit: Constants.Components.limit.rawValue,
+                chips: chips)
+            self?.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
+                orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
+                self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!).subscribe(onNext: { res in
+                    XCTAssertNotNil(res.response)
+                    expectationUpdateDeleteItemOfTableInOrderDetail.fulfill()
+                }).disposed(by: (self?.disposeBag)!)
+                expectationGetComponents.fulfill()
+            }).disposed(by: (self?.disposeBag)!)
+            
+        }).disposed(by: disposeBag!)
         
-        XCTAssertNotNil(componentO)
-        XCTAssertNotNil(componentO?.first)
-        
-        guard let componentO = componentO else { return }
-        guard let comp = componentO.first else { return }
+        wait(for: [expectationGetComponents, expectationUpdateDeleteItemOfTableInOrderDetail], timeout: 1000)
+    }
+    
+    func returnOrderDetailRequest(componentO: [ComponentO]?) -> OrderDetailRequest? {
+        guard let componentO = componentO else { return nil }
+        guard let comp = componentO.first else { return  nil }
         let values = ComponentFormValues(baseQuantity: 2.0, requiredQuantity: 2.0, warehouse: "MN")
         
         let productOrderId = 89466
-        let plannedQuantity = 1
+        let plannedQuantity: Decimal = 1.0
         let fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "13/09/2020", withFormat: "yyyy-MM-dd") ?? ""
         
         let component = Component(
@@ -118,28 +144,20 @@ class ComponetsTest: XCTestCase {
             fechaFin: fechaFin,
             comments: "",
             components: [component])
+        return orderDetailReq
+    }
+    
+    
+    func testSearchDidTapSuccess() -> Void {
+        componentsViewModel?.searchFilter.onNext("Crema")
         
-        testValidResponse(req: orderDetailReq)
-        testValidCodeNotNull(req: orderDetailReq)
-        testValidCode(req: orderDetailReq)
+        componentsViewModel?.dataChips.subscribe(onNext: { res in
+            print(res)
+            if res.count > 0 {
+                XCTAssertEqual(res[0],"Crema" )
+            }
+        }).disposed(by: self.disposeBag!)
+        
+        componentsViewModel?.searchDidTap.onNext(())
     }
-    
-    func testValidResponse(req: OrderDetailRequest) {
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { res in
-            XCTAssertNotNil(res.response)
-        }).disposed(by: disposeBag)
-    }
-    
-    func testValidCodeNotNull(req: OrderDetailRequest) {
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { res in
-            XCTAssertNotNil(res.code)
-        }).disposed(by: disposeBag)
-    }
-    
-    func testValidCode(req: OrderDetailRequest) {
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { res in
-            XCTAssert(res.code == 200)
-        }).disposed(by: disposeBag)
-    }
-
 }

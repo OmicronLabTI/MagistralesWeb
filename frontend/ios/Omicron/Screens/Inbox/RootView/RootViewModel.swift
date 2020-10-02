@@ -30,6 +30,7 @@ class RootViewModel {
     var needsRefresh = true
     
     @Injected var chartViewModel: ChartViewModel
+    @Injected var networkManager: NetworkManager
     
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -63,7 +64,7 @@ class RootViewModel {
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
             chartViewModel.getWorkload()
-            NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
+            self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 let sections = res.response?.status.map({ status in
                     return status.map({ detail -> SectionOrder? in

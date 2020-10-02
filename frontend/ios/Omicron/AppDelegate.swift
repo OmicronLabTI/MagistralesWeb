@@ -8,6 +8,7 @@
 
 import UIKit
 import Resolver
+import Moya
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -33,6 +34,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func setupRegistrationsDI() {
+        Resolver.register {
+                    Config.isRunningTests ? NetworkManager(
+                        provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+                            AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
+                        ])) : NetworkManager()
+                }.scope(Resolver.cached)
         Resolver.register { LoginViewModel() }
         Resolver.register { InboxViewModel() }.scope(Resolver.cached)
         Resolver.register { RootViewModel() }.scope(Resolver.cached)
