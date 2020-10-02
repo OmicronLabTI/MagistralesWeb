@@ -146,4 +146,18 @@ class ComponetsTest: XCTestCase {
             components: [component])
         return orderDetailReq
     }
+    
+    
+    func testSearchDidTapSuccess() -> Void {
+        componentsViewModel?.searchFilter.onNext("Crema")
+        
+        componentsViewModel?.dataChips.subscribe(onNext: { res in
+            print(res)
+            if res.count > 0 {
+                XCTAssertEqual(res[0],"Crema" )
+            }
+        }).disposed(by: self.disposeBag!)
+        
+        componentsViewModel?.searchDidTap.onNext(())
+    }
 }
