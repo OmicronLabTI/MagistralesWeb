@@ -32,6 +32,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
         public SapDiApi(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+            this.httpClient.Timeout = new System.TimeSpan(0, 0, 30);
         }
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
         {
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(pedidos), UnicodeEncoding.UTF8, "application/json");
+            this.httpClient.Timeout = new System.TimeSpan(0, 2, 0);
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
