@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Resolver
-
+// swiftlint:disable type_body_length
 class OrderDetailViewController: UIViewController {
     // Outlets
     @IBOutlet weak var processButton: UIButton!

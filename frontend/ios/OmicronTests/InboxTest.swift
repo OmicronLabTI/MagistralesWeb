@@ -39,7 +39,9 @@ class InboxTest:  XCTestCase {
             plannedQuantity: 1,
             startDate: "27/08/2020",
             finishDate:  "06/09/2020",
-            descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
+            descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
+            "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
+            "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1,
             itemCode: "3264   120 ML",
             productCode: "3264",
@@ -120,6 +122,7 @@ class InboxTest:  XCTestCase {
     // MARK: - TEST FUNCTIONS
     func testChangingAnOrderToStatusProcessSuccess() -> Void {
         // Given
+        // swiftlint:disable line_length
         let response = "[{\"Id\":400,\"Userid\":\"d125566b-6321-4854-9a42-10fb5c5e4cc1\",\"Salesorderid\":\"\",\"Productionorderid\":\"89628\",\"Status\":\"Proceso\",\"Comments\":null,\"FinishDate\":null,\"CreationDate\":\"10/09/2020 09:44:31 AM\",\"CreatorUserId\":\"14409829-caa8-42f5-83e8-bc52b1f7afa5\",\"CloseDate\":null,\"CloseUserId\":null,\"IsIsolatedProductionOrder\":true,\"IsSalesOrder\":false,\"IsProductionOrder\":true,\"StatusOrder\":5}]"
         let userId = "d125566b-6321-4854-9a42-10fb5c5e4cc1"
         let orderId = 89628
@@ -153,10 +156,15 @@ class InboxTest:  XCTestCase {
     func testGroupedWithSimilarityOrWithoutSimilarityShouldBeGroupedWithoutSimilarity() -> Void {
         // Given
         var data: [String?:[Order]] = [:]
-        let order = Order(productionOrderId: 89852, baseDocument: 0, container: "", tag: "", plannedQuantity: 1, startDate: "14/09/2020", finishDate: "14/09/2020", descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01", productCode: "BA-01", destiny: "Local", hasMissingStock: false)
+        let order = Order(productionOrderId: 89852, baseDocument: 0, container: "", tag: "",
+                          plannedQuantity: 1, startDate: "14/09/2020", finishDate: "14/09/2020",
+                          descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01",
+                          productCode: "BA-01", destiny: "Local", hasMissingStock: false)
         data["BA-01"] = [order]
         // When
-        let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(data: data, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity, titleForOrdersWithSimilarity: CommonStrings.product)
+        let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(
+            data: data, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+            titleForOrdersWithSimilarity: CommonStrings.product)
         
         // Then
         XCTAssertFalse(sectionModels.count == 0)
@@ -172,7 +180,9 @@ class InboxTest:  XCTestCase {
             data["BA-01"] = orders
             
             // When
-            let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(data: data, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity, titleForOrdersWithSimilarity: CommonStrings.product)
+            let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(
+                data: data, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+                titleForOrdersWithSimilarity: CommonStrings.product)
             
             // Then
             XCTAssertEqual(sectionModels[0].model, "Producto: BA-01")

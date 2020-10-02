@@ -143,7 +143,8 @@ class LoginViewController: UIViewController {
         
         button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
         
-        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))", textToBold: "Versión: ")
+        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(
+            text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))", textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
         self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
     }
@@ -168,8 +169,8 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func btnPasswordVisibilityClicked( sender: Any) {
-        (sender as! UIButton).isSelected = !(sender as! UIButton).isSelected
-        if (sender as! UIButton).isSelected {
+        (sender as? UIButton)?.isSelected = !(sender as? UIButton)!.isSelected
+        if (sender as? UIButton)!.isSelected {
             passwordTextField.isSecureTextEntry = false
             button.setImage(UIImage(named: ImagesNames.openEye), for: .normal)
         } else {

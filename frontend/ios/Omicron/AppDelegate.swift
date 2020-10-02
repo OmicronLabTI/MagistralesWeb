@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register {
                     Config.isRunningTests ? NetworkManager(
                         provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
-                            AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
+                            AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
                         ])) : NetworkManager()
                 }.scope(Resolver.cached)
         Resolver.register { LoginViewModel() }

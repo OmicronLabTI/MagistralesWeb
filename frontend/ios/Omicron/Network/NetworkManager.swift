@@ -29,7 +29,7 @@ class NetworkManager: SessionProtocol {
     // MARK: Variables
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
         NetworkLoggerPlugin(
             configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
     ])) {
@@ -37,7 +37,7 @@ class NetworkManager: SessionProtocol {
     }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
-        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refresh_token ?? "")
+        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refreshToken ?? "")
         return self.provider.rx.request(.renew(data: data))
     }
     // Parse and save your token locally or do any thing with the new token here

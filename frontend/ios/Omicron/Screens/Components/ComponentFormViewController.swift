@@ -31,6 +31,7 @@ class ComponentFormViewController: FormViewController {
         self.viewModelBinding()
     }
     // MARK: Functions
+    // swiftlint:disable function_body_length
     func buildForm(component: ComponentO, order: Order) {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red

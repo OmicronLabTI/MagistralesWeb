@@ -87,7 +87,11 @@ class OrderDetailTest: XCTestCase {
     
     func testDeleteItemOfTableOrderDetailSucces() -> Void {
         // Given
-        let components = Component(orderFabID: 89838, productId: "MP-024", componentDescription: "Carbopol Ultrez 21", baseQuantity: 0.012, requiredQuantity: 0.012, consumed:  0, available: 12.657999999999999, unit: "KG", warehouse: "MP", pendingQuantity: 0.012, stock: 13.994999999999999, warehouseQuantity: 12.67, action: "delete")
+        let components = Component(orderFabID: 89838, productId: "MP-024",
+                                   componentDescription: "Carbopol Ultrez 21", baseQuantity: 0.012,
+                                   requiredQuantity: 0.012, consumed:  0, available: 12.657999999999999,
+                                   unit: "KG", warehouse: "MP", pendingQuantity: 0.012, stock: 13.994999999999999,
+                                   warehouseQuantity: 12.67, action: "delete")
         
         let order = OrderDetailRequest(fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", components: [components])
         
@@ -102,7 +106,10 @@ class OrderDetailTest: XCTestCase {
     
     func testUpdateItemOfTableOrderDetailSucces() -> Void {
         // Given
-        let components = Component(orderFabID: 89838, productId: "MP-024", componentDescription: "Carbopol Ultrez 21", baseQuantity: 0.012, requiredQuantity: 0.012, consumed:  0, available: 12.657999999999999, unit: "KG", warehouse: "MP", pendingQuantity: 0.012, stock: 13.994999999999999, warehouseQuantity: 12.67, action: "update")
+        let components = Component(orderFabID: 89838, productId: "MP-024",
+                                   componentDescription: "Carbopol Ultrez 21", baseQuantity: 0.012,
+                                   requiredQuantity: 0.012, consumed:  0, available: 12.657999999999999, unit: "KG", warehouse: "MP",
+                                   pendingQuantity: 0.012, stock: 13.994999999999999, warehouseQuantity: 12.67, action: "update")
         
         let order = OrderDetailRequest(fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", components: [components])
         
@@ -145,7 +152,11 @@ class OrderDetailTest: XCTestCase {
     func testChangeStatusOrderPendingSuccess() -> Void {
         // Given
         let status = "Pendiente"
-        let response = "[{\"Id\":400,\"Userid\":\"d125566b-6321-4854-9a42-10fb5c5e4cc1\",\"Salesorderid\":\"\",\"Productionorderid\":\"89628\",\"Status\":\"Proceso\",\"Comments\":null,\"FinishDate\":null,\"CreationDate\":\"10/09/2020 09:44:31 AM\",\"CreatorUserId\":\"14409829-caa8-42f5-83e8-bc52b1f7afa5\",\"CloseDate\":null,\"CloseUserId\":null,\"IsIsolatedProductionOrder\":true,\"IsSalesOrder\":false,\"IsProductionOrder\":true,\"StatusOrder\":5}]"
+        let response = "[{\"Id\":400,\"Userid\":\"d125566b-6321-4854-9a42-10fb5c5e4cc1\",\"Salesorderid\":\"\"," +
+        "\"Productionorderid\":\"89628\",\"Status\":\"Proceso\",\"Comments\":null,\"FinishDate\":null," +
+        "\"CreationDate\":\"10/09/2020 09:44:31 AM\",\"CreatorUserId\":\"14409829-caa8-42f5-83e8-bc52b1f7afa5\"," +
+        "\"CloseDate\":null,\"CloseUserId\":null,\"IsIsolatedProductionOrder\":true,\"IsSalesOrder\":false," +
+        "\"IsProductionOrder\":true,\"StatusOrder\":5}]"
         let changeStatus = ChangeStatusRequest(userId: "", orderId: 89026, status: status)
         // When
         networkManager.changeStatusOrder(changeStatusRequest: [changeStatus]).subscribe(onNext: { res in

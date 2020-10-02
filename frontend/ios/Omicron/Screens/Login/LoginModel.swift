@@ -8,15 +8,13 @@
 
 import Foundation
 import ObjectMapper
-
 struct Login: Codable {
     var user: String
     var password: String
     var redirectUri: String?
     var clientId2: String?
     var origin: String?
-    
-    init(username: String, password: String, redirectUri: String , clientId2: String, origin: String) {
+    init(username: String, password: String, redirectUri: String, clientId2: String, origin: String) {
         self.user = username
         self.password = password
         self.redirectUri = redirectUri
@@ -24,20 +22,17 @@ struct Login: Codable {
         self.origin = origin
     }
 }
-
 struct Renew: Codable {
-    var refresh_token: String
-    
+    var refreshToken: String
     init(refreshToken: String) {
-        self.refresh_token = refreshToken
+        self.refreshToken = refreshToken
     }
 }
-
 class LoginResponse: Codable {
-    var access_token: String?
-    var refresh_token: String?
-    var token_type: String?
-    var expires_in: Int?
+    var accessToken: String?
+    var refreshToken: String?
+    var tokenType: String?
+    var expiresIn: Int?
     var scope: String?
     
     required init?(map: Map) {}
@@ -45,10 +40,10 @@ class LoginResponse: Codable {
 
 extension LoginResponse: Mappable {
     func mapping(map: Map) {
-        access_token <- map["access_token"]
-        refresh_token <- map["refresh_token"]
-        token_type <- map["token_type"]
-        expires_in <- map["expires_in"]
+        accessToken <- map["access_token"]
+        refreshToken <- map["refresh_token"]
+        tokenType <- map["token_type"]
+        expiresIn <- map["expires_in"]
         scope <- map["scope"]
     }
 }

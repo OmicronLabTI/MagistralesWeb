@@ -35,6 +35,7 @@ class OrderDetailFormViewController: FormViewController {
         print("Se muere el ipad")
     }
     // MARK: Functions
+    // swiftlint:disable function_body_length
     func buildForm() {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
@@ -60,6 +61,7 @@ class OrderDetailFormViewController: FormViewController {
         form
             +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
             <<< TextRow { [weak self] in
+                
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
                 $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?

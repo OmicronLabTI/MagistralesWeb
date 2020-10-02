@@ -61,8 +61,8 @@ class LoginTest: XCTestCase {
         // Then
         self.networkManager.login(data: (data)).subscribe(onNext: { res in
             // When
-            XCTAssertNotNil(res.access_token)
-            XCTAssertEqual(res.access_token, testToken)
+            XCTAssertNotNil(res.accessToken)
+            XCTAssertEqual(res.accessToken, testToken)
         }).disposed(by: self.disposeBag!)
     }
     
@@ -165,16 +165,4 @@ class LoginTest: XCTestCase {
 //
 //
 }
-
-
-
-//    func testRenewService() {
-//        let disposeBag = DisposeBag()
-//        let data = Renew(refresh_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGllbnRJZCI6IiIsInByb2ZpbGUiOiJhZG1pbiIsImV4cCI6MTU5NjgyNjU2MiwidXNlciI6Imd1eiJ9.2O4TsKp1uGqBRJ5dobk7xZHsSe5TvXVhxRTPu0oviYY")
-//        let manager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-//        manager.renew(data: data).subscribe(onNext: { res in
-//            XCTAssertNotNil(res.access_token)
-//            XCTAssertEqual(res.access_token, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY1ODE3NTksInVzZXIiOiJzZXJnaW8ifQ.ArIbPJJyUSpEG3Hg9tuw00Z-eE4wtKbmsmzdS0gUuEc")
-//        }).disposed(by: disposeBag)
-//    }
 
