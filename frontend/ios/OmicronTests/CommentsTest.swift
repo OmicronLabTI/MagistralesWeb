@@ -15,18 +15,17 @@ import Resolver
 class CommentsTest: XCTestCase {
 
     // MARK: - Variables
-    var chartViewModel: CommentsViewModel?
+    var sut: CommentsViewModel?
     var disposeBag: DisposeBag?
     var productionOrderID: Int?
     var plannedQuantity: Decimal?
     var fechaFin: String?
     var message: String?
     var order: OrderDetailRequest?
-    var expectation: XCTestExpectation?
     @Injected var networkmanager: NetworkManager
     
     override func setUp() {
-        chartViewModel = CommentsViewModel()
+        sut = CommentsViewModel()
         disposeBag = DisposeBag()
         productionOrderID = 89623
         plannedQuantity = 1.0
@@ -38,18 +37,16 @@ class CommentsTest: XCTestCase {
             fechaFin: fechaFin!,
             comments: message!,
             components: [])
-        expectation = XCTestExpectation()
     }
     
     override func tearDown() {
-        chartViewModel = nil
+        sut = nil
         disposeBag = nil
         productionOrderID = nil
         plannedQuantity = nil
         fechaFin = nil
         message = nil
         order = nil
-        expectation = nil
     }
     
     // MARK: - Test Functions
@@ -59,22 +56,39 @@ class CommentsTest: XCTestCase {
         self.networkmanager
             .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] res in
+            .subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
-                self?.expectation?.fulfill()
             }).disposed(by: self.disposeBag!)
-        wait(for: [self.expectation!], timeout: 1000)
     }
         
-    func testValidCode() -> Void {
-        self.networkmanager
-            .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] res in
-                XCTAssertNotNil(res.code == 200)
-                self?.expectation?.fulfill()
-            }).disposed(by: self.disposeBag!)
-        wait(for: [self.expectation!], timeout: 1000)
+    func testAceptDidTapSuccessFromOrderDetailViewController() -> Void {
+        // Given
+        sut?.textView.onNext("Texto de Prueba")
+        sut?.originView = ViewControllerIdentifiers.orderDetailViewController
+        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+            self?.sut?.orderDetail = [res.response!]
+            self?.sut?.backToOrderDetail.subscribe(onNext: { _ in
+                // When
+                XCTAssertTrue(true)
+            }).disposed(by: (self?.disposeBag)!)
+            // Then
+            self?.sut?.aceptDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
+    }
+    
+    func testAceptDidTapSuccessFromLotsViewController() -> Void {
+        // Given
+        sut?.textView.onNext("Texto de Prueba")
+        sut?.originView = ViewControllerIdentifiers.lotsViewController
+        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+            self?.sut?.orderDetail = [res.response!]
+            self?.sut?.backToLots.subscribe(onNext: { _ in
+                // When
+                XCTAssertTrue(true)
+            }).disposed(by: (self?.disposeBag)!)
+            // Then
+            self?.sut?.aceptDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
     }
     
 }
