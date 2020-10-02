@@ -35,7 +35,7 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <inheritdoc/>
         public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
-            return await this.databaseContext.Usuarios.ToListAsync();
+            return await this.databaseContext.Usuarios.Where(x => !x.Deleted).ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -71,7 +71,14 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         public async Task<bool> DeleteUsers(List<string> id)
         {
             var users = (await this.databaseContext.Usuarios.Where(x => id.Contains(x.Id)).ToListAsync()).ToList();
-            this.databaseContext.Usuarios.RemoveRange(users);
+            users.ForEach(x =>
+            {
+                x.Deleted = true;
+                x.Activo = 0;
+                x.Asignable = 0;
+                x.Piezas = 0;
+            });
+            this.databaseContext.Usuarios.UpdateRange(users);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
@@ -105,7 +112,7 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <returns>the result.</returns>
         public async Task<IEnumerable<UserModel>> GetUsersByRole(int roleId)
         {
-            return await this.databaseContext.Usuarios.Where(x => x.Role == roleId).ToListAsync();
+            return await this.databaseContext.Usuarios.Where(x => x.Role == roleId && !x.Deleted).ToListAsync();
         }
 
         /// <summary>
