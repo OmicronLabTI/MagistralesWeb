@@ -1,16 +1,25 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatTableDataSource} from '@angular/material/table';
-import {MaterialComponent} from '../../model/http/materialReques';
+import {MaterialComponent, RawRequest, RawRequestPost} from '../../model/http/materialReques';
 import {MaterialRequestService} from '../../services/material-request.service';
-import {CONST_NUMBER, CONST_STRING, TypeProperty} from '../../constants/const';
+import {
+  ClassNames,
+  ComponentSearch,
+  CONST_NUMBER,
+  CONST_STRING, HttpServiceTOCall,
+  MessageType
+} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material';
-import { RequestSignatureDialogComponent } from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
-import {isNumber} from "util";
+import {RequestSignatureDialogComponent} from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
+import {DataService} from '../../services/data.service';
+import {Messages} from '../../constants/messages';
+import {Location} from '@angular/common';
+import {Subscription} from 'rxjs';
+import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
-import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 
 
 @Component({
@@ -18,25 +27,29 @@ import { FileDownloaderService } from 'src/app/services/file.downloader.service'
   templateUrl: './material-request.component.html',
   styleUrls: ['./material-request.component.scss']
 })
-export class MaterialRequestComponent implements OnInit {
+export class MaterialRequestComponent implements OnInit, OnDestroy {
   dataToRequest = {};
   displayedColumns: string[] = [
-    'code', 'component', 'unit', 'requestQuantity'
+    'check', 'code', 'component', 'requestQuantity', 'unit'
   ];
   dataSource = new MatTableDataSource<MaterialComponent>();
   comments = CONST_STRING.empty;
   isOrder = false;
   isCorrectData = false;
-
-  onlyNumbers = /[0-9]/;
-  @ViewChild('quantityField', {static: false}) quantityField: ElementRef;
+  oldData = new RawRequest();
+  subscription = new Subscription();
+  allComplete = false;
+  isThereToDelete = false;
+  isToDownload = false;
   constructor(private router: Router,
               private dialog: MatDialog,
               private materialReService: MaterialRequestService,
-              private reportingService: ReportingService,
-              private fileDownloaderServie: FileDownloaderService,
               private errorService: ErrorService,
-              private activeRoute: ActivatedRoute) {
+              private activeRoute: ActivatedRoute,
+              private dataService: DataService,
+              private fileDownloaderServie: FileDownloaderService,
+              private reportingService: ReportingService,
+              private  location: Location) {
   }
 
   ngOnInit() {
@@ -44,127 +57,179 @@ export class MaterialRequestComponent implements OnInit {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
       this.getPreMaterialRequestH();
+      this.dataService.setUrlActive(this.isOrder ? HttpServiceTOCall.ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
     });
+    this.subscription.add(this.dataService.getNewMaterialComponent().subscribe( resultNewMaterialComponent => {
+      this.dataSource.data = [...this.dataSource.data, {...resultNewMaterialComponent,
+                                                          id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
+      this.checkIsCorrectData();
+      this.checkToDownload();
+      this.registerChanges();
+    }));
   }
   getPreMaterialRequestH() {
+    let titleStatusOrders = CONST_STRING.empty;
     this.materialReService.getPreMaterialRequest(this.dataToRequest, this.isOrder).subscribe( resultMaterialRequest => {
-      this.dataSource.data = resultMaterialRequest.response.orderedProducts;
-      this.checkIsCorrectData();
+      const lengthFailOrders = resultMaterialRequest.response.failedProductionOrderIds.length;
+      const lengthOkOrders = resultMaterialRequest.response.productionOrderIds.length;
+      if ( lengthFailOrders > CONST_NUMBER.zero) {
+        titleStatusOrders = `${Messages.existRequest} ${
+                                lengthFailOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} \n\n`;
+        titleStatusOrders = `${titleStatusOrders} ${ this.getIdsLit(resultMaterialRequest.response.failedProductionOrderIds)} \n\n`;
+      }
+      if (lengthOkOrders > CONST_NUMBER.zero) {
+        titleStatusOrders = `${titleStatusOrders} ${
+          lengthFailOrders >= CONST_NUMBER.one ?
+              `${Messages.requestOrderWithFailOrders }${
+                                              lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
+              : `${Messages.requestOrdersOnlyOk} ${ lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
+        titleStatusOrders = `${titleStatusOrders} \n\n ${ this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
+      }
+
+      this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
+          titleStatusOrders, 'info', '', true, false, ClassNames.popupCustom);
+
+      if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
+        this.oldData = resultMaterialRequest.response;
+        this.dataSource.data = resultMaterialRequest.response.orderedProducts;
+        this.dataService.setIsToSaveAnything(false);
+        this.checkIsCorrectData();
+        this.checkToDownload();
+      } else {
+        this.goBack();
+      }
     }, error => this.errorService.httpError(error));
   }
 
-    addNewComponent() {
-      this.dataSource.data = [...this.dataSource.data, {
-          id: CONST_NUMBER.zero,
-        requestId: CONST_NUMBER.zero,
-        productId: CONST_STRING.empty,
-        description: CONST_STRING.empty,
-        requestQuantity: CONST_NUMBER.zero,
-        unit: CONST_STRING.empty
-        }];
+  addNewComponent() {
+      this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data});
+  }
+
+  updateAllComplete() {
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.checkToDelete();
+  }
+
+  someComplete(): boolean {
+    if (this.dataSource.data == null) {
+      return false;
     }
+    return this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero && !this.allComplete;
+  }
+
+  setAll(completed: boolean) {
+    this.allComplete = completed;
+    if (this.dataSource.data == null) {
+      return;
+    }
+    this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.checkToDelete();
+  }
 
   signUser() {
-    this.dialog.open(RequestSignatureDialogComponent, { panelClass: 'custom-dialog-container' })
+    this.dialog.open(RequestSignatureDialogComponent, 
+      { 
+        panelClass: 'custom-dialog-container',
+        data: this.oldData.signature 
+      })
       .afterClosed().subscribe(result => {
         if (result) {
-          console.log('Set signature.. ', result);
+          this.oldData.signature = result;
+          this.checkIsCorrectData();
         }
       });
   }
 
-  downloadPreview() {
-    console.log('download preview')
-    // var data = {};
-    // this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(data), FileTypeContentEnum.PDF, this.getFileNamePreview());
-  }
-
   sendRequest() {
-    console.log('sendingRequest')
+    const newComponentsToSend = new RawRequestPost();
+    this.setModelData();
+    newComponentsToSend.data = this.oldData;
+    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds;
+    newComponentsToSend.userId = this.dataService.getUserId();
+    this.materialReService.postMaterialRequest(newComponentsToSend).subscribe( resultMaterialPost => {
+      if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
+        this.onDataError(resultMaterialPost.response.failed);
+      } else {
+        this.goBack();
+        this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
+      }
+    }, error => this.errorService.httpError(error));
   }
 
   cancelRequest() {
-    console.log('cancelRequest')
-    this.setFocus()
+    this.dataService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
+    , true).then((resultCancel: any) => {
+      if (resultCancel.isConfirmed) {
+        this.goBack();
+      }
+    });
   }
 
-  onProductIdChange(productId: string, index: number) {
-    this.checkStrings(productId, TypeProperty.code, index);
-  }
-
-  onDescriptionChange(description: string, index: number) {
-    this.checkStrings(description, TypeProperty.description, index);
-  }
-
-  onUnitChange(unit: string, index: number) {
-    this.checkStrings(unit, TypeProperty.unit, index);
-  }
 
   onRequestQuantityChange(requestQuantity: number, index: number) {
-
-    console.log('quantity: ', Number(requestQuantity), 'boolean: ', isNumber(Number(requestQuantity)))
-    console.log('data: ', Number(this.dataSource.data[index].requestQuantity).toFixed(CONST_NUMBER.seven))
     this.dataSource.data[index].isWithError = !Number(requestQuantity);
-    // console.log('quantity: ', requestQuantity, 'index: ', Number(requestQuantity), ' isNumber: ', isNumber(Number(requestQuantity)))
     this.checkIsCorrectData();
+    this.registerChanges();
   }
 
   checkIsCorrectData() {
     this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
-        || order.productId.trim().length > CONST_NUMBER.fifty || order.requestQuantity <= CONST_NUMBER.zero
         || order.requestQuantity === null || order.description === CONST_STRING.empty
-        || order.description.trim().length > CONST_NUMBER.oneHundred
-        || order.unit === CONST_STRING.empty || order.unit.trim().length > CONST_NUMBER.fifty
-        || order.isWithError).length === CONST_NUMBER.zero;
-  }
-  checkStrings(wordToCheck: string, typeProperty: TypeProperty, index: number) {
-    if (wordToCheck.trim().length < (typeProperty === TypeProperty.unit || typeProperty === TypeProperty.code ?
-        CONST_NUMBER.fifty : CONST_NUMBER.oneHundred) && wordToCheck.trim() !== CONST_STRING.empty) {
-      this.assignData(wordToCheck, typeProperty, index);
-      this.dataSource.data[index].isWithError = false;
-    } else {
-      this.dataSource.data[index].isWithError = true;
-    }
-    this.checkIsCorrectData();
-  }
-  assignData(value: string, typeProperty: TypeProperty, index: number) {
-    switch (typeProperty) {
-      case TypeProperty.code:
-        this.dataSource.data[index].productId = value;
-        break;
-      case  TypeProperty.unit:
-        this.dataSource.data[index].unit = value;
-        break;
-      case TypeProperty.description:
-        this.dataSource.data[index].description = value;
-        break;
-      case TypeProperty.requestQuantity:
-        console.log('caseQuantity')
-        this.dataSource.data[index].requestQuantity = value;
-        break;
-    }
+        || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
   }
 
-  private forEachNumber(newRequestQuantity: string, numberString: string, isForDecimal: boolean = false) {
-    newRequestQuantity = isForDecimal ? `${newRequestQuantity}.` : newRequestQuantity;
-    for (let i = 0; i < numberString.length; i++) {
-      newRequestQuantity += this.onlyNumbers.test(numberString.charAt(i)) ? numberString.charAt(i) : CONST_STRING.empty;
-      console.log('localQuantity: ', newRequestQuantity)
-    }
-    return newRequestQuantity;
-  }
-  setFocus() {
-    this.quantityField.nativeElement.focus();
-  }
-  numericOnly(event): boolean {
-   // const pattern = /^\d{1,9}(\.\d{0,6})?$/;
-    const pattern = /^([0-9.])$/;
-    return pattern.test(event.key);
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.dataService.setIsToSaveAnything(false);
   }
 
+  checkToDelete() {
+    this.isThereToDelete = this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero;
+  }
+  checkToDownload() {
+    this.isToDownload = this.dataSource.data.length > CONST_NUMBER.zero;
+  }
+
+  deleteComponents() {
+    this.dataService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
+        .then( (resultDeleteMessage: any) => {
+          if (resultDeleteMessage.isConfirmed) {
+            this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
+            this.checkToDownload();
+            this.registerChanges();
+          }
+        });
+  }
+
+  private goBack() {
+    this.location.back();
+  }
+  onDataError(errorData: any[], isOnInitError: boolean = false) {
+    this.generateMessage(this.dataService.getMessageTitle(errorData,
+        isOnInitError ? MessageType.materialRequest : MessageType.default, !isOnInitError));
+  }
+  generateMessage(title: string) {
+    this.dataService.presentToastCustom(title, 'error',
+        Messages.errorToAssignOrderAutomaticSubtitle ,
+        true, false, ClassNames.popupCustom);
+  }
+  
+  downloadPreview() {
+    this.setModelData();
+    this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
+  }
+
+  private setModelData() {
+    this.oldData.observations = this.comments || '';
+    this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
+    this.oldData.orderedProducts = this.dataSource.data;
+    this.oldData.signature = this.oldData.signature || '';
+    this.oldData.signingUserName = this.dataService.getUserName();
+  }
   private getFileNamePreview(): string {
     var date = new Date();
-    let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth())}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
+    let fileName = `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-${this.getStringNumberTwoDigits(date.getMonth() + 1)}-${date.getFullYear()}_${date.getHours()}_${date.getMinutes()}_PREVIEW.pdf`;
     return fileName;
   }
 
@@ -173,5 +238,14 @@ export class MaterialRequestComponent implements OnInit {
       return `0${number}`;
     }
     return `${number}`;
+  }
+  registerChanges() {
+    this.dataService.setIsToSaveAnything(true);
+  }
+
+  getIdsLit(idToMessage: number[]) {
+    let newIdsStrings = [];
+    idToMessage.forEach( id => newIdsStrings = [...newIdsStrings, ` ${ id.toString()}`]);
+    return newIdsStrings;
   }
 }

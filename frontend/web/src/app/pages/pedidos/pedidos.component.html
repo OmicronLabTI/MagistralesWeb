@@ -25,7 +25,10 @@
     </div>
 
     <div class="table-toolbar">
-        <div class="refresh-icon-on-toolbar">
+        <div class="refresh-icon-on-toolbar" (click)="getPedidos()">
+            <span class="material-icons color-omicron cursor-pointer">
+                refresh
+            </span>
         </div>
         <div class="table-toolbar-buttons">
                 <span class="material-icons icon-button-toolbar " [ngClass]="isCheckedOrders ? 'color-omicron cursor-pointer' : 'disabled'" (click)="printOrderAsPdfFile()"  matTooltip="Generar PDF" matTooltipPosition="above">
@@ -67,6 +70,7 @@
                     </td>
                     <td mat-footer-cell *matFooterCellDef></td>
                 </ng-container>
+
                 <ng-container matColumnDef="cons">
                     <th mat-header-cell *matHeaderCellDef class="centered">#</th>
                     <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center documento"> {{i+1}} </td>

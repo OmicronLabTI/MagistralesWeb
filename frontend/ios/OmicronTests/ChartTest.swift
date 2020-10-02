@@ -36,8 +36,7 @@ class ChartTest: XCTestCase {
     // MARK: - Test Functions
     
     func testValidResponse() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.response)
@@ -45,8 +44,7 @@ class ChartTest: XCTestCase {
     }
     
     func testValidCodeNotNull() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.code)
@@ -54,12 +52,20 @@ class ChartTest: XCTestCase {
     }
     
     func testValidCode() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssert(workloadResponse.code == 200)
             }).disposed(by: disposeBag)
     }
-
+//
+//    func testGetWorkLoadNotNil() {
+//        let expectation = XCTestExpectation()
+//        self.chartViewModel.workloadData.subscribe(onNext: { response in
+//            XCTAssertNotNil(response)
+//            expectation.fulfill()
+//        }).disposed(by: self.disposeBag)
+//        self.chartViewModel.getWorkload()
+//        wait(for: [expectation], timeout: 3600.0)
+//    }
 }

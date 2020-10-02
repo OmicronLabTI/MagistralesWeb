@@ -115,6 +115,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToCancel = false;
         this.isThereOrdersDetailToFinalize = false;
         this.isThereOrdersDetailToReassign = false;
+        this.allComplete = false;
       }, error => this.errorService.httpError(error));
   }
 

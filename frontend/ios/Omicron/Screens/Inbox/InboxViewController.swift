@@ -23,9 +23,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
     @IBOutlet weak var groupByOrderNumberButton: UIButton!
-    
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
     
@@ -72,23 +70,27 @@ class InboxViewController: UIViewController {
         
     }
     
+    func getDecimalPartOfDouble(number: Double) -> Double {
+        return number.truncatingRemainder(dividingBy: 1)
+    }
+    
     func viewModelBindingCollectionView() {
         
         // Pinta la cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { [weak self] (dataSource, cv, indexPath, element) in
-            
+            let decimalPart = self?.getDecimalPartOfDouble(number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
             if element.baseDocument != 0 {
                 let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
                 cell.row = indexPath.row
                 cell.order = element
                 cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
                 cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
-                cell.containerDescriptionLabel.text = element.container ?? ""
-                cell.tagDescriptionLabel.text = element.tag ?? ""
-                cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
-                cell.startDateDescriptionLabel.text = element.startDate ?? ""
-                cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
-                cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+                cell.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
+                cell.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
+                cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?  String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) : "\(element.plannedQuantity ?? 0.0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
                 cell.missingStockImage.isHidden = !element.hasMissingStock
                 cell.delegate = self
                 return cell
@@ -97,10 +99,10 @@ class InboxViewController: UIViewController {
                 cell.row = indexPath.row
                 cell.order = element
                 cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-                cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
-                cell.startDateDescriptionLabel.text = element.startDate ?? ""
-                cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
-                cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
+                cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?  String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) : "\(element.plannedQuantity ?? 0.0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
                 cell.missingStockImage.isHidden = !element.hasMissingStock
                 cell.delegate = self
                 return cell
@@ -117,7 +119,6 @@ class InboxViewController: UIViewController {
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
     }
 
         

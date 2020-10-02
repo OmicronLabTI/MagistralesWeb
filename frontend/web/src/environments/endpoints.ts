@@ -20,7 +20,7 @@ export const Endpoints = {
     processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
     getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
-    getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
+    components: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
     placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
@@ -50,6 +50,7 @@ export const Endpoints = {
   },
   materialRequest: {
     getPreMaterialRequest: `${environment.baseUrl}/api/warehouses/prerequest/rawmaterial`,
+    postMaterialRequest: `${environment.baseUrl}/api/warehouses/request/rawmaterial`
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`
