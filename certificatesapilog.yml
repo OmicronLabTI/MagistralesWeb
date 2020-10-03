@@ -10,9 +10,7 @@ spec:
     kind: Issuer
     name: ca-issuer
   secretName: prod-cert-tls
-
-  
-  
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
