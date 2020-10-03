@@ -4,11 +4,12 @@ metadata:
   name: omicron-ingress-log
   annotations:
     kubernetes.io/ingress.class: nginx-log    
-    cert-manager.io/issuer: selfsigned-issuer
+    cert-manager.io/issuer: ca-issuer
 spec:
   tls:
-  - secretName: selfsigned-cert-tls
+  - secretName: prod-cert-tls-log
     hosts:
+    - magistralesdashboard.omicronlab.com.mx
     - omicron-log.eastus2.cloudapp.azure.com
   rules:
   - host: omicron-log.eastus2.cloudapp.azure.com
@@ -18,3 +19,11 @@ spec:
           serviceName: seqlog-svc
           servicePort: 81
         path: /
+  - host: magistralesdashboard.omicronlab.com.mx
+    http:
+      paths:
+      - backend:
+          serviceName: seqlog-svc
+          servicePort: 81
+        path: /
+    
