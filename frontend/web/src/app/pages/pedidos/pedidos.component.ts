@@ -55,6 +55,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToReassign = false;
   pageIndex = 0;
   isThereOrdersToRequest = false;
+  isOnInit = true;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -124,6 +125,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToReassign = false;
         this.isThereOrdersToRequest = false;
         this.allComplete = false;
+        this.isOnInit = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -172,6 +174,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               this.getPedidos();
               this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
             }
+            this.dataService.setIsLoading(false);
           },
           error => {
             this.errorService.httpError(error);
@@ -255,7 +258,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   toSeeRecipes(docNum: number) {
-    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => this.onSuccessHttpGetRecipes(recipeByOrderRes)
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => {
+          this.onSuccessHttpGetRecipes(recipeByOrderRes);
+          this.dataService.setIsLoading(false);
+        }
     , error => this.errorService.httpError(error));
 
   }
@@ -304,6 +310,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false, ClassNames.popupCustom);
       }
       this.uncheckedItems();
+      this.dataService.setIsLoading(false);
     },
     (error: ErrorHttpInterface) => {
       if (error.status !== HttpStatus.notFound) {
