@@ -67,8 +67,8 @@ pipeline {
                     }
                 }
             }
-        }/*
-        stage('Build Micro Services') {
+        }
+        /*stage('Build Micro Services') {
             
             steps {
                 echo 'Building ms1'
@@ -204,8 +204,8 @@ pipeline {
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
             }
-        }*/
-        stage('Kubernetes Up') {
+        }
+        */stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
                 sh 'sudo kubectl apply -f deploy_qa.yaml'
