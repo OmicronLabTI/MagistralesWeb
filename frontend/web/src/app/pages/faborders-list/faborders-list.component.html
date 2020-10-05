@@ -141,7 +141,8 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
             <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
-                <span>No hay pedidos registrados</span>
+                <span *ngIf="!isOnInit">No hay órdenes registradas</span>
+                <span *ngIf="isOnInit"> Cargando órdenes de fabricación ...</span>
             </div>
         </div>
         <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
