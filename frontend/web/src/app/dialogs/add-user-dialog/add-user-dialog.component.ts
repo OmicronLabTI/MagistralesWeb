@@ -51,6 +51,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
+      console.log('value form: ', valueForm)
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
             valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
@@ -134,7 +135,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
   numericOnly(event): boolean {
-    const pattern = /^([0-9])$/;
+    console.log('keyPress', event )
+    const pattern = /^[0-9]$/;
     return pattern.test(event.key);
   }
 }

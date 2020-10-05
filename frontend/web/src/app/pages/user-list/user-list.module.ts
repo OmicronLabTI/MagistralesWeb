@@ -5,6 +5,7 @@ import {UserListComponent} from './user-list.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dialog.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
+import {FaborderListModule} from "../faborders-list/faborder-list.module";
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import {MATERIAL_COMPONENTS} from '../../app.material';
         UserListRoutingModule,
         ReactiveFormsModule,
         FormsModule,
-        MATERIAL_COMPONENTS
+        MATERIAL_COMPONENTS,
+        FaborderListModule
     ],
     entryComponents: [AddUserDialogComponent],
 })
