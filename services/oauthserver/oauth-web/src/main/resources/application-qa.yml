@@ -6,7 +6,7 @@ spring:
     password: Axity2020
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximumPoolSize: 300
+      maximumPoolSize: 1000
       minimumIdle: 3
     #datasource:
     #url: jdbc:sqlserver://localhost;databaseName=securitydb
