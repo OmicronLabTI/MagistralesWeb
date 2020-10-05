@@ -41,10 +41,60 @@ zuul:
       serviceId: reportingservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
-ribbon:
-  ReadTimeout: 60000
-  ConnectionTimeout: 3000
-  MaxAutoRetries: 2
-  MaxAutoRetriesNextServer: 2
-  MaxTotalHttpConnections: 7000
-  MaxConnectionsPerHost: 1000
+
+oauth:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+catalogos:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+usuarios:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+sapadapter:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+pedidos:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+warehouses:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
+reporting:
+  ribbon:
+    ReadTimeout: 60000
+    ConnectionTimeout: 3000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    MaxTotalHttpConnections: 7000
+    MaxConnectionsPerHost: 1000
