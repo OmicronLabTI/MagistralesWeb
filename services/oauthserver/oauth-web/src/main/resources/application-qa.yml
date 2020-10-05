@@ -5,7 +5,10 @@ spring:
     username: omicronuser
     password: Axity2020
     driver-class-name: org.postgresql.Driver
-  #datasource:
+    hikari:
+      maximumPoolSize: 300
+      minimumIdle: 3
+    #datasource:
     #url: jdbc:sqlserver://localhost;databaseName=securitydb
     #username: sa
     #password: Axity&2019Arq
