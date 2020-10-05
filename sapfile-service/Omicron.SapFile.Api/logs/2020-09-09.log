@@ -1,2 +1,0 @@
-2020-09-09 09:38:17.6995 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status 0 -  - 89540-[{"OrderId":89540,"AssignedQty":0.1,"BatchNumber":"D611C (260819)-96 %","ItemCode":"MP-014","Action":"insert"}] 
-2020-09-09 09:42:33.4053 INFO Omicron.SapDiApi.Log.LoggerProxy.Info The next Batch was tried to be assign with status 0 -  - 89540-[{"OrderId":89540,"AssignedQty":0.1,"BatchNumber":"D612C (290819)-96 %","ItemCode":"MP-014","Action":"insert"}] 

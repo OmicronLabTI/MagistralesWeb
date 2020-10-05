@@ -23,9 +23,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
     @IBOutlet weak var groupByOrderNumberButton: UIButton!
-    
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
     
@@ -50,6 +48,8 @@ class InboxViewController: UIViewController {
         self.initComponents()
         collectionView.register(UINib(nibName:
             ViewControllerIdentifiers.cardCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
+        collectionView.register(UINib(nibName:
+            ViewControllerIdentifiers.cardIsolatedOrderCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier)
         collectionView.register(UINib(nibName: ViewControllerIdentifiers.headerCollectionViewCell, bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
         finishedButton.isHidden = true
         pendingButton.isHidden = true
@@ -70,25 +70,43 @@ class InboxViewController: UIViewController {
         
     }
     
+    func getDecimalPartOfDouble(number: Double) -> Double {
+        return number.truncatingRemainder(dividingBy: 1)
+    }
+    
     func viewModelBindingCollectionView() {
         
         // Pinta la cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(configureCell: { [weak self] (dataSource, cv, indexPath, element) in
-            
-            let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
-            cell.row = indexPath.row
-            cell.order = element
-            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-            cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
-            cell.containerDescriptionLabel.text = element.container ?? ""
-            cell.tagDescriptionLabel.text = element.tag ?? ""
-            cell.plannedQuantityDescriptionLabel.text = "\(element.plannedQuantity ?? 0)"
-            cell.startDateDescriptionLabel.text = element.startDate ?? ""
-            cell.finishDateDescriptionLabel.text = element.finishDate ?? ""
-            cell.productDescriptionLabel.text = element.descriptionProduct ?? ""
-            cell.missingStockImage.isHidden = !element.hasMissingStock
-            cell.delegate = self
-            return cell
+            let decimalPart = self?.getDecimalPartOfDouble(number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
+            if element.baseDocument != 0 {
+                let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath) as! CardCollectionViewCell
+                cell.row = indexPath.row
+                cell.order = element
+                cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+                cell.baseDocumentDescriptionLabel.text =  element.baseDocument == 0 ? CommonStrings.empty : "\(element.baseDocument ?? 0)"
+                cell.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
+                cell.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
+                cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?  String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) : "\(element.plannedQuantity ?? 0.0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+                cell.missingStockImage.isHidden = !element.hasMissingStock
+                cell.delegate = self
+                return cell
+            } else {
+                let cell = cv.dequeueReusableCell(withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier, for: indexPath) as! CardIsolatedOrderCollectionViewCell
+                cell.row = indexPath.row
+                cell.order = element
+                cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+                cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?  String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) : "\(element.plannedQuantity ?? 0.0)"
+                cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+                cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+                cell.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+                cell.missingStockImage.isHidden = !element.hasMissingStock
+                cell.delegate = self
+                return cell
+            }
             
         })
         
@@ -101,7 +119,6 @@ class InboxViewController: UIViewController {
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
     }
 
         
@@ -161,6 +178,8 @@ class InboxViewController: UIViewController {
         inboxViewModel.similarityViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.similarityViewButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
         }).disposed(by: self.disposeBag)
         
         // Habilita o deshabilita el botón de agrupamiento por vista normal
@@ -185,6 +204,7 @@ class InboxViewController: UIViewController {
             guard let self = self else { return }
             self.similarityViewButton.isHidden = isHidden
             self.normalViewButton.isHidden = isHidden
+            self.groupByOrderNumberButton.isHidden = isHidden
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
@@ -226,6 +246,8 @@ class InboxViewController: UIViewController {
                 if (orders.items.count == 0 && statusId != -1) {
                     message = "No tienes órdenes \(title)"
                 }
+            } else {
+                message = "No tienes órdenes \(title)"
             }
             self?.collectionView.setEmptyMessage(message)
         }).subscribe().disposed(by: disposeBag)

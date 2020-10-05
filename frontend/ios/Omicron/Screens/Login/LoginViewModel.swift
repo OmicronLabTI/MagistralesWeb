@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import CryptoKit
+import Resolver
 
 class LoginViewModel {
     public let finishedLogin : PublishSubject<Void> = PublishSubject()
@@ -19,8 +20,9 @@ class LoginViewModel {
     var username = BehaviorSubject<String>(value: "")
     var password = BehaviorSubject<String>(value: "")
     var loginDidTap = PublishSubject<Void>()
-    
     let canLogin: Driver<Bool>
+    @Injected var networkManager: NetworkManager
+    
     
     private let disposeBag = DisposeBag()
     
@@ -41,10 +43,10 @@ class LoginViewModel {
             })
             .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
-                NetworkManager.shared.login(data: data)
+                self.networkManager.login(data: data)
                     .flatMap({ res -> Observable<UserInfoResponse> in
                         Persistence.shared.saveLoginData(data: res)
-                        return NetworkManager.shared.getInfoUser(username: data.user)
+                        return self.networkManager.getInfoUser(username: data.user)
                     }).subscribe(onNext: { [weak self] info  in
                         self?.loading.onNext(false)
                         if let user = info.response {

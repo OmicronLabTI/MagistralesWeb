@@ -38,8 +38,8 @@ class LotsViewModel {
     
     var finishOrderDidTap = PublishSubject<Void>()
     var backToInboxView = PublishSubject<Void>()
-    private var selectedBatches: [BatchSelected] = []
-    private var documentLines: [Lots] = []
+    var selectedBatches: [BatchSelected] = []
+    var documentLines: [Lots] = []
     var technicalSignatureIsGet = false
     var qfbSignatureIsGet = false
     var askIfUserWantToFinalizeOrder = PublishSubject<String>()
@@ -50,8 +50,10 @@ class LotsViewModel {
     var updateComments = PublishSubject<OrderDetail>()
     var pendingButtonDidTap = PublishSubject<Void>()
     var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
+    var changeColorLabels = PublishSubject<Void>()
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
+    @Injected var networkManager: NetworkManager
     
     init() {
         
@@ -186,7 +188,7 @@ class LotsViewModel {
     // MARK: -Functions
     func getLots() -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+        self.networkManager.getLots(orderId: orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             self?.loading.onNext(false)
             if let lotsData = data.response {
                 if lotsData.count > 0 {
@@ -207,6 +209,7 @@ class LotsViewModel {
                 } else {
                     self?.showMessage.onNext("No hay lotes asignados")
                 }
+                self?.changeColorLabels.onNext(())
             }
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
@@ -286,7 +289,7 @@ class LotsViewModel {
     
     func sendToServerAssignedLots(lotsToSend: [BatchSelected]) -> Void {
         self.loading.onNext(true)
-        NetworkManager.shared.assignLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+        self.networkManager.assignLots(lotsRequest: lotsToSend).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if(res.response!.isEmpty) {
@@ -323,7 +326,7 @@ class LotsViewModel {
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() -> Void  {
         self.loading.onNext(true)
-        NetworkManager.shared.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] res in
             self?.loading.onNext(false)
             self?.showSignatureView.onNext("Firma del  QFB")
             }, onError: { [weak self] error in
@@ -339,7 +342,7 @@ class LotsViewModel {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature:technicalSignature)
 
-            NetworkManager.shared.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
+            self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
                 self?.rootViewModel.needsRefresh = true
@@ -353,7 +356,7 @@ class LotsViewModel {
     // Se actualiza order detail para obtener los comentarios
     func updateOrderDetail() {
         loading.onNext(true)
-        NetworkManager.shared.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+        self.networkManager.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
             self?.loading.onNext(false)
             if (res.response != nil) {
                 self?.updateComments.onNext(res.response!)
@@ -370,7 +373,7 @@ class LotsViewModel {
         
         let orderToChageStatus = ChangeStatusRequest(userId: Persistence.shared.getUserData()!.id!, orderId: self.orderId, status: CommonStrings.pending)
         
-        NetworkManager.shared.changeStatusOrder(changeStatusRequest: [orderToChageStatus]).subscribe(onNext: { [weak self] _ in
+        self.networkManager.changeStatusOrder(changeStatusRequest: [orderToChageStatus]).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())
             self?.rootViewModel.needsRefresh = true

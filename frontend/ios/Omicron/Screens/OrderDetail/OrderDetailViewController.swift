@@ -62,6 +62,8 @@ class OrderDetailViewController: UIViewController {
     var orderDetail: [OrderDetail] = []
     var refreshControl = UIRefreshControl()
     var destiny = ""
+    var isolatedOrder = false
+    var emptyStockProductId: [String] = []
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -137,6 +139,8 @@ class OrderDetailViewController: UIViewController {
             let lotsVC = storyboard.instantiateViewController(identifier: ViewControllerIdentifiers.lotsViewController) as! LotsViewController
             if (self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil) {
                 lotsVC.orderId = self!.orderId
+                if let self = self { lotsVC.emptyStockProductId = self.emptyStockProductId }
+                
                 lotsVC.statusType = self!.statusType
                 lotsVC.orderDetail = self!.orderDetail
                 if let order = self?.orderDetail.first {
@@ -178,30 +182,59 @@ class OrderDetailViewController: UIViewController {
 //        }).disposed(by: self.disposeBag)
         
         self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
-            self?.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.sumOfFormula)\(self?.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)", textToBold: "\(CommonStrings.sumOfFormula)")
+            
+            guard let self = self else { return }
+            
+            if (sum != -1) {
+                if !self.isolatedOrder {
+                    self.sumFormulaDescriptionLabel.attributedText = UtilsManager
+                        .shared
+                        .boldSubstring(
+                            text: "\(CommonStrings.sumOfFormula)\(self.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)",
+                            textToBold: "\(CommonStrings.sumOfFormula)")
+                } else {
+                    self.tagDescriptionLabel.attributedText = UtilsManager
+                        .shared
+                        .boldSubstring(
+                            text: "\(CommonStrings.sumOfFormula)\(self.formatter.string(from: NSNumber(value: sum)) ?? CommonStrings.empty)",
+                            textToBold: "\(CommonStrings.sumOfFormula)")
+                }
+            }
+            
         }).disposed(by: self.disposeBag)
                 
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             
             guard let self = self else { return }
-            
             if res.first != nil {
-                
+                self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
                 let detail = res.first!
+                let partDecimal = self.getDecimalPartOfDouble(number: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue)
+                
                 let number = detail.baseDocument == 0 ? CommonStrings.empty : "\(detail.baseDocument ?? 0)"
                 self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(number)", textToBold: CommonStrings.orderNumber)
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.container) \(detail.container ?? CommonStrings.empty)", textToBold: CommonStrings.container)
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.tag) \(detail.productLabel ?? CommonStrings.empty)", textToBold: CommonStrings.tag)
 
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
-                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
+                
+                let plannedQuantityText = partDecimal > 0.0 ? String(format: "%6f", NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue) : "\(detail.plannedQuantity ?? 0.0)"
+                
+                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(plannedQuantityText)", textToBold: CommonStrings.plannedQuantity)
+                
+                
+                
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
 //                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
-                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: 22, textColor: OmicronColors.blue)
-                let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: 22, textColor: .gray)
-                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: 22)
+                
+//                let titleFontSize = detail.productDescription?.count ?? 170 > 170 ? CGFloat(21) : CGFloat(22)
+                let titleFontSize = CGFloat(22.0)
+                self.productDescritionLabel.textColor = .black
+                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)", textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
+                let description = UtilsManager.shared.boldSubstring(text: "\(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
+                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: titleFontSize, textColor: .black)
                 let richText = NSMutableAttributedString()
                 richText.append(code)
                 richText.append(pipe)
@@ -209,11 +242,22 @@ class OrderDetailViewController: UIViewController {
                 self.productDescritionLabel.attributedText = richText
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
+                    self.isolatedOrder = true
                     self.destinyLabel.text = ""
+                    self.codeDescriptionLabel.isHidden = true
+                    self.containerDescriptionLabel.isHidden = true
+                    self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
+                    self.quantityPlannedDescriptionLabel.text = ""
                 }
                 
             }
                 }).disposed(by: self.disposeBag)
+        
+        // Cambia de color los labels encabezado de tabla cuando termina de cargar las ordene
+        self.orderDetailViewModel.changeColorLabelsHt.subscribe(onNext: { [weak self] _ in
+            self?.changeTextColorHtLabels(color: .black)
+        }).disposed(by: self.disposeBag)
+        
         
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(cellIdentifier: ViewControllerIdentifiers.detailTableViewCell, cellType: DetailTableViewCell.self)){ [weak self] row, data, cell in
             cell.hashTagLabel.text = "\(row + 1)"
@@ -223,12 +267,19 @@ class OrderDetailViewController: UIViewController {
             cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ? String(format: "%.0f", data.requiredQuantity ?? 0.0) : self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
             cell.unitLabel.text = data.unit!
             cell.werehouseLabel.text = data.warehouse
-//            cell.consumedLabel.text = self?.formatter.string(from: NSNumber(value: data.consumed ?? 0.0))
-//            cell.availableLabel.text =  self?.formatter.string(from: NSNumber(value: data.available ?? 0.0))
-//            cell.quantityPendingLabel.text = self?.formatter.string(from: NSNumber(value: data.pendingQuantity ?? 0.0))
-//            cell.stockLabel.text =  self?.formatter.string(from: NSNumber(value: data.stock ?? 0.0))
-//            cell.storedQuantity.text =  self?.formatter.string(from: NSNumber(value: data.warehouseQuantity ?? 0.0))
+            let hasStock = data.stock ?? 0.0 > 0.0
+            cell.setEmptyStock(hasStock)
+            
         }.disposed(by: disposeBag)
+        
+        
+        orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
+            guard let self = self else { return }
+            self.emptyStockProductId = details.map { detail -> String in
+                if !(detail.stock ?? 0.0 > 0.0) { return detail.productID ?? "" }
+                return ""
+            }
+        }).disposed(by: disposeBag)
         
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] iconName in
             guard let self = self else { return }
@@ -259,6 +310,10 @@ class OrderDetailViewController: UIViewController {
         }).disposed(by: self.disposeBag)
     }
     
+    func getDecimalPartOfDouble(number: Double) -> Double {
+        return number.truncatingRemainder(dividingBy: 1)
+    }
+    
     func initComponents() -> Void {
 
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
@@ -282,21 +337,64 @@ class OrderDetailViewController: UIViewController {
 //        UtilsManager.shared.labelsStyle(label: self.htAmountPendingLabel, text: "Cant. Pendiente", fontSize: 19, typeFont: "bold")
 //        UtilsManager.shared.labelsStyle(label: self.htStockLabel, text: "En stock", fontSize: 19, typeFont: "bold")
 //        UtilsManager.shared.labelsStyle(label: self.htQuantityInStockLabel, text: "Cant. Almacén", fontSize: 19, typeFont: "bold")
+   
         
-        self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingOrder, textToBold: CommonStrings.manufacturingOrder)
-        self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.container, textToBold: CommonStrings.container)
-        self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.tag, textToBold: CommonStrings.tag)
-        self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.baseDocument, textToBold: CommonStrings.baseDocument)
-        self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.sumOfFormula, textToBold: CommonStrings.sumOfFormula)
-        self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.plannedQuantity, textToBold: CommonStrings.plannedQuantity)
-        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingDate, textToBold: CommonStrings.manufacturingDate)
-        self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.finishdate, textToBold: CommonStrings.finishdate)
-        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.destiny, textToBold: CommonStrings.destiny)
+        self.codeDescriptionLabel.text = "Label"
+        self.containerDescriptionLabel.text = "Label"
+        self.tagDescriptionLabel.text = "Label"
+        self.documentBaseDescriptionLabel.text = "Label"
+        self.sumFormulaDescriptionLabel.text = "Label"
+        self.quantityPlannedDescriptionLabel.text = "Label"
+        self.startDateDescriptionLabel.text = "Label"
+        self.finishedDateDescriptionLabel.text = "Label"
+        self.destinyLabel.text = "Label"
+        self.productDescritionLabel.text = "Label"
+        self.productDescritionLabel.textColor = .white
+        
+        // Se cambian de color los Labels
+        self.changeTextColorLabel(color: OmicronColors.ligthGray)
+        
+//        self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingOrder, textToBold: CommonStrings.manufacturingOrder)
+//        self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.container, textToBold: CommonStrings.container)
+//        self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.tag, textToBold: CommonStrings.tag)
+//        self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.baseDocument, textToBold: CommonStrings.baseDocument)
+//        self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.sumOfFormula, textToBold: CommonStrings.sumOfFormula)
+//        self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.plannedQuantity, textToBold: CommonStrings.plannedQuantity)
+//        self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.manufacturingDate, textToBold: CommonStrings.manufacturingDate)
+//        self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.finishdate, textToBold: CommonStrings.finishdate)
+//        self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(text: CommonStrings.destiny, textToBold: CommonStrings.destiny)
+        
         self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
+        
         self.detailTable.tableFooterView = UIView()
         
         self.infoView.layer.cornerRadius = 10.0
         self.infoView.backgroundColor = OmicronColors.ligthGray
+        
+        self.changeTextColorHtLabels(color: .white)
+    }
+    
+    func changeTextColorLabel(color: UIColor) {
+        self.codeDescriptionLabel.textColor = color
+        self.containerDescriptionLabel.textColor = color
+        self.tagDescriptionLabel.textColor = color
+        self.documentBaseDescriptionLabel.textColor = color
+        self.sumFormulaDescriptionLabel.textColor = color
+        self.quantityPlannedDescriptionLabel.textColor = color
+        self.startDateDescriptionLabel.textColor = color
+        self.finishedDateDescriptionLabel.textColor = color
+        self.destinyLabel.textColor = color
+    }
+    
+    func changeTextColorHtLabels(color: UIColor) -> Void {
+        self.htCode.textColor = color
+        self.htDescription.textColor = color
+        self.htBaseQuantity.textColor = color
+        self.htrequiredQuantity.textColor = color
+        self.htUnit.textColor = color
+        self.htWerehouse.textColor = color
+        self.hashtagLabel.textColor = color
+        self.titleLabel.textColor = color
     }
     
     func showButtonsByStatusType(statusType: String) -> Void {

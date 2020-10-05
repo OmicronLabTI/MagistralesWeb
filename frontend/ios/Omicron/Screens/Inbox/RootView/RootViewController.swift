@@ -19,6 +19,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var kpiButton: UIButton!
+    @IBOutlet weak var versionLabel: UILabel!
     
     // Variables
     @Injected var rootViewModel: RootViewModel
@@ -156,6 +157,8 @@ class RootViewController: UIViewController {
                 self.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
+            let section = self.rootViewModel.sections[self.lastRow.row]
+            self.inboxViewModel.setSelection(section: section)
             self.viewTable.alpha = 0.25
             self.viewTable.isUserInteractionEnabled = false
             self.viewTable.deselectRow(at: self.lastRow, animated: false)
@@ -192,6 +195,9 @@ class RootViewController: UIViewController {
         self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 260)
         self.logoutButton.titleEdgeInsets.left = 35
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
+        self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "Versión: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))", textToBold: "Versión: ")
+        self.versionLabel.textColor = OmicronColors.blue
+        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
     }
     
     private func getUserInfo() -> String {

@@ -9,61 +9,88 @@
     </div>
     <div class="table-toolbar-work-load">
         <div class="only-space-work-load">
-
+              <div class="totals-container">
+                  <div class="indicators-work-load-totals ">
+                      <span class="style-number-totals">{{workLoadTotals[0].totalOrders}} </span>
+                      <span>Pedidos</span>
+                  </div>
+                  <div class="indicators-work-load-totals ">
+                      <span class="style-number-totals">{{workLoadTotals[0].totalFabOrders}}</span>
+                      <span>Órdenes</span>
+                  </div>
+                  <div class="indicators-work-load-totals ">
+                      <span class="style-number-totals">{{workLoadTotals[0].totalPieces}}</span>
+                      <span>Piezas</span>
+                  </div>
+              </div>
         </div>
         <div class="table-toolbar-buttons-load">
             <div class="indicators-container">
                 <div class="indicators-work-load background-color-assign">
-                    Asignado
+                    <span class="style-number">{{workLoadTotals[0].assigned}}</span>
+                    <span>Asignado</span>
                 </div>
                 <div class="indicators-work-load background-color-in-process">
-                    En proceso
+                    <span class="style-number">{{workLoadTotals[0].processed}}</span>
+                    <span>En proceso</span>
+
                 </div>
                 <div class="indicators-work-load background-color-pending">
-                    Pendiente
+                    <span class="style-number">{{workLoadTotals[0].pending}}</span>
+                    <span>Pendiente</span>
+
                 </div>
                 <div class="indicators-work-load background-color-finish">
-                    Terminado
+                    <span class="style-number">{{workLoadTotals[0].finished}}</span>
+                    <span>Terminado</span>
+
                 </div>
                 <div class="indicators-work-load background-color-re-assign">
-                    Reasignado
+                    <span class="style-number">{{workLoadTotals[0].reassigned}}</span>
+                    <span>Reasignado</span>
+
                 </div>
                 <div class="indicators-work-load background-color-finished">
-                    Finalizado
-                </div>
-            </div>
-            <div class="data-range-container">
-                <div class="date-range-container">
-                    <div class="data-title">
-                     Rango de fechas
-                    </div>
-                    <div class="dates-components">
-                        <mat-form-field color="accent" appearance="outline" class="custom-date">
-                            <mat-label class="title-Date">Desde: </mat-label>
-                            <input matInput [matDatepicker]="picker2"
-                                   [(ngModel)]="startDate"
-                                   [min]="minStartDate"
-                                   [max]="finishDate"
-                                   (ngModelChange)="onDataChange()"
-                                   readonly >
-                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                            <mat-datepicker #picker2 color="primary"></mat-datepicker>
-                        </mat-form-field>
-                        <mat-form-field color="accent" appearance="outline" class="custom-date">
-                            <mat-label class="title-Date">Hasta: </mat-label>
-                            <input matInput [matDatepicker]="picker3"
-                                   [(ngModel)]="finishDate"
-                                   [min]="startDate"
-                                   [max]="maxFinishDate"
-                                   (ngModelChange)="onDataChange()"
-                                   readonly>
-                            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-                            <mat-datepicker #picker3 color="primary"></mat-datepicker>
-                        </mat-form-field>
-                    </div>
+                    <span class="style-number">{{workLoadTotals[0].finalized}}</span>
+                    <span>Finalizado</span>
+
                 </div>
             </div>
         </div>
+    </div>
+    <div class="number-total-titles">
+        <div class="data-range-container">
+            <div class="date-range-container">
+                <div class="data-title">
+                    Rango de fechas
+                </div>
+                <div class="dates-components">
+                    <mat-form-field color="accent" appearance="outline" class="custom-date">
+                        <mat-label class="title-Date">Desde: </mat-label>
+                        <input matInput [matDatepicker]="picker2"
+                               [(ngModel)]="startDate"
+                               [min]="minStartDate"
+                               [max]="finishDate"
+                               (ngModelChange)="onDataChange()"
+                               readonly >
+                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                        <mat-datepicker #picker2 color="primary"></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field color="accent" appearance="outline" class="custom-date">
+                        <mat-label class="title-Date">Hasta: </mat-label>
+                        <input matInput [matDatepicker]="picker3"
+                               [(ngModel)]="finishDate"
+                               [min]="startDate"
+                               [max]="maxFinishDate"
+                               (ngModelChange)="onDataChange()"
+                               readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                        <mat-datepicker #picker3 color="primary"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="list-users-container">
@@ -71,7 +98,7 @@
             <div class="card-work-load-container col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let workLoad of workLoads">
                 <mat-card class="example-card">
                     <mat-card-header class="card-header-container border-header">
-                        <mat-card-title class="style-title">{{workLoad.user}}
+                        <mat-card-title class="style-title">{{workLoad.user | titlecase}}
                         </mat-card-title>
                             <div class="number-user-container">
                                 <div *ngIf="workLoad.user !== 'Total'" class="rectangle-number background-color-omicron">
@@ -81,6 +108,21 @@
                     </mat-card-header>
                     <mat-card-content>
                        <div class="first-line-numbers row">
+                           <div class="totals-work-load font-style-omicron col-sm-12 col-md-12 col-lg-12">
+                               <div class="indicators-work-load-totals-into-card ">
+                                   <span class="style-number-totals-into-card">{{workLoad.totalOrders}}</span>
+                                   <span>Pedidos</span>
+                               </div>
+                               <div class="indicators-work-load-totals-into-card ">
+                                   <span class="style-number-totals-into-card">{{workLoad.totalFabOrders}} </span>
+                                   <span>Órdenes</span>
+                               </div>
+                               <div class="indicators-work-load-totals-into-card ">
+                                   <span class="style-number-totals-into-card">{{workLoad.totalPieces}} </span>
+                                   <span>Piezas</span>
+                               </div>
+
+                           </div>
                            <div class="color-assign col-sm-12 col-md-6 col-lg-4">
                                <div class="only-number-work-load">
                                    {{workLoad.assigned}}
@@ -116,19 +158,6 @@
                             </div>
                         </div>
                     </mat-card-content>
-                    <mat-card-actions>
-                       <div class="totals-work-load font-style-omicron">
-                           <div class="total-orders">
-                               {{workLoad.totalOrders}} Pedidos
-                           </div>
-                           <div class="total-orders">
-                               {{workLoad.totalFabOrders}} Órdenes
-                           </div>
-                           <div class="total-orders">
-                               {{workLoad.totalPieces}} Piezas
-                           </div>
-                       </div>
-                    </mat-card-actions>
                 </mat-card>
             </div>
         </div>

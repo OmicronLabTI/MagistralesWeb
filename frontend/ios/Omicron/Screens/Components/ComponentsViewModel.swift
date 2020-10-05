@@ -25,6 +25,7 @@ class ComponentsViewModel {
     
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
+    @Injected var networkManager: NetworkManager
     
     init() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
@@ -82,7 +83,7 @@ class ComponentsViewModel {
     
     func saveComponent(req: OrderDetailRequest) {
         loading.onNext(true)
-        NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { [weak self] _ in
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.saveSuccess.onNext(())
             self?.orderDetailViewModel.getOrdenDetail(isRefresh: true)
@@ -99,7 +100,7 @@ class ComponentsViewModel {
             chips: chips)
 
         loading.onNext(true)
-        NetworkManager.shared.getComponents(data: request).subscribe(onNext: { [weak self] res in
+        self.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
             self?.dataResults.onNext(res.response ?? [])
             self?.loading.onNext(false)
         }, onError: { [weak self] _ in

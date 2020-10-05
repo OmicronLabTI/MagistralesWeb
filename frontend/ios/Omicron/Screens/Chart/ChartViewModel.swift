@@ -9,36 +9,34 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 class ChartViewModel {
     
-    var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
+
     var workloadData = ReplaySubject<[Workload]>.create(bufferSize: 1)
-    var disposeBag: DisposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
+    @Injected var networkManager: NetworkManager
     
     init() { }
     
     func getWorkload() {
-        loading.onNext(true)
         let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
             + "-"
             + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
-        NetworkManager
-            .shared
-        .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
+
+        self.networkManager.getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { [weak self] workloadResponse in
                 guard let self = self else { return }
-                self.loading.onNext(false)
                 if let workload = workloadResponse.response {
                     
                     self.workloadData.onNext(workload)
                 }
                 
                 }, onError: { [weak self] error in
-                    guard let self = self else { return }
-                    self.loading.onNext(false)
+                    print(error)
             }).disposed(by: disposeBag)
     }
     

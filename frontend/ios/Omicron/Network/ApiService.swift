@@ -62,7 +62,7 @@ extension ApiService: AuthorizedTargetType {
             return "pedidos/completedBatches/\(orderId)"
         case .getComponents:
             return "sapadapter/componentes"
-        case .getWorkload(let data):
+        case .getWorkload:
             return "/pedidos/qfb/workload"
         }
     }

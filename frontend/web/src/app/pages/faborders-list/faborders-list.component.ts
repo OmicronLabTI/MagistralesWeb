@@ -9,7 +9,7 @@ import {
   HttpServiceTOCall,
   HttpStatus,
   MODAL_FIND_ORDERS,
-  MODAL_NAMES
+  MODAL_NAMES, RouterPaths
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {ErrorService} from '../../services/error.service';
@@ -23,6 +23,7 @@ import {CancelOrderReq, ParamsPedidos} from 'src/app/model/http/pedidos';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-faborders-list',
@@ -68,6 +69,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
+    private router: Router
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
     this.filterDataOrders.isFromOrders = false;
@@ -91,11 +93,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }));
     this.subscriptionObservables.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
           if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
-            this.getOrders();
+            this.getOrdersAction();
           }
         }));
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
   }
 
   updateAllComplete() {
@@ -116,7 +118,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.getButtonsOrdersIsolatedToUnLooked();
   }
 
-  getOrders() {
+  getOrdersAction() {
     this.ordersService.getOrders(this.fullQueryString).subscribe(
       ordersRes => {
         this.lengthPaginator = ordersRes.comments;
@@ -157,6 +159,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.isAssignOrderIsolated = false;
         this.isReAssignOrderIsolated = false;
         this.isFinalizeOrderIsolated = false;
+        this.allComplete = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -183,7 +186,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
     return event;
   }
 
@@ -204,7 +207,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.offset = 0;
     this.limit = 10;
     this.getFullQueryString();
-    this.getOrders();
+    this.getOrdersAction();
     this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
   }
 
@@ -219,7 +222,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
   assignOrderIsolated() {
     this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataSource.data.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId))
+      list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated)
       , isFromOrderIsolated: true});
   }
   private getButtonsOrdersIsolatedToUnLooked() {
@@ -247,6 +250,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       data: {
         finalizeOrdersData: this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
       }
-    }).afterClosed().subscribe(() => this.getOrders());
+    }).afterClosed().subscribe(() => this.getOrdersAction());
   }
+
+    materialRequestIsolatedOrder() {
+     this.router.navigate([RouterPaths.materialRequest,
+                      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
+                      , CONST_NUMBER.zero.toString()]);
+    }
 }

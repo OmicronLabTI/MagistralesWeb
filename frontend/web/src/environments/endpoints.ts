@@ -20,7 +20,7 @@ export const Endpoints = {
     processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
     getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
-    getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
+    components: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
     placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
@@ -40,13 +40,20 @@ export const Endpoints = {
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   },
   orders: {
-    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+    endPointOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
     saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`,
     createPdf: `${environment.baseUrl}/api/pedidos/print/orders`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
     getWorkLoad: `${environment.baseUrl}/api/pedidos/qfb/workload`,
+  },
+  materialRequest: {
+    getPreMaterialRequest: `${environment.baseUrl}/api/warehouses/prerequest/rawmaterial`,
+    postMaterialRequest: `${environment.baseUrl}/api/warehouses/request/rawmaterial`
+  },
+  reporting: {
+    getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`
   }
 };
 

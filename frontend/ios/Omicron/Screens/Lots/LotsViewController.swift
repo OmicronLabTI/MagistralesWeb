@@ -61,6 +61,7 @@ class LotsViewController: UIViewController {
     var manufacturingOrder = CommonStrings.empty
     var comments = CommonStrings.empty
     var orderDetail:[OrderDetail] = []
+    var emptyStockProductId: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +109,36 @@ class LotsViewController: UIViewController {
             signatureVC.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC.modalPresentationStyle = .overCurrentContext
             self?.present(signatureVC, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        // Cambia de color los labels a negro cuando ya termino de cargar toda la información
+        self.lotsViewModel.changeColorLabels.subscribe(onNext: { [weak self] _ in
+            self?.changeTextColorOfLabels(color: .black)
+            let orderNumber = self?.orderNumber == "0" ? CommonStrings.empty : self?.orderNumber
+            self?.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(orderNumber ?? "")", textToBold: CommonStrings.orderNumber)
+            self?.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(self?.manufacturingOrder ?? "")", textToBold: CommonStrings.manufacturingOrder)
+            
+            let titleFontSize = self?.codeDescription.count ?? 170 > 170 ? CGFloat(11) : CGFloat(15)
+
+            var codeDescriptionArray = self?.codeDescription.components(separatedBy: "  ")
+            if (codeDescriptionArray?.count ?? 0 > 0) {
+                let code = codeDescriptionArray?[0]
+                codeDescriptionArray?.remove(at: 0)
+                
+                let description = codeDescriptionArray?.joined(separator: " ")
+
+                let codeAtr = UtilsManager.shared.boldSubstring(text: code ?? CommonStrings.empty, textToBold: code, fontSize: titleFontSize, textColor: OmicronColors.blue)
+                let descriptionAtr = UtilsManager.shared.boldSubstring(text: description ?? CommonStrings.empty, textToBold: description, fontSize: titleFontSize, textColor: .gray)
+                let pipeAtr = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ", fontSize: titleFontSize, textColor: .black)
+                let richText = NSMutableAttributedString()
+                richText.append(codeAtr)
+                richText.append(pipeAtr)
+                richText.append(descriptionAtr)
+                self?.codeDescriptionLabel.attributedText = richText
+            }
+
+
+
         }).disposed(by: self.disposeBag)
         
         // Actualizan los comentarios
@@ -160,13 +191,30 @@ class LotsViewController: UIViewController {
         
         // Muestra los datos en la tabla Linea de documentos
         self.lotsViewModel.dataOfLots.bind(to: lineDocTable.rx.items(cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell, cellType: LotsTableViewCell.self)) { [weak self] row, data, cell in
+            
+            guard let self = self else { return }
+            
             cell.row = row
             cell.numberLabel.text = "\(row + 1)"
             cell.codeLabel.text = data.codigoProducto
             cell.descriptionLabel.text = data.descripcionProducto?.uppercased()
             cell.warehouseCodeLabel.text = data.almacen
-            cell.totalNeededLabel.text =  self?.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
-            cell.totalSelectedLabel.text = self?.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
+            cell.totalNeededLabel.text =  self.formatter.string(from: (data.totalNecesario ?? 0) as NSNumber)
+            cell.totalSelectedLabel.text = self.formatter.string(from: (data.totalSeleccionado ?? 0) as NSNumber)
+            
+            if self.emptyStockProductId.contains(data.codigoProducto ?? "-") {
+                cell.setEmptyStock(false)
+            } else {
+                cell.setEmptyStock(true)
+            }
+            
+            if let order = self.orderDetail.first {
+                if order.baseDocument == 0 {
+                    self.orderNumberLabel.isHidden = true
+                }
+            }
+            
+            
         }.disposed(by: self.disposeBag)
         
         // Muestra los datos en la tabla de lotes disponibles
@@ -254,7 +302,6 @@ class LotsViewController: UIViewController {
     func initComponents() {
         self.showIconMessage()
         UtilsManager.shared.setStyleButtonStatus(button: self.finishOrderButton, title: StatusNameConstants.finishedStatus, color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
-        
         self.title = CommonStrings.batchesTitle
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.documentsLines, fontSize: 20)
         UtilsManager.shared.labelsStyle(label: self.hashtagLabel, text: CommonStrings.hashtag, fontSize: 15)
@@ -276,13 +323,8 @@ class LotsViewController: UIViewController {
         
         UtilsManager.shared.setStyleButtonStatus(button: self.saveLotsButton, title: StatusNameConstants.save, color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus, color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
-        self.codeDescriptionLabel.text = self.codeDescription
-        self.codeDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 15)
-        
-        let orderNumber = self.orderNumber == "0" ? CommonStrings.empty : self.orderNumber
-        self.orderNumberLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(orderNumber)", textToBold: CommonStrings.orderNumber, fontSize: 15)
-        self.manufacturingOrderLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(self.manufacturingOrder)", textToBold: CommonStrings.manufacturingOrder, fontSize: 15)
-        
+
+        self.changeTextColorOfLabels(color: .white)
         self.addLotButton.setImage(UIImage(named: ImageButtonNames.addLot), for: .normal)
         self.addLotButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 50, bottom: 15, right: 50)
         self.addLotButton.setTitle(CommonStrings.empty, for: .normal)
@@ -313,6 +355,29 @@ class LotsViewController: UIViewController {
         } else {
             self.pendingButton.isHidden = true
         }
+    }
+    
+    
+    func changeTextColorOfLabels(color: UIColor) -> Void {
+        self.titleLabel.textColor = color
+        self.hashtagLabel.textColor = color
+        self.codeLabel.textColor = color
+        self.descriptionLabel.textColor = color
+        self.warehouseCodeLabel.textColor = color
+        self.totalNeededLabel.textColor = color
+        self.totalSelectedLabel.textColor = color
+        
+        self.lotsAvailableLabel.textColor = color
+        self.laLotsLabel.textColor = color
+        self.laQuantityAvailableLabel.textColor = color
+        self.laQuantitySelectedLabel.textColor = color
+        self.laQuantityAssignedLabel.textColor = color
+        self.lotsSelectedLabel.textColor = color
+        self.lsLotsLabel.textColor = color
+        self.lsQuantityAvailableLabel.textColor = color
+        self.codeDescriptionLabel.textColor = color
+        self.orderNumberLabel.textColor = color
+        self.manufacturingOrderLabel.textColor = color
     }
     
     func setStyleView(view: UIView) {

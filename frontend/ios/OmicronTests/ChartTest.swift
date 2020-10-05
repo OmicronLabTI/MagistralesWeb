@@ -8,24 +8,31 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
 class ChartTest: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // MARK: - Variables
+    var chartViewModel: ChartViewModel?
+    var disposeBag: DisposeBag?
+    var expectation: XCTestExpectation?
+    @Injected var networkManager: NetworkManager
+    
+    override func setUp() {
+        print("XXXX setUp ChartTest")
+        chartViewModel = ChartViewModel()
+        disposeBag = DisposeBag()
+        expectation = XCTestExpectation()
     }
     
-    // MARK: - Variables
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    let chartViewModel = ChartViewModel()
-    let disposeBag = DisposeBag()
+    override func tearDown() {
+        print("XXXX tearDown ChartTest")
+        chartViewModel = nil
+        disposeBag = nil
+        expectation = nil
+    }
     
     fileprivate let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
@@ -36,30 +43,35 @@ class ChartTest: XCTestCase {
     // MARK: - Test Functions
     
     func testValidResponse() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.response)
-            }).disposed(by: disposeBag)
+            }).disposed(by: disposeBag!)
     }
     
     func testValidCodeNotNull() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssertNotNil(workloadResponse.code)
-            }).disposed(by: disposeBag)
+            }).disposed(by: disposeBag!)
     }
     
     func testValidCode() {
-        NetworkManager
-            .shared
+        networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
             .subscribe(onNext: { workloadResponse in
                 XCTAssert(workloadResponse.code == 200)
-            }).disposed(by: disposeBag)
+            }).disposed(by: disposeBag!)
     }
 
+    func testGetWorkLoadNotNil() {
+        chartViewModel!.workloadData.subscribe(onNext: { response in
+            XCTAssertNotNil(response)
+            self.expectation!.fulfill()
+        }).disposed(by: self.disposeBag!)
+        self.chartViewModel!.getWorkload()
+        wait(for: [self.expectation!], timeout: 1000.0)
+    }
 }

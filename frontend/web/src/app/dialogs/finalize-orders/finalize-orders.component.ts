@@ -4,7 +4,7 @@ import {IOrdersReq} from '../../model/http/ordenfabricacion';
 import {MatTableDataSource} from '@angular/material/table';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
-import {ClassNames, CONST_NUMBER, HttpServiceTOCall, MessageType} from '../../constants/const';
+import {ClassNames, CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../../constants/const';
 import {CancelOrderReq} from '../../model/http/pedidos';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
@@ -25,12 +25,12 @@ export class FinalizeOrdersComponent implements OnInit {
               private errorService: ErrorService,
               private dataService: DataService,
               private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
-
+    this.finalizeData = finalizeData || new Array();
   }
 
   async ngOnInit() {
     let index = 0;
-    const ordersIsolatedFull: IOrdersReq[] = [];
+    let ordersIsolatedFull: IOrdersReq[] = [];
     this.ordersIsolated = [...this.finalizeData.finalizeOrdersData.filter(order => order.docNum === 0)];
 
     if (this.ordersIsolated.length > 0) {
@@ -44,6 +44,7 @@ export class FinalizeOrdersComponent implements OnInit {
               order[1][0].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
               if (order[1].length > 1) {
                 for ( const objectOrder of order[1]) {
+                  // set default batch code
                   order[1][count].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
                   count ++;
                 }
@@ -57,24 +58,33 @@ export class FinalizeOrdersComponent implements OnInit {
         index ++;
       }
     }
+    
+    ordersIsolatedFull.forEach(x =>  {
+      // set default dates
+      x.fabDate = this.toDay;
+      x.endDate = new Date(new Date().setMonth(this.toDay.getMonth()+6));
+    });
+    
     this.dataSource.data = ordersIsolatedFull;
     this.ordersNoIsolated = [...this.finalizeData.finalizeOrdersData.filter(order => order.docNum !== 0)];
     if (this.ordersIsolated.length === 0 && this.ordersNoIsolated.length > 0) {
       this.finalizeOrderSend();
     }
-
-
   }
 
   onBatchesChange(batchesValue: string, index: number) {
-    this.dataSource.data[index].batche = batchesValue;
-    this.isCorrectDataToFinalize();
+      this.dataSource.data[index].isWithErrorBatch = batchesValue === CONST_STRING.empty;
+      this.dataSource.data[index].batche = batchesValue;
+      this.isCorrectDataToFinalize();
   }
 
-  onQuantityFinishChange(quantityValue: number, index: number) {
+  onQuantityFinishChange(quantityValueAsString: string, index: number) {
+    let quantityValue : number = Number.parseFloat(quantityValueAsString);
+
     if ( quantityValue > 0 ) {
       this.dataSource.data[index].quantityFinish = Number(quantityValue.toFixed(CONST_NUMBER.seven));
     }
+    
     this.dataSource.data.forEach( order => order.isWithError = order.quantityFinish === null || order.quantityFinish <= 0);
     this.isCorrectDataToFinalize();
   }

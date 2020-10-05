@@ -193,6 +193,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.createMessageOkHttp();
               this.checkISComponentsToDelete();
               this.elementsToSave();
+              this.allComplete = this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
             }
           });
   }
@@ -215,11 +216,12 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
 
   changeData() {
-    this.isPlannedQuantityError = this.oldDataFormulaDetail.plannedQuantity === null || this.oldDataFormulaDetail.plannedQuantity % 1 !== 0
+    this.isPlannedQuantityError = this.oldDataFormulaDetail.plannedQuantity === null || this.oldDataFormulaDetail.plannedQuantity <= 0
         || this.oldDataFormulaDetail.plannedQuantity === 0;
     this.dataSource.data.forEach(component => {
       component.requiredQuantity = component.baseQuantity * this.oldDataFormulaDetail.plannedQuantity;
     });
+
     this.getIsReadyTOSave();
   }
   getIsReadyTOSave() {
@@ -281,11 +283,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   elementsToSave() {
-    if (this.dataSource.data.filter(element => element.action === CONST_DETAIL_FORMULA.insert).length > 0 ) {
-      this.isSaveToMyList = true;
-    } else {
-      this.isSaveToMyList = false;
-    }
+    this.isSaveToMyList = this.dataSource.data.filter(element => element.action === CONST_DETAIL_FORMULA.insert).length > 0;
   }
 
   openCustomList() {

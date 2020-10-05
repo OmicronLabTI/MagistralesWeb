@@ -9,6 +9,8 @@
 import RxSwift
 import RxCocoa
 import Moya // Borrar cuando se consuma bien el servicio
+import Resolver
+
 class RootViewModel {
     
     // MARK: Variables
@@ -26,6 +28,9 @@ class RootViewModel {
     var goToLoginViewController = PublishSubject<Void>()
     var searchFilter = PublishSubject<String>()
     var needsRefresh = true
+    
+    @Injected var chartViewModel: ChartViewModel
+    @Injected var networkManager: NetworkManager
     
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -58,7 +63,8 @@ class RootViewModel {
         if isUpdate { needsRefresh = true }
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
-            NetworkManager.shared.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
+            chartViewModel.getWorkload()
+            self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 let sections = res.response?.status.map({ status in
                     return status.map({ detail -> SectionOrder? in

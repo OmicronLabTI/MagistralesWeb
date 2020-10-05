@@ -42,6 +42,10 @@ class  InboxViewModel {
     var deselectRow = PublishSubject<Bool>()
     
     @Injected var rootViewModel: RootViewModel
+    @Injected var networkManager: NetworkManager
+    var normalSort = true
+    var similaritySort = false
+    var groupSort = false
     
     init() {
         // Funcionalidad para el botón de Terminar
@@ -86,6 +90,7 @@ class  InboxViewModel {
             self?.similarityViewButtonIsEnable.onNext(false)
             self?.normalViewButtonIsEnable.onNext(true)
             self?.groupedByOrderNumberIsEnable.onNext(true)
+            self?.changeStatusSort(normal: false, similarity: true, grouped: false)
             
         }).disposed(by: self.disposeBag)
         
@@ -98,6 +103,8 @@ class  InboxViewModel {
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.normalViewButtonIsEnable.onNext(false)
             self?.groupedByOrderNumberIsEnable.onNext(true)
+            self?.changeStatusSort(normal: true, similarity: false, grouped: false)
+            
         }).disposed(by: self.disposeBag)
         
         // Funcionalidad para mostra la vista ordenada número de orden
@@ -114,6 +121,7 @@ class  InboxViewModel {
             self?.normalViewButtonIsEnable.onNext(true)
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.groupedByOrderNumberIsEnable.onNext(false)
+            self?.changeStatusSort(normal: false, similarity: false, grouped: true)
         }).disposed(by: self.disposeBag)
 
         viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
@@ -174,17 +182,59 @@ class  InboxViewModel {
     }
     
     func setSelection(section: SectionOrder) -> Void {
-        let ordering = self.sortByBaseBocumentAscending(orders: section.orders)
-        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
-        self.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
-        self.title.onNext(section.statusName)
-        self.ordersTemp = ordering
-        self.similarityViewButtonIsEnable.onNext(true)
-        self.groupedByOrderNumberIsEnable.onNext(true)
-        self.normalViewButtonIsEnable.onNext(false)
-        self.processButtonIsEnable.onNext(false)
-        self.pendingButtonIsEnable.onNext(false)
+        
+        let ordering = sortByBaseBocumentAscending(orders: section.orders)
+        ordersTemp = ordering
+        
+        if normalSort {
+            
+            statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+            sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
+            similarityViewButtonIsEnable.onNext(true)
+            groupedByOrderNumberIsEnable.onNext(true)
+            normalViewButtonIsEnable.onNext(false)
+            processButtonIsEnable.onNext(false)
+            pendingButtonIsEnable.onNext(false)
+            
+        } else if similaritySort {
+            
+            for order in ordersTemp {
+                let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
+                if let codeProduct = itemCodeInArray?.first {
+                    order.productCode = codeProduct
+                } else {
+                    order.productCode = CommonStrings.empty
+                }
+            }
+
+            // Se agrupa las ordenes por código de producto
+            let dataGroupedByProductCode = Dictionary(grouping: ordersTemp, by: {$0.productCode})
+            let sectionModels = groupedWithSimilarityOrWithoutSimilarity(data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity, titleForOrdersWithSimilarity: CommonStrings.product)
+            sectionOrders = sectionModels
+            statusDataGrouped.onNext(sectionModels)
+            
+            similarityViewButtonIsEnable.onNext(false)
+            normalViewButtonIsEnable.onNext(true)
+            groupedByOrderNumberIsEnable.onNext(true)
+        
+        } else {
+            
+            processButtonIsEnable.onNext(false)
+            
+            let dataGroupedByBaseDocument = Dictionary(grouping: ordersTemp, by: { "\($0.baseDocument!)" })
+            let ordersGroupedAndSorted = groupedByOrderNumber(data: dataGroupedByBaseDocument)
+            sectionOrders = ordersGroupedAndSorted
+            statusDataGrouped.onNext(ordersGroupedAndSorted)
+            
+            normalViewButtonIsEnable.onNext(true)
+            similarityViewButtonIsEnable.onNext(true)
+            groupedByOrderNumberIsEnable.onNext(false)
+            
+        }
+        
+        title.onNext(section.statusName)
         showKPIView.onNext(false)
+        
     }
     
     func setFilter(orders: [Order]) -> Void {
@@ -231,7 +281,7 @@ class  InboxViewModel {
                 orders.append(order)
             }
             
-            NetworkManager.shared.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            self.networkManager.changeStatusOrder(changeStatusRequest: orders).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
                 self?.loading.onNext(false)
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 self?.processButtonIsEnable.onNext(false)
@@ -280,4 +330,23 @@ class  InboxViewModel {
             return -1
         }
     }
+    
+    private func changeStatusSort(normal: Bool, similarity: Bool, grouped: Bool) {
+        
+        if normal {
+            normalSort = true
+            similaritySort = false
+            groupSort = false
+        } else if similarity {
+            normalSort = false
+            similaritySort = true
+            groupSort = false
+        } else {
+            normalSort = false
+            similaritySort = false
+            groupSort = true
+        }
+        
+    }
+    
 }
