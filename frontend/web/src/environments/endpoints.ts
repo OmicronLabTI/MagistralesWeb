@@ -20,7 +20,7 @@ export const Endpoints = {
     processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
     getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
-    getComponents: `${environment.baseUrl}/api/sapadapter/componentes`,
+    components: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
     placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,
@@ -40,7 +40,7 @@ export const Endpoints = {
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
   },
   orders: {
-    getOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
+    endPointOrders: `${environment.baseUrl}/api/pedidos/fabOrder`,
     saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`,
     createPdf: `${environment.baseUrl}/api/pedidos/print/orders`
   },

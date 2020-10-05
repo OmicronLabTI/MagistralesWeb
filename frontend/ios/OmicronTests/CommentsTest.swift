@@ -8,74 +8,87 @@
 
 import XCTest
 import RxSwift
-import Moya
+import Resolver
 
 @testable import Omicron
 
 class CommentsTest: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // MARK: - Variables
+    var sut: CommentsViewModel?
+    var disposeBag: DisposeBag?
+    var productionOrderID: Int?
+    var plannedQuantity: Decimal?
+    var fechaFin: String?
+    var message: String?
+    var order: OrderDetailRequest?
+    @Injected var networkmanager: NetworkManager
+    
+    override func setUp() {
+        sut = CommentsViewModel()
+        disposeBag = DisposeBag()
+        productionOrderID = 89623
+        plannedQuantity = 1.0
+        fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "10/09/2020", withFormat: "yyyy-MM-dd") ?? ""
+        message = "Comment :D"
+        order = OrderDetailRequest(
+            fabOrderID: productionOrderID!,
+            plannedQuantity: plannedQuantity!,
+            fechaFin: fechaFin!,
+            comments: message!,
+            components: [])
     }
     
-    // MARK: - Variables
-    let networkManager = NetworkManager(provider: MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub))
-    let chartViewModel = CommentsViewModel()
-    let disposeBag = DisposeBag()
+    override func tearDown() {
+        sut = nil
+        disposeBag = nil
+        productionOrderID = nil
+        plannedQuantity = nil
+        fechaFin = nil
+        message = nil
+        order = nil
+    }
     
     // MARK: - Test Functions
-    
-    func testInitData() {
-        let productionOrderID = 89623
-        let plannedQuantity = 1
-        let fechaFin = UtilsManager.shared.formattedDateFromString(dateString: "10/09/2020", withFormat: "yyyy-MM-dd") ?? ""
-        let message = "Comment :D"
         
-        let order = OrderDetailRequest(
-            fabOrderID: productionOrderID,
-            plannedQuantity: plannedQuantity,
-            fechaFin: fechaFin,
-            comments: message,
-            components: [])
-        XCTAssertNotNil(order)
+    func testValidResponse() -> Void {
         
-        testValidResponse(order: order)
-        testValidCodeNotNull(order: order)
-        testValidCode(order: order)
+        self.networkmanager
+            .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { res in
+                XCTAssertNotNil(res.response)
+            }).disposed(by: self.disposeBag!)
+    }
+        
+    func testAceptDidTapSuccessFromOrderDetailViewController() -> Void {
+        // Given
+        sut?.textView.onNext("Texto de Prueba")
+        sut?.originView = ViewControllerIdentifiers.orderDetailViewController
+        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+            self?.sut?.orderDetail = [res.response!]
+            self?.sut?.backToOrderDetail.subscribe(onNext: { _ in
+                // When
+                XCTAssertTrue(true)
+            }).disposed(by: (self?.disposeBag)!)
+            // Then
+            self?.sut?.aceptDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
     }
     
-    func testValidResponse(order: OrderDetailRequest) {
-        NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
-               XCTAssertNotNil(res.response)
-           }).disposed(by: disposeBag)
+    func testAceptDidTapSuccessFromLotsViewController() -> Void {
+        // Given
+        sut?.textView.onNext("Texto de Prueba")
+        sut?.originView = ViewControllerIdentifiers.lotsViewController
+        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+            self?.sut?.orderDetail = [res.response!]
+            self?.sut?.backToLots.subscribe(onNext: { _ in
+                // When
+                XCTAssertTrue(true)
+            }).disposed(by: (self?.disposeBag)!)
+            // Then
+            self?.sut?.aceptDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
     }
     
-    func testValidCodeNotNull(order: OrderDetailRequest) {
-        NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
-                XCTAssertNotNil(res.code)
-           }).disposed(by: disposeBag)
-    }
-    
-    func testValidCode(order: OrderDetailRequest) {
-        NetworkManager
-               .shared
-               .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-               .observeOn(MainScheduler.instance)
-               .subscribe(onNext: { res in
-                XCTAssertNotNil(res.code == 200)
-           }).disposed(by: disposeBag)
-    }
-
 }

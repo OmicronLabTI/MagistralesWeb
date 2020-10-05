@@ -9,6 +9,7 @@
 import RxSwift
 import RxSwift
 import UIKit
+import Resolver
 
 class CommentsViewModel {
     
@@ -23,7 +24,7 @@ class CommentsViewModel {
     var backToOrderDetail = PublishSubject<Void>()
     var backToLots = PublishSubject<Void>()
     var originView = ""
-    
+    @Injected var networkmanager: NetworkManager
     init() {
         
         self.aceptDidTap.withLatestFrom(textView).subscribe(onNext: { [weak self] data in
@@ -31,7 +32,7 @@ class CommentsViewModel {
             if (self?.orderDetail.first != nil) {
                 let order = OrderDetailRequest(fabOrderID: (self?.orderDetail[0].productionOrderID!)!, plannedQuantity: (self?.orderDetail[0].plannedQuantity!)!, fechaFin: UtilsManager.shared.formattedDateFromString(dateString: (self?.orderDetail[0].dueDate!)! , withFormat: "yyyy-MM-dd")!, comments: data, components: [])
                 self?.loading.onNext(true)
-                NetworkManager.shared.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+                self?.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                     self?.loading.onNext(false)
                     self?.backToOriginView()
                 }, onError: { [weak self] error in

@@ -11,8 +11,8 @@ export class IOrdersReq {
     itemCode: string;
     description: string;
     quantity: number;
-    createDate: Date;
-    finishDate: Date;
+    createDate: string;
+    finishDate: string;
     qfb?: string;
     status?: string;
     class?: string;

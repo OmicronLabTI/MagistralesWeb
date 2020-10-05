@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import { IMyNewListReq, BaseComponent, Components } from 'src/app/model/http/listacomponentes';
+import { IMyNewListReq, BaseComponent } from 'src/app/model/http/listacomponentes';
 import { DataService } from 'src/app/services/data.service';
 import { FormControl, Validators } from '@angular/forms';
 import { OrdersService } from 'src/app/services/orders.service';

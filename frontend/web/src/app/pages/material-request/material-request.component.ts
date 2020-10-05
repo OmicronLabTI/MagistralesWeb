@@ -79,7 +79,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       }
       if (lengthOkOrders > CONST_NUMBER.zero) {
         titleStatusOrders = `${titleStatusOrders} ${
-          lengthFailOrders > CONST_NUMBER.one ?
+          lengthFailOrders >= CONST_NUMBER.one ?
               `${Messages.requestOrderWithFailOrders }${
                                               lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
               : `${Messages.requestOrdersOnlyOk} ${ lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
@@ -192,9 +192,14 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   deleteComponents() {
-    this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
-    this.checkToDownload();
-    this.registerChanges();
+    this.dataService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
+        .then( (resultDeleteMessage: any) => {
+          if (resultDeleteMessage.isConfirmed) {
+            this.dataSource.data = this.dataSource.data.filter( order => !order.isChecked);
+            this.checkToDownload();
+            this.registerChanges();
+          }
+        });
   }
 
   private goBack() {

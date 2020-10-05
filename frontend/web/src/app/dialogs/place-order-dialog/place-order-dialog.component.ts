@@ -4,7 +4,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
 import {QfbWithNumber} from '../../model/http/users';
 import {DataService} from '../../services/data.service';
-import {CONST_NUMBER, MODAL_NAMES} from '../../constants/const';
+import {CONST_NUMBER, CONST_STRING, MODAL_NAMES} from '../../constants/const';
 
 @Component({
   selector: 'app-place-order-dialog',
@@ -21,7 +21,7 @@ export class PlaceOrderDialogComponent implements OnInit {
         if (this.placeData.placeOrdersData) {
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
         }
-        this.isPlaceManual = this.idQfbSelected !== '';
+        this.isPlaceManual = this.idQfbSelected !== CONST_STRING.empty;
   }
 
   async ngOnInit() {

@@ -12,7 +12,7 @@ import {
   MessageType,
   ClassNames,
   CONST_STRING
-} from '../../constants/const'
+} from '../../constants/const';
 import { Messages } from '../../constants/messages';
 import {DataService} from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
@@ -37,6 +37,7 @@ export class InventorybatchesComponent implements OnInit {
   lotesSeleccionados: ILotesSelectedReq[];
   hasMissingStock = false;
   description = CONST_STRING.empty;
+  productId = CONST_STRING.empty;
   element: any;
   detailsColumns: string[] = [
     'cons',
@@ -73,9 +74,10 @@ export class InventorybatchesComponent implements OnInit {
       this.ordenFabricacionId = params.get('ordenid');
       this.hasMissingStock = Number(params.get('hasMissingStock'))  === CONST_NUMBER.one;
       this.description = params.get('description');
+      this.productId = params.get('code');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
+      this.getInventoryBatches();
     });
-    this.getInventoryBatches();
 
   }
 

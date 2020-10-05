@@ -54,12 +54,12 @@ export class ComponentSearchComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     if (this.keywords.length > 0 ) {
       this.getQueryString();
-      this.getComponents();
+      this.getComponentsAction();
     }
     this.changeDetector.detectChanges();
   }
 
-  getComponents() {
+  getComponentsAction() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
           resComponents.response.forEach( component => {
@@ -85,7 +85,7 @@ export class ComponentSearchComponent implements OnInit {
     this.offset = (event.pageSize * (event.pageIndex));
     this.limit = event.pageSize;
     this.getQueryString();
-    this.getComponents();
+    this.getComponentsAction();
     return event;
   }
 
@@ -97,7 +97,7 @@ export class ComponentSearchComponent implements OnInit {
     if (valueTrim && valueTrim.length >= this.minimumCharacters) {
       this.keywords.push(valueTrim);
       this.getQueryString();
-      this.getComponents();
+      this.getComponentsAction();
     }
     if (input) {
       input.value = '';
@@ -111,7 +111,7 @@ export class ComponentSearchComponent implements OnInit {
       this.keywords.splice(index, 1);
     }
     this.getQueryString();
-    this.getComponents();
+    this.getComponentsAction();
   }
   getQueryString() {
     this.queryStringComponents =

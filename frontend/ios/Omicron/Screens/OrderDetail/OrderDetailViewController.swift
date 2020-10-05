@@ -206,18 +206,25 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
             
             guard let self = self else { return }
-            
             if res.first != nil {
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
                 let detail = res.first!
+                let partDecimal = self.getDecimalPartOfDouble(number: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue)
+                
                 let number = detail.baseDocument == 0 ? CommonStrings.empty : "\(detail.baseDocument ?? 0)"
                 self.codeDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.orderNumber) \(number)", textToBold: CommonStrings.orderNumber)
                 self.containerDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.container) \(detail.container ?? CommonStrings.empty)", textToBold: CommonStrings.container)
                 self.tagDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.tag) \(detail.productLabel ?? CommonStrings.empty)", textToBold: CommonStrings.tag)
 
                 self.documentBaseDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingOrder) \(detail.productionOrderID ?? 0)", textToBold: CommonStrings.manufacturingOrder)
-                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)", textToBold: CommonStrings.plannedQuantity)
+                
+                let plannedQuantityText = partDecimal > 0.0 ? String(format: "%6f", NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue) : "\(detail.plannedQuantity ?? 0.0)"
+                
+                self.quantityPlannedDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.plannedQuantity) \(plannedQuantityText)", textToBold: CommonStrings.plannedQuantity)
+                
+                
+                
                 self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)", textToBold: CommonStrings.manufacturingDate)
                 self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)", textToBold: CommonStrings.finishdate)
 //                self.productDescritionLabel.attributedText = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty) | \(detail.productDescription ?? CommonStrings.empty)", textToBold: detail.code, textColor: OmicronColors.blue)
@@ -301,6 +308,10 @@ class OrderDetailViewController: UIViewController {
             signatureVC.modalPresentationStyle = .overCurrentContext
             self?.present(signatureVC, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
+    }
+    
+    func getDecimalPartOfDouble(number: Double) -> Double {
+        return number.truncatingRemainder(dividingBy: 1)
     }
     
     func initComponents() -> Void {
