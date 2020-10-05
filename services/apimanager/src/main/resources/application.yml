@@ -21,38 +21,24 @@ zuul:
     oauth:
       path: /oauth/**
       serviceId: oauth-service
-      semaphore:
-        maxSemaphores: 1000
     catalogos:
       path: /catalogos/**
       serviceId: catalogosservice
-      semaphore:
-        maxSemaphores: 1000
     usuarios:
       path: /usuarios/**
       serviceId: usuariosservice
-      semaphore:
-        maxSemaphores: 1000
     sapadapter:
       path: /sapadapter/**
       serviceId: sapadapterService
-      semaphore:
-        maxSemaphores: 1000
     pedidos:
       path: /pedidos/**
       serviceId: pedidosservice
-      semaphore:
-        maxSemaphores: 1000
     warehouses:
       path: /warehouses/**
       serviceId: warehousesservice
-      semaphore:
-        maxSemaphores: 1000
     reporting:
       path: /reporting/**
       serviceId: reportingservice
-      semaphore:
-        maxSemaphores: 1000
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
 ribbon:
@@ -60,5 +46,5 @@ ribbon:
   ConnectionTimeout: 3000
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 2
-  MaxTotalHttpConnections: 500
+  MaxTotalHttpConnections: 7000
   MaxConnectionsPerHost: 1000
