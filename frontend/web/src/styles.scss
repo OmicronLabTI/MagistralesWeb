@@ -99,9 +99,6 @@ body {
 td{
   font-family: 'Quicksand', sans-serif !important;
 }
-th{
-  font-family: 'Quicksand', sans-serif !important;
-}
 .table-container {
   width: 100%;
   height: 90%;
@@ -212,6 +209,7 @@ table {
 }
 
 th{
+  font-family: 'Quicksand', sans-serif !important;
   color: #6C90B3 !important;
   font-weight: bold !important;
   font-size: 13px !important;
@@ -591,10 +589,6 @@ a.breadcrumblink:hover{
 
 .table-container-component {
   width: 100%;
-  //overflow-y: scroll;
-}
-
-.table-container-component {
   -ms-overflow-style: none !important;  /* IE and Edge */
 }
 
