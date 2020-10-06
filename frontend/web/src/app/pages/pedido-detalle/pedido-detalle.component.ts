@@ -187,22 +187,13 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = order.ordenFabricacionId;
-        return cancelOrder;
-      }),
+    this.dataService.setCancelOrders({list: this.getDataCancelFinalize(ConstStatus.finalizado) ,
       cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status === ConstStatus.terminado)).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = order.ordenFabricacionId;
-        return cancelOrder;
-      }), cancelType: MODAL_NAMES.placeOrdersDetail});
+    this.dataService.setFinalizeOrders({list: this.getDataCancelFinalize(ConstStatus.terminado),
+      cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 
   reassignOrderDetail() {
@@ -220,5 +211,13 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.router.navigate([RouterPaths.materialRequest,
           this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString(),
           CONST_NUMBER.zero.toString()]);
+    }
+    getDataCancelFinalize(status: string) {
+    return this.dataSource.data.filter
+      (t => (t.isChecked && t.status !== status)).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      });
     }
 }

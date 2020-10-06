@@ -266,7 +266,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openMiListaDialog() {
-    const dialogRef = this.dialog.open(MiListaComponent, {
+     this.dialog.open(MiListaComponent, {
       panelClass: 'custom-dialog-container',
       data: {
           data: this.dataSource.data,
@@ -287,7 +287,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openCustomList() {
-    const dialogRef = this.dialog.open(ComponentslistComponent, {
+    this.dialog.open(ComponentslistComponent, {
       panelClass: 'custom-dialog-container',
       data: {
           code: this.oldDataFormulaDetail.code,

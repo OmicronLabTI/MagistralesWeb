@@ -12,16 +12,12 @@ class KPITableViewCell: UITableViewCell {
 
     @IBOutlet weak var kpiImage: UIImageView!
     @IBOutlet weak var kpiLabel: UILabel!
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
-
 }

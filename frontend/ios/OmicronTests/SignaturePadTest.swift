@@ -17,70 +17,52 @@ class SignaturePadTest: XCTestCase {
     // MARK: - Variables
     var signaturePadViewModel: SignaturePadViewModel?
     var disposeBag: DisposeBag?
-
     override func setUp() {
         print("XXXX setUp SignaturePadTest")
         signaturePadViewModel = SignaturePadViewModel()
         disposeBag = DisposeBag()
     }
-    
     override func tearDown() {
         print("XXXX tearDown SignaturePadTest")
         signaturePadViewModel = nil
         disposeBag = nil
     }
-    
-    
     // MARK: - Test Functions
     func testValidSignatureType() {
-        
         signaturePadViewModel!.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
         signaturePadViewModel!.getTypeSignature.subscribe(onNext: { typeSignature in
             XCTAssert(typeSignature == CommonStrings.signatureViewTitleQFB ||
                 typeSignature == CommonStrings.signatureViewTitleTechnical)
         }).disposed(by: disposeBag!)
-        
     }
-    
     func testValidSignature() {
-        
         signaturePadViewModel!.getSignature.onNext(UIImage(imageLiteralResourceName: "AppIcon"))
         signaturePadViewModel!.getSignature.subscribe(onNext: { signature in
             XCTAssertNotNil(signature.toBase64())
         }).disposed(by: disposeBag!)
-        
     }
-    
     func testValidSignatureRequest() {
-        
         signaturePadViewModel!.whoRequestSignature.onNext(ViewControllerIdentifiers.orderDetailViewController)
         signaturePadViewModel!.whoRequestSignature.subscribe(onNext: { signatureRequest in
             XCTAssert(signatureRequest == ViewControllerIdentifiers.orderDetailViewController)
         }).disposed(by: disposeBag!)
     }
-    
-    func testAcceptDidTapSuccessOrderDetailViewController() -> Void {
+    func testAcceptDidTapSuccessOrderDetailViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
-        
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
         self.signaturePadViewModel?.getSignature.onNext(testIUmage!)
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.orderDetailViewController)
-
         self.signaturePadViewModel?.orderDetailVC.showSignatureView.subscribe(onNext: { res in
             XCTAssertEqual(res, "Firma del Técnico")
             let qfbSignatureIsGet = self.signaturePadViewModel?.orderDetailVC.qfbSignatureIsGet
             XCTAssertEqual(qfbSignatureIsGet, true)
         }).disposed(by: self.disposeBag!)
-        
         self.signaturePadViewModel?.acceptDidTap.onNext(())
-        
     }
-    
-    func testAcceptDidTapSuccessLotsViewController() -> Void {
+    func testAcceptDidTapSuccessLotsViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
-        
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
         self.signaturePadViewModel?.getSignature.onNext(testIUmage!)
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.lotsViewController)
@@ -90,47 +72,41 @@ class SignaturePadTest: XCTestCase {
             let qfbSignature = self.signaturePadViewModel?.lotsViewModel.qfbSignatureIsGet
             XCTAssertEqual(qfbSignature, true)
         }).disposed(by: self.disposeBag!)
-        
         self.signaturePadViewModel?.acceptDidTap.onNext(())
     }
-    
-    func testAcceptDidTapToBase64OrderLotsViewController() -> Void {
+    func testAcceptDidTapToBase64OrderLotsViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
         let expected64 = Base64.test1
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
         self.signaturePadViewModel?.getSignature.onNext(testIUmage!)
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.lotsViewController)
-
-        self.signaturePadViewModel?.lotsViewModel.showSignatureView.subscribe(onNext: { res in
+        self.signaturePadViewModel?.lotsViewModel
+            .showSignatureView.subscribe(onNext: { _ in
             let base64 = self.signaturePadViewModel?.lotsViewModel.sqfbSignature
             // When
             XCTAssertEqual(expected64, base64)
         }).disposed(by: self.disposeBag!)
-
         // Then
         self.signaturePadViewModel?.acceptDidTap.onNext(())
     }
-    
-    func testAcceptDidTapToBase64DetailViewController() -> Void {
+    func testAcceptDidTapToBase64DetailViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
         let expected64 = Base64.test1
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
         self.signaturePadViewModel?.getSignature.onNext(testIUmage!)
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.orderDetailViewController)
-
-        self.signaturePadViewModel?.orderDetailVC.showSignatureView.subscribe(onNext: { res in
+        self.signaturePadViewModel?.orderDetailVC
+            .showSignatureView.subscribe(onNext: { _ in
             // When
             let base64 = self.signaturePadViewModel?.orderDetailVC.sqfbSignature
             XCTAssertEqual(expected64, base64)
         }).disposed(by: self.disposeBag!)
-        
         // Then
         self.signaturePadViewModel?.acceptDidTap.onNext(())
     }
-    
-    func testAcceptDidTapSignatureTypeOrderDetailViewController() -> Void {
+    func testAcceptDidTapSignatureTypeOrderDetailViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleTechnical)
@@ -138,12 +114,10 @@ class SignaturePadTest: XCTestCase {
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.orderDetailViewController)
         // Then
         self.signaturePadViewModel?.acceptDidTap.onNext(())
-        
         // When
         XCTAssertEqual(self.signaturePadViewModel?.orderDetailVC.technicalSignatureIsGet, true)
     }
-    
-    func testAcceptDidTapSignatureTypeOrderLotsViewController() -> Void {
+    func testAcceptDidTapSignatureTypeOrderLotsViewController() {
         // Given
         let testIUmage = UIImage(named: ImagesNames.closeEye)
         self.signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleTechnical)
@@ -151,9 +125,7 @@ class SignaturePadTest: XCTestCase {
         self.signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.lotsViewController)
         // Then
         self.signaturePadViewModel?.acceptDidTap.onNext(())
-        
         // When
         XCTAssertEqual(self.signaturePadViewModel?.lotsViewModel.technicalSignatureIsGet, true)
     }
-
 }

@@ -9,7 +9,5 @@
 import UIKit
 
 class HeaderCollectionViewCell: UICollectionViewCell {
-    
     @IBOutlet weak var productID: UILabel!
-    
 }

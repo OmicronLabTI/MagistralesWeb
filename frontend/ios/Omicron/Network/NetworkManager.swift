@@ -26,147 +26,116 @@ protocol AuthorizedTargetType: TargetType {
 }
 
 class NetworkManager: SessionProtocol {
-    
-    //MARK: Variables
+    // MARK: Variables
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
-    
-    // MARK: Init
-    
-    // Para consumir mock
-//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
-//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token })
-//    ])) {
-//        self.provider = provider
-//    }
-    
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.access_token }),
-        NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
-        ])) {
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
+        NetworkLoggerPlugin(
+            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
+    ])) {
         self.provider = provider
     }
-    
     // MARK: Functions
-    
     func getTokenRefreshService() -> Single<Response> {
-        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refresh_token ?? "")
+        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refreshToken ?? "")
         return self.provider.rx.request(.renew(data: data))
     }
-
     // Parse and save your token locally or do any thing with the new token here
     func tokenDidRefresh(response: LoginResponse) {
         Persistence.shared.saveLoginData(data: response)
     }
-
     // Log the user out or do anything related here
-    public func didFailedToRefreshToken() {
-        // TODO LOGOUT USER
-    }
-    
+    public func didFailedToRefreshToken() { }
     // Realiza el login
     func login(data: Login) -> Observable<LoginResponse> {
         let req: ApiService = ApiService.login(data: data)
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene la información del usuario logeado
     func getInfoUser(username: String) -> Observable<UserInfoResponse> {
         let req: ApiService = ApiService.getInfoUser(username: username)
         let res: Observable<UserInfoResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene las órdenes de fabricación en una lista de por status
     func getStatusList(userId: String) -> Observable<StatusResponse> {
         let req: ApiService = ApiService.getStatusList(userId: userId)
         let res: Observable<StatusResponse> = makeRequest(request: req)
         return res
     }
-    
     func renew(data: Renew) -> Observable<LoginResponse> {
         let req: ApiService = ApiService.renew(data: data)
         let res: Observable<LoginResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene el detalle de la fórmula
     func getOrdenDetail(orderId: Int) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.getOrdenDetail(orderId: orderId)
         let res: Observable<OrderDetailResponse> = makeRequest(request: req)
         return res
     }
-    
     // Chambia de status una orden de fabricación
     func changeStatusOrder(changeStatusRequest: [ChangeStatusRequest]) -> Observable<ChangeStatusRespose> {
         let req: ApiService = ApiService.changeStatusOrder(changeStatusRequest: changeStatusRequest)
         let res: Observable<ChangeStatusRespose> = makeRequest(request: req)
         return res
     }
-    
     // Actualiza, elimina un elemento de la tabla en detalle de la formula
-    func updateDeleteItemOfTableInOrderDetail(orderDetailRequest:  OrderDetailRequest) -> Observable<DeleteOrUpdateItemOfTableResponse> {
+    func updateDeleteItemOfTableInOrderDetail(
+        orderDetailRequest: OrderDetailRequest) -> Observable<DeleteOrUpdateItemOfTableResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
         let res: Observable<DeleteOrUpdateItemOfTableResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene los lotes para un orderId
-    func getLots(orderId:  Int) -> Observable<LotsResponse> {
-        let req: ApiService = ApiService.getLots(orderId:  orderId)
+    func getLots(orderId: Int) -> Observable<LotsResponse> {
+        let req: ApiService = ApiService.getLots(orderId: orderId)
         let res: Observable<LotsResponse> = makeRequest(request: req)
         return res
     }
-    
     // Finaliza la order de fabricación
     func finishOrder(order: FinishOrder) -> Observable<FinishOrderResponse> {
         let req: ApiService = ApiService.finishOrder(finishOrder: order)
         let res: Observable<FinishOrderResponse> = makeRequest(request: req)
         return res
     }
-    
     // Asigna lotes a una orden de fabricación
     func assignLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
         let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)
         let res: Observable<AssingbBatchResponse> = makeRequest(request: req)
         return res
     }
-
     // Se pregunta si una orden  se puede finalizar o no
     func askIfOrderCanBeFinalized(orderId: Int) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.askIfOrderCanBeFinalized(orderId: orderId)
         let res: Observable<OrderDetailResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene listado de componentes
     func getComponents(data: ComponentRequest) -> Observable<ComponentResponse> {
         let req: ApiService = ApiService.getComponents(data: data)
         let res: Observable<ComponentResponse> = makeRequest(request: req)
         return res
     }
-    
     // Obtiene la carga de trabajo
     func getWordLoad(data: WorkloadRequest) -> Observable<WorkloadResponse> {
         let req: ApiService = ApiService.getWorkload(data: data)
         let res: Observable<WorkloadResponse> = makeRequest(request: req)
         return res
     }
-    
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
-            let r = !request.needsAuth ?
+            let res = !request.needsAuth ?
                 self?.provider.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
                 self?.provider.rx
-                                .request(request)
-                                .filterSuccessfulStatusAndRedirectCodes()
-                                .refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: self!)
-            
-            let _ = r?.asObservable().subscribe(onNext: { response in
+                    .request(request)
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: self!)
+            _ = res?.asObservable().subscribe(onNext: { response in
                 let json = try? response.mapJSON()
-                
                 let res = Mapper<T>().map(JSONObject: json)
-                if (res != nil) {
+                if res != nil {
                     observer.onNext(res!)
                 } else {
                     observer.onError(RequestError.invalidResponse)
@@ -175,32 +144,25 @@ class NetworkManager: SessionProtocol {
                 if let moyaError: MoyaError = error as? MoyaError, let res = moyaError.response {
                     let statusCode = res.statusCode
                     let json = try? res.mapJSON()
-
                     switch statusCode {
                     case 400:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.invalidRequest(error: err))
-                        break
                     case 401:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.unauthorized(error: err))
-                        break
                     case 404:
                         observer.onError(RequestError.notFound)
-                        break
                     case 500...:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.serverError(error: err))
-                        break
                     default:
                         observer.onError(RequestError.unknownError)
-                        break
                     }
                     return
                 }
                 observer.onError(RequestError.serverUnavailable)
             })
-            
             return Disposables.create()
         })
     }
@@ -218,7 +180,6 @@ private func JSONResponseDataFormatter(_ data: Data) -> String {
 
 struct AuthPlugin: PluginType {
     let tokenClosure: () -> String?
-    
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
         guard
             let token = tokenClosure(),
@@ -227,7 +188,6 @@ struct AuthPlugin: PluginType {
             else {
                 return request
         }
-        
         var request = request
         request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization")
         return request
@@ -243,43 +203,44 @@ private protocol SessionProtocol {
 private extension PrimitiveSequence where Trait == SingleTrait, Element == Response {
     // Tries to refresh auth token on 401 error and retry the request.
     // If the refresh fails it returns an error .
-    func refreshAuthenticationTokenIfNeeded(sessionServiceDelegate : SessionProtocol) -> Single<Response> {
+    func refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: SessionProtocol) -> Single<Response> {
         return
             // Retry and process the request if any error occurred
             self.retryWhen { responseFromFirstRequest in
-                responseFromFirstRequest.asObservable().flatMap { originalRequestResponseError -> PrimitiveSequence<SingleTrait, Element> in
-                    if let moyaError: MoyaError = originalRequestResponseError as? MoyaError, let res = moyaError.response {
-                        let statusCode = res.statusCode
-                        if statusCode == 401 {
-                            // Token expired >> Call refresh token request
-                            return sessionServiceDelegate
-                                .getTokenRefreshService()
-                                .filterSuccessfulStatusAndRedirectCodes()
-                                .catchError { tokenRefreshRequestError -> Single<Response> in
-                                    // Failed to refresh token
-                                    //
-                                    // Logout or do any thing related
-                                    sessionServiceDelegate.didFailedToRefreshToken()
-                                    return Single.error(tokenRefreshRequestError)
-                            }
-                            .flatMap { tokenRefreshResponse -> Single<Response> in
-                                // Refresh token response string
-                                // Save new token locally to use with any request from now on
-                                if let json = try? tokenRefreshResponse.mapJSON(), let tokenRes = Mapper<LoginResponse>().map(JSONObject: json) {
-                                    sessionServiceDelegate.tokenDidRefresh(response: tokenRes)
+                responseFromFirstRequest.asObservable()
+                    .flatMap { originalRequestResponseError -> PrimitiveSequence<SingleTrait, Element> in
+                        if let moyaError: MoyaError = originalRequestResponseError as? MoyaError,
+                            let res = moyaError.response {
+                            let statusCode = res.statusCode
+                            if statusCode == 401 {
+                                // Token expired >> Call refresh token request
+                                return sessionServiceDelegate
+                                    .getTokenRefreshService()
+                                    .filterSuccessfulStatusAndRedirectCodes()
+                                    .catchError { tokenRefreshRequestError -> Single<Response> in
+                                        // Failed to refresh token
+                                        //
+                                        // Logout or do any thing related
+                                        sessionServiceDelegate.didFailedToRefreshToken()
+                                        return Single.error(tokenRefreshRequestError)
                                 }
-
-                                // Retry the original request one more time
-                                return self.retry(1)
+                                .flatMap { tokenRefreshResponse -> Single<Response> in
+                                    // Refresh token response string
+                                    // Save new token locally to use with any request from now on
+                                    if let json = try? tokenRefreshResponse.mapJSON(),
+                                        let tokenRes = Mapper<LoginResponse>().map(JSONObject: json) {
+                                        sessionServiceDelegate.tokenDidRefresh(response: tokenRes)
+                                    }
+                                    // Retry the original request one more time
+                                    return self.retry(1)
+                                }
+                            } else {
+                                // Retuen errors other than 401 & 403 of the original request
+                                return Single.error(originalRequestResponseError)
                             }
                         }
-                        else {
-                            // Retuen errors other than 401 & 403 of the original request
-                            return Single.error(originalRequestResponseError)
-                        }
-                    }
-                    // Return any other error
-                    return Single.error(originalRequestResponseError)
+                        // Return any other error
+                        return Single.error(originalRequestResponseError)
                 }
         }
     }
