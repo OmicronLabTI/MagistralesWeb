@@ -69,47 +69,60 @@ class InboxViewController: UIViewController {
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
+    func returnCardIsolateOrderCollectionViewCell(
+        indexPath: IndexPath, element: SectionModel<String, Order>.Item,
+        decimalPart: Double?) -> CardIsolatedOrderCollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier,
+            for: indexPath) as? CardIsolatedOrderCollectionViewCell
+        cell?.row = indexPath.row
+        cell?.order = element
+        cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+        cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
+            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            "\(element.plannedQuantity ?? 0.0)"
+        cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+        cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+        cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+        cell?.missingStockImage.isHidden = !element.hasMissingStock
+        return cell!
+    }
+    func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
+                                      decimalPart: Double?) -> CardCollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath)
+            as? CardCollectionViewCell
+        cell?.row = indexPath.row
+        cell?.order = element
+        cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+        cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
+            CommonStrings.empty : "\(element.baseDocument ?? 0)"
+        cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
+        cell?.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
+        cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
+            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            "\(element.plannedQuantity ?? 0.0)"
+        cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+        cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+        cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+        cell?.missingStockImage.isHidden = !element.hasMissingStock
+        return cell!
+    }
     func viewModelBindingCollectionView() {
         // Pinta las cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(
-            configureCell: { [weak self] (_, collectionView, indexPath, element) in
+            configureCell: { [weak self] (_, _, indexPath, element) in
             let decimalPart = self?.getDecimalPartOfDouble(
                 number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
             if element.baseDocument != 0 {
-                let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath)
-                    as? CardCollectionViewCell
-                cell?.row = indexPath.row
-                cell?.order = element
-                cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-                cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
-                    CommonStrings.empty : "\(element.baseDocument ?? 0)"
-                cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
-                cell?.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
-                cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-                    String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
-                    "\(element.plannedQuantity ?? 0.0)"
-                cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
-                cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-                cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
-                cell?.missingStockImage.isHidden = !element.hasMissingStock
+                let cell = self?.returnCardCollectionViewCell(
+                    indexPath: indexPath, element: element, decimalPart: decimalPart)
                 cell?.delegate = self
                 return cell!
             } else {
-                let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier,
-                    for: indexPath) as? CardIsolatedOrderCollectionViewCell
-                cell?.row = indexPath.row
-                cell?.order = element
-                cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-                cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-                    String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
-                    "\(element.plannedQuantity ?? 0.0)"
-                cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
-                cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-                cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
-                cell?.missingStockImage.isHidden = !element.hasMissingStock
-                cell?.delegate = self
+                let cell = self?.returnCardIsolateOrderCollectionViewCell(
+                    indexPath: indexPath, element: element, decimalPart: decimalPart)
+                cell!.delegate = self
                 return cell!
             }
         })

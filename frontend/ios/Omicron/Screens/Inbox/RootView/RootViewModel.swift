@@ -52,6 +52,37 @@ class RootViewModel {
         }).disposed(by: disposeBag)
     }
     // MARK: - Functions
+    func sectionOrderSwitched(statusId: Int, orders: [Order]) -> SectionOrder? {
+        switch statusId {
+        case 1:
+            return SectionOrder(statusId: statusId, statusName: StatusNameConstants.assignedStatus,
+                                numberTask: orders.count,
+                                imageIndicatorStatus: IndicatorImageStatus.assigned, orders: orders)
+        case 2:
+            return SectionOrder(statusId: statusId, statusName: StatusNameConstants.inProcessStatus,
+                                numberTask: orders.count,
+                                imageIndicatorStatus: IndicatorImageStatus.inProcess,
+                                orders: orders)
+        case 3:
+            return SectionOrder(statusId: statusId, statusName: StatusNameConstants.penddingStatus,
+                                numberTask: orders.count,
+                                imageIndicatorStatus: IndicatorImageStatus.pendding,
+                                orders: orders)
+        case 4:
+            return SectionOrder(statusId: statusId, statusName: StatusNameConstants.finishedStatus,
+                                numberTask: orders.count,
+                                imageIndicatorStatus: IndicatorImageStatus.finished,
+                                orders: orders)
+        case 5:
+            return SectionOrder(statusId: statusId,
+                                statusName: StatusNameConstants.reassignedStatus,
+                                numberTask: orders.count,
+                                imageIndicatorStatus: IndicatorImageStatus.reassined,
+                                orders: orders)
+        default:
+            return nil
+        }
+    }
     func getOrders(isUpdate: Bool = false) {
         if isUpdate { needsRefresh = true }
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
@@ -63,35 +94,7 @@ class RootViewModel {
                     return status.map({ detail -> SectionOrder? in
                         let orders = detail.orders ?? []
                         if let statusId = detail.statusId {
-                            switch statusId {
-                            case 1:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.assignedStatus,
-                                                    numberTask: orders.count,
-                                                    imageIndicatorStatus: IndicatorImageStatus.assigned, orders: orders)
-                            case 2:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.inProcessStatus,
-                                                    numberTask: orders.count,
-                                                    imageIndicatorStatus: IndicatorImageStatus.inProcess,
-                                                    orders: orders)
-                            case 3:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.penddingStatus,
-                                                    numberTask: orders.count,
-                                                    imageIndicatorStatus: IndicatorImageStatus.pendding,
-                                                    orders: orders)
-                            case 4:
-                                return SectionOrder(statusId: statusId, statusName: StatusNameConstants.finishedStatus,
-                                                    numberTask: orders.count,
-                                                    imageIndicatorStatus: IndicatorImageStatus.finished,
-                                                    orders: orders)
-                            case 5:
-                                return SectionOrder(statusId: statusId,
-                                                    statusName: StatusNameConstants.reassignedStatus,
-                                                    numberTask: orders.count,
-                                                    imageIndicatorStatus: IndicatorImageStatus.reassined,
-                                                    orders: orders)
-                            default:
-                                break
-                            }
+                            return self.sectionOrderSwitched(statusId: statusId, orders: orders)
                         }
                         return nil
                     })

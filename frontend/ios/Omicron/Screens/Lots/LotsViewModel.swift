@@ -56,6 +56,17 @@ class LotsViewModel {
             self?.askIfUserWantChageOrderToPendigStatus.onNext(CommonStrings.confirmationMessagePendingStatus)
         }).disposed(by: self.disposeBag)
         // Añade lotes de Lotes disponibles a Lotes Seleccionados
+        self.addLotDidTapAction()
+        // Remueve un lote de Lotes seleccionados y lo pasa a Lotes Disponibles
+        self.removeLotAction()
+        // Guada los lotes seleccionados y los manda al servicio
+        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.assignLots()
+        }).self.disposed(by: self.disposeBag)
+    }
+    // MARK: - Functions
+    // swiftlint:disable function_body_length
+    func addLotDidTapAction() {
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in
             self?.availableSelected.onNext(nil)
@@ -73,15 +84,10 @@ class LotsViewModel {
             }) {
                 if existing.action == nil {
                     existing.action = "delete"
-                    self?.selectedBatches.append(BatchSelected(
-                        orderId: existing.orderId,
+                    self?.selectedBatches.append(BatchSelected(orderId: existing.orderId,
                         assignedQty: (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0),
-                        batchNumber:
-                        existing.batchNumber,
-                        itemCode: existing.itemCode,
-                        action: "insert",
-                        sysNumber: existing.sysNumber,
-                        expiredBatch: existing.expiredBatch))
+                        batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: "insert",
+                        sysNumber: existing.sysNumber, expiredBatch: existing.expiredBatch))
                     self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
                 } else {
                     existing.assignedQty = (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0)
@@ -94,12 +100,8 @@ class LotsViewModel {
                 }
             } else {
                 self?.selectedBatches.append(BatchSelected(
-                    orderId: self?.orderId,
-                    assignedQty: quantity,
-                    batchNumber: available.numeroLote,
-                    itemCode: product.codigoProducto,
-                    action: "insert",
-                    sysNumber: available.sysNumber,
+                    orderId: self?.orderId, assignedQty: quantity, batchNumber: available.numeroLote,
+                    itemCode: product.codigoProducto, action: "insert", sysNumber: available.sysNumber,
                     expiredBatch: available.expiredBatch))
                 self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
             }
@@ -118,7 +120,8 @@ class LotsViewModel {
             }
             self?.dataOfLots.onNext(self?.documentLines ?? [])
         }).disposed(by: self.disposeBag)
-        // Remueve un lote de Lotes seleccionados y lo pasa a Lotes Disponibles
+    }
+    func removeLotAction() {
         let inputsRemove = Observable.combineLatest(productSelected, batchSelected)
         self.removeLotDidTap.withLatestFrom(inputsRemove).subscribe(onNext: { [weak self] document, batch in
             if let existing = self?.selectedBatches.first(where: { batchItem in
@@ -158,12 +161,7 @@ class LotsViewModel {
                 self?.dataOfLots.onNext(self?.documentLines ?? [])
             }
         }).disposed(by: self.disposeBag)
-        // Guada los lotes seleccionados y los manda al servicio
-        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.assignLots()
-        }).self.disposed(by: self.disposeBag)
     }
-    // MARK: - Functions
     func getLots() {
         self.loading.onNext(true)
         self.networkManager.getLots(orderId: orderId)

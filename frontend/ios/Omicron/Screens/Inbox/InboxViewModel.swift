@@ -11,8 +11,8 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 import Resolver
-
-class  InboxViewModel {
+// swiftlint:disable type_body_length
+class InboxViewModel {
     var finishedDidTap = PublishSubject<Void>()
     var pendingDidTap = PublishSubject<Void>()
     var processDidTap = PublishSubject<Void>()
@@ -44,6 +44,7 @@ class  InboxViewModel {
     var normalSort = true
     var similaritySort = false
     var groupSort = false
+    // swiftlent:disable function_body_length
     init() {
         pendingDidTap.subscribe(onNext: { [weak self] _ in
             let message = MessageToChangeStatus(
@@ -59,30 +60,7 @@ class  InboxViewModel {
             self?.showAlertToChangeOrderOfStatus.onNext(message)
         }).disposed(by: disposeBag)
         // Funcionalidad para agrupar los cards por similitud
-        similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
-            self?.processButtonIsEnable.onNext(false)
-            if self?.ordersTemp != nil {
-                for order in self!.ordersTemp {
-                    let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
-                    if let codeProduct = itemCodeInArray?.first {
-                        order.productCode = codeProduct
-                    } else {
-                        order.productCode = CommonStrings.empty
-                    }
-                }
-                // Se agrupa las ordenes por código de producto
-                let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
-                let sectionModels = self?.groupedWithSimilarityOrWithoutSimilarity(
-                    data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
-                    titleForOrdersWithSimilarity: CommonStrings.product)
-                self?.sectionOrders = sectionModels ?? []
-                self?.statusDataGrouped.onNext(sectionModels ?? [])
-            }
-            self?.similarityViewButtonIsEnable.onNext(false)
-            self?.normalViewButtonIsEnable.onNext(true)
-            self?.groupedByOrderNumberIsEnable.onNext(true)
-            self?.changeStatusSort(normal: false, similarity: true, grouped: false)
-        }).disposed(by: self.disposeBag)
+        self.similarityViewButtonAction()
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
@@ -113,6 +91,32 @@ class  InboxViewModel {
             self.showKPIView.onNext(true)
             self.deselectRow.onNext(true)
         }).disposed(by: disposeBag)
+    }
+    func similarityViewButtonAction() {
+        similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
+            self?.processButtonIsEnable.onNext(false)
+            if self?.ordersTemp != nil {
+                for order in self!.ordersTemp {
+                    let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
+                    if let codeProduct = itemCodeInArray?.first {
+                        order.productCode = codeProduct
+                    } else {
+                        order.productCode = CommonStrings.empty
+                    }
+                }
+                // Se agrupa las ordenes por código de producto
+                let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
+                let sectionModels = self?.groupedWithSimilarityOrWithoutSimilarity(
+                    data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+                    titleForOrdersWithSimilarity: CommonStrings.product)
+                self?.sectionOrders = sectionModels ?? []
+                self?.statusDataGrouped.onNext(sectionModels ?? [])
+            }
+            self?.similarityViewButtonIsEnable.onNext(false)
+            self?.normalViewButtonIsEnable.onNext(true)
+            self?.groupedByOrderNumberIsEnable.onNext(true)
+            self?.changeStatusSort(normal: false, similarity: true, grouped: false)
+        }).disposed(by: self.disposeBag)
     }
     // Se agrupan ordenes por similitud o sin similitud
     func groupedWithSimilarityOrWithoutSimilarity(
