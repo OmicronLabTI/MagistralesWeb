@@ -4,7 +4,7 @@ metadata:
   name: prod-cert-tls
 spec:
   dnsNames:
-  - magistralesprod.omicronlab.com.mx
+  - '*.omicronlab.com.mx'
   issuerRef:
     group: cert-manager.io
     kind: Issuer
@@ -17,7 +17,7 @@ metadata:
   name: prod-cert-tls-log
 spec:
   dnsNames:
-  - magistralesdashboard.omicronlab.com.mx
+  - '*.omicronlab.com.mx'
   issuerRef:
     group: cert-manager.io
     kind: Issuer
