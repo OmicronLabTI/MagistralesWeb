@@ -63,6 +63,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   isAssignOrderIsolated = false;
   isReAssignOrderIsolated = false;
   isFinalizeOrderIsolated = false;
+  isOnInit = true;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -160,6 +161,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.isReAssignOrderIsolated = false;
         this.isFinalizeOrderIsolated = false;
         this.allComplete = false;
+        this.isOnInit = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {

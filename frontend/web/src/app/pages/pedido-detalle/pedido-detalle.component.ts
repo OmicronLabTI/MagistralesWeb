@@ -50,6 +50,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToCancel = false;
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
+  isOnInit = true;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -116,6 +117,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToFinalize = false;
         this.isThereOrdersDetailToReassign = false;
         this.allComplete = false;
+        this.isOnInit = false;
       }, error => this.errorService.httpError(error));
   }
 

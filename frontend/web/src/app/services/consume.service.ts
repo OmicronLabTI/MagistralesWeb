@@ -24,7 +24,6 @@ export class ConsumeService {
         objParams = objParams.append(key, params[key]);
       });
     }
-
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.get<any>(url, { headers: objHeaders, params: objParams })
