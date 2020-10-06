@@ -13,7 +13,6 @@ import Resolver
 @testable import Omicron
 
 class CommentsTest: XCTestCase {
-
     // MARK: - Variables
     var sut: CommentsViewModel?
     var disposeBag: DisposeBag?
@@ -23,7 +22,6 @@ class CommentsTest: XCTestCase {
     var message: String?
     var order: OrderDetailRequest?
     @Injected var networkmanager: NetworkManager
-    
     override func setUp() {
         sut = CommentsViewModel()
         disposeBag = DisposeBag()
@@ -38,7 +36,6 @@ class CommentsTest: XCTestCase {
             comments: message!,
             components: [])
     }
-    
     override func tearDown() {
         sut = nil
         disposeBag = nil
@@ -48,11 +45,8 @@ class CommentsTest: XCTestCase {
         message = nil
         order = nil
     }
-    
     // MARK: - Test Functions
-        
-    func testValidResponse() -> Void {
-        
+    func testValidResponse() {
         self.networkmanager
             .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
             .observeOn(MainScheduler.instance)
@@ -60,8 +54,7 @@ class CommentsTest: XCTestCase {
                 XCTAssertNotNil(res.response)
             }).disposed(by: self.disposeBag!)
     }
-        
-    func testAceptDidTapSuccessFromOrderDetailViewController() -> Void {
+    func testAceptDidTapSuccessFromOrderDetailViewController() {
         // Given
         sut?.textView.onNext("Texto de Prueba")
         sut?.originView = ViewControllerIdentifiers.orderDetailViewController
@@ -75,8 +68,7 @@ class CommentsTest: XCTestCase {
             self?.sut?.aceptDidTap.onNext(())
         }).disposed(by: self.disposeBag!)
     }
-    
-    func testAceptDidTapSuccessFromLotsViewController() -> Void {
+    func testAceptDidTapSuccessFromLotsViewController() {
         // Given
         sut?.textView.onNext("Texto de Prueba")
         sut?.originView = ViewControllerIdentifiers.lotsViewController
@@ -90,5 +82,4 @@ class CommentsTest: XCTestCase {
             self?.sut?.aceptDidTap.onNext(())
         }).disposed(by: self.disposeBag!)
     }
-    
 }

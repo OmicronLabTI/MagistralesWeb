@@ -12,18 +12,16 @@ import RxCocoa
 import Resolver
 
 class OrderDetailViewModel {
-    
-    // MARK: Variables
+    // MARK: - Variables
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
-    weak var tempOrderDetailData: OrderDetail? = nil
+    weak var tempOrderDetailData: OrderDetail?
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
-    //var showAlertConfirmationProcess = PublishSubject<String>()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
-    var auxTabledata:[Detail] = []
+    var auxTabledata: [Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
     var finishedButtonDidTap = PublishSubject<Void>()
     var pendingButtonDidTap = PublishSubject<Void>()
@@ -40,43 +38,39 @@ class OrderDetailViewModel {
     var endRefreshing = PublishSubject<Void>()
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
-    
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
-    
-    // MARK: Init
+    // MARK: - Init
     init() {
-        
         self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.doYouWantToFinishTheOrder, typeOfStatus: StatusNameConstants.finishedStatus)
+            let message = MessageToChangeStatus(message: CommonStrings.doYouWantToFinishTheOrder,
+                                                typeOfStatus: StatusNameConstants.finishedStatus)
             self?.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
-        
         self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus, typeOfStatus: StatusNameConstants.inProcessStatus)
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus,
+                                                typeOfStatus: StatusNameConstants.inProcessStatus)
             self?.showAlertConfirmation.onNext(message)
         }).disposed(by: disposeBag)
-        
         self.pendingButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus, typeOfStatus: StatusNameConstants.penddingStatus)
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus,
+                                                typeOfStatus: StatusNameConstants.penddingStatus)
             self?.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
-        
         self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             self?.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
     }
-    
     deinit {
         print("Se muere OrderDetailViewModel")
     }
-    
-    // MARK: Functions
-    func getOrdenDetail(isRefresh: Bool = false) -> Void {
+    // MARK: - Functions
+    func getOrdenDetail(isRefresh: Bool = false) {
         if needsRefresh { loading.onNext(true) }
-        self.networkManager.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+        self.networkManager.getOrdenDetail(orderId: self.orderId).observeOn(MainScheduler.instance)
+            .subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
-            if (res.response != nil) {
+            if res.response != nil {
                 self.orderDetailData.accept([res.response!])
                 self.tableData.onNext(res.response!.details!)
                 self.auxTabledata = res.response!.details!
@@ -87,13 +81,14 @@ class OrderDetailViewModel {
                 }
                 self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
                 var iconName = CommonStrings.empty
-                if (res.response?.comments != nil) {
-                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ? ImageButtonNames.message : ImageButtonNames.messsageFill
+                if res.response?.comments != nil {
+                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ?
+                        ImageButtonNames.message : ImageButtonNames.messsageFill
                 } else {
                     iconName = ImageButtonNames.message
                 }
                 self.showIconComments.onNext(iconName)
-                if(isRefresh) {
+                if isRefresh {
                     self.endRefreshing.onNext(())
                 }
                 self.changeColorLabelsHt.onNext(())
@@ -103,17 +98,15 @@ class OrderDetailViewModel {
             if self.needsRefresh {
                 self.loading.onNext(false)
                 self.needsRefresh.toggle()
+                print(error.localizedDescription)
             }
-            if(isRefresh) {
+            if isRefresh {
                 self.endRefreshing.onNext(())
             }
             self.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
         }).disposed(by: self.disposeBag)
     }
-    
-    
     func terminateOrChangeStatusOfAnOrder(actionType: String) {
-        
         switch actionType {
         case StatusNameConstants.finishedStatus:        // Realiza el proceso para terminar la orden
             self.validIfOrderCanBeFinalized()
@@ -125,45 +118,57 @@ class OrderDetailViewModel {
             print("")
         }
     }
-    
     func sum(tableDetails: [Detail]) -> Double {
         var sum = 0.0
-        if(tableDetails.count > 0) {
+        if tableDetails.count > 0 {
             for detail in tableDetails {
-                if(detail.unit  != CommonStrings.piece) {
-                    sum = sum + detail.requiredQuantity!
+                // swiftlint:disable for_where
+                if detail.unit != CommonStrings.piece {
+                    sum += detail.requiredQuantity!
                 }
             }
             return sum
         }
         return sum
     }
-    
     func changeStatus(actionType: String) {
         self.loading.onNext(true)
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
-        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!, orderId: (self.tempOrderDetailData?.productionOrderID)!, status: status)
-
-        self.networkManager.changeStatusOrder(changeStatusRequest: [changeStatus]).observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!,
+                                               orderId: (self.tempOrderDetailData?.productionOrderID)!,
+                                               status: status)
+        self.networkManager.changeStatusOrder(changeStatusRequest: [changeStatus])
+            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
             self?.rootViewModel.needsRefresh = true
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
             self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
+            print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
     }
 
     func deleteItemFromTable(index: Int) {
         self.loading.onNext(true)
         let itemToDelete = auxTabledata[index]
-        let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!, componentDescription: itemToDelete.detailDescription!, baseQuantity: itemToDelete.baseQuantity!, requiredQuantity: itemToDelete.requiredQuantity!, consumed: itemToDelete.consumed!, available: itemToDelete.available!, unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!, pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!, warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
+        let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!,
+                                   componentDescription: itemToDelete.detailDescription!,
+                                   baseQuantity: itemToDelete.baseQuantity!,
+                                   requiredQuantity: itemToDelete.requiredQuantity!,
+                                   consumed: itemToDelete.consumed!, available: itemToDelete.available!,
+                                   unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!,
+                                   pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!,
+                                   warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
 
-        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
-        let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!, plannedQuantity: (tempOrderDetailData?.plannedQuantity)!, fechaFin: fechaFinFormated!, comments: "", components: componets)
-
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            if(self?.tempOrderDetailData != nil ) {
+        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
+            dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
+        let order = OrderDetailRequest(fabOrderID: (tempOrderDetailData?.productionOrderID)!,
+                                       plannedQuantity: (tempOrderDetailData?.plannedQuantity)!,
+                                       fechaFin: fechaFinFormated!, comments: "", components: componets)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
+            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
                 self?.tempOrderDetailData?.details?.remove(at: index)
                 self?.auxTabledata = self!.tempOrderDetailData!.details!
@@ -173,30 +178,31 @@ class OrderDetailViewModel {
             }, onError: {  [weak self] error in
                 self?.loading.onNext(false)
                 self?.showAlert.onNext(CommonStrings.couldNotDeleteItem)
+                print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
-    
-    func getDataTableToEdit() -> OrderDetail  {
+    func getDataTableToEdit() -> OrderDetail {
         return self.tempOrderDetailData!
     }
-    
     // Valida si el usuario obtuvo las firmas y finaliza la orden
-    func validSignatures() -> Void {
-        
-        if(self.technicalSignatureIsGet && self.qfbSignatureIsGet) {
+    func validSignatures() {
+        if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
-            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId, qfbSignature: self.sqfbSignature, technicalSignature: self.technicalSignature)
-
-            self.networkManager.finishOrder(order: finishOrder).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!,
+                                          fabricationOrderId: self.orderId,
+                                          qfbSignature: self.sqfbSignature,
+                                          technicalSignature: self.technicalSignature)
+            self.networkManager.finishOrder(order: finishOrder)
+                .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
+                print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
         }
     }
-    
-    func validIfOrderCanBeFinalized() -> Void {
+    func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
         self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
@@ -204,6 +210,7 @@ class OrderDetailViewModel {
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
                 self?.showAlert.onNext(CommonStrings.orderCouldNotBeCompleted)
+                print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
 }

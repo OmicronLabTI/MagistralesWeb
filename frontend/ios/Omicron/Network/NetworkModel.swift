@@ -14,7 +14,6 @@ class HttpError {
     var error: String?
     var userError: String?
     var info: String?
-    
     required init?(map: Map) {}
 }
 
@@ -32,9 +31,7 @@ class HttpResponse: Mappable {
     var userError: String?
     var exceptionMessage: String?
     var success: Bool?
-    
     required init?(map: Map) {}
-    
     func mapping(map: Map) {
         code <- map["code"]
         userError <- map["userError"]

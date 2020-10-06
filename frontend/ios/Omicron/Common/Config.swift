@@ -30,7 +30,6 @@ struct Config {
             return .release
         #endif
     }()
-    
     static let baseUrl: String = {
         switch env {
         case .debug,
@@ -42,7 +41,6 @@ struct Config {
             return "http://201.163.179.28:8000/api"
         }
     }()
-    
     static var isRunningTests: Bool {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
