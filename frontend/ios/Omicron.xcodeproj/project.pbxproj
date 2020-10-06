@@ -198,7 +198,7 @@
 		7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewModel.swift; sourceTree = "<group>"; };
 		7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadModel.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		98015CAC24AFBC6C00E7772F /* Omicron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Omicron.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98015CAC24AFBC6C00E7772F /* OmicronLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		98015CB124AFBC6C00E7772F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		98015CB624AFBC6C00E7772F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -420,7 +420,7 @@
 		98015CAD24AFBC6C00E7772F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				98015CAC24AFBC6C00E7772F /* Omicron.app */,
+				98015CAC24AFBC6C00E7772F /* OmicronLab.app */,
 				98015CC224AFBC6D00E7772F /* OmicronTests.xctest */,
 				98015CCD24AFBC6D00E7772F /* OmicronUITests.xctest */,
 			);
@@ -611,7 +611,7 @@
 			);
 			name = Omicron;
 			productName = Omicron;
-			productReference = 98015CAC24AFBC6C00E7772F /* Omicron.app */;
+			productReference = 98015CAC24AFBC6C00E7772F /* OmicronLab.app */;
 			productType = "com.apple.product-type.application";
 		};
 		98015CC124AFBC6D00E7772F /* OmicronTests */ = {
@@ -1116,7 +1116,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1124,7 +1124,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = OmicronLab;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -1138,7 +1138,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1146,7 +1146,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = OmicronLab;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
