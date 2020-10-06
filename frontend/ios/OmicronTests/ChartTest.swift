@@ -19,29 +19,24 @@ class ChartTest: XCTestCase {
     var disposeBag: DisposeBag?
     var expectation: XCTestExpectation?
     @Injected var networkManager: NetworkManager
-    
     override func setUp() {
         print("XXXX setUp ChartTest")
         chartViewModel = ChartViewModel()
         disposeBag = DisposeBag()
         expectation = XCTestExpectation()
     }
-    
     override func tearDown() {
         print("XXXX tearDown ChartTest")
         chartViewModel = nil
         disposeBag = nil
         expectation = nil
     }
-    
     fileprivate let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
             + "-"
             + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
     fileprivate let userId = "d125566b-6321-4854-9a42-10fb5c5e4cc1"
-    
     // MARK: - Test Functions
-    
     func testValidResponse() {
         networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
@@ -49,7 +44,6 @@ class ChartTest: XCTestCase {
                 XCTAssertNotNil(workloadResponse.response)
             }).disposed(by: disposeBag!)
     }
-    
     func testValidCodeNotNull() {
         networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
@@ -57,7 +51,6 @@ class ChartTest: XCTestCase {
                 XCTAssertNotNil(workloadResponse.code)
             }).disposed(by: disposeBag!)
     }
-    
     func testValidCode() {
         networkManager
         .getWordLoad(data: WorkloadRequest(fini: fini, qfb: userId))
@@ -65,7 +58,6 @@ class ChartTest: XCTestCase {
                 XCTAssert(workloadResponse.code == 200)
             }).disposed(by: disposeBag!)
     }
-
     func testGetWorkLoadNotNil() {
         chartViewModel!.workloadData.subscribe(onNext: { response in
             XCTAssertNotNil(response)
