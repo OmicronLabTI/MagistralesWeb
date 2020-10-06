@@ -10,7 +10,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-class CardViewModel  {
+class CardViewModel {
 //    var contentCard = PublishSubject<Void>()
 //    var numberLabel = BehaviorSubject<String>(value: "")
 //    var numberDescriptionLabel = BehaviorSubject<String>(value: "")

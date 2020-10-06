@@ -4,7 +4,7 @@ PODS:
     - Charts/Core (= 3.5.0)
   - Charts/Core (3.5.0)
   - Differentiator (4.0.1)
-  - Eureka (5.2.1)
+  - Eureka (5.3.1)
   - lottie-ios (3.1.8)
   - Moya/Core (14.0.0):
     - Alamofire (~> 5.0)
@@ -60,7 +60,7 @@ SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
   Charts: 40a08591df1f8ad5c223ddedfb1a06da92f24f7c
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
-  Eureka: c883105488e05bc65539f583246ecf9657cabbfe
+  Eureka: 859877ab1e85661b6b7e810015d430e937d9cc7d
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81

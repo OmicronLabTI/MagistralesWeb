@@ -12,28 +12,23 @@ import Resolver
 
 @testable import Omicron
 
-
-class RootViewTest:  XCTestCase {
-        
+class RootViewTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
     var rootViewModel: RootViewModel?
     @Injected var networkManager: NetworkManager
-    
     override func setUp() {
         print("XXXX setUp RootViewTest")
         disposeBag = DisposeBag()
         rootViewModel = RootViewModel()
     }
-    
     override func tearDown() {
         print("XXXX tearDown RootViewTest")
         disposeBag = nil
         rootViewModel = nil
     }
-
     // MARK: - TEST FUNCTIONS
-    func testGetStatusListServiceValid() -> Void {
+    func testGetStatusListServiceValid() {
         self.networkManager.getStatusList(userId: "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
             XCTAssertNotNil(res)
             XCTAssertNotNil(res.response)
@@ -41,38 +36,31 @@ class RootViewTest:  XCTestCase {
             XCTAssertTrue((res.response?.status!.count)! > 0)
         }).disposed(by: self.disposeBag!)
     }
-    
-    func testSearchFilterShoudBeText() -> Void {
+    func testSearchFilterShoudBeText() {
         // Given
         self.rootViewModel!.searchFilter.onNext("89")
-        
         // When
         self.rootViewModel!.searchFilter.subscribe(onNext: { res in
             // Then
             XCTAssertTrue(res == "89")
         }).disposed(by: self.disposeBag!)
     }
-    
-    func testSearchFilterShouldBeEmpty() -> Void {
+    func testSearchFilterShouldBeEmpty() {
         self.rootViewModel!.searchFilter.onNext("")
         self.rootViewModel!.searchFilter.subscribe(onNext: { res in
             XCTAssertTrue(res == "")
         }).disposed(by: self.disposeBag!)
     }
-    
-    func testSearchFilterShouldBeEmptyWhenInputIsNotNumber() -> Void {
+    func testSearchFilterShouldBeEmptyWhenInputIsNotNumber() {
         self.rootViewModel!.searchFilter.onNext("sdf")
         self.rootViewModel!.searchFilter.subscribe(onNext: { res in
             XCTAssertTrue(res == "")
         }).disposed(by: self.disposeBag!)
     }
-    
-    
-    func testResetFilterValueShouldBeNil() -> Void {
+    func testResetFilterValueShouldBeNil() {
         self.rootViewModel!.dataFilter.subscribe(onNext: { res in
             XCTAssertNil(res)
         }).disposed(by: self.disposeBag!)
         self.rootViewModel!.resetFilter()
     }
-    
 }

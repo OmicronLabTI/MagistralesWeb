@@ -13,29 +13,22 @@ import CryptoKit
 import Resolver
 
 class LoginViewModel {
-    public let finishedLogin : PublishSubject<Void> = PublishSubject()
+    public let finishedLogin: PublishSubject<Void> = PublishSubject()
     public let loading: PublishSubject<Bool> = PublishSubject()
-    public let error : PublishSubject<String> = PublishSubject()
-    
+    public let error: PublishSubject<String> = PublishSubject()
     var username = BehaviorSubject<String>(value: "")
     var password = BehaviorSubject<String>(value: "")
     var loginDidTap = PublishSubject<Void>()
     let canLogin: Driver<Bool>
     @Injected var networkManager: NetworkManager
-    
-    
     private let disposeBag = DisposeBag()
-    
     deinit {
         print("Se muere LoginViewModel")
     }
-    
     init() {
         let input = Observable.combineLatest(username, password)
         let isValid = input.map({ $0.isEmpty == false && $1.isEmpty == false })
-        
         self.canLogin = isValid.asDriver(onErrorJustReturn: false)
-        
         loginDidTap
             .withLatestFrom(input)
             .map({
@@ -58,7 +51,7 @@ class LoginViewModel {
                         }
                         }, onError: { [weak self] err in
                             self?.loading.onNext(false)
-                            switch (err) {
+                            switch err {
                             case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
                                 self?.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
                             case RequestError.unauthorized(let httpError):

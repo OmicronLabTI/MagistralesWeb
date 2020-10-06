@@ -12,8 +12,7 @@ import RxSwift
 import Resolver
 
 class CommentsViewController: UIViewController {
-    
-    // MARK: -Outlets
+    // MARK: - Outlets
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var labelView: UIView!
     @IBOutlet weak var buttonsView: UIView!
@@ -21,8 +20,7 @@ class CommentsViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var aceptButton: UIButton!
-    
-    // MARK: -Variables
+    // MARK: - Variables
     @Injected var commentsViewModel: CommentsViewModel
     @Injected var orderDetailVC: OrderDetailViewModel
     @Injected var lottieManager: LottieManager
@@ -30,81 +28,60 @@ class CommentsViewController: UIViewController {
     var orderDetail: [OrderDetail] = []
     var disposeBag = DisposeBag()
     var originView = ""
-    
     // MARK: - LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
         self.initComponents()
         self.viewModelBinding()
         self.commentsViewModel.orderDetail = self.orderDetail
         self.textView.text = self.orderDetail[0].comments != nil ? self.orderDetail[0].comments: ""
     }
-    
-    //MARK: - Functions
-    
+    // MARK: - Functions
     @IBAction func cancelButtonAction(_ sender: Any) {
         self.dismissCommentsView()
     }
-    
-    func dismissCommentsView() -> Void {
+    func dismissCommentsView() {
         self.dismiss(animated: true)
     }
-    
-    
-    func viewModelBinding() -> Void {
+    func viewModelBinding() {
         self.commentsViewModel.originView = self.originView
         self.commentsViewModel.backToOrderDetail.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.dismissCommentsView()
             self?.orderDetailVC.getOrdenDetail()
         }).disposed(by: self.disposeBag)
-        
-        self.commentsViewModel.backToLots.subscribe(onNext:{ [weak self] _ in
+        self.commentsViewModel.backToLots.subscribe(onNext: { [weak self] _ in
             self?.dismissCommentsView()
             self?.lotsViewModel.updateOrderDetail()
         }).disposed(by: self.disposeBag)
-        
         self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)
         self.textView.rx.text.orEmpty.bind(to: commentsViewModel.textView).disposed(by: self.disposeBag)
-        
         self.commentsViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        
         self.commentsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
-            if(showLoading) {
+            if showLoading {
                 self?.lottieManager.showLoading()
                 return
             }
             self?.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
     }
-    
-    func initComponents() -> Void {
-    
+    func initComponents() {
         mainView.layer.cornerRadius = 50
         labelView.backgroundColor = UIColor.init(named: "darkGray")
         buttonsView.backgroundColor = UIColor.init(named: "darkGray")
-        
         titleLabel.text = "Comentarios"
         titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
         titleLabel.textColor = .white
-        
         cancelButton.setTitle("Cancelar".uppercased(), for: .normal)
         cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
         cancelButton.setTitleColor(.white, for: .normal)
-        
         aceptButton.setTitle("Aceptar".uppercased(), for: .normal)
         aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
         aceptButton.setTitleColor(.white, for: .normal)
         aceptButton.backgroundColor = UIColor.systemGreen
-        
         textView.text = ""
         textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 23)
-        
     }
-    
 }
-
-

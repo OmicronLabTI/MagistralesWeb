@@ -11,9 +11,8 @@ import RxCocoa
 import RxSwift
 import Resolver
 
-class SignaturePadViewModel  {
-    
-    //MARK: - Variables
+class SignaturePadViewModel {
+    // MARK: - Variables
     var acceptDidTap = PublishSubject<Void>()
     var getSignature = BehaviorSubject<UIImage>(value: UIImage())
     var signatureIsDone = BehaviorSubject<Bool>(value: false)
@@ -25,73 +24,47 @@ class SignaturePadViewModel  {
     let whoRequestSignature = PublishSubject<String>()
     @Injected var orderDetailVC: OrderDetailViewModel
     @Injected var lotsViewModel: LotsViewModel
-    
-    
     init() {
-        
-        let input = Observable.combineLatest(self.getTypeSignature,self.getSignature, self.whoRequestSignature)
+        let input = Observable.combineLatest(self.getTypeSignature,
+                                             self.getSignature, self.whoRequestSignature)
         let isValid = self.signatureIsDone.map({$0})
         self.canGetSignature = isValid.asDriver(onErrorJustReturn: false)
-    
-        self.acceptDidTap.withLatestFrom(input).map({OrderSignature(signatureType: $0, signature: $1, whoRequestSignature: $2)}).subscribe(onNext: { [weak self] data in
-            if (data.signatureType == CommonStrings.signatureViewTitleQFB) {
-                //self.orderDetailVC.qfbSignatureIsGet = true
-                                self?.dismissSignatureView.onNext(())
-                switch data.whoRequestSignature {
-                case ViewControllerIdentifiers.orderDetailViewController:
-                    self?.orderDetailVC.qfbSignatureIsGet = true
-                    self?.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-                    self?.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
-                case ViewControllerIdentifiers.lotsViewController:
-                    self?.lotsViewModel.qfbSignatureIsGet = true
-                    self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-                    self?.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
-                default:
-                    print("")
+        self.acceptDidTap.withLatestFrom(input)
+            .map({OrderSignature(signatureType: $0, signature: $1, whoRequestSignature: $2)})
+            .subscribe(onNext: { [weak self] data in
+                if data.signatureType == CommonStrings.signatureViewTitleQFB {
+                    self?.dismissSignatureView.onNext(())
+                    switch data.whoRequestSignature {
+                    case ViewControllerIdentifiers.orderDetailViewController:
+                        self?.orderDetailVC.qfbSignatureIsGet = true
+                        self?.orderDetailVC.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+                    case ViewControllerIdentifiers.lotsViewController:
+                        self?.lotsViewModel.qfbSignatureIsGet = true
+                        self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+                    default:
+                        print("")
+                    }
                 }
-                // Guarda la firma en storage del ipad
-//                FileManagerApp.shared.saveSignatureOnIpad(signature: data.signature, name: FileManagerConstants.qfbSignatureName)
-            }
-            
-            if(data.signatureType == CommonStrings.signatureViewTitleTechnical)  {
-                switch data.whoRequestSignature {
-                case ViewControllerIdentifiers.orderDetailViewController:
-                    self?.orderDetailVC.technicalSignatureIsGet = true
-                    self?.orderDetailVC.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
-                    self?.orderDetailVC.validSignatures()
-                case ViewControllerIdentifiers.lotsViewController:
-                    self?.lotsViewModel.technicalSignatureIsGet = true
-                    self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
-                    self?.lotsViewModel.callFinishOrderService()
-                default:
-                    print("")
+                if data.signatureType == CommonStrings.signatureViewTitleTechnical {
+                    switch data.whoRequestSignature {
+                    case ViewControllerIdentifiers.orderDetailViewController:
+                        self?.orderDetailVC.technicalSignatureIsGet = true
+                        self?.orderDetailVC.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.orderDetailVC.validSignatures()
+                    case ViewControllerIdentifiers.lotsViewController:
+                        self?.lotsViewModel.technicalSignatureIsGet = true
+                        self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.lotsViewModel.callFinishOrderService()
+                    default:
+                        print("")
+                    }
+                    self?.dismissSignatureView.onNext(())
                 }
-                //self.orderDetailVC.technicalSignatureIsGet = true
-                self?.dismissSignatureView.onNext(())
-                // guarda la firma en el storage del ipad
-//                FileManagerApp.shared.saveSignatureOnIpad(signature: data.signature, name: FileManagerConstants.technicalSignatureName)
-            }
-        }).disposed(by: self.disposeBag)
-    
+            }).disposed(by: self.disposeBag)
     }
-        
-//    func saveSignatureOnIpad(signature: UIImage, name: String) -> Void {
-//        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//        let fileURL = URL(fileURLWithPath: name, relativeTo: directoryURL).appendingPathExtension("jpg")
-//        guard let data = signature.jpegData(compressionQuality: 1) else { return }
-//
-//        // Guarda los datos
-//        do {
-//            try data.write(to: fileURL)
-//        } catch {
-//            self.showAlert.onNext("No se pudo guardar la firma, intentar de nuevo")
-//            print(error.localizedDescription)
-//        }
-//    }
 }
-
-
-
 extension UIImage {
     func toBase64() -> String? {
         guard let imageData = self.pngData() else { return nil }
