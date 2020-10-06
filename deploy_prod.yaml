@@ -177,11 +177,11 @@ spec:
         - containerPort: 5102
         resources:
           limits:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 300m
+            memory: 500Mi
           requests:
-            cpu: 50m
-            memory: 64Mi
+            cpu: 150m
+            memory: 256Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
