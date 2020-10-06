@@ -4,21 +4,13 @@ metadata:
   name: omicron-ingress-api
   annotations:
     kubernetes.io/ingress.class: nginx-api
-    cert-manager.io/issuer: ca-issuer
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
-  - secretName: prod-cert-tls
+  - secretName: secure-tls
     hosts:
     - magistralesprod.omicronlab.com.mx
-    - omicron-api.eastus2.cloudapp.azure.com
   rules:
-  - host: omicron-api.eastus2.cloudapp.azure.com
-    http:
-      paths:
-      - backend:
-          serviceName: apimanager-svc
-          servicePort: 8000
-        path: /
   - host: magistralesprod.omicronlab.com.mx
     http:
       paths:
