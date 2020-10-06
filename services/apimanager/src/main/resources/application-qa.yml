@@ -41,7 +41,13 @@ zuul:
       path: /reporting/**
       serviceId: reportingservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  semaphore.maxSemaphores: 30000
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
 
 ribbon:
   ReadTimeout: 60000
   ConnectionTimeout: 3000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 2
+  MaxTotalHttpConnections: 7000
+  MaxConnectionsPerHost: 1000
