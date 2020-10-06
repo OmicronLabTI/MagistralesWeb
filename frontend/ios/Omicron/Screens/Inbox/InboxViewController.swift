@@ -13,6 +13,7 @@ import Resolver
 import RxDataSources
 import Charts
 
+// swiftlint:disable type_body_length
 class InboxViewController: UIViewController {
     // MARK: Outlets
     @IBOutlet weak var finishedButton: UIButton!
@@ -215,7 +216,7 @@ class InboxViewController: UIViewController {
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default, handler: { _ in
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { _ in
                 self?.inboxViewModel.changeStatus(
                     indexPath: self?.collectionView.indexPathsForSelectedItems,
                     typeOfStatus: data.typeOfStatus)
@@ -397,4 +398,5 @@ extension UICollectionView {
     func restore() {
         self.backgroundView = nil
     }
+    // swiftlint:disable file_length
 }

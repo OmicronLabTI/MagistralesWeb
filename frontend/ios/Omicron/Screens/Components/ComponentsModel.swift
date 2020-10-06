@@ -13,15 +13,13 @@ class ComponentRequest: Codable {
     var offset: Int?
     var limit: Int?
     var chips: [String]?
-    
     init(offset: Int?, limit: Int?, chips: [String]?) {
         self.offset = offset
         self.limit = limit
         self.chips = chips
     }
-    
     func toDictionary() -> [String: Any] {
-        var dict = [String:Any]()
+        var dict = [String: Any]()
         let otherSelf = Mirror(reflecting: self)
         for child in otherSelf.children {
             if let key = child.label {
@@ -35,20 +33,16 @@ class ComponentRequest: Codable {
         return dict
     }
 }
-
 class ComponentResponse: HttpResponse {
     var response: [ComponentO]?
-    
     required init?(map: Map) {
         super.init(map: map)
     }
-    
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
     }
 }
-
 class ComponentO: Mappable {
     var orderFabId: Int?
     var productId: String?
@@ -62,9 +56,7 @@ class ComponentO: Mappable {
     var pendingQuantity: Decimal?
     var stock: Decimal?
     var warehouseQuantity: Decimal?
-    
     required init?(map: Map) {}
-    
     func mapping(map: Map) {
         self.orderFabId <- map["orderFabId"]
         self.productId <- map["productId"]
@@ -80,12 +72,10 @@ class ComponentO: Mappable {
         self.warehouseQuantity <- (map["warehouseQuantity"], DecimalTransform())
     }
 }
-
 class ComponentFormValues {
     var baseQuantity: Double
     var requiredQuantity: Double
     var warehouse: String
-    
     init(baseQuantity: Double, requiredQuantity: Double, warehouse: String) {
         self.baseQuantity = baseQuantity
         self.requiredQuantity = requiredQuantity

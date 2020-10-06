@@ -183,7 +183,7 @@ class OrderDetailViewController: UIViewController {
                 let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
                                                  handler: {[weak self] _ in
                                                     self?.dismiss(animated: true, completion: nil)})
-                let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+                let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                              handler: { [weak self] _ in
                                                 self?.orderDetailViewModel.terminateOrChangeStatusOfAnOrder(
                                                     actionType: data.typeOfStatus)})
@@ -408,6 +408,7 @@ class OrderDetailViewController: UIViewController {
             print("")
         }
     }
+    // swiftlint:disable function_parameter_count
     func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,
                                      hideAddCompBtn: Bool, hideSaveBtn: Bool, hideSeeLotsBtn: Bool) {
         self.processButton.isHidden = hideProcessBtn
@@ -458,7 +459,7 @@ extension OrderDetailViewController: UITableViewDelegate {
                                                   message: nil, preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
                                                      handler: { [weak self] _ in self?.dismiss(animated: true)})
-                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+                    let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                                  handler: { [weak self] _ in
                                                     self?.sendIndexToDelete(index: indexPath.row)})
                     alert.addAction(cancelAction)
@@ -470,4 +471,5 @@ extension OrderDetailViewController: UITableViewDelegate {
             }
             return nil
     }
+    // swiftlint:disable file_length
 }

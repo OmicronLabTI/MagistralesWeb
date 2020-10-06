@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class OrderSignature  {
+class OrderSignature {
     var signatureType: String
     var signature: UIImage
     var whoRequestSignature: String

@@ -122,6 +122,7 @@ class OrderDetailViewModel {
         var sum = 0.0
         if tableDetails.count > 0 {
             for detail in tableDetails {
+                // swiftlint:disable for_where
                 if detail.unit != CommonStrings.piece {
                     sum += detail.requiredQuantity!
                 }

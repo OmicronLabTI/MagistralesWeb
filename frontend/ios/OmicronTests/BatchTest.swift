@@ -134,7 +134,6 @@ class BatchesTest: XCTestCase {
             XCTAssertEqual(res.count, 0)
         }).disposed(by: self.disposeBag!)
     }
-    
     func testAddLotsDidTapSucess() {
         let lotSelected: [LotsSelected] = []
         let lotsAvailable = LotsAvailable(

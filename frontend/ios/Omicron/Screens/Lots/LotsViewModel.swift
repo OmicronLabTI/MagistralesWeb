@@ -9,7 +9,7 @@
 import RxCocoa
 import RxSwift
 import Resolver
-
+// swiftlint:disable type_body_length
 class LotsViewModel {
     // MARK: Variables
     var loading = PublishSubject<Bool>()

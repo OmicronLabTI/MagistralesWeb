@@ -52,7 +52,7 @@ class RootViewModel {
         }).disposed(by: disposeBag)
     }
     // MARK: - Functions
-    func getOrders(isUpdate: Bool = false) -> Void {
+    func getOrders(isUpdate: Bool = false) {
         if isUpdate { needsRefresh = true }
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
@@ -109,18 +109,17 @@ class RootViewModel {
                 }, onError: { [weak self] err in
                     guard let self = self else { return }
                     print(err)
-                    self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
+                    self.error.onNext(CommonStrings.errorLoadingOrders)
                     if self.needsRefresh {
                         self.loading.onNext(false)
                         self.needsRefresh.toggle()
                     }
             }).disposed(by: disposeBag)
         } else {
-            self.error.onNext("Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo")
+            self.error.onNext(CommonStrings.errorLoadingOrders)
             self.showRefreshControl.onNext(())
         }
     }
-    
     func resetFilter() {
         self.dataFilter.onNext(nil)
     }

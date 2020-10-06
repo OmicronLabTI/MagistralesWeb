@@ -61,7 +61,6 @@ class OrderDetailFormViewController: FormViewController {
         form
             +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
             <<< TextRow { [weak self] in
-                
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
                 $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
@@ -174,7 +173,7 @@ class OrderDetailFormViewController: FormViewController {
             <<< PickerInlineRow<String> { [weak self] in
                 $0.title = "Almacén: "
                 $0.tag = "werehouse"
-                $0.options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN", "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
+                $0.options = CommonStrings.options
                 $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
             }
             +++ Section()
@@ -194,7 +193,7 @@ class OrderDetailFormViewController: FormViewController {
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive,
                                                      handler: {[weak self] _ in
                                                         self?.navigationController?.popViewController(animated: true)})
-                    let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+                    let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                                  handler: {[weak self] _ in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)
@@ -234,7 +233,7 @@ class OrderDetailFormViewController: FormViewController {
         }).disposed(by: self.disposeBag)
         orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                          handler: {[weak self] _ in self?.refreshOrderDetail()})
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)

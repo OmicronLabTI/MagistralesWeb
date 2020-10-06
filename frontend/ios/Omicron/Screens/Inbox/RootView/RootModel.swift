@@ -20,6 +20,7 @@ class UserInfoResponse: HttpResponse {
     }
 }
 class User: Codable {
+    // swiftlint:disable identifier_name
     var id: String?
     var userName: String?
     var firstName: String?

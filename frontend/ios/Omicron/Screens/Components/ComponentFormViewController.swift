@@ -167,7 +167,7 @@ class ComponentFormViewController: FormViewController {
             <<< PickerInlineRow<String> {
                 $0.title = "Almacén: "
                 $0.tag = "warehouse"
-                $0.options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN", "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
+                $0.options = CommonStrings.options
                 guard let warehouse = component.warehouse else { return }
                 $0.value = warehouse
             }
@@ -186,7 +186,7 @@ class ComponentFormViewController: FormViewController {
                     let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?",
                                                   message: nil, preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-                    let okAction = UIAlertAction(title: CommonStrings.OK,
+                    let okAction = UIAlertAction(title: CommonStrings.OKConst,
                                                  style: .default, handler: { _ in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)

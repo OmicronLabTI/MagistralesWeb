@@ -12,7 +12,6 @@ import RxCocoa
 import Resolver
 
 class ChartViewModel {
-    
     var workloadData = ReplaySubject<[Workload]>.create(bufferSize: 1)
     var disposeBag = DisposeBag()
     @Injected var networkManager: NetworkManager

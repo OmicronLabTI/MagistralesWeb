@@ -12,7 +12,6 @@ import Resolver
 import RxSwift
 
 class ChartViewController: UIViewController {
-    
     @IBOutlet weak var chartView: PieChartView!
     @IBOutlet weak var possibleAssingLabel: UILabel!
     @Injected var chartViewModel: ChartViewModel

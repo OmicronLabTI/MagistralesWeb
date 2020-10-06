@@ -17,18 +17,15 @@ struct Constants {
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
     }
-    
     enum Tags: Int {
         case loading = 101
         case moreIndicator = 201
     }
-    
     enum Components: Int {
         case offset = 0
         case limit = 20
     }
 }
-
 struct ViewControllerIdentifiers {
     static let inboxViewController = "InboxViewController"
     static let storieboardName = "Main"
@@ -54,7 +51,6 @@ struct ViewControllerIdentifiers {
     static let headerCollectionViewCell = "HeaderCollectionViewCell"
     static let headerReuseIdentifier = "header"
 }
-
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
     static let ligthGray = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
@@ -68,7 +64,6 @@ struct OmicronColors {
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
 }
-
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
     static let accessToken = "accessToken"
@@ -78,12 +73,10 @@ struct UsersDefaultsConstants {
     static let qfbSignature = "qfbSignature"
     static let technicalSignature = "technicalSignature"
 }
-
 struct ImagesNames {
     static let openEye = "ojo.png"
     static let closeEye = "esconder.png"
 }
-
 struct CommonStrings {
     static let login = "Login"
     static let logIntoYourAccount = "Ingresa a tu cuenta"
@@ -91,7 +84,7 @@ struct CommonStrings {
     static let user = "Usuario"
     static let password = "Contraseña"
     static let empty = ""
-    static let OK = "OK"
+    static let OKConst = "OK"
     static let cancel = "Cancelar"
     static let searchOrden = "Buscar orden / pedido"
     static let signatureViewTitleQFB = "Firma del  QFB"
@@ -131,10 +124,12 @@ struct CommonStrings {
     static let edit = "Editar"
     static let delete = "Eliminar"
     static let deleteComponentMessage = "El componente será eliminado, ¿quieres continuar?"
-    static let formulaDetailCouldNotBeLoaded = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
+    static let formulaDetailCouldNotBeLoaded = "Hubo un error al cargar el detalle " +
+    "de la orden de fabricación, intentar de nuevo"
     static let couldNotDeleteItem = "Hubo un error al eliminar el elemento,  intente de nuevo"
     static let qfbSignature = "Firma del  QFB"
-    static let orderCouldNotBeCompleted = "La orden no puede ser Terminada, revisa que todos los artículos tengan un lote asignado"
+    static let orderCouldNotBeCompleted = "La orden no puede ser Terminada, " +
+    "revisa que todos los artículos tengan un lote asignado"
     static let clear = "Limpiar"
     static let accept = "Aceptar"
     static let finished = "Terminado"
@@ -155,14 +150,15 @@ struct CommonStrings {
     static let errorInComments = "Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo"
     static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+    static let errorLoadingOrders = "Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo"
+    static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
+                          "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
 }
-
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
     static let SFProDisplayRegular = "SFProDisplay-Regular"
     static let SFProDisplayMedium = "SFProDisplay-Medium"
 }
-
 struct StatusNameConstants {
     static let assignedStatus = "Asignadas"
     static let inProcessStatus = "En proceso"
@@ -174,7 +170,6 @@ struct StatusNameConstants {
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
 }
-
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"
     static let inProcess = "showProcessDetailButton.png"
@@ -195,7 +190,6 @@ struct ImageButtonNames {
     static let messsageFill = "message.fill"
     static let rectangule3offgrid = "rectangle.3.offgrid"
 }
-
 struct IndicatorImageStatus {
     static let assigned = "assignedStatus"
     static let inProcess = "processStatus"
@@ -203,12 +197,10 @@ struct IndicatorImageStatus {
     static let finished = "finishedStatus"
     static let reassined = "reassignedStatus"
 }
-
 struct FileManagerConstants {
     static let qfbSignatureName = "qfbSignature.jpg"
     static let technicalSignatureName = "tecnicalSignature.jpg"
 }
-
 struct Base64 {
     static let test1 = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAQAAABu4E3oAAAM82lDQ1BrQ0dDb2xv\r\nc" +
     "lNwYWNlR2VuZXJpY0dyYXlHYW1tYTJfMgAAWIWlVwdYU8kWnluS0BJ6lRI60gwo\r\nX" +

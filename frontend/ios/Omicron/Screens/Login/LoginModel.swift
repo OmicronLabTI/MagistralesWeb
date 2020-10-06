@@ -34,10 +34,8 @@ class LoginResponse: Codable {
     var tokenType: String?
     var expiresIn: Int?
     var scope: String?
-    
     required init?(map: Map) {}
 }
-
 extension LoginResponse: Mappable {
     func mapping(map: Map) {
         accessToken <- map["access_token"]

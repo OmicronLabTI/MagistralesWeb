@@ -10,9 +10,9 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Resolver
-
+// swiftlint:disable type_body_length
 class LotsViewController: UIViewController {
-    // MARK: -OUTLEST
+    // MARK: - OUTLEST
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var hashtagLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
@@ -195,7 +195,7 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.askIfUserWantToFinalizeOrder.subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                          handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
@@ -205,7 +205,7 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OK, style: .default,
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                          handler: { [weak self] _ in self?.lotsViewModel.changeOrderToPendingStatus() })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
@@ -418,4 +418,5 @@ extension LotsViewController: UITableViewDelegate {
         guard let tableView = scrollView as? UITableView else { return }
         tableView.removeMoreIndicator()
     }
+    // swiftlint:disable file_length
 }
