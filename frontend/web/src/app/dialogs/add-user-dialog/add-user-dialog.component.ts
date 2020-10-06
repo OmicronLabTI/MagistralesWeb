@@ -4,7 +4,14 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import {IUserReq, RoleUser} from '../../model/http/users';
 import {ErrorService} from '../../services/error.service';
-import {CONST_NUMBER, CONST_USER_DIALOG, HttpServiceTOCall, HttpStatus, MODAL_NAMES} from '../../constants/const';
+import {
+  CONST_NUMBER, CONST_STRING,
+  CONST_USER_DIALOG,
+  HttpServiceTOCall,
+  HttpStatus,
+  MaterialRequestPage,
+  MODAL_NAMES
+} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {SweetAlertIcon} from 'sweetalert2';
@@ -47,6 +54,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
             valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+      }
+      if (valueForm.piezas) {
+        this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
       }
       if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
         this.addUserForm.get('piezas').disable({onlySelf: true, emitEvent: false});
@@ -127,7 +137,17 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
   numericOnly(event): boolean {
-    const pattern = /^([0-9])$/;
+    const pattern = /^[0-9]$/;
     return pattern.test(event.key);
+  }
+
+  getOnlyNumbers(pieces: string) {
+    const numbers = ['0', '1', '2' , '3' , '4', '5', '6', '7', '8', '9'];
+    let newNumbers = CONST_STRING.empty;
+    // tslint:disable-next-line:prefer-for-of
+    for (let index = 0; index < pieces.length; index ++) {
+      newNumbers += numbers.includes(pieces.charAt(index)) ?  pieces.charAt(index).trim() : CONST_STRING.empty.trim();
+    }
+    return newNumbers;
   }
 }
