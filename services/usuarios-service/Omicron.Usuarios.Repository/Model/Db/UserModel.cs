@@ -98,5 +98,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("asignable")]
         public int Asignable { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether logic deleted flag.
+        /// </summary>
+        /// <value>
+        /// Deleted flag.
+        /// </value>
+        [Column("deleted")]
+        public bool Deleted { get; set; }
     }
 }

@@ -55,14 +55,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToReassign = false;
   pageIndex = 0;
   isThereOrdersToRequest = false;
+  isOnInit = true;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
-    private router: Router,
-    private changeDetector: ChangeDetectorRef
+    private router: Router
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.filterDataOrders.isFromOrders = true;
@@ -117,6 +117,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               element.class = 'terminado';
           }
         });
+        this.isCheckedOrders = false;
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
         this.isThereOrdersToCancel = false;
@@ -124,6 +125,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isThereOrdersToReassign = false;
         this.isThereOrdersToRequest = false;
         this.allComplete = false;
+        this.isOnInit = false;
       },
         (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
@@ -137,12 +139,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsToUnLooked();
-    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   someComplete(): boolean {
     return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
-    this.validateCheckedItems([ConstStatus.cancelado]);
   }
 
   setAll(completed: boolean) {
@@ -172,6 +172,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               this.getPedidos();
               this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
             }
+            this.dataService.setIsLoading(false);
           },
           error => {
             this.errorService.httpError(error);
@@ -200,6 +201,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
   getButtonsToUnLooked() {
+    this.isCheckedOrders = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
     this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
         ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
@@ -207,6 +209,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
     this.isThereOrdersToReassign =
         this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
+
   }
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
@@ -255,7 +258,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   toSeeRecipes(docNum: number) {
-    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => this.onSuccessHttpGetRecipes(recipeByOrderRes)
+    this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => {
+          this.onSuccessHttpGetRecipes(recipeByOrderRes);
+          this.dataService.setIsLoading(false);
+        }
     , error => this.errorService.httpError(error));
 
   }
@@ -281,7 +287,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         if (res.isConfirmed) {
           this.printOrderAsPdfFileConfirmedAction();
         }
-      })
+      });
     }
   }
 
@@ -301,28 +307,16 @@ export class PedidosComponent implements OnInit, OnDestroy {
         }
         this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
       } else {
-        this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false, ClassNames.popupCustom);
+        this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
       }
-      this.uncheckedItems();
+      this.getPedidos();
     },
     (error: ErrorHttpInterface) => {
       if (error.status !== HttpStatus.notFound) {
         this.errorService.httpError(error);
       }
-      this.uncheckedItems();
+      this.getPedidos();
     });
-  }
-  
-  validateCheckedItems(ignoredStatus : string[]) {
-    this.isCheckedOrders = this.dataSource.data.filter(t => {
-      return t.isChecked && ignoredStatus.indexOf(t.pedidoStatus) < 0;
-    }).length > 0;
-  }
-
-  uncheckedItems() {
-    this.dataSource.data.forEach(i => i.isChecked = false);
-    this.allComplete = false;
-    this.changeDetector.detectChanges();
   }
 
 }

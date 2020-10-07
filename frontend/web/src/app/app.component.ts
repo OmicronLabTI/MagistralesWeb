@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from './services/data.service';
 import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material';
@@ -38,11 +38,12 @@ import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-order
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy , OnInit {
+export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     iconMenuActive = HttpServiceTOCall.ORDERS;
     title = 'omicron';
     now = new Date();
     isLoading: Observable<boolean>;
+    // isLoading = false;
     isLogin = false;
     subscriptionObservables = new Subscription();
     fullName = '';
@@ -50,6 +51,7 @@ export class AppComponent implements OnDestroy , OnInit {
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
+              private cdRef: ChangeDetectorRef
               ) {
     this.getFullName();
     this.role = this.dataService.getUserRole();
@@ -69,6 +71,9 @@ export class AppComponent implements OnDestroy , OnInit {
         });
       });
   }
+    ngAfterViewChecked() {
+        this.cdRef.detectChanges();
+    }
   ngOnInit() {
     this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => this.iconMenuActive = url));
     this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace =>
