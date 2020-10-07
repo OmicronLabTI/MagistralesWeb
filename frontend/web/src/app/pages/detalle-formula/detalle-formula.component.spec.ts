@@ -8,17 +8,35 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
-import { of, throwError } from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
+import {DataService} from '../../services/data.service';
+import {CONST_DETAIL_FORMULA} from '../../constants/const';
+import {ErrorService} from '../../services/error.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
   let fixture: ComponentFixture<DetalleFormulaComponent>;
   let pedidosServiceSpy;
+  let dataServiceSpy;
+  let errorServiceSpy;
 
   beforeEach(async(() => {
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
+    ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getFormulaDetail'
     ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
+      'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
+      'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
+      'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
+      'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything'
+    ]);
+    dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
+      return new Observable();
+    });
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
@@ -35,7 +53,9 @@ describe('DetalleFormulaComponent', () => {
       providers: [
         DatePipe, {
           provide: PedidosService, useValue: pedidosServiceSpy
-        }
+        },
+        { provide: DataService, useValue: dataServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy }
       ]
     })
     .compileComponents();
@@ -77,7 +97,7 @@ describe('DetalleFormulaComponent', () => {
       return throwError({ status: 500 });
     });
     component.getDetalleFormula();
-    expect(component.dataSource.data.length).toEqual(1);
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
 
   it('should updateAllComplete', () => {
@@ -104,11 +124,60 @@ describe('DetalleFormulaComponent', () => {
     component.setAll(true);
     expect(component.allComplete).toBeTruthy();
     component.dataSource.data = DetalleFormulaMock.response.details;
-    component.setAll(true);
-    expect(component.allComplete).toBeTruthy();
-    expect(component.dataSource.data.every(element => element.isChecked)).toBeTruthy();
     component.setAll(false);
     expect(component.allComplete).toBeFalsy();
     expect(component.dataSource.data.every(element => element.isChecked)).toBeFalsy();
   });
+  it('should getOpenDialog()', () => {
+    component.openDialog();
+    expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
+  });
+  it('should onBaseQuantityChange()', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false
+    };
+    component.onBaseQuantityChange(1, 0);
+    expect(component.dataSource.data[0].action).toBeDefined();
+    component.dataSource.data[0].action = CONST_DETAIL_FORMULA.update;
+    component.onBaseQuantityChange(1, 0);
+    expect(component.dataSource.data[0].action).toBeDefined();
+  });
+  it('should onRequiredQuantityChange()', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false
+    };
+    component.oldDataFormulaDetail.plannedQuantity = 2;
+    component.onRequiredQuantityChange(1, 0);
+    expect(component.dataSource.data[0].action).toBeDefined();
+    expect(component.dataSource.data[0].requiredQuantity).toBeDefined();
+  });
+
 });

@@ -11,18 +11,16 @@ import ObjectMapper
 // MARK: UserModel
 class UserInfoResponse: HttpResponse {
     var response: User?
-
     required init?(map: Map) {
         super.init(map: map)
     }
-    
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
     }
 }
-
 class User: Codable {
+    // swiftlint:disable identifier_name
     var id: String?
     var userName: String?
     var firstName: String?
@@ -32,7 +30,6 @@ class User: Codable {
     var activo: Int?
     required init?(map: Map) {}
 }
-
 extension User: Mappable {
     func mapping(map: Map) {
         self.id <- map["id"]
@@ -44,43 +41,32 @@ extension User: Mappable {
         self.activo <- map["activo"]
     }
 }
-
-
 // MARK: StatusModel
 class StatusResponse: HttpResponse {
     var response: Status?
-    
     required init?(map: Map) {
         super.init(map: map)
     }
-    
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
     }
 }
-
 class Status {
     var status: [StatusDetail]?
     required init?(map: Map) {}
 }
-
 extension Status: Mappable {
     func mapping(map: Map) {
         self.status <- map["status"]
     }
 }
-
-
-
 class StatusDetail {
     var statusId: Int?
     var statusName: String?
     var orders: [Order]?
-    
     required init?(map: Map) {}
 }
-
 extension StatusDetail: Mappable {
     func mapping(map: Map) {
         self.statusId <- map["statusId"]
@@ -88,7 +74,6 @@ extension StatusDetail: Mappable {
         self.orders <- map["orders"]
     }
 }
-
 class Order {
     var productionOrderId: Int?
     var baseDocument: Int?
@@ -103,9 +88,9 @@ class Order {
     var productCode: String?
     var destiny: String?
     var hasMissingStock = false
-    
-    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?, startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?, productCode: String?, destiny: String?, hasMissingStock: Bool) {
-        
+    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?,
+         startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?,
+         productCode: String?, destiny: String?, hasMissingStock: Bool) {
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
         self.container = container
@@ -120,10 +105,8 @@ class Order {
         self.destiny = destiny
         self.hasMissingStock = hasMissingStock
     }
-    
     required init?(map: Map) {}
 }
-
 extension Order: Mappable {
     func mapping(map: Map) {
         productionOrderId <- map["productionOrderId"]
@@ -139,15 +122,12 @@ extension Order: Mappable {
         hasMissingStock <- map["hasMissingStock"]
     }
 }
-
-
 struct SectionOrder {
     var statusId: Int
     var statusName: String
     var numberTask: Int
     var imageIndicatorStatus: String
     var orders: [Order]
-    
     init(statusId: Int, statusName: String, numberTask: Int, imageIndicatorStatus: String, orders: [Order]) {
         self.statusName = statusName
         self.numberTask = numberTask

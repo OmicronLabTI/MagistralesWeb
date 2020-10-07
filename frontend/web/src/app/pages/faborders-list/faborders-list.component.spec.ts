@@ -7,16 +7,14 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { FabordersListComponent } from './faborders-list.component';
-import {DataService} from "../../services/data.service";
-import {ConstOrders, HttpServiceTOCall} from "../../constants/const";
-import {Observable, of, throwError} from "rxjs";
-import {RolesMock} from "../../../mocks/rolesMock";
-import {PedidosListMock} from "../../../mocks/pedidosListMock";
-import {FabOrderListMock} from "../../../mocks/fabOrderListMock";
-import {PedidosService} from "../../services/pedidos.service";
-import {OrdersService} from "../../services/orders.service";
-import {ErrorService} from "../../services/error.service";
-import {ErrorHttpInterface} from "../../model/http/commons";
+import {DataService} from '../../services/data.service';
+import {ConstOrders, HttpServiceTOCall} from '../../constants/const';
+import {Observable, of, throwError} from 'rxjs';
+import {FabOrderListMock} from '../../../mocks/fabOrderListMock';
+import {OrdersService} from '../../services/orders.service';
+import {ErrorService} from '../../services/error.service';
+import {ErrorHttpInterface} from '../../model/http/commons';
+import {PageEvent} from '@angular/material/paginator';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -132,5 +130,26 @@ describe('FabordersListComponent', () => {
     component.getOrdersAction();
     expect(errorServiceSpy.httpError).not.toHaveBeenCalled();
 
+  });
+  it('should getFullQueryString', () => {
+    component.queryString = '?status=Abierto';
+    component.offset = 10;
+    component.limit = 20;
+    component.getFullQueryString();
+    expect(component.fullQueryString).toEqual('?status=Abierto&offset=10&limit=20');
+  });
+  it('should getDateFormatted()', () => {
+    component.getDateFormatted(new Date(), new Date(), true);
+    expect(dataServiceSpy.transformDate).toHaveBeenCalledTimes(4);
+  });
+  it('should changeDataEvent()', () => {
+    expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
+    expect(component.pageIndex ).toEqual(0);
+    expect(component.offset).toEqual(0);
+    expect(component.limit).toEqual(5);
+  });
+  it('should createOrderIsolated()', () => {
+    component.createOrderIsolated();
+    expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
   });
 });

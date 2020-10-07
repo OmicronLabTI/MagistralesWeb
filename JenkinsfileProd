@@ -33,7 +33,7 @@ pipeline {
                 sh 'sudo kubectl delete -f deploy_prod.yaml --grace-period=0 --force --ignore-not-found'
 				sh 'sudo docker system prune -f'
             }
-        }/*
+        }
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -153,7 +153,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'

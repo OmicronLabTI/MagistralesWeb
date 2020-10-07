@@ -9,8 +9,7 @@
 import UIKit
 
 class LotsTableViewCell: UITableViewCell {
-    
-    // MARK: -OUTLETS
+    // MARK: - OUTLETS
     @IBOutlet weak var numberLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -28,13 +27,10 @@ class LotsTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.totalNeededLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.totalSelectedLabel, text: "", fontSize: 14)
     }
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
-    
     func setEmptyStock(_ hasStock: Bool) {
         numberLabel.textColor = hasStock ? .black : .systemOrange
         codeLabel.textColor = hasStock ? .black : .systemOrange
@@ -43,5 +39,4 @@ class LotsTableViewCell: UITableViewCell {
         totalNeededLabel.textColor = hasStock ? .black : .systemOrange
         totalSelectedLabel.textColor = hasStock ? .black : .systemOrange
     }
-    
 }

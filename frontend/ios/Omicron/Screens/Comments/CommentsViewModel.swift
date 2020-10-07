@@ -7,12 +7,10 @@
 //
 
 import RxSwift
-import RxSwift
 import UIKit
 import Resolver
 
 class CommentsViewModel {
-    
     // MARK: - Variables
     var cancelDidTap = PublishSubject<Void>()
     var aceptDidTap = PublishSubject<Void>()
@@ -26,23 +24,30 @@ class CommentsViewModel {
     var originView = ""
     @Injected var networkmanager: NetworkManager
     init() {
-        
         self.aceptDidTap.withLatestFrom(textView).subscribe(onNext: { [weak self] data in
-            
-            if (self?.orderDetail.first != nil) {
-                let order = OrderDetailRequest(fabOrderID: (self?.orderDetail[0].productionOrderID!)!, plannedQuantity: (self?.orderDetail[0].plannedQuantity!)!, fechaFin: UtilsManager.shared.formattedDateFromString(dateString: (self?.orderDetail[0].dueDate!)! , withFormat: "yyyy-MM-dd")!, comments: data, components: [])
+            if self?.orderDetail.first != nil {
+                let order = OrderDetailRequest(
+                    fabOrderID: (self?.orderDetail[0].productionOrderID!)!,
+                    plannedQuantity: (self?.orderDetail[0].plannedQuantity!)!,
+                    fechaFin: UtilsManager.shared.formattedDateFromString(
+                        dateString: (self?.orderDetail[0].dueDate!)! ,
+                        withFormat: "yyyy-MM-dd")!,
+                    comments: data,
+                    components: [])
                 self?.loading.onNext(true)
-                self?.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-                    self?.loading.onNext(false)
-                    self?.backToOriginView()
-                }, onError: { [weak self] error in
-                    self?.loading.onNext(false)
-                    self?.showAlert.onNext("Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo")
-                }).disposed(by: self!.disposeBag)
+                self?.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
+                    .observeOn(MainScheduler.instance)
+                    .subscribe(onNext: { [weak self] _ in
+                        self?.loading.onNext(false)
+                        self?.backToOriginView()
+                        }, onError: { [weak self] _ in
+                            self?.loading.onNext(false)
+                            self?.showAlert
+                                .onNext(CommonStrings.errorInComments)
+                    }).disposed(by: self!.disposeBag)
             }
         }).disposed(by: self.disposeBag)
     }
-    
     func backToOriginView() {
         switch self.originView {
         case ViewControllerIdentifiers.lotsViewController:
