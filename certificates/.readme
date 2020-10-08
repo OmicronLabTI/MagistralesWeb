@@ -1,0 +1,11 @@
+SSL
+openssl pkcs12 -in omicron.pfx -nocerts -out key.pem
+openssl rsa -in key.pem -out withoutpw-privatekey.pem
+openssl pkcs12 -in omicron.pfx -nokeys -out cert-file.pem
+openssl pkcs12 -in omicron.pfx -cacerts -nokeys -chain -out ca-chain.pem
+
+Phrase: OmicronAxity2020
+Password: NoPassword, just enter.
+
+
+openssl pkcs12 -in omicron.pfx -clcerts -nokeys -out cert-file.pem

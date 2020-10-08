@@ -606,4 +606,9 @@
         ALTER TABLE warehouse.rawmaterialrequestdetail ALTER COLUMN description TYPE VARCHAR(255)
     </sql>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.64"> 
+	  <addColumn schemaName= "public" tableName="user" >
+		  <column name="deleted" defaultValueBoolean="false" type="BOOLEAN" />  
+	  </addColumn>  
+  </changeSet>
 </databaseChangeLog> 

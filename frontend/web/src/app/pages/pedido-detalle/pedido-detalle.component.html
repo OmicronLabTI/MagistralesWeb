@@ -44,7 +44,7 @@
     </div>
   
     <div class="list-users-container">
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
             <ng-container matColumnDef="seleccion">&nbsp;
               <th mat-header-cell *matHeaderCellDef>
                 <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
@@ -118,6 +118,10 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+        <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
+            <span *ngIf="!isOnInit">No hay órdenes registradas</span>
+            <span *ngIf="isOnInit"> Cargando detalle del pedido ...</span>
+        </div>
     </div>
   </div>
 

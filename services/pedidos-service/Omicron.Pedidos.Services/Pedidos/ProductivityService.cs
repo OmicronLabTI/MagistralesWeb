@@ -305,10 +305,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, WorkLoadModel workLoadModel)
         {
+            var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.StatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
+            var productionOrderIds = productionOrders.Select(y => int.Parse(y.Productionorderid)).ToList();
+            var salesOrderIds = productionOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(x => x.Salesorderid).Select(y => int.Parse(y.Salesorderid)).ToList();
+
             ServiceConstants.StatusWorkload.ForEach(status =>
             {
-                var ordersByStatus = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
-                var total = (int)sapOrders.Where(x => ordersByStatus.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
+                var productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                var total = (int)sapOrders.Where(x => productionOrderIdsByStatus.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
 
                 switch (status)
                 {
@@ -338,12 +342,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             });
 
-            workLoadModel.TotalFabOrders = userOrders.DistinctBy(y => y.Productionorderid).ToList().Count;
-            workLoadModel.TotalOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(y => y.Salesorderid).ToList().Count;
-
-            var ordersId = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
-            workLoadModel.TotalPieces = sapOrders.Where(x => ordersId.Any(y => y == x.OrdenId)).Sum(y => (int)y.Quantity);
-
+            workLoadModel.TotalFabOrders = productionOrderIds.Count;
+            workLoadModel.TotalOrders = salesOrderIds.Count;
+            workLoadModel.TotalPieces = (int)sapOrders.Where(x => productionOrderIds.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
             return workLoadModel;
         }
 

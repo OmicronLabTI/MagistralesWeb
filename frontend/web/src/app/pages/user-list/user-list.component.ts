@@ -28,6 +28,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     offset = CONST_NUMBER.zero;
     limit = CONST_NUMBER.ten;
     subscriptionUsers = new Subscription();
+    isOnInit = true;
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
                 private errorService: ErrorService,
                 private titleService: Title) {
@@ -56,6 +57,7 @@ export class UserListComponent implements OnInit, OnDestroy {
                     user.piezas = this.dataService.getFormattedNumber(user.piezas);
                 });
                 this.isAllComplete = false;
+                this.isOnInit = false;
             },
             error => {
                 this.errorService.httpError(error);

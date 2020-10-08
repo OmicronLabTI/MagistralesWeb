@@ -74,10 +74,9 @@
                             <input matInput
                                    formControlName="piezas"
                                    placeholder="Piezas máximas"
-                                   type="text"
-                                   (keypress)="numericOnly($event)"
                                    class="height-input"
-                                   maxlength="5"
+                                   type="text" pattern="[0-9]*" maxlength="5"
+                                   (keypress)="numericOnly($event)"
                                    />
 
                             <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
