@@ -67,7 +67,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.oldDataFormulaDetail.details.push(resultNewFormulaComponent);
       this.dataSource.data = this.oldDataFormulaDetail.details;
       this.getIsReadyTOSave();
-      this.elementsToSave();
+      this.getIsElementsToSave();
     }));
   }
 
@@ -162,6 +162,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
+              console.log('save components: ', detailComponentsTOSave)
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( (res) => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
@@ -184,15 +185,19 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
           .then( (resultDeleteMessage: any) => {
             if (resultDeleteMessage.isConfirmed) {
+              console.log('data: ', this.dataSource.data)
+              console.log('data filtered: ', this.dataSource.data.filter( component => component.isChecked &&
+                  (component.action === CONST_DETAIL_FORMULA.update || !component.action)))
               this.componentsToDelete.push(...this.dataSource.data.filter( component => component.isChecked &&
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action)));
               this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
               this.oldDataFormulaDetail.details = this.dataSource.data;
               this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+              console.log('components to delete: ', this.componentsToDelete)
               this.getIsReadyTOSave();
               this.createMessageOkHttp();
               this.checkISComponentsToDelete();
-              this.elementsToSave();
+              this.getIsElementsToSave();
               this.allComplete = this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
             }
           });
@@ -282,7 +287,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     });
   }
 
-  elementsToSave() {
+  getIsElementsToSave() {
     this.isSaveToMyList = this.dataSource.data.filter(element => element.action === CONST_DETAIL_FORMULA.insert).length > 0;
   }
 
@@ -330,7 +335,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
     this.getIsReadyTOSave();
     this.checkISComponentsToDelete();
-    this.elementsToSave();
+    this.getIsElementsToSave();
   }
 }
 
