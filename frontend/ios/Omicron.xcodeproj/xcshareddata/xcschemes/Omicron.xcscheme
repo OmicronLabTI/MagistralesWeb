@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "98015CAB24AFBC6C00E7772F"
-               BuildableName = "Omicron.app"
+               BuildableName = "OmicronLab.app"
                BlueprintName = "Omicron"
                ReferencedContainer = "container:Omicron.xcodeproj">
             </BuildableReference>
@@ -66,7 +66,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "98015CAB24AFBC6C00E7772F"
-            BuildableName = "Omicron.app"
+            BuildableName = "OmicronLab.app"
             BlueprintName = "Omicron"
             ReferencedContainer = "container:Omicron.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "98015CAB24AFBC6C00E7772F"
-            BuildableName = "Omicron.app"
+            BuildableName = "OmicronLab.app"
             BlueprintName = "Omicron"
             ReferencedContainer = "container:Omicron.xcodeproj">
          </BuildableReference>
