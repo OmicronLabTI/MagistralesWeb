@@ -10,4 +10,6 @@ import UIKit
 
 class HeaderCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var productID: UILabel!
+    @IBOutlet weak var downloadPDF: UIButton!
+    @IBOutlet weak var checkedImageView: UIImageView!
 }
