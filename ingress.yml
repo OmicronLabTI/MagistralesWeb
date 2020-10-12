@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    configuration.konghq.com: configuration-omicron
+    kubernetes.io/ingress.class: kong
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt
+  name: omicroningress
+spec:
+  tls:
+  - secretName: omicroningress
+    hosts:
+    - omicron-api.eastus2.cloudapp.azure.com
+  rules:
+  - host: omicron-api.eastus2.cloudapp.azure.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: apimanager-svc
+            port:
+              number: 8000
+  - host: omicron-log.eastus2.cloudapp.azure.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: seqlog-svc
+            port:
+              number: 81
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: seqlog-svc
+            port:
+              number: 5341

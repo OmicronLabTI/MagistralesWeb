@@ -23,9 +23,10 @@ struct Login: Codable {
     }
 }
 struct Renew: Codable {
-    var refreshToken: String
-    init(refreshToken: String) {
-        self.refreshToken = refreshToken
+    // swiftlint:disable identifier_name
+    var refresh_token: String
+    init(refresh_token: String) {
+        self.refresh_token = refresh_token
     }
 }
 class LoginResponse: Codable {
