@@ -64,6 +64,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
+            await this.sapDao.TryConnect(true);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);

@@ -112,6 +112,7 @@ class RootViewModel {
                 }, onError: { [weak self] err in
                     guard let self = self else { return }
                     print(err)
+                    self.showRefreshControl.onNext(())
                     self.error.onNext(CommonStrings.errorLoadingOrders)
                     if self.needsRefresh {
                         self.loading.onNext(false)

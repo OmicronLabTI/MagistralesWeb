@@ -48,7 +48,7 @@ namespace Omicron.SapAdapter.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext)), action => action.EnableRetryOnFailure()));
+            Services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext)), action => action.EnableRetryOnFailure(4)));
         }
 
         /// <summary>

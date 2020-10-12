@@ -480,6 +480,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <param name="retry">The retry.</param>
+        /// <returns>get the orders.</returns>
+        public async Task<OrderModel> TryConnect(bool retry)
+        {
+            try
+            {
+                return await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == 1);
+            }
+            catch
+            {
+                if (retry)
+                {
+                    return await this.TryConnect(false);
+                }
+
+                return new OrderModel();
+            }
+        }
+
+        /// <summary>
         /// Gets the componenents from the product.
         /// </summary>
         /// <param name="products">the products.</param>

@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  web:
+    image: omicron.azurecr.io/omicron-web-repository:latest
+    ports:
+      - "80:80"

@@ -37,7 +37,7 @@ class NetworkManager: SessionProtocol {
     }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
-        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refreshToken ?? "")
+        let data = Renew(refresh_token: Persistence.shared.getLoginData()?.refreshToken ?? "")
         return self.provider.rx.request(.renew(data: data))
     }
     // Parse and save your token locally or do any thing with the new token here
