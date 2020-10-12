@@ -15,7 +15,7 @@
         <!--Navigation View Controller-->
         <scene sceneID="i92-Du-Xlq">
             <objects>
-                <navigationController id="EFE-v6-BeN" customClass="NavigationViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController id="EFE-v6-BeN" customClass="NavigationViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="xwh-jl-ASU">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -31,7 +31,7 @@
         <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="LoginViewController" id="BYZ-38-t0r" customClass="LoginViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="BYZ-38-t0r" customClass="LoginViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -186,7 +186,7 @@
         <!--Inbox View Controller-->
         <scene sceneID="dtU-oR-0BD">
             <objects>
-                <viewController storyboardIdentifier="InboxViewController" id="jwh-yn-yGS" customClass="InboxViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="InboxViewController" id="jwh-yn-yGS" customClass="InboxViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="i2U-wQ-yxQ">
                         <rect key="frame" x="0.0" y="0.0" width="990.5" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -384,7 +384,7 @@
         <!--Root View Controller-->
         <scene sceneID="I1Y-pA-bkf">
             <objects>
-                <viewController storyboardIdentifier="RootViewController" id="lc1-hN-T0H" customClass="RootViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RootViewController" id="lc1-hN-T0H" customClass="RootViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" id="e7n-AZ-UcY">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="974"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -409,7 +409,7 @@
                                 <rect key="frame" x="0.0" y="130" width="375" height="534"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RootTableViewCell" id="BKn-rr-W8E" customClass="RootTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RootTableViewCell" id="BKn-rr-W8E" customClass="RootTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="60.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="BKn-rr-W8E" id="CQQ-Lj-cb4">
@@ -579,7 +579,7 @@
         <!--Signature Pad View Controller-->
         <scene sceneID="ers-by-XXt">
             <objects>
-                <viewController storyboardIdentifier="SignaturePadViewController" id="Dis-5c-558" customClass="SignaturePadViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignaturePadViewController" id="Dis-5c-558" customClass="SignaturePadViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="EMN-O2-MhG">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -700,7 +700,7 @@
         <!--Lots View Controller-->
         <scene sceneID="eeB-uS-CLm">
             <objects>
-                <viewController storyboardIdentifier="LotsViewController" id="FQH-un-ffw" customClass="LotsViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LotsViewController" id="FQH-un-ffw" customClass="LotsViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Opk-QP-vcL">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -900,7 +900,7 @@
                                         <rect key="frame" x="0.0" y="70" width="1334" height="170"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsTableViewCell" id="2wc-Ph-bE4" customClass="LotsTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsTableViewCell" id="2wc-Ph-bE4" customClass="LotsTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="1334" height="50.5"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2wc-Ph-bE4" id="7d3-tc-f7f">
@@ -1068,7 +1068,7 @@
                                                         <rect key="frame" x="0.0" y="70" width="936" height="567"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                         <prototypes>
-                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsAvailableTableViewCell" id="55T-vP-yBG" customClass="LotsAvailableTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsAvailableTableViewCell" id="55T-vP-yBG" customClass="LotsAvailableTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="28" width="936" height="50.5"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="55T-vP-yBG" id="Wa9-pc-AeQ">
@@ -1239,7 +1239,7 @@
                                                         <rect key="frame" x="0.0" y="60" width="300" height="577"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                         <prototypes>
-                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsSelectedTableViewCell" id="lqc-Vy-uEJ" customClass="LotsSelectedTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LotsSelectedTableViewCell" id="lqc-Vy-uEJ" customClass="LotsSelectedTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="28" width="300" height="50.5"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lqc-Vy-uEJ" id="ZTE-EV-r2G">
@@ -1340,6 +1340,7 @@
                     <navigationItem key="navigationItem" id="gZj-du-bct"/>
                     <connections>
                         <outlet property="addLotButton" destination="cUX-ti-NmS" id="HCX-FX-Lm2"/>
+                        <outlet property="buttonsViewConstraint" destination="TiY-2v-jj4" id="rTD-Xf-DxA"/>
                         <outlet property="codeDescriptionLabel" destination="XOC-rO-TTS" id="B3p-hk-4GB"/>
                         <outlet property="codeLabel" destination="xzO-WQ-eQ7" id="ZdY-U0-qfH"/>
                         <outlet property="descriptionLabel" destination="Wb8-0k-Agb" id="sug-b0-59G"/>
@@ -1377,7 +1378,7 @@
         <!--Title-->
         <scene sceneID="BAP-3r-Vdj">
             <objects>
-                <viewController storyboardIdentifier="OrderDetailViewController" id="Dvp-ad-RrX" customClass="OrderDetailViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OrderDetailViewController" id="Dvp-ad-RrX" customClass="OrderDetailViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mbS-m8-5F7">
                         <rect key="frame" x="0.0" y="0.0" width="990.5" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1683,7 +1684,7 @@
                                 <rect key="frame" x="0.0" y="444" width="990.5" height="575"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DetailTableViewCell" id="Nlc-ol-hxo" customClass="DetailTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DetailTableViewCell" id="Nlc-ol-hxo" customClass="DetailTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="990.5" height="50.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nlc-ol-hxo" id="nkM-Kx-4J3">
@@ -1854,7 +1855,7 @@
         <!--Components View Controller-->
         <scene sceneID="mHD-9S-ucV">
             <objects>
-                <viewController storyboardIdentifier="ComponentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9NP-z5-RkI" customClass="ComponentsViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ComponentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9NP-z5-RkI" customClass="ComponentsViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Wn3-1f-N5U">
                         <rect key="frame" x="0.0" y="0.0" width="712" height="984"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1869,7 +1870,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="nhb-0t-jMp">
                                 <rect key="frame" x="0.0" y="71" width="712" height="913"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W8z-nA-eC1" customClass="TagListView" customModule="TagListView">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W8z-nA-eC1" customClass="TagListView" customModule="TagListView">
                                         <rect key="frame" x="0.0" y="0.0" width="712" height="178"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <userDefinedRuntimeAttributes>
@@ -1894,7 +1895,7 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="enableRemoveButton" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                     </view>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="b7C-aR-kJn">
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="b7C-aR-kJn">
                                         <rect key="frame" x="0.0" y="188" width="712" height="725"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No hay resultados" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="K7c-ch-I4L">
@@ -1905,7 +1906,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ComponentsTableViewCell" id="EFM-Wx-kuf" customClass="ComponentsTableViewCell" customModule="Omicron" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ComponentsTableViewCell" id="EFM-Wx-kuf" customClass="ComponentsTableViewCell" customModule="OmicronLab" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="712" height="50.5"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EFM-Wx-kuf" id="MoJ-dG-6Ta">
@@ -1991,7 +1992,7 @@
         <!--Split View Controller-->
         <scene sceneID="THk-VW-Nl3">
             <objects>
-                <splitViewController storyboardIdentifier="SplitViewController" id="M3I-HA-Kcq" customClass="SplitViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="SplitViewController" id="M3I-HA-Kcq" customClass="SplitViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="IGc-3R-BiL"/>
                     <connections>
                         <segue destination="JSY-bC-ejf" kind="relationship" relationship="masterViewController" id="SII-yJ-RSe"/>
@@ -2005,7 +2006,7 @@
         <!--Order Detail Form View Controller-->
         <scene sceneID="rag-sW-JkR">
             <objects>
-                <viewController storyboardIdentifier="OrderDetailFormViewController" id="pSw-ye-U1M" customClass="OrderDetailFormViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OrderDetailFormViewController" id="pSw-ye-U1M" customClass="OrderDetailFormViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="56H-lB-pVF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2020,7 +2021,7 @@
         <!--Comments View Controller-->
         <scene sceneID="lEq-fE-5bq">
             <objects>
-                <viewController storyboardIdentifier="CommentsViewController" id="WCK-qO-LDc" customClass="CommentsViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CommentsViewController" id="WCK-qO-LDc" customClass="CommentsViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="G17-1I-xa3">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2132,7 +2133,7 @@
         <!--Chart View Controller-->
         <scene sceneID="Zza-aC-vlJ">
             <objects>
-                <viewController id="6ZI-OH-vUE" customClass="ChartViewController" customModule="Omicron" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="6ZI-OH-vUE" customClass="ChartViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pa6-OO-Pyc">
                         <rect key="frame" x="0.0" y="0.0" width="990.5" height="974"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -42,6 +42,7 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var orderNumberLabel: UILabel!
     @IBOutlet weak var manufacturingOrderLabel: UILabel!
     @IBOutlet weak var finishOrderButton: UIButton!
+    @IBOutlet weak var buttonsViewConstraint: NSLayoutConstraint!
     // MARK: - Variables
     @Injected var lotsViewModel: LotsViewModel
     @Injected var lottieManager: LottieManager
@@ -313,7 +314,9 @@ class LotsViewController: UIViewController {
         if self.statusType == "En proceso" {
             self.pendingButton.isHidden = false
         } else {
+            // Caso cuando el statusType es Reasignado
             self.pendingButton.isHidden = true
+            self.buttonsViewConstraint.constant = 200
         }
     }
     func initComponentsExtension() {
