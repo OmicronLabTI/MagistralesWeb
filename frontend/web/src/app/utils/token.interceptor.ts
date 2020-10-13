@@ -2,8 +2,6 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import {catchError, flatMap, timeout} from 'rxjs/operators';
-
-import { Messages } from '../constants/messages';
 import { DataService } from '../services/data.service';
 import { TokenExcludedEndpoints } from 'src/environments/endpoints';
 import { AppConfig } from '../constants/app-config';
@@ -48,7 +46,8 @@ export class TokenInterceptor implements HttpInterceptor {
         if (error instanceof TimeoutError) {
           return throwError({status: HttpStatus.timeOut} as ErrorHttpInterface);
         } else {
-         if (error.status === HttpStatus.unauthorized && this.dataService.getRefreshToken() !== CONST_STRING.empty
+         if ((error.status === HttpStatus.unauthorized || error.status === HttpStatus.notFound)
+              && this.dataService.getRefreshToken() !== CONST_STRING.empty
               && this.dataService.getRememberSession() !== null) {
             return this.securityService.refreshToken().pipe(
                 catchError(err => {
