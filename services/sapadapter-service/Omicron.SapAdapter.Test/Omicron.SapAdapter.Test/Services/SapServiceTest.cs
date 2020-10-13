@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
+    using Serilog;
 
     /// <summary>
     /// class for the test.
@@ -82,7 +83,12 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
-            this.sapDao = new SapDao(this.context);
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            this.sapDao = new SapDao(this.context, mockLog.Object);
             this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object);
         }
 
