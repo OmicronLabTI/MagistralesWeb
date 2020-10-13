@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
@@ -128,10 +128,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.isOnInit = false;
       },
         (error: ErrorHttpInterface) => {
-        if (error.status !== HttpStatus.notFound) {
           this.errorService.httpError(error);
-        }
-        this.dataSource.data = [];
+          this.dataSource.data = [];
       }
     );
   }
