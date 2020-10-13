@@ -29,9 +29,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.USUARIO_NO_EXISTE);
         }
 
-        String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
-
-        if(!encodedPassword.equals(securityDO.getPassword())){
+        if(!password.equals(securityDO.getPassword())){
             throw new UnAuthorizedException(ErrorMessages.INVALID_CREDENTIALS);
         }
 
