@@ -246,7 +246,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
         {
             await this.TryConnect(true);
-            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
+            try
+            {
+                return await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                this.logger.Information($"Error busqueda {ex.Message}--{ex.StackTrace}");
+                return await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
+            }            
         }
 
         /// <summary>
