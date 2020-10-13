@@ -203,12 +203,5 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="ids">gets the attachments by id</param>
         /// <returns>the attachaments.</returns>
         Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
-
-        /// <summary>
-        /// Get the orders.
-        /// </summary>
-        /// <param name="retry">If it has to rety.</param>
-        /// <returns>get the orders.</returns>
-        Task<OrderModel> TryConnect(bool retry);
     }
 }

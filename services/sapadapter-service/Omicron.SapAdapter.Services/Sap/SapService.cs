@@ -76,7 +76,6 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-            await this.sapDao.TryConnect(true);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
@@ -449,8 +448,6 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
         {
             var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
-            await this.sapDao.TryConnect(true);
-            this.logger.Information("Consulta try exitosa");
 
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
