@@ -16,7 +16,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;    
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Serilog;
 
     /// <summary>
     /// Class for the dao.
@@ -26,12 +27,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         private readonly IDatabaseContext databaseContext;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapDao"/> class.
         /// </summary>
         /// <param name="databaseContext">the context.</param>
-        public SapDao(IDatabaseContext databaseContext)
+        /// <param name="logger">the logger.</param>
+        public SapDao(IDatabaseContext databaseContext, ILogger logger)
         {
             this.databaseContext = databaseContext ?? throw new ArgumentNullException(nameof(databaseContext));
+            this.logger = logger;
         }
 
         /// <summary>
@@ -488,16 +496,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             try
             {
+                this.logger.Information($"Consulta data base");
                 return await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == 1);
             }
-            catch
+            catch(Exception ex)
             {
-                if (retry)
-                {
-                    return await this.TryConnect(false);
-                }
-
-                return new OrderModel();
+                this.logger.Error(ex, $"Error data base");
+                return retry ? await this.TryConnect(false) : new OrderModel();
             }
         }
 
