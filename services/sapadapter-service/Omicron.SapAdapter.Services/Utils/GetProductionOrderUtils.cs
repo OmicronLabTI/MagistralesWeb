@@ -20,7 +20,7 @@ namespace Omicron.SapAdapter.Services.Utils
     /// <summary>
     /// class for the utils for the orders.
     /// </summary>
-    public class GetProductionOrderUtils
+    public class GetProductionOrderUtils : IGetProductionOrderUtils
     {
         private readonly ISapDao sapDao;
 

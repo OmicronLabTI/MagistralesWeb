@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
+    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -89,7 +90,8 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.Information(It.IsAny<string>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object);
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils);
         }
 
         /// <summary>

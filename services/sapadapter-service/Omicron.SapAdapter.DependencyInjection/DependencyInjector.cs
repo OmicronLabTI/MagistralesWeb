@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
+    using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -39,6 +40,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<ISapService, SapService>();
             Services.AddTransient<ISapDao, SapDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
             return Services;
         }
 
