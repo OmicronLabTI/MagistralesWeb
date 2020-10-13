@@ -16,7 +16,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;    
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Serilog;
 
     /// <summary>
     /// Class for the dao.
@@ -26,12 +27,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         private readonly IDatabaseContext databaseContext;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapDao"/> class.
         /// </summary>
         /// <param name="databaseContext">the context.</param>
-        public SapDao(IDatabaseContext databaseContext)
+        /// <param name="logger">the logger.</param>
+        public SapDao(IDatabaseContext databaseContext, ILogger logger)
         {
             this.databaseContext = databaseContext ?? throw new ArgumentNullException(nameof(databaseContext));
+            this.logger = logger;
         }
 
         /// <summary>
@@ -40,6 +48,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate)
         {
+            await this.TryConnect(true);
                 var query = await (from order in this.databaseContext.OrderModel
                                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                                    join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
@@ -67,7 +76,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaFin(DateTime initDate, DateTime endDate)
         {
-
+            await this.TryConnect(true);
             var query = await (from order in this.databaseContext.OrderModel
                                join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                                join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
@@ -236,8 +245,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
         {
-            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
-            return query;
+            await this.TryConnect(true);
+            return await this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate).ToListAsync();
         }
 
         /// <summary>
@@ -484,20 +493,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="retry">The retry.</param>
         /// <returns>get the orders.</returns>
-        public async Task<OrderModel> TryConnect(bool retry)
+        private async Task TryConnect(bool retry)
         {
             try
             {
-                return await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == 1);
+                this.logger.Information($"Consulta data base");
+                await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == 1);
+                await this.databaseContext.OrdenFabricacionModel.FirstOrDefaultAsync();
+                this.logger.Information($"Consulta data base exitosa");
             }
-            catch
+            catch(Exception ex)
             {
+                this.logger.Error(ex, $"Error data base");
                 if (retry)
                 {
-                    return await this.TryConnect(false);
+                    await this.TryConnect(false);
                 }
-
-                return new OrderModel();
             }
         }
 

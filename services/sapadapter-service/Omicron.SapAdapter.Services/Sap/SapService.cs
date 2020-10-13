@@ -27,6 +27,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// The sap class.
@@ -41,6 +42,13 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IConfiguration configuration;
 
+        private readonly IGetProductionOrderUtils getProductionOrderUtils;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
@@ -48,12 +56,16 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidosservice.</param>
         /// <param name="userService">user service.</param>
         /// <param name="configuration">App configuration.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration)
+        /// <param name="logger">the logger.</param>
+        /// <param name="getProductionOrderUtils">the getproduction order utisl.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.logger = logger;
+            this.getProductionOrderUtils = getProductionOrderUtils;
         }
 
         /// <summary>
@@ -64,7 +76,6 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-            await this.sapDao.TryConnect(true);
             var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
@@ -437,25 +448,26 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
         {
             var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
-            await this.sapDao.TryConnect(true);
 
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
+                orders = this.getProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
                 var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
-                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
+                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Busqueda por filtros");
+            var dataBaseOrders = (await this.getProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Consulta por filtros exitosa");
             var total = dataBaseOrders.Count;
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
-            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(ordersToReturn, this.sapDao) : ordersToReturn;
+            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(ordersToReturn) : ordersToReturn;
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, total);
         }
 
