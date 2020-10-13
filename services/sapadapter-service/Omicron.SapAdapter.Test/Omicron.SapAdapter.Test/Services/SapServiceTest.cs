@@ -89,7 +89,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.Information(It.IsAny<string>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object);
         }
 
         /// <summary>

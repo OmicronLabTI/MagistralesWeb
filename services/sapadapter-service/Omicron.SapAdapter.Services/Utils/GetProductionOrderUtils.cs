@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
+    using Serilog;
 
     /// <summary>
     /// class for the utils for the orders.
@@ -27,8 +28,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="parameters">the filter from front.</param>
         /// <param name="dateFilter">the date filter.</param>
         /// <param name="sapDao">The sap dao.</param>
+        /// <param name="logger">the logger.</param>
         /// <returns>teh orders.</returns>
-        public static async Task<List<OrdenFabricacionModel>> GetSapDbProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, ISapDao sapDao)
+        public static async Task<List<OrdenFabricacionModel>> GetSapDbProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, ISapDao sapDao, ILogger logger)
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
@@ -42,7 +44,9 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (filterDate)
             {
+                logger.Information("Busqueda por fecha.");
                 listToReturn.AddRange((await sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
+                logger.Information("Fin de busqueda por fecha.");
             }
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))

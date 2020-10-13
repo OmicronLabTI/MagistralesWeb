@@ -27,6 +27,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// The sap class.
@@ -42,18 +43,25 @@ namespace Omicron.SapAdapter.Services.Sap
         private readonly IConfiguration configuration;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
         /// <param name="pedidosService">the pedidosservice.</param>
         /// <param name="userService">user service.</param>
         /// <param name="configuration">App configuration.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration)
+        /// <param name="logger">the logger.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.logger = logger;
         }
 
         /// <summary>
@@ -438,6 +446,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
             await this.sapDao.TryConnect(true);
+            this.logger.Information("Consulta try exitosa");
 
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
@@ -451,7 +460,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Busqueda por filtros");
+            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao, this.logger)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Consulta por filtros exitosa");
             var total = dataBaseOrders.Count;
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
