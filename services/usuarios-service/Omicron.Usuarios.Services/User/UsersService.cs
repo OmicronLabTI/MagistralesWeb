@@ -85,7 +85,6 @@ namespace Omicron.Usuarios.Services.User
             }
 
             userModel.Id = Guid.NewGuid().ToString("D");
-            userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
             await this.userDao.InsertUser(userModel);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null, null);
@@ -108,8 +107,6 @@ namespace Omicron.Usuarios.Services.User
 
             var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-
-            listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, users.Count());
         }
@@ -149,7 +146,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.UserName = user.UserName;
             usertoUpdate.FirstName = user.FirstName;
             usertoUpdate.LastName = user.LastName;
-            usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
+            usertoUpdate.Password = user.Password;
             usertoUpdate.Role = user.Role;
             usertoUpdate.Activo = user.Activo;
             usertoUpdate.Piezas = user.Piezas;

@@ -437,6 +437,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
         {
             var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
+            await this.sapDao.TryConnect(true);
 
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
