@@ -1,14 +1,14 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
-import {catchError, flatMap, timeout} from 'rxjs/operators';
+import { catchError, flatMap, timeout} from 'rxjs/operators';
 import { DataService } from '../services/data.service';
 import { TokenExcludedEndpoints } from 'src/environments/endpoints';
 import { AppConfig } from '../constants/app-config';
-import {CONST_STRING, HttpStatus} from '../constants/const';
-import {ErrorHttpInterface} from '../model/http/commons';
-import {SecurityService} from '../services/security.service';
-import {ILoginRes} from '../model/http/security.model';
+import { CONST_STRING, HttpStatus } from '../constants/const';
+import { ErrorHttpInterface } from '../model/http/commons';
+import { SecurityService } from '../services/security.service';
+import { ILoginRes } from '../model/http/security.model';
 
 const DEFAULT_TIMEOUT = 45000;
 
