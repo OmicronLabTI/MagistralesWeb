@@ -448,25 +448,27 @@ namespace Omicron.SapAdapter.Services.Sap
             await this.sapDao.TryConnect(true);
             this.logger.Information("Consulta try exitosa");
 
+            var productionorders = new GetProductionOrderUtils(this.sapDao, this.logger);
+
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
+                orders = productionorders.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
                 var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
-                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
+                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await productionorders.CompleteOrder(orders) : orders;
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
             this.logger.Information("Busqueda por filtros");
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao, this.logger)).OrderBy(x => x.OrdenId).ToList();
+            var dataBaseOrders = (await productionorders.GetSapDbProdOrders(orderFabModel.Filters, dateFilter)).OrderBy(x => x.OrdenId).ToList();
             this.logger.Information("Consulta por filtros exitosa");
             var total = dataBaseOrders.Count;
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
-            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(ordersToReturn, this.sapDao) : ordersToReturn;
+            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await productionorders.CompleteOrder(ordersToReturn) : ordersToReturn;
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, total);
         }
 
