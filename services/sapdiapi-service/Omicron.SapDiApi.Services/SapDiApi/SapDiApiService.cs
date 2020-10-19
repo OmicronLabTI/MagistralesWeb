@@ -150,13 +150,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
             }
 
-            if (!this.DeleteComponentsToFormula(updateFormula))
-            {
-                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, -1, company, dictResult);
-                return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
-            }
-
-            updateFormula.Components = updateFormula.Components.Where(x => !x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
+            //updateFormula.Components = updateFormula.Components.Where(x => !x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
 
             // Reload fab order.
             productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
@@ -233,6 +227,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {JsonConvert.SerializeObject(updateFormula)}");
             }
 
+            if (!this.DeleteComponentsToFormula(updateFormula))
+            {
+                dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, -1, company, dictResult);
+                return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+            }
+
             dictResult = this.AddResult($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ServiceConstants.ErrorUpdateFabOrd, updated, company, dictResult);
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
@@ -244,14 +244,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <returns></returns>
         public bool DeleteComponentsToFormula(UpdateFormulaModel updateFormula)
         {
+            if (!updateFormula.Components.Any(x => x.Action == ServiceConstants.DeleteComponent))
+            {
+                return true;
+            }
+
             var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             productionOrderObj.GetByKey(updateFormula.FabOrderId);
-
-            double.TryParse(updateFormula.PlannedQuantity.ToString(), out double plannedQuantity);
-            productionOrderObj.DueDate = updateFormula.FechaFin;
-            productionOrderObj.PlannedQuantity = plannedQuantity;
-            productionOrderObj.Warehouse = updateFormula.Warehouse;
-
             var components = this.ExecuteQuery(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId);
             var linesToDelete = new List<int>();
             
