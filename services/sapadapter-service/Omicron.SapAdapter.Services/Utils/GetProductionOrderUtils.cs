@@ -15,26 +15,44 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
+    using Serilog;
 
     /// <summary>
     /// class for the utils for the orders.
     /// </summary>
-    public static class GetProductionOrderUtils
+    public class GetProductionOrderUtils : IGetProductionOrderUtils
     {
+        private readonly ISapDao sapDao;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetProductionOrderUtils"/> class.
+        /// </summary>
+        /// <param name="sapDao">sap dao.</param>
+        /// <param name="logger">The logger.</param>
+        public GetProductionOrderUtils(ISapDao sapDao, ILogger logger)
+        {
+            this.sapDao = sapDao;
+            this.logger = logger;
+        }
+
         /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
         /// <param name="dateFilter">the date filter.</param>
-        /// <param name="sapDao">The sap dao.</param>
         /// <returns>teh orders.</returns>
-        public static async Task<List<OrdenFabricacionModel>> GetSapDbProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, ISapDao sapDao)
+        public async Task<List<OrdenFabricacionModel>> GetSapDbProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter)
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                var orders = (await sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
-                return await CompleteOrder(orders, sapDao);
+                var orders = (await this.sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
+                return await this.CompleteOrder(orders);
             }
 
             var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
@@ -42,13 +60,15 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (filterDate)
             {
-                listToReturn.AddRange((await sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
+                this.logger.Information("Busqueda por fecha.");
+                listToReturn.AddRange((await this.sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
+                this.logger.Information("Fin de busqueda por fecha.");
             }
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
             {
                 var code = parameters[ServiceConstants.ItemCode].ToLower();
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : (await sapDao.GetFabOrderByItemCode(code)).ToList();
+                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : (await this.sapDao.GetFabOrderByItemCode(code)).ToList();
             }
 
             return listToReturn.DistinctBy(x => x.OrdenId).ToList();
@@ -61,7 +81,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="dateFilter">the date filter.</param>
         /// <param name="orders">The orders.</param>
         /// <returns>teh orders.</returns>
-        public static List<OrdenFabricacionModel> GetSapLocalProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, List<OrdenFabricacionModel> orders)
+        public List<OrdenFabricacionModel> GetSapLocalProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, List<OrdenFabricacionModel> orders)
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
@@ -96,15 +116,14 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Completes the order with the large description.
         /// </summary>
         /// <param name="listOrders">the orders.</param>
-        /// <param name="sapDao">the sapDao.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<OrdenFabricacionModel>> CompleteOrder(List<OrdenFabricacionModel> listOrders, ISapDao sapDao)
+        public async Task<List<OrdenFabricacionModel>> CompleteOrder(List<OrdenFabricacionModel> listOrders)
         {
             foreach (var order in listOrders)
             {
-                var item = (await sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
+                var item = (await this.sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
                 order.ProdName = item == null ? order.ProdName : item.LargeDescription;
-                order.HasMissingStock = (await sapDao.GetDetalleFormula(order.OrdenId)).Any(y => y.Stock == 0);
+                order.HasMissingStock = (await this.sapDao.GetDetalleFormula(order.OrdenId)).Any(y => y.Stock == 0);
             }
 
             return listOrders;

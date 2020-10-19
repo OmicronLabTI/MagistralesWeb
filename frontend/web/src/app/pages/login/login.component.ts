@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
    login() {
     const userLoginReq = {
         user: this.formLogin.get('username').value,
-        password: this.formLogin.get('password').value,
+        password: btoa(this.formLogin.get('password').value),
         redirectUri: ConstLogin.defaultRedirectUri,
         clientId2: ConstLogin.defaultClientId2,
         origin: ConstLogin.defaultOrigin

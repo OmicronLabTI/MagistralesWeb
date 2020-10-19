@@ -8,13 +8,13 @@
 
 namespace Omicron.Pedidos.Services.SapAdapter
 {
-    using System.Collections.Generic;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// the sap adapter.
@@ -27,12 +27,19 @@ namespace Omicron.Pedidos.Services.SapAdapter
         private readonly HttpClient httpClient;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapAdapter" /> class.
         /// </summary>
         /// <param name="httpClient">Client Http.</param>
-        public SapAdapter(HttpClient httpClient)
+        /// <param name="logger">the logger.</param>
+        public SapAdapter(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -52,7 +59,8 @@ namespace Omicron.Pedidos.Services.SapAdapter
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.BadRequest);
+                    this.logger.Information($"Error peticion sapadapter {jsonString}");
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
                 }
 
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
@@ -77,6 +85,7 @@ namespace Omicron.Pedidos.Services.SapAdapter
 
                 if ((int)response.StatusCode >= 300)
                 {
+                    this.logger.Information($"Error peticion sapadapter {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 

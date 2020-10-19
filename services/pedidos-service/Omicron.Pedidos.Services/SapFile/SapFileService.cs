@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.SapFile
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// Send to file service.
@@ -26,12 +27,19 @@ namespace Omicron.Pedidos.Services.SapFile
         private readonly HttpClient httpClient;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapFileService"/> class.
         /// </summary>
         /// <param name="httpClient">Object to mapper.</param>
-        public SapFileService(HttpClient httpClient)
+        /// <param name="logger">the logger.</param>
+        public SapFileService(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,6 +59,7 @@ namespace Omicron.Pedidos.Services.SapFile
                 var jsonString = await response.Content.ReadAsStringAsync();
                 if ((int)response.StatusCode >= 300)
                 {
+                    this.logger.Information($"Error peticion sapfile {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 
