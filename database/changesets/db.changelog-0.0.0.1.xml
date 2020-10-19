@@ -611,4 +611,14 @@
 		  <column name="deleted" defaultValueBoolean="false" type="BOOLEAN" />  
 	  </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.65">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="DISEÑO"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.66">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="ALMACÉN"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
