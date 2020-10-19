@@ -192,7 +192,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({list: this.getDataCancelFinalize(ConstStatus.terminado),
+    this.dataService.setFinalizeOrders({list: this.getDataCancelFinalize(ConstStatus.terminado, true),
       cancelType: MODAL_NAMES.placeOrdersDetail});
   }
 
@@ -212,9 +212,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString(),
           CONST_NUMBER.zero.toString()]);
     }
-    getDataCancelFinalize(status: string) {
+    getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== status)).map(order => {
+      (t => (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = order.ordenFabricacionId;
         return cancelOrder;
