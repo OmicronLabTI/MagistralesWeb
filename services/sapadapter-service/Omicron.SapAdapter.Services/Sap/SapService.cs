@@ -81,8 +81,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
-
-            orders = orders.DistinctBy(x => x.DocNum).ToList();
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";

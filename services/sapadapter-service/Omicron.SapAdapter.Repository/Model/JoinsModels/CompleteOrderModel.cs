@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Entities.Model
 {
-    using System;
-
     /// <summary>
     /// class for the complete order.
     /// </summary>
@@ -74,5 +72,23 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The IsChecked.</value>
         public bool IsChecked { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public DetallePedidoModel Detalles { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string LabelType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public int FinishedLabel { get; set; }
     }
 }
