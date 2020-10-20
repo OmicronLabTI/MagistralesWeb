@@ -877,5 +877,56 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateDesignerLabel()
+        {
+            var orderId = new List<UpdateDesignerLabelModel>
+            {
+                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 100, UserId = "abc" },
+                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 200, UserId = "abc" },
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateDesignerLabelOnlyUpdate()
+        {
+            var orderId = new List<UpdateDesignerLabelModel>
+            {
+                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 100, UserId = "abc" },
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

@@ -12,13 +12,11 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
-    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
@@ -698,6 +696,51 @@ namespace Omicron.Pedidos.Services.Pedidos
             saleOrder.Comments = updateOrder.Comments;
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             return ServiceUtils.CreateResult(true, 200, null, updateOrder, null);
+        }
+
+        /// <summary>
+        /// Updates the orders designer label.
+        /// </summary>
+        /// <param name="updateDesignerLabels">the data to save.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateDesignerLabel(List<UpdateDesignerLabelModel> updateDesignerLabels)
+        {
+            var ordersIdString = updateDesignerLabels.Select(x => x.OrderId.ToString()).ToList();
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersIdString)).ToList();
+            var signatureOrders = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Select(x => x.Id).ToList());
+            var listNewSignatures = new List<UserOrderSignatureModel>();
+            var listToUpdate = new List<UserOrderSignatureModel>();
+
+            foreach (var x in orders)
+            {
+                var orderToUpdate = updateDesignerLabels.FirstOrDefault(y => y.OrderId.ToString() == x.Productionorderid);
+                var orderSignatureToUpdate = signatureOrders.FirstOrDefault(y => y.UserOrderId == x.Id);
+                var signature = orderToUpdate.DesignerSignature != null ? Convert.FromBase64String(orderToUpdate.DesignerSignature) : new byte[0];
+                x.FinishedLabel = orderToUpdate.Checked ? 1 : 0;
+
+                if (orderSignatureToUpdate == null && orderToUpdate.Checked)
+                {
+                    var newSignature = new UserOrderSignatureModel
+                    {
+                        DesignerSignature = signature,
+                        UserOrderId = x.Id,
+                        DesignerId = orderToUpdate.UserId,
+                    };
+
+                    listNewSignatures.Add(newSignature);
+                }
+                else if (orderSignatureToUpdate != null && orderToUpdate.Checked)
+                {
+                    orderSignatureToUpdate.DesignerSignature = signature;
+                    orderSignatureToUpdate.DesignerId = orderToUpdate.UserId;
+                    listToUpdate.Add(orderSignatureToUpdate);
+                }
+            }
+
+            await this.pedidosDao.InsertOrderSignatures(listNewSignatures);
+            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
+            await this.pedidosDao.UpdateUserOrders(orders);
+            return ServiceUtils.CreateResult(true, 200, null, updateDesignerLabels, null);
         }
 
         /// <summary>

@@ -361,5 +361,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateSaleOrders(this.mapper.Map<UpdateOrderCommentsModel>(updateSaleOrder)));
         }
+
+        /// <summary>
+        /// Updates de designer label value and signature.
+        /// </summary>
+        /// <param name="updateDesignerLabel">the objects.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateDesignerLabel(List<UpdateDesignerLabelDto> updateDesignerLabel)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateDesignerLabel(this.mapper.Map<List<UpdateDesignerLabelModel>>(updateDesignerLabel)));
+        }
     }
 }

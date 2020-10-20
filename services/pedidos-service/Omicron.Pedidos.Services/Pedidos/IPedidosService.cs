@@ -150,5 +150,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="updateOrder">the order to update.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateSaleOrders(UpdateOrderCommentsModel updateOrder);
+
+        /// <summary>
+        /// Updates the orders designer label.
+        /// </summary>
+        /// <param name="updateDesignerLabels">the data to save.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateDesignerLabel(List<UpdateDesignerLabelModel> updateDesignerLabels);
     }
 }

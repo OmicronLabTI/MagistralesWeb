@@ -438,6 +438,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// updates the fields for the label.
+        /// </summary>
+        /// <param name="updateDesignerLabels">the data.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/finish/label")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFinishedLabel(List<UpdateDesignerLabelDto> updateDesignerLabels)
+        {
+            var response = await this.pedidoFacade.UpdateDesignerLabel(updateDesignerLabels);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
