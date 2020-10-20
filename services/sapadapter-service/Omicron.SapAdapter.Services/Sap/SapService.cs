@@ -128,6 +128,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+                x.Comments = pedido == null ? null : pedido.Comments;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);

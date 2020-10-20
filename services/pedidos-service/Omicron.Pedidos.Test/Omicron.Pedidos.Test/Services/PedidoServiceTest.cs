@@ -851,5 +851,31 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateSaleOrders()
+        {
+            var orderId = new UpdateOrderCommentsModel
+            {
+                OrderId = 100,
+                Comments = "Comments",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateSaleOrders(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

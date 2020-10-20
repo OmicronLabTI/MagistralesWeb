@@ -425,6 +425,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Updates the comments of the sale order.
+        /// </summary>
+        /// <param name="updateSaleOrder">the order to update.</param>
+        /// <returns>the data.</returns>
+        [Route("/saleorder/comments")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateSaleOrderComments(UpdateOrderCommentsDto updateSaleOrder)
+        {
+            var response = await this.pedidoFacade.UpdateSaleOrders(updateSaleOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

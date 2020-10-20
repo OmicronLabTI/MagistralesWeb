@@ -221,5 +221,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="ordersId">the pedidos list.</param>
         /// <returns>the result.</returns>
         Task<ResultDto> PrintOrders(List<int> ordersId);
+
+        /// <summary>
+        /// updates the sale orders.
+        /// </summary>
+        /// <param name="updateSaleOrder">the update orders.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateSaleOrders(UpdateOrderCommentsDto updateSaleOrder);
     }
 }

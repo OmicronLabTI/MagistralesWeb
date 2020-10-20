@@ -351,5 +351,15 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.PrintOrders(ordersId));
         }
+
+        /// <summary>
+        /// updates the sale orders.
+        /// </summary>
+        /// <param name="updateSaleOrder">the update orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateSaleOrders(UpdateOrderCommentsDto updateSaleOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateSaleOrders(this.mapper.Map<UpdateOrderCommentsModel>(updateSaleOrder)));
+        }
     }
 }
