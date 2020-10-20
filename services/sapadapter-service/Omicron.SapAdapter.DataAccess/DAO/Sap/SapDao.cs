@@ -161,6 +161,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Status = dp.Status,
                              IsChecked = false,
                              CreatedDate = dp.CreatedDate,
+                             Label = d.Label,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);

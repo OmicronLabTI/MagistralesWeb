@@ -121,6 +121,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUsersById = "getUsersById";
 
         /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string Personalizado = "Personalizada";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string Generico = "Genérico";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

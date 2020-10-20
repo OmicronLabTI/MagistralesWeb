@@ -150,8 +150,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
             }
 
-            //updateFormula.Components = updateFormula.Components.Where(x => !x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
-
             // Reload fab order.
             productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
             productionOrderObj.GetByKey(updateFormula.FabOrderId);
