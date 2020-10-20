@@ -165,15 +165,19 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               const componentsToDeleteFull = this.dataSource.data
                   .filter(component => component.action === CONST_DETAIL_FORMULA.update ||
                       component.action === CONST_DETAIL_FORMULA.insert);
-
+              console.log('deleteFull: ', componentsToDeleteFull)
+              console.log('componentsToDeleteSave: ', this.componentsToDelete)
+              componentsToDeleteFull.push(...this.componentsToDelete);
               componentsToDeleteFull.forEach( component => {
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
+              console.log('tosave: ', componentsToDeleteFull)
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
+                this.componentsToDelete = [];
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
@@ -194,14 +198,14 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           .then( (resultDeleteMessage: any) => {
             if (resultDeleteMessage.isConfirmed) {
               const detailComponentsToDelete = this.createDetailTOSave();
-              this.componentsToDelete = [...this.dataSource.data.filter(component => component.isChecked &&
+              const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
-              this.componentsToDelete.forEach( component => {
+              componentsToDeleteOnSave.forEach( component => {
                 component.action = CONST_DETAIL_FORMULA.delete;
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
-              detailComponentsToDelete.components = this.componentsToDelete;
+              detailComponentsToDelete.components = componentsToDeleteOnSave;
 
               this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
                 this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
@@ -213,7 +217,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
-                this.componentsToDelete = [];
               });
             }
           });
@@ -312,6 +315,34 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   replaceComponentsWithCustomList(components: Components[]) {
+    console.log('initComponents: ', components.length)
+    const newDataToUpdate: IFormulaDetalleReq [] = [];
+    components.forEach(component => {
+      if (this.dataSource.data.filter( element => element.productId === component.productId).length > CONST_NUMBER.zero) {
+         console.log('there something')
+         const elementValue = this.dataSource.data.filter( element => element.productId === component.productId)[0];
+         if (component.baseQuantity !== elementValue.baseQuantity || component.description !== elementValue.description) {
+           console.log('there something different')
+           newDataToUpdate.push({...elementValue, action: CONST_DETAIL_FORMULA.update});
+           components.splice(components.findIndex( componentI => componentI.productId === component.productId)
+                            , CONST_NUMBER.one);
+           this.dataSource.data.splice(this.dataSource.data.findIndex( element => element.productId === component.productId)
+                            , CONST_NUMBER.one );
+         } else {
+           console.log('there all equal')
+           components.splice(components.findIndex( componentI => componentI.productId === component.productId)
+               , CONST_NUMBER.one);
+           this.dataSource.data.splice(this.dataSource.data.findIndex( element => element.productId === component.productId)
+               , CONST_NUMBER.one );
+           newDataToUpdate.push(elementValue);
+         }
+      }
+    });
+    console.log('newDataUpdate: ', newDataToUpdate)
+    console.log('newComponents: ', components)
+    console.log('data: ', this.dataSource.data)
+
+
     this.componentsToDelete.push(...this.dataSource.data.filter(
       component =>
         (component.isInDb === undefined)
@@ -338,9 +369,10 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         isInDb: false
       });
     });
-    this.dataSource.data = newData;
+    this.dataSource.data = [].concat(newData, newDataToUpdate);
     this.oldDataFormulaDetail.details = this.dataSource.data;
     this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
+    console.log('componentsToDeleteList: ', this.componentsToDelete)
     this.getIsReadyTOSave();
     this.checkISComponentsToDelete();
     this.getIsElementsToSave();
