@@ -234,6 +234,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="updateDesignerLabel">the objects.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> UpdateDesignerLabel(List<UpdateDesignerLabelDto> updateDesignerLabel);
+        Task<ResultDto> UpdateDesignerLabel(UpdateDesignerLabelDto updateDesignerLabel);
     }
 }

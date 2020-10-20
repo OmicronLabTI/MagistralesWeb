@@ -176,7 +176,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServicesPedidos
-                .Setup(m => m.UpdateDesignerLabel(It.IsAny<List<UpdateDesignerLabelModel>>()))
+                .Setup(m => m.UpdateDesignerLabel(It.IsAny<UpdateDesignerLabelModel>()))
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
@@ -885,14 +885,13 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             var orderId = new UpdateDesignerLabelDto
             {
-                OrderId = 100,
-                Checked = true,
+                Details = new List<UpdateDesignerLabelDetailDto>(),
                 DesignerSignature = "text",
                 UserId = "id",
             };
 
             // act
-            var response = await this.pedidoFacade.UpdateDesignerLabel(new List<UpdateDesignerLabelDto> { orderId });
+            var response = await this.pedidoFacade.UpdateDesignerLabel(orderId);
 
             // Assert
             Assert.IsNotNull(response);

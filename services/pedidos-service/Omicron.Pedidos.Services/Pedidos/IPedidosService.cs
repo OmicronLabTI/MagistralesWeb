@@ -156,6 +156,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="updateDesignerLabels">the data to save.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> UpdateDesignerLabel(List<UpdateDesignerLabelModel> updateDesignerLabels);
+        Task<ResultModel> UpdateDesignerLabel(UpdateDesignerLabelModel updateDesignerLabels);
     }
 }

@@ -703,19 +703,50 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="updateDesignerLabels">the data to save.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> UpdateDesignerLabel(List<UpdateDesignerLabelModel> updateDesignerLabels)
+        public async Task<ResultModel> UpdateDesignerLabel(UpdateDesignerLabelModel updateDesignerLabels)
         {
-            var ordersIdString = updateDesignerLabels.Select(x => x.OrderId.ToString()).ToList();
+            var ordersIdString = updateDesignerLabels.Details.Select(x => x.OrderId.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersIdString)).ToList();
-            var signatureOrders = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Select(x => x.Id).ToList());
+            var signatureOrders = (await this.pedidosDao.GetSignaturesByUserOrderId(orders.Select(x => x.Id).ToList())).ToList();
+
+            var dataReturned = this.GetModelsToUpdate(orders, signatureOrders, updateDesignerLabels);
+            orders = dataReturned.Item1;
+            var listNewSignatures = dataReturned.Item2;
+            var listToUpdate = dataReturned.Item3;
+
+            await this.pedidosDao.InsertOrderSignatures(listNewSignatures);
+            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
+            await this.pedidosDao.UpdateUserOrders(orders);
+
+            var saleOrderId = orders.FirstOrDefault().Salesorderid;
+            orders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { saleOrderId })).ToList();
+
+            var saleOrder = orders.FirstOrDefault(x => x.IsSalesOrder);
+            var allChecked = orders.Where(x => x.IsProductionOrder).All(y => y.FinishedLabel == 1);
+            saleOrder.FinishedLabel = allChecked ? 1 : 0;
+
+            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+
+            return ServiceUtils.CreateResult(true, 200, null, updateDesignerLabels, null);
+        }
+
+        /// <summary>
+        /// Gets the order updated and the signatures to insert or update.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <param name="signatureOrders">the signatues.</param>
+        /// <param name="updateDesignerLabels">the data to insert.</param>
+        /// <returns>the values.</returns>
+        private Tuple<List<UserOrderModel>, List<UserOrderSignatureModel>, List<UserOrderSignatureModel>> GetModelsToUpdate(List<UserOrderModel> orders, List<UserOrderSignatureModel> signatureOrders, UpdateDesignerLabelModel updateDesignerLabels)
+        {
             var listNewSignatures = new List<UserOrderSignatureModel>();
             var listToUpdate = new List<UserOrderSignatureModel>();
+            var signature = updateDesignerLabels.DesignerSignature != null ? Convert.FromBase64String(updateDesignerLabels.DesignerSignature) : new byte[0];
 
             foreach (var x in orders)
             {
-                var orderToUpdate = updateDesignerLabels.FirstOrDefault(y => y.OrderId.ToString() == x.Productionorderid);
+                var orderToUpdate = updateDesignerLabels.Details.FirstOrDefault(y => y.OrderId.ToString() == x.Productionorderid);
                 var orderSignatureToUpdate = signatureOrders.FirstOrDefault(y => y.UserOrderId == x.Id);
-                var signature = orderToUpdate.DesignerSignature != null ? Convert.FromBase64String(orderToUpdate.DesignerSignature) : new byte[0];
                 x.FinishedLabel = orderToUpdate.Checked ? 1 : 0;
 
                 if (orderSignatureToUpdate == null && orderToUpdate.Checked)
@@ -724,7 +755,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     {
                         DesignerSignature = signature,
                         UserOrderId = x.Id,
-                        DesignerId = orderToUpdate.UserId,
+                        DesignerId = updateDesignerLabels.UserId,
                     };
 
                     listNewSignatures.Add(newSignature);
@@ -732,15 +763,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 else if (orderSignatureToUpdate != null && orderToUpdate.Checked)
                 {
                     orderSignatureToUpdate.DesignerSignature = signature;
-                    orderSignatureToUpdate.DesignerId = orderToUpdate.UserId;
+                    orderSignatureToUpdate.DesignerId = updateDesignerLabels.UserId;
                     listToUpdate.Add(orderSignatureToUpdate);
                 }
             }
 
-            await this.pedidosDao.InsertOrderSignatures(listNewSignatures);
-            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
-            await this.pedidosDao.UpdateUserOrders(orders);
-            return ServiceUtils.CreateResult(true, 200, null, updateDesignerLabels, null);
+            return new Tuple<List<UserOrderModel>, List<UserOrderSignatureModel>, List<UserOrderSignatureModel>>(orders, listNewSignatures, listToUpdate);
         }
 
         /// <summary>

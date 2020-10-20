@@ -421,6 +421,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Local = "Local";
 
         /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string Personalizado = "Personalizada";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

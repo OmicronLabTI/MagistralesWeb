@@ -444,7 +444,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>the data to return.</returns>
         [Route("/finish/label")]
         [HttpPut]
-        public async Task<IActionResult> UpdateFinishedLabel(List<UpdateDesignerLabelDto> updateDesignerLabels)
+        public async Task<IActionResult> UpdateFinishedLabel(UpdateDesignerLabelDto updateDesignerLabels)
         {
             var response = await this.pedidoFacade.UpdateDesignerLabel(updateDesignerLabels);
             return this.Ok(response);

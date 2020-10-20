@@ -885,35 +885,17 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task UpdateDesignerLabel()
         {
-            var orderId = new List<UpdateDesignerLabelModel>
+            var details = new List<UpdateDesignerLabelDetailModel>
             {
-                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 100, UserId = "abc" },
-                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 200, UserId = "abc" },
+                new UpdateDesignerLabelDetailModel { OrderId = 100, Checked = true },
+                new UpdateDesignerLabelDetailModel { OrderId = 200, Checked = true },
             };
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            var mockUsers = new Mock<IUsersService>();
-            var localSapAdapter = new Mock<ISapAdapter>();
-            var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
-
-            // act
-            var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
-
-            // assert
-            Assert.IsNotNull(result);
-        }
-
-        /// <summary>
-        /// Get last isolated production order id.
-        /// </summary>
-        /// <returns>the data.</returns>
-        [Test]
-        public async Task UpdateDesignerLabelOnlyUpdate()
-        {
-            var orderId = new List<UpdateDesignerLabelModel>
+            var orderId = new UpdateDesignerLabelModel
             {
-                new UpdateDesignerLabelModel { Checked = true, DesignerSignature = "aG9sYQ==", OrderId = 100, UserId = "abc" },
+                DesignerSignature = "aG9sYQ==",
+                UserId = "abc",
+                Details = details,
             };
 
             var mockSaDiApiLocal = new Mock<ISapDiApi>();

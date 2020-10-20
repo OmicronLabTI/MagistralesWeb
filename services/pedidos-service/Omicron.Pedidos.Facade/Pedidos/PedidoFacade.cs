@@ -367,9 +367,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="updateDesignerLabel">the objects.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> UpdateDesignerLabel(List<UpdateDesignerLabelDto> updateDesignerLabel)
+        public async Task<ResultDto> UpdateDesignerLabel(UpdateDesignerLabelDto updateDesignerLabel)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateDesignerLabel(this.mapper.Map<List<UpdateDesignerLabelModel>>(updateDesignerLabel)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateDesignerLabel(this.mapper.Map<UpdateDesignerLabelModel>(updateDesignerLabel)));
         }
     }
 }

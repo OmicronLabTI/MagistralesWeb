@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="UpdateDesignerLabelModel.cs" company="Axity">
+// <copyright file="UpdateDesignerLabelDetailModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,29 +8,21 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
-    using System.Collections.Generic;
-
     /// <summary>
-    /// class to update designer label.
+    /// class for the detail.
     /// </summary>
-    public class UpdateDesignerLabelModel
+    public class UpdateDesignerLabelDetailModel
     {
         /// <summary>
         /// Gets or sets the signature image on base 64.
         /// </summary>
         /// <value>The signature.</value>
-        public List<UpdateDesignerLabelDetailModel> Details { get; set; }
+        public int OrderId { get; set; }
 
         /// <summary>
-        /// Gets or sets the signature image on base 64.
+        /// Gets or sets a value indicating whether gets or sets the signature image on base 64.
         /// </summary>
         /// <value>The signature.</value>
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the signature image on base 64.
-        /// </summary>
-        /// <value>The signature.</value>
-        public string DesignerSignature { get; set; }
+        public bool Checked { get; set; }
     }
 }
