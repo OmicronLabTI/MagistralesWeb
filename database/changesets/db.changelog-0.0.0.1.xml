@@ -621,4 +621,9 @@
 		<column name="roledescription" value="ALMACÉN"/>
 	</insert>
   </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.67"> 
+	  <sql endDelimiter=";">
+        ALTER TABLE usersorders ALTER COLUMN comments TYPE VARCHAR(1000)
+    </sql>
+  </changeSet>
 </databaseChangeLog> 

@@ -143,5 +143,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="ordersId">the sales orders..</param>
         /// <returns>the data.</returns>
         Task<ResultModel> PrintOrders(List<int> ordersId);
+
+        /// <summary>
+        /// Updates the saleorder comments.
+        /// </summary>
+        /// <param name="updateOrder">the order to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateSaleOrders(UpdateOrderCommentsModel updateOrder);
     }
 }

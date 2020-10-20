@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
@@ -683,6 +684,20 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
+        }
+
+        /// <summary>
+        /// Updates the saleorder comments.
+        /// </summary>
+        /// <param name="updateOrder">the order to update.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateSaleOrders(UpdateOrderCommentsModel updateOrder)
+        {
+            var saleOrders = await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { updateOrder.OrderId.ToString() });
+            var saleOrder = saleOrders.FirstOrDefault(x => x.IsSalesOrder);
+            saleOrder.Comments = updateOrder.Comments;
+            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+            return ServiceUtils.CreateResult(true, 200, null, updateOrder, null);
         }
 
         /// <summary>
