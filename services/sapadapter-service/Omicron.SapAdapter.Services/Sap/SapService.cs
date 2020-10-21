@@ -560,7 +560,6 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> ValidateOrder(int orderId)
         {
             var listErrors = new List<string>();
-            var algo = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
 
             (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
             {
