@@ -86,5 +86,23 @@ namespace Omicron.SapFile.Entities.Models
         /// </summary>
         /// <value>The code.</value>
         public string FabOrderPdfRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DesignerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public byte[] DesignerSignature { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string LabelType { get; set; }
     }
 }

@@ -22,5 +22,20 @@ namespace Omicron.SapFile.Services.Constants
         /// Text for production order reference.
         /// </summary>
         public const string ProductionOrderReferenceText = "Orden de fabricación: {0}";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string SigantureLabel = "Firma etiqueta";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string GenericSignature = "genérica";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string PersonalizedSignature = "personalizada";
     }
 }
