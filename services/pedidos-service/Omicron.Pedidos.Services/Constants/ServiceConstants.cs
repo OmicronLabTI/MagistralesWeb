@@ -482,6 +482,7 @@ namespace Omicron.Pedidos.Services.Constants
             Terminado,
             Finalizado,
             Reasignado,
+            Entregado,
         };
     }
 }
