@@ -11,6 +11,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
+import {SearchUsersDialogComponent} from "../../dialogs/search-users-dialog/search-users-dialog.component";
 
 @Component({
     selector: 'app-user-list',
@@ -122,5 +123,13 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscriptionUsers.unsubscribe();
+    }
+
+    openSearchUsers() {
+        this.dialog.open(SearchUsersDialogComponent, {
+            panelClass: 'custom-dialog-container',
+        }).afterClosed().subscribe(searchUsersResult => {
+            console.log('resultUsers: ', searchUsersResult)
+        });
     }
 }

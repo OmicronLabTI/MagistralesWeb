@@ -1,0 +1,97 @@
+<div class="add-user-container">
+    <mat-card class="add-user-card">
+        <mat-card-header class="card-header-container">
+            <mat-card-title><span>Buscar usuarios</span>
+            </mat-card-title>
+            <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
+
+        </mat-card-header>
+        <mat-card-content class="content-card-container">
+            <form [formGroup]="searchUserForm" class="form-add-user" autocomplete="off">
+                <div class="row-form-user padding-user">
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Ingresa usuario" formControlName="userNameSe" maxlength="50" class="height-input">
+                            <!--<mat-error *ngIf="addUserForm?.controls.userName?.errors?.required">
+                                Usuario es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.userName?.errors?.maxLength">
+                                Solo 50 caracteres.
+                            </mat-error>-->
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field class="custom-field">
+                            <input matInput placeholder="Nombre(s)" formControlName="firstNameSe" maxlength="50" class="height-input">
+                            <!--<mat-error *ngIf="addUserForm?.controls.firstName?.errors?.required">
+                                Nombre es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.firstName?.errors?.maxLength">
+                                Solo 50 caracteres.
+                            </mat-error>-->
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field class="custom-field magin-top-field">
+                            <input matInput placeholder="Apellido(s)" formControlName="lastNameSe" maxlength="50" class="height-input">
+                            <!--<mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
+                                Apellido es <strong>requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!addUserForm?.controls.firstName?.errors?.maxLength">
+                                Solo 50 caracteres.
+                            </mat-error>-->
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
+                            <mat-label>Selecciona rol</mat-label>
+                            <mat-select formControlName="userTypeRSe">
+                                <mat-option value="test">test</mat-option>
+                               <!-- <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>-->
+                            </mat-select>
+                          <!--  <mat-error *ngIf="addUserForm?.controls.userTypeR?.errors?.required">
+                                Rol es <strong>requerido</strong>
+                            </mat-error>-->
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-user">
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                            <mat-label>Selecciona asignación</mat-label>
+                            <mat-select formControlName="asignableSe">
+                                <mat-option value="1">Encendido</mat-option>
+                                <mat-option value="0">Apagado</mat-option>
+                            </mat-select>
+                            <!--<mat-error *ngIf="!addUserForm?.controls.asignable?.errors?.required">
+                                Asignación es <strong>requerido</strong>
+                            </mat-error>-->
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                            <mat-label>Selecciona estatus</mat-label>
+                            <mat-select formControlName="activoSe">
+                                <mat-option value="0">Inactivo</mat-option>
+                                <mat-option value="1">Activo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <!--<mat-error *ngIf="addUserForm?.controls.activo?.errors?.required">
+                            Estatus es <strong>requerido</strong>
+                        </mat-error>-->
+                    </div>
+
+                </div>
+            </form>
+
+        </mat-card-content>
+        <mat-card-actions class="options-footer">
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="searchUserForm.invalid">
+                <span>Buscar</span>
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
