@@ -553,6 +553,41 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Validates if the order is ready to be finished.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> ValidateOrder(int orderId)
+        {
+            var listErrors = new List<string>();
+
+            (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
+            {
+                if (x.WarehouseQuantity <= 0)
+                {
+                    listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
+                }
+            });
+
+            var resultBatches = await this.GetBatchesComponents(orderId);
+            ((List<BatchesComponentModel>)resultBatches.Response).ForEach(x =>
+            {
+                if (!x.LotesAsignados.Any() || x.TotalNecesario > 0)
+                {
+                    listErrors.Add($"{ServiceConstants.BatchesAreMissingError} {x.CodigoProducto}");
+                }
+            });
+
+            if (listErrors.Any())
+            {
+                var result = ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
+                throw new CustomServiceException(JsonConvert.SerializeObject(result), HttpStatusCode.BadRequest);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

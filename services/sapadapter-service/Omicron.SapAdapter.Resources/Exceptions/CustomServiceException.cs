@@ -9,7 +9,7 @@
 namespace Omicron.LeadToCash.Resources.Exceptions
 {
     using System;
-    using System.Runtime.Serialization;
+    using System.Net;
 
     /// <summary>
     /// Class Custom Service.
@@ -41,5 +41,24 @@ namespace Omicron.LeadToCash.Resources.Exceptions
             : base(message, innerException)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomServiceException"/> class.
+        /// </summary>
+        /// <param name="message">the message.</param>
+        /// <param name="status">the statucs code.</param>
+        public CustomServiceException(string message, HttpStatusCode status)
+            : base(message)
+        {
+            this.Status = status;
+        }
+
+        /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <value>
+        /// The Status.
+        /// </value>
+        public virtual HttpStatusCode Status { get; }
     }
 }
