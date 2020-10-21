@@ -16,6 +16,13 @@
                 </svg>
             </div>
             <button mat-raised-button class="button-blue-user-list" (click)="openSearchUsers()">
+                <mat-icon *ngIf="searchUsersData.activoSe && searchUsersData.activoSe !== '' ||
+                                 searchUsersData.asignableSe && searchUsersData.asignableSe !== '' ||
+                                 searchUsersData.firstNameSe && searchUsersData.firstNameSe !== '' ||
+                                 searchUsersData.lastNameSe && searchUsersData.lastNameSe !== '' ||
+                                 searchUsersData.userNameSe && searchUsersData.userNameSe !== '' ||
+                                 searchUsersData.userTypeRSe && searchUsersData.userTypeRSe !== ''">search
+                </mat-icon>
                 Buscar
             </button>
         </div>

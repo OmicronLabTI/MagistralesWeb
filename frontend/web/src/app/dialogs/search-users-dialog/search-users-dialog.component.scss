@@ -1,7 +1,7 @@
 
 .add-user-container{
   width: 40rem;
-  height: 35rem;
+  height: 30rem;
 }
 
 .form-add-user{
@@ -12,7 +12,21 @@
   justify-content: center;
 
 }
+.btn-cancel-modal-custom{
+  width: 11rem;
+  height: 3rem;
+  font-size: 1em;
+  background-color: #fff;
+  font-weight: 500;
+  border: 1px solid #e8e8e8;
+  color: #3b3f5c;
+  padding: 0 10px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  margin: 5px;
+  transition: all 0.35s ease;
 
+}
 
 .row-form-user{
   width: 100%;

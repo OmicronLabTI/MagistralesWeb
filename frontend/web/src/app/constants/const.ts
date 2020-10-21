@@ -1,4 +1,5 @@
 export const CONST_NUMBER = {
+    lessOne: -1,
     zero: 0,
     one: 1,
     two: 2,
