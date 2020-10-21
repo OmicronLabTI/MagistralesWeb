@@ -877,5 +877,38 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateDesignerLabel()
+        {
+            var details = new List<UpdateDesignerLabelDetailModel>
+            {
+                new UpdateDesignerLabelDetailModel { OrderId = 100, Checked = true },
+                new UpdateDesignerLabelDetailModel { OrderId = 200, Checked = true },
+            };
+
+            var orderId = new UpdateDesignerLabelModel
+            {
+                DesignerSignature = "aG9sYQ==",
+                UserId = "abc",
+                Details = details,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

@@ -81,8 +81,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
-
-            orders = orders.DistinctBy(x => x.DocNum).ToList();
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
@@ -130,6 +128,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
                 x.Comments = pedido == null ? null : pedido.Comments;
                 x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
+                x.FinishedLabel = userOrder.FinishedLabel;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);

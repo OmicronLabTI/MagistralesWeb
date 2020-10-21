@@ -626,4 +626,29 @@
         ALTER TABLE usersorders ALTER COLUMN comments TYPE VARCHAR(1000)
     </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.68">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="finishedlabel"
+			type="INT"
+			defaultValue="0">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.69">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="designerid"
+			type="varchar(100)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.70">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="designersignature"
+			type="BYTEA">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

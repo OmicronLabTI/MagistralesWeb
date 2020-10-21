@@ -95,6 +95,18 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public static List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters, List<UserOrderModel> userOrder, List<UserModel> users)
         {
+            orderModels.GroupBy(x => x.DocNum).ToList().ForEach(p =>
+            {
+                var allPersonalized = p.All(d => d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
+                var allGeneric = p.All(d => d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
+
+                var typeLabel = allPersonalized ? "P" : "M";
+                typeLabel = allGeneric ? "G" : typeLabel;
+                p.ToList().ForEach(a => a.LabelType = typeLabel);
+            });
+
+            orderModels = orderModels.DistinctBy(x => x.DocNum).ToList();
+
             orderModels.ForEach(x =>
             {
                 var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
@@ -106,6 +118,8 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
 
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
+                x.FinishedLabel = order == null ? 0 : order.FinishedLabel;
+                x.Detalles = null;
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -132,6 +146,16 @@ namespace Omicron.SapAdapter.Services.Utils
             if (parameters.ContainsKey(ServiceConstants.Cliente))
             {
                 orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Cliente) && x.Cliente.ToLower().Contains(parameters[ServiceConstants.Cliente].ToLower())).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.Label))
+            {
+                orderModels = orderModels.Where(x => x.LabelType == "M" || x.LabelType == parameters[ServiceConstants.Label]).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.FinishedLabel))
+            {
+                orderModels = orderModels.Where(x => x.FinishedLabel.ToString() == parameters[ServiceConstants.FinishedLabel]).ToList();
             }
 
             orderModels.ForEach(x =>

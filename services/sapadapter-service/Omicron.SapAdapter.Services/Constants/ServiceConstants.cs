@@ -41,6 +41,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Label = "label";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string FinishedLabel = "finlabel";
+
+        /// <summary>
         /// if needs the large description.
         /// </summary>
         public const string NeedsLargeDsc = "Ldsc";
