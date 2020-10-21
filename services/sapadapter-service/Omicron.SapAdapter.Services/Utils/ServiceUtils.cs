@@ -97,8 +97,8 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             orderModels.GroupBy(x => x.DocNum).ToList().ForEach(p =>
             {
-                var allPersonalized = p.All(d => d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
-                var allGeneric = p.All(d => d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
+                var allPersonalized = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
+                var allGeneric = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
 
                 var typeLabel = allPersonalized ? "P" : "M";
                 typeLabel = allGeneric ? "G" : typeLabel;
