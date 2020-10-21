@@ -141,6 +141,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Generico = "Genérico";
 
         /// <summary>
+        /// when stock is missing.
+        /// </summary>
+        public const string MissingWarehouseStock = "No es posible Terminar falta existencia para:";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string BatchesAreMissingError = "No es posible Terminar faltan lotes para:";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

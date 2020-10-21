@@ -202,5 +202,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetOriginalRouteRecipes(ordersId));
         }
+
+        /// <summary>
+        /// Validates the order in order to finish it.
+        /// </summary>
+        /// <param name="orderId">the order.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> ValidateOrder(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.ValidateOrder(orderId));
+        }
     }
 }
