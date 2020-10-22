@@ -9,7 +9,6 @@ import {
   CONST_USER_DIALOG,
   HttpServiceTOCall,
   HttpStatus,
-  MaterialRequestPage,
   MODAL_NAMES
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
@@ -52,7 +51,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
-            valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+            this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
       }
       if (valueForm.piezas) {
         this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });

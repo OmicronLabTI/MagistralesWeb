@@ -17,7 +17,9 @@ export const DetailOrderMock = {
             status: 'Abierto',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         },
         {
             ordenFabricacionId: 89101,
@@ -32,7 +34,9 @@ export const DetailOrderMock = {
             status: 'Asignado',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         },
         {
             ordenFabricacionId: 89102,
@@ -47,7 +51,9 @@ export const DetailOrderMock = {
             status: 'Pendiente',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         },
         {
             ordenFabricacionId: 89103,
@@ -62,7 +68,9 @@ export const DetailOrderMock = {
             status: 'Terminado',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         },
         {
             ordenFabricacionId: 89104,
@@ -77,7 +85,9 @@ export const DetailOrderMock = {
             status: 'En proceso',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         },
         {
             ordenFabricacionId: 89105,
@@ -92,7 +102,9 @@ export const DetailOrderMock = {
             status: '',
             pedidoStatus: 'Planificado',
             isChecked: false,
-            hasMissingStock: false
+            hasMissingStock: false,
+            comments: null,
+            label: 'Genérica'
         }
     ]
 };

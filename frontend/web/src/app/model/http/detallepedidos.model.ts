@@ -13,6 +13,8 @@ export class IPedidoDetalleReq {
     status: string;
     class?: string;
     pedidoStatus: string;
+    comments: string;
+    label: string;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
