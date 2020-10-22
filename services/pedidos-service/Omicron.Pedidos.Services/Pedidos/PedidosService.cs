@@ -783,6 +783,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Send the petition to delete.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> DeleteFiles()
+        {
+            var response = await this.sapFileService.PostSimple(null, ServiceConstants.DeleteFiles);
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
         /// <param name="orders">the orders.</param>

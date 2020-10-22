@@ -137,6 +137,35 @@ namespace Omicron.SapFile.Services.SapFile
         }
 
         /// <summary>
+        /// Deetes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> DeleteFiles()
+        {
+            var route = ConfigurationManager.AppSettings["SalePdfCreated"];
+
+            if (Directory.Exists(route))
+            {
+                var files = Directory.GetFiles(route);
+                this._loggerProxy.Info($"Deleting files");
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                        this._loggerProxy.Info($"File deleted - {file}");
+                    }
+                    catch (Exception ex)
+                    {
+                        this._loggerProxy.Error($"File could not be deleted -- {file} -- {ex.Message}--{ex.StackTrace}");
+                    }
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        /// <summary>
         /// Creates the report for an order.
         /// </summary>
         /// <param name="orderId">the order id.</param>

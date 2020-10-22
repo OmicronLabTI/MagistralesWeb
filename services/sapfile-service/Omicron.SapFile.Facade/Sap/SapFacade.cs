@@ -50,5 +50,14 @@ namespace Omicron.SapFile.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapFileService.CreateSaleOrderPdf(ordersId));
         }
+
+        /// <summary>
+        /// Deletes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> DeleteFiles()
+        {
+            return this.mapper.Map<ResultDto>(await this.sapFileService.DeleteFiles());
+        }
     }
 }

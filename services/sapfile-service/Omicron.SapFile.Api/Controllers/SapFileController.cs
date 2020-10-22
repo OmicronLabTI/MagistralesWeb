@@ -59,6 +59,18 @@ namespace Omicron.SapFile.Api.Controllers
         }
 
         /// <summary>
+        /// Deletes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [HttpPost]
+        [Route("delete/files")]
+        public async Task<IHttpActionResult> DeleteFiles()
+        {
+            var response = await this.sapFacade.DeleteFiles();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

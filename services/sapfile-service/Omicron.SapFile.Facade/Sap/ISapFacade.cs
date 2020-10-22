@@ -27,5 +27,11 @@ namespace Omicron.SapFile.Facade.Sap
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CreateSaleOrderPdf(List<int> ordersId);
+
+        /// <summary>
+        /// Deletes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> DeleteFiles();
     }
 }

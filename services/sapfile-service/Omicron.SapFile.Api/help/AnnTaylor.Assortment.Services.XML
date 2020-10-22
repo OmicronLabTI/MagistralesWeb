@@ -185,6 +185,12 @@
             <param name="ordersId">the order ids.</param>
             <returns>the data.</returns>
         </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.DeleteFiles">
+            <summary>
+            Deletes the files.
+            </summary>
+            <returns>the data.</returns>
+        </member>
         <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.Get">
             <summary>
             the ping pong.

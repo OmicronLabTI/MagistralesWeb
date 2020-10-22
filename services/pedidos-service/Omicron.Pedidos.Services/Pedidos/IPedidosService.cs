@@ -164,5 +164,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="ordersId">the orders.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId);
+
+        /// <summary>
+        /// Send the petition to delete.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> DeleteFiles();
     }
 }
