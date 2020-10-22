@@ -33,7 +33,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   docStatus: string;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'ordenFabricacionId',
     'codigoProducto',
     'descripcionProducto',
@@ -41,6 +40,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     'fechaOF',
     'fechaOFFin',
     'qfb',
+    'label',
     'statusOF',
     'actions'
   ];

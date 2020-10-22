@@ -14,6 +14,7 @@ export class IPedidoDetalleReq {
     class?: string;
     pedidoStatus: string;
     comments: string;
+    label: string;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
