@@ -6,6 +6,11 @@
         <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / Detalle del pedido</div>
       </div>
       <div class="filter-select">
+          <img src="assets/icons/comments.png" class="img-comments cursor-pointer" *ngIf="dataSource.data[0].comments && dataSource.data[0].comments !== ''" (click)="addCommentsDialog()" alt="comments" />
+          <img src="assets/icons/no-comments.png" class="img-comments cursor-pointer" *ngIf="dataSource.data[0].comments === null || dataSource.data[0].comments === ''" (click)="addCommentsDialog()" alt="no-comments" />
+          <span class="material-icons" *ngIf="dataSource.data[0].comments && dataSource.data[0].comments !== ''">
+            mode_comment
+          </span>
         <div class="docbase">Número de pedido: <span class="spandoc">{{docNum}}</span></div>
         <div class="docbase-status">Estatus del pedido: <span class="spnstatus">{{docStatus}}</span> </div>
       </div>

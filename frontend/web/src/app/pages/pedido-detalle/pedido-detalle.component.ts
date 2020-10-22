@@ -19,6 +19,8 @@ import {Title} from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
+import {MatDialog} from '@angular/material/dialog';
+import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-comments-dialog.component';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -54,7 +56,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
-              private router: Router) {
+              private router: Router, private dialog: MatDialog) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -220,4 +222,23 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         return cancelOrder;
       });
     }
+
+  addCommentsDialog() {
+    this.dialog.open(AddCommentsDialogComponent, {
+      panelClass: 'custom-dialog-container',
+      data: this.dataSource.data[0].comments
+    }).afterClosed().subscribe(addCommentsResult => {
+      if ( addCommentsResult) {
+        this.addCommentsOnService(addCommentsResult);
+      }
+    });
+  }
+
+  addCommentsOnService(addCommentsResult: string) {
+    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(commentsResult => {
+          console.log('commentsResult: ', commentsResult)
+          this.getDetallePedido();
+        },
+        error => this.errorService.httpError(error));
+  }
 }
