@@ -175,6 +175,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.UpdateSaleOrders(It.IsAny<UpdateOrderCommentsModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.UpdateDesignerLabel(It.IsAny<UpdateDesignerLabelModel>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -865,6 +869,29 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.UpdateSaleOrders(orderId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task UpdateDesignerLabel()
+        {
+            // arrange
+            var orderId = new UpdateDesignerLabelDto
+            {
+                Details = new List<UpdateDesignerLabelDetailDto>(),
+                DesignerSignature = "text",
+                UserId = "id",
+            };
+
+            // act
+            var response = await this.pedidoFacade.UpdateDesignerLabel(orderId);
 
             // Assert
             Assert.IsNotNull(response);

@@ -276,6 +276,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the recipes by all orders id.
+        /// </summary>
+        /// <param name="orderId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/validate/order/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> ValidateOrder(int orderId)
+        {
+            var result = await this.sapFacade.ValidateOrder(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

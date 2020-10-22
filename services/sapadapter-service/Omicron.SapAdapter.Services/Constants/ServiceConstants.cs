@@ -41,6 +41,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Label = "label";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string FinishedLabel = "finlabel";
+
+        /// <summary>
         /// if needs the large description.
         /// </summary>
         public const string NeedsLargeDsc = "Ldsc";
@@ -129,6 +139,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Get users by id.
         /// </summary>
         public const string Generico = "Genérico";
+
+        /// <summary>
+        /// when stock is missing.
+        /// </summary>
+        public const string MissingWarehouseStock = "No es posible Terminar falta existencia para:";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string BatchesAreMissingError = "No es posible Terminar faltan lotes para:";
 
         /// <summary>
         /// Gets the status of the order.
