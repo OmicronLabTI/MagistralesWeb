@@ -98,7 +98,12 @@ class InboxViewController: UIViewController {
         cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
         cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
-        cell?.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
+        cell?.tagDescriptionLabel.text = element.tag
+        if let tag = element.tag, !tag.contains("Selecciona una") {
+            cell?.tagDescriptionLabel.textColor = .systemGreen
+        } else {
+            cell?.tagDescriptionLabel.textColor = .red
+        }
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
@@ -305,7 +310,7 @@ class InboxViewController: UIViewController {
         self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.itemSize = CGSize(width: 355, height: 250)
+        layout.itemSize = CGSize(width: 365, height: 250)
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -60
         print(UIScreen.main.bounds.width)

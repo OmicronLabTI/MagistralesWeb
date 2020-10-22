@@ -18,7 +18,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Serilog;
-    using Microsoft.VisualBasic.CompilerServices;
 
     /// <summary>
     /// Class for the dao.
@@ -51,7 +50,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
                 var query = (from order in this.databaseContext.OrderModel
                                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                                   join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                                   into DetalleOrden
+                                   from dp in DetalleOrden.DefaultIfEmpty()
+                                   join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                                    where order.FechaInicio >= initDate && order.FechaInicio <= endDate && producto.IsMagistral == "Y"
                                    select new CompleteOrderModel
@@ -64,7 +65,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                        FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                        PedidoStatus = order.PedidoStatus,
-                                       IsChecked = false
+                                       IsChecked = false,
+                                       Detalles = dp
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -78,7 +80,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = (from order in this.databaseContext.OrderModel
                                join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                               into DetalleOrden
+                               from dp in DetalleOrden.DefaultIfEmpty()
+                               join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                                where order.FechaFin >= initDate && order.FechaFin <= endDate && producto.IsMagistral == "Y"
                                select new CompleteOrderModel
@@ -91,7 +95,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                    FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                    PedidoStatus = order.PedidoStatus,
-                                   IsChecked = false
+                                   IsChecked = false,
+                                   Detalles = dp
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -161,6 +166,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Status = dp.Status,
                              IsChecked = false,
                              CreatedDate = dp.CreatedDate,
+                             Label = d.Label,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);

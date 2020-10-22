@@ -20,6 +20,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.SapAdapter;
@@ -158,6 +159,31 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var dic = new Dictionary<string, string>();
             dic.Add("offset", "2");
             dic.Add("limit", "10");
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+
+            // Assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetAllUsersWithFilters()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("offset", "2");
+            dic.Add("limit", "10");
+            dic.Add(ServiceConstants.UserName, "ale");
+            dic.Add(ServiceConstants.FirstName, "alej");
+            dic.Add(ServiceConstants.LastName, "OJEDA");
+            dic.Add(ServiceConstants.Role, "1");
+            dic.Add(ServiceConstants.Assignable, "1");
+            dic.Add(ServiceConstants.Status, "1");
 
             // act
             var response = await this.userServices.GetUsers(dic);

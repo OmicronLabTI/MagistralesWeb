@@ -237,6 +237,26 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task UpdateUserOrderStatusEntregado()
+        {
+            // arrange
+            var components = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado" },
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateStatusOrder(components);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task ConnectDiApi()
         {
             // act
@@ -847,6 +867,65 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await SendToGeneratePdfUtils.CreateModelGeneratePdf(new List<int>(), orderId, mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUsers.Object, true);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateSaleOrders()
+        {
+            var orderId = new UpdateOrderCommentsModel
+            {
+                OrderId = 100,
+                Comments = "Comments",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateSaleOrders(orderId);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateDesignerLabel()
+        {
+            var details = new List<UpdateDesignerLabelDetailModel>
+            {
+                new UpdateDesignerLabelDetailModel { OrderId = 100, Checked = true },
+                new UpdateDesignerLabelDetailModel { OrderId = 200, Checked = true },
+            };
+
+            var orderId = new UpdateDesignerLabelModel
+            {
+                DesignerSignature = "aG9sYQ==",
+                UserId = "abc",
+                Details = details,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object);
+
+            // act
+            var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
 
             // assert
             Assert.IsNotNull(result);

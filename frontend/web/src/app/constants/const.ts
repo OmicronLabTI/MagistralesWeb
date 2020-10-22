@@ -1,4 +1,5 @@
 export const CONST_NUMBER = {
+    lessOne: -1,
     zero: 0,
     one: 1,
     two: 2,
@@ -11,7 +12,8 @@ export const CONST_NUMBER = {
     six: 6,
     seven: 7,
     fifty: 50,
-    oneHundred: 100
+    oneHundred: 100,
+    oneThousand: 1000
 };
 export const CONST_STRING = {
     empty: ''

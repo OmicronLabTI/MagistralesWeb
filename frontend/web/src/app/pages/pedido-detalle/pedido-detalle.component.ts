@@ -19,6 +19,8 @@ import {Title} from '@angular/platform-browser';
 import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
+import {MatDialog} from '@angular/material/dialog';
+import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-comments-dialog.component';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -31,7 +33,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   docStatus: string;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'ordenFabricacionId',
     'codigoProducto',
     'descripcionProducto',
@@ -39,6 +40,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     'fechaOF',
     'fechaOFFin',
     'qfb',
+    'label',
     'statusOF',
     'actions'
   ];
@@ -54,7 +56,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
-              private router: Router) {
+              private router: Router, private dialog: MatDialog) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -178,8 +180,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                 this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false,  ClassNames.popupCustom);
               } else {
-                this.getDetallePedido();
-                this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+                this.reloadOrderDetail();
               }
             }, error => this.errorService.httpError(error));
           }
@@ -220,4 +221,27 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         return cancelOrder;
       });
     }
+
+  addCommentsDialog() {
+    this.dialog.open(AddCommentsDialogComponent, {
+      panelClass: 'custom-dialog-container',
+      data: this.dataSource.data[0].comments
+    }).afterClosed().subscribe(addCommentsResult => {
+      if ( addCommentsResult) {
+        this.addCommentsOnService(addCommentsResult);
+      }
+    });
+  }
+
+  addCommentsOnService(addCommentsResult: string) {
+    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(() => {
+          this.reloadOrderDetail();
+        },
+        error => this.errorService.httpError(error));
+  }
+
+  reloadOrderDetail() {
+    this.getDetallePedido();
+    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
 }

@@ -145,6 +145,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Method for add order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to add.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> InsertOrderSignatures(List<UserOrderSignatureModel> orderSignature)
+        {
+            this.databaseContext.UserOrderSignatureModel.AddRange(orderSignature);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// Method for save order signatures.
         /// </summary>
         /// <param name="orderSignature">Order signatures to save.</param>
@@ -155,7 +167,19 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
-         
+
+        /// <summary>
+        /// Method for save order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to save.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> SaveOrderSignatures(List<UserOrderSignatureModel> orderSignature)
+        {
+            this.databaseContext.UserOrderSignatureModel.UpdateRange(orderSignature);
+            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
         /// <summary>
         /// Get order signature by user order id.
         /// </summary>

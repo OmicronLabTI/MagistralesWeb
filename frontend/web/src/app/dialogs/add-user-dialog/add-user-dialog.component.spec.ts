@@ -40,7 +40,7 @@ describe('AddUserDialogComponent', () => {
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive',
-        'setCallHttpService', 'setMessageGeneralCallHttp'
+        'setCallHttpService', 'setMessageGeneralCallHttp', 'getNormalizeString'
     ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getRoles', 'createUserService' , 'updateUser'
@@ -106,7 +106,6 @@ describe('AddUserDialogComponent', () => {
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('3');
 
-    expect(component.addUserForm.get('userName').value).toEqual(userEditSpec.userName);
     expect(component.addUserForm.get('firstName').value).toEqual(userEditSpec.firstName);
     expect(component.addUserForm.get('lastName').value).toEqual(userEditSpec.lastName);
     expect(component.addUserForm.get('password').value).toEqual( atob('QXhpdHkyMDIwaGh4eA=='));

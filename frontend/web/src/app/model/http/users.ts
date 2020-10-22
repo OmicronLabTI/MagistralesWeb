@@ -66,3 +66,12 @@ export  class QfbWithNumber {
     isFromReassign?: boolean;
     asignable?: number;
 }
+
+export class SearchUsersData {
+    userNameSe: string;
+    firstNameSe: string;
+    lastNameSe: string;
+    userTypeRSe: string;
+    activoSe: string;
+    asignableSe: string;
+}

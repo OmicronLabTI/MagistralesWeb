@@ -97,7 +97,8 @@ namespace Omicron.Usuarios.Services.User
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> GetUsers(Dictionary<string, string> parameters)
         {
-            var users = await this.userDao.GetAllUsersAsync();
+            var users = (await this.userDao.GetAllUsersAsync()).ToList();
+            users = ServiceUtils.GetUsersToReturn(users, parameters);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";

@@ -3,10 +3,11 @@
         <div class="title-list-container">
             <span>Usuarios</span>
         </div>
+
         <div class="add-user-container">
             <div class="icon-add" (click)="openDialog('addModal','')">
-                <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="24"
-                     height="24" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
+                <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="30"
+                     height="30" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="8.5" cy="7" r="4"></circle>
@@ -14,6 +15,16 @@
                     <line x1="23" y1="11" x2="17" y2="11"></line>
                 </svg>
             </div>
+            <button mat-raised-button class="button-blue-user-list" (click)="openSearchUsers()">
+                <mat-icon *ngIf="searchUsersData.activoSe && searchUsersData.activoSe !== '' ||
+                                 searchUsersData.asignableSe && searchUsersData.asignableSe !== '' ||
+                                 searchUsersData.firstNameSe && searchUsersData.firstNameSe !== '' ||
+                                 searchUsersData.lastNameSe && searchUsersData.lastNameSe !== '' ||
+                                 searchUsersData.userNameSe && searchUsersData.userNameSe !== '' ||
+                                 searchUsersData.userTypeRSe && searchUsersData.userTypeRSe !== ''">search
+                </mat-icon>
+                Buscar
+            </button>
         </div>
     </div>
     <div class="list-users-container">
@@ -61,20 +72,22 @@
                         <span *ngIf="element.role === 2">QFB</span>
                         <span *ngIf="element.role === 1">ADMINISTRADOR</span>
                         <span *ngIf="element.role === 3">LOGÍSTICA</span>
+                        <span *ngIf="element.role === 4">DISEÑO</span>
+                        <span *ngIf="element.role === 5">ALMACÉN</span>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="pieces">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                        {{element.role !== 1 && element.role !== 3 ? element.piezas : 'NO APLICA'}}
+                        {{element.role !== 1 && element.role !== 3 && element.role !== 4 && element.role !== 5 ? element.piezas : 'NO APLICA'}}
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="asignable">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ASIGNACIONES</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                        {{element.role !== 1 && element.role !== 3 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
+                        {{element.role !== 1 && element.role !== 3 && element.role !== 4 && element.role !== 5 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
                     </td>
                 </ng-container>
                 <!-- Symbol Column -->

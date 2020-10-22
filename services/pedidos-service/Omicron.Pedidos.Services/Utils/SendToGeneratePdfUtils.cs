@@ -65,11 +65,14 @@ namespace Omicron.Pedidos.Services.Utils
 
             var userIds = listUserOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).DistinctBy(x => x).ToList();
             var userOrdersId = listUserOrders.Select(x => x.Id).ToList();
-            var users = await GetUsers(userIds, usersService);
             var orderSignature = (await pedidosDao.GetSignaturesByUserOrderId(userOrdersId)).ToList();
 
-            listToSend.AddRange(GetModelsByOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
-            listToSend.AddRange(GetModelBySaleOrder(listFabOrders, users, orderSignature, listUserOrders));
+            var designerIds = orderSignature.Where(x => !string.IsNullOrEmpty(x.DesignerId)).Select(x => x.DesignerId).ToList();
+            userIds.AddRange(designerIds);
+            var users = await GetUsers(userIds, usersService);
+
+            listToSend.AddRange(GetModelsBySaleOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
+            listToSend.AddRange(GetModelByOrder(listFabOrders, users, orderSignature, listUserOrders));
 
             return sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
         }
@@ -83,7 +86,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="signatures">the signatures.</param>
         /// <param name="userOrders">the userOrders.</param>
         /// <returns>the data.</returns>
-        private static List<FinalizaGeneratePdfModel> GetModelsByOrders(List<OrderWithDetailModel> ordersWithDetail, List<OrderRecipeModel> recipes, List<UserModel> users, List<UserOrderSignatureModel> signatures, List<UserOrderModel> userOrders)
+        private static List<FinalizaGeneratePdfModel> GetModelsBySaleOrders(List<OrderWithDetailModel> ordersWithDetail, List<OrderRecipeModel> recipes, List<UserModel> users, List<UserOrderSignatureModel> signatures, List<UserOrderModel> userOrders)
         {
             var listToReturn = new List<FinalizaGeneratePdfModel>();
             foreach (var order in ordersWithDetail)
@@ -117,6 +120,9 @@ namespace Omicron.Pedidos.Services.Utils
                     var signaturesByOrder = signatures.FirstOrDefault(x => x.UserOrderId == userOrder.Id);
                     var user = users.FirstOrDefault(x => x.Id.Equals(userOrder.Userid));
 
+                    var designerId = signaturesByOrder == null || signaturesByOrder.DesignerId == null ? string.Empty : signaturesByOrder.DesignerId;
+                    var designer = users.FirstOrDefault(x => x.Id.Equals(designerId));
+
                     var model = new FinalizaGeneratePdfModel
                     {
                         CreateDate = detail.CreatedDate.HasValue ? detail.CreatedDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"),
@@ -130,6 +136,9 @@ namespace Omicron.Pedidos.Services.Utils
                         SaleOrderCreateDate = order.Order.FechaInicio.ToString("dd/MM/yyyy"),
                         TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
                         UserOrderId = userOrder.Id,
+                        DesignerName = designer == null ? string.Empty : $"{designer.FirstName} {designer.LastName}",
+                        DesignerSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.DesignerSignature,
+                        LabelType = detail.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? "P" : "G",
                     };
 
                     listToReturn.Add(model);
@@ -147,7 +156,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="signatures">the signatures.</param>
         /// <param name="userOrders">the userordees.</param>
         /// <returns>the data.</returns>
-        private static List<FinalizaGeneratePdfModel> GetModelBySaleOrder(List<FabricacionOrderModel> orders, List<UserModel> users, List<UserOrderSignatureModel> signatures, List<UserOrderModel> userOrders)
+        private static List<FinalizaGeneratePdfModel> GetModelByOrder(List<FabricacionOrderModel> orders, List<UserModel> users, List<UserOrderSignatureModel> signatures, List<UserOrderModel> userOrders)
         {
             var listToReturn = new List<FinalizaGeneratePdfModel>();
 
@@ -176,6 +185,8 @@ namespace Omicron.Pedidos.Services.Utils
                     SaleOrderCreateDate = string.Empty,
                     TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
                     UserOrderId = userOrder.Id,
+                    DesignerSignature = new byte[0],
+                    DesignerName = string.Empty,
                 };
 
                 listToReturn.Add(model);

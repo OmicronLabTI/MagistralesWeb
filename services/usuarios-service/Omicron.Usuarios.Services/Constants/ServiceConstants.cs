@@ -56,6 +56,36 @@ namespace Omicron.Usuarios.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// Const for the user.
+        /// </summary>
+        public const string UserName = "user";
+
+        /// <summary>
+        /// the first name.
+        /// </summary>
+        public const string FirstName = "fname";
+
+        /// <summary>
+        /// the last name.
+        /// </summary>
+        public const string LastName = "lname";
+
+        /// <summary>
+        /// the role.
+        /// </summary>
+        public const string Role = "role";
+
+        /// <summary>
+        /// the assignable value.
+        /// </summary>
+        public const string Assignable = "assignable";
+
+        /// <summary>
+        /// the status.
+        /// </summary>
+        public const string Status = "status";
+
+        /// <summary>
         /// the qfb role.
         /// </summary>
         public const int RoleQfb = 2;

@@ -17,8 +17,8 @@ export class UsersService {
   getRoles() {
     return this.consumeService.httpGet<IRolesRes>(Endpoints.users.roles);
   }
-  getUsers(offset: number, limit: number) {
-    return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.getUsers}?offset=${offset}&limit=${limit}`);
+  getUsers(fullQueryString: string) {
+    return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.getUsers}${fullQueryString}`);
   }
   deleteUsers(idsToDelete: string[]) {
     return this.consumeService.httpPatch(Endpoints.users.delete, idsToDelete);

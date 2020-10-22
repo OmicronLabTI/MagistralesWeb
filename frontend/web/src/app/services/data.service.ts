@@ -422,4 +422,7 @@ export class DataService {
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
     }
   }
+  getNormalizeString(valueToNormalize: string) {
+    return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 }

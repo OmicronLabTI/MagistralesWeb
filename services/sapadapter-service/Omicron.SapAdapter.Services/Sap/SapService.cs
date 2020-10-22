@@ -81,8 +81,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
-
-            orders = orders.DistinctBy(x => x.DocNum).ToList();
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
@@ -128,6 +126,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+                x.Comments = pedido == null ? null : pedido.Comments;
+                x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
+                x.FinishedLabel = userOrder.FinishedLabel;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
@@ -549,6 +550,41 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
+        }
+
+        /// <summary>
+        /// Validates if the order is ready to be finished.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> ValidateOrder(int orderId)
+        {
+            var listErrors = new List<string>();
+
+            (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
+            {
+                if (x.WarehouseQuantity <= 0)
+                {
+                    listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
+                }
+            });
+
+            var resultBatches = await this.GetBatchesComponents(orderId);
+            ((List<BatchesComponentModel>)resultBatches.Response).ForEach(x =>
+            {
+                if (!x.LotesAsignados.Any() || x.TotalNecesario > 0)
+                {
+                    listErrors.Add($"{ServiceConstants.BatchesAreMissingError} {x.CodigoProducto}");
+                }
+            });
+
+            if (listErrors.Any())
+            {
+                var result = ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
+                throw new CustomServiceException(JsonConvert.SerializeObject(result), HttpStatusCode.BadRequest);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
         }
 
         /// <summary>

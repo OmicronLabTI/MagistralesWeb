@@ -311,7 +311,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             ServiceConstants.StatusWorkload.ForEach(status =>
             {
-                var productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                var productionOrderIdsByStatus = new List<int>();
+                if (status == ServiceConstants.Finalizado)
+                {
+                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Entregado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                }
+                else
+                {
+                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                }
+
                 var total = (int)sapOrders.Where(x => productionOrderIdsByStatus.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
 
                 switch (status)

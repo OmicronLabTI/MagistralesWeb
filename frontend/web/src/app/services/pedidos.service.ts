@@ -90,4 +90,10 @@ export class PedidosService {
   createPdfOrders(orderIds: number[]) {
     return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.createPdf}`, orderIds);
   }
+  savedComments(orderId: number, comments: string) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.savedComments}`, {
+      orderId,
+      comments
+    });
+  }
 }
