@@ -138,7 +138,6 @@ namespace Omicron.Pedidos.Services.Utils
                         UserOrderId = userOrder.Id,
                         DesignerName = designer == null ? string.Empty : $"{designer.FirstName} {designer.LastName}",
                         DesignerSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.DesignerSignature,
-                        LabelType = detail.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? "P" : "G",
                     };
 
                     listToReturn.Add(model);

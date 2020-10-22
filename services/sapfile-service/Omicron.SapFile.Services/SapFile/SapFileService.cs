@@ -73,7 +73,7 @@ namespace Omicron.SapFile.Services.SapFile
                     {
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
-                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId);
+                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
 
@@ -112,11 +112,65 @@ namespace Omicron.SapFile.Services.SapFile
         }
 
         /// <summary>
+        /// Creates the sale order pdf.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data to return.</returns>
+        public async Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            var dictResult = new Dictionary<string, string>();
+            ordersId.ForEach(o =>
+            {
+                try
+                {
+                    var routePDf = this.CreateOrderReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
+                    dictResult.Add($"{o}", $"Ok-{routePDf}");
+                }
+                catch (Exception ex)
+                {
+                    this._loggerProxy.Error(ex.Message, ex);
+                    dictResult.Add($"Error-{o}", "ErrorCreatePdf");
+                }
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <summary>
+        /// Deetes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> DeleteFiles()
+        {
+            var route = ConfigurationManager.AppSettings["SalePdfCreated"];
+
+            if (Directory.Exists(route))
+            {
+                var files = Directory.GetFiles(route);
+                this._loggerProxy.Info($"Deleting files");
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                        this._loggerProxy.Info($"File deleted - {file}");
+                    }
+                    catch (Exception ex)
+                    {
+                        this._loggerProxy.Error($"File could not be deleted -- {file} -- {ex.Message}--{ex.StackTrace}");
+                    }
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        /// <summary>
         /// Creates the report for an order.
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the name and route of the file.</returns>
-        private string CreateOrderReport(int orderId)
+        private string CreateOrderReport(int orderId, string fileRoute)
         {
             var report = new ReportDocument();
             var localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
@@ -132,7 +186,7 @@ namespace Omicron.SapFile.Services.SapFile
             report.SetParameterValue("ObjectId@", 17);
 
             var name = $"Order{orderId}.pdf";
-            var route = ConfigurationManager.AppSettings["PdfCreated"];
+            var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
             return completeRoute;
