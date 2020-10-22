@@ -34,11 +34,11 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return "http://201.163.179.28:8000/api"
+            return "http://201.163.179.29:8000/api"
         case .stagingRelease,
              .appstore,
              .release:
-            return "http://201.163.179.28:8000/api"
+            return "http://201.163.179.29:8000/api"
         }
     }()
     static var isRunningTests: Bool {
