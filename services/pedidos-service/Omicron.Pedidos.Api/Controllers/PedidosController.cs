@@ -451,6 +451,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        [Route("/saleorder/pdf")]
+        [HttpPost]
+        public async Task<IActionResult> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            var response = await this.pedidoFacade.CreateSaleOrderPdf(ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

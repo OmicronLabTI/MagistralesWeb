@@ -46,6 +46,19 @@ namespace Omicron.SapFile.Api.Controllers
         }
 
         /// <summary>
+        /// Method to create the sale order pdf.
+        /// </summary>
+        /// <param name="ordersId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [HttpPost]
+        [Route("create/sale/pdf")]
+        public async Task<IHttpActionResult> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            var response = await this.sapFacade.CreateSaleOrderPdf(ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

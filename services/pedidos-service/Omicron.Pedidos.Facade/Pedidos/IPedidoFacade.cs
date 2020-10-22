@@ -235,5 +235,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="updateDesignerLabel">the objects.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateDesignerLabel(UpdateDesignerLabelDto updateDesignerLabel);
+
+        /// <summary>
+        /// Create the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateSaleOrderPdf(List<int> orderIds);
     }
 }

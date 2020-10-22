@@ -11,8 +11,9 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
+    using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -41,6 +42,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapFileService sapFileService;
 
+        private readonly IConfiguration configuration;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -49,13 +52,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
         /// <param name="sapFileService">The sap file service.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService)
+        /// <param name="configuration">The configuration.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -744,6 +749,37 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
 
             return ServiceUtils.CreateResult(true, 200, null, updateDesignerLabels, null);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale orders.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            var listRoutes = new List<string>();
+            var responseFile = await this.sapFileService.PostSimple(ordersId, ServiceConstants.CreateSalePdf);
+
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseFile.Response.ToString());
+            ServiceUtils.GetValuesContains(dictResult, ServiceConstants.Ok)
+            .ForEach(x =>
+            {
+                var targetPath = dictResult[x].Replace("Ok-", string.Empty);
+                var baseRoute = this.configuration["OmicronFilesAddress"];
+
+                var pathArray = targetPath.Split(@"\").Where(x => x.ToUpper() != "C:").ToList();
+                var completePath = new StringBuilder();
+                completePath.Append(baseRoute);
+                pathArray.ForEach(x => completePath.Append($"{x}/"));
+                var path = completePath.ToString().Remove(completePath.ToString().Length - 1);
+                listRoutes.Add(path);
+            });
+
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+
+            return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listErrorId), listRoutes, null);
         }
 
         /// <summary>

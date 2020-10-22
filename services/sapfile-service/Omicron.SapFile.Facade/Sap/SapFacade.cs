@@ -40,5 +40,15 @@ namespace Omicron.SapFile.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapFileService.CreatePdfs(this.mapper.Map<List<FinalizaGeneratePdfModel>>(listGeneratePdf)));
         }
+
+        /// <summary>
+        /// Created the pdf.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapFileService.CreateSaleOrderPdf(ordersId));
+        }
     }
 }
