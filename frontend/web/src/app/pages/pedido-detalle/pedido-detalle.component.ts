@@ -180,8 +180,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                 this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false,  ClassNames.popupCustom);
               } else {
-                this.getDetallePedido();
-                this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+                this.reloadOrderDetail();
               }
             }, error => this.errorService.httpError(error));
           }
@@ -235,10 +234,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   addCommentsOnService(addCommentsResult: string) {
-    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(commentsResult => {
-          console.log('commentsResult: ', commentsResult)
-          this.getDetallePedido();
+    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(() => {
+          this.reloadOrderDetail();
         },
         error => this.errorService.httpError(error));
+  }
+
+  reloadOrderDetail() {
+    this.getDetallePedido();
+    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 }
