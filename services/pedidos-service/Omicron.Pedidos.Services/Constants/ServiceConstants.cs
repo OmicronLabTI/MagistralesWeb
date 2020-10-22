@@ -296,6 +296,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string CreatePdf = "create/pdf";
 
         /// <summary>
+        /// creates the pdfs.
+        /// </summary>
+        public const string CreateSalePdf = "create/sale/pdf";
+
+        /// <summary>
+        /// deletes the files.
+        /// </summary>
+        public const string DeleteFiles = "delete/files";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;

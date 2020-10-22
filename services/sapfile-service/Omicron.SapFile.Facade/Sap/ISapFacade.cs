@@ -20,5 +20,18 @@ namespace Omicron.SapFile.Facade.Sap
         /// <param name="listGeneratePdf"></param>
         /// <returns>the data.</returns>
         Task<ResultDto> CreatePdfs(List<FinalizaGeneratePdfDto> listGeneratePdf);
+
+        /// <summary>
+        /// Created the pdf.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateSaleOrderPdf(List<int> ordersId);
+
+        /// <summary>
+        /// Deletes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> DeleteFiles();
     }
 }
