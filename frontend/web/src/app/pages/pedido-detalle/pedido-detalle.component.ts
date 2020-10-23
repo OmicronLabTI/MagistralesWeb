@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
@@ -53,6 +53,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
+  isThereOrdersToFinishLabel = false;
+  signatureData = CONST_STRING.empty;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -66,11 +68,15 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
-    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+    this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
         this.getDetallePedido();
       }
-    });
+    }));
+    this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe( newDataSignature => {
+      this.signatureData = newDataSignature;
+      this.sendToLabelsFinish();
+    }));
   }
 
   getDetallePedido() {
@@ -113,6 +119,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
+        this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
@@ -120,6 +127,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToReassign = false;
         this.allComplete = false;
         this.isOnInit = false;
+        this.signatureData = CONST_STRING.empty;
       }, error => this.errorService.httpError(error));
   }
 
@@ -150,6 +158,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
+        FromToFilter.fromOrderDetailLabel); // change to ConstStatus.finalizado,
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -243,5 +253,53 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   reloadOrderDetail() {
     this.getDetallePedido();
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
+
+  finishOrdersLabels() {
+    this.dataService.setOpenSignatureDialog(this.signatureData);
+  }
+  sendToLabelsFinish() {
+    this.dataService.presentToastCustom(Messages.labelsFinish, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+           this.createConsumeService();
+          }
+        });
+  }
+
+  createConsumeService(isFromRemoveSignature: boolean = false, index?: number) {
+    const labelToFinishReq = new IPedidoDetalleLabelReq();
+    labelToFinishReq.details = this.getArrayToFinishLabel(isFromRemoveSignature, index);
+    labelToFinishReq.designerSignature = isFromRemoveSignature ? null : this.signatureData;
+    labelToFinishReq.userId = this.dataService.getUserId();
+    this.pedidosService.finishLabels(labelToFinishReq).subscribe(finishLabelResult => {
+      this.reloadOrderDetail();
+    }, error => this.errorService.httpError(error));
+  }
+
+  getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number ) {
+    if (!isFromRemoveSignature) {
+      return this.dataSource.data.filter( order => order.isChecked && (order.status !== ConstStatus.abierto &&
+          order.status !== ConstStatus.cancelado))
+          .map(order => {
+            const labelToFinish = new LabelToFinish();
+            labelToFinish.orderId = order.ordenFabricacionId;
+            labelToFinish.checked = !isFromRemoveSignature;
+            return labelToFinish;
+          });
+    } else {
+      const labelsToFinish: LabelToFinish[] = [];
+      labelsToFinish.push({orderId: this.dataSource.data[index].ordenFabricacionId, checked: false});
+      return labelsToFinish;
+    }
+  }
+
+  removeSignature(index: number) {
+    this.dataService.presentToastCustom(Messages.removeLabelFinish, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.createConsumeService(true, index);
+          }
+        });
   }
 }
