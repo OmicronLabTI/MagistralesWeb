@@ -25,6 +25,8 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
+    using Omicron.SapAdapter.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// class for the test.
@@ -82,8 +84,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
 
-            this.sapDao = new SapDao(this.context);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object);
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            this.sapDao = new SapDao(this.context, mockLog.Object);
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils);
         }
 
         /// <summary>
@@ -805,6 +813,20 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task ValidateOrder()
+        {
+            // arrange
+            var order = 200;
+
+            // act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.ValidateOrder(order));
         }
     }
 }

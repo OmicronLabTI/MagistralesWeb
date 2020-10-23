@@ -29,9 +29,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.USUARIO_NO_EXISTE);
         }
 
-        String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
-
-        if(!encodedPassword.equals(securityDO.getPassword())){
+        if(!password.equals(securityDO.getPassword())){
             throw new UnAuthorizedException(ErrorMessages.INVALID_CREDENTIALS);
         }
 
@@ -39,7 +37,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.USUARIO_INACTIVO);
         }
 
-        if(origin != null && (securityDO.getRole() == 1 || securityDO.getRole() == 3 ) && origin.toLowerCase().equals("app")){
+        if(origin != null && (securityDO.getRole() != 2) && origin.toLowerCase().equals("app")){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
 

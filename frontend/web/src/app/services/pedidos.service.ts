@@ -16,7 +16,7 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -89,5 +89,14 @@ export class PedidosService {
   }
   createPdfOrders(orderIds: number[]) {
     return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.createPdf}`, orderIds);
+  }
+  savedComments(orderId: number, comments: string) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.savedComments}`, {
+      orderId,
+      comments
+    });
+  }
+  finishLabels(labelsToFinish: IPedidoDetalleLabelReq) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.finishLabels}`, labelsToFinish);
   }
 }

@@ -425,6 +425,58 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Updates the comments of the sale order.
+        /// </summary>
+        /// <param name="updateSaleOrder">the order to update.</param>
+        /// <returns>the data.</returns>
+        [Route("/saleorder/comments")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateSaleOrderComments(UpdateOrderCommentsDto updateSaleOrder)
+        {
+            var response = await this.pedidoFacade.UpdateSaleOrders(updateSaleOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// updates the fields for the label.
+        /// </summary>
+        /// <param name="updateDesignerLabels">the data.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/finish/label")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateFinishedLabel(UpdateDesignerLabelDto updateDesignerLabels)
+        {
+            var response = await this.pedidoFacade.UpdateDesignerLabel(updateDesignerLabels);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        [Route("/saleorder/pdf")]
+        [HttpPost]
+        public async Task<IActionResult> CreateSaleOrderPdf(List<int> ordersId)
+        {
+            var response = await this.pedidoFacade.CreateSaleOrderPdf(ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        [Route("/files")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFiles()
+        {
+            var response = await this.pedidoFacade.DeleteFiles();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

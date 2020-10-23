@@ -36,11 +36,12 @@ namespace Omicron.SapAdapter.Api.Filters
             string message = string.Empty;
 
             var exceptionType = context.Exception.GetType();
-            HttpStatusCode status;
+            HttpStatusCode status = HttpStatusCode.Conflict;
             if (exceptionType == typeof(CustomServiceException))
             {
-                message = context.Exception.Message;
-                status = HttpStatusCode.Conflict;
+                var customException = (CustomServiceException)context.Exception;
+                message = customException.Message;
+                status = (int)customException.Status == 0 ? status : customException.Status;
             }
             else
             {

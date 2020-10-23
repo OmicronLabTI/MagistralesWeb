@@ -1,0 +1,83 @@
+
+.add-user-container{
+  width: 40rem;
+  height: 30rem;
+}
+
+.form-add-user{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+.btn-cancel-modal-custom{
+  width: 11rem;
+  height: 3rem;
+  font-size: 1em;
+  background-color: #fff;
+  font-weight: 500;
+  border: 1px solid #e8e8e8;
+  color: #3b3f5c;
+  padding: 0 10px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  margin: 5px;
+  transition: all 0.35s ease;
+
+}
+
+.row-form-user{
+  width: 100%;
+  height: 33%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.form-field{
+  width: 50%;
+  height: 100%;
+  padding: 2%;
+}
+
+.options-footer{
+  width: 100%;
+  height: 11%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.btn--modal:hover{
+  width: 7.1rem;
+  height: 3.1rem;
+  font-size: 1em;
+
+}
+.margin-top-user{
+  margin-top: 5%;
+}
+.magin-top-field{
+  margin-top: 4%;
+}
+.padding-user {
+  padding-top: 10px;
+}
+.margin-top-user-custom {
+  margin-top: 8%;
+}
+::ng-deep .mat-focused .mat-form-field-label {
+  /*change color of label  */
+  color: #6C90B3 !important;
+}
+
+::ng-deep.mat-form-field-underline {
+  /*change color of underline*/
+  background-color: #6C90B3 !important;
+}
+
+::ng-deep.mat-form-field-ripple {
+  /*change color of underline when focused*/
+  background-color: #638db6 !important;
+}

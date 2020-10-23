@@ -611,4 +611,44 @@
 		  <column name="deleted" defaultValueBoolean="false" type="BOOLEAN" />  
 	  </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.65">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="DISEÑO"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.66">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="ALMACÉN"/>
+	</insert>
+  </changeSet>
+  <changeSet author="hmiguel" id="changelog-1.67"> 
+	  <sql endDelimiter=";">
+        ALTER TABLE usersorders ALTER COLUMN comments TYPE VARCHAR(1000)
+    </sql>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.68">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="finishedlabel"
+			type="INT"
+			defaultValue="0">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.69">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="designerid"
+			type="varchar(100)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.70">
+	<addColumn tableName ="userorderssignatures">
+		<column 
+			name="designersignature"
+			type="BYTEA">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

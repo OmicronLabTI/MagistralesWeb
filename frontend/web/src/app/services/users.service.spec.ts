@@ -45,7 +45,7 @@ describe('UsersService', () => {
   });
   it('should getUsers', () => {
     const service: UsersService = TestBed.get(UsersService);
-    service.getUsers(0, 10);
+    service.getUsers('?user=benny&offset=10&limit=10');
     expect(consumeServiceSpy.httpGet).toHaveBeenCalled();
   });
   it('should deleteUsers', () => {

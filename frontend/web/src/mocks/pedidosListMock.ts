@@ -69,7 +69,9 @@ export const PedidosListMock = {
             fechaFin: '09/08/2020',
             pedidoStatus: 'Abierto',
             qfb: 'Armando Hoyos',
-            isChecked: false
+            isChecked: false,
+            labelType: 'G',
+            finishedLabel: 0
         },
         {
             docNum: 60022,
@@ -81,7 +83,9 @@ export const PedidosListMock = {
             fechaFin: '23/08/2020',
             pedidoStatus: 'Planificado',
             qfb: 'Armando Hoyos',
-            isChecked: false
+            isChecked: false,
+            labelType: 'P',
+            finishedLabel: 0
         },
         {
             docNum: 60023,
@@ -93,7 +97,9 @@ export const PedidosListMock = {
             fechaFin: '23/08/2020',
             pedidoStatus: 'Liberado',
             qfb: 'Armando Hoyos',
-            isChecked: false
+            isChecked: false,
+            labelType: 'M',
+            finishedLabel: 0
         },
         {
             docNum: 60024,
@@ -105,7 +111,9 @@ export const PedidosListMock = {
             fechaFin: '23/08/2020',
             pedidoStatus: 'Cancelado',
             qfb: 'Armando Hoyos',
-            isChecked: false
+            isChecked: false,
+            labelType: 'G',
+            finishedLabel: 1
         },
         {
             docNum: 60025,
@@ -117,7 +125,9 @@ export const PedidosListMock = {
             fechaFin: '23/08/2020',
             pedidoStatus: 'En proceso',
             qfb: 'Armando Hoyos',
-            isChecked: false
+            isChecked: false,
+            labelType: 'P',
+            finishedLabel: 1
         }
     ]
 };

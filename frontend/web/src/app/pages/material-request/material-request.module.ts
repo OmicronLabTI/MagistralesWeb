@@ -16,7 +16,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
 
 @NgModule({
-  declarations: [ MaterialRequestComponent, RequestSignatureDialogComponent ],
+  declarations: [ MaterialRequestComponent ],
   imports: [
       CommonModule,
       MaterialRequestRoutingModule,
@@ -28,10 +28,8 @@ import { FaborderListModule } from '../faborders-list/faborder-list.module';
       FormsModule,
       MatInputModule,
       MATERIAL_COMPONENTS,
-      SignaturePadModule,
       FaborderListModule
   ],
-  entryComponents: [RequestSignatureDialogComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MaterialRequestModule { }

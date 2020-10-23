@@ -27,6 +27,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// The sap class.
@@ -41,6 +42,13 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IConfiguration configuration;
 
+        private readonly IGetProductionOrderUtils getProductionOrderUtils;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
@@ -48,12 +56,16 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidosservice.</param>
         /// <param name="userService">user service.</param>
         /// <param name="configuration">App configuration.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration)
+        /// <param name="logger">the logger.</param>
+        /// <param name="getProductionOrderUtils">the getproduction order utisl.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.logger = logger;
+            this.getProductionOrderUtils = getProductionOrderUtils;
         }
 
         /// <summary>
@@ -69,8 +81,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             var listUsers = await this.GetUsers(userOrders);
-
-            orders = orders.DistinctBy(x => x.DocNum).ToList();
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
@@ -116,6 +126,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FechaOfFin = userOrder.FinishDate;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+                x.Comments = pedido == null ? null : pedido.Comments;
+                x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
+                x.FinishedLabel = userOrder.FinishedLabel;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
@@ -442,18 +455,20 @@ namespace Omicron.SapAdapter.Services.Sap
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = GetProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
+                orders = this.getProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
                 var orderCount = orders.Count;
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
-                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(orders, this.sapDao) : orders;
+                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
             }
 
-            var dataBaseOrders = (await GetProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter, this.sapDao)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Busqueda por filtros");
+            var dataBaseOrders = (await this.getProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter)).OrderBy(x => x.OrdenId).ToList();
+            this.logger.Information("Consulta por filtros exitosa");
             var total = dataBaseOrders.Count;
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
-            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await GetProductionOrderUtils.CompleteOrder(ordersToReturn, this.sapDao) : ordersToReturn;
+            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(ordersToReturn) : ordersToReturn;
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, total);
         }
 
@@ -535,6 +550,41 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
+        }
+
+        /// <summary>
+        /// Validates if the order is ready to be finished.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> ValidateOrder(int orderId)
+        {
+            var listErrors = new List<string>();
+
+            (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
+            {
+                if (x.WarehouseQuantity <= 0)
+                {
+                    listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
+                }
+            });
+
+            var resultBatches = await this.GetBatchesComponents(orderId);
+            ((List<BatchesComponentModel>)resultBatches.Response).ForEach(x =>
+            {
+                if (!x.LotesAsignados.Any() || x.TotalNecesario > 0)
+                {
+                    listErrors.Add($"{ServiceConstants.BatchesAreMissingError} {x.CodigoProducto}");
+                }
+            });
+
+            if (listErrors.Any())
+            {
+                var result = ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
+                throw new CustomServiceException(JsonConvert.SerializeObject(result), HttpStatusCode.BadRequest);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// the sap adapter.
@@ -26,12 +27,19 @@ namespace Omicron.Pedidos.Services.SapDiApi
         private readonly HttpClient httpClient;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SapDiApi" /> class.
         /// </summary>
         /// <param name="httpClient">Client Http.</param>
-        public SapDiApi(HttpClient httpClient)
+        /// <param name="logger">the logger.</param>
+        public SapDiApi(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,6 +59,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
 
                 if ((int)response.StatusCode > 200)
                 {
+                    this.logger.Information($"Error peticion sapdiapi {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 
@@ -76,6 +85,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
 
                 if ((int)response.StatusCode >= 300)
                 {
+                    this.logger.Information($"Error peticion sapdiapi {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 

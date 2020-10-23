@@ -1,5 +1,5 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import { MATERIAL_COMPONENTS } from './app.material';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,10 +15,13 @@ import {ComponentSearchComponent} from './dialogs/components-search-dialog/compo
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 import { MiListaComponent } from './dialogs/mi-lista/mi-lista.component';
 import { ComponentslistComponent } from './dialogs/componentslist/componentslist.component';
+import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
+import {SignaturePadModule} from 'angular2-signaturepad';
 
 @NgModule({
   declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent, ComponentslistComponent,
+    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
+      ComponentslistComponent, RequestSignatureDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -30,6 +33,7 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
         FlexLayoutModule,
         FormsModule,
         InfiniteScrollModule,
+        SignaturePadModule,
 
     ],
   providers: [
@@ -42,7 +46,9 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
       ComponentSearchComponent,
       FindOrdersDialogComponent,
       MiListaComponent,
-      ComponentslistComponent
-    ]
+      ComponentslistComponent,
+        RequestSignatureDialogComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

@@ -80,5 +80,17 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// </summary>
         /// <value>The code.</value>
         public string SaleOrderCreateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DesignerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public byte[] DesignerSignature { get; set; }
     }
 }

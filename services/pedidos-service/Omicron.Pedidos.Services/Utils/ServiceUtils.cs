@@ -166,11 +166,10 @@ namespace Omicron.Pedidos.Services.Utils
 
                 userOrders
                     .Where(x => x.Status.Equals(status.ToString()))
-                    .Select(y => y.Productionorderid)
                     .ToList()
                     .ForEach(o =>
                     {
-                        int.TryParse(o, out int orderId);
+                        int.TryParse(o.Productionorderid, out int orderId);
                         var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
 
                         if (sapOrder != null)
@@ -190,6 +189,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 ItemCode = sapOrder.Code,
                                 HasMissingStock = sapOrder.HasMissingStock,
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                                FinishedLabel = o.FinishedLabel,
                             };
 
                             ordersDetail.Add(order);
