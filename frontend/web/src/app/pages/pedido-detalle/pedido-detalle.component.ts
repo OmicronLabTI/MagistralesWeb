@@ -5,7 +5,8 @@ import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
-  ClassNames, CONST_NUMBER,
+  ClassNames,
+  CONST_NUMBER,
   CONST_STRING,
   ConstStatus,
   FromToFilter,
@@ -16,7 +17,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, OrderToDelivered, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -53,6 +54,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
+  isThereOrdersDetailToDelivered = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -78,6 +80,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       (pedidoDetalleRes) => {
         this.dataSource.data = pedidoDetalleRes.response;
         this.dataSource.data.forEach(element => {
+          element.status = element.ordenFabricacionId === 90277 ? ConstStatus.finalizado : '' // delete
           this.docStatus = element.pedidoStatus;
           element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
@@ -113,6 +116,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
+        this.isThereOrdersDetailToDelivered = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
@@ -150,6 +154,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+        FromToFilter.fromDefault);
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -243,5 +249,26 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   reloadOrderDetail() {
     this.getDetallePedido();
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
+
+  ordersToDelivered() {
+    console.log('toDelivered: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+        .map(order => {
+          const orderToDelivered = new OrderToDelivered();
+          orderToDelivered.orderId = order.ordenFabricacionId;
+          orderToDelivered.status = ConstStatus.entregado;
+          return orderToDelivered;
+        }))
+    // this.dataService.presentToastCustom(Messages)
+    this.pedidosService.putOrdersToDelivered(
+        this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+        .map(order => {
+          const orderToDelivered = new OrderToDelivered();
+          orderToDelivered.orderId = order.ordenFabricacionId;
+          orderToDelivered.status = ConstStatus.entregado;
+          return orderToDelivered;
+        })).subscribe(deliveredOrdersResult => console.log('delivered result: ', deliveredOrdersResult)
+    , error => this.errorService.httpError((error)));
+
   }
 }

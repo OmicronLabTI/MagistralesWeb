@@ -113,3 +113,7 @@ export class WorkLoad {
 export class ICreatePdfOrdersRes extends BaseResponseHttp {
     response: string[];
 }
+export class OrderToDelivered {
+    orderId: number;
+    status: string;
+}

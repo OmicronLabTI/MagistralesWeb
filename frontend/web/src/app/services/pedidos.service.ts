@@ -13,7 +13,7 @@ import {
   IGetNewBachCodeRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
-  IProcessOrdersRes, IRecipesRes, IWorkLoadRes,
+  IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
@@ -86,6 +86,9 @@ export class PedidosService {
   }
   getOrdersPdfViews(orderIds: number[]) {
     return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.viewPdf}`, orderIds);
+  }
+  putOrdersToDelivered(ordersToDelivered: OrderToDelivered[]) {
+    return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.ordersToDelivered}`, ordersToDelivered);
   }
   getRecipesByOrder(orderId: number) {
     return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
