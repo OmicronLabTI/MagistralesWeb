@@ -44,6 +44,8 @@ export const Endpoints = {
     saveMyList: `${environment.baseUrl}/api/pedidos/components/custom`,
     createPdf: `${environment.baseUrl}/api/pedidos/print/orders`,
     savedComments: `${environment.baseUrl}/api/pedidos/saleorder/comments`,
+    viewPdf: `${environment.baseUrl}/api/pedidos/saleorder/pdf`,
+    ordersToDelivered: `${environment.baseUrl}/api/pedidos/status/fabOrder`,
     finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`
   },
   productivity: {

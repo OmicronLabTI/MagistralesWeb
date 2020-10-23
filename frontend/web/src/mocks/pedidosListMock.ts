@@ -12,7 +12,7 @@ export const DetalleFormulaMock = {
         status: 'Cancelado',
         plannedQuantity: 1,
         unit: 'Pieza',
-        warehouse:'PT',
+        warehouse: 'PT',
         number: 60024,
         fabDate: '18/08/2020',
         dueDate: '31/08/2020',

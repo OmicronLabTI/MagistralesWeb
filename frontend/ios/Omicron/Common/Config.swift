@@ -35,10 +35,12 @@ struct Config {
         case .debug,
              .stagingDebug:
             return "http://201.163.179.29:8000/api"
+//            return "https://magistralesprod.omicronlab.com.mx/api"
         case .stagingRelease,
              .appstore,
              .release:
             return "http://201.163.179.29:8000/api"
+//            return "https://magistralesprod.omicronlab.com.mx/api"
         }
     }()
     static var isRunningTests: Bool {
