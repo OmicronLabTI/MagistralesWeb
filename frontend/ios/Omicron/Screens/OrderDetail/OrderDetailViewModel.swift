@@ -38,6 +38,7 @@ class OrderDetailViewModel {
     var endRefreshing = PublishSubject<Void>()
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
+    var showErrorVC = false
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
@@ -204,13 +205,29 @@ class OrderDetailViewModel {
     }
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId).subscribe(onNext: { [weak self] _ in
-            self?.loading.onNext(false)
-            self?.showSignatureView.onNext(CommonStrings.qfbSignature)
+        networkManager.getValidateOrder(orderId: orderId)
+            .subscribe(onNext: { [weak self] response in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showSignatureView.onNext("Firma del  QFB")
             }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                self?.showAlert.onNext(CommonStrings.orderCouldNotBeCompleted)
-                print(error.localizedDescription)
-        }).disposed(by: self.disposeBag)
+
+                guard let self = self else { return }
+                self.loading.onNext(false)
+
+                guard let requestError = error as? RequestError else { return }
+                switch requestError {
+                case .invalidRequest(let response):
+                    var messageConcat = ""
+                    for message in response?.response ?? [] {
+                        messageConcat += "* " + message + "\n\n"
+                    }
+                    self.showErrorVC.toggle()
+                    self.showAlert.onNext(messageConcat)
+                case .unknownError, .unauthorized, .notFound, .invalidResponse, .serverError, .serverUnavailable:
+                    break
+                }
+
+            }).disposed(by: disposeBag)
     }
 }

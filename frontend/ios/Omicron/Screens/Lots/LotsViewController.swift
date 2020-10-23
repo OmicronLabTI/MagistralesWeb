@@ -262,6 +262,14 @@ class LotsViewController: UIViewController {
         // Muestra un AlertMessage
         self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             guard let weakSelf = self else { return }
+            guard !weakSelf.lotsViewModel.showErrorVC else {
+                weakSelf.lotsViewModel.showErrorVC.toggle()
+                weakSelf.performSegue(
+                    withIdentifier: ViewControllerIdentifiers.showErrorViewController,
+                    sender: message
+                )
+                return
+            }
             AlertManager.shared.showAlert(message: message, view: weakSelf)
         }).disposed(by: self.disposeBag)
     }
@@ -402,6 +410,13 @@ class LotsViewController: UIViewController {
         commentsVC?.originView = ViewControllerIdentifiers.lotsViewController
         commentsVC?.modalPresentationStyle = .overCurrentContext
         self.present(commentsVC!, animated: true, completion: nil)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ViewControllerIdentifiers.showErrorViewController {
+            guard let errorVC = segue.destination as? ErrorViewController else { return }
+            errorVC.errorDescription = sender as? String ?? CommonStrings.orderCouldNotBeCompleted
+        }
     }
 }
 

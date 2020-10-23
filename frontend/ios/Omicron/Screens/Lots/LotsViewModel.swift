@@ -43,6 +43,7 @@ class LotsViewModel {
     var pendingButtonDidTap = PublishSubject<Void>()
     var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
     var changeColorLabels = PublishSubject<Void>()
+    var showErrorVC = false
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -299,15 +300,31 @@ class LotsViewModel {
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId)
-            .subscribe(onNext: { [weak self] _ in
-            self?.loading.onNext(false)
-            self?.showSignatureView.onNext("Firma del  QFB")
+
+        networkManager.getValidateOrder(orderId: orderId)
+            .subscribe(onNext: { [weak self] response in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showSignatureView.onNext("Firma del  QFB")
             }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                self?.showMessage.onNext(CommonStrings.orderCouldNotBeCompleted)
-                print(error.localizedDescription)
-        }).disposed(by: self.disposeBag)
+
+                guard let self = self else { return }
+                self.loading.onNext(false)
+
+                guard let requestError = error as? RequestError else { return }
+                switch requestError {
+                case .invalidRequest(let response):
+                    var messageConcat = ""
+                    for message in response?.response ?? [] {
+                        messageConcat += "* " + message + "\n\n"
+                    }
+                    self.showErrorVC.toggle()
+                    self.showMessage.onNext(messageConcat)
+                case .unknownError, .unauthorized, .notFound, .invalidResponse, .serverError, .serverUnavailable:
+                    break
+                }
+
+            }).disposed(by: disposeBag)
     }
     // Valida si el usuario obtuvo las firmas y finaliza la orden 
     func callFinishOrderService() {
