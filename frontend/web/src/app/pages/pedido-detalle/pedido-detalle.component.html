@@ -119,7 +119,7 @@
                         <svg *ngIf="element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" width="23.283" height="19.536" viewBox="0 0 23.283 19.536"><defs><style>.a{opacity:0.406;}.b{fill:#ff0041;}.b,.d{stroke:#ff0041;}.c,.d{fill:none;stroke-width:2px;}.c{stroke:#fff;}.d{stroke-linecap:round;opacity:0.996;}</style></defs><g class="a" transform="translate(-798.24 -173.937)"><g transform="translate(255.387 -355.563)"><g transform="translate(547.256 530)"><path class="b" d="M17.425,14.493,13.246,8.747V3.156H14.4V2H7.467V3.156H8.623V8.747L4.444,14.493a2.322,2.322,0,0,0,1.878,3.688h9.224a2.322,2.322,0,0,0,1.878-3.688ZM9.779,9.123V3.156h2.312V9.123l1.545,2.124h-5.4Zm5.768,7.9H6.323a1.167,1.167,0,0,1-.944-1.853L7.394,12.4h7.082l2.015,2.77a1.167,1.167,0,0,1-.944,1.853Z" transform="translate(-4 -2)"/></g><line class="c" x1="19.071" y2="16.181" transform="translate(543.5 531.445)"/></g><line class="d" x1="19.071" y2="16.181" transform="translate(801.043 175.882)"/></g></svg>
                     </mat-icon>
                   </button>
-                  <button mat-icon-button class="ico-col-pri generic" *ngIf="element.label === 'Genérico'">
+                  <button mat-icon-button matTooltip="Etiqueta genérica" class="ico-col-pri generic" *ngIf="element.label === 'Genérico'">
                       <mat-icon >
                           <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 337">
                               <defs>
@@ -149,7 +149,7 @@
                           </svg>
                       </mat-icon>
                   </button>
-                  <button mat-icon-button class="ico-col-pri person" *ngIf="element.label === 'Personalizada'" >
+                  <button mat-icon-button matTooltip="Etiqueta personalizada"  class="ico-col-pri person" *ngIf="element.label === 'Personalizada'" >
                       <mat-icon>
                           <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 337">
                               <defs>
