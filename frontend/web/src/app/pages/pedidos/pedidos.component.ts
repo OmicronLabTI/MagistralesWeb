@@ -327,4 +327,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
             .subscribe( viewPdfResult => { viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl)); }
             , error => this.errorService.httpError(error));
     }
+
+    openNewTabByOrder(param: (string | any)[]) {
+        this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`);
+    }
 }
