@@ -12,6 +12,7 @@ import RxCocoa
 import Resolver
 import RxDataSources
 import Charts
+import PDFKit
 
 // swiftlint:disable type_body_length
 class InboxViewController: UIViewController {
@@ -26,6 +27,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
+    var order = PublishSubject<Int>()
     // MARK: - Variables
     private var bindingCollectionView = true
     @Injected var inboxViewModel: InboxViewModel
@@ -133,12 +135,20 @@ class InboxViewController: UIViewController {
         })
         dataSource
             .configureSupplementaryView = { (dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
-            let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
-                for: indexPath) as? HeaderCollectionViewCell
-            header?.productID.text = dataSource.sectionModels[indexPath.section].identity
-            return header!
+                let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
+                    for: indexPath) as? HeaderCollectionViewCell
+                let headerText = dataSource.sectionModels[indexPath.section].identity
+                header?.productID.text = headerText
+                if headerText.contains("Pedido") {
+                    let productId = headerText
+                        .components(separatedBy: CharacterSet.decimalDigits.inverted)
+                        .joined()
+                    header?.productId = Int(productId) ?? 0
+                    header?.delegate = self
+                }
+                return header!
         }
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
@@ -177,6 +187,15 @@ class InboxViewController: UIViewController {
         inboxViewModel.pendingButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
             self?.pendingButton.isEnabled = isEnable
         }).self.disposed(by: self.disposeBag)
+        inboxViewModel.orderURLPDF.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
+            guard let self = self else { return }
+            print(urlPDF)
+            DispatchQueue.main.async {
+                let pdfViewController = PDFViewController()
+                pdfViewController.pdfURL = URL(string: urlPDF)
+                self.present(pdfViewController, animated: true, completion: nil)
+            }
+        }).disposed(by: disposeBag)
         self.modelBindingExtention1()
         self.modelBindingExtension2()
         self.modelBindingExtension3()
@@ -251,6 +270,7 @@ class InboxViewController: UIViewController {
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
             groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
+        order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
             guard let row = index?.row else { return }
             self?.chageStatusName(index: row)
@@ -417,4 +437,18 @@ extension UICollectionView {
         self.backgroundView = nil
     }
     // swiftlint:disable file_length
+}
+
+// MARK: - HeaderSelectedDelegate
+
+extension InboxViewController: HeaderSelectedDelegate {
+
+    func headerSelected(productID: Int) {
+        order.onNext(productID)
+//        let pdfViewController = PDFViewController()
+//        pdfViewController.pdfURL =
+//            URL(string: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+//        present(pdfViewController, animated: true, completion: nil)
+    }
+
 }
