@@ -39,8 +39,22 @@ export class DataService {
   private newMaterialComponent = new Subject<any>();
   private searchOrdersModal = new Subject<SearchComponentModal>();
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
+  private openSignatureDialog = new Subject<any>();
+  private newDataSignature = new Subject<any>();
   constructor(private datePipe: DatePipe) { }
 
+  setNewDataSignature(newSignature: any) {
+    this.newDataSignature.next(newSignature);
+  }
+  getNewDataSignature() {
+    return this.newDataSignature.asObservable();
+  }
+  setOpenSignatureDialog(datSignature: any) {
+    this.openSignatureDialog.next(datSignature);
+  }
+  getOpenSignatureDialog() {
+    return this.openSignatureDialog.asObservable();
+  }
   setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
     this.newSearchOrdersParams.next(searchOrdersParams);
   }

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {IPedidoDetalleReq} from '../../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
@@ -53,6 +53,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
+  isThereOrdersToFinishLabel = false;
+  signatureData = CONST_STRING.empty;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -66,11 +68,15 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.titleService.setTitle('Pedido ' + this.docNum);
     });
     this.getDetallePedido();
-    this.subscriptionCallHttpDetail = this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+    this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
         this.getDetallePedido();
       }
-    });
+    }));
+    this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe( newDataSignature => {
+      this.signatureData = newDataSignature;
+      this.sendToLabelsFinish();
+    }));
   }
 
   getDetallePedido() {
@@ -113,6 +119,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
+        this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
         this.isThereOrdersDetailToCancel = false;
@@ -150,6 +157,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
+        FromToFilter.fromDefault); // change to ConstStatus.finalizado,
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -243,5 +252,36 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   reloadOrderDetail() {
     this.getDetallePedido();
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
+
+  finishOrdersLabels() {
+    this.dataService.setOpenSignatureDialog(this.signatureData);
+  }
+  sendToLabelsFinish() {
+    this.dataService.presentToastCustom(Messages.labelsFinish, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+           this.createConsumeService();
+          }
+        });
+  }
+
+  createConsumeService() {
+    const labelToFinishReq = new IPedidoDetalleLabelReq();
+    // change to ConstStatus.finalizado, on filter
+    labelToFinishReq.details = this.dataSource.data.filter( order => order.status === ConstStatus.abierto)
+        .map(order => {
+          const labelToFinish = new LabelToFinish();
+          labelToFinish.orderId = order.ordenFabricacionId;
+          labelToFinish.checked = true;
+          return labelToFinish;
+        });
+    labelToFinishReq.designerSignature = this.signatureData;
+    labelToFinishReq.userId = this.dataService.getUserId();
+    console.log('finishLabelBefore: ', labelToFinishReq)
+    this.pedidosService.finishLabels(labelToFinishReq).subscribe(finishLabelResult => {
+      console.log('resultFinishLabel: ', finishLabelResult)
+      this.reloadOrderDetail();
+    }, error => this.errorService.httpError(error));
   }
 }
