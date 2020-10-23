@@ -1,0 +1,10 @@
+{
+  "code": 200,
+  "userError": "[]",
+  "exceptionMessage": null,
+  "success": true,
+  "response": [
+    "http://172.30.5.49:5002/Pruebas_ArchivosOmicronTemp/SaleOrders/Order60188.pdf"
+  ],
+  "comments": null
+}

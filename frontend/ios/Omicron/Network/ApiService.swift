@@ -24,6 +24,7 @@ enum ApiService {
     case getComponents(data: ComponentRequest)
     case getWorkload(data: WorkloadRequest)
     case getValidateOrder(orderId: Int)
+    case postOrdersPDF(orders: [Int])
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -66,13 +67,16 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/qfb/workload"
         case .getValidateOrder(let orderId):
             return "/sapadapter/validate/order/\(orderId)"
+        case .postOrdersPDF:
+            return "/pedidos/saleorder/pdf"
         }
     }
     var method: Moya.Method {
         switch self {
         case .login,
              .renew,
-             .finishOrder:
+             .finishOrder,
+             .postOrdersPDF:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -109,6 +113,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         case .getWorkload(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case .postOrdersPDF(let data):
+            return .requestJSONEncodable(data)
         }
     }
     var sampleData: Data {
@@ -190,6 +196,12 @@ extension ApiService: AuthorizedTargetType {
 
         case .getValidateOrder:
             guard let url = Bundle.main.url(forResource: "getValidateOrder", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .postOrdersPDF:
+            guard let url = Bundle.main.url(forResource: "order_pdf", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
