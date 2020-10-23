@@ -84,6 +84,7 @@ export const ConstStatus = {
     asignado: 'Asignado',
     terminado: 'Terminado',
     reasingado: 'Reasignado',
+    entregado: 'Entregado',
 };
 export const HttpStatus = {
     ok: 200,

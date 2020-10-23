@@ -12,7 +12,6 @@ import {
 } from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material';
-import {RequestSignatureDialogComponent} from 'src/app/dialogs/request-signature-dialog/request-signature-dialog.component';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
 import {Location} from '@angular/common';
@@ -131,17 +130,6 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-  /*  this.dialog.open(RequestSignatureDialogComponent,
-      { 
-        panelClass: 'custom-dialog-container',
-        data: this.oldData.signature 
-      })
-        .afterClosed().subscribe(result => {
-        if (result) {
-          this.oldData.signature = result;
-          this.checkIsCorrectData();
-        }
-      });*/
     this.dataService.setOpenSignatureDialog(this.oldData.signature);
   }
 

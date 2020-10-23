@@ -5,7 +5,8 @@ import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../mo
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
-  ClassNames, CONST_NUMBER,
+  ClassNames,
+  CONST_NUMBER,
   CONST_STRING,
   ConstStatus,
   FromToFilter,
@@ -16,7 +17,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, OrderToDelivered, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -53,6 +54,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
+  isThereOrdersDetailToDelivered = false;
   isThereOrdersToFinishLabel = false;
   signatureData = CONST_STRING.empty;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
@@ -119,6 +121,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
+        this.isThereOrdersDetailToDelivered = false;
         this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -158,8 +161,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+        FromToFilter.fromDefault);
+
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
-        FromToFilter.fromOrderDetailLabel); // change to ConstStatus.finalizado,
+        FromToFilter.fromOrderDetailLabel);
+
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -255,6 +262,30 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
+  ordersToDelivered() {
+   /* console.log('toDelivered: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+        .map(order => {
+          const orderToDelivered = new OrderToDelivered();
+          orderToDelivered.orderId = order.ordenFabricacionId;
+          orderToDelivered.status = ConstStatus.entregado;
+          return orderToDelivered;
+        }));
+    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.pedidosService.putOrdersToDelivered(
+                this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+                    .map(order => {
+                      const orderToDelivered = new OrderToDelivered();
+                      orderToDelivered.orderId = order.ordenFabricacionId;
+                      orderToDelivered.status = ConstStatus.entregado;
+                      return orderToDelivered;
+                    })).subscribe(deliveredOrdersResult => console.log('delivered result: ', deliveredOrdersResult)
+                , error => this.errorService.httpError((error)));
+          }});*/
+
+  }
+
   finishOrdersLabels() {
     this.dataService.setOpenSignatureDialog(this.signatureData);
   }
@@ -272,7 +303,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     labelToFinishReq.details = this.getArrayToFinishLabel(isFromRemoveSignature, index);
     labelToFinishReq.designerSignature = isFromRemoveSignature ? null : this.signatureData;
     labelToFinishReq.userId = this.dataService.getUserId();
-    this.pedidosService.finishLabels(labelToFinishReq).subscribe(finishLabelResult => {
+    this.pedidosService.finishLabels(labelToFinishReq).subscribe(() => {
       this.reloadOrderDetail();
     }, error => this.errorService.httpError(error));
   }
