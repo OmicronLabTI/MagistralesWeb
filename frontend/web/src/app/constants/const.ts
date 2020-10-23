@@ -128,6 +128,7 @@ export enum FromToFilter {
     fromOrdersReassign,
     fromOrdersCancel,
     fromDetailOrder,
+    fromOrderDetailLabel,
     fromOrdersIsolated,
     fromOrdersIsolatedCancel,
     fromOrderIsolatedReassign,

@@ -16,7 +16,7 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -95,5 +95,8 @@ export class PedidosService {
       orderId,
       comments
     });
+  }
+  finishLabels(labelsToFinish: IPedidoDetalleLabelReq) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.finishLabels}`, labelsToFinish);
   }
 }

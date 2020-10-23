@@ -66,6 +66,10 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.checkToDownload();
       this.registerChanges();
     }));
+    this.subscription.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+      this.oldData.signature = newDataSignature;
+      this.checkIsCorrectData();
+    }));
   }
   getPreMaterialRequestH() {
     let titleStatusOrders = CONST_STRING.empty;
@@ -127,17 +131,18 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-    this.dialog.open(RequestSignatureDialogComponent, 
+  /*  this.dialog.open(RequestSignatureDialogComponent,
       { 
         panelClass: 'custom-dialog-container',
         data: this.oldData.signature 
       })
-      .afterClosed().subscribe(result => {
+        .afterClosed().subscribe(result => {
         if (result) {
           this.oldData.signature = result;
           this.checkIsCorrectData();
         }
-      });
+      });*/
+    this.dataService.setOpenSignatureDialog(this.oldData.signature);
   }
 
   sendRequest() {

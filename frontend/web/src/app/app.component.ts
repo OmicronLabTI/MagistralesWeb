@@ -32,6 +32,7 @@ import {CancelOrders, SearchComponentModal} from './model/device/orders';
 import {ErrorHttpInterface} from './model/http/commons';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
+import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -91,6 +92,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
          this.onSuccessSearchComponentModal(resultSearchComponentModal)));
     this.subscriptionObservables.add(this.dataService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
         this.onSuccessSearchOrders(resultSearchOrdersModal)));
+    this.subscriptionObservables.add(this.dataService.getOpenSignatureDialog().subscribe(dataSignature =>
+        this.onSuccessOpenSignatureDialog(dataSignature)));
   }
   endSession() {
       this.logoutSession(true);
@@ -346,6 +349,19 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
            if (result) {
                this.dataService.setNewSearchOrderModal(result);
            }
+        });
+    }
+
+    private onSuccessOpenSignatureDialog(dataSignature: any) {
+        this.dialog.open(RequestSignatureDialogComponent,
+            {
+                panelClass: 'custom-dialog-container',
+                data: dataSignature
+            })
+            .afterClosed().subscribe(result => {
+            if (result) {
+                this.dataService.setNewDataSignature(result);
+            }
         });
     }
 }
