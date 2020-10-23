@@ -75,6 +75,8 @@ export class IPedidoReq {
     pedidoStatus: string;
     qfb?: string;
     class?: string;
+    labelType: string;
+    finishedLabel: number;
 }
 
 export class CancelOrderReq {

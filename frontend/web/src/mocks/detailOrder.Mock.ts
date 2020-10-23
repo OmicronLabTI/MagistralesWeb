@@ -19,7 +19,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 0
         },
         {
             ordenFabricacionId: 89101,
@@ -36,7 +37,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 0
         },
         {
             ordenFabricacionId: 89102,
@@ -53,7 +55,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 1
         },
         {
             ordenFabricacionId: 89103,
@@ -70,7 +73,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 1
         },
         {
             ordenFabricacionId: 89104,
@@ -87,7 +91,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 0
         },
         {
             ordenFabricacionId: 89105,
@@ -104,7 +109,8 @@ export const DetailOrderMock = {
             isChecked: false,
             hasMissingStock: false,
             comments: null,
-            label: 'Genérica'
+            label: 'Genérica',
+            finishedLabel: 1
         }
     ]
 };

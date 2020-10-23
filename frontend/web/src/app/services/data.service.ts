@@ -39,8 +39,22 @@ export class DataService {
   private newMaterialComponent = new Subject<any>();
   private searchOrdersModal = new Subject<SearchComponentModal>();
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
+  private openSignatureDialog = new Subject<any>();
+  private newDataSignature = new Subject<any>();
   constructor(private datePipe: DatePipe) { }
 
+  setNewDataSignature(newSignature: any) {
+    this.newDataSignature.next(newSignature);
+  }
+  getNewDataSignature() {
+    return this.newDataSignature.asObservable();
+  }
+  setOpenSignatureDialog(datSignature: any) {
+    this.openSignatureDialog.next(datSignature);
+  }
+  getOpenSignatureDialog() {
+    return this.openSignatureDialog.asObservable();
+  }
   setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
     this.newSearchOrdersParams.next(searchOrdersParams);
   }
@@ -293,6 +307,8 @@ export class DataService {
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
+      case FromToFilter.fromOrderDetailLabel:
+        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }

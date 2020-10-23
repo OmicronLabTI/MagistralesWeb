@@ -119,7 +119,13 @@ class OrderDetailViewController: UIViewController {
                 self.navigationItem.rightBarButtonItems = [self.getOmniconLogo(), comments]
             }).disposed(by: self.disposeBag)
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            AlertManager.shared.showAlert(message: message, view: self!)
+            guard let self = self else { return }
+            guard !self.orderDetailViewModel.showErrorVC else {
+                self.orderDetailViewModel.showErrorVC.toggle()
+                self.performSegue(withIdentifier: ViewControllerIdentifiers.showErrorViewController, sender: message)
+                return
+            }
+            AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
@@ -428,6 +434,9 @@ class OrderDetailViewController: UIViewController {
                 destination.dataOfTable = orderDetailToEdit
                 destination.indexOfItemSelected = self.indexOfTableToEditItem
             }
+        } else if segue.identifier == ViewControllerIdentifiers.showErrorViewController {
+            guard let errorVC = segue.destination as? ErrorViewController else { return }
+            errorVC.errorDescription = sender as? String ?? ""
         }
     }
 }

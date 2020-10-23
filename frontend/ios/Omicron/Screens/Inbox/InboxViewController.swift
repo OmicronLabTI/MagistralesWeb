@@ -99,10 +99,10 @@ class InboxViewController: UIViewController {
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
         cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
         cell?.tagDescriptionLabel.text = element.tag
-        if let tag = element.tag, !tag.contains("Selecciona una") {
-            cell?.tagDescriptionLabel.textColor = .systemGreen
-        } else {
+        if !element.finishedLabel {
             cell?.tagDescriptionLabel.textColor = .red
+        } else {
+            cell?.tagDescriptionLabel.textColor = .systemGreen
         }
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :

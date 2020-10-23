@@ -124,6 +124,14 @@ class NetworkManager: SessionProtocol {
         let res: Observable<WorkloadResponse> = makeRequest(request: req)
         return res
     }
+
+    // Obtiene la carga de trabajo
+    func getValidateOrder(orderId: Int) -> Observable<OrderDetail> {
+        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
+        let res: Observable<OrderDetail> = makeRequest(request: req)
+        return res
+    }
+
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?

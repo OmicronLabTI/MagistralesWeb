@@ -116,31 +116,130 @@
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaFin.substring(10, 0)}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status style-button-status">
-                        <div class="center-status">
-                            <button mat-stroked-button [ngClass]="element.class">{{element.pedidoStatus}}</button>
-                        </div>
-                    </td>
-                </ng-container>
-
                 <ng-container matColumnDef="qfb_asignado">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  QFB ASIGNADO </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.qfb}} </td>
                 </ng-container>
 
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status style-button-status">
+                        <div class="center-status">
+                                <button mat-stroked-button matTooltipPosition="left" matTooltip="Ver detalle" [routerLink]="['/pdetalle', element.docNum]" [ngClass]="element.class">{{element.pedidoStatus}}</button>
+                        </div>
+                    </td>
+                </ng-container>
+
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
-                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
-                        <button mat-icon-button class="ico-col-pri">
-                            <a target="_blank" [routerLink]="['/pdetalle', element.docNum]">
-                                <mat-icon><svg matTooltip="Ver detalle" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path d="M32 6H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM19 22H9a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm8-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0-4H9a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2z" class="clr-i-solid clr-i-solid-path-1" fill="#626262"></path></svg></mat-icon>
-                            </a>
-                        </button>
-                        <span (click)="toSeeRecipes(element.docNum)" matTooltip="Ver receta" class="material-icons cursor-pointer">
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions ">
+                        <div class="actions-align-center">
+                             <span (click)="toSeeRecipes(element.docNum)" matTooltip="Ver receta" class="material-icons cursor-pointer">
                            receipt_long
                         </span>
+                            <button mat-icon-button matTooltip="Etiqueta genérica" class="ico-col-pri generic" *ngIf="element.labelType === 'G'">
+                                <mat-icon >
+                                    <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1_3">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1_3" data-name="1 – 3" clip-path="url(#clip-_1_3)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M325.191,137.8V48.519A32.417,32.417,0,0,0,292.737,16H203.506a22.226,22.226,0,0,0-15.614,6.453L9.5,200.792a32.563,32.563,0,0,0,0,45.977L94.429,331.7a32.548,32.548,0,0,0,45.969,0L318.738,153.415a22.212,22.212,0,0,0,6.453-15.614Zm-69.684-28.89a23.228,23.228,0,1,1,23.228-23.228A23.228,23.228,0,0,1,255.507,108.912Z" transform="translate(-0.001 -5.803)" fill="none" stroke="#5480a6" stroke-width="5"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <svg *ngIf="element.finishedLabel === 1" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1_2">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1_2" data-name="1 – 2" clip-path="url(#clip-_1_2)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313A23.313,23.313,0,0,1,256.444,109.252Z" transform="translate(-0.001 -5.803)" fill="#5480a6"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </mat-icon>
+                            </button>
+                            <button mat-icon-button matTooltip="Etiqueta personalizada"  class="ico-col-pri person" *ngIf="element.labelType === 'P'" >
+                                <mat-icon>
+                                    <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1_1">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1_1" data-name="1 – 1" clip-path="url(#clip-_1_1)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M325.191,137.8V48.519A32.417,32.417,0,0,0,292.737,16H203.506a22.226,22.226,0,0,0-15.614,6.453L9.5,200.792a32.563,32.563,0,0,0,0,45.977L94.429,331.7a32.548,32.548,0,0,0,45.969,0L318.738,153.415a22.212,22.212,0,0,0,6.453-15.614Zm-69.684-28.89a23.228,23.228,0,1,1,23.228-23.228A23.228,23.228,0,0,1,255.507,108.912Z" transform="translate(-0.001 -5.803)" fill="none" stroke="#5480a6" stroke-width="5"/>
+                                            </g>
+                                            <g id="user" transform="translate(59 100.463)">
+                                                <path id="Path_6010" data-name="Path 6010" d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z" transform="translate(8.325 16.726)" fill="#5480a6"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <svg *ngIf="element.finishedLabel === 1" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1" data-name="1" clip-path="url(#clip-_1)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313A23.313,23.313,0,0,1,256.444,109.252Z" transform="translate(-0.001 -5.803)" fill="#5480a6"/>
+                                            </g>
+                                            <g id="user" transform="translate(59 100.463)">
+                                                <path id="Path_6010" data-name="Path 6010" d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z" transform="translate(8.325 16.726)" fill="#fff"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </mat-icon>
+                            </button>
+                            <button mat-icon-button matTooltip="Etiqueta mixta"  class="ico-col-pri person" *ngIf="element.labelType === 'M'" >
+                                <mat-icon>
+                                    <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1_4">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1_4" data-name="1 – 4" clip-path="url(#clip-_1_4)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(27.258 26.663)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928L88.167,310.76a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578Z" transform="translate(-0.002 -16)" fill="#fff" stroke="#5480a6" stroke-width="5"/>
+                                            </g>
+                                            <g id="pricetags-2" data-name="pricetags" transform="translate(4.001 6.197)">
+                                                <path id="Path_6008-2" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928L88.167,310.76a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062,21.688,21.688,0,0,1,238.563,102.75Z" transform="translate(-0.002 -16)" fill="#fff" stroke="#5480a6" stroke-width="5"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <svg *ngIf="element.finishedLabel === 1" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 337">
+                                        <defs>
+                                            <clipPath id="clip-_1_5">
+                                                <rect width="337" height="337"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="_1_5" data-name="1 – 5" clip-path="url(#clip-_1_5)">
+                                            <rect width="337" height="337" fill="#fff"/>
+                                            <g id="pricetags" transform="translate(27.258 26.663)">
+                                                <path id="Path_6008" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928L88.167,310.76a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062,21.688,21.688,0,0,1,238.563,102.75Z" transform="translate(-0.002 -16)" fill="#5480a6" stroke="#fff" stroke-width="1"/>
+                                            </g>
+                                            <g id="pricetags-2" data-name="pricetags" transform="translate(4.001 6.197)">
+                                                <path id="Path_6008-2" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928L88.167,310.76a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062,21.688,21.688,0,0,1,238.563,102.75Z" transform="translate(-0.002 -16)" fill="#5480a6" stroke="#fff" stroke-width="5"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </mat-icon>
+                            </button>
+                        </div>
                     </td>
                 </ng-container>
 
