@@ -121,7 +121,6 @@ namespace Omicron.SapFile.Services.ReportBuilder
 
             var dataRowSecondSignatures = table.Rows[3];
             var dataRowSecondNames = table.Rows[4];
-            var dataTypeSignature = table.Rows[5];
 
             // QFB signature
             AddSignaturePicture(dataRowSignatures.Cells[0], this.order.QfbSignature);
