@@ -56,6 +56,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   pageIndex = 0;
   isThereOrdersToRequest = false;
   isOnInit = true;
+  isThereOrdersToViewPdf = false;
   constructor(
     private pedidosService: PedidosService,
     private dataService: DataService,
@@ -117,6 +118,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               element.class = 'terminado';
           }
         });
+        this.isThereOrdersToViewPdf = false;
         this.isCheckedOrders = false;
         this.isThereOrdersToPlan = false;
         this.isThereOrdersToPlace = false;
@@ -202,11 +204,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isCheckedOrders = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
     this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
         ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
+    this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
     this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
     this.isThereOrdersToReassign =
         this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
+
+
 
   }
   getFullQueryString() {
@@ -317,4 +322,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
     });
   }
 
+    viewOrdersWithPdf() {
+        this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))
+            .subscribe( viewPdfResult => { viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl)); }
+            , error => this.errorService.httpError(error));
+    }
 }

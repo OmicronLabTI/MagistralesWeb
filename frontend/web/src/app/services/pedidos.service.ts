@@ -84,6 +84,9 @@ export class PedidosService {
     return this.consumeService.httpGet<IExistsBachCodeRes>(
         `${Endpoints.pedidos.checkIfExistsBatchCode}?productCode=${productCode}&batchCode=${batchCode}`);
   }
+  getOrdersPdfViews(orderIds: number[]) {
+    return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.viewPdf}`, orderIds);
+  }
   getRecipesByOrder(orderId: number) {
     return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
   }

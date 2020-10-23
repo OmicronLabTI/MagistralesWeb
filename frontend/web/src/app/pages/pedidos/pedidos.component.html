@@ -34,6 +34,9 @@
                 <span class="material-icons icon-button-toolbar " [ngClass]="isCheckedOrders ? 'color-omicron cursor-pointer' : 'disabled'" (click)="printOrderAsPdfFile()"  matTooltip="Generar PDF" matTooltipPosition="above">
                     print
                 </span>
+                <button [disabled]="!isThereOrdersToViewPdf" mat-raised-button
+                    [ngClass]="isThereOrdersToViewPdf ? 'button-blue' : 'disable-button'"
+                    (click)="viewOrdersWithPdf()">Ver pedido</button>
                 <button [disabled]="!isThereOrdersToPlace" mat-raised-button
                     [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'"
                     (click)="requestMaterial()">Solicitud de insumos</button>    
