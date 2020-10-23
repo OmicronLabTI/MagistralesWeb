@@ -307,6 +307,8 @@ export class DataService {
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
+      case FromToFilter.fromOrderDetailLabel:
+        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }

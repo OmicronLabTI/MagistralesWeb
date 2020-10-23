@@ -127,6 +127,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.isThereOrdersDetailToReassign = false;
         this.allComplete = false;
         this.isOnInit = false;
+        this.signatureData = CONST_STRING.empty;
       }, error => this.errorService.httpError(error));
   }
 
@@ -158,7 +159,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   getButtonsToUnLooked() {
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
-        FromToFilter.fromDefault); // change to ConstStatus.finalizado,
+        FromToFilter.fromOrderDetailLabel); // change to ConstStatus.finalizado,
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDetailOrder);
     this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -266,22 +267,39 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         });
   }
 
-  createConsumeService() {
+  createConsumeService(isFromRemoveSignature: boolean = false, index?: number) {
     const labelToFinishReq = new IPedidoDetalleLabelReq();
-    // change to ConstStatus.finalizado, on filter
-    labelToFinishReq.details = this.dataSource.data.filter( order => order.status === ConstStatus.abierto)
-        .map(order => {
-          const labelToFinish = new LabelToFinish();
-          labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = true;
-          return labelToFinish;
-        });
-    labelToFinishReq.designerSignature = this.signatureData;
+    labelToFinishReq.details = this.getArrayToFinishLabel(isFromRemoveSignature, index);
+    labelToFinishReq.designerSignature = isFromRemoveSignature ? null : this.signatureData;
     labelToFinishReq.userId = this.dataService.getUserId();
-    console.log('finishLabelBefore: ', labelToFinishReq)
     this.pedidosService.finishLabels(labelToFinishReq).subscribe(finishLabelResult => {
-      console.log('resultFinishLabel: ', finishLabelResult)
       this.reloadOrderDetail();
     }, error => this.errorService.httpError(error));
+  }
+
+  getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number ) {
+    if (!isFromRemoveSignature) {
+      return this.dataSource.data.filter( order => order.isChecked && (order.status !== ConstStatus.abierto &&
+          order.status !== ConstStatus.cancelado))
+          .map(order => {
+            const labelToFinish = new LabelToFinish();
+            labelToFinish.orderId = order.ordenFabricacionId;
+            labelToFinish.checked = !isFromRemoveSignature;
+            return labelToFinish;
+          });
+    } else {
+      const labelsToFinish: LabelToFinish[] = [];
+      labelsToFinish.push({orderId: this.dataSource.data[index].ordenFabricacionId, checked: false});
+      return labelsToFinish;
+    }
+  }
+
+  removeSignature(index: number) {
+    this.dataService.presentToastCustom(Messages.removeLabelFinish, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.createConsumeService(true, index);
+          }
+        });
   }
 }
