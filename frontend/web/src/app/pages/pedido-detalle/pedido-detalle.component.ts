@@ -86,7 +86,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       (pedidoDetalleRes) => {
         this.dataSource.data = pedidoDetalleRes.response;
         this.dataSource.data.forEach(element => {
-          element.status = element.ordenFabricacionId === 90277 ? ConstStatus.finalizado : ''; // delete
+          element.status = element.ordenFabricacionId === 90277 || element.ordenFabricacionId === 90278 ? ConstStatus.finalizado : ''; // delete
           this.docStatus = element.pedidoStatus;
           element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
           element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
@@ -271,16 +271,20 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           orderToDelivered.status = ConstStatus.entregado;
           return orderToDelivered;
         }));
-    // this.dataService.presentToastCustom(Messages)
-    this.pedidosService.putOrdersToDelivered(
-        this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
-            .map(order => {
-              const orderToDelivered = new OrderToDelivered();
-              orderToDelivered.orderId = order.ordenFabricacionId;
-              orderToDelivered.status = ConstStatus.entregado;
-              return orderToDelivered;
-            })).subscribe(deliveredOrdersResult => console.log('delivered result: ', deliveredOrdersResult)
-        , error => this.errorService.httpError((error)));
+    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.pedidosService.putOrdersToDelivered(
+                this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+                    .map(order => {
+                      const orderToDelivered = new OrderToDelivered();
+                      orderToDelivered.orderId = order.ordenFabricacionId;
+                      orderToDelivered.status = ConstStatus.entregado;
+                      return orderToDelivered;
+                    })).subscribe(deliveredOrdersResult => console.log('delivered result: ', deliveredOrdersResult)
+                , error => this.errorService.httpError((error)));
+          }});
+
   }
 
   finishOrdersLabels() {
