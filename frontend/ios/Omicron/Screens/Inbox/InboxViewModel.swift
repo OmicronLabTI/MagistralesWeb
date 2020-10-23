@@ -39,6 +39,8 @@ class InboxViewModel {
     var showKPIView = PublishSubject<Bool>()
     var viewKPIDidPressed = PublishSubject<Void>()
     var deselectRow = PublishSubject<Bool>()
+    var selectOrder = PublishSubject<Int?>()
+    var orderURLPDF = PublishSubject<String>()
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     var normalSort = true
@@ -86,12 +88,34 @@ class InboxViewModel {
             self?.groupedByOrderNumberIsEnable.onNext(false)
             self?.changeStatusSort(normal: false, similarity: false, grouped: true)
         }).disposed(by: self.disposeBag)
+        initExtension()
+    }
+
+    func initExtension() {
         viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.showKPIView.onNext(true)
             self.deselectRow.onNext(true)
         }).disposed(by: disposeBag)
+        selectOrder.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] orders in
+            guard let orders = orders, let self = self else { return }
+            self.postOrderPDf(orders: [orders])
+        }).disposed(by: disposeBag)
     }
+
+    private func postOrderPDf(orders: [Int]) {
+        loading.onNext(true)
+        networkManager.postOrdersPDF(orders: orders).subscribe(onNext: { [weak self] response in
+            guard let self = self, response.response?.count ?? 0 > 0 else { return }
+            self.loading.onNext(false)
+            self.orderURLPDF.onNext(response.response!.first!)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.showAlert.onNext("Error")
+        }).disposed(by: disposeBag)
+    }
+
     func similarityViewButtonAction() {
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)

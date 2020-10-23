@@ -132,6 +132,13 @@ class NetworkManager: SessionProtocol {
         return res
     }
 
+    // Obtiene el pdf de el pedido
+    func postOrdersPDF(orders: [Int]) -> Observable<OrderPDF> {
+        let req: ApiService = ApiService.postOrdersPDF(orders: orders)
+        let res: Observable<OrderPDF> = makeRequest(request: req)
+        return res
+    }
+
     private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?
