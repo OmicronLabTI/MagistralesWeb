@@ -15,6 +15,7 @@ protocol HeaderSelectedDelegate: class {
 class HeaderCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var productID: UILabel!
+    @IBOutlet weak var downloadPDF: UIButton!
 
     var productId = 0
 

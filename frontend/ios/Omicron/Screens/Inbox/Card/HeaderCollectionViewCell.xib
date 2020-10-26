@@ -18,30 +18,61 @@
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pS7-fw-OHY">
                         <rect key="frame" x="0.0" y="0.0" width="300" height="100"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="-1" translatesAutoresizingMaskIntoConstraints="NO" id="x2e-1j-ZYd">
+                                <rect key="frame" x="0.0" y="0.0" width="280" height="100"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d4f-JR-fbn">
+                                        <rect key="frame" x="0.0" y="0.0" width="220" height="100"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OPE-rD-0j8">
+                                        <rect key="frame" x="220" y="0.0" width="60" height="100"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="aPI-dF-BfV"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                        <state key="normal" image="arrow.down.doc" catalog="system"/>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="OPE-rD-0j8" firstAttribute="leading" secondItem="d4f-JR-fbn" secondAttribute="trailing" id="27t-0S-1bH"/>
+                                    <constraint firstItem="d4f-JR-fbn" firstAttribute="top" secondItem="x2e-1j-ZYd" secondAttribute="top" id="2ea-3z-Yc6"/>
+                                    <constraint firstItem="d4f-JR-fbn" firstAttribute="leading" secondItem="x2e-1j-ZYd" secondAttribute="leading" id="8nV-Bx-K7b"/>
+                                    <constraint firstAttribute="bottom" secondItem="d4f-JR-fbn" secondAttribute="bottom" id="VZc-eC-oQk"/>
+                                    <constraint firstAttribute="bottom" secondItem="OPE-rD-0j8" secondAttribute="bottom" id="fjz-Zj-jht"/>
+                                    <constraint firstItem="OPE-rD-0j8" firstAttribute="top" secondItem="x2e-1j-ZYd" secondAttribute="top" id="gLO-mW-1zc"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="x2e-1j-ZYd" secondAttribute="bottom" id="5lH-8w-YjM"/>
+                            <constraint firstAttribute="trailing" secondItem="x2e-1j-ZYd" secondAttribute="trailing" constant="20" id="ZbG-XX-8xB"/>
+                            <constraint firstItem="x2e-1j-ZYd" firstAttribute="top" secondItem="pS7-fw-OHY" secondAttribute="top" id="aYU-qg-54s"/>
+                            <constraint firstItem="x2e-1j-ZYd" firstAttribute="leading" secondItem="pS7-fw-OHY" secondAttribute="leading" id="tam-HW-nrC"/>
+                        </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d4f-JR-fbn">
-                        <rect key="frame" x="16" y="35" width="64" height="30"/>
-                        <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                 </subviews>
             </view>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="pS7-fw-OHY" secondAttribute="bottom" id="2fc-Am-HND"/>
                 <constraint firstItem="pS7-fw-OHY" firstAttribute="leading" secondItem="eF4-Rs-Cgq" secondAttribute="leading" id="BKV-KS-jcw"/>
-                <constraint firstItem="d4f-JR-fbn" firstAttribute="centerY" secondItem="eF4-Rs-Cgq" secondAttribute="centerY" id="WRy-JL-wvu"/>
-                <constraint firstItem="d4f-JR-fbn" firstAttribute="leading" secondItem="eF4-Rs-Cgq" secondAttribute="leading" constant="16" id="acg-2b-efh"/>
                 <constraint firstAttribute="trailing" secondItem="pS7-fw-OHY" secondAttribute="trailing" id="lM3-M3-zVS"/>
                 <constraint firstItem="pS7-fw-OHY" firstAttribute="top" secondItem="eF4-Rs-Cgq" secondAttribute="top" id="qdI-3K-jhF"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="mkK-oj-cNj"/>
             <size key="customSize" width="356" height="536"/>
             <connections>
+                <outlet property="downloadPDF" destination="OPE-rD-0j8" id="lQU-DL-hh0"/>
                 <outlet property="productID" destination="d4f-JR-fbn" id="whe-i7-bsx"/>
             </connections>
-            <point key="canvasLocation" x="-215.21739130434784" y="191.51785714285714"/>
+            <point key="canvasLocation" x="-215.94202898550725" y="191.51785714285714"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="arrow.down.doc" catalog="system" width="115" height="128"/>
+    </resources>
 </document>

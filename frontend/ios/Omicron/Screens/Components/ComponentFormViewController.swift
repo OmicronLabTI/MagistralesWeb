@@ -164,6 +164,11 @@ class ComponentFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
+            <<< TextRow {
+                $0.title = "Unidad:"
+                $0.value = component.unit
+                $0.disabled = true
+            }
             <<< PickerInlineRow<String> {
                 $0.title = "Almacén: "
                 $0.tag = "warehouse"
