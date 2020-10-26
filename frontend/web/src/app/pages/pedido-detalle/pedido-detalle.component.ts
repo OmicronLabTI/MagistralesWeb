@@ -266,13 +266,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ordersToDelivered() {
-   console.log('toDelivered: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
-        .map(order => {
-          const orderToDelivered = new OrderToDelivered();
-          orderToDelivered.orderId = order.ordenFabricacionId;
-          orderToDelivered.status = ConstStatus.entregado;
-          return orderToDelivered;
-        }));
     this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
           if (result.isConfirmed) {
@@ -283,9 +276,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                       orderToDelivered.orderId = order.ordenFabricacionId;
                       orderToDelivered.status = ConstStatus.entregado;
                       return orderToDelivered;
-                    })).subscribe(deliveredOrdersResult => {
+                    })).subscribe(() => {
                       this.reloadOrderDetail();
-                      console.log('delivered result: ', deliveredOrdersResult)
                 }
                 , error => this.errorService.httpError((error)));
           }});
