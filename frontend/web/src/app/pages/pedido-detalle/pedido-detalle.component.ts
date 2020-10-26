@@ -118,6 +118,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             case ConstStatus.reasingado.toUpperCase():
               element.class = 'reasignado';
               break;
+            case ConstStatus.entregado.toUpperCase():
+              element.class = 'entregado';
+              break;
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
@@ -263,7 +266,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ordersToDelivered() {
-   /* console.log('toDelivered: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+   console.log('toDelivered: ', this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
         .map(order => {
           const orderToDelivered = new OrderToDelivered();
           orderToDelivered.orderId = order.ordenFabricacionId;
@@ -280,9 +283,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
                       orderToDelivered.orderId = order.ordenFabricacionId;
                       orderToDelivered.status = ConstStatus.entregado;
                       return orderToDelivered;
-                    })).subscribe(deliveredOrdersResult => console.log('delivered result: ', deliveredOrdersResult)
+                    })).subscribe(deliveredOrdersResult => {
+                      this.reloadOrderDetail();
+                      console.log('delivered result: ', deliveredOrdersResult)
+                }
                 , error => this.errorService.httpError((error)));
-          }});*/
+          }});
 
   }
 

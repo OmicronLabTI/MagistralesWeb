@@ -88,7 +88,7 @@ export class PedidosService {
     return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.viewPdf}`, orderIds);
   }
   putOrdersToDelivered(ordersToDelivered: OrderToDelivered[]) {
-    return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.ordersToDelivered}`, ordersToDelivered);
+    return this.consumeService.httpPut<ICreatePdfOrdersRes>(`${Endpoints.orders.ordersToDelivered}`, ordersToDelivered);
   }
   getRecipesByOrder(orderId: number) {
     return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
