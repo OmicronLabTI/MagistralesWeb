@@ -12,7 +12,8 @@
                 <div class="row-form-order">
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'" type="number"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'"
+                                   type="number"
                                    maxlength="7"
                                    class="height-input"
                                    formControlName="docNum"
@@ -28,7 +29,7 @@
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
-                        <mat-form-field appearance="fill" class="custom-field">
+                        <mat-form-field appearance="outline" class="custom-field">
                             <mat-label>Fecha</mat-label>
                             <mat-select formControlName="dateType" >
                                 <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
@@ -44,7 +45,7 @@
                     <div class="form-field-right">
                         <div class="dates-container">
                             <div class="date-init">
-                                <mat-form-field class="date-picker-custom" appearance="fill">
+                                <mat-form-field class="date-picker-custom" appearance="outline">
                                     <mat-label>fecha de</mat-label>
                                     <input matInput [matDatepicker]="dp3"
                                            formControlName="fini"
@@ -58,7 +59,7 @@
                                 </mat-form-field>
                             </div>
                             <div class="date-init">
-                                <mat-form-field class="date-picker-custom" appearance="fill">
+                                <mat-form-field class="date-picker-custom" appearance="outline">
                                     <mat-label>fecha hasta</mat-label>
                                     <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
@@ -74,7 +75,7 @@
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left margin-top-status">
-                        <mat-form-field appearance="fill" class="custom-field">
+                        <mat-form-field appearance="outline" class="custom-field custom-style-status">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
                                 <mat-option *ngIf="isFromSearchOrders" value="Abierto">Abierto</mat-option>
@@ -91,7 +92,34 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <mat-form-field appearance="fill" class="custom-field-full">
+                        <mat-form-field appearance="outline" class="custom-field">
+                            <mat-label>Tipo de Etiqueta</mat-label>
+                            <mat-select formControlName="label" >
+                                <mat-option value="G">Genérica</mat-option>
+                                <mat-option value="P">Personalizada</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
+                                Tipo de fecha es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-order">
+                    <div class="form-field-left">
+                        <mat-form-field appearance="outline" class="custom-field">
+                            <mat-label>Etiqueta terminada</mat-label>
+                            <mat-select formControlName="finlabel" >
+                                <mat-option value="1">Si</mat-option>
+                                <mat-option value="0">No</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
+                                Tipo de fecha es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-field-right">
+                        <mat-form-field appearance="outline" class="custom-field-full">
                             <mat-label>QFB Asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
@@ -125,7 +153,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                            <mat-error *ngIf="findOrdersForm.invalid" class="font-style-omicron">
+                        <mat-error *ngIf="findOrdersForm.invalid" class="font-style-omicron">
                             El rango de fechas debe ser menor a 3 meses
                         </mat-error>
                     </div>

@@ -47,6 +47,9 @@ export class ParamsPedidos {
     productCode?: string;
     isFromOrders?: boolean;
     clientName?: string;
+    label?: string;
+    finlabel: string;
+
 
 }
 
