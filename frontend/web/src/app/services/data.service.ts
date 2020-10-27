@@ -329,22 +329,26 @@ export class DataService {
     let isSearchWithFilter = false;
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -390,6 +394,14 @@ export class DataService {
       if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
         queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName}`;
         filterDataOrders.clientName = resultSearchOrderModal.clientName;
+      }
+      if (resultSearchOrderModal.label !== '' && resultSearchOrderModal.label) {
+        queryString = `${queryString}&label=${resultSearchOrderModal.label}`;
+        filterDataOrders.label = resultSearchOrderModal.label;
+      }
+      if (resultSearchOrderModal.finlabel !== '' && resultSearchOrderModal.finlabel) {
+        queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
+        filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
     }
 

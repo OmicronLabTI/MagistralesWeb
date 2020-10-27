@@ -9,7 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
-@testable import Omicron
+@testable import OmicronLab
 class ComponetsTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?

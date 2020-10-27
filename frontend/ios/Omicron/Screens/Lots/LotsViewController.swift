@@ -84,6 +84,7 @@ class LotsViewController: UIViewController {
         self.modelBindingExtension1()
         self.modelViewBindingEstension2()
         self.modelViewBindingExtension3()
+        self.modelViewBindingExtension4()
         //Muestra los datos en la tabla de Lotes Selecionados
         self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(
             cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell,
@@ -259,6 +260,8 @@ class LotsViewController: UIViewController {
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
         }.disposed(by: self.disposeBag)
+    }
+    func modelViewBindingExtension4() {
         // Muestra un AlertMessage
         self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
             guard let weakSelf = self else { return }
