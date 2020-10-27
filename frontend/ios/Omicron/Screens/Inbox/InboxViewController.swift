@@ -147,6 +147,11 @@ class InboxViewController: UIViewController {
                         .joined()
                     header?.productId = Int(productId) ?? 0
                     header?.delegate = self
+                    header?.pdfImageView.isHidden = false
+                } else {
+                    header?.productId = 0
+                    header?.delegate = nil
+                    header?.pdfImageView.isHidden = true
                 }
                 return header!
         }

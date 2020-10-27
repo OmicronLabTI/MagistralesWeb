@@ -170,6 +170,11 @@ class OrderDetailFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
+            <<< TextRow { [weak self] in
+                $0.title = "Unidad:"
+                $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit
+                $0.disabled = true
+            }
             <<< PickerInlineRow<String> { [weak self] in
                 $0.title = "Almacén: "
                 $0.tag = "werehouse"
