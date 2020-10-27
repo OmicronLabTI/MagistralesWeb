@@ -191,10 +191,10 @@ describe('DataService', () => {
     const service: DataService = TestBed.get(DataService);
     service.getNewSearchOrdersModal().subscribe(newSearchOrdersModal => {
       expect(newSearchOrdersModal).toEqual({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'),
-        ffin: new Date('01/12/2020'), status: 'Finalizado'});
+        ffin: new Date('01/12/2020'), status: 'Finalizado', finlabel: '1'});
     });
     service.setNewSearchOrderModal({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'), ffin: new Date('01/12/2020'),
-      status: 'Finalizado'});
+      status: 'Finalizado', finlabel: '1'});
   });
   it('should getIsThereOnData', () => {
     const service: DataService = TestBed.get(DataService);
