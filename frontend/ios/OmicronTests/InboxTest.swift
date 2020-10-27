@@ -11,7 +11,7 @@ import RxSwift
 import Resolver
 import RxDataSources
 
-@testable import Omicron
+@testable import OmicronLab
 // swiftlint:disable type_body_length
 class InboxTest: XCTestCase {
     // MARK: - VARIABLES
@@ -45,7 +45,8 @@ class InboxTest: XCTestCase {
             itemCode: "3264   120 ML",
             productCode: "3264",
             destiny: "Foráneo",
-            hasMissingStock: false)
+            hasMissingStock: false,
+            finishedLabel: false)
         order2 = Order(
             productionOrderId: 89995,
             baseDocument: 60284,
@@ -59,7 +60,8 @@ class InboxTest: XCTestCase {
             itemCode: "1027S   30 ML",
             productCode: "1027S",
             destiny: "Local",
-            hasMissingStock: false)
+            hasMissingStock: false,
+            finishedLabel: false)
         orderItemCodeEmpty = Order(
             productionOrderId: 89995,
             baseDocument: 60284,
@@ -73,7 +75,8 @@ class InboxTest: XCTestCase {
             itemCode: "",
             productCode: "1027S",
             destiny: "Local",
-            hasMissingStock: false)
+            hasMissingStock: false,
+            finishedLabel: false)
         orderTest1 = Order(
             productionOrderId: 90006,
             baseDocument: 60288,
@@ -87,7 +90,8 @@ class InboxTest: XCTestCase {
             itemCode: "1132   120 ML",
             productCode: nil,
             destiny: "Local",
-            hasMissingStock: true)
+            hasMissingStock: true,
+            finishedLabel: false)
         orderTest2 = Order(
             productionOrderId: 89997,
             baseDocument: 60284,
@@ -101,7 +105,8 @@ class InboxTest: XCTestCase {
             itemCode: "2573   30 ML",
             productCode: nil,
             destiny: "Local",
-            hasMissingStock: false)
+            hasMissingStock: false,
+            finishedLabel: false)
     }
     override func tearDown() {
         print("XXXX tearDown InboxTest")
@@ -147,7 +152,7 @@ class InboxTest: XCTestCase {
         let order = Order(productionOrderId: 89852, baseDocument: 0, container: "", tag: "",
                           plannedQuantity: 1, startDate: "14/09/2020", finishDate: "14/09/2020",
                           descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01",
-                          productCode: "BA-01", destiny: "Local", hasMissingStock: false)
+                          productCode: "BA-01", destiny: "Local", hasMissingStock: false, finishedLabel: false)
         data["BA-01"] = [order]
         // When
         let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(

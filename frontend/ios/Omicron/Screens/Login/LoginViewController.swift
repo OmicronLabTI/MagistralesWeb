@@ -23,6 +23,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userLabel: UILabel!
     @IBOutlet weak var passwordLabel: UILabel!
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var loginStackView: UIStackView!
     let button = UIButton(type: .custom)
     // MARK: - VARIABLES
     @Injected var viewModel: LoginViewModel
@@ -120,6 +121,7 @@ class LoginViewController: UIViewController {
             text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))", textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
         self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
+        self.loginStackView.backgroundColor = OmicronColors.blue
     }
     @objc func keyBoardActions(notification: Notification) {
         if notification.name == UIResponder.keyboardWillShowNotification {

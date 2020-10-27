@@ -31,43 +31,63 @@ class ChartViewController: UIViewController {
     }
     private func setDataToChart(_ workload: Workload?) {
         guard let workload = workload else { return }
-        var entries: [PieChartDataEntry] = []
-        var colors: [UIColor] = []
+        var entries: [PieChartDataEntry]?
+        var colors: [UIColor]?
         for index in 0...5 {
             switch index {
             case 0:
-                guard workload.assigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.assigned ?? 0), label: StatusNameConstants.assignedStatus))
-                colors.append(OmicronColors.assignedStatus)
+                (entries, colors) =
+                    setWorkloadProperties(workloadType: workload.assigned,
+                                          statusName: StatusNameConstants.assignedStatus,
+                                          colorName: OmicronColors.assignedStatus)
             case 1:
-                guard workload.processed ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.processed ?? 0), label: StatusNameConstants.inProcessStatus))
-                colors.append(OmicronColors.processStatus)
+                (entries, colors) =
+                    setWorkloadProperties(workloadType: workload.processed,
+                                          statusName: StatusNameConstants.inProcessStatus,
+                                          colorName: OmicronColors.processStatus)
             case 2:
-                guard workload.pending ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.pending ?? 0), label: StatusNameConstants.penddingStatus))
-                colors.append(OmicronColors.pendingStatus)
+                (entries, colors) =
+                    setWorkloadProperties(workloadType: workload.pending,
+                                          statusName: StatusNameConstants.penddingStatus,
+                                          colorName: OmicronColors.pendingStatus)
             case 3:
-                guard workload.finished ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.finished ?? 0), label: StatusNameConstants.finishedStatus))
-                colors.append(OmicronColors.finishedStatus)
+                (entries, colors) =
+                    setWorkloadProperties(workloadType: workload.finished,
+                                          statusName: StatusNameConstants.finishedStatus,
+                                          colorName: OmicronColors.finishedStatus)
             case 4:
-                guard workload.reassigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.reassigned ?? 0), label: StatusNameConstants.reassignedStatus))
-                colors.append(OmicronColors.reassignedStatus)
+                (entries, colors) =
+                    setWorkloadProperties(workloadType: workload.reassigned,
+                                          statusName: StatusNameConstants.reassignedStatus,
+                                          colorName: OmicronColors.reassignedStatus)
             case 5:
-                guard workload.finalized ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.finalized ?? 0), label: StatusNameConstants.finalizedStatus))
-                colors.append(UIColor.init(named: "finalized") ?? .black)
+                (entries, colors) =
+                    setWorkLoadPropertiesFinalized(workloadType: workload.finalized)
             default: break
             }
         }
+        setDataToChart(entries: entries ?? [], colors: colors ?? [], workload: workload)
+    }
+    func setWorkloadProperties(workloadType: Int?, statusName: String,
+                               colorName: UIColor) -> ([PieChartDataEntry]?, [UIColor]?) {
+        guard workloadType ?? 0 > 0 else { return (nil, nil) }
+        var entries: [PieChartDataEntry] = []
+        var colors: [UIColor] = []
+        entries.append(PieChartDataEntry(
+            value: Double(workloadType ?? 0), label: statusName))
+        colors.append(colorName)
+        return (entries, colors)
+    }
+    func setWorkLoadPropertiesFinalized(workloadType: Int?) -> ([PieChartDataEntry]?, [UIColor]?) {
+        var entries: [PieChartDataEntry] = []
+        var colors: [UIColor] = []
+        guard workloadType ?? 0 > 0 else { return (nil, nil) }
+        entries.append(PieChartDataEntry(
+                        value: Double(workloadType ?? 0), label: StatusNameConstants.finalizedStatus))
+        colors.append(UIColor.init(named: "finalized") ?? .black)
+        return (entries, colors)
+    }
+    func setDataToChart(entries: [ChartDataEntry], colors: [UIColor], workload: Workload) {
         let set = PieChartDataSet(entries: entries, label: "")
         set.colors = colors
         set.sliceSpace = 2
