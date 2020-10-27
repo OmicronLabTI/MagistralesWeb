@@ -153,6 +153,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             case ConstStatus.cancelado:
               element.class = 'cancelado';
               break;
+            case ConstStatus.entregado:
+              element.class = 'entregado';
+              break;
           }
           element.description = element.description.toUpperCase();
         });
