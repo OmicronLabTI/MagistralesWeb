@@ -12,7 +12,7 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_NAMES,
+  MODAL_NAMES, RolesType,
   RouterPaths
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
@@ -57,6 +57,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToDelivered = false;
   isThereOrdersToFinishLabel = false;
   signatureData = CONST_STRING.empty;
+  isThereOrdersToViewPdf = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -124,6 +125,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
+        this.isThereOrdersToViewPdf = false;
         this.isThereOrdersDetailToDelivered = false;
         this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
@@ -166,6 +168,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   getButtonsToUnLooked() {
     this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
         FromToFilter.fromDefault);
+    this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
         FromToFilter.fromOrderDetailLabel);
@@ -324,11 +327,19 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   removeSignature(index: number) {
-    this.dataService.presentToastCustom(Messages.removeLabelFinish, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            this.createConsumeService(true, index);
-          }
-        });
+    if (this.dataService.getUserRole() === RolesType.design) {
+      this.dataService.presentToastCustom(Messages.removeLabelFinish, 'question', CONST_STRING.empty, true, true)
+          .then((result: any) => {
+            if (result.isConfirmed) {
+              this.createConsumeService(true, index);
+            }
+          });
+    }
+  }
+
+  viewOrdersWithPdf() {
+    this.pedidosService.getOrdersPdfViews([Number(this.docNum)])
+        .subscribe( viewPdfResult => { viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl)); }
+            , error => this.errorService.httpError(error));
   }
 }

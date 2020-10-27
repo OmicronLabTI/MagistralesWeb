@@ -5,7 +5,7 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS} from '../../constants/const';
+import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Messages} from '../../constants/messages';
@@ -27,11 +27,7 @@ export class LoginComponent implements OnInit {
     private errorService: ErrorService
   ) {
     if (this.dataService.userIsAuthenticated()) {
-      if (this.dataService.getUserRole() === '3') {
-        this.goToPedidos();
-      } else {
-        this.goToUsers();
-      }
+        this.evaluatedGoTo();
     }
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
@@ -69,11 +65,7 @@ export class LoginComponent implements OnInit {
           this.dataService.setGeneralNotificationMessage('Error al obtener usuario');
       });
       this.dataService.setIsLogin(true);
-      if (this.dataService.getUserRole() === '3') {
-        this.goToPedidos();
-      } else {
-        this.goToUsers();
-      }
+      this.evaluatedGoTo();
     }).catch( (error: ErrorHttpInterface) => {
         switch (error.status) {
             case HttpStatus.serverError:
@@ -100,4 +92,12 @@ export class LoginComponent implements OnInit {
         }
   }
 
+  evaluatedGoTo() {
+      if (this.dataService.getUserRole() === RolesType.logistic || this.dataService.getUserRole() === RolesType.design
+          || this.dataService.getUserRole() === RolesType.warehouse) {
+            this.goToPedidos();
+      } else {
+            this.goToUsers();
+      }
+    }
 }

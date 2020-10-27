@@ -179,6 +179,11 @@ export const pathRoles = {
         'workLoad',
         'materialRequest',
         '**'
+    ],
+    design: [
+        'pedidos',
+        'pdetalle',
+        '**'
     ]
 };
 export const CONST_PRODUCTIVITY = {
@@ -194,3 +199,10 @@ export enum TypeProperty {
     description,
     requestQuantity
 }
+
+export const RolesType = {
+    logistic: '3',
+    admin: '1',
+    design: '4',
+    warehouse: '5'
+};

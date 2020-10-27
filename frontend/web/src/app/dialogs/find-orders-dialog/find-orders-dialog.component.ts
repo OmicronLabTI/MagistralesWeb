@@ -7,6 +7,7 @@ import { ErrorService} from '../../services/error.service';
 import { QfbSelect} from '../../model/http/users';
 import { Subscription} from 'rxjs';
 import { UsersService} from '../../services/users.service';
+import {DataService} from '../../services/data.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
                 private ordersServices: PedidosService,
                 private errorService: ErrorService,
-                private usersService: UsersService) {
+                private usersService: UsersService,
+                private dataService: DataService) {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({

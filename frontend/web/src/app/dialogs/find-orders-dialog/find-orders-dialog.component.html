@@ -92,7 +92,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <mat-form-field appearance="outline" class="custom-field">
+                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Tipo de Etiqueta</mat-label>
                             <mat-select formControlName="label" >
                                 <mat-option value="G">Genérica</mat-option>
@@ -102,24 +102,8 @@
                                 Tipo de fecha es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
-                    </div>
-                </div>
-                <div class="row-form-order">
-                    <div class="form-field-left">
-                        <mat-form-field appearance="outline" class="custom-field">
-                            <mat-label>Etiqueta terminada</mat-label>
-                            <mat-select formControlName="finlabel" >
-                                <mat-option value="1">Si</mat-option>
-                                <mat-option value="0">No</mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
-                                Tipo de fecha es <strong>requerido</strong>
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
 
-                    <div class="form-field-right">
-                        <mat-form-field appearance="outline" class="custom-field-full">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '5' || !isFromSearchOrders">
                             <mat-label>QFB Asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
@@ -128,8 +112,16 @@
                     </div>
                 </div>
                 <div class="row-form-order">
-                    <div class="form-field-left" *ngIf="isFromSearchOrders">
-                        <mat-form-field class="custom-field-full">
+                    <div class="form-field-left">
+                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
+                            <mat-label>Etiqueta terminada</mat-label>
+                            <mat-select formControlName="finlabel" >
+                                <mat-option value="1">Si</mat-option>
+                                <mat-option value="0">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '5' && isFromSearchOrders">
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
@@ -139,9 +131,7 @@
                                 Solo 80 caracteres
                             </mat-error>
                         </mat-form-field>
-                    </div>
-                    <div class="form-field-left" *ngIf="!isFromSearchOrders">
-                        <mat-form-field class="custom-field-full">
+                        <mat-form-field class="custom-field-full" *ngIf="(dataService.getUserRole() === '5' || dataService.getUserRole() === '3') && !isFromSearchOrders">
                             <input matInput placeholder="Código del producto" type="text"
                                    maxlength="40"
                                    class="height-input"
@@ -149,6 +139,29 @@
                                    (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
                                 Solo 40 caracteres
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-field-right">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
+                            <mat-label>QFB Asignado</mat-label>
+                            <mat-select formControlName="qfb">
+                                <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row-form-order">
+                    <div class="form-field-left" *ngIf="isFromSearchOrders">
+                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '3' ">
+                            <input matInput placeholder="Nombre del cliente" type="text"
+                                   maxlength="80"
+                                   class="height-input"
+                                   formControlName="clientName"
+                                   (focusout)="trimFilterValues()">
+                            <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
+                                Solo 80 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
