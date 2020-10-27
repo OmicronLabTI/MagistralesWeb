@@ -68,6 +68,9 @@ class ChartViewController: UIViewController {
             default: break
             }
         }
+        setDataToChart(entries: entries, colors: colors, workload: workload)
+    }
+    func setDataToChart(entries: [ChartDataEntry], colors: [UIColor], workload: Workload) {
         let set = PieChartDataSet(entries: entries, label: "")
         set.colors = colors
         set.sliceSpace = 2

@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Moya
 
-@testable import Omicron
+@testable import OmicronLab
 
 class SignaturePadTest: XCTestCase {
 
