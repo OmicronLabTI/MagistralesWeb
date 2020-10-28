@@ -91,7 +91,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count);
         }
 
         /// <summary>
