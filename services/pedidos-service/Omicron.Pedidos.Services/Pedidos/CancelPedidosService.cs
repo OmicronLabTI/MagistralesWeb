@@ -16,11 +16,11 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.Utils;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
     /// Implementations for order cancellations.
