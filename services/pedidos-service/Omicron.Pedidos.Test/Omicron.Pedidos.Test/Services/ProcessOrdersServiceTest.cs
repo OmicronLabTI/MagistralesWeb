@@ -35,8 +35,6 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> sapAdapter;
 
-        private ISapDiApi sapDiApi;
-
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;

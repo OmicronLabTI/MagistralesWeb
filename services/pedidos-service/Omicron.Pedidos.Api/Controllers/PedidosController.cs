@@ -466,7 +466,6 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Creates the pdf for the sale order.
         /// </summary>
-        /// <param name="ordersId">the orders.</param>
         /// <returns>the data.</returns>
         [Route("/files")]
         [HttpDelete]
