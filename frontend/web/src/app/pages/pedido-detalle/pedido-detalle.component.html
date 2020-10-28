@@ -20,14 +20,28 @@
             </span>
         </div>
       <div class="table-toolbar-buttons">
+          <button mat-icon-button matTooltip="Ver pedido" class="ico-col-pri generic"
+                  (click)="viewOrdersWithPdf()">
+           <svg xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
+                  <defs>
+                      <clipPath id="clip-PDF">
+                          <rect width="348" height="359"/>
+                      </clipPath>
+                  </defs>
+                  <g id="PDF" clip-path="url(#clip-PDF)">
+                      <path id="Path_6016" data-name="Path 6016" d="M14,3V66.463A15.866,15.866,0,0,0,29.866,82.329H93.328" transform="translate(191.694 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                      <path id="Path_6017" data-name="Path 6017" d="M195.388,288.584H36.731A31.731,31.731,0,0,1,5,256.852V34.732A31.731,31.731,0,0,1,36.731,3h111.06l79.328,79.329V256.852A31.731,31.731,0,0,1,195.388,288.584Z" transform="translate(57.902 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                      <line id="Line_148" data-name="Line 148" y2="91" transform="translate(175 191)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                      <path id="Path_6018" data-name="Path 6018" d="M9,14,54.46,59.46,99.92,14" transform="translate(119.365 222.935)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                      <text id="PDF-2" data-name="PDF" transform="translate(82 104)" fill="#5480a6" font-size="51" font-family="Helvetica-Bold, Helvetica" font-weight="700"><tspan x="0" y="0">PDF</tspan></text>
+                  </g>
+              </svg>
+          </button>
           <button [disabled]="!isThereOrdersDetailToDelivered"
                   mat-raised-button [ngClass]="isThereOrdersDetailToDelivered ? 'button-blue' : 'disable-button'"
                   (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
               Entregado
           </button>
-          <button mat-raised-button
-                  class="button-blue"
-                  (click)="viewOrdersWithPdf()">Ver pedido</button>
           <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
                   [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
                   (click)="finishOrdersLabels()" *ngIf="dataService.getUserRole() === '4'">
