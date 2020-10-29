@@ -1,23 +1,31 @@
-import { Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
 import {
-  ClassNames,
-  CONST_NUMBER,
-  CONST_STRING,
-  ConstOrders,
-  ConstStatus,
-  FromToFilter,
-  HttpServiceTOCall,
-  HttpStatus,
-  MessageType,
-  MODAL_NAMES,
-  RouterPaths,
+    ClassNames,
+    CONST_NUMBER,
+    CONST_STRING,
+    ConstOrders,
+    ConstStatus,
+    FromToFilter,
+    HttpServiceTOCall,
+    HttpStatus,
+    MessageType,
+    MODAL_NAMES,
+    RouterPaths,
+    TypeToSeeTap,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
-import {CancelOrderReq, ICreatePdfOrdersRes, IPedidoReq, IRecipesRes, ParamsPedidos, ProcessOrders} from '../../model/http/pedidos';
+import {
+    CancelOrderReq,
+    ICreatePdfOrdersRes,
+    IPedidoReq,
+    IRecipesRes,
+    ParamsPedidos,
+    ProcessOrders
+} from '../../model/http/pedidos';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
@@ -277,7 +285,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
       this.dataService.setMessageGeneralCallHttp({title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true});
     } else {
-      resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe));
+      resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe, TypeToSeeTap.receipt, urlPdf.order));
     }
   }
 
@@ -327,11 +335,18 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   openNewTabByOrder(param: (string | any)[]) {
-        this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`);
+        this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`, TypeToSeeTap.system);
   }
     viewPedidosWithPdf() {
         this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))
-            .subscribe( viewPdfResult => { viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl)); }
+            .subscribe( viewPdfResult => {
+                viewPdfResult.response.forEach( pdfUrl => {
+                    this.dataService.openNewTapByUrl(
+                        pdfUrl, TypeToSeeTap.order,
+                        Number(pdfUrl.split('/').slice(-1)[0].split('.')[0].slice(5, 10) // to get number Order from link
+                        ));
+                });
+                }
                 , error => this.errorService.httpError(error));
     }
 }

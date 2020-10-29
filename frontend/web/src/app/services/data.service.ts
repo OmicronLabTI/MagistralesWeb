@@ -10,7 +10,8 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS
+  MODAL_FIND_ORDERS,
+  TypeToSeeTap
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
@@ -437,9 +438,20 @@ export class DataService {
      localStorage.removeItem(ConstToken.isolatedOrder);
    }
 
-  openNewTapByUrl(url: string) {
-    window.open(url);
+  openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
+    let tapTitle = CONST_STRING.empty;
+    switch (typeToSeeTap) {
+      case TypeToSeeTap.order:
+        tapTitle = `Pedido ${orderId}`;
+        break;
+      case TypeToSeeTap.receipt:
+        tapTitle = `Receta pedido ${orderId}`;
+        break;
+    }
+    const newTap = window.open(url);
+    newTap.document.title = tapTitle;
   }
+
   getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {
     switch (type) {
       case FromToFilter.fromOrders:
