@@ -200,6 +200,12 @@ export enum TypeProperty {
     requestQuantity
 }
 
+export enum TypeToSeeTap {
+    order,
+    receipt,
+    system
+}
+
 export const RolesType = {
     logistic: '3',
     admin: '1',

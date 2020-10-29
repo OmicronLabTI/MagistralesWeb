@@ -12,8 +12,10 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_NAMES, RolesType,
-  RouterPaths
+  MODAL_NAMES,
+  RolesType,
+  RouterPaths,
+  TypeToSeeTap
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
@@ -339,7 +341,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   viewOrdersWithPdf() {
     this.pedidosService.getOrdersPdfViews([Number(this.docNum)])
-        .subscribe( viewPdfResult => { viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl)); }
+        .subscribe( viewPdfResult => {
+          viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl, TypeToSeeTap.order, Number(this.docNum)));
+          }
             , error => this.errorService.httpError(error));
   }
 }

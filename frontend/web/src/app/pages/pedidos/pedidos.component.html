@@ -37,9 +37,24 @@
                       matTooltipPosition="above" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
                     print
                 </span>
-               <button [disabled]="!isTherePedidosToViewPdf" mat-raised-button
-                    [ngClass]="isTherePedidosToViewPdf ? 'button-blue' : 'disable-button'"
-                    (click)="viewPedidosWithPdf()">Ver pedido</button>
+            <button mat-icon-button matTooltip="Ver pedidos" class="ico-col-pri generic"
+                    (click)="viewPedidosWithPdf()">
+                <img *ngIf="!isTherePedidosToViewPdf" src="assets/icons/pdf.png" class="img-pdf-order-icon" alt="pdf"/>
+                <svg *ngIf="isTherePedidosToViewPdf" xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
+                    <defs>
+                        <clipPath id="clip-PDF">
+                            <rect width="348" height="359"/>
+                        </clipPath>
+                    </defs>
+                    <g id="PDF" clip-path="url(#clip-PDF)">
+                        <path id="Path_6016" data-name="Path 6016" d="M14,3V66.463A15.866,15.866,0,0,0,29.866,82.329H93.328" transform="translate(191.694 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                        <path id="Path_6017" data-name="Path 6017" d="M195.388,288.584H36.731A31.731,31.731,0,0,1,5,256.852V34.732A31.731,31.731,0,0,1,36.731,3h111.06l79.328,79.329V256.852A31.731,31.731,0,0,1,195.388,288.584Z" transform="translate(57.902 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                        <line id="Line_148" data-name="Line 148" y2="91" transform="translate(175 191)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                        <path id="Path_6018" data-name="Path 6018" d="M9,14,54.46,59.46,99.92,14" transform="translate(119.365 222.935)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                        <text id="PDF-2" data-name="PDF" transform="translate(82 104)" fill="#5480a6" font-size="51" font-family="Helvetica-Bold, Helvetica" font-weight="700"><tspan x="0" y="0">PDF</tspan></text>
+                    </g>
+                </svg>
+            </button>
                 <button [disabled]="!isThereOrdersToPlace" mat-raised-button
                     [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'"
                     (click)="requestMaterial()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">Solicitud de insumos</button>
@@ -138,15 +153,19 @@
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions ">
                         <div class="actions-align-center">
                             <button mat-icon-button matTooltip="Ver receta" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 342">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 348 359">
                                     <defs>
-                                        <clipPath id="clip-_7">
-                                            <rect width="337" height="342"/>
+                                        <clipPath id="clip-receta">
+                                            <rect width="348" height="359"/>
                                         </clipPath>
                                     </defs>
-                                    <g id="_7" data-name="7" clip-path="url(#clip-_7)">
-                                        <g id="file-pdf" transform="translate(48.183 9.91)">
-                                            <path id="Path_5204" data-name="Path 5204" d="M114.373,161.028c-3.144-10.06-3.081-29.489-1.258-29.489C118.4,131.538,117.894,154.74,114.373,161.028ZM113.3,190.706c-4.842,12.7-10.878,27.226-17.857,39.424,11.506-4.4,24.522-10.815,39.55-13.77A81.449,81.449,0,0,1,113.3,190.706Zm-59.167,78.47c0,.5,8.3-3.4,21.944-25.277C71.868,247.861,57.784,259.3,54.137,269.176ZM155.935,100.6h85.513V306.839a15.054,15.054,0,0,1-15.09,15.09H15.09A15.054,15.054,0,0,1,0,306.839V15.09A15.054,15.054,0,0,1,15.09,0H140.844V85.513A15.135,15.135,0,0,0,155.935,100.6ZM150.9,208.626c-12.575-7.671-20.938-18.234-26.848-33.828,2.829-11.632,7.294-29.3,3.9-40.367-2.955-18.486-26.66-16.662-30.055-4.276-3.144,11.506-.252,27.729,5.093,48.415-7.294,17.354-18.046,40.618-25.654,53.948-.063,0-.063.063-.126.063-17.04,8.74-46.277,27.98-34.268,42.756,3.521,4.339,10.06,6.288,13.519,6.288,11.255,0,22.447-11.318,38.418-38.858,16.222-5.345,34.016-12.009,49.673-14.587,13.644,7.419,29.615,12.261,40.241,12.261,18.36,0,19.618-20.121,12.387-27.289C188.442,204.6,163.04,207.054,150.9,208.626Zm86.141-142.6L175.427,4.4A15.079,15.079,0,0,0,164.737,0h-3.773V80.482h80.482V76.647A15.042,15.042,0,0,0,237.046,66.021ZM190.454,226.545c2.578-1.7-1.572-7.482-26.911-5.659C186.87,230.821,190.454,226.545,190.454,226.545Z" fill="#212121"/>
+                                    <g id="receta" clip-path="url(#clip-receta)">
+                                        <g id="Group_9824" data-name="Group 9824" transform="translate(-126.24 -9.988)">
+                                            <path id="Path_6019" data-name="Path 6019" d="M14,3V64.241a15.31,15.31,0,0,0,15.31,15.31H90.551" transform="translate(317.338 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            <path id="Path_6020" data-name="Path 6020" d="M188.722,278.582H35.62A30.62,30.62,0,0,1,5,247.962V33.62A30.62,30.62,0,0,1,35.62,3H142.791l76.551,76.551V247.962A30.62,30.62,0,0,1,188.722,278.582Z" transform="translate(188.547 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            <line id="Line_149" data-name="Line 149" x2="14" transform="translate(255.24 149.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            <line id="Line_150" data-name="Line 150" x2="93" transform="translate(255.24 212.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            <line id="Line_151" data-name="Line 151" x2="93" transform="translate(255.24 273.989)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
                                         </g>
                                     </g>
                                 </svg>
