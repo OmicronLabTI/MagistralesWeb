@@ -218,7 +218,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   cancelOrder() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.entregado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = Number(order.fabOrderId);
         return cancelOrder;
