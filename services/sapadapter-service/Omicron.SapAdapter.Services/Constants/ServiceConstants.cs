@@ -138,7 +138,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// Get users by id.
         /// </summary>
-        public const string Generico = "Genérico";
+        public const string Generico = "Genérica";
 
         /// <summary>
         /// when stock is missing.
