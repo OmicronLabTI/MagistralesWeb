@@ -301,7 +301,7 @@ export class DataService {
                 && t.pedidoStatus !== ConstStatus.entregado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
-            && t.status !== ConstStatus.abierto)).length > 0;
+            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.entregado)).length > 0;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
@@ -449,8 +449,7 @@ export class DataService {
         tapTitle = `Receta pedido ${orderId}`;
         break;
     }
-    const newTap = window.open(url);
-    newTap.document.title = tapTitle;
+    window.open(url);
   }
 
   getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {
