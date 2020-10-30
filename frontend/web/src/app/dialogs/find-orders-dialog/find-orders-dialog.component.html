@@ -87,13 +87,14 @@
                                 <mat-option *ngIf="isFromSearchOrders" value="Liberado">Liberado</mat-option>
                                 <mat-option value="Terminado">Terminado</mat-option>
                                 <mat-option value="Finalizado">Finalizado</mat-option>
+                                <mat-option value="Entregado">Entregado</mat-option>
                                 <mat-option value="Cancelado">Cancelado</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
                         <mat-form-field appearance="outline" class="custom-field" *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
-                            <mat-label>Tipo de Etiqueta</mat-label>
+                            <mat-label>Tipo de etiqueta</mat-label>
                             <mat-select formControlName="label" >
                                 <mat-option value="G">Genérica</mat-option>
                                 <mat-option value="P">Personalizada</mat-option>
@@ -104,7 +105,7 @@
                         </mat-form-field>
 
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '5' || !isFromSearchOrders">
-                            <mat-label>QFB Asignado</mat-label>
+                            <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
@@ -145,7 +146,7 @@
 
                     <div class="form-field-right">
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
-                            <mat-label>QFB Asignado</mat-label>
+                            <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>

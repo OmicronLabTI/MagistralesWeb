@@ -236,7 +236,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado)).map(order => {
+      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.entregado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = order.docNum;
         return cancelOrder;

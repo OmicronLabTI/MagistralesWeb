@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {CONST_STRING } from '../../constants/const';
+import {CONST_STRING, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UsersService} from '../../services/users.service';
 import {RoleUser} from '../../model/http/users';
@@ -22,12 +22,12 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
               private usersService: UsersService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public searchData: any, private dataService: DataService) {
     this.searchUserForm = this.formBuilder.group({
-      userNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      firstNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      lastNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      userTypeRSe: ['', Validators.required],
-      activoSe: ['', [Validators.required]],
-      asignableSe: ['', [Validators.required]]
+      userNameSe: ['', [ Validators.maxLength(50)]],
+      firstNameSe: ['', [ Validators.maxLength(50)]],
+      lastNameSe: ['', [ Validators.maxLength(50)]],
+      userTypeRSe: ['', []],
+      activoSe: ['', []],
+      asignableSe: ['', []]
     });
   }
 
@@ -77,8 +77,21 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
     this.searchUserForm.get('userTypeRSe').setValue('');
     this.searchUserForm.get('activoSe').setValue('');
     this.searchUserForm.get('asignableSe').setValue('');
+    this.isCorrectData = true;
+  }
+  keyDownUsers(event: KeyboardEvent) {
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && ((this.searchUserForm.get('userNameSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('userNameSe').value !== null) || (this.searchUserForm.get('firstNameSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('firstNameSe').value !== null) || (this.searchUserForm.get('lastNameSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('lastNameSe').value !== null) || (this.searchUserForm.get('userTypeRSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('userTypeRSe').value !== null) || (this.searchUserForm.get('activoSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('activoSe').value !== null) || (this.searchUserForm.get('asignableSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('asignableSe').value !== null) )) {
+      this.searchUser();
+    }
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
+
 }

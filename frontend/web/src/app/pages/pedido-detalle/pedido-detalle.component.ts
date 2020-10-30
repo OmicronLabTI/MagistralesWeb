@@ -248,14 +248,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
 
   addCommentsDialog() {
-    this.dialog.open(AddCommentsDialogComponent, {
-      panelClass: 'custom-dialog-container',
-      data: this.dataSource.data[0].comments
-    }).afterClosed().subscribe(addCommentsResult => {
-      if ( addCommentsResult) {
-        this.addCommentsOnService(addCommentsResult);
-      }
-    });
+    if (!this.dataSource.data.every(order => order.status === ConstStatus.abierto && order.ordenFabricacionId === CONST_NUMBER.zero)) {
+      this.dialog.open(AddCommentsDialogComponent, {
+        panelClass: 'custom-dialog-container',
+        data: this.dataSource.data[0].comments
+      }).afterClosed().subscribe(addCommentsResult => {
+        if ( addCommentsResult) {
+          this.addCommentsOnService(addCommentsResult);
+        }
+      });
+    }
   }
 
   addCommentsOnService(addCommentsResult: string) {
