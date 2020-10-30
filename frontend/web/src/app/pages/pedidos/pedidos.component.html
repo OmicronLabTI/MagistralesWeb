@@ -152,7 +152,7 @@
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions ">
                         <div class="actions-align-center">
-                            <button mat-icon-button matTooltip="Ver receta" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
+                            <button mat-icon-button matTooltip="Ver receta" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 348 359">
                                     <defs>
                                         <clipPath id="clip-receta">
