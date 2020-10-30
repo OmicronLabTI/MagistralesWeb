@@ -279,7 +279,8 @@ namespace Omicron.SapFile.Services.SapFile
         private string CreateSalesOrderReportWithProductionOrders(List<FinalizaGeneratePdfModel> orders)
         {
             var first = orders.First();
-            var recipeRoute = orders.Select(x => x.RecipeRoute).FirstOrDefault(x => !string.IsNullOrEmpty(x));
+            var recipeRoute = orders.Select(x => x.RecipeRoute).FirstOrDefault(x => x.Any());
+            recipeRoute = recipeRoute == null ? new List<string>() : recipeRoute;
             var orderSapPdf = orders.Select(x => x.OrderPdfRoute).FirstOrDefault(x => !string.IsNullOrEmpty(x));
             var mergedFilePath = Path.Combine(TemporalDirectoryPath, $"{first.OrderId}_ov_merged.pdf");
             orders = orders.OrderBy(x => x.FabOrderId).ToList();
@@ -289,14 +290,19 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 filePaths.Add(this.CreateFabOrderReportWithSignatures(x, false));
             });
-            filePaths.Add(recipeRoute);
+            filePaths.AddRange(recipeRoute);
             filePaths = filePaths.Where(x => File.Exists(x)).ToList();
 
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
             var pagedFilePath = PdfFileHelper.AddPageNumber(mergedFilePath);
 
             filePaths.Add(mergedFilePath);
-            filePaths.Remove(recipeRoute);
+
+            recipeRoute.ForEach(x =>
+            {
+                filePaths.Remove(x);
+            });
+
             ServiceUtils.DeleteFile(filePaths.ToArray());
 
             return this.CopyFileToProductionFirectory(pagedFilePath, first.SaleOrderCreateDate, $"{first.OrderId}_{first.MedicName}.pdf");

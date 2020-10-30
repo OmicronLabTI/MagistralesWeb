@@ -539,14 +539,16 @@ namespace Omicron.SapAdapter.Services.Sap
 
             order.ForEach(o =>
             {
-                var attach = attachments.FirstOrDefault(x => x.AbsEntry == o.AtcEntry);
-                var modelAttach = new OrderRecipeModel
+                attachments.Where(x => x.AbsEntry == o.AtcEntry).ToList().ForEach(x =>
                 {
-                    Order = o.PedidoId,
-                    Recipe = attach == null ? string.Empty : attach.CompletePath,
-                };
+                    var modelAttach = new OrderRecipeModel
+                    {
+                        Order = o.PedidoId,
+                        Recipe = x == null ? string.Empty : x.CompletePath,
+                    };
 
-                modelToReturn.Add(modelAttach);
+                    modelToReturn.Add(modelAttach);
+                });
             });
 
             return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
