@@ -180,6 +180,9 @@ class ComponentFormViewController: FormViewController {
                 guard let warehouse = component.warehouse else { return }
                 $0.value = warehouse
             }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
+            }
             +++ Section()
             <<< ButtonRow {
                 $0.title = "Aceptar"
