@@ -297,7 +297,8 @@ export class DataService {
             || t.pedidoStatus === ConstStatus.terminado))).length > 0;
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
+            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
+                && t.pedidoStatus !== ConstStatus.entregado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
             && t.status !== ConstStatus.abierto)).length > 0;
@@ -307,7 +308,7 @@ export class DataService {
             || t.status === ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
+            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.entregado))).length > 0;
       case FromToFilter.fromOrderDetailLabel:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
