@@ -41,11 +41,11 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
         UtilsManager.shared.labelsStyle(label: numberDescriptionLabel, text: " ", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: plannedQuantityLabel, text: "Cantidad planificada:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: plannedQuantityDescriptionLabel, text: "", fontSize: 13)
-        UtilsManager.shared.labelsStyle(label: startDateLabel, text: "Fecha orden de fabricación:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: startDateLabel, text: "Fecha orden fabricación:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: startDateDescriptionLabel, text: "", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: finishDateLabel, text: "Fecha de finalización:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: finishDateDescriptionLabel, text: "", fontSize: 13)
-        UtilsManager.shared.labelsStyle(label: productLabel, text: "Descripción del producto:", fontSize: 13)
+        UtilsManager.shared.labelsStyle(label: productLabel, text: "Descripción producto:", fontSize: 13)
         UtilsManager.shared.labelsStyle(label: productDescriptionLabel, text: "", fontSize: 13)
         UtilsManager.shared.changeIconButton(button: self.showDetail, iconName: ImageButtonNames.assigned)
         missingStockImage.isHidden = true

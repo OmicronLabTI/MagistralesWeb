@@ -10,6 +10,7 @@ import Foundation
 import Moya
 import RxSwift
 import ObjectMapper
+import Alamofire
 
 enum RequestError: Error {
     case unknownError
@@ -27,6 +28,16 @@ protocol AuthorizedTargetType: TargetType {
 
 class NetworkManager: SessionProtocol {
     // MARK: Variables
+    let requestTimeoutClosure = { (endpoint: Endpoint, done: @escaping MoyaProvider<ApiService>.RequestResultClosure) in
+        do {
+            var request = try endpoint.urlRequest()
+            request.timeoutInterval = 10
+            done(.success(request))
+        } catch {
+            return
+        }
+    }
+    private lazy var providerChoseed = MoyaProvider<ApiService>()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
         AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
@@ -139,11 +150,20 @@ class NetworkManager: SessionProtocol {
         return res
     }
 
-    private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
+    // Comprueba la coneccion con la VPN
+    func getConnect() -> Observable<ConnectModel> {
+        let req: ApiService = ApiService.getConnect
+        let res: Observable<ConnectModel> = makeRequest(request: req, needsVPN: true)
+        return res
+    }
+
+    private func makeRequest<T: BaseMappable>(request: ApiService, needsVPN: Bool = false) -> Observable<T> {
+        providerChoseed = provider
+        if needsVPN { providerChoseed = MoyaProvider<ApiService>(requestClosure: requestTimeoutClosure) }
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?
-                self?.provider.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
-                self?.provider.rx
+                self?.providerChoseed.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
+                self?.providerChoseed.rx
                     .request(request)
                     .filterSuccessfulStatusAndRedirectCodes()
                     .refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: self!)

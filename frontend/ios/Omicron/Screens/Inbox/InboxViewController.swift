@@ -449,11 +449,12 @@ extension UICollectionView {
 extension InboxViewController: HeaderSelectedDelegate {
 
     func headerSelected(productID: Int) {
-        order.onNext(productID)
-//        let pdfViewController = PDFViewController()
-//        pdfViewController.pdfURL =
-//            URL(string: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-//        present(pdfViewController, animated: true, completion: nil)
+        inboxViewModel.getConnection()
+        inboxViewModel.hasConnection.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] hasConnection in
+                guard let self = self else { return }
+                if hasConnection { self.order.onNext(productID) }
+            }).disposed(by: disposeBag)
     }
 
 }
