@@ -27,6 +27,7 @@
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PDF" translatesAutoresizingMaskIntoConstraints="NO" id="1so-11-d1S">
                                 <rect key="frame" x="0.0" y="35" width="30" height="30"/>
+                                <color key="tintColor" red="0.36292648319999998" green="0.49593049290000002" blue="0.63531726600000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="30" id="ObB-LJ-f76"/>
                                     <constraint firstAttribute="height" constant="30" id="QpU-wP-L1z"/>

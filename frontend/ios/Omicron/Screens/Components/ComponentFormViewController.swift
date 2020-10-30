@@ -169,6 +169,10 @@ class ComponentFormViewController: FormViewController {
                 $0.value = component.unit
                 $0.disabled = true
             }
+            .cellUpdate { cell, _ in
+                cell.titleLabel?.textColor = .black
+                cell.textField.textColor = .black
+            }
             <<< PickerInlineRow<String> {
                 $0.title = "Almacén: "
                 $0.tag = "warehouse"

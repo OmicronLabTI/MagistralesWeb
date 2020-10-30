@@ -25,6 +25,7 @@ enum ApiService {
     case getWorkload(data: WorkloadRequest)
     case getValidateOrder(orderId: Int)
     case postOrdersPDF(orders: [Int])
+    case getConnect
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -36,7 +37,12 @@ extension ApiService: AuthorizedTargetType {
             return true
         }
     }
-    var baseURL: URL { return URL(string: Config.baseUrl)! }
+    var baseURL: URL {
+        switch self {
+        case .getConnect: return URL(string: Config.serverOmicron)!
+        default: return URL(string: Config.baseUrl)!
+        }
+    }
     var path: String {
         switch self {
         case .login:
@@ -69,6 +75,8 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/validate/order/\(orderId)"
         case .postOrdersPDF:
             return "/pedidos/saleorder/pdf"
+        case .getConnect:
+            return "SapDiApi/connect"
         }
     }
     var method: Moya.Method {
@@ -85,7 +93,8 @@ extension ApiService: AuthorizedTargetType {
              .askIfOrderCanBeFinalized,
              .getComponents,
              .getWorkload,
-             .getValidateOrder:
+             .getValidateOrder,
+             .getConnect:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -97,7 +106,13 @@ extension ApiService: AuthorizedTargetType {
         switch self {
         case .login(let data):
             return .requestJSONEncodable(data)
-        case .getInfoUser, .getStatusList, .getLots, .getOrdenDetail, .askIfOrderCanBeFinalized, .getValidateOrder:
+        case .getInfoUser,
+             .getStatusList,
+             .getLots,
+             .getOrdenDetail,
+             .askIfOrderCanBeFinalized,
+             .getValidateOrder,
+             .getConnect:
             return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
@@ -202,6 +217,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .postOrdersPDF:
             guard let url = Bundle.main.url(forResource: "order_pdf", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getConnect:
+            guard let url = Bundle.main.url(forResource: "connect", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
