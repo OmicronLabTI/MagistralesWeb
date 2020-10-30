@@ -164,7 +164,7 @@ class ComponentFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
-            <<< TextRow {
+            <<< TextRow { [weak self] in
                 $0.title = "Unidad:"
                 $0.value = component.unit
                 $0.disabled = true
