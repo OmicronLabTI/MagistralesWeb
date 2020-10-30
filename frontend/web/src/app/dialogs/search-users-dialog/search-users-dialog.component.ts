@@ -22,12 +22,12 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
               private usersService: UsersService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public searchData: any, private dataService: DataService) {
     this.searchUserForm = this.formBuilder.group({
-      userNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      firstNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      lastNameSe: ['', [Validators.required, Validators.maxLength(50)]],
-      userTypeRSe: ['', Validators.required],
-      activoSe: ['', [Validators.required]],
-      asignableSe: ['', [Validators.required]]
+      userNameSe: ['', [ Validators.maxLength(50)]],
+      firstNameSe: ['', [ Validators.maxLength(50)]],
+      lastNameSe: ['', [ Validators.maxLength(50)]],
+      userTypeRSe: ['', []],
+      activoSe: ['', []],
+      asignableSe: ['', []]
     });
   }
 
