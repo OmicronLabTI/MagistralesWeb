@@ -27,14 +27,15 @@ namespace Omicron.SapAdapter.Resources.Extensions
         /// <returns>New string.</returns>
         public static string Concat(this string baseString, string stringToConcat, int repeat = 1)
         {
-            var newString = baseString;
+            var newString = new StringBuilder();
+            newString.Append(baseString);
 
             for (int i = 0; i < repeat; i++)
             {
-                newString += stringToConcat;
+                newString.Append(stringToConcat);
             }
 
-            return newString;
+            return newString.ToString();
         }
 
         /// <summary>

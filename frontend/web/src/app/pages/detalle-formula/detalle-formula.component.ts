@@ -165,7 +165,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               const componentsToDeleteFull = this.dataSource.data
                   .filter(component => component.action === CONST_DETAIL_FORMULA.update ||
                       component.action === CONST_DETAIL_FORMULA.insert);
-
+              componentsToDeleteFull.push(...this.componentsToDelete);
               componentsToDeleteFull.forEach( component => {
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
@@ -174,6 +174,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
+                this.componentsToDelete = [];
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
@@ -194,14 +195,14 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           .then( (resultDeleteMessage: any) => {
             if (resultDeleteMessage.isConfirmed) {
               const detailComponentsToDelete = this.createDetailTOSave();
-              this.componentsToDelete = [...this.dataSource.data.filter(component => component.isChecked &&
+              const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
-              this.componentsToDelete.forEach( component => {
+              componentsToDeleteOnSave.forEach( component => {
                 component.action = CONST_DETAIL_FORMULA.delete;
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
-              detailComponentsToDelete.components = this.componentsToDelete;
+              detailComponentsToDelete.components = componentsToDeleteOnSave;
 
               this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
                 this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
@@ -213,7 +214,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
-                this.componentsToDelete = [];
               });
             }
           });
@@ -312,10 +312,29 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   replaceComponentsWithCustomList(components: Components[]) {
+    const newDataToUpdate: IFormulaDetalleReq [] = [];
+    components.forEach(component => {
+      if (this.dataSource.data.filter( element => element.productId === component.productId).length > CONST_NUMBER.zero) {
+         const elementValue = this.dataSource.data.filter( element => element.productId === component.productId)[0];
+         if (component.baseQuantity !== elementValue.baseQuantity || component.description !== elementValue.description) {
+           newDataToUpdate.push({...elementValue, action: CONST_DETAIL_FORMULA.update});
+         } else {
+           newDataToUpdate.push(elementValue);
+         }
+      }
+    });
+    newDataToUpdate.forEach( component => {
+      components.splice(components.findIndex( componentI => componentI.productId === component.productId)
+          , CONST_NUMBER.one);
+      this.dataSource.data.splice(this.dataSource.data.findIndex( element => element.productId === component.productId)
+          , CONST_NUMBER.one );
+    });
+
     this.componentsToDelete.push(...this.dataSource.data.filter(
       component =>
         (component.isInDb === undefined)
     ));
+
     const newData: IFormulaDetalleReq[] = [];
     // tslint:disable-next-line: radix
     const orderFabricacionId = parseInt(this.ordenFabricacionId);
@@ -338,7 +357,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         isInDb: false
       });
     });
-    this.dataSource.data = newData;
+    this.dataSource.data = [].concat(newData, newDataToUpdate);
     this.oldDataFormulaDetail.details = this.dataSource.data;
     this.componentsToDelete.forEach( component => component.action = CONST_DETAIL_FORMULA.delete);
     this.getIsReadyTOSave();

@@ -222,11 +222,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// gets the orders by product and item.
         /// </summary>
-        /// <param name="listOrders">the product id.</param>        
+        /// <param name="pedidoId">the product id.</param>        
         /// <returns>the data.</returns>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> listOrders)
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId)
         {
-            return await this.RetryQuery(this.databaseContext.OrdenFabricacionModel.Where(x => listOrders.Contains(x.OrdenId)));            
+            return await this.RetryQuery(this.databaseContext.OrdenFabricacionModel.Where(x => pedidoId.Contains(x.OrdenId)));            
         }
 
         /// <summary>

@@ -60,13 +60,15 @@
 
         </mat-card-content>
         <mat-card-actions class="options-footer">
-            <button mat-button class="btn-cancel-modal-custom box-shadow-cancel-custom" *ngIf="searchData.activoSe && searchData.activoSe !== '' ||
+            <button mat-button class="btn-cancel-modal-custom" *ngIf="searchData.activoSe && searchData.activoSe !== '' ||
                                  searchData.asignableSe && searchData.asignableSe !== '' ||
                                  searchData.firstNameSe && searchData.firstNameSe !== '' ||
                                  searchData.lastNameSe && searchData.lastNameSe !== '' ||
                                  searchData.userNameSe && searchData.userNameSe !== '' ||
                                  searchData.userTypeRSe && searchData.userTypeRSe !== ''" (click)="resetSearchParams()">Reiniciar parámetros</button>
-            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <div class="only-margin">
+            </div>
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal box-shadow-cancel-custom">Cancelar</button>
             <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="!isCorrectData" (click)="searchUser()">
                 <span>Buscar</span>
             </button>

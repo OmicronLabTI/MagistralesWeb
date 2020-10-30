@@ -37,10 +37,9 @@
                       matTooltipPosition="above" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
                     print
                 </span>
-            <button mat-icon-button matTooltip="Ver pedidos" class="ico-col-pri generic"
-                    (click)="viewPedidosWithPdf()">
+            <button mat-icon-button matTooltip="Ver pedidos" class="ico-col-pri generic" [ngClass]="!isTherePedidosToViewPdf ? 'cursor-none' : ''">
                 <img *ngIf="!isTherePedidosToViewPdf" src="assets/icons/pdf.png" class="img-pdf-order-icon" alt="pdf"/>
-                <svg *ngIf="isTherePedidosToViewPdf" xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
+                <svg *ngIf="isTherePedidosToViewPdf" (click)="viewPedidosWithPdf()" xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
                     <defs>
                         <clipPath id="clip-PDF">
                             <rect width="348" height="359"/>
@@ -152,7 +151,7 @@
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions ">
                         <div class="actions-align-center">
-                            <button mat-icon-button matTooltip="Ver receta" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
+                            <button mat-icon-button matTooltip="Ver receta" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 348 359">
                                     <defs>
                                         <clipPath id="clip-receta">
@@ -170,7 +169,7 @@
                                     </g>
                                 </svg>
                             </button>
-                            <button mat-icon-button matTooltip="Etiqueta genérica" class="ico-col-pri generic" *ngIf="element.labelType === 'G'">
+                            <button mat-icon-button matTooltip="Etiqueta genérica" class="ico-col-pri generic cursor-none" *ngIf="element.labelType === 'G'">
                                 <mat-icon >
                                     <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 342">
                                         <defs>
@@ -206,7 +205,7 @@
                                     </svg>
                                 </mat-icon>
                             </button>
-                            <button mat-icon-button matTooltip="Etiqueta personalizada"  class="ico-col-pri person" *ngIf="element.labelType === 'P'" >
+                            <button mat-icon-button matTooltip="Etiqueta personalizada"  class="ico-col-pri person cursor-none" *ngIf="element.labelType === 'P'" >
                                 <mat-icon>
                                     <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 342">
                                         <defs>
@@ -244,7 +243,7 @@
                                     </svg>
                                 </mat-icon>
                             </button>
-                            <button mat-icon-button matTooltip="Etiqueta mixta"  class="ico-col-pri person" *ngIf="element.labelType === 'M'" >
+                            <button mat-icon-button matTooltip="Etiqueta mixta"  class="ico-col-pri person cursor-none" *ngIf="element.labelType === 'M'" >
                                 <mat-icon>
                                     <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 342">
                                         <defs>
