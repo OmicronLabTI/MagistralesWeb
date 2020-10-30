@@ -113,7 +113,7 @@ class InboxViewModel {
             guard let self = self else { return }
             print(error.localizedDescription)
             self.loading.onNext(false)
-            self.showAlert.onNext("Error")
+            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
         }).disposed(by: disposeBag)
     }
 
@@ -348,7 +348,7 @@ class InboxViewModel {
             guard let self = self else { return }
             self.hasConnection.onNext(false)
             self.loading.onNext(false)
-            self.showAlert.onNext("No estas en la red!")
+            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
         }).disposed(by: disposeBag)
 
     }
