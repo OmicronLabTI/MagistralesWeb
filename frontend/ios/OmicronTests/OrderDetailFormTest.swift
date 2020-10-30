@@ -14,19 +14,16 @@ import Resolver
 class OrderDetailFormTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
-    var expectation: XCTestExpectation?
     var orderDetailFormViewModel: OrderDetailFormViewModel?
     @Injected var networkManager: NetworkManager
     override func setUp() {
         print("XXXX setUp OrderDetailFormTest")
         orderDetailFormViewModel = OrderDetailFormViewModel()
-        expectation = XCTestExpectation()
         disposeBag = DisposeBag()
     }
     override func tearDown() {
         print("XXXX tearDown OrderDetailFormTest")
         orderDetailFormViewModel = nil
-        expectation = nil
     }
     // MARCK: - FUNCTION TEST
     func testEditTableSuccessValueSuccess() {
@@ -55,12 +52,10 @@ class OrderDetailFormTest: XCTestCase {
         self.orderDetailFormViewModel!.success.subscribe(onNext: { res in
             if res != 0 {
                 XCTAssertEqual(89662, res)
-                self.expectation!.fulfill()
             }
         }).disposed(by: self.disposeBag!)
         // then
         self.orderDetailFormViewModel!
             .editItemTable(index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
-        wait(for: [self.expectation!], timeout: 2000)
     }
 }
