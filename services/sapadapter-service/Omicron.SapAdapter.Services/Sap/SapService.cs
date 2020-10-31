@@ -565,7 +565,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
             {
-                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity > x.WarehouseQuantity)
+                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
                 {
                     listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
                 }
