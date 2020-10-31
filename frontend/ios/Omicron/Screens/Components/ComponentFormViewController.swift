@@ -164,7 +164,7 @@ class ComponentFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
-            <<< TextRow { [weak self] in
+            <<< TextRow {
                 $0.title = "Unidad:"
                 $0.value = component.unit
                 $0.disabled = true
@@ -179,6 +179,9 @@ class ComponentFormViewController: FormViewController {
                 $0.options = CommonStrings.options
                 guard let warehouse = component.warehouse else { return }
                 $0.value = warehouse
+            }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow {

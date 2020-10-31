@@ -124,6 +124,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                   PedidoStatus = order.PedidoStatus,
                                   IsChecked = false,
+                                  Detalles = detalle
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
