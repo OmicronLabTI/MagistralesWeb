@@ -80,6 +80,7 @@ class ChartViewController: UIViewController {
             default: break
             }
         }
+        setDataToChart2()
     }
 
     private func setDataToChart2() {
