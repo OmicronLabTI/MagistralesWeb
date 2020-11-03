@@ -32,6 +32,7 @@ pipeline {
             steps {
                 dir ('testing/stress/'){
 					sh 'pip3'
+					sh 'python --version'
 					sh 'pip3 install bzt'
                     bzt 'OmicronLabJenkins.jmx'
                 }
