@@ -46,7 +46,6 @@
 		7C56BE0224EDE9900039B2E7 /* requestChangeStatusProcess.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */; };
 		7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */; };
 		7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */; };
-		7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */; };
 		7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */; };
 		7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */; };
 		7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */; };
@@ -68,7 +67,6 @@
 		7C980E0624E3245000D58A85 /* UserInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C980E0524E3244F00D58A85 /* UserInfo.json */; };
 		7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CA3058924DB0ACF00A7D2B5 /* Status.json */; };
 		7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB218D924E79E870015951C /* CommentsViewModel.swift */; };
-		7CB218DC24E79EC00015951C /* CommentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB218DB24E79EC00015951C /* CommentsModel.swift */; };
 		7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */; };
 		7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */; };
 		7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6332524DDCBE70055425C /* OrderDetailModel.swift */; };
@@ -169,7 +167,6 @@
 		7C56BE0124EDE9900039B2E7 /* requestChangeStatusProcess.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = requestChangeStatusProcess.json; sourceTree = "<group>"; };
 		7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormViewModel.swift; sourceTree = "<group>"; };
-		7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFormModel.swift; sourceTree = "<group>"; };
 		7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = finishedOrderResponse.json; sourceTree = "<group>"; };
 		7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = updateOrDeleteItemOfTable.json; sourceTree = "<group>"; };
 		7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = assingBatchesResponse.json; sourceTree = "<group>"; };
@@ -191,7 +188,6 @@
 		7C980E0524E3244F00D58A85 /* UserInfo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserInfo.json; sourceTree = "<group>"; };
 		7CA3058924DB0ACF00A7D2B5 /* Status.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Status.json; sourceTree = "<group>"; };
 		7CB218D924E79E870015951C /* CommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
-		7CB218DB24E79EC00015951C /* CommentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsModel.swift; sourceTree = "<group>"; };
 		7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewController.swift; sourceTree = "<group>"; };
 		7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
 		7CB6332524DDCBE70055425C /* OrderDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailModel.swift; sourceTree = "<group>"; };
@@ -319,7 +315,6 @@
 			children = (
 				7C3A55CB24E76E0C001B627E /* CommentsViewController.swift */,
 				7CB218D924E79E870015951C /* CommentsViewModel.swift */,
-				7CB218DB24E79EC00015951C /* CommentsModel.swift */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -339,7 +334,6 @@
 			children = (
 				7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */,
 				7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */,
-				7C5C6DA424E8F49900662508 /* OrderDetailFormModel.swift */,
 			);
 			path = OrderDetailForm;
 			sourceTree = "<group>";
@@ -936,7 +930,6 @@
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				7C844BA524D0C3BB00D26B96 /* CardViewModel.swift in Sources */,
 				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
-				7C5C6DA524E8F49900662508 /* OrderDetailFormModel.swift in Sources */,
 				7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */,
 				1E9674AF254338A40004344C /* OrderPDF.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
@@ -955,7 +948,6 @@
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
-				7CB218DC24E79EC00015951C /* CommentsModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
 				7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */,
@@ -1144,7 +1136,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 52;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1166,7 +1158,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 52;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
