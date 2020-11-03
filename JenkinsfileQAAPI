@@ -31,6 +31,12 @@ pipeline {
 		stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
+					sh 'sudo yum install centos-release-scl'
+					sh 'sudo yum install rh-python36'
+					sh 'scl enable rh-python36 bash'
+					sh "sudo yum groupinstall 'Development Tools'"
+					sh 'python --version'
+					sh 'pip3 install bzt'
                     bzt 'OmicronLabJenkins.jmx'
                 }
             }
