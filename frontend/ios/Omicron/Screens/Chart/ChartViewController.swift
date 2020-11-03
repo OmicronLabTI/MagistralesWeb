@@ -19,6 +19,9 @@ class ChartViewController: UIViewController {
     @Injected var chartViewModel: ChartViewModel
 
     var disposeBag: DisposeBag = DisposeBag()
+    var entries: [PieChartDataEntry] = []
+    var colors: [UIColor] = []
+    var workload: Workload?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,75 +41,48 @@ class ChartViewController: UIViewController {
 
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     private func setDataToChart(_ workload: Workload?) {
-
         guard let workload = workload else { return }
-
-        var entries: [PieChartDataEntry] = []
-        var colors: [UIColor] = []
-
+        self.workload = workload
         for index in 0...5 {
-
             switch index {
-            case 0:
-                guard workload.assigned ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
+            case 0: guard workload.assigned ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
                         value: Double(workload.assigned ?? 0),
-                        label: StatusNameConstants.assignedStatus
-                    )
-                )
+                        label: StatusNameConstants.assignedStatus))
                 colors.append(OmicronColors.assignedStatus)
-            case 1:
-                guard workload.processed ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
+            case 1: guard workload.processed ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
                         value: Double(workload.processed ?? 0),
-                        label: StatusNameConstants.inProcessStatus
-                    )
-                )
+                        label: StatusNameConstants.inProcessStatus))
                 colors.append(OmicronColors.processStatus)
-            case 2:
-                guard workload.pending ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
+            case 2: guard workload.pending ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
                         value: Double(workload.pending ?? 0),
-                        label: StatusNameConstants.penddingStatus
-                    )
-                )
+                        label: StatusNameConstants.penddingStatus))
                 colors.append(OmicronColors.pendingStatus)
-            case 3:
-                guard workload.finished ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
+            case 3: guard workload.finished ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
                         value: Double(workload.finished ?? 0),
-                        label: StatusNameConstants.finishedStatus
-                    )
-                )
+                        label: StatusNameConstants.finishedStatus))
                 colors.append(OmicronColors.finishedStatus)
-            case 4:
-                guard workload.reassigned ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
+            case 4: guard workload.reassigned ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
                         value: Double(workload.reassigned ?? 0),
-                        label: StatusNameConstants.reassignedStatus
-                    )
-                )
+                        label: StatusNameConstants.reassignedStatus))
                 colors.append(OmicronColors.reassignedStatus)
-            case 5:
-                guard workload.finalized ?? 0 > 0 else { break }
-                entries.append(
-                    PieChartDataEntry(
-                        value: Double(workload.finalized ?? 0),
-                        label: StatusNameConstants.finalizedStatus
-                    )
-                )
+            case 5: guard workload.finalized ?? 0 > 0 else { break }
+                entries.append(PieChartDataEntry(
+                    value: Double(workload.finalized ?? 0),
+                    label: StatusNameConstants.finalizedStatus))
                 colors.append(UIColor.init(named: "finalized") ?? .black)
             default: break
             }
-
         }
+    }
 
+    private func setDataToChart2() {
         let set = PieChartDataSet(entries: entries, label: "")
         set.colors = colors
         set.sliceSpace = 2
@@ -121,21 +97,20 @@ class ChartViewController: UIViewController {
 
         chartView.data = data
 
-        let requests = "\(workload.totalOrders ?? 0) Pedidos"
-        let orders = "\(workload.totalFabOrders ?? 0) Órdenes"
-        let pieces = "\(workload.totalPieces ?? 0 ) Piezas"
+        let requests = "\(workload!.totalOrders ?? 0) Pedidos"
+        let orders = "\(workload!.totalFabOrders ?? 0) Órdenes"
+        let pieces = "\(workload!.totalPieces ?? 0 ) Piezas"
 
         let extraData = requests + "\n" + orders + "\n" + pieces
         let myAttrString = NSAttributedString(
-            string: extraData,
-            attributes: [NSAttributedString.Key.foregroundColor: OmicronColors.blue,
-                         NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 25)])
+              string: extraData,
+              attributes: [NSAttributedString.Key.foregroundColor: OmicronColors.blue,
+                           NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 25)])
 
         chartView.centerAttributedText = myAttrString
 
-        let totalPossibleAssing = pFormatter.string(from: NSNumber(value: workload.totalPossibleAssign ?? 0))
+        let totalPossibleAssing = pFormatter.string(from: NSNumber(value: workload!.totalPossibleAssign ?? 0))
         possibleAssingLabel.text = totalPossibleAssing
-
     }
 
     private func setupChart() {
