@@ -60,6 +60,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersToFinishLabel = false;
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
+  isCorrectToAddComments = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -138,6 +139,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         this.allComplete = false;
         this.isOnInit = false;
         this.signatureData = CONST_STRING.empty;
+        this.isCorrectToAddComments = this.dataSource.data.every(order => order.status === ConstStatus.abierto
+                                                                 && order.ordenFabricacionId === CONST_NUMBER.zero);
       }, error => this.errorService.httpError(error));
   }
 
@@ -248,7 +251,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
 
   addCommentsDialog() {
-    if (!this.dataSource.data.every(order => order.status === ConstStatus.abierto && order.ordenFabricacionId === CONST_NUMBER.zero)) {
+    if (!this.isCorrectToAddComments) {
       this.dialog.open(AddCommentsDialogComponent, {
         panelClass: 'custom-dialog-container',
         data: this.dataSource.data[0].comments
@@ -295,12 +298,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.setOpenSignatureDialog(this.signatureData);
   }
   sendToLabelsFinish() {
-    this.dataService.presentToastCustom(Messages.labelsFinish, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
            this.createConsumeService();
-          }
-        });
   }
 
   createConsumeService(isFromRemoveSignature: boolean = false, index?: number) {
@@ -332,7 +330,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   removeSignature(index: number) {
     if (this.dataService.getUserRole() === RolesType.design) {
-      this.dataService.presentToastCustom(Messages.removeLabelFinish, 'question', CONST_STRING.empty, true, true)
+      this.dataService.presentToastCustom(`${Messages.removeLabelFinish } ${this.dataSource.data[index].label.toLowerCase() }?`,
+          'question', CONST_STRING.empty, true, true)
           .then((result: any) => {
             if (result.isConfirmed) {
               this.createConsumeService(true, index);

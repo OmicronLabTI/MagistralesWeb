@@ -43,7 +43,8 @@ export const MODAL_FIND_ORDERS = {
 export const CONST_DETAIL_FORMULA = {
     update: 'update',
     insert: 'insert',
-    delete: 'delete'
+    delete: 'delete',
+    none: 'none'
 };
 export enum HttpServiceTOCall {
     ORDERS,

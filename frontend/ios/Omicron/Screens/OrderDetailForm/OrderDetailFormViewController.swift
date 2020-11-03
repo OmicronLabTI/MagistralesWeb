@@ -184,6 +184,9 @@ class OrderDetailFormViewController: FormViewController {
                 $0.options = CommonStrings.options
                 $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
             }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
+            }
             +++ Section()
             <<< ButtonRow { [weak self] in
                 $0.title = "Aceptar"

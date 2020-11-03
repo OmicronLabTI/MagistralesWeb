@@ -57,12 +57,9 @@ namespace Omicron.SapAdapter.Resources.Extensions
             object value = dictionary[key];
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
-            if (type.IsNumericType())
+            if (type.IsNumericType() && (value == null || string.IsNullOrEmpty(value.ToString().Trim())))
             {
-                if (value == null || string.IsNullOrEmpty(value.ToString().Trim()))
-                {
-                    value = 0;
-                }
+                value = 0;
             }
 
             var stringValue = value != null ? value.ToString().Trim() : string.Empty;

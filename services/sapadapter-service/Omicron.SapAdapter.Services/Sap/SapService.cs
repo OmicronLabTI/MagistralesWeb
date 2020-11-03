@@ -91,7 +91,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count);
         }
 
         /// <summary>
@@ -539,14 +539,16 @@ namespace Omicron.SapAdapter.Services.Sap
 
             order.ForEach(o =>
             {
-                var attach = attachments.FirstOrDefault(x => x.AbsEntry == o.AtcEntry);
-                var modelAttach = new OrderRecipeModel
+                attachments.Where(x => x.AbsEntry == o.AtcEntry).ToList().ForEach(x =>
                 {
-                    Order = o.PedidoId,
-                    Recipe = attach == null ? string.Empty : attach.CompletePath,
-                };
+                    var modelAttach = new OrderRecipeModel
+                    {
+                        Order = o.PedidoId,
+                        Recipe = x == null ? string.Empty : x.CompletePath,
+                    };
 
-                modelToReturn.Add(modelAttach);
+                    modelToReturn.Add(modelAttach);
+                });
             });
 
             return ServiceUtils.CreateResult(true, 200, null, modelToReturn, null, null);
@@ -563,7 +565,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
             {
-                if (x.WarehouseQuantity <= 0)
+                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
                 {
                     listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
                 }

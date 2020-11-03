@@ -151,6 +151,17 @@
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
+
+                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '4' && isFromSearchOrders">
+                            <input matInput placeholder="Nombre del cliente" type="text"
+                                   maxlength="80"
+                                   class="height-input"
+                                   formControlName="clientName"
+                                   (focusout)="trimFilterValues()">
+                            <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
+                                Solo 80 caracteres
+                            </mat-error>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row-form-order">
@@ -176,6 +187,8 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parámetros</button>
+            <div class="only-margin">
+            </div>
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal with-button-cancel">Cancelar</button>
             <button mat-button class="btn-add-modal btn--modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
                 <span>Buscar</span>

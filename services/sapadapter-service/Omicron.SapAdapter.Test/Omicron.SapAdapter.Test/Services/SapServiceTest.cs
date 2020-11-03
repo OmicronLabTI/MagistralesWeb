@@ -38,8 +38,6 @@ namespace Omicron.SapAdapter.Test.Services
 
         private ISapDao sapDao;
 
-        private IUsersService userService;
-
         private DatabaseContext context;
 
         /// <summary>
@@ -355,9 +353,8 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get the order with details.
         /// </summary>
-        /// <returns>the data.</returns>
         [Test]
-        public async Task GetComponentsNoChips()
+        public void GetComponentsNoChips()
         {
             // arrange
             var paramsDict = new Dictionary<string, string>
@@ -818,9 +815,8 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test to get recipes.
         /// </summary>
-        /// <returns>the data.</returns>
         [Test]
-        public async Task ValidateOrder()
+        public void ValidateOrder()
         {
             // arrange
             var order = 200;
