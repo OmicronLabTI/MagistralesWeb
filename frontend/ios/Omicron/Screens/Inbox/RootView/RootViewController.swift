@@ -168,8 +168,8 @@ class RootViewController: UIViewController {
         self.logoutButton.tintColor = .darkGray
         self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
         self.logoutButton.imageView?.contentMode = .scaleAspectFit
-        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 260)
-        self.logoutButton.titleEdgeInsets.left = 35
+        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 10, bottom: 15, right: 260)
+        self.logoutButton.titleEdgeInsets.left = 20
         self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
         self.versionLabel.attributedText = UtilsManager.shared
             .boldSubstring(
