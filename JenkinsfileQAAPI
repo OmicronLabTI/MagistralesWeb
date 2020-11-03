@@ -33,10 +33,10 @@ pipeline {
                 dir ('testing/stress/'){
 					sh 'sudo yum install centos-release-scl'
 					sh 'sudo yum install rh-python36'
-					sh 'scl enable rh-python36 bash'
+					sh 'sudo scl enable rh-python36 bash'
+					sh 'sudo python --version'
 					sh "sudo yum groupinstall 'Development Tools'"
-					sh 'python --version'
-					sh 'pip3 install bzt'
+					sh 'sudo pip3 install bzt'
                     bzt 'OmicronLabJenkins.jmx'
                 }
             }
