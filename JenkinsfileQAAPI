@@ -30,8 +30,9 @@ pipeline {
     stages {
 		stage('Testing Estress') {
             steps {
-				bzt --help
-                bzt '/home/omicron/deployfiles/OmicronLabJenkins.jmx'
+                dir ('testing/stress/'){
+                    bzt 'OmicronLabJenkins.jmx'
+                }
             }
         }
     }
