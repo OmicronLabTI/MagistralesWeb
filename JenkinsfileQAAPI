@@ -31,7 +31,7 @@ pipeline {
 		stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
-                    sh 'sudo bzt /home/omicron/deployfiles/OmicronLabJenkins.jmx'
+                    sh 'bzt /home/omicron/deployfiles/OmicronLabJenkins.jmx'
                 }
             }
         }
