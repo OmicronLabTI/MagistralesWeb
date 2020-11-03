@@ -36,6 +36,7 @@ class OrderDetailFormViewController: FormViewController {
     }
     // MARK: Functions
     // swiftlint:disable function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func buildForm() {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
