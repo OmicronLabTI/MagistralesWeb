@@ -816,13 +816,17 @@ namespace Omicron.SapAdapter.Test.Services
         /// Test to get recipes.
         /// </summary>
         [Test]
-        public void ValidateOrder()
+        public async Task ValidateOrder()
         {
             // arrange
             var order = 200;
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.ValidateOrder(order));
+            // Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.ValidateOrder(order));
+            var response = await this.sapService.ValidateOrder(order);
+
+            // assert
+            Assert.IsNotNull(response);
         }
     }
 }
