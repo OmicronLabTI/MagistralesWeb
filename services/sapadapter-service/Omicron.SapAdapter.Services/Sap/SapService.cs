@@ -562,13 +562,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> ValidateOrder(int orderId)
         {
-            var listErrors = new List<string>();
+            var listErrors = new List<OrderValidationResponse>();
+            var listErrorsBatches = new OrderValidationResponse { Type = ServiceConstants.BatchesAreMissingError, ListItems = new List<string>() };
+            var listErrorStock = new OrderValidationResponse { Type = ServiceConstants.MissingWarehouseStock, ListItems = new List<string>() };
 
             (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
             {
                 if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
                 {
-                    listErrors.Add($"{ServiceConstants.MissingWarehouseStock} {x.ProductId}");
+                    listErrorStock.ListItems.Add(x.ProductId);
                 }
             });
 
@@ -577,12 +579,17 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 if (!x.LotesAsignados.Any() || x.TotalNecesario > 0)
                 {
-                    listErrors.Add($"{ServiceConstants.BatchesAreMissingError} {x.CodigoProducto}");
+                    listErrorsBatches.ListItems.Add(x.CodigoProducto);
                 }
             });
 
-            if (listErrors.Any())
+            listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
+            listErrorStock.ListItems = listErrorStock.ListItems.OrderBy(x => x).ToList();
+
+            if (listErrorsBatches.ListItems.Any() || listErrorStock.ListItems.Any())
             {
+                listErrors.Add(listErrorsBatches);
+                listErrors.Add(listErrorStock);
                 var result = ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
                 throw new CustomServiceException(JsonConvert.SerializeObject(result), HttpStatusCode.BadRequest);
             }
