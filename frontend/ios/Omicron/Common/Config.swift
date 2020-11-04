@@ -23,7 +23,7 @@ struct Config {
         #elseif STAGING_RELEASE
             return .stagingRelease
         #elseif APPSTORE
-            return .appstore
+        return .appstore
         #elseif DEBUG
             return .debug
         #elseif RELEASE
