@@ -21,10 +21,29 @@ $omicron-warn: mat-palette($mat-red);
 // Create the theme object (a Sass map containing all of the palettes).
 $omicron-theme: mat-light-theme($omicron-primary, $omicron-accent, $omicron-warn);
 
+@mixin mix-omicron-theme($omicron-theme) {
+  .mat-form-field-underline {
+    caret-color: rgba(108, 144, 179, 1) !important;
+  
+  }
+  .mat-form-field-underline {
+    /*change color of underline*/
+    background-color: rgba(108, 144, 179, 1) !important;
+  }
+  .mat-form-field-ripple {
+    /*change color of underline when focused*/
+    background-color: rgba(108, 144, 179, 1) !important;
+  }
+  .mat-input-underline {
+    caret-color: rgba(108, 144, 179, 1) !important;
+  }
+}
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($omicron-theme);
+@include mix-omicron-theme($omicron-theme);
 
 /* You can add global styles to this file, and also import other style files */
 .custom-dialog-container .mat-dialog-container {
@@ -396,64 +415,6 @@ input[type=number] {
 ::-webkit-scrollbar-thumb:hover {
   background: #6C90B3!important;
 }
-/*@media(min-width: 769px){
-  .cont-center{
-      margin-left: 10%;
-      margin-top: 2%;
-      margin-right: 10%;
-      margin-bottom: 5%;;
-  }
-}
-
-@media(max-width: 768px){
-  .cont-center{
-      margin-left: 2%;
-      margin-right: 2%;
-      margin-top: 3rem;
-  }
-}
-@media(min-width: 769px){
-  .cont-center-notop{
-      margin-left: 10%;
-      margin-right: 10%;
-      margin-bottom: 5%;;
-  }
-}*/
-
-/*body > app-root > mat-sidenav-container > mat-sidenav-content > app-general-services > div.cont-center > table{
-  margin-top: 3rem !important;
-}
-
-body > app-root > mat-sidenav-container > mat-sidenav-content > app-guestscreen > div.cont-center > div.tab-top-space > mat-list{
-  background-color:#fff;
-}
-
-@media(max-width: 768px){
-  body > app-root > app-menu-bar > mat-sidenav-container > mat-sidenav-content > app-pre-registry > div.cont-center > mat-card > form > div.first-in-div > mat-form-field{
-      display: block;
-  }
-}
-
-@media(max-width: 768px){
-  body > app-root > app-menu-bar > mat-sidenav-container > mat-sidenav-content > app-wizard > div.cont-center > div > mat-horizontal-stepper > div.mat-horizontal-content-container{
-      margin-top: -2rem;
-      }
-  
-      #mat-checkbox-1 > label,
-      #mat-checkbox-2 > label{
-          margin-top: 0.8rem;
-      }
-  }
-
-  .title-head{
-    font-size: x-large;
-    font-style: unset;
-    color: #1b4063;
-  }
-
-  .mat-form-field-infix{
-    padding: 0px !important;
-  }*/
 
 
 .mat-drawer-content {
@@ -800,18 +761,18 @@ a.breadcrumblink:hover{
 .only-margin {
   width: 8px;
 }
-.mat-form-field-underline {
-  caret-color: rgba(108, 144, 179, 1) !important;
+// .mat-form-field-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
 
-}
-::ng-deep.mat-form-field-underline {
-  /*change color of underline*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
-::ng-deep.mat-form-field-ripple {
-  /*change color of underline when focused*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
-.mat-input-underline {
-  caret-color: rgba(108, 144, 179, 1) !important;
-}
+// }
+// ::ng-deep.mat-form-field-underline {
+//   /*change color of underline*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// ::ng-deep.mat-form-field-ripple {
+//   /*change color of underline when focused*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// .mat-input-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
+// }

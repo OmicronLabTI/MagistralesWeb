@@ -82,7 +82,7 @@ mat-card img{
   width: 15%;
   height: 2rem;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 }
 .input-pass-login{
@@ -114,11 +114,4 @@ justify-content: center;
   border-color: #6C90B3;
   height: 3rem;
 }
-::ng-deep.mat-form-field-underline {
-  /*change color of underline*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
-::ng-deep.mat-form-field-ripple {
-  /*change color of underline when focused*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
+
