@@ -143,12 +143,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// when stock is missing.
         /// </summary>
-        public const string MissingWarehouseStock = "No es posible Terminar, falta existencia para:";
+        public const string MissingWarehouseStock = "Stock";
 
         /// <summary>
         /// error when batche are missing.
         /// </summary>
-        public const string BatchesAreMissingError = "No es posible Terminar, faltan lotes para:";
+        public const string BatchesAreMissingError = "Batches";
 
         /// <summary>
         /// Gets the status of the order.
