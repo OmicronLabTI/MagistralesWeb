@@ -209,6 +209,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
                 var details = await this.GetDetailsByOrder(o.OrdenId);
+                details = details.OrderBy(x => x.Description).ToList();
 
                 var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();

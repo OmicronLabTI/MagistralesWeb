@@ -31,8 +31,7 @@ pipeline {
 		stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
-					sh 'sudo python --version'
-					sh 'sudo python3 --version'
+					sh 'pip install bzt'
                 }
             }
         }
