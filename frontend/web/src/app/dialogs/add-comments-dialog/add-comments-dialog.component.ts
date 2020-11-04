@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {CONST_NUMBER, CONST_STRING} from '../../constants/const';
+import {CONST_NUMBER, CONST_STRING, MODAL_FIND_ORDERS} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
@@ -15,10 +15,18 @@ export class AddCommentsDialogComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  keyDownFunction(event: KeyboardEvent) {
+    console.log('event enter')
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.comments.length > CONST_NUMBER.zero) {
+      this.saveComments();
+    }
+  }
   saveComments() {
-    if (this.comments.length <= CONST_NUMBER.oneThousand) {
+    if (this.getIsCorrectData()) {
       this.dialogRef.close(this.comments);
     }
+  }
+  getIsCorrectData() {
+    return this.comments.length <= CONST_NUMBER.oneThousand;
   }
 }
