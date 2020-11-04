@@ -52,17 +52,17 @@
 .margin-top-user-custom {
   margin-top: 8%;
 }
-::ng-deep .mat-focused .mat-form-field-label {
-  /*change color of label  */
-  color: #6C90B3 !important;
-}
+// ::ng-deep .mat-focused .mat-form-field-label {
+//   /*change color of label  */
+//   color: #6C90B3 !important;
+// }
 
-::ng-deep.mat-form-field-underline {
-  /*change color of underline*/
-  background-color: #6C90B3 !important;
-}
+// ::ng-deep.mat-form-field-underline {
+//   /*change color of underline*/
+//   background-color: #6C90B3 !important;
+// }
 
-::ng-deep.mat-form-field-ripple {
-  /*change color of underline when focused*/
-  background-color: #638db6 !important;
-}
+// ::ng-deep.mat-form-field-ripple {
+//   /*change color of underline when focused*/
+//   background-color: #638db6 !important;
+// }

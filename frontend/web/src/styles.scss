@@ -21,10 +21,29 @@ $omicron-warn: mat-palette($mat-red);
 // Create the theme object (a Sass map containing all of the palettes).
 $omicron-theme: mat-light-theme($omicron-primary, $omicron-accent, $omicron-warn);
 
+@mixin mix-omicron-theme($omicron-theme) {
+  .mat-form-field-underline {
+    caret-color: rgba(108, 144, 179, 1) !important;
+  
+  }
+  .mat-form-field-underline {
+    /*change color of underline*/
+    background-color: rgba(108, 144, 179, 1) !important;
+  }
+  .mat-form-field-ripple {
+    /*change color of underline when focused*/
+    background-color: rgba(108, 144, 179, 1) !important;
+  }
+  .mat-input-underline {
+    caret-color: rgba(108, 144, 179, 1) !important;
+  }
+}
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($omicron-theme);
+@include mix-omicron-theme($omicron-theme);
 
 /* You can add global styles to this file, and also import other style files */
 .custom-dialog-container .mat-dialog-container {
@@ -800,18 +819,18 @@ a.breadcrumblink:hover{
 .only-margin {
   width: 8px;
 }
-.mat-form-field-underline {
-  caret-color: rgba(108, 144, 179, 1) !important;
+// .mat-form-field-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
 
-}
-::ng-deep.mat-form-field-underline {
-  /*change color of underline*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
-::ng-deep.mat-form-field-ripple {
-  /*change color of underline when focused*/
-  background-color: rgba(108, 144, 179, 1) !important;
-}
-.mat-input-underline {
-  caret-color: rgba(108, 144, 179, 1) !important;
-}
+// }
+// ::ng-deep.mat-form-field-underline {
+//   /*change color of underline*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// ::ng-deep.mat-form-field-ripple {
+//   /*change color of underline when focused*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// .mat-input-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
+// }
