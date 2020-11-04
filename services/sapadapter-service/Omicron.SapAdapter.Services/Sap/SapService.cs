@@ -590,8 +590,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 listErrors.Add(listErrorsBatches);
                 listErrors.Add(listErrorStock);
-                var result = ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
-                throw new CustomServiceException(JsonConvert.SerializeObject(result), HttpStatusCode.BadRequest);
+                return ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null, null);
