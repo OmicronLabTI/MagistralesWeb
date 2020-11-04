@@ -32,7 +32,7 @@ class CommentsViewModel {
                     fechaFin: UtilsManager.shared.formattedDateFromString(
                         dateString: (self?.orderDetail[0].dueDate!)! ,
                         withFormat: "yyyy-MM-dd")!,
-                    comments: data,
+                    comments: data, warehouse: (self?.orderDetail[0].warehouse!)!,
                     components: [])
                 self?.loading.onNext(true)
                 self?.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)

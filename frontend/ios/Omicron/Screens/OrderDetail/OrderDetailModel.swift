@@ -137,15 +137,16 @@ extension Detail: Mappable {
 class OrderDetailRequest: Codable {
     let fabOrderID: Int
     let plannedQuantity: Decimal
-    let fechaFin, comments: String
+    let fechaFin, comments, warehouse: String
     let components: [Component]
     init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String,
-         comments: String, components: [Component]) {
+         comments: String, warehouse: String ,components: [Component]) {
         self.fabOrderID = fabOrderID
         self.plannedQuantity = plannedQuantity
         self.fechaFin = fechaFin
         self.comments = comments
         self.components = components
+        self.warehouse = warehouse
     }
 }
 class Component: Codable {
