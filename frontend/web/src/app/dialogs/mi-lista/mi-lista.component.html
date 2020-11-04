@@ -9,7 +9,8 @@
                 <div class="form-field-full">
                     <mat-form-field appearance="outline" class="custom-field-full generalinput fsize">
                         <mat-label style="font-size: 16px !important;">{{data.code}}</mat-label>
-                        <input matInput [placeholder]="'Nombre de la lista'" [formControl]="name" required/>
+                        <input matInput [placeholder]="'Nombre de la lista'" [formControl]="name"
+                               (keydown)="keyDownFunction($event)" required/>
                         <mat-error *ngIf="name.invalid">
                             Este campo es <strong>requerido</strong>
                         </mat-error>

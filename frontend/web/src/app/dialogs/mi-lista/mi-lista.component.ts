@@ -6,6 +6,7 @@ import { DataService } from 'src/app/services/data.service';
 import { FormControl, Validators } from '@angular/forms';
 import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
+import {MODAL_FIND_ORDERS} from '../../constants/const';
 
 @Component({
   selector: 'app-mi-lista',
@@ -48,11 +49,17 @@ export class MiListaComponent implements OnInit {
             'La lista <b>' + nameFC + '</b> ya existe.', true, false);
           } else {
             this.dialogRef.close(true);
-            this.dataService.presentToastCustom(Messages.successMyList, 'success', '', true, false);
+            this.dataService.presentToastCustom(Messages.successMyList, 'success', '', false, false);
           }
         }, error => this.errorService.httpError(error));
       }
     });
   }
+  keyDownFunction(event: KeyboardEvent) {
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.name.valid) {
+      this.saveMyList();
+    }
+  }
+
 
 }

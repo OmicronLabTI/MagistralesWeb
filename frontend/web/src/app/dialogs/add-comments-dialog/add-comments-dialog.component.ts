@@ -16,8 +16,7 @@ export class AddCommentsDialogComponent implements OnInit {
   ngOnInit() {
   }
   keyDownFunction(event: KeyboardEvent) {
-    console.log('event enter')
-    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.comments.length > CONST_NUMBER.zero) {
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.comments.trim().length > CONST_NUMBER.zero) {
       this.saveComments();
     }
   }
