@@ -4,7 +4,14 @@ import {IOrdersReq} from '../../model/http/ordenfabricacion';
 import {MatTableDataSource} from '@angular/material/table';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
-import {ClassNames, CONST_NUMBER, CONST_STRING, HttpServiceTOCall, MessageType} from '../../constants/const';
+import {
+    ClassNames,
+    CONST_NUMBER,
+    CONST_STRING,
+    HttpServiceTOCall,
+    MessageType,
+    MODAL_FIND_ORDERS
+} from '../../constants/const';
 import {CancelOrderReq} from '../../model/http/pedidos';
 import {DataService} from '../../services/data.service';
 import {Messages} from '../../constants/messages';
@@ -62,7 +69,7 @@ export class FinalizeOrdersComponent implements OnInit {
     ordersIsolatedFull.forEach(x =>  {
       // set default dates
       x.fabDate = this.toDay;
-      x.endDate = new Date(new Date().setMonth(this.toDay.getMonth()+6));
+      x.endDate = new Date(new Date().setMonth(this.toDay.getMonth() + 6));
     });
     
     this.dataSource.data = ordersIsolatedFull;
@@ -183,4 +190,9 @@ export class FinalizeOrdersComponent implements OnInit {
   )
   zFill = (str: string, max: number) => str.length < max ? this.zFill ( '0' + str, max) : str;
 
+  keyDownFunction(event: KeyboardEvent) {
+        if (event.key === MODAL_FIND_ORDERS.keyEnter && this.isCorrectData) {
+            this.finalizeOrderSend();
+        }
+    }
 }

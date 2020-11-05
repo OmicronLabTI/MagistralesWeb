@@ -36,7 +36,8 @@
                                    class="number color-number" placeholder="Lote"
                                    (focusout)="focusOutLote(i)"
                                    [(ngModel)]="element.batche"
-                                   (ngModelChange)="onBatchesChange($event, i)">
+                                   (ngModelChange)="onBatchesChange($event, i)"
+                                   >
                         </mat-form-field>
                     </td>
                 </ng-container>
@@ -50,7 +51,8 @@
                             <input matInput type="number"
                                    class="number color-number" placeholder="Cantidad"
                                    [(ngModel)]="element.quantityFinish"
-                                   (ngModelChange)="onQuantityFinishChange($event, i)" 
+                                   (ngModelChange)="onQuantityFinishChange($event, i)"
+                                   (keydown)="keyDownFunction($event)"
                                    step="any"
                                    appDigitDecimalNumber
                                    decimalPlaces="6">

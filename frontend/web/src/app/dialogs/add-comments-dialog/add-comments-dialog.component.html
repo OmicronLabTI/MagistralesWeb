@@ -9,6 +9,7 @@
         <mat-card-content class="content-card-container">
                 <div class="comment-content-container">
                     <textarea class="text-area-add-comments" cols="55" rows="20"
+                              (keydown)="keyDownFunction($event)"
                               maxlength="1000"
                               [(ngModel)]="comments"
                             >
@@ -19,7 +20,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="!comments.length > 0" (click)="saveComments()">
+            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="!comments.trim().length > 0" (click)="saveComments()">
                 Guardar
             </button>
         </mat-card-actions>

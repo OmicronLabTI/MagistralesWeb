@@ -8,7 +8,7 @@ import {
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
   HttpServiceTOCall,
-  HttpStatus,
+  HttpStatus, MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
@@ -103,6 +103,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       };
       this.usersService.createUserService(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
+            this.dialogRef.close();
           },
           error => this.userExistDialog(error));
     } else {
@@ -117,6 +118,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       };
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
+        this.dialogRef.close();
           },
           error => this.userExistDialog(error));
     }
@@ -149,5 +151,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       newNumbers += numbers.includes(pieces.charAt(index)) ?  pieces.charAt(index).trim() : CONST_STRING.empty.trim();
     }
     return newNumbers;
+  }
+
+  keyDownFunction(event: KeyboardEvent) {
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.addUserForm.valid) {
+      this.saveUser();
+    }
   }
 }
