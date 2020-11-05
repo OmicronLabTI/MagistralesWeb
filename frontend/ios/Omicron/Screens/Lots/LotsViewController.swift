@@ -264,16 +264,8 @@ class LotsViewController: UIViewController {
     func modelViewBindingExtension4() {
         // Muestra un AlertMessage
         self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            guard let weakSelf = self else { return }
-            guard !weakSelf.lotsViewModel.showErrorVC else {
-                weakSelf.lotsViewModel.showErrorVC.toggle()
-                weakSelf.performSegue(
-                    withIdentifier: ViewControllerIdentifiers.showErrorViewController,
-                    sender: message
-                )
-                return
-            }
-            AlertManager.shared.showAlert(message: message, view: weakSelf)
+            guard let self = self else { return }
+            AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
     }
     func showMoreIndicators() {
@@ -415,12 +407,6 @@ class LotsViewController: UIViewController {
         self.present(commentsVC!, animated: true, completion: nil)
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ViewControllerIdentifiers.showErrorViewController {
-            guard let errorVC = segue.destination as? ErrorViewController else { return }
-            errorVC.errorDescription = sender as? String ?? CommonStrings.orderCouldNotBeCompleted
-        }
-    }
 }
 
 extension LotsViewController: UITableViewDelegate {

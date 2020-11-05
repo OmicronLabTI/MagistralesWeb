@@ -12,6 +12,7 @@
 		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
 		1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */; };
+		1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A75FF255362780014F38D /* ValidateOrderModel.swift */; };
 		1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B277251B9BEC009F56FC /* ChartTest.swift */; };
 		1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */; };
 		1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E72B27D251B9C33009F56FC /* ComponetsTest.swift */; };
@@ -22,7 +23,6 @@
 		1E9674AF254338A40004344C /* OrderPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9674AE254338A40004344C /* OrderPDF.swift */; };
 		1EC2920B254B4C9F002FD4E3 /* connect.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EC2920A254B4C9F002FD4E3 /* connect.json */; };
 		1EC2920D254B4D90002FD4E3 /* ConnectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */; };
-		1EEC35CA25423A3A00F09B49 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EEC35C925423A3A00F09B49 /* ErrorViewController.swift */; };
 		1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321B25192C5C0040DC65 /* ChartViewController.swift */; };
 		1EF0321E251931B30040DC65 /* workload.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EF0321D251931B30040DC65 /* workload.json */; };
 		1EF03220251932DA0040DC65 /* Workload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321F251932DA0040DC65 /* Workload.swift */; };
@@ -135,6 +135,7 @@
 		1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPITableViewCell.swift; sourceTree = "<group>"; };
 		1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderCollectionViewCell.xib; sourceTree = "<group>"; };
 		1E1C019F250EA53A00CA6263 /* HeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionViewCell.swift; sourceTree = "<group>"; };
+		1E2A75FF255362780014F38D /* ValidateOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidateOrderModel.swift; sourceTree = "<group>"; };
 		1E72B277251B9BEC009F56FC /* ChartTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartTest.swift; sourceTree = "<group>"; };
 		1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadTest.swift; sourceTree = "<group>"; };
 		1E72B27D251B9C33009F56FC /* ComponetsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponetsTest.swift; sourceTree = "<group>"; };
@@ -145,7 +146,6 @@
 		1E9674AE254338A40004344C /* OrderPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderPDF.swift; sourceTree = "<group>"; };
 		1EC2920A254B4C9F002FD4E3 /* connect.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = connect.json; sourceTree = "<group>"; };
 		1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectModel.swift; sourceTree = "<group>"; };
-		1EEC35C925423A3A00F09B49 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		1EF0321B25192C5C0040DC65 /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 		1EF0321D251931B30040DC65 /* workload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = workload.json; sourceTree = "<group>"; };
 		1EF0321F251932DA0040DC65 /* Workload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workload.swift; sourceTree = "<group>"; };
@@ -269,14 +269,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1EEC35C825423A2E00F09B49 /* Error */ = {
-			isa = PBXGroup;
-			children = (
-				1EEC35C925423A3A00F09B49 /* ErrorViewController.swift */,
-			);
-			path = Error;
-			sourceTree = "<group>";
-		};
 		1EF03223251938970040DC65 /* Chart */ = {
 			isa = PBXGroup;
 			children = (
@@ -357,6 +349,7 @@
 				7C9118FA24EF1C8B00E2571A /* LotsViewController.swift */,
 				7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */,
 				7C9118FE24EF1CF200E2571A /* LotsModel.swift */,
+				1E2A75FF255362780014F38D /* ValidateOrderModel.swift */,
 			);
 			path = Lots;
 			sourceTree = "<group>";
@@ -560,7 +553,6 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				1EEC35C825423A2E00F09B49 /* Error */,
 				1EF03223251938970040DC65 /* Chart */,
 				987BDFDE2509867200D9C6E4 /* Components */,
 				7CF2EA3624F6C5DD0005602F /* SignaturePad */,
@@ -934,7 +926,6 @@
 				1E9674AF254338A40004344C /* OrderPDF.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */,
-				1EEC35CA25423A3A00F09B49 /* ErrorViewController.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
@@ -947,6 +938,7 @@
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
+				1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
@@ -1136,7 +1128,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1158,7 +1150,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

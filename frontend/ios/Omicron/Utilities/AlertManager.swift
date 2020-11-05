@@ -20,7 +20,7 @@ class AlertManager {
             alert.addAction(action)
         }
         if actions?.count ?? 0 == 0 {
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
+            let okAction = UIAlertAction(title: "Aceptar", style: .default, handler: nil)
             alert.addAction(okAction)
         }
         view?.present(alert, animated: true, completion: nil)

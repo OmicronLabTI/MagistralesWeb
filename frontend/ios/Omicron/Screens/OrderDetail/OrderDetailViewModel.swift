@@ -38,7 +38,6 @@ class OrderDetailViewModel {
     var endRefreshing = PublishSubject<Void>()
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
-    var showErrorVC = false
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
@@ -211,24 +210,30 @@ class OrderDetailViewModel {
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.showSignatureView.onNext("Firma del  QFB")
-            }, onError: { [weak self] error in
+                guard response.code == 400, !(response.success ?? false) else {
+                    self.showSignatureView.onNext("Firma del  QFB")
+                    return
+                }
+                guard let errors = response.response, errors.count > 0 else { return }
+                var messageConcat = ""
+                for error in errors {
+                    if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
+                        messageConcat += "No es posible Terminar, faltan lotes para: "
+                        messageConcat += "\n"
+                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                        messageConcat += "\n\n"
+                    } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
+                        messageConcat += "No es posible Terminar, falta existencia para: "
+                        messageConcat += "\n"
+                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                    }
+                }
+                self.showAlert.onNext(messageConcat)
+            }, onError: { [weak self] _ in
 
                 guard let self = self else { return }
                 self.loading.onNext(false)
-
-                guard let requestError = error as? RequestError else { return }
-                switch requestError {
-                case .invalidRequest(let response):
-                    var messageConcat = ""
-                    for message in response?.response ?? [] {
-                        messageConcat += "* " + message + "\n\n"
-                    }
-                    self.showErrorVC.toggle()
-                    self.showAlert.onNext(messageConcat)
-                case .unknownError, .unauthorized, .notFound, .invalidResponse, .serverError, .serverUnavailable:
-                    break
-                }
+                self.showAlert.onNext("Error")
 
             }).disposed(by: disposeBag)
     }
