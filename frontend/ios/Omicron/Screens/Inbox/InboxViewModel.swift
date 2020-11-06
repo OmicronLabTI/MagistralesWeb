@@ -67,6 +67,7 @@ class InboxViewModel {
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
             self?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering ?? [])]
             self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering ?? [])])
@@ -78,6 +79,7 @@ class InboxViewModel {
         // Funcionalidad para mostra la vista ordenada número de orden
         groupByOrderNumberButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             if self?.ordersTemp != nil {
                 let dataGroupedByBaseDocument = Dictionary(grouping: self!.ordersTemp, by: { "\($0.baseDocument!)" })
                 let ordersGroupedAndSorted = self?.groupedByOrderNumber(data: dataGroupedByBaseDocument)
@@ -120,6 +122,7 @@ class InboxViewModel {
     func similarityViewButtonAction() {
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             if self?.ordersTemp != nil {
                 for order in self!.ordersTemp {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
@@ -276,11 +279,11 @@ class InboxViewModel {
             }
             self.networkManager.changeStatusOrder(changeStatusRequest: orders)
                 .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
-                self?.loading.onNext(false)
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 self?.processButtonIsEnable.onNext(false)
                 self?.pendingButtonIsEnable.onNext(false)
                 self?.rootViewModel.needsRefresh = true
+                self?.loading.onNext(false)
                 }, onError: { [weak self] _ in
                     self?.loading.onNext(false)
                     self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
