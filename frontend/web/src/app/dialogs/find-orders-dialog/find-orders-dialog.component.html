@@ -144,7 +144,7 @@
                         </mat-form-field>
                     </div>
 
-                    <div class="form-field-right">
+                    <div [ngClass]="dataService.getUserRole() === '4' && isFromSearchOrders ? 'form-field-right-no-padding' : 'form-field-right' ">
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
@@ -152,7 +152,7 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '4' && isFromSearchOrders">
+                        <mat-form-field class="custom-field-full no-padding-custom" *ngIf="dataService.getUserRole() === '4' && isFromSearchOrders">
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
