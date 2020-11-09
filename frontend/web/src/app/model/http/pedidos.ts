@@ -47,6 +47,9 @@ export class ParamsPedidos {
     productCode?: string;
     isFromOrders?: boolean;
     clientName?: string;
+    label?: string;
+    finlabel: string;
+
 
 }
 
@@ -75,6 +78,8 @@ export class IPedidoReq {
     pedidoStatus: string;
     qfb?: string;
     class?: string;
+    labelType: string;
+    finishedLabel: number;
 }
 
 export class CancelOrderReq {
@@ -112,4 +117,8 @@ export class WorkLoad {
 }
 export class ICreatePdfOrdersRes extends BaseResponseHttp {
     response: string[];
+}
+export class OrderToDelivered {
+    orderId: number;
+    status: string;
 }

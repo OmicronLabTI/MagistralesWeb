@@ -11,7 +11,7 @@ import RxSwift
 import Resolver
 import Moya
 
-@testable import Omicron
+@testable import OmicronLab
 
 class LoginTest: XCTestCase {
     // MARK: - VARIABLES

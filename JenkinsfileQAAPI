@@ -28,37 +28,11 @@ pipeline {
         ).trim()
 	}
     stages {
-		stage('Kubernetes Down') {
+		stage('Testing Estress') {
             steps {
-                echo 'Running Kubernetes down'
-				sh 'sudo kubectl config use-context kubernetes-admin@kubernetes'
-                sh 'sudo kubectl delete all --all --grace-period=0 --force'
-				sh 'sudo docker system prune -f'
-            }
-        }        
-        stage('Build Federated Services') {
-            steps {
-                echo 'Building Fedetared Services'
-                dir ('services/apimanager/'){
-                    sh 'mvn clean package'
-                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
-                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-apimanager-repository ."
-                    }
+                dir ('testing/stress/'){
+					sh 'pip install bzt'
                 }
-				dir ('services/oauthserver/'){
-                    sh 'mvn clean package'
-                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
-                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-oauthserver-repository ."
-                    }
-                }
-            }
-        }
-        stage('Kubernetes Up') {
-            steps {
-                echo 'Running Kubernetes'
-                sh 'sudo kubectl apply -f deploy_qa.yaml'
             }
         }
     }

@@ -13,10 +13,10 @@ import {
   IGetNewBachCodeRes,
   IPedidosListRes,
   IPlaceOrdersAutomaticReq, IPlaceOrdersAutomaticRes,
-  IProcessOrdersRes, IRecipesRes, IWorkLoadRes,
+  IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -84,10 +84,25 @@ export class PedidosService {
     return this.consumeService.httpGet<IExistsBachCodeRes>(
         `${Endpoints.pedidos.checkIfExistsBatchCode}?productCode=${productCode}&batchCode=${batchCode}`);
   }
+  getOrdersPdfViews(orderIds: number[]) {
+    return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.viewPdf}`, orderIds);
+  }
+  putOrdersToDelivered(ordersToDelivered: OrderToDelivered[]) {
+    return this.consumeService.httpPut<ICreatePdfOrdersRes>(`${Endpoints.orders.ordersToDelivered}`, ordersToDelivered);
+  }
   getRecipesByOrder(orderId: number) {
     return this.consumeService.httpGet<IRecipesRes>(`${Endpoints.pedidos.getRecipes}/${orderId}`);
   }
   createPdfOrders(orderIds: number[]) {
     return this.consumeService.httpPost<ICreatePdfOrdersRes>(`${Endpoints.orders.createPdf}`, orderIds);
+  }
+  savedComments(orderId: number, comments: string) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.savedComments}`, {
+      orderId,
+      comments
+    });
+  }
+  finishLabels(labelsToFinish: IPedidoDetalleLabelReq) {
+    return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.finishLabels}`, labelsToFinish);
   }
 }

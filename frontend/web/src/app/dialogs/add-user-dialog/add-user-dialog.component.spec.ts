@@ -32,7 +32,7 @@ describe('AddUserDialogComponent', () => {
     id: '12516967-1a01-488b-b6ec-4ebd9500d3ee',
     isChecked: false,
     lastName: '34',
-    password: '34lajUddd',
+    password: 'QXhpdHkyMDIwaGh4eA==',
     piezas: 10,
     role: 3,
     userName: 'a44'
@@ -40,7 +40,7 @@ describe('AddUserDialogComponent', () => {
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive',
-        'setCallHttpService', 'setMessageGeneralCallHttp'
+        'setCallHttpService', 'setMessageGeneralCallHttp', 'getNormalizeString'
     ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getRoles', 'createUserService' , 'updateUser'
@@ -106,10 +106,9 @@ describe('AddUserDialogComponent', () => {
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('3');
 
-    expect(component.addUserForm.get('userName').value).toEqual(userEditSpec.userName);
     expect(component.addUserForm.get('firstName').value).toEqual(userEditSpec.firstName);
     expect(component.addUserForm.get('lastName').value).toEqual(userEditSpec.lastName);
-    expect(component.addUserForm.get('password').value).toEqual(userEditSpec.password);
+    expect(component.addUserForm.get('password').value).toEqual( atob('QXhpdHkyMDIwaGh4eA=='));
     expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
     expect(component.addUserForm.get('piezas').value).toEqual(userEditSpec.piezas);
     expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());

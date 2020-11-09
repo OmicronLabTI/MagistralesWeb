@@ -42,6 +42,7 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var orderNumberLabel: UILabel!
     @IBOutlet weak var manufacturingOrderLabel: UILabel!
     @IBOutlet weak var finishOrderButton: UIButton!
+    @IBOutlet weak var buttonsViewConstraint: NSLayoutConstraint!
     // MARK: - Variables
     @Injected var lotsViewModel: LotsViewModel
     @Injected var lottieManager: LottieManager
@@ -83,6 +84,7 @@ class LotsViewController: UIViewController {
         self.modelBindingExtension1()
         self.modelViewBindingEstension2()
         self.modelViewBindingExtension3()
+        self.modelViewBindingExtension4()
         //Muestra los datos en la tabla de Lotes Selecionados
         self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(
             cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell,
@@ -258,10 +260,12 @@ class LotsViewController: UIViewController {
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
         }.disposed(by: self.disposeBag)
+    }
+    func modelViewBindingExtension4() {
         // Muestra un AlertMessage
         self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            guard let weakSelf = self else { return }
-            AlertManager.shared.showAlert(message: message, view: weakSelf)
+            guard let self = self else { return }
+            AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
     }
     func showMoreIndicators() {
@@ -313,7 +317,9 @@ class LotsViewController: UIViewController {
         if self.statusType == "En proceso" {
             self.pendingButton.isHidden = false
         } else {
+            // Caso cuando el statusType es Reasignado
             self.pendingButton.isHidden = true
+            self.buttonsViewConstraint.constant = 200
         }
     }
     func initComponentsExtension() {
@@ -400,6 +406,7 @@ class LotsViewController: UIViewController {
         commentsVC?.modalPresentationStyle = .overCurrentContext
         self.present(commentsVC!, animated: true, completion: nil)
     }
+
 }
 
 extension LotsViewController: UITableViewDelegate {

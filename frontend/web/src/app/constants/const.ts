@@ -1,4 +1,5 @@
 export const CONST_NUMBER = {
+    lessOne: -1,
     zero: 0,
     one: 1,
     two: 2,
@@ -11,7 +12,8 @@ export const CONST_NUMBER = {
     six: 6,
     seven: 7,
     fifty: 50,
-    oneHundred: 100
+    oneHundred: 100,
+    oneThousand: 1000
 };
 export const CONST_STRING = {
     empty: ''
@@ -19,7 +21,7 @@ export const CONST_STRING = {
 
 export const CONST_USER_DIALOG = {
     defaultQfb: 'QFB',
-    defaultNumberOfPieces: 200,
+    defaultNumberOfPieces: '200',
     patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/
 };
 
@@ -41,7 +43,8 @@ export const MODAL_FIND_ORDERS = {
 export const CONST_DETAIL_FORMULA = {
     update: 'update',
     insert: 'insert',
-    delete: 'delete'
+    delete: 'delete',
+    none: 'none'
 };
 export enum HttpServiceTOCall {
     ORDERS,
@@ -82,6 +85,7 @@ export const ConstStatus = {
     asignado: 'Asignado',
     terminado: 'Terminado',
     reasingado: 'Reasignado',
+    entregado: 'Entregado',
 };
 export const HttpStatus = {
     ok: 200,
@@ -126,6 +130,7 @@ export enum FromToFilter {
     fromOrdersReassign,
     fromOrdersCancel,
     fromDetailOrder,
+    fromOrderDetailLabel,
     fromOrdersIsolated,
     fromOrdersIsolatedCancel,
     fromOrderIsolatedReassign,
@@ -175,6 +180,11 @@ export const pathRoles = {
         'workLoad',
         'materialRequest',
         '**'
+    ],
+    design: [
+        'pedidos',
+        'pdetalle',
+        '**'
     ]
 };
 export const CONST_PRODUCTIVITY = {
@@ -190,3 +200,16 @@ export enum TypeProperty {
     description,
     requestQuantity
 }
+
+export enum TypeToSeeTap {
+    order,
+    receipt,
+    system
+}
+
+export const RolesType = {
+    logistic: '3',
+    admin: '1',
+    design: '4',
+    warehouse: '5'
+};

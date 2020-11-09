@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IUserReq} from '../../model/http/users';
+import {IUserReq, SearchUsersData} from '../../model/http/users';
 import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dialog.component';
 import {UsersService} from '../../services/users.service';
@@ -11,6 +11,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
+import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/search-users-dialog.component';
 
 @Component({
     selector: 'app-user-list',
@@ -29,6 +30,8 @@ export class UserListComponent implements OnInit, OnDestroy {
     limit = CONST_NUMBER.ten;
     subscriptionUsers = new Subscription();
     isOnInit = true;
+    searchUsersData = new SearchUsersData();
+    fullQueryString = CONST_STRING.empty;
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
                 private errorService: ErrorService,
                 private titleService: Title) {
@@ -49,7 +52,8 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     getUsers() {
 
-        this.usersService.getUsers(this.offset, this.limit).subscribe(userRes => {
+        this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
+
                 this.lengthPaginator = userRes.comments;
                 this.dataSource.data = userRes.response;
                 this.dataSource.data.forEach( user => {
@@ -122,5 +126,41 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscriptionUsers.unsubscribe();
+    }
+
+    openSearchUsers() {
+        this.dialog.open(SearchUsersDialogComponent, {
+            panelClass: 'custom-dialog-container',
+            data: this.searchUsersData
+        }).afterClosed().subscribe(searchUsersResult => {
+            if (searchUsersResult) {
+                this.onSuccessUserResult(searchUsersResult);
+            }
+        });
+    }
+
+    onSuccessUserResult(searchUsersResult: any) {
+        this.fullQueryString = CONST_STRING.empty;
+        this.searchUsersData = searchUsersResult;
+        if (this.searchUsersData.activoSe && this.searchUsersData.activoSe !== CONST_STRING.empty) {
+            this.fullQueryString = `status=${this.searchUsersData.activoSe}&`;
+        }
+        if (this.searchUsersData.asignableSe && this.searchUsersData.asignableSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}assignable=${this.searchUsersData.asignableSe}&`;
+        }
+        if (this.searchUsersData.firstNameSe && this.searchUsersData.firstNameSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}fname=${this.searchUsersData.firstNameSe}&`;
+        }
+        if (this.searchUsersData.lastNameSe && this.searchUsersData.lastNameSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}lname=${this.searchUsersData.lastNameSe}&`;
+        }
+        if (this.searchUsersData.userNameSe && this.searchUsersData.userNameSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}user=${this.searchUsersData.userNameSe}&`;
+        }
+        if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
+        }
+        this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
+        this.getUsers();
     }
 }

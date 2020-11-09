@@ -143,5 +143,32 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="ordersId">the sales orders..</param>
         /// <returns>the data.</returns>
         Task<ResultModel> PrintOrders(List<int> ordersId);
+
+        /// <summary>
+        /// Updates the saleorder comments.
+        /// </summary>
+        /// <param name="updateOrder">the order to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateSaleOrders(UpdateOrderCommentsModel updateOrder);
+
+        /// <summary>
+        /// Updates the orders designer label.
+        /// </summary>
+        /// <param name="updateDesignerLabels">the data to save.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateDesignerLabel(UpdateDesignerLabelModel updateDesignerLabels);
+
+        /// <summary>
+        /// Creates the pdf for the sale orders.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId);
+
+        /// <summary>
+        /// Send the petition to delete.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> DeleteFiles();
     }
 }

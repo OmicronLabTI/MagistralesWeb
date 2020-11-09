@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Omicron.SapAdapter.Repository\Omicron.SapAdapter.Entities.csproj" />
     <ProjectReference Include="..\Omicron.SapAdapter.Resources\Omicron.SapAdapter.Resources.csproj" />
   </ItemGroup>

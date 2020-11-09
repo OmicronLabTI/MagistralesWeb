@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Test
     using Moq;
     using Moq.Protected;
     using Omicron.Pedidos.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// Base class for http clients.
@@ -52,7 +53,12 @@ namespace Omicron.Pedidos.Test
                 BaseAddress = new Uri("http://test.com/"),
             };
 
-            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient });
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
         }
 
         /// <summary>
@@ -83,7 +89,12 @@ namespace Omicron.Pedidos.Test
                 BaseAddress = new Uri("http://test.com/"),
             };
 
-            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient });
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
         }
     }
 }

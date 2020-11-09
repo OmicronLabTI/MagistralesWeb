@@ -32,7 +32,7 @@ class LoginViewModel {
         loginDidTap
             .withLatestFrom(input)
             .map({
-                Login(username: $0, password: $1, redirectUri: "", clientId2: "", origin: "app")
+                Login(username: $0, password: self.passwordToBase64($1), redirectUri: "", clientId2: "", origin: "app")
             })
             .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
@@ -61,5 +61,15 @@ class LoginViewModel {
                             }
                     }).disposed(by: self.disposeBag)
             }).disposed(by: disposeBag)
+    }
+
+    private func passwordToBase64(_ password: String) -> String {
+        let utf8str = password.data(using: .utf8)
+
+        if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
+            print("Encoded: \(base64Encoded)")
+            return base64Encoded
+        }
+        return ""
     }
 }

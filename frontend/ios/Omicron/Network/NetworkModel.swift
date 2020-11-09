@@ -14,6 +14,8 @@ class HttpError {
     var error: String?
     var userError: String?
     var info: String?
+    var response: [String]?
+    var comments: String?
     required init?(map: Map) {}
 }
 
@@ -23,6 +25,8 @@ extension HttpError: Mappable {
         error <- map["error"]
         userError <- map["userError"]
         info <- map["info"]
+        response <- map["Response"]
+        comments <- map["Comments"]
     }
 }
 

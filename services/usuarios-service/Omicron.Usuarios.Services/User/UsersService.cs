@@ -85,7 +85,6 @@ namespace Omicron.Usuarios.Services.User
             }
 
             userModel.Id = Guid.NewGuid().ToString("D");
-            userModel.Password = ServiceUtils.ConvertToBase64(userModel.Password);
             await this.userDao.InsertUser(userModel);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, JsonConvert.SerializeObject(userModel), null, null);
@@ -98,7 +97,8 @@ namespace Omicron.Usuarios.Services.User
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> GetUsers(Dictionary<string, string> parameters)
         {
-            var users = await this.userDao.GetAllUsersAsync();
+            var users = (await this.userDao.GetAllUsersAsync()).ToList();
+            users = ServiceUtils.GetUsersToReturn(users, parameters);
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -109,9 +109,7 @@ namespace Omicron.Usuarios.Services.User
             var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            listUsers.ForEach(x => x.Password = ServiceUtils.ConvertFromBase64(x.Password));
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, users.Count());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, users.Count);
         }
 
         /// <summary>
@@ -149,7 +147,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.UserName = user.UserName;
             usertoUpdate.FirstName = user.FirstName;
             usertoUpdate.LastName = user.LastName;
-            usertoUpdate.Password = ServiceUtils.ConvertToBase64(user.Password);
+            usertoUpdate.Password = user.Password;
             usertoUpdate.Role = user.Role;
             usertoUpdate.Activo = user.Activo;
             usertoUpdate.Piezas = user.Piezas;

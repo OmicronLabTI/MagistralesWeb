@@ -12,6 +12,7 @@ import RxCocoa
 import Resolver
 import RxDataSources
 import Charts
+import PDFKit
 
 // swiftlint:disable type_body_length
 class InboxViewController: UIViewController {
@@ -26,6 +27,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
+    var order = PublishSubject<Int>()
     // MARK: - Variables
     private var bindingCollectionView = true
     @Injected var inboxViewModel: InboxViewModel
@@ -98,7 +100,12 @@ class InboxViewController: UIViewController {
         cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
         cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
-        cell?.tagDescriptionLabel.text = element.tag ?? CommonStrings.empty
+        cell?.tagDescriptionLabel.text = element.tag
+        if !element.finishedLabel {
+            cell?.tagDescriptionLabel.textColor = .red
+        } else {
+            cell?.tagDescriptionLabel.textColor = .systemGreen
+        }
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
@@ -128,12 +135,25 @@ class InboxViewController: UIViewController {
         })
         dataSource
             .configureSupplementaryView = { (dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
-            let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
-                for: indexPath) as? HeaderCollectionViewCell
-            header?.productID.text = dataSource.sectionModels[indexPath.section].identity
-            return header!
+                let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
+                    for: indexPath) as? HeaderCollectionViewCell
+                let headerText = dataSource.sectionModels[indexPath.section].identity
+                header?.productID.text = headerText
+                if headerText.contains("Pedido") {
+                    let productId = headerText
+                        .components(separatedBy: CharacterSet.decimalDigits.inverted)
+                        .joined()
+                    header?.productId = Int(productId) ?? 0
+                    header?.delegate = self
+                    header?.pdfImageView.isHidden = false
+                } else {
+                    header?.productId = 0
+                    header?.delegate = nil
+                    header?.pdfImageView.isHidden = true
+                }
+                return header!
         }
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
@@ -172,6 +192,15 @@ class InboxViewController: UIViewController {
         inboxViewModel.pendingButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
             self?.pendingButton.isEnabled = isEnable
         }).self.disposed(by: self.disposeBag)
+        inboxViewModel.orderURLPDF.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
+            guard let self = self else { return }
+            print(urlPDF)
+            DispatchQueue.main.async {
+                let pdfViewController = PDFViewController()
+                pdfViewController.pdfURL = URL(string: urlPDF)
+                self.present(pdfViewController, animated: true, completion: nil)
+            }
+        }).disposed(by: disposeBag)
         self.modelBindingExtention1()
         self.modelBindingExtension2()
         self.modelBindingExtension3()
@@ -246,6 +275,7 @@ class InboxViewController: UIViewController {
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
             groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
+        order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
             guard let row = index?.row else { return }
             self?.chageStatusName(index: row)
@@ -305,7 +335,7 @@ class InboxViewController: UIViewController {
         self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.itemSize = CGSize(width: 355, height: 250)
+        layout.itemSize = CGSize(width: 365, height: 250)
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -60
         print(UIScreen.main.bounds.width)
@@ -412,4 +442,19 @@ extension UICollectionView {
         self.backgroundView = nil
     }
     // swiftlint:disable file_length
+}
+
+// MARK: - HeaderSelectedDelegate
+
+extension InboxViewController: HeaderSelectedDelegate {
+
+    func headerSelected(productID: Int) {
+        inboxViewModel.getConnection()
+        inboxViewModel.hasConnection.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] hasConnection in
+                guard let self = self else { return }
+                if hasConnection { self.order.onNext(productID) }
+            }).disposed(by: disposeBag)
+    }
+
 }

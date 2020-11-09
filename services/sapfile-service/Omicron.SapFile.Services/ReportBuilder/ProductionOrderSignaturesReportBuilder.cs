@@ -9,12 +9,12 @@ namespace Omicron.SapFile.Services.ReportBuilder
 {
     using System.Drawing;
     using System.IO;
-    using System.ServiceModel;
     using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Services.Constants;
     using Omicron.SapFile.Services.Utils;
     using Spire.Doc;
     using Spire.Doc.Documents;
+    using Spire.Doc.Fields;
 
     /// <summary>
     /// Production order signatures report builder.
@@ -119,11 +119,17 @@ namespace Omicron.SapFile.Services.ReportBuilder
             var dataRowSignatures = table.Rows[0];
             var dataRowName = table.Rows[1];
 
+            var dataRowSecondSignatures = table.Rows[3];
+            var dataRowSecondNames = table.Rows[4];
+
             // QFB signature
             AddSignaturePicture(dataRowSignatures.Cells[0], this.order.QfbSignature);
 
             // Technical signature
             AddSignaturePicture(dataRowSignatures.Cells[2], this.order.TechnicalSignature);
+
+            // Designer signature
+            AddSignaturePicture(dataRowSecondSignatures.Cells[0], this.order.DesignerSignature);
 
             // QFB name
             dataRowName.Cells[0].ChildObjects.Clear();
@@ -133,6 +139,16 @@ namespace Omicron.SapFile.Services.ReportBuilder
             cellContent.Format.HorizontalAlignment = HorizontalAlignment.Center;
             cellContent.AppendText(this.order.QfbName);
             cellContent.ApplyStyle(STYLEBLACKTEXT);
+
+            // Designer Name
+            var designerName = string.IsNullOrEmpty(this.order.DesignerName) ? string.Empty : this.order.DesignerName;
+            dataRowSecondNames.Cells[0].ChildObjects.Clear();
+            dataRowSecondNames.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+
+            var cellContentName = dataRowSecondNames.Cells[0].AddParagraph();
+            cellContentName.Format.HorizontalAlignment = HorizontalAlignment.Center;
+            cellContentName.AppendText(designerName);
+            cellContentName.ApplyStyle(STYLEBLACKTEXT);
         }
 
         /// <summary>
@@ -183,7 +199,7 @@ namespace Omicron.SapFile.Services.ReportBuilder
             styleForBlackText.CharacterFormat.TextColor = ColorTranslator.FromHtml(blackColor);
             styleForBlackText.CharacterFormat.FontName = font;
             styleForBlackText.CharacterFormat.FontSize = 12;
-            document.Styles.Add(styleForBlackText); 
+            document.Styles.Add(styleForBlackText);
         }
     }
 }

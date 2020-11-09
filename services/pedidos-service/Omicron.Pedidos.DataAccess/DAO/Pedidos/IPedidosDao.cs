@@ -89,12 +89,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<bool> InsertOrderSignatures(UserOrderSignatureModel orderSignature);
 
         /// <summary>
+        /// Method for add order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to add.</param>
+        /// <returns>Operation result</returns>
+        Task<bool> InsertOrderSignatures(List<UserOrderSignatureModel> orderSignature);
+
+        /// <summary>
         /// Method for save order signatures.
         /// </summary>
         /// <param name="orderSignature">Order signatures to save.</param>
         /// <returns>Operation result</returns>
         Task<bool> SaveOrderSignatures(UserOrderSignatureModel orderSignature);
-         
+
+        /// <summary>
+        /// Method for save order signatures.
+        /// </summary>
+        /// <param name="orderSignature">Order signatures to save.</param>
+        /// <returns>Operation result</returns>
+        Task<bool> SaveOrderSignatures(List<UserOrderSignatureModel> orderSignature);
+
         /// <summary>
         /// Get order signature by user order id.
         /// </summary>

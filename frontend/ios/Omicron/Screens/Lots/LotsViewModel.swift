@@ -299,15 +299,37 @@ class LotsViewModel {
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId)
-            .subscribe(onNext: { [weak self] _ in
-            self?.loading.onNext(false)
-            self?.showSignatureView.onNext("Firma del  QFB")
-            }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                self?.showMessage.onNext(CommonStrings.orderCouldNotBeCompleted)
-                print(error.localizedDescription)
-        }).disposed(by: self.disposeBag)
+
+        networkManager.getValidateOrder(orderId: orderId)
+            .subscribe(onNext: { [weak self] response in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                guard response.code == 400, !(response.success ?? false) else {
+                    self.showSignatureView.onNext("Firma del  QFB")
+                    return
+                }
+                guard let errors = response.response, errors.count > 0 else { return }
+                var messageConcat = ""
+                for error in errors {
+                    if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
+                        messageConcat += "No es posible Terminar, faltan lotes para: "
+                        messageConcat += "\n"
+                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                        messageConcat += "\n\n"
+                    } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
+                        messageConcat += "No es posible Terminar, falta existencia para: "
+                        messageConcat += "\n"
+                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                    }
+                }
+                self.showMessage.onNext(messageConcat)
+            }, onError: { [weak self] _ in
+
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showMessage.onNext("Error")
+
+            }).disposed(by: disposeBag)
     }
     // Valida si el usuario obtuvo las firmas y finaliza la orden 
     func callFinishOrderService() {

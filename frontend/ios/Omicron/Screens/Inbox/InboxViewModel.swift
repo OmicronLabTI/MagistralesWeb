@@ -39,6 +39,9 @@ class InboxViewModel {
     var showKPIView = PublishSubject<Bool>()
     var viewKPIDidPressed = PublishSubject<Void>()
     var deselectRow = PublishSubject<Bool>()
+    var selectOrder = PublishSubject<Int?>()
+    var orderURLPDF = PublishSubject<String>()
+    var hasConnection = PublishSubject<Bool>()
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     var normalSort = true
@@ -64,6 +67,7 @@ class InboxViewModel {
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
             self?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering ?? [])]
             self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering ?? [])])
@@ -75,6 +79,7 @@ class InboxViewModel {
         // Funcionalidad para mostra la vista ordenada número de orden
         groupByOrderNumberButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             if self?.ordersTemp != nil {
                 let dataGroupedByBaseDocument = Dictionary(grouping: self!.ordersTemp, by: { "\($0.baseDocument!)" })
                 let ordersGroupedAndSorted = self?.groupedByOrderNumber(data: dataGroupedByBaseDocument)
@@ -86,15 +91,38 @@ class InboxViewModel {
             self?.groupedByOrderNumberIsEnable.onNext(false)
             self?.changeStatusSort(normal: false, similarity: false, grouped: true)
         }).disposed(by: self.disposeBag)
+        initExtension()
+    }
+
+    func initExtension() {
         viewKPIDidPressed.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.showKPIView.onNext(true)
             self.deselectRow.onNext(true)
         }).disposed(by: disposeBag)
+        selectOrder.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] orders in
+            guard let orders = orders, let self = self else { return }
+            self.postOrderPDf(orders: [orders])
+        }).disposed(by: disposeBag)
     }
+
+    private func postOrderPDf(orders: [Int]) {
+        networkManager.postOrdersPDF(orders: orders).subscribe(onNext: { [weak self] response in
+            guard let self = self, response.response?.count ?? 0 > 0 else { return }
+            self.loading.onNext(false)
+            self.orderURLPDF.onNext(response.response!.first!)
+        }, onError: { [weak self] error in
+            guard let self = self else { return }
+            print(error.localizedDescription)
+            self.loading.onNext(false)
+            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
+        }).disposed(by: disposeBag)
+    }
+
     func similarityViewButtonAction() {
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
+            self?.pendingButtonIsEnable.onNext(false)
             if self?.ordersTemp != nil {
                 for order in self!.ordersTemp {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
@@ -251,11 +279,11 @@ class InboxViewModel {
             }
             self.networkManager.changeStatusOrder(changeStatusRequest: orders)
                 .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
-                self?.loading.onNext(false)
                 self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 self?.processButtonIsEnable.onNext(false)
                 self?.pendingButtonIsEnable.onNext(false)
                 self?.rootViewModel.needsRefresh = true
+                self?.loading.onNext(false)
                 }, onError: { [weak self] _ in
                     self?.loading.onNext(false)
                     self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
@@ -312,4 +340,20 @@ class InboxViewModel {
             groupSort = true
         }
     }
+
+    func getConnection() {
+
+        self.loading.onNext(true)
+        networkManager.getConnect().subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            self.hasConnection.onNext(true)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.hasConnection.onNext(false)
+            self.loading.onNext(false)
+            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
+        }).disposed(by: disposeBag)
+
+    }
+
 }

@@ -11,26 +11,23 @@ import RxSwift
 import Moya
 import Resolver
 
-@testable import Omicron
+@testable import OmicronLab
 
 class BatchesTest: XCTestCase {
     // MARK: - VARIABLES
     var lotsViewModel: LotsViewModel?
     var disposeBag: DisposeBag?
     var orderId: Int?
-    var expectation: XCTestExpectation?
     @Injected var networkManager: NetworkManager
     override func setUp() {
         lotsViewModel = LotsViewModel()
         disposeBag = DisposeBag()
         orderId = 0
-        expectation = XCTestExpectation()
     }
     override func tearDown() {
         lotsViewModel = nil
         disposeBag = nil
         orderId = nil
-        expectation =  nil
     }
     // MARK: - TEST FUNCTIONS
     func testGetLotsSuccess() {
@@ -169,17 +166,14 @@ class BatchesTest: XCTestCase {
         self.lotsViewModel!.saveLotsDidTap.onNext(())
     }
     func testValidIfOrderCanBeFinalizedNotNull() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: {
+            res in
             XCTAssertNotNil(res)
-            self?.expectation?.fulfill()
-        }).disposed(by: self.disposeBag!)
-        wait(for: [self.expectation!], timeout: 1000)
-    }
+        }).disposed(by: self.disposeBag!)    }
     func testValidIfOrderCanBeFinalizedValidCode() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { [weak self] res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: {
+            res in
             XCTAssertTrue(res.code == 200)
-            self?.expectation?.fulfill()
         }).disposed(by: self.disposeBag!)
-        wait(for: [self.expectation!], timeout: 1000)
     }
 }

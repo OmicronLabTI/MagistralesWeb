@@ -104,7 +104,11 @@
     width: 75% !important;
   }
 
-
+ .item-selected {
+   background-color: #6C90B3;
+   color: #fff !important;
+   font-weight: 700 !important;
+ }
   tr.mat-footer-row, tr.mat-row {
     height: 25px !important;
   }

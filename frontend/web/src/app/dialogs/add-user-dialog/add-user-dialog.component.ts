@@ -8,8 +8,7 @@ import {
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
   HttpServiceTOCall,
-  HttpStatus,
-  MaterialRequestPage,
+  HttpStatus, MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
 import {DataService} from '../../services/data.service';
@@ -35,7 +34,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
               private dialogRef: MatDialogRef<AddUserDialogComponent>) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
-
     this.addUserForm = this.formBuilder.group({
       userName: ['', [Validators.required, Validators.maxLength(50)]],
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -53,7 +51,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
-            valueForm.userName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), { emitEvent: false });
+            this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
       }
       if (valueForm.piezas) {
         this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
@@ -85,7 +83,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
       this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
       this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
-      this.addUserForm.get('password').setValue(this.userToEdit.password);
+      this.addUserForm.get('password').setValue(atob(this.userToEdit.password));
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
@@ -98,18 +96,21 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (!this.isForEditModal) {
       const user: IUserReq = {
         ...this.addUserForm.value,
+        password: btoa(this.addUserForm.get('password').value),
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
         piezas: Number(this.addUserForm.get('piezas').value)
       };
       this.usersService.createUserService(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
+            this.dialogRef.close();
           },
           error => this.userExistDialog(error));
     } else {
       const user: IUserReq = {
         ...this.addUserForm.value,
         id: this.userToEdit.id,
+        password: btoa(this.addUserForm.get('password').value),
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
         activo: Number(this.addUserForm.get('activo').value),
@@ -117,6 +118,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       };
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
+        this.dialogRef.close();
           },
           error => this.userExistDialog(error));
     }
@@ -149,5 +151,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       newNumbers += numbers.includes(pieces.charAt(index)) ?  pieces.charAt(index).trim() : CONST_STRING.empty.trim();
     }
     return newNumbers;
+  }
+
+  keyDownFunction(event: KeyboardEvent) {
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.addUserForm.valid) {
+      this.saveUser();
+    }
   }
 }

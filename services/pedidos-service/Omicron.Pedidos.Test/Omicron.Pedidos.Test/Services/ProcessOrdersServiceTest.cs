@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Moq;
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -33,8 +34,6 @@ namespace Omicron.Pedidos.Test.Services
         private IPedidosDao pedidosDao;
 
         private Mock<ISapAdapter> sapAdapter;
-
-        private ISapDiApi sapDiApi;
 
         private Mock<IUsersService> usersService;
 
@@ -81,9 +80,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
             var sapfileMock = new Mock<ISapFileService>();
+            var configMock = new Mock<IConfiguration>();
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object);
         }
 
         /// <summary>

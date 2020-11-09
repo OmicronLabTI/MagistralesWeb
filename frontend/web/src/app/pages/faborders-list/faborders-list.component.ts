@@ -153,6 +153,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             case ConstStatus.cancelado:
               element.class = 'cancelado';
               break;
+            case ConstStatus.entregado:
+              element.class = 'entregado';
+              break;
           }
           element.description = element.description.toUpperCase();
         });
@@ -215,7 +218,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   cancelOrder() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado)).map(order => {
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.entregado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = Number(order.fabOrderId);
         return cancelOrder;

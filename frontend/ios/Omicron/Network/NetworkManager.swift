@@ -10,6 +10,7 @@ import Foundation
 import Moya
 import RxSwift
 import ObjectMapper
+import Alamofire
 
 enum RequestError: Error {
     case unknownError
@@ -27,6 +28,16 @@ protocol AuthorizedTargetType: TargetType {
 
 class NetworkManager: SessionProtocol {
     // MARK: Variables
+    let requestTimeoutClosure = { (endpoint: Endpoint, done: @escaping MoyaProvider<ApiService>.RequestResultClosure) in
+        do {
+            var request = try endpoint.urlRequest()
+            request.timeoutInterval = 10
+            done(.success(request))
+        } catch {
+            return
+        }
+    }
+    private lazy var providerChoseed = MoyaProvider<ApiService>()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
     init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
         AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
@@ -37,7 +48,7 @@ class NetworkManager: SessionProtocol {
     }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
-        let data = Renew(refreshToken: Persistence.shared.getLoginData()?.refreshToken ?? "")
+        let data = Renew(refresh_token: Persistence.shared.getLoginData()?.refreshToken ?? "")
         return self.provider.rx.request(.renew(data: data))
     }
     // Parse and save your token locally or do any thing with the new token here
@@ -124,11 +135,35 @@ class NetworkManager: SessionProtocol {
         let res: Observable<WorkloadResponse> = makeRequest(request: req)
         return res
     }
-    private func makeRequest<T: BaseMappable>(request: ApiService) -> Observable<T> {
+
+    // Obtiene la carga de trabajo
+    func getValidateOrder(orderId: Int) -> Observable<ValidateOrderModel> {
+        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
+        let res: Observable<ValidateOrderModel> = makeRequest(request: req)
+        return res
+    }
+
+    // Obtiene el pdf de el pedido
+    func postOrdersPDF(orders: [Int]) -> Observable<OrderPDF> {
+        let req: ApiService = ApiService.postOrdersPDF(orders: orders)
+        let res: Observable<OrderPDF> = makeRequest(request: req)
+        return res
+    }
+
+    // Comprueba la coneccion con la VPN
+    func getConnect() -> Observable<ConnectModel> {
+        let req: ApiService = ApiService.getConnect
+        let res: Observable<ConnectModel> = makeRequest(request: req, needsVPN: true)
+        return res
+    }
+
+    private func makeRequest<T: BaseMappable>(request: ApiService, needsVPN: Bool = false) -> Observable<T> {
+        providerChoseed = provider
+        if needsVPN { providerChoseed = MoyaProvider<ApiService>(requestClosure: requestTimeoutClosure) }
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?
-                self?.provider.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
-                self?.provider.rx
+                self?.providerChoseed.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :
+                self?.providerChoseed.rx
                     .request(request)
                     .filterSuccessfulStatusAndRedirectCodes()
                     .refreshAuthenticationTokenIfNeeded(sessionServiceDelegate: self!)

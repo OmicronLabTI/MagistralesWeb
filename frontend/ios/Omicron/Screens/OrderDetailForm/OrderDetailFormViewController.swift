@@ -36,6 +36,7 @@ class OrderDetailFormViewController: FormViewController {
     }
     // MARK: Functions
     // swiftlint:disable function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func buildForm() {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
@@ -73,7 +74,7 @@ class OrderDetailFormViewController: FormViewController {
                     cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
-                    if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) != nil) {
+                    if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) ?? false) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
                         let requiredQuantity = self?.dataOfTable?.plannedQuantity ?? 0.0
@@ -128,7 +129,7 @@ class OrderDetailFormViewController: FormViewController {
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
                     if !(row.value?.isEmpty ?? true) && !(row.value == "0")
-                        && ((self?.canOperation(rowValue: row.value ?? "d")) != nil) {
+                        && ((self?.canOperation(rowValue: row.value ?? "d")) ?? false) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
                         let baseQuantity = self?.dataOfTable?.plannedQuantity!
                         let result = requiredQuantity!  / baseQuantity!
@@ -170,11 +171,22 @@ class OrderDetailFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
+            <<< TextRow { [weak self] in
+                $0.title = "Unidad:"
+                $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit
+                $0.disabled = true
+            }.cellUpdate { cell, _ in
+                cell.titleLabel?.textColor = .black
+                cell.textField.textColor = .black
+            }
             <<< PickerInlineRow<String> { [weak self] in
                 $0.title = "Almacén: "
                 $0.tag = "werehouse"
                 $0.options = CommonStrings.options
                 $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
+            }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow { [weak self] in

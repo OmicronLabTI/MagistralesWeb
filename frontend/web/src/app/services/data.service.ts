@@ -10,7 +10,8 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS
+  MODAL_FIND_ORDERS,
+  TypeToSeeTap
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
 import {QfbWithNumber} from '../model/http/users';
@@ -39,8 +40,22 @@ export class DataService {
   private newMaterialComponent = new Subject<any>();
   private searchOrdersModal = new Subject<SearchComponentModal>();
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
+  private openSignatureDialog = new Subject<any>();
+  private newDataSignature = new Subject<any>();
   constructor(private datePipe: DatePipe) { }
 
+  setNewDataSignature(newSignature: any) {
+    this.newDataSignature.next(newSignature);
+  }
+  getNewDataSignature() {
+    return this.newDataSignature.asObservable();
+  }
+  setOpenSignatureDialog(datSignature: any) {
+    this.openSignatureDialog.next(datSignature);
+  }
+  getOpenSignatureDialog() {
+    return this.openSignatureDialog.asObservable();
+  }
   setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
     this.newSearchOrdersParams.next(searchOrdersParams);
   }
@@ -282,17 +297,20 @@ export class DataService {
             || t.pedidoStatus === ConstStatus.terminado))).length > 0;
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado))).length > 0;
+            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
+                && t.pedidoStatus !== ConstStatus.entregado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
-            && t.status !== ConstStatus.abierto)).length > 0;
+            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.entregado)).length > 0;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
             || t.status === ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.status !== status && t.status !== ConstStatus.cancelado))).length > 0;
+            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.entregado))).length > 0;
+      case FromToFilter.fromOrderDetailLabel:
+        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
         return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
     }
@@ -313,22 +331,26 @@ export class DataService {
     let isSearchWithFilter = false;
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== '')) {
+            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === '')) {
+            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -375,6 +397,14 @@ export class DataService {
         queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName}`;
         filterDataOrders.clientName = resultSearchOrderModal.clientName;
       }
+      if (resultSearchOrderModal.label !== '' && resultSearchOrderModal.label) {
+        queryString = `${queryString}&label=${resultSearchOrderModal.label}`;
+        filterDataOrders.label = resultSearchOrderModal.label;
+      }
+      if (resultSearchOrderModal.finlabel !== '' && resultSearchOrderModal.finlabel) {
+        queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
+        filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
+      }
     }
 
     return [filterDataOrders, queryString];
@@ -409,9 +439,19 @@ export class DataService {
      localStorage.removeItem(ConstToken.isolatedOrder);
    }
 
-  openNewTapByUrl(url: string) {
+  openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
+    let tapTitle = CONST_STRING.empty;
+    switch (typeToSeeTap) {
+      case TypeToSeeTap.order:
+        tapTitle = `Pedido ${orderId}`;
+        break;
+      case TypeToSeeTap.receipt:
+        tapTitle = `Receta pedido ${orderId}`;
+        break;
+    }
     window.open(url);
   }
+
   getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {
     switch (type) {
       case FromToFilter.fromOrders:
@@ -421,5 +461,8 @@ export class DataService {
       case FromToFilter.fromOrdersIsolated:
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
     }
+  }
+  getNormalizeString(valueToNormalize: string) {
+    return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 }

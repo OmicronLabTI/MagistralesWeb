@@ -9,8 +9,11 @@
 namespace Omicron.Usuarios.Services.Utils
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Services.Constants;
 
     /// <summary>
     /// Class for common logic.
@@ -41,25 +44,20 @@ namespace Omicron.Usuarios.Services.Utils
         }
 
         /// <summary>
-        /// Converts data to base64.
+        /// Filters the users.
         /// </summary>
-        /// <param name="data">the input.</param>
-        /// <returns>the string in base64.</returns>
-        public static string ConvertToBase64(string data)
-        {
-            var bytes = Encoding.ASCII.GetBytes(data);
-            return Convert.ToBase64String(bytes);
-        }
-
-        /// <summary>
-        /// Convert from Base64.
-        /// </summary>
-        /// <param name="data">the hash.</param>
+        /// <param name="users">the complete list of users.</param>
+        /// <param name="criteria">the criteria.</param>
         /// <returns>the data.</returns>
-        public static string ConvertFromBase64(string data)
+        public static List<UserModel> GetUsersToReturn(List<UserModel> users, Dictionary<string, string> criteria)
         {
-            var bytes = Convert.FromBase64String(data);
-            return ASCIIEncoding.ASCII.GetString(bytes);
+            users = criteria.ContainsKey(ServiceConstants.UserName) ? users.Where(x => x.UserName.ToLower().Contains(criteria[ServiceConstants.UserName].ToLower())).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.FirstName) ? users.Where(x => x.FirstName.ToLower().Contains(criteria[ServiceConstants.FirstName].ToLower())).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.LastName) ? users.Where(x => x.LastName.ToLower().Contains(criteria[ServiceConstants.LastName].ToLower())).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.Role) ? users.Where(x => x.Role.ToString() == criteria[ServiceConstants.Role]).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.Assignable) ? users.Where(x => x.Asignable.ToString() == criteria[ServiceConstants.Assignable] && x.Role == ServiceConstants.RoleQfb).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.Status) ? users.Where(x => x.Activo.ToString() == criteria[ServiceConstants.Status]).ToList() : users;
+            return users;
         }
     }
 }

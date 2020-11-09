@@ -9,7 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
-@testable import Omicron
+@testable import OmicronLab
 class ComponetsTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
@@ -25,7 +25,6 @@ class ComponetsTest: XCTestCase {
     }
     // MARK: - TEST FUNCTIONS
     func testValidResponse() {
-        let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
         componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             let request = ComponentRequest(
@@ -34,13 +33,10 @@ class ComponetsTest: XCTestCase {
                 chips: chips)
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
-                expectation.fulfill()
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
-        wait(for: [expectation], timeout: 1000)
     }
     func testValidCodeNotNull() {
-        let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
         componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             let request = ComponentRequest(
@@ -49,13 +45,10 @@ class ComponetsTest: XCTestCase {
                 chips: chips)
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
-                expectation.fulfill()
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
-        wait(for: [expectation], timeout: 1000)
     }
     func testValidCode() {
-        let expectation = XCTestExpectation(description: "ComponetsTest")
         componentsViewModel!.dataChips.onNext(["Base"])
         componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
             let request = ComponentRequest(
@@ -64,14 +57,10 @@ class ComponetsTest: XCTestCase {
                 chips: chips)
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
-                expectation.fulfill()
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
-        wait(for: [expectation], timeout: 1000)
     }
     func testSaveComponentSuccess() {
-        let expectationGetComponents = XCTestExpectation(description: "ComponetsTest")
-        let expecUpdateDeleteItemOfTable = XCTestExpectation()
         var orderDetailRequest: OrderDetailRequest?
         componentsViewModel!.dataChips.onNext(["Base"])
         componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
@@ -84,12 +73,9 @@ class ComponetsTest: XCTestCase {
                 self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!)
                     .subscribe(onNext: { res in
                     XCTAssertNotNil(res.response)
-                    expecUpdateDeleteItemOfTable.fulfill()
                 }).disposed(by: (self?.disposeBag)!)
-                expectationGetComponents.fulfill()
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
-        wait(for: [expectationGetComponents, expecUpdateDeleteItemOfTable], timeout: 1000)
     }
     func returnOrderDetailRequest(componentO: [ComponentO]?) -> OrderDetailRequest? {
         guard let componentO = componentO else { return nil }

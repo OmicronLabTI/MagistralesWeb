@@ -119,7 +119,9 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   selectComponent(row: any) {
+    this.dataSource.data.forEach(component => component.isItemSelected = false);
     if (this.isFromSearchComponent) {
+      this.dataSource.data.filter(component => component.productId === row.productId)[0].isItemSelected = true;
       if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
@@ -134,6 +136,7 @@ export class ComponentSearchComponent implements OnInit {
         );
       }
     } else {
+      this.dataSource.data.filter(component => component.productoId === row.productoId)[0].isItemSelected = true;
       this.checkIsPrevious(row);
     }
   }

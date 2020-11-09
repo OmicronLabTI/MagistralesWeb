@@ -119,7 +119,8 @@ class OrderDetailViewController: UIViewController {
                 self.navigationItem.rightBarButtonItems = [self.getOmniconLogo(), comments]
             }).disposed(by: self.disposeBag)
         orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
-            AlertManager.shared.showAlert(message: message, view: self!)
+            guard let self = self else { return }
+            AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {

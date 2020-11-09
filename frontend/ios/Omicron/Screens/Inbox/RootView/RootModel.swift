@@ -88,9 +88,11 @@ class Order {
     var productCode: String?
     var destiny: String?
     var hasMissingStock = false
+    var finishedLabel = false
+
     init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?,
-         productCode: String?, destiny: String?, hasMissingStock: Bool) {
+         productCode: String?, destiny: String?, hasMissingStock: Bool, finishedLabel: Bool) {
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
         self.container = container
@@ -104,6 +106,7 @@ class Order {
         self.productCode = productCode
         self.destiny = destiny
         self.hasMissingStock = hasMissingStock
+        self.finishedLabel = finishedLabel
     }
     required init?(map: Map) {}
 }
@@ -120,6 +123,7 @@ extension Order: Mappable {
         itemCode <- map["itemCode"]
         destiny <- map["destiny"]
         hasMissingStock <- map["hasMissingStock"]
+        finishedLabel <- map["finishedLabel"]
     }
 }
 struct SectionOrder {

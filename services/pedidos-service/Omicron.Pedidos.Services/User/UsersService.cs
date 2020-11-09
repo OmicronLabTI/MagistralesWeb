@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.User
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// Class User Service.
@@ -26,12 +27,19 @@ namespace Omicron.Pedidos.Services.User
         private readonly HttpClient httpClient;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
         /// <param name="httpClient">Object to mapper.</param>
-        public UsersService(HttpClient httpClient)
+        /// <param name="logger">the logger.</param>
+        public UsersService(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -50,6 +58,7 @@ namespace Omicron.Pedidos.Services.User
 
                 if ((int)response.StatusCode >= 300)
                 {
+                    this.logger.Information($"Error peticion users {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 

@@ -52,5 +52,8 @@ export const Messages = {
   nextOrders: 'las siguientes ordenes: ',
   requestOrderWithFailOrders: 'Únicamente se generará solicitud para ',
   requestOrdersOnlyOk: 'Se generará solicitud para ',
-  thereNoOrderProcess: 'No existen ordenes Planificadas para los pedidos seleccionados'
+  thereNoOrderProcess: 'No existen ordenes Planificadas para los pedidos seleccionados',
+  labelsFinish: '¿Deseas pasar a terminado las etiquetas de la(s) orden(es) seleccionada(s)?',
+  removeLabelFinish: '¿Deseas quitar la selección de la etiqueta ',
+  deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)'
 };

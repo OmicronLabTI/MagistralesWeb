@@ -6,7 +6,7 @@
         <div class="breadcrumb"><a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToOrders(['pedidos'])">Pedidos&nbsp;/</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument === 0" (click)="goToOrders(['ordenes'])">Órdenes de fabricación </a> / Fórmula </div>
       </div>
       <div class="filter-select">
-          <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido:</span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
+          <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido: </span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
         <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
       </div>
     </div>
@@ -60,7 +60,7 @@
                                type="number"
                                placeholder="Cantidad planificada"
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
-                               [(ngModel)]="oldDataFormulaDetail.plannedQuantity"
+                               [(ngModel)]="plannedQuantity"
                                (ngModelChange)="changeData()"
                                step="any"
                                appDigitDecimalNumber
@@ -73,7 +73,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                             <mat-label>Almacén</mat-label>
-                            <mat-select [(ngModel)]="oldDataFormulaDetail.warehouse" (ngModelChange)="changeData()">
+                            <mat-select [(ngModel)]="warehouse" (ngModelChange)="changeData()">
                                 <mat-option value="AMP" >
                                     AMP
                                 </mat-option>
@@ -246,7 +246,7 @@
                     <ng-container matColumnDef="almacen">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> ALMACÉN </th>
                     <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen">
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="outline">
                         <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)">
                               <mat-option value="AMP" >
                                   AMP

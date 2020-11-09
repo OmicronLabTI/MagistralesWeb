@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 
-@testable import Omicron
+@testable import OmicronLab
 
 class RootViewTest: XCTestCase {
     // MARK: - VARIABLES

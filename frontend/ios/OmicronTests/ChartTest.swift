@@ -10,26 +10,23 @@ import XCTest
 import RxSwift
 import Resolver
 
-@testable import Omicron
+@testable import OmicronLab
 
 class ChartTest: XCTestCase {
 
     // MARK: - Variables
     var chartViewModel: ChartViewModel?
     var disposeBag: DisposeBag?
-    var expectation: XCTestExpectation?
     @Injected var networkManager: NetworkManager
     override func setUp() {
         print("XXXX setUp ChartTest")
         chartViewModel = ChartViewModel()
         disposeBag = DisposeBag()
-        expectation = XCTestExpectation()
     }
     override func tearDown() {
         print("XXXX tearDown ChartTest")
         chartViewModel = nil
         disposeBag = nil
-        expectation = nil
     }
     fileprivate let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
@@ -61,9 +58,7 @@ class ChartTest: XCTestCase {
     func testGetWorkLoadNotNil() {
         chartViewModel!.workloadData.subscribe(onNext: { response in
             XCTAssertNotNil(response)
-            self.expectation!.fulfill()
         }).disposed(by: self.disposeBag!)
         self.chartViewModel!.getWorkload()
-        wait(for: [self.expectation!], timeout: 1000.0)
     }
 }

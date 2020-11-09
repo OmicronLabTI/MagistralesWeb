@@ -351,5 +351,44 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.PrintOrders(ordersId));
         }
+
+        /// <summary>
+        /// updates the sale orders.
+        /// </summary>
+        /// <param name="updateSaleOrder">the update orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateSaleOrders(UpdateOrderCommentsDto updateSaleOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateSaleOrders(this.mapper.Map<UpdateOrderCommentsModel>(updateSaleOrder)));
+        }
+
+        /// <summary>
+        /// Updates de designer label value and signature.
+        /// </summary>
+        /// <param name="updateDesignerLabel">the objects.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateDesignerLabel(UpdateDesignerLabelDto updateDesignerLabel)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateDesignerLabel(this.mapper.Map<UpdateDesignerLabelModel>(updateDesignerLabel)));
+        }
+
+        /// <summary>
+        /// Create the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">the orders id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> CreateSaleOrderPdf(List<int> orderIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateSaleOrderPdf(orderIds));
+        }
+
+        /// <summary>
+        /// Deletes the files.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> DeleteFiles()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.DeleteFiles());
+        }
     }
 }

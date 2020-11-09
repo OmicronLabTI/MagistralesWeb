@@ -10,14 +10,13 @@ namespace Omicron.SapAdapter.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Resources.Extensions;
+    using Serilog;
 
     /// <summary>
     /// Class User Controller.
@@ -31,17 +30,17 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly ILogger<SapController> logger;
+        private readonly ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapController"/> class.
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
-        /// <param name="loggerFactory">the logger factory.</param>
-        public SapController(ISapFacade sapFacade, ILoggerFactory loggerFactory)
+        /// <param name="logger">the logger factory.</param>
+        public SapController(ISapFacade sapFacade, ILogger logger)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
-            this.logger = loggerFactory.CreateLogger<SapController>();
+            this.logger = logger;
         }
 
         /// <summary>
@@ -152,7 +151,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetComponentes([FromQuery] Dictionary<string, string> parameters)
         {
-            this.logger.LogInformation($"Se buscara {JsonConvert.SerializeObject(parameters)}");
+            this.logger.Information($"Se buscara {JsonConvert.SerializeObject(parameters)}");
             var result = await this.sapFacade.GetComponents(parameters);
             return this.Ok(result);
         }
@@ -273,6 +272,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetRecipes(List<int> ordersId)
         {
             var result = await this.sapFacade.GetRecipes(ordersId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Gets the recipes by all orders id.
+        /// </summary>
+        /// <param name="orderId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/validate/order/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> ValidateOrder(int orderId)
+        {
+            var result = await this.sapFacade.ValidateOrder(orderId);
             return this.Ok(result);
         }
 

@@ -27,9 +27,9 @@ namespace Omicron.Usuarios.Test
         {
             return new List<UserModel>()
             {
-                new UserModel { Id = "1", FirstName = "Alejandro", LastName = "Ojeda", UserName = "Alex", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
-                new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
-                new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
+                new UserModel { Id = "1", FirstName = "Alejandro", LastName = "Ojeda", UserName = "Alex", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "2", FirstName = "Jorge", LastName = "Morales", UserName = "George", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "3", FirstName = "Arturo", LastName = "Miranda", UserName = "Artuhr", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
                 new UserModel { Id = "4", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
                 new UserModel { Id = "5", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
                 new UserModel { Id = "6", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },

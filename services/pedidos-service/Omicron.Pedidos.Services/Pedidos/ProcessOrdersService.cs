@@ -59,7 +59,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
 
             var listToInsert = this.CreateUserModelOrders(listOrders);
-            var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders);
+            var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend);
             listToInsert.AddRange(dataToInsertUpdate.Item1);
             var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
 
@@ -197,11 +197,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var listErrorsToReturn = new List<string>();
+            listErrorId.ForEach(x =>
+            {
+                listErrorsToReturn.Add(x.Split("-")[0]);
+            });
 
             return new Dictionary<string, List<string>>
             {
                 { ServiceConstants.Ok, listToLook },
-                { ServiceConstants.ErrorCreateFabOrd, listErrorId },
+                { ServiceConstants.ErrorCreateFabOrd, listErrorsToReturn },
             };
         }
 
@@ -231,8 +236,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="pedidosId">the pedidos id.</param>
         /// <param name="dataBaseSaleOrders">the database sale orders.</param>
+        /// <param name="errors">if there are erros.</param>
+        /// <param name="listOrders">List with orders.</param>
         /// <returns>the first is the list to insert the second the list to update.</returns>
-        private Tuple<List<UserOrderModel>, List<UserOrderModel>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders)
+        private Tuple<List<UserOrderModel>, List<UserOrderModel>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders)
         {
             var listToInsert = new List<UserOrderModel>();
             var listToUpdate = new List<UserOrderModel>();
@@ -252,7 +259,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                     insertUserOrdersale = true;
                 }
 
-                saleOrder.Status = ServiceConstants.Planificado;
+                var order = listOrders.FirstOrDefault(x => x.Order.DocNum == p);
+                var codes = order.Detalle.Select(x => x.CodigoProducto);
+                var haveErrors = errors.Any(x => codes.Contains(x));
+
+                saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
 
                 if (insertUserOrdersale)
                 {

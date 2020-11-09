@@ -5,11 +5,12 @@ import {UserListComponent} from './user-list.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dialog.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
-import {FaborderListModule} from "../faborders-list/faborder-list.module";
+import {FaborderListModule} from '../faborders-list/faborder-list.module';
+import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/search-users-dialog.component';
 
 
 @NgModule({
-  declarations: [UserListComponent, AddUserDialogComponent],
+  declarations: [UserListComponent, AddUserDialogComponent, SearchUsersDialogComponent],
     imports: [
         CommonModule,
         UserListRoutingModule,
@@ -18,6 +19,6 @@ import {FaborderListModule} from "../faborders-list/faborder-list.module";
         MATERIAL_COMPONENTS,
         FaborderListModule
     ],
-    entryComponents: [AddUserDialogComponent],
+    entryComponents: [AddUserDialogComponent, SearchUsersDialogComponent],
 })
 export class UserListModule { }

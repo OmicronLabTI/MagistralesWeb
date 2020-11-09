@@ -9,6 +9,7 @@
 namespace Omicron.SapFile.Dtos.Models
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Class to generate Pdfs.
@@ -55,7 +56,7 @@ namespace Omicron.SapFile.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string RecipeRoute { get; set; }
+        public List<string> RecipeRoute { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -86,5 +87,17 @@ namespace Omicron.SapFile.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string FabOrderPdfRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DesignerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public byte[] DesignerSignature { get; set; }
     }
 }

@@ -112,6 +112,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string CloseUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("finishedlabel")]
+        public int FinishedLabel { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

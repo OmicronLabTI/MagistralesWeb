@@ -32,6 +32,7 @@ class ComponentFormViewController: FormViewController {
     }
     // MARK: Functions
     // swiftlint:disable function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func buildForm(component: ComponentO, order: Order) {
         LabelRow.defaultCellUpdate = { cell, row in
             cell.contentView.backgroundColor = .red
@@ -164,12 +165,24 @@ class ComponentFormViewController: FormViewController {
                     row.cleanValidationErrors()
                 }
             }
+            <<< TextRow {
+                $0.title = "Unidad:"
+                $0.value = component.unit
+                $0.disabled = true
+            }
+            .cellUpdate { cell, _ in
+                cell.titleLabel?.textColor = .black
+                cell.textField.textColor = .black
+            }
             <<< PickerInlineRow<String> {
                 $0.title = "Almacén: "
                 $0.tag = "warehouse"
                 $0.options = CommonStrings.options
                 guard let warehouse = component.warehouse else { return }
                 $0.value = warehouse
+            }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow {
