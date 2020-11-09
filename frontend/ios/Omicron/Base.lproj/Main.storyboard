@@ -1096,7 +1096,7 @@
                                                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OgE-h0-kEY">
                                                                                             <rect key="frame" x="325" y="0.0" width="162.5" height="50.5"/>
                                                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                                            <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                                                                            <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                                                                         </textField>
                                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dPx-cc-ceT">
                                                                                             <rect key="frame" x="487.5" y="0.0" width="162.5" height="50.5"/>
@@ -1369,67 +1369,11 @@
                         <outlet property="totalNeededLabel" destination="OUz-9U-Z6n" id="pDO-P4-C7K"/>
                         <outlet property="totalSelectedLabel" destination="vfU-5f-kQQ" id="bvc-Wc-PR8"/>
                         <outlet property="warehouseCodeLabel" destination="yCz-8r-CxG" id="Ut6-GR-wqi"/>
-                        <segue destination="52C-a3-sgc" kind="presentation" identifier="showError" modalPresentationStyle="formSheet" id="P8j-dm-NlA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I0Z-xe-LKK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4025.6222547584184" y="-260.7421875"/>
-        </scene>
-        <!--Error View Controller-->
-        <scene sceneID="0eY-nr-eK5">
-            <objects>
-                <viewController id="52C-a3-sgc" customClass="ErrorViewController" customModule="OmicronLab" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Rbv-bW-UDl">
-                        <rect key="frame" x="0.0" y="0.0" width="560" height="300"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5VC-nn-7JT">
-                                <rect key="frame" x="0.0" y="0.0" width="560" height="80"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No se puede finalizar la orden" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ASG-zp-7Ye">
-                                        <rect key="frame" x="24" y="28" width="512" height="36"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" red="0.96861571069999997" green="0.96862143280000002" blue="0.96863609549999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="ASG-zp-7Ye" secondAttribute="bottom" constant="16" id="KRe-1k-Qte"/>
-                                    <constraint firstAttribute="trailing" secondItem="ASG-zp-7Ye" secondAttribute="trailing" constant="24" id="O0K-Zl-k9Q"/>
-                                    <constraint firstItem="ASG-zp-7Ye" firstAttribute="leading" secondItem="5VC-nn-7JT" secondAttribute="leading" constant="24" id="RfY-xb-0XS"/>
-                                    <constraint firstAttribute="height" constant="80" id="dAH-Cs-gQv"/>
-                                </constraints>
-                            </view>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="error" translatesAutoresizingMaskIntoConstraints="NO" id="GsU-uc-xT9">
-                                <rect key="frame" x="16" y="96" width="528" height="188"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="GsU-uc-xT9" firstAttribute="top" secondItem="5VC-nn-7JT" secondAttribute="bottom" constant="16" id="AOw-ND-REM"/>
-                            <constraint firstItem="5VC-nn-7JT" firstAttribute="leading" secondItem="tMe-7v-mjJ" secondAttribute="leading" id="Kic-Ng-uT0"/>
-                            <constraint firstItem="tMe-7v-mjJ" firstAttribute="trailing" secondItem="5VC-nn-7JT" secondAttribute="trailing" id="Lyk-nm-c8l"/>
-                            <constraint firstItem="tMe-7v-mjJ" firstAttribute="trailing" secondItem="GsU-uc-xT9" secondAttribute="trailing" constant="16" id="R02-QQ-8Sv"/>
-                            <constraint firstItem="5VC-nn-7JT" firstAttribute="top" secondItem="tMe-7v-mjJ" secondAttribute="top" id="RFA-9w-ROS"/>
-                            <constraint firstItem="tMe-7v-mjJ" firstAttribute="bottom" secondItem="GsU-uc-xT9" secondAttribute="bottom" constant="16" id="SFO-uV-CVc"/>
-                            <constraint firstItem="GsU-uc-xT9" firstAttribute="leading" secondItem="tMe-7v-mjJ" secondAttribute="leading" constant="16" id="YFN-WF-CRe"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="tMe-7v-mjJ"/>
-                    </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="560" height="300"/>
-                    <connections>
-                        <outlet property="errorsTextView" destination="GsU-uc-xT9" id="4rL-9D-f9w"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UsF-Ll-fHX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3272.5925925925922" y="-192.22222222222223"/>
         </scene>
         <!--Title-->
         <scene sceneID="BAP-3r-Vdj">
@@ -1902,7 +1846,6 @@
                         <segue destination="pSw-ye-U1M" kind="popoverPresentation" identifier="OrderDetailFormViewController" popoverAnchorView="Pz7-of-sCi" id="vpk-OB-chk">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
-                        <segue destination="52C-a3-sgc" kind="presentation" identifier="showError" modalPresentationStyle="formSheet" id="OHh-eq-1rk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PkH-un-RAO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2248,9 +2191,6 @@
             <point key="canvasLocation" x="2592" y="1112"/>
         </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="OHh-eq-1rk"/>
-    </inferredMetricsTieBreakers>
     <resources>
         <image name="LoginButtonImage" width="91" height="90"/>
         <image name="OmicronLogo" width="844" height="378"/>

@@ -91,7 +91,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listToReturn = new List<FinalizaGeneratePdfModel>();
             foreach (var order in ordersWithDetail)
             {
-                var recipe = recipes.FirstOrDefault(r => r.Order == order.Order.PedidoId);
+                var recipe = recipes.Where(r => r.Order == order.Order.PedidoId).Select(y => y.Recipe).ToList();
 
                 if (!order.Detalle.Any(d => d.OrdenFabricacionId != 0))
                 {
@@ -100,7 +100,7 @@ namespace Omicron.Pedidos.Services.Utils
                         OrderId = order.Order.PedidoId,
                         SaleOrderCreateDate = order.Order.FechaInicio.ToString("dd/MM/yyyy"),
                         MedicName = NormalizeMedicName(order.Order.Medico),
-                        RecipeRoute = recipe == null ? string.Empty : recipe.Recipe,
+                        RecipeRoute = recipe == null ? new List<string>() : recipe,
                     };
 
                     listToReturn.Add(modelOrder);
@@ -132,7 +132,7 @@ namespace Omicron.Pedidos.Services.Utils
                         OrderId = order.Order.PedidoId,
                         QfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                         QfbSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.QfbSignature,
-                        RecipeRoute = recipe == null ? string.Empty : recipe.Recipe,
+                        RecipeRoute = recipe == null ? new List<string>() : recipe,
                         SaleOrderCreateDate = order.Order.FechaInicio.ToString("dd/MM/yyyy"),
                         TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
                         UserOrderId = userOrder.Id,
@@ -180,7 +180,7 @@ namespace Omicron.Pedidos.Services.Utils
                     OrderId = 0,
                     QfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     QfbSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.QfbSignature,
-                    RecipeRoute = string.Empty,
+                    RecipeRoute = new List<string>(),
                     SaleOrderCreateDate = string.Empty,
                     TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
                     UserOrderId = userOrder.Id,

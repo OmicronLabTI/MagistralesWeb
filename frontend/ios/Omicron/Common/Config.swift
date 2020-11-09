@@ -23,7 +23,7 @@ struct Config {
         #elseif STAGING_RELEASE
             return .stagingRelease
         #elseif APPSTORE
-            return .appstore
+        return .appstore
         #elseif DEBUG
             return .debug
         #elseif RELEASE
@@ -34,12 +34,12 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return "http://201.163.179.29:8000/api"
+            return "http://201.163.179.28:8000/api"
 //            return "https://magistralesprod.omicronlab.com.mx/api"
         case .stagingRelease,
              .appstore,
              .release:
-            return "http://201.163.179.29:8000/api"
+            return "http://201.163.179.28:8000/api"
 //            return "https://magistralesprod.omicronlab.com.mx/api"
         }
     }()

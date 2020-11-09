@@ -85,7 +85,7 @@ struct CommonStrings {
     static let user = "Usuario"
     static let password = "Contraseña"
     static let empty = ""
-    static let OKConst = "OK"
+    static let OKConst = "Aceptar"
     static let cancel = "Cancelar"
     static let searchOrden = "Buscar orden / pedido"
     static let signatureViewTitleQFB = "Firma del  QFB"

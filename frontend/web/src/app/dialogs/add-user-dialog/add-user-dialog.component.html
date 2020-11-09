@@ -7,7 +7,7 @@
 
         </mat-card-header>
         <mat-card-content class="content-card-container">
-            <form [formGroup]="addUserForm" class="form-add-user" autocomplete="off">
+            <form [formGroup]="addUserForm" class="form-add-user" autocomplete="off" (keydown)="keyDownFunction($event)">
                 <div class="row-form-user padding-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
@@ -120,7 +120,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="addUserForm.invalid" (click)="saveUser()">
+            <button mat-button class="btn-add-modal btn--modal" [disabled]="addUserForm.invalid" (click)="saveUser()">
                 <span *ngIf="!isForEditModal">Agregar</span>
                 <span *ngIf="isForEditModal">Guardar</span>
             </button>

@@ -45,6 +45,8 @@ class ChartViewController: UIViewController {
     private func setDataToChart(_ workload: Workload?) {
         guard let workload = workload else { return }
         self.workload = workload
+        entries = []
+        colors = []
         for index in 0...5 {
             switch index {
             case 0: guard workload.assigned ?? 0 > 0 else { break }

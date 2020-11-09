@@ -74,7 +74,7 @@ class OrderDetailFormViewController: FormViewController {
                     cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
-                    if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) != nil) {
+                    if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) ?? false) {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
                         let requiredQuantity = self?.dataOfTable?.plannedQuantity ?? 0.0
@@ -129,7 +129,7 @@ class OrderDetailFormViewController: FormViewController {
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
                     if !(row.value?.isEmpty ?? true) && !(row.value == "0")
-                        && ((self?.canOperation(rowValue: row.value ?? "d")) != nil) {
+                        && ((self?.canOperation(rowValue: row.value ?? "d")) ?? false) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
                         let baseQuantity = self?.dataOfTable?.plannedQuantity!
                         let result = requiredQuantity!  / baseQuantity!
@@ -184,6 +184,9 @@ class OrderDetailFormViewController: FormViewController {
                 $0.tag = "werehouse"
                 $0.options = CommonStrings.options
                 $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
+            }
+            .cellUpdate { cell, _ in
+                cell.detailTextLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow { [weak self] in

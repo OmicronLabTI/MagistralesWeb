@@ -127,6 +127,11 @@ namespace Omicron.SapAdapter.Services.Utils
                 int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
                 var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
 
+                if (ordersById == null)
+                {
+                    return new List<CompleteOrderModel>();
+                }
+
                 var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
                 ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
 

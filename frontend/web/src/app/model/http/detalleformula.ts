@@ -64,6 +64,8 @@ export class IFormulaDetalleReq {
     action?: string;
     hasBatches?: boolean;
     isInDb?: boolean;
+    isItemSelected?: boolean;
+    productoId?: string;
 }
 
 
