@@ -65,6 +65,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                        FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                        PedidoStatus = order.PedidoStatus,
+                                       AtcEntry = order.AtcEntry,
                                        IsChecked = false,
                                        Detalles = dp
                                    });
@@ -95,6 +96,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                    FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                    PedidoStatus = order.PedidoStatus,
+                                   AtcEntry = order.AtcEntry,
                                    IsChecked = false,
                                    Detalles = dp
                                });
@@ -123,6 +125,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                                   PedidoStatus = order.PedidoStatus,
+                                  AtcEntry = order.AtcEntry,
                                   IsChecked = false,
                                   Detalles = detalle
                               });
