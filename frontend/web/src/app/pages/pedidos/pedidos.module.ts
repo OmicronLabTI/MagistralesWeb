@@ -4,15 +4,17 @@ import { PedidosRoutingModule } from './pedidos-routing.module';
 import {PedidosComponent} from './pedidos.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import { ReactiveFormsModule , FormsModule} from '@angular/forms';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [PedidosComponent],
   imports: [
     CommonModule,
     PedidosRoutingModule,
-      MATERIAL_COMPONENTS,
+    MATERIAL_COMPONENTS,
     ReactiveFormsModule,
-      FormsModule
+    FormsModule,
+    PipesModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

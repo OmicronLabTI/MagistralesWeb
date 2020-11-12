@@ -15,6 +15,7 @@ import {OrdersService} from '../../services/orders.service';
 import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {PageEvent} from '@angular/material/paginator';
+import {PipesModule} from '../../pipes/pipes.module';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -49,7 +50,8 @@ describe('FabordersListComponent', () => {
     });
     TestBed.configureTestingModule({
       declarations: [ FabordersListComponent ],
-      imports: [ RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule, BrowserAnimationsModule ],
+      imports: [ RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
+        BrowserAnimationsModule, PipesModule ],
       providers: [
         DatePipe,
         { provide: DataService, useValue: dataServiceSpy },

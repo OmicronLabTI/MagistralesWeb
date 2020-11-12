@@ -11,8 +11,9 @@
                 Fecha de término QFB:
             </span>
             <span class="date-selected">
-              {{  filterDataOrders.dateFull}}
+              {{  filterDataOrders.dateFull | dateformat}}
             </span>
+
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
             <span class="dateType">
