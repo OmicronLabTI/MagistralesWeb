@@ -18,11 +18,12 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {SignaturePadModule} from 'angular2-signaturepad';
 
+
 @NgModule({
-  declarations: [
-    AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
-      ComponentslistComponent, RequestSignatureDialogComponent
-  ],
+    declarations: [
+        AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
+        ComponentslistComponent, RequestSignatureDialogComponent,
+    ],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -36,18 +37,20 @@ import {SignaturePadModule} from 'angular2-signaturepad';
         SignaturePadModule,
 
     ],
-  providers: [
-    APP_PROVIDERS,
-    Title
-  ],
-  bootstrap: [AppComponent],
+    providers: [
+        APP_PROVIDERS,
+        Title
+    ],
+    bootstrap: [AppComponent],
     entryComponents: [
-      PlaceOrderDialogComponent,
-      ComponentSearchComponent,
-      FindOrdersDialogComponent,
-      MiListaComponent,
-      ComponentslistComponent,
+        PlaceOrderDialogComponent,
+        ComponentSearchComponent,
+        FindOrdersDialogComponent,
+        MiListaComponent,
+        ComponentslistComponent,
         RequestSignatureDialogComponent
+    ],
+    exports: [
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

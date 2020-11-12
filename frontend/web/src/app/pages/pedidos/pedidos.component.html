@@ -11,7 +11,7 @@
                 Fecha finalización:
             </span>
             <span class="date-selected">
-             {{ filterDataOrders.dateFull}}
+             {{ filterDataOrders.dateFull | dateformat }}
             </span>
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
@@ -151,24 +151,45 @@
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions ">
                         <div class="actions-align-center">
-                            <button mat-icon-button matTooltip="Ver receta" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 348 359">
-                                    <defs>
-                                        <clipPath id="clip-receta">
-                                            <rect width="348" height="359"/>
-                                        </clipPath>
-                                    </defs>
-                                    <g id="receta" clip-path="url(#clip-receta)">
-                                        <g id="Group_9824" data-name="Group 9824" transform="translate(-126.24 -9.988)">
-                                            <path id="Path_6019" data-name="Path 6019" d="M14,3V64.241a15.31,15.31,0,0,0,15.31,15.31H90.551" transform="translate(317.338 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                                            <path id="Path_6020" data-name="Path 6020" d="M188.722,278.582H35.62A30.62,30.62,0,0,1,5,247.962V33.62A30.62,30.62,0,0,1,35.62,3H142.791l76.551,76.551V247.962A30.62,30.62,0,0,1,188.722,278.582Z" transform="translate(188.547 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                                            <line id="Line_149" data-name="Line 149" x2="14" transform="translate(255.24 149.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                                            <line id="Line_150" data-name="Line 150" x2="93" transform="translate(255.24 212.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                                            <line id="Line_151" data-name="Line 151" x2="93" transform="translate(255.24 273.989)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                            <div class="receipt-icon-container">
+                                <button mat-icon-button matTooltip="Ver receta" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5' && element.hasRecipte === '1'" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
+                                    <svg xmlns="http://www.w3.org/2000/svg"  width="2.3em" height="2.6em" viewBox="0 0 348 359">
+                                        <defs>
+                                            <clipPath id="clip-receta_negative">
+                                                <rect width="348" height="359"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="receta_negative" data-name="receta – negative" clip-path="url(#clip-receta_negative)">
+                                            <path id="Path_6022" data-name="Path 6022" d="M35,0,138.146,3.482c19.33,0,78.714,64.09,78.714,83.42L219,240a35,35,0,0,1-35,35H35A35,35,0,0,1,0,240V35A35,35,0,0,1,35,0Z" transform="translate(67 50)"/>
+                                            <g id="Group_9824" data-name="Group 9824" transform="translate(-126.24 -9.988)">
+                                                <path id="Path_6019" data-name="Path 6019" d="M14,3V64.241a15.31,15.31,0,0,0,15.31,15.31H90.551" transform="translate(317.338 56.502)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <path id="Path_6020" data-name="Path 6020" d="M188.722,278.582H35.62A30.62,30.62,0,0,1,5,247.962V33.62A30.62,30.62,0,0,1,35.62,3H142.791l76.551,76.551V247.962A30.62,30.62,0,0,1,188.722,278.582Z" transform="translate(188.547 56.502)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_149" data-name="Line 149" x2="14" transform="translate(255.24 149.988)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_150" data-name="Line 150" x2="93" transform="translate(255.24 212.988)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_151" data-name="Line 151" x2="93" transform="translate(255.24 273.989)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            </g>
                                         </g>
-                                    </g>
-                                </svg>
-                            </button>
+                                    </svg>
+                                </button>
+                                <button mat-icon-button matTooltip="Ver receta" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5' && element.hasRecipte === '2'" (click)="toSeeRecipes(element.docNum)" class="ico-col-pri generic">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 348 359">
+                                        <defs>
+                                            <clipPath id="clip-receta">
+                                                <rect width="348" height="359"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="receta" clip-path="url(#clip-receta)">
+                                            <g id="Group_9824" data-name="Group 9824" transform="translate(-126.24 -9.988)">
+                                                <path id="Path_6019" data-name="Path 6019" d="M14,3V64.241a15.31,15.31,0,0,0,15.31,15.31H90.551" transform="translate(317.338 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <path id="Path_6020" data-name="Path 6020" d="M188.722,278.582H35.62A30.62,30.62,0,0,1,5,247.962V33.62A30.62,30.62,0,0,1,35.62,3H142.791l76.551,76.551V247.962A30.62,30.62,0,0,1,188.722,278.582Z" transform="translate(188.547 56.502)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_149" data-name="Line 149" x2="14" transform="translate(255.24 149.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_150" data-name="Line 150" x2="93" transform="translate(255.24 212.988)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                                <line id="Line_151" data-name="Line 151" x2="93" transform="translate(255.24 273.989)" fill="none" stroke="#212121" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+                            </div>
                             <button mat-icon-button matTooltip="Etiqueta genérica" class="ico-col-pri generic cursor-none" *ngIf="element.labelType === 'G'">
                                 <mat-icon >
                                     <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 342">

@@ -14,6 +14,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {DataService} from '../../services/data.service';
 import Swal from 'sweetalert2';
 import {IProcessOrdersRes} from '../../model/http/pedidos';
+import {PipesModule} from '../../pipes/pipes.module';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -36,7 +37,8 @@ describe('PedidosComponent', () => {
     });
     TestBed.configureTestingModule({
       declarations: [ PedidosComponent ],
-      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule, BrowserAnimationsModule],
+      imports: [RouterTestingModule, MATERIAL_COMPONENTS,
+        HttpClientTestingModule, BrowserAnimationsModule, PipesModule],
       providers: [
         DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
