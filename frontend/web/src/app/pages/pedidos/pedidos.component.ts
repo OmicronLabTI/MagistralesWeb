@@ -61,7 +61,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToCancel = false;
   isThereOrdersToFinalize = false;
   isThereOrdersToReassign = false;
-  pageIndex = 0;
+  pageIndex = CONST_NUMBER.zero;
   isThereOrdersToRequest = false;
   isOnInit = true;
   isTherePedidosToViewPdf = false;

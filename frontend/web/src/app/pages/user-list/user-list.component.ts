@@ -32,6 +32,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     isOnInit = true;
     searchUsersData = new SearchUsersData();
     fullQueryString = CONST_STRING.empty;
+    pageIndex = CONST_NUMBER.zero;
     constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
                 private errorService: ErrorService,
                 private titleService: Title) {
@@ -115,8 +116,10 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     changeDataEvent(event: PageEvent) {
+        this.pageSize = event.pageSize;
         this.offset = (event.pageSize * (event.pageIndex));
         this.limit = event.pageSize;
+        this.pageIndex = event.pageIndex;
         this.getUsers();
         return event;
     }
@@ -161,6 +164,11 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
         }
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
+        this.offset = CONST_NUMBER.zero;
+        this.limit = CONST_NUMBER.ten;
+        this.pageIndex = CONST_NUMBER.zero;
+        this.pageSize = CONST_NUMBER.ten;
+
         this.getUsers();
     }
 }

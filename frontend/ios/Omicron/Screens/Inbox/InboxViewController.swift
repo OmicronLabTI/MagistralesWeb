@@ -34,6 +34,7 @@ class InboxViewController: UIViewController {
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
     let disposeBag = DisposeBag()
+    var productID = 0
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -259,6 +260,7 @@ class InboxViewController: UIViewController {
             let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { _ in
+                self?.view.isUserInteractionEnabled = false
                 self?.inboxViewModel.changeStatus(
                     indexPath: self?.collectionView.indexPathsForSelectedItems,
                     typeOfStatus: data.typeOfStatus)
@@ -296,6 +298,7 @@ class InboxViewController: UIViewController {
     func modelBindingExtension3() {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
+            self?.view.isUserInteractionEnabled = true
             if showLoading {
                 self?.lottieManager.showLoading()
                 return
@@ -307,6 +310,11 @@ class InboxViewController: UIViewController {
             .subscribe(onNext: { [unowned self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
+        inboxViewModel.hasConnection.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] hasConnection in
+                guard let self = self else { return }
+                if hasConnection { self.order.onNext(self.productID) }
+            }).disposed(by: disposeBag)
     }
     func initComponents() {
         self.processButton.isEnabled = false
@@ -450,11 +458,7 @@ extension InboxViewController: HeaderSelectedDelegate {
 
     func headerSelected(productID: Int) {
         inboxViewModel.getConnection()
-        inboxViewModel.hasConnection.observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] hasConnection in
-                guard let self = self else { return }
-                if hasConnection { self.order.onNext(productID) }
-            }).disposed(by: disposeBag)
+        self.productID = productID
     }
 
 }

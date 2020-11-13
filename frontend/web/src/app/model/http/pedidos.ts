@@ -76,6 +76,7 @@ export class IPedidoReq {
     fechaInicio: string;
     fechaFin: string;
     pedidoStatus: string;
+    hasRecipte?: string;
     qfb?: string;
     class?: string;
     labelType: string;

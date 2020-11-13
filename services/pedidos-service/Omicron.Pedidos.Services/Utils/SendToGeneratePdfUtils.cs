@@ -161,7 +161,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             foreach (var order in orders)
             {
-                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(order.OrdenId.ToString()));
+                var userOrder = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).FirstOrDefault(x => x.Productionorderid.Equals(order.OrdenId.ToString()));
                 userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
 
                 if (userOrder.Id == -1)

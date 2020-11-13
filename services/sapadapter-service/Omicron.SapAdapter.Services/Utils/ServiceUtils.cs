@@ -102,7 +102,18 @@ namespace Omicron.SapAdapter.Services.Utils
 
                 var typeLabel = allPersonalized ? "P" : "M";
                 typeLabel = allGeneric ? "G" : typeLabel;
-                p.ToList().ForEach(a => a.LabelType = typeLabel);
+
+                var hasRecipe = p.FirstOrDefault() != null && p.FirstOrDefault().AtcEntry != null;
+                var needRecipe = p.Any(d => !string.IsNullOrEmpty(d.Detalles.HasRecipe) && d.Detalles.HasRecipe.ToLower() == ServiceConstants.HasRecipe);
+
+                var recipe = hasRecipe ? ServiceConstants.HasNeedsRecipe : ServiceConstants.DoesntHaveNeedRecipe;
+                recipe = needRecipe ? recipe : ServiceConstants.NoNeedRecipe;
+
+                p.ToList().ForEach(a =>
+                {
+                    a.LabelType = typeLabel;
+                    a.HasRecipte = recipe;
+                });
             });
 
             orderModels = orderModels.DistinctBy(x => x.DocNum).ToList();
