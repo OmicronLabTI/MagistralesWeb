@@ -33,7 +33,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 private ordersServices: PedidosService,
                 private errorService: ErrorService,
                 private usersService: UsersService,
-                private dataService: DataService) {
+                public dataService: DataService) {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({
