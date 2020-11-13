@@ -151,6 +151,26 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string BatchesAreMissingError = "Batches";
 
         /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string HasRecipe = "si";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string HasNeedsRecipe = "1";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string DoesntHaveNeedRecipe = "2";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string NoNeedRecipe = "3";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
