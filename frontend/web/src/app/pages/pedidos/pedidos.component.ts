@@ -67,7 +67,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isTherePedidosToViewPdf = false;
   constructor(
     private pedidosService: PedidosService,
-    private dataService: DataService,
+    public dataService: DataService,
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
