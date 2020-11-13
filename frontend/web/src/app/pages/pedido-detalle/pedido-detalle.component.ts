@@ -62,7 +62,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              private dataService: DataService,
+              public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
               private router: Router, private dialog: MatDialog) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
