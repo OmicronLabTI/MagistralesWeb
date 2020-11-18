@@ -33,7 +33,7 @@ class CommentsTest: XCTestCase {
             fabOrderID: productionOrderID!,
             plannedQuantity: plannedQuantity!,
             fechaFin: fechaFin!,
-            comments: message!,
+            comments: message!, warehouse: "MP",
             components: [])
     }
     override func tearDown() {
