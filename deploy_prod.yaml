@@ -32,21 +32,6 @@ spec:
             cpu: 100m
             memory: 384Mi
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: apimanager-svc
-  labels:
-    app: apimanager-svc
-spec:
-  ports:
-  - port: 8000
-    targetPort: 8000
-    protocol: TCP
-    name: apimanager
-  selector:
-    app: apimanager
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
