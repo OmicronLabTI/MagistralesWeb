@@ -33,6 +33,7 @@ pipeline {
                 dir ('testing/stress/'){
 					script{
 						bzt 'OmicronLabJenkins.jmx'
+						perfReport 'result.csv'
 					}
                 }
             }
