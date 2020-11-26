@@ -31,7 +31,7 @@ pipeline {
 		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
-                sh 'sudo kubectl delete all --all --grace-period=0 --force'
+                sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
 				sh 'sudo docker system prune -f'
             }
         }
@@ -39,7 +39,6 @@ pipeline {
             steps {
                 echo 'Building Frontend'
                 dir ('frontend/web/'){
-                    sh 'npm install'
 					sh 'npm run build --prod'
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
