@@ -103,7 +103,7 @@ class ComponetsTest: XCTestCase {
             fabOrderID: component.orderFabId,
             plannedQuantity: plannedQuantity,
             fechaFin: fechaFin,
-            comments: "",
+            comments: "", warehouse: "MP",
             components: [component])
         return orderDetailReq
     }
