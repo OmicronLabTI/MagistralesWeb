@@ -31,7 +31,9 @@ pipeline {
 		stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
-					sh 'pip install bzt'
+					script{
+						bzt 'OmicronLabJenkins.jmx'
+					}
                 }
             }
         }
