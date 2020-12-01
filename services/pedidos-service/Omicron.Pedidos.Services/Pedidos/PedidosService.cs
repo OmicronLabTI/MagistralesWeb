@@ -145,27 +145,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
                 x.Status = order.Status ?? x.Status;
-
-                if (x.Status != ServiceConstants.Entregado)
-                {
-                    x.Userid = order.UserId ?? x.Userid;
-                }
-
+                x.Userid = order.UserId ?? x.Userid;
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
-
-            if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
-            {
-                var saleOrderId = ordersList.FirstOrDefault().Salesorderid;
-                ordersList = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { saleOrderId })).ToList();
-                var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
-                var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
-                saleOrder.Status = allDelivered ? ServiceConstants.Entregado : saleOrder.Status;
-                await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
-            }
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }

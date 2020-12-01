@@ -57,10 +57,5 @@ namespace Omicron.Pedidos.Resources.Enums
         /// Represents a logisticts signature.
         /// </summary>
         Cancelado = 8,
-
-        /// <summary>
-        /// Represents a logisticts signature.
-        /// </summary>
-        Entregado = 7,
     }
 }

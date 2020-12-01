@@ -1,0 +1,48 @@
+﻿// <summary>
+// <copyright file="QrFacade.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.Pedidos.Facade.Pedidos
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Services.Pedidos;
+
+    /// <summary>
+    /// Generates the QR.
+    /// </summary>
+    public class QrFacade : IQrFacade
+    {
+        private readonly IMapper mapper;
+
+        private readonly IQrService qrsService;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QrFacade"/> class.
+        /// </summary>
+        /// <param name="mapper">the mapper.</param>
+        /// <param name="qrsService">The qr services.</param>
+        public QrFacade(IMapper mapper, IQrService qrsService)
+        {
+            this.mapper = mapper;
+            this.qrsService = qrsService ?? throw new ArgumentNullException(nameof(qrsService));
+        }
+
+        /// <summary>
+        /// Geths the QR url for the orders.
+        /// </summary>
+        /// <param name="ordersId">The orders id.</param>
+        /// <returns>The urls for the QR.</returns>
+        public async Task<ResultDto> CreateMagistralQr(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.qrsService.CreateMagistralQr(ordersId));
+        }
+    }
+}

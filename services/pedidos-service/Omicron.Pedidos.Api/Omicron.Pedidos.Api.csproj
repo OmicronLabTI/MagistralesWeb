@@ -42,4 +42,8 @@
     <ProjectReference Include="..\Omicron.Pedidos.Resources\Omicron.Pedidos.Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
+
 </Project>
