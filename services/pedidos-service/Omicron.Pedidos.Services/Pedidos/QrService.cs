@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
@@ -35,13 +36,17 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IPedidosDao pedidosDao;
 
+        private readonly IConfiguration configuration;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="QrService"/> class.
         /// </summary>
         /// <param name="pedidosDao">The pedidos dao.</param>
-        public QrService(IPedidosDao pedidosDao)
+        /// <param name="configuration">The configuration.</param>
+        public QrService(IPedidosDao pedidosDao, IConfiguration configuration)
         {
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -51,9 +56,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> CreateMagistralQr(List<int> ordersId)
         {
-            var saleOrders = await this.GetOrders(ordersId);
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
-            var urls = this.GetUrlQr(saleOrders, parameters);
+            var saleOrders = await this.GetOrders(ordersId);
+
+            var listSavedQr = await this.pedidosDao.GetQrRoute(saleOrders.Select(x => x.Id).ToList());
+
+            var savedQrUserOrders = listSavedQr.Select(c => c.UserOrderId).ToList();
+            var savedQrRoutes = listSavedQr.Select(r => r.MagistralQrRoute).ToList();
+
+            saleOrders.RemoveAll(x => savedQrUserOrders.Contains(x.Id));
+            var urls = await this.GetUrlQr(saleOrders, parameters);
+            urls.AddRange(savedQrRoutes);
 
             return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
         }
@@ -75,9 +88,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="saleOrders">the sale order.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
-        private List<string> GetUrlQr(List<UserOrderModel> saleOrders, List<ParametersModel> parameters)
+        private async Task<List<string>> GetUrlQr(List<UserOrderModel> saleOrders, List<ParametersModel> parameters)
         {
+            var baseAddres = this.configuration["QrImagesBaseRoute"];
             var listUrls = new List<string>();
+            var listToSave = new List<ProductionOrderQr>();
             saleOrders
                 .Where(x => !string.IsNullOrEmpty(x.MagistralQr))
                 .ToList()
@@ -96,9 +111,20 @@ namespace Omicron.Pedidos.Services.Pedidos
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    listUrls.Add(pathTosave);
+                    var currentAddres = $"{baseAddres}/{so.Productionorderid}.png";
+
+                    var modelToSave = new ProductionOrderQr
+                    {
+                        Id = Guid.NewGuid().ToString("D"),
+                        MagistralQrRoute = currentAddres,
+                        UserOrderId = so.Id,
+                    };
+
+                    listToSave.Add(modelToSave);
+                    listUrls.Add(currentAddres);
                 });
 
+            await this.pedidosDao.InsertQrRoute(listToSave);
             return listUrls;
         }
 

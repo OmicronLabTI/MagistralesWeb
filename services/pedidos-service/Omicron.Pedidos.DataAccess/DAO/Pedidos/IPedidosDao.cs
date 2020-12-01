@@ -157,5 +157,19 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="fieldName">The field name.</param>
         /// <returns>the data.</returns>
         Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="userOrderId">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave);
     }
 }
