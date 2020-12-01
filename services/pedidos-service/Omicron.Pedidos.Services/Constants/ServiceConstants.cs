@@ -436,6 +436,56 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Personalizado = "Personalizada";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQr = "QrMagistral";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrHeight = "QrMagistralHeight";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrWidth = "QrMagistralWidth";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrMargin = "QrMagistralMargin";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectx = "QrMagistralRectx";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRecty = "QrMagistralRecty";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectWidth = "QrMagistralRectWidth";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectHeight = "QrMagistralRectHeight";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomText = "Pedido: {0} {1}";
+
+        /// <summary>
+        /// const for the cooling.
+        /// </summary>
+        public const string NeedsCooling = "\nRequiere refrigeración";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

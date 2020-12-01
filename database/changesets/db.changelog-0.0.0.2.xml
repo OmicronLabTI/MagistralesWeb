@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="gramirez" id="changelog-2.1">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrmgestrcuture"
+			type="VARCHAR(300)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.2">
+	<insert tableName="parameters"> 
+		<column name="value" value="350"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralHeight"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.3">
+	<insert tableName="parameters"> 
+		<column name="value" value="350"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralWidth"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-3.3">
+	<insert tableName="parameters"> 
+		<column name="value" value="5"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralMargin"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-3.4">
+	<insert tableName="parameters"> 
+		<column name="value" value="115"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectx"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-3.5">
+	<insert tableName="parameters"> 
+		<column name="value" value="305"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRecty"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-3.6">
+	<insert tableName="parameters"> 
+		<column name="value" value="300"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectWidth"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-3.7">
+	<insert tableName="parameters"> 
+		<column name="value" value="250"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectHeight"/>
+	</insert>
+  </changeSet>
+</databaseChangeLog> 

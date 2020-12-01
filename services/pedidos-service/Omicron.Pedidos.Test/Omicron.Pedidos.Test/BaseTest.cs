@@ -45,6 +45,14 @@ namespace Omicron.Pedidos.Test
         /// <returns>the user.</returns>
         public List<UserOrderModel> GetUserOrderModel()
         {
+            var magistralQr = new MagistralQrModel
+            {
+                NeedsCooling = "Y",
+                ProductionOrder = 100,
+                Quantity = 1,
+                SaleOrder = 100,
+            };
+
             return new List<UserOrderModel>
             {
                 new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
@@ -69,6 +77,10 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
                 new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = "29/08/2020" },
                 new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
+
+                // Orders for Qr.
+                new UserOrderModel { Id = 100, Productionorderid = "300", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr) },
+                new UserOrderModel { Id = 101, Productionorderid = "301", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr) },
             };
         }
 

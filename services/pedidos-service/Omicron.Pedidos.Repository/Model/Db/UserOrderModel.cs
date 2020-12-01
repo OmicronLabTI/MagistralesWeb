@@ -120,6 +120,14 @@ namespace Omicron.Pedidos.Entities.Model
         public int FinishedLabel { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrmgestrcuture")]
+        public string MagistralQr { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

@@ -150,5 +150,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="customListIds">Te custom list ids.</param>
         /// <returns>Related components.</returns>
         Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(List<int> customListIds);
+
+        /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName);
     }
 }

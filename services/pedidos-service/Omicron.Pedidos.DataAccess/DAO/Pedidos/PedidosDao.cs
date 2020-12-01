@@ -247,6 +247,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName)
+        {
+            return await this.databaseContext.ParametersModel.Where(x => x.Field.Contains(fieldName)).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
