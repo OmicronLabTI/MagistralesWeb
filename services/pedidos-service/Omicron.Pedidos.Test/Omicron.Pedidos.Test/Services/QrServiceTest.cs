@@ -11,6 +11,8 @@ namespace Omicron.Pedidos.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Moq;
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
@@ -28,6 +30,8 @@ namespace Omicron.Pedidos.Test.Services
 
         private QrService qrsService;
 
+        private Mock<IConfiguration> configuration;
+
         /// <summary>
         /// The set up.
         /// </summary>
@@ -42,8 +46,11 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.SaveChanges();
 
+            this.configuration = new Mock<IConfiguration>();
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == "QrImagesBaseRoute")]).Returns("http://localhost:5002/");
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.qrsService = new QrService(this.pedidosDao);
+            this.qrsService = new QrService(this.pedidosDao, this.configuration.Object);
         }
 
         /// <summary>
