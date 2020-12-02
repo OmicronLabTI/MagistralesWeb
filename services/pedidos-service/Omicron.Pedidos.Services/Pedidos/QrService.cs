@@ -111,7 +111,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    var currentAddres = $"{baseAddres}/{so.Productionorderid}.png";
+                    var currentAddres = $"{baseAddres}{so.Productionorderid}.png";
 
                     var modelToSave = new ProductionOrderQr
                     {

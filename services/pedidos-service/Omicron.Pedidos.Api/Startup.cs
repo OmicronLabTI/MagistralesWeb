@@ -169,11 +169,10 @@ namespace Omicron.Pedidos.Api
 
             app.UseResponseCompression();
 
-            app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Images")),
-                RequestPath = "/Resources",
+                RequestPath = "/resources",
             });
             app.UseDiscoveryClient();
             app.UseMetricServer();
