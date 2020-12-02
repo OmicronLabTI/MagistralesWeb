@@ -128,6 +128,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string MagistralQr { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("finalizeddate")]
+        public DateTime? FinalizedDate { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
