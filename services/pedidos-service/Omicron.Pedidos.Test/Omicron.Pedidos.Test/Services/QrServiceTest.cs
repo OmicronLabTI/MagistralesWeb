@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Test.Services
         /// Test the creation of the Qr.
         /// </summary>
         /// <returns>the data.</returns>
-        /*[Test]
+        [Test]
         public async Task CreateQrMagistral()
         {
             var listOrdersId = new List<int> { 300, 301 };
@@ -66,6 +66,6 @@ namespace Omicron.Pedidos.Test.Services
 
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
-        }*/
+        }
     }
 }
