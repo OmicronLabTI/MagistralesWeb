@@ -74,4 +74,17 @@
       </column>
     </createTable>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.10">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="REPARTIDOR"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.11">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="finalizeddate"
+			type="Date">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 
