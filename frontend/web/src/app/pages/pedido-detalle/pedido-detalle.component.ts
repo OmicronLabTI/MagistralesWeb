@@ -1,7 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../model/http/detallepedidos.model';
+import {
+  IPedidoDetalleLabelReq,
+  IPedidoDetalleReq,
+  IQrByOrdersRes,
+  LabelToFinish
+} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
@@ -24,6 +29,7 @@ import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-comments-dialog.component';
+import {DownloadImagesService} from '../../services/download-images.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -64,7 +70,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
-              private router: Router, private dialog: MatDialog) {
+              private router: Router, private dialog: MatDialog,
+              private downloadImagesService: DownloadImagesService) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -347,4 +354,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
             , error => this.errorService.httpError(error));
   }
+
+  ordersToDownloadQr() {
+    this.pedidosService.qrByEachOrder(this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder))
+        .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error) );
+
+  }
+  downloadQrByUrl(urlsOfQrs: string[]) {
+    urlsOfQrs.forEach( urlOfQr => {
+      this.downloadImagesService.downloadFile(urlOfQr, urlOfQr.split('/').slice(-1)[0]);
+    });
+  }
 }
+

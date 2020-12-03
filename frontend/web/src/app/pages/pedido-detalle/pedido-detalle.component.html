@@ -46,6 +46,20 @@
                   (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
               Entregado
           </button>
+          <!--
+           Remove Entregado button
+           pero checar si no afecta en alguna otra funcionalidad
+
+           add to Download  qr button
+            [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
+                  [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
+           *ngIf="dataService.getUserRole() === '4'"
+           -->
+          <button  [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
+                   [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
+                  (click)="ordersToDownloadQr()" >
+              Descargar qr &nbsp;
+          </button>
           <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
                   [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
                   (click)="finishOrdersLabels()" *ngIf="dataService.getUserRole() === '4'">
