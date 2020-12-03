@@ -12,7 +12,7 @@ export class DownloadImagesService {
 
   constructor(private http: HttpClient, private dataService: DataService) { }
 
-  downloadFile(urlImage: string, fileName: string): void {
+  downloadImageFromUrl(urlImage: string, fileName: string): void {
     this.http
         .get(urlImage, { responseType: 'blob' })
         .pipe(map(res => res))

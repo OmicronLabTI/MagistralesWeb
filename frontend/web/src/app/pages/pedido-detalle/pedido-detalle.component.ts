@@ -62,7 +62,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
-  isThereOrdersDetailToDelivered = false;
   isThereOrdersToFinishLabel = false;
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
@@ -136,7 +135,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
         this.isThereOrdersToViewPdf = false;
-        this.isThereOrdersDetailToDelivered = false;
         this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -178,8 +176,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
-        FromToFilter.fromDefault);
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
@@ -282,25 +278,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
-  ordersToDelivered() {
-    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            this.pedidosService.putOrdersToDelivered(
-                this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
-                    .map(order => {
-                      const orderToDelivered = new OrderToDelivered();
-                      orderToDelivered.orderId = order.ordenFabricacionId;
-                      orderToDelivered.status = ConstStatus.entregado;
-                      return orderToDelivered;
-                    })).subscribe(() => {
-                      this.reloadOrderDetail();
-                }
-                , error => this.errorService.httpError((error)));
-          }});
-
-  }
-
   finishOrdersLabels() {
     this.dataService.setOpenSignatureDialog(this.signatureData);
   }
@@ -362,7 +339,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
   downloadQrByUrl(urlsOfQrs: string[]) {
     urlsOfQrs.forEach( urlOfQr => {
-      this.downloadImagesService.downloadFile(urlOfQr, urlOfQr.split('/').slice(-1)[0]);
+      this.downloadImagesService.downloadImageFromUrl(urlOfQr, urlOfQr.split('/').slice(-1)[0]);
     });
   }
 }
