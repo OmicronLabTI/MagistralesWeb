@@ -170,5 +170,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> DeleteFiles();
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersForAlmacen();
     }
 }

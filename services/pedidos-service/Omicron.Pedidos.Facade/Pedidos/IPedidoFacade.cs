@@ -248,5 +248,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> DeleteFiles();
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForAlmacen();
     }
 }

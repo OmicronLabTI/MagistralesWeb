@@ -783,6 +783,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetOrdersForAlmacen()
+        {
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var orders = await this.pedidosDao.GetOrderForAlmacen(ServiceConstants.Finalizado);
+            orders = orders.Where(x => x.IsSalesOrder).ToList();
+
+            var ordersAlmacenado = await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado });
+            orders.AddRange(ordersAlmacenado);
+
+            var ordersToReturn = orders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Productionorderid = x.Productionorderid,
+                Status = x.Status,
+                Comments = x.Comments,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
+        }
+
+        /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
         /// <param name="orders">the orders.</param>

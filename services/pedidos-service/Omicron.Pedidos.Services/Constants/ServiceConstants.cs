@@ -76,6 +76,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Reasignado = "Reasignado";
 
         /// <summary>
+        /// Almacenado status.
+        /// </summary>
+        public const string Almacenado = "Almacenado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -474,6 +479,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the magistrgal qr.
         /// </summary>
         public const string QrMagistralRectHeight = "QrMagistralRectHeight";
+
+        /// <summary>
+        /// Field for the max day to look.
+        /// </summary>
+        public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
         /// const for the bottom temxt.
