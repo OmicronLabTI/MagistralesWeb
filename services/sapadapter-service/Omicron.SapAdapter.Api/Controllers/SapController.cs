@@ -306,6 +306,20 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="type">The type of scanned item.</param>
+        /// <param name="code">The code scanned.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/{type}/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrder(string type, string code)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedData(type, code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

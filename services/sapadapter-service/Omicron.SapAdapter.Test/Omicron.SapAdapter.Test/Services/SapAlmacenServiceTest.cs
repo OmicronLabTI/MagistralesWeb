@@ -47,6 +47,8 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
+            this.context.Batches.AddRange(this.GetBatches());
+            this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -81,6 +83,40 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetMagistralScannedData()
+        {
+            // arrange
+            var order = "75000-1000";
+
+            // act
+            var response = await this.sapService.GetMagistralScannedData(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetLineScannedData()
+        {
+            // arrange
+            var order = "aa";
+
+            // act
+            var response = await this.sapService.GetLineScannedData(order);
 
             // assert
             Assert.IsNotNull(response);

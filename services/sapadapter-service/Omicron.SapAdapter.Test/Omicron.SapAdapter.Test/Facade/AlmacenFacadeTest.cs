@@ -50,6 +50,14 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockService
+                .Setup(m => m.GetMagistralScannedData(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockService
+                .Setup(m => m.GetLineScannedData(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object);
         }
 
@@ -62,6 +70,34 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetOrders(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetScannedDataMagistral()
+        {
+            var type = "magistral";
+            var code = "75000-1000";
+            var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetScannedDataLine()
+        {
+            var type = "line";
+            var code = "750001000";
+            var response = await this.almacenFacade.GetScannedData(type, code);
 
             Assert.IsNotNull(response);
         }

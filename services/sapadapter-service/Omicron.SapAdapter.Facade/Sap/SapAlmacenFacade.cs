@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Facade.FacadeConstants;
     using Omicron.SapAdapter.Services.Sap;
 
     /// <summary>
@@ -43,6 +44,22 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetOrders(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetOrders(parameters));
+        }
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="type">the type of the scan.</param>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetScannedData(string type, string code)
+        {
+            if (type.Equals(FacadeConstants.Magistral))
+            {
+                return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
+            }
+
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
         }
     }
 }

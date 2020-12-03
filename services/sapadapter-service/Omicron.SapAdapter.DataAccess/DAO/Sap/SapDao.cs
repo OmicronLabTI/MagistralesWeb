@@ -172,6 +172,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CreatedDate = dp.CreatedDate,
                              Label = d.Label,
                              NeedsCooling = p.NeedsCooling,
+                             Container = d.Container,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);

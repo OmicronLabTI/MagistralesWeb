@@ -23,5 +23,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="type">the type of the scan.</param>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedData(string type, string code);
     }
 }

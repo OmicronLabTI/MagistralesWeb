@@ -60,6 +60,74 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the data of the magistral scanned data.
+        /// </summary>
+        /// <param name="code">the code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetMagistralScannedData(string code)
+        {
+            var codeArray = code.Split("-");
+            int.TryParse(codeArray[0], out var pedidoId);
+            int.TryParse(codeArray[1], out var orderId);
+
+            var details = (await this.sapDao.GetAllDetails(pedidoId)).ToList();
+            var order = details.FirstOrDefault(x => x.OrdenFabricacionId == orderId);
+            order = order == null ? new CompleteDetailOrderModel() : order;
+
+            var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
+            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+
+            var magistralData = new MagistralScannerModel
+            {
+                Container = order.Container,
+                Description = itemCode.ProductoName,
+                ItemCode = itemCode.ProductoId,
+                NeedsCooling = itemCode.NeedsCooling,
+                Pieces = order.QtyPlanned.Value,
+                ProductType = $"Producto {productType}",
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, magistralData, null, null);
+        }
+
+        /// <summary>
+        /// Gets the data of the line scanned bar.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetLineScannedData(string code)
+        {
+            var listBatchesModel = new List<LineProductBatchesModel>();
+
+            // ToDo Get the code from items.
+            var itemCode = (await this.sapDao.GetProductById("Linea1")).FirstOrDefault();
+            var validBatches = (await this.sapDao.GetValidBatches(itemCode.ProductoId, ServiceConstants.PT)).ToList();
+            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+
+            validBatches.ForEach(b =>
+            {
+                var batch = new LineProductBatchesModel
+                {
+                    Batch = b.DistNumber,
+                    ExpDate = b.FechaExp,
+                    AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
+                };
+
+                listBatchesModel.Add(batch);
+            });
+
+            var lineData = new LineScannerModel
+            {
+                Batches = listBatchesModel,
+                Description = itemCode.ProductoName,
+                ItemCode = itemCode.ProductoId,
+                ProductType = $"Producto {productType}",
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
+        }
+
+        /// <summary>
         /// Gets the data structure.
         /// </summary>
         /// <param name="userOrders">The user orders.</param>

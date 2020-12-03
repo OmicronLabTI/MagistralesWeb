@@ -206,6 +206,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Mixto = "Mixto";
 
         /// <summary>
+        /// PT wharegouse.
+        /// </summary>
+        public const string PT = "PT";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -131,6 +131,9 @@ namespace Omicron.SapAdapter.Test
             return new List<Batches>
             {
                 new Batches { AbsEntry = 1, DistNumber = "Lote1", ItemCode = "Abc Aspirina", SysNumber = 1 },
+
+                // For Almacen
+                new Batches { AbsEntry = 2, DistNumber = "Lote1", ItemCode = "Linea1", SysNumber = 1 },
             };
         }
 
@@ -143,6 +146,9 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesQuantity>
             {
                 new BatchesQuantity { AbsEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1, CommitQty = 10, Quantity = 10, WhsCode = "MN" },
+
+                // For Almacen
+                new BatchesQuantity { AbsEntry = 2, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
             };
         }
 

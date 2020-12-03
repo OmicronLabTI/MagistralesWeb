@@ -23,5 +23,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the data of the magistral scanned data.
+        /// </summary>
+        /// <param name="code">the code.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetMagistralScannedData(string code);
+
+        /// <summary>
+        /// Gets the data of the line scanned bar.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetLineScannedData(string code);
     }
 }
