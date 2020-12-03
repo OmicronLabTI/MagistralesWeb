@@ -185,7 +185,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (item.IsMagistral.Equals("Y"))
                 {
-                    var userFabOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(orderId));
+                    var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(orderId));
                     orderStatus = userFabOrder == null || userFabOrder.Status.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabOrder.Status;
                 }
                 else

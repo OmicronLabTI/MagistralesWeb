@@ -8,15 +8,14 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
@@ -40,10 +39,14 @@ namespace Omicron.SapAdapter.Test.Services
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(databaseName: "TemporalAlmacen")
                 .Options;
 
             this.context = new DatabaseContext(options);
+            this.context.OrderModel.AddRange(this.GetOrderModel());
+            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -55,10 +58,32 @@ namespace Omicron.SapAdapter.Test.Services
             this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object);
         }
 
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
         [Test]
         public async Task GetOrders()
         {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
 
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object);
+
+            // act
+            var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
         }
     }
 }

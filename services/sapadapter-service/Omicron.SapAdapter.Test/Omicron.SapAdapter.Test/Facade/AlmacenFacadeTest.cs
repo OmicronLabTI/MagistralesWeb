@@ -8,13 +8,15 @@
 
 namespace Omicron.SapAdapter.Test.Facade
 {
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Class for the QR test.
@@ -45,7 +47,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockService = new Mock<ISapAlmacenService>();
 
             mockService
-                .Setup(m => m.GetOrders()))
+                .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object);
@@ -58,7 +60,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetPedidos()
         {
-            var response = await this.almacenFacade.GetOrders();
+            var dictionary = new Dictionary<string, string>();
+            var response = await this.almacenFacade.GetOrders(dictionary);
 
             Assert.IsNotNull(response);
         }

@@ -496,7 +496,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// Gets the orders for almacen.
         /// </summary>
         /// <returns>the data.</returns>
-        [Route("userorders/almacen")]
+        [Route("/userorders/almacen")]
         [HttpGet]
         public async Task<IActionResult> GetOrdersForAlmacen()
         {

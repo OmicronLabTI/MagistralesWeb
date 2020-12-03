@@ -815,6 +815,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test to get recipes.
         /// </summary>
+        /// <returns>The data.</returns>
         [Test]
         public async Task ValidateOrder()
         {

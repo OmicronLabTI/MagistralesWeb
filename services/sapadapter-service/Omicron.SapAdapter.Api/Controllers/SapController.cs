@@ -27,6 +27,8 @@ namespace Omicron.SapAdapter.Api.Controllers
     {
         private readonly ISapFacade sapFacade;
 
+        private readonly ISapAlmacenFacade sapAlmacenFacade;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -37,9 +39,11 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
-        public SapController(ISapFacade sapFacade, ILogger logger)
+        /// <param name="sapAlmacenFacade">the sap almacen.</param>
+        public SapController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
+            this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));
             this.logger = logger;
         }
 
@@ -286,6 +290,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             var result = await this.sapFacade.ValidateOrder(orderId);
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrders([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetOrders(parameters);
+            return this.Ok(response);
         }
 
         /// <summary>
