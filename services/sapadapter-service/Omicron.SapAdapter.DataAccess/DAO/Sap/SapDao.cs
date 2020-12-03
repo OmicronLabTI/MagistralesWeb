@@ -498,6 +498,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         where order.FechaInicio >= initDate && order.PedidoStatus == "O"
+                         select new CompleteAlmacenOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = order.Cliente,
+                             Medico = order.Medico,                             
+                             FechaInicio = order.FechaInicio,
+                             Detalles = dp,
+                         });
+
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+        }
+
+        /// <summary>
         /// Gets the retry.
         /// </summary>
         /// <typeparam name="T">the type.</typeparam>
