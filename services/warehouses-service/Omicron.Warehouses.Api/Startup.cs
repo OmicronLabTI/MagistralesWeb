@@ -119,6 +119,7 @@ namespace Omicron.Warehouses.Api
             .AddTypedClient<IReportingService, ReportingService>();
 
             this.AddRedis(services, Log.Logger);
+            this.AddCorsSvc(services);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
@@ -160,9 +161,28 @@ namespace Omicron.Warehouses.Api
             app.UseMiddleware<ResponseMiddleware>();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 
