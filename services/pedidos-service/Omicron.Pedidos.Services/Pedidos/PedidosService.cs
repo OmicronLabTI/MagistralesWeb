@@ -688,9 +688,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
+
+            var listUrls = ServiceUtils.GetValuesByContainsKeyValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
+            listErrorId.AddRange(listUrls);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
