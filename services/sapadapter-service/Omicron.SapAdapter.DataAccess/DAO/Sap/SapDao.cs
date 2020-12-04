@@ -172,6 +172,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CreatedDate = dp.CreatedDate,
                              Label = d.Label,
                              NeedsCooling = p.NeedsCooling,
+                             Container = d.Container,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);
@@ -495,6 +496,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
         {
             return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         where order.FechaInicio >= initDate && order.PedidoStatus == "O"
+                         select new CompleteAlmacenOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = order.Cliente,
+                             Medico = order.Medico,                             
+                             FechaInicio = order.FechaInicio,
+                             Detalles = dp,
+                         });
+
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
         /// <summary>

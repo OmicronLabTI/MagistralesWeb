@@ -87,4 +87,11 @@
 		</column>
 	</addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.12">
+	<insert tableName="parameters"> 
+		<column name="value" value="15"/>
+		<column name="type" value="int"/>
+		<column name="field" value="AlmacenMaxDayToLook"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

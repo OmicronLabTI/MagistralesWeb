@@ -171,5 +171,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="modelsToSave">the orders ids.</param>
         /// <returns>the data.</returns>
         Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave);
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status tu,</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>>GetOrderForAlmacen(string status);
     }
 }

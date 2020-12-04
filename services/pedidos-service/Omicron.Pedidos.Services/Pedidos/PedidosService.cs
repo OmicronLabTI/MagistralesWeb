@@ -688,9 +688,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
+
+            var listUrls = ServiceUtils.GetValuesByContainsKeyValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
+            listErrorId.AddRange(listUrls);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
@@ -780,6 +783,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var response = await this.sapFileService.PostSimple(null, ServiceConstants.DeleteFiles);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetOrdersForAlmacen()
+        {
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var orders = await this.pedidosDao.GetOrderForAlmacen(ServiceConstants.Finalizado);
+            orders = orders.Where(x => x.IsSalesOrder).ToList();
+
+            var ordersAlmacenado = await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado });
+            orders.AddRange(ordersAlmacenado);
+
+            var ordersToReturn = orders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Productionorderid = x.Productionorderid,
+                Status = x.Status,
+                Comments = x.Comments,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
         }
 
         /// <summary>

@@ -279,6 +279,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status to look.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<UserOrderModel>> GetOrderForAlmacen(string status)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
