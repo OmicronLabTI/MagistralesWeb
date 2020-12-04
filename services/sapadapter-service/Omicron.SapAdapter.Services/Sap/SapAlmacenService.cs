@@ -128,6 +128,17 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the complete detail.
+        /// </summary>
+        /// <param name="orderId">The order id.</param>
+        /// <returns>The data.</returns>
+        public async Task<ResultModel> GetCompleteDetail(int orderId)
+        {
+            var data = await this.sapDao.GetAllOrdersForAlmacenById(orderId);
+            return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+        }
+
+        /// <summary>
         /// Gets the data structure.
         /// </summary>
         /// <param name="userOrders">The user orders.</param>

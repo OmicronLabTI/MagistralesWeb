@@ -61,5 +61,15 @@ namespace Omicron.SapAdapter.Facade.Sap
 
             return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
         }
+
+        /// <summary>
+        /// Gets all the details.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetCompleteDetail(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetCompleteDetail(orderId));
+        }
     }
 }
