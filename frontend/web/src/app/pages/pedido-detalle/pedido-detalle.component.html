@@ -45,7 +45,7 @@
                    [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
                    *ngIf="dataService.getUserRole() === '4'"
                   (click)="ordersToDownloadQr()" >
-              Descargar qr &nbsp;
+              Descargar código QR&nbsp;
           </button>
           <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
                   [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"

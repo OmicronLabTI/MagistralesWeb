@@ -1,12 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
-import {
-  IPedidoDetalleLabelReq,
-  IPedidoDetalleReq,
-  IQrByOrdersRes,
-  LabelToFinish
-} from '../../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../model/http/detallepedidos.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
@@ -24,7 +19,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, OrderToDelivered, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -66,6 +61,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
+  ordersToSendAndDownloadQR: number[] = [];
+  ordersReceivedFromRequest: number[] = [];
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -333,14 +330,37 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ordersToDownloadQr() {
-    this.pedidosService.qrByEachOrder(this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder))
+    this.ordersReceivedFromRequest = [];
+    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder);
+    this.pedidosService.qrByEachOrder(this.ordersToSendAndDownloadQR)
         .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error) );
 
   }
   downloadQrByUrl(urlsOfQrs: string[]) {
     urlsOfQrs.forEach( urlOfQr => {
+      this.addToOrderReceived(urlOfQr);
       this.downloadImagesService.downloadImageFromUrl(urlOfQr, urlOfQr.split('/').slice(-1)[0]);
     });
+    this.checkIfThereOrdersWithoutQr();
+  }
+  addToOrderReceived(urlOfQr: string) {
+    this.ordersReceivedFromRequest.push(Number(urlOfQr.split('/').slice(-1)[0].split('.')[0]));
+  }
+  checkIfThereOrdersWithoutQr() {
+    const ordersWithoutQr: string[] = [];
+    this.ordersToSendAndDownloadQR.forEach(orderSend => {
+      if (!this.ordersReceivedFromRequest.includes(orderSend)) {
+        ordersWithoutQr.push(String(orderSend));
+      }
+    });
+    if (ordersWithoutQr.length > CONST_NUMBER.zero) {
+      this.createMessageWithOrdersWithoutQr(ordersWithoutQr);
+    }
+  }
+  createMessageWithOrdersWithoutQr(ordersWithoutQr: string[] ) {
+    this.dataService.presentToastCustom(
+        this.dataService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
+        CONST_STRING.empty , true, false, ClassNames.popupCustom);
   }
 }
 

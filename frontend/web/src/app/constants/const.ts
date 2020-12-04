@@ -69,7 +69,8 @@ export enum MessageType {
     finalizeOrder,
     saveBatches,
     materialRequest,
-    default
+    default,
+    ordersWithoutQr
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
