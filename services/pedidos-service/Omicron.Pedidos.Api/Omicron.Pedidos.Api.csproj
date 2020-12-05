@@ -42,4 +42,10 @@
     <ProjectReference Include="..\Omicron.Pedidos.Resources\Omicron.Pedidos.Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Resources\Images\json.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

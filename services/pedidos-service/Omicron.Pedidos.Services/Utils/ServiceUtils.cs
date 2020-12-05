@@ -100,6 +100,26 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="dictResult">the dict.</param>
         /// <param name="correctValue">the correct value.</param>
         /// <returns>the list.</returns>
+        public static List<string> GetValuesByContainsKeyValue(Dictionary<string, string> dictResult, string correctValue)
+        {
+            var listToReturn = new List<string>();
+            foreach (var k in dictResult.Keys)
+            {
+                if (k.Contains(correctValue))
+                {
+                    listToReturn.Add(dictResult[k]);
+                }
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the list of keys by a value.
+        /// </summary>
+        /// <param name="dictResult">the dict.</param>
+        /// <param name="correctValue">the correct value.</param>
+        /// <returns>the list.</returns>
         public static List<string> GetValuesContains(Dictionary<string, string> dictResult, string correctValue)
         {
             var listToReturn = new List<string>();

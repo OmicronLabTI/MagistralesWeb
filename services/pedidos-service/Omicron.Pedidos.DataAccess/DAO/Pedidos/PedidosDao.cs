@@ -247,6 +247,48 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName)
+        {
+            return await this.databaseContext.ParametersModel.Where(x => x.Field.Contains(fieldName)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="userOrderId">the orders ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId)
+        {
+            return await this.databaseContext.ProductionOrderQr.Where(x => userOrderId.Contains(x.UserOrderId)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave)
+        {
+            this.databaseContext.ProductionOrderQr.AddRange(modelsToSave);
+            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status to look.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<UserOrderModel>> GetOrderForAlmacen(string status)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

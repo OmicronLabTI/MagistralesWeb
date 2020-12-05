@@ -145,27 +145,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
                 x.Status = order.Status ?? x.Status;
-
-                if (x.Status != ServiceConstants.Entregado)
-                {
-                    x.Userid = order.UserId ?? x.Userid;
-                }
-
+                x.Userid = order.UserId ?? x.Userid;
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
-
-            if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
-            {
-                var saleOrderId = ordersList.FirstOrDefault().Salesorderid;
-                ordersList = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { saleOrderId })).ToList();
-                var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
-                var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
-                saleOrder.Status = allDelivered ? ServiceConstants.Entregado : saleOrder.Status;
-                await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
-            }
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
@@ -298,6 +283,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now.FormatedDate();
                         userOrder.Status = ServiceConstants.Finalizado;
+                        userOrder.FinalizedDate = DateTime.Now;
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                     }
                 }
@@ -310,6 +296,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     salesOrder.CloseUserId = orderToFinish.UserId;
                     salesOrder.CloseDate = DateTime.Now.FormatedDate();
                     salesOrder.Status = ServiceConstants.Finalizado;
+                    salesOrder.FinalizedDate = DateTime.Now;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
 
@@ -404,6 +391,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     productionOrder.CloseUserId = orderToFinish.UserId;
                     productionOrder.CloseDate = DateTime.Now.FormatedDate();
                     productionOrder.Status = ServiceConstants.Finalizado;
+                    productionOrder.FinalizedDate = DateTime.Now;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
@@ -431,6 +419,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     salesOrder.CloseUserId = userId;
                     salesOrder.CloseDate = DateTime.Now.FormatedDate();
                     salesOrder.Status = ServiceConstants.Finalizado;
+                    salesOrder.FinalizedDate = DateTime.Now;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
@@ -699,9 +688,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
+
+            var listUrls = ServiceUtils.GetValuesByContainsKeyValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
+            listErrorId.AddRange(listUrls);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
@@ -745,6 +737,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var saleOrder = orders.FirstOrDefault(x => x.IsSalesOrder);
             var allChecked = orders.Where(x => x.IsProductionOrder).All(y => y.FinishedLabel == 1);
             saleOrder.FinishedLabel = allChecked ? 1 : 0;
+            saleOrder.FinalizedDate = allChecked ? DateTime.Now : saleOrder.FinalizedDate;
 
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
 
@@ -793,6 +786,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetOrdersForAlmacen()
+        {
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var orders = await this.pedidosDao.GetOrderForAlmacen(ServiceConstants.Finalizado);
+            orders = orders.Where(x => x.IsSalesOrder).ToList();
+
+            var ordersAlmacenado = await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado });
+            orders.AddRange(ordersAlmacenado);
+
+            var ordersToReturn = orders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Productionorderid = x.Productionorderid,
+                Status = x.Status,
+                Comments = x.Comments,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
+        }
+
+        /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
         /// <param name="orders">the orders.</param>
@@ -810,6 +828,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var orderToUpdate = updateDesignerLabels.Details.FirstOrDefault(y => y.OrderId.ToString() == x.Productionorderid);
                 var orderSignatureToUpdate = signatureOrders.FirstOrDefault(y => y.UserOrderId == x.Id);
                 x.FinishedLabel = orderToUpdate.Checked ? 1 : 0;
+                x.FinalizedDate = orderToUpdate.Checked ? DateTime.Now : x.FinalizedDate;
 
                 if (orderSignatureToUpdate == null && orderToUpdate.Checked)
                 {

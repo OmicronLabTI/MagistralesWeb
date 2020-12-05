@@ -9,12 +9,14 @@
 namespace Omicron.Pedidos.Api
 {
     using System;
+    using System.IO;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.Pedidos.Api.Filters;
@@ -130,6 +132,7 @@ namespace Omicron.Pedidos.Api
             .AddTypedClient<ISapFileService, SapFileService>();
 
             this.AddRedis(services, Log.Logger);
+            this.AddCorsSvc(services);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
@@ -167,14 +170,38 @@ namespace Omicron.Pedidos.Api
 
             app.UseResponseCompression();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Images")),
+                RequestPath = "/resources",
+            });
             app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 

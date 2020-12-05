@@ -314,7 +314,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionOrderIdsByStatus = new List<int>();
                 if (status == ServiceConstants.Finalizado)
                 {
-                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Entregado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals("Almacenado")).Select(y => int.Parse(y.Productionorderid)).ToList();
                 }
                 else
                 {

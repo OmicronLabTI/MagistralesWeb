@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
             var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
 
-            var listToInsert = this.CreateUserModelOrders(listOrders);
+            var listToInsert = this.CreateUserModelOrders(listOrders, listToSend);
             var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend);
             listToInsert.AddRange(dataToInsertUpdate.Item1);
             var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
-            var dataToInsert = this.CreateUserModelOrders(listOrders);
+            var dataToInsert = this.CreateUserModelOrders(listOrders, ordersSap);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
@@ -214,21 +214,46 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// creates the user model from fabrication.
         /// </summary>
         /// <param name="dataToCreate">the data to create.</param>
+        /// <param name="salesOrders">The sales orders.</param>
         /// <returns>the data.</returns>
-        private List<UserOrderModel> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate)
+        private List<UserOrderModel> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate, List<OrderWithDetailModel> salesOrders)
         {
             var listToReturn = new List<UserOrderModel>();
             dataToCreate.ForEach(x =>
             {
+                var saleOrder = salesOrders.FirstOrDefault(y => y.Order != null && y.Order.DocNum == x.PedidoId);
+
                 listToReturn.Add(new UserOrderModel
                 {
                     Productionorderid = x.OrdenId.ToString(),
                     Salesorderid = x.PedidoId.ToString(),
                     Status = ServiceConstants.Planificado,
+                    MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
                 });
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Creates the QR data structure.
+        /// </summary>
+        /// <param name="model">the fabrication model.</param>
+        /// <param name="orderModel">the order model.</param>
+        /// <returns>the data.</returns>
+        private object ReturnQrStructure(FabricacionOrderModel model, OrderWithDetailModel orderModel)
+        {
+            var prodOrder = orderModel.Detalle.FirstOrDefault(x => x.CodigoProducto == model.ProductoId);
+
+            var modelQr = new MagistralQrModel
+            {
+                SaleOrder = model.PedidoId.HasValue ? model.PedidoId.Value : 0,
+                ProductionOrder = model.OrdenId,
+                Quantity = model.Quantity,
+                NeedsCooling = prodOrder != null ? prodOrder.NeedsCooling : "N",
+            };
+
+            return modelQr;
         }
 
         /// <summary>
