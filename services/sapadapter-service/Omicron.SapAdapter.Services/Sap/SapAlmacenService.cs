@@ -134,7 +134,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>The data.</returns>
         public async Task<ResultModel> GetCompleteDetail(int orderId)
         {
-            var data = await this.sapDao.GetAllOrdersForAlmacenById(orderId);
+            var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, data, null, null);
         }
 
