@@ -32,4 +32,7 @@ export class IPedidoDetalleRes extends BaseResponseHttp {
 export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
 }
+export class IQrByOrdersRes extends BaseResponseHttp {
+    response: string[];
+}
 
