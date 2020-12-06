@@ -505,6 +505,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="listUser">The list of users.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserOrders(List<UserOrderDto> listUser)
+        {
+            var response = await this.pedidoFacade.UpdateUserOrders(listUser);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

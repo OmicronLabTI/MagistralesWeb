@@ -811,6 +811,30 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Updates user orders.
+        /// </summary>
+        /// <param name="listOrders">the list of orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateUserOrders(List<UserOrderModel> listOrders)
+        {
+            var ids = listOrders.Select(x => x.Id).ToList();
+            var dataBaseOrders = await this.pedidosDao.GetUserOrdersById(ids);
+
+            dataBaseOrders.ForEach(x =>
+            {
+                var order = listOrders.FirstOrDefault(y => y.Id == x.Id);
+
+                x.Status = order.Status;
+                x.StatusAlmacen = order.StatusAlmacen;
+                x.UserCheckIn = order.UserCheckIn;
+                x.DateTimeCheckIn = order.DateTimeCheckIn;
+            });
+
+            await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
+            return ServiceUtils.CreateResult(true, 200, null, true, null, null);
+        }
+
+        /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
         /// <param name="orders">the orders.</param>
