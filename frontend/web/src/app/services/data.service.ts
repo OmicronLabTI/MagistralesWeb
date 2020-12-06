@@ -276,6 +276,10 @@ export class DataService {
         firstMessage = 'Ya se ha generado una solicitud para la orden ';
         finishMessaje = '\n';
         break;
+      case MessageType.ordersWithoutQr:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no cuenta con código qr \n';
+        break;
     }
     if (!isFromCancel) {
       itemsWithError.forEach((order: string) => {

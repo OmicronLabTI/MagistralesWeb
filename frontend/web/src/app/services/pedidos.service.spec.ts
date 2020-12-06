@@ -117,4 +117,8 @@ describe('PedidosService', () => {
       const service: PedidosService = TestBed.get(PedidosService);
       expect(service.createPdfOrders([]) instanceof Observable).toBeTruthy();
   });
+  it('should createPdfOrders', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.qrByEachOrder([123, 2345]) instanceof Observable).toBeTruthy();
+  });
 });

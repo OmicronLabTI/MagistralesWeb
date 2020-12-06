@@ -19,11 +19,12 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, OrderToDelivered, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-comments-dialog.component';
+import {DownloadImagesService} from '../../services/download-images.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -56,15 +57,17 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToFinalize = false;
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
-  isThereOrdersDetailToDelivered = false;
   isThereOrdersToFinishLabel = false;
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
+  ordersToSendAndDownloadQR: number[] = [];
+  ordersReceivedFromRequest: number[] = [];
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
-              private router: Router, private dialog: MatDialog) {
+              private router: Router, private dialog: MatDialog,
+              private downloadImagesService: DownloadImagesService) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -129,7 +132,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
         });
         this.isThereOrdersToViewPdf = false;
-        this.isThereOrdersDetailToDelivered = false;
         this.isThereOrdersToFinishLabel = false;
         this.isThereOrdersDetailToPlan = false;
         this.isThereOrdersDetailToPlace = false;
@@ -171,8 +173,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
-        FromToFilter.fromDefault);
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
@@ -275,25 +275,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
-  ordersToDelivered() {
-    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            this.pedidosService.putOrdersToDelivered(
-                this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
-                    .map(order => {
-                      const orderToDelivered = new OrderToDelivered();
-                      orderToDelivered.orderId = order.ordenFabricacionId;
-                      orderToDelivered.status = ConstStatus.entregado;
-                      return orderToDelivered;
-                    })).subscribe(() => {
-                      this.reloadOrderDetail();
-                }
-                , error => this.errorService.httpError((error)));
-          }});
-
-  }
-
   finishOrdersLabels() {
     this.dataService.setOpenSignatureDialog(this.signatureData);
   }
@@ -347,4 +328,39 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
             , error => this.errorService.httpError(error));
   }
+
+  ordersToDownloadQr() {
+    this.ordersReceivedFromRequest = [];
+    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder);
+    this.pedidosService.qrByEachOrder(this.ordersToSendAndDownloadQR)
+        .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error) );
+
+  }
+  downloadQrByUrl(urlsOfQrs: string[]) {
+    urlsOfQrs.forEach( urlOfQr => {
+      this.addToOrderReceived(urlOfQr);
+      this.downloadImagesService.downloadImageFromUrl(urlOfQr, urlOfQr.split('/').slice(-1)[0]);
+    });
+    this.checkIfThereOrdersWithoutQr();
+  }
+  addToOrderReceived(urlOfQr: string) {
+    this.ordersReceivedFromRequest.push(Number(urlOfQr.split('/').slice(-1)[0].split('.')[0]));
+  }
+  checkIfThereOrdersWithoutQr() {
+    const ordersWithoutQr: string[] = [];
+    this.ordersToSendAndDownloadQR.forEach(orderSend => {
+      if (!this.ordersReceivedFromRequest.includes(orderSend)) {
+        ordersWithoutQr.push(String(orderSend));
+      }
+    });
+    if (ordersWithoutQr.length > CONST_NUMBER.zero) {
+      this.createMessageWithOrdersWithoutQr(ordersWithoutQr);
+    }
+  }
+  createMessageWithOrdersWithoutQr(ordersWithoutQr: string[] ) {
+    this.dataService.presentToastCustom(
+        this.dataService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
+        CONST_STRING.empty , true, false, ClassNames.popupCustom);
+  }
 }
+
