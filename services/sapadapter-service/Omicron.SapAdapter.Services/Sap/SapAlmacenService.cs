@@ -286,7 +286,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
                 else
                 {
-                    var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && x.ItemCode.Equals(item.ProductoId));
+                    var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(item.ProductoId));
                     orderStatus = userFabLineOrder == null || userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
                 }
 
