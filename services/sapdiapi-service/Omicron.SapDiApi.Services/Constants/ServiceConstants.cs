@@ -114,6 +114,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string DeleteBatch = "delete";
 
         /// <summary>
+        /// Const for he magistral.
+        /// </summary>
+        public const string Magistral = "magistral";
+
+        /// <summary>
         /// Fail reason.
         /// </summary>
         public const string FailReasonNotExistsProductionOrder = "La orden de produción {0} no existe.";

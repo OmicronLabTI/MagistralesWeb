@@ -57,6 +57,7 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<CloseProductionOrderModel, CloseProductionOrderDto>();
                 cfg.CreateMap<BatchesConfigurationDto, BatchesConfigurationModel>();
                 cfg.CreateMap<BatchesConfigurationModel, BatchesConfigurationDto>();
+                cfg.CreateMap<CreateDeliveryDto, CreateDeliveryModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
