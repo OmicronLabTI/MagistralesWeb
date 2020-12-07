@@ -185,6 +185,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
                 var salesStatus = userOrder == null || userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : userOrder.Status;
+                salesStatus = lineOrder == null ? salesStatus : lineOrder.StatusAlmacen;
                 var client = order == null ? string.Empty : order.Cliente;
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
 

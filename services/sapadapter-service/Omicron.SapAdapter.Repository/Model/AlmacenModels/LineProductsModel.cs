@@ -77,6 +77,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// <value>
         /// Datetime userid.
         /// </value>
-        public DateTime DateCheckIn { get; set; }
+        public DateTime? DateCheckIn { get; set; }
     }
 }

@@ -157,7 +157,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String user id.
         [Column("datecheckin")]
-        public DateTime DateTimeCheckIn { get; set; }
+        public DateTime? DateTimeCheckIn { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether gets.
