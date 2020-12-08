@@ -136,11 +136,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(List<int> ordersId)
         {
-            var listString = new StringBuilder();
-            ordersId.ForEach(x => listString.Append($"{x},"));
-
-            var listIds = listString.ToString().Remove(listString.Length - 1, 1);
-
             var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
             var response = await this.almacenService.GetSapAdapter($"{ServiceConstants.AlmacenGetOrders}{dictParam}");
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
