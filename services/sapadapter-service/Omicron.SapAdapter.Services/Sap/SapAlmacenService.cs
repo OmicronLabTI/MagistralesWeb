@@ -157,7 +157,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters)
         {
             var totalOrders = sapOrders.Count(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O"));
-            var totalPedidos = sapOrders.Select(x => x.DocNum).Distinct().Count();
+            var totalPedidos = sapOrders.Where(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O")).Select(x => x.DocNum).Distinct().Count();
             var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
             var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();
             var listToReturn = new AlmacenOrdersModel
@@ -218,8 +218,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                 };
 
-                listToReturn.TotalSalesOrders = totalOrders;
-                listToReturn.TotalItems = totalPedidos;
+                listToReturn.TotalSalesOrders = totalPedidos;
+                listToReturn.TotalItems = totalOrders;
 
                 var saleModel = new SalesModel
                 {
@@ -283,12 +283,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 if (item.IsMagistral.Equals("Y"))
                 {
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(orderId));
-                    orderStatus = userFabOrder == null || userFabOrder.Status.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabOrder.Status;
+                    orderStatus = userFabOrder == null || !userFabOrder.Status.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabOrder.Status;
                 }
                 else
                 {
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(item.ProductoId));
-                    orderStatus = userFabLineOrder == null || userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+                    orderStatus = userFabLineOrder == null || !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
                 }
 
                 var productModel = new ProductListModel

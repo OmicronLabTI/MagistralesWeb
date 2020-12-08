@@ -508,7 +508,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
-                         where order.FechaInicio >= initDate && order.PedidoStatus == "O"
+                         where order.FechaInicio >= initDate
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,

@@ -79,6 +79,6 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>
         /// String user id.
-        public DateTime DateTimeCheckIn { get; set; }
+        public DateTime? DateTimeCheckIn { get; set; }
     }
 }
