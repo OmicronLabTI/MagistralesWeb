@@ -59,6 +59,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
 
             var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(dateToLook)).ToList();
+            sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
 
             var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
@@ -270,7 +271,7 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var order in sapOrders)
             {
                 var item = (await this.sapDao.GetProductById(order.Detalles.ProductoId)).FirstOrDefault();
-                item = item == null ? new ProductoModel() : item;
+                item = item == null ? new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty } : item;
 
                 var fabOrder = detailsList.FirstOrDefault(x => x.CodigoProducto.Equals(order.Detalles.ProductoId));
                 var orderId = fabOrder == null ? string.Empty : fabOrder.OrdenFabricacionId.ToString();
