@@ -505,7 +505,6 @@ namespace Omicron.Pedidos.Api.Controllers
             return this.Ok(response);
         }
 
-
         /// <summary>
         /// Gets the orders for almacen.
         /// </summary>

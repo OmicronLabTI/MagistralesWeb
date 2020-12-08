@@ -551,6 +551,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry)).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar)
+        {
+            return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).ToListAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

@@ -97,8 +97,13 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listBatchesModel = new List<LineProductBatchesModel>();
 
-            // ToDo Get the code from items.
-            var itemCode = (await this.sapDao.GetProductById("Linea1")).FirstOrDefault();
+            var itemCode = (await this.sapDao.GetProductById(code)).FirstOrDefault();
+
+            if (itemCode == null)
+            {
+                return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
+            }
+
             var validBatches = (await this.sapDao.GetValidBatches(itemCode.ProductoId, ServiceConstants.PT)).ToList();
             var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
