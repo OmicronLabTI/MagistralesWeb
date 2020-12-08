@@ -160,6 +160,14 @@ namespace Omicron.Pedidos.Entities.Model
         public DateTime? DateTimeCheckIn { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrremisionmgestrcuture")]
+        public string RemisionQr { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

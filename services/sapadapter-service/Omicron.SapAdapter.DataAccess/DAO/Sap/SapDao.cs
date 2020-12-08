@@ -545,6 +545,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryBySaleOrder(List<int> ordersId)
+        {
+            return await this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry)).ToListAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

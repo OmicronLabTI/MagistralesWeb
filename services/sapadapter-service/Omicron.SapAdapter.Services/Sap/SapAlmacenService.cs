@@ -45,11 +45,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
         }
 
-        /// <summary>
-        /// Gets the orders for almacen.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
@@ -69,11 +65,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
 
-        /// <summary>
-        /// Gets the data of the magistral scanned data.
-        /// </summary>
-        /// <param name="code">the code.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetMagistralScannedData(string code)
         {
             var codeArray = code.Split("-");
@@ -100,11 +92,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, magistralData, null, null);
         }
 
-        /// <summary>
-        /// Gets the data of the line scanned bar.
-        /// </summary>
-        /// <param name="code">The code.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetLineScannedData(string code)
         {
             var listBatchesModel = new List<LineProductBatchesModel>();
@@ -137,14 +125,17 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
         }
 
-        /// <summary>
-        /// Gets the complete detail.
-        /// </summary>
-        /// <param name="orderId">The order id.</param>
-        /// <returns>The data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetCompleteDetail(int orderId)
         {
             var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveryBySaleOrderId(List<int> ordersId)
+        {
+            var data = (await this.sapDao.GetDeliveryBySaleOrder(ordersId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, data, null, null);
         }
 

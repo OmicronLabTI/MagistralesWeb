@@ -493,6 +493,20 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">The orders ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/qr/remision")]
+        [HttpPost]
+        public async Task<IActionResult> CreateQrRemision(List<int> orderIds)
+        {
+            var response = await this.qrsFacade.CreateRemisionQr(orderIds);
+            return this.Ok(response);
+        }
+
+
+        /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
         /// <returns>the data.</returns>

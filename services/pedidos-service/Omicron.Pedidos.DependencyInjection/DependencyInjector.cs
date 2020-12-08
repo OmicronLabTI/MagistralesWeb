@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -51,6 +52,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<ISapAdapter, SapAdapter>();
             Services.AddTransient<IQrFacade, QrFacade>();
             Services.AddTransient<IQrService, QrService>();
+            Services.AddTransient<IAlmacenService, AlmacenService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }

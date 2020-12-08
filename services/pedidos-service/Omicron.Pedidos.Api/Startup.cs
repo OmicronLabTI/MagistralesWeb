@@ -21,6 +21,7 @@ namespace Omicron.Pedidos.Api
     using Microsoft.OpenApi.Models;
     using Omicron.Pedidos.Api.Filters;
     using Omicron.Pedidos.DependencyInjection;
+    using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
@@ -130,6 +131,13 @@ namespace Omicron.Pedidos.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapFileService, SapFileService>();
+
+            services.AddHttpClient("almacenService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["AlmacenUrl"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IAlmacenService, AlmacenService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);

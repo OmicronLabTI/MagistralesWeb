@@ -266,6 +266,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetRecipes = "recipes/orders";
 
         /// <summary>
+        /// Gets the delivery.
+        /// </summary>
+        public const string GetDelivery = "delivery/orderids";
+
+        /// <summary>
+        /// Gets the line orders from almacen.
+        /// </summary>
+        public const string AlmacenGetOrders = "AlmacenGetOrders";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
@@ -406,6 +416,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// the sale order id key.
+        /// </summary>
+        public const string SaleOrderId = "saleorderid";
+
+        /// <summary>
         /// if needs the large description.
         /// </summary>
         public const string NeedsLargeDsc = "Ldsc";
@@ -488,7 +503,12 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomText = "Pedido: {0} {1}";
+        public const string QrBottomTextOrden = "Orden: {0} {1}";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomTextRemision = "Remisión: {0} {1}";
 
         /// <summary>
         /// const for the cooling.

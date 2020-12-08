@@ -67,5 +67,20 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateRemisionQr()
+        {
+            var listOrdersId = new List<int> { 300, 301 };
+
+            var response = await this.qrsService.CreateRemisionQr(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

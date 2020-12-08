@@ -35,14 +35,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
             this.qrsService = qrsService ?? throw new ArgumentNullException(nameof(qrsService));
         }
 
-        /// <summary>
-        /// Geths the QR url for the orders.
-        /// </summary>
-        /// <param name="ordersId">The orders id.</param>
-        /// <returns>The urls for the QR.</returns>
+        /// <inheritdoc/>
         public async Task<ResultDto> CreateMagistralQr(List<int> ordersId)
         {
             return this.mapper.Map<ResultDto>(await this.qrsService.CreateMagistralQr(ordersId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreateRemisionQr(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.qrsService.CreateRemisionQr(ordersId));
         }
     }
 }
