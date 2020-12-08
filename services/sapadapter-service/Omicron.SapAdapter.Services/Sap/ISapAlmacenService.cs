@@ -44,5 +44,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="orderId">The order id.</param>
         /// <returns>The data.</returns>
         Task<ResultModel> GetCompleteDetail(int orderId);
+
+        /// <summary>
+        /// The list of orders by delivery.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetDeliveryBySaleOrderId(List<int> ordersId);
     }
 }

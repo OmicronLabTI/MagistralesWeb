@@ -144,6 +144,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<ProductoModel>> GetProductById(string itemCode);
 
         /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar);
+
+        /// <summary>
         /// gets the valid batches by item.
         /// </summary>
         /// <param name="itemCode">the item code.</param>
@@ -216,5 +223,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="saleOrderId">The order id.</param>
         /// <returns>get the orders.</returns>
         Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryBySaleOrder(List<int> ordersId);
     }
 }

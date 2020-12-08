@@ -168,6 +168,20 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Gets the qr if exist in table.
         /// </summary>
+        /// <param name="saleOrder">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
         /// <param name="modelsToSave">the orders ids.</param>
         /// <returns>the data.</returns>
         Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave);
