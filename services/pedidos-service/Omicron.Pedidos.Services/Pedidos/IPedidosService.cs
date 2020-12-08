@@ -176,5 +176,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrdersForAlmacen();
+
+        /// <summary>
+        /// Updates user orders.
+        /// </summary>
+        /// <param name="listOrders">the list of orders.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateUserOrders(List<UserOrderModel> listOrders);
     }
 }

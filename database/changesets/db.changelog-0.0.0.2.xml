@@ -94,4 +94,28 @@
 		<column name="field" value="AlmacenMaxDayToLook"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.13">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="statusalmacen"
+			type="varchar(30)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.14">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="usercheckin"
+			type="varchar(50)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.15">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="datecheckin"
+			type="timestamp">
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

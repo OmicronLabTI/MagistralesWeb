@@ -178,5 +178,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="status">The status tu,</param>
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>>GetOrderForAlmacen(string status);
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersById(List<int> ordersId);
     }
 }

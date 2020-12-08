@@ -67,6 +67,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder);
 
         /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the objects to create.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateDelivery(List<CreateDeliveryModel> createDelivery);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

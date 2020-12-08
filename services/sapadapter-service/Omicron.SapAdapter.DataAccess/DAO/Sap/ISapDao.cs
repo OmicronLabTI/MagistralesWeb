@@ -209,5 +209,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>get the orders.</returns>
         Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <param name="saleOrderId">The order id.</param>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId);
     }
 }

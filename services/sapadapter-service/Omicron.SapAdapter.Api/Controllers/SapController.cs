@@ -320,6 +320,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="saleorderid">The type of scanned item.</param>
+        /// <returns>the data.</returns>
+        [Route("/complete/detail/{saleorderid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetCompleteDetail(int saleorderid)
+        {
+            var response = await this.sapAlmacenFacade.GetCompleteDetail(saleorderid);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
