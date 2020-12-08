@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -135,6 +136,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(List<int> ordersId)
         {
+            var listString = new StringBuilder();
+            ordersId.ForEach(x => listString.Append($"{x},"));
+
+            var listIds = listString.ToString().Remove(listString.Length - 1, 1);
+
             var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
             var response = await this.almacenService.GetSapAdapter($"{ServiceConstants.AlmacenGetOrders}{dictParam}");
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
@@ -227,16 +233,16 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .ForEach(so =>
                 {
                     var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                    var bitmap = this.CreateQr(parameters, so.MagistralQr);
+                    var bitmap = this.CreateQr(parameters, so.RemisionQr);
 
-                    var delivery = sapDeliveries.FirstOrDefault(y => y.BaseEntry.ToString().Equals(so.Productionorderid));
+                    var delivery = sapDeliveries.FirstOrDefault(y => y.BaseEntry.ToString().Equals(so.Salesorderid));
                     delivery = delivery == null ? new DeliveryDetailModel() : delivery;
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, delivery.DeliveryId.ToString(), parameters);
 
                     var foldername = Path.Combine("Resources", "Images");
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), foldername, $"{so.Productionorderid}.png");
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), foldername, $"{delivery.DeliveryId}.png");
 
                     if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), foldername)))
                     {
@@ -244,7 +250,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    var currentAddres = $"{baseAddres}{so.Productionorderid}.png";
+                    var currentAddres = $"{baseAddres}{delivery.DeliveryId}.png";
 
                     var modelToSave = new ProductionRemisionQrModel
                     {
