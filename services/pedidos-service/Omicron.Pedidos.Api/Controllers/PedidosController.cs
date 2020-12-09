@@ -493,6 +493,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">The orders ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/qr/remision")]
+        [HttpPost]
+        public async Task<IActionResult> CreateQrRemision(List<int> orderIds)
+        {
+            var response = await this.qrsFacade.CreateRemisionQr(orderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
         /// <returns>the data.</returns>
@@ -501,6 +514,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetOrdersForAlmacen()
         {
             var response = await this.pedidoFacade.GetOrdersForAlmacen();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="listUser">The list of users.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserOrders(List<UserOrderDto> listUser)
+        {
+            var response = await this.pedidoFacade.UpdateUserOrders(listUser);
             return this.Ok(response);
         }
 

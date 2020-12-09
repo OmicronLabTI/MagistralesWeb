@@ -84,5 +84,13 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object componets of custom lists.
         /// </value>
         public virtual DbSet<ProductionOrderQr> ProductionOrderQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets components of custom lists .
+        /// </summary>
+        /// <value>
+        /// Object componets of custom lists.
+        /// </value>
+        public virtual DbSet<ProductionRemisionQrModel> ProductionRemisionQrModel { get; set; }
     }
 }

@@ -187,6 +187,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetOrdersForAlmacen())
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.UpdateUserOrders(It.IsAny<List<UserOrderModel>>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -934,6 +938,24 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             // act
             var response = await this.pedidoFacade.GetOrdersForAlmacen();
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task UpdateUserOrders()
+        {
+            // arrange
+            var listUsers = new List<UserOrderDto>();
+
+            // act
+            var response = await this.pedidoFacade.UpdateUserOrders(listUsers);
 
             // Assert
             Assert.IsNotNull(response);

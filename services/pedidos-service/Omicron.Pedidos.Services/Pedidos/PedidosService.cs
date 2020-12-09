@@ -689,11 +689,24 @@ namespace Omicron.Pedidos.Services.Pedidos
             var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result.Response.ToString());
 
-            var listUrls = ServiceUtils.GetValuesByContainsKeyValue(dictResult, ServiceConstants.Ok);
+            var listUrls = ServiceUtils.GetValuesByContainsKeyValue(dictResult, ServiceConstants.Ok.ToUpper());
+            var listRoutes = new List<string>();
+            listUrls.ForEach(x =>
+            {
+                var baseRoute = this.configuration["OmicronFilesAddress"];
+
+                var pathArray = x.Split(@"\").Where(x => x.ToUpper() != "C:").ToList();
+                var completePath = new StringBuilder();
+                completePath.Append(baseRoute);
+                pathArray.ForEach(x => completePath.Append($"{x}/"));
+                var path = completePath.ToString().Remove(completePath.ToString().Length - 1);
+                listRoutes.Add(path);
+            });
+
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
-            listErrorId.AddRange(listUrls);
+            listErrorId = listErrorId.Any() ? listErrorId : listRoutes;
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
@@ -808,6 +821,30 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
+        }
+
+        /// <summary>
+        /// Updates user orders.
+        /// </summary>
+        /// <param name="listOrders">the list of orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> UpdateUserOrders(List<UserOrderModel> listOrders)
+        {
+            var ids = listOrders.Select(x => x.Id).ToList();
+            var dataBaseOrders = await this.pedidosDao.GetUserOrdersById(ids);
+
+            dataBaseOrders.ForEach(x =>
+            {
+                var order = listOrders.FirstOrDefault(y => y.Id == x.Id);
+
+                x.Status = order.Status;
+                x.StatusAlmacen = order.StatusAlmacen;
+                x.UserCheckIn = order.UserCheckIn;
+                x.DateTimeCheckIn = order.DateTimeCheckIn;
+            });
+
+            await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
+            return ServiceUtils.CreateResult(true, 200, null, true, null, null);
         }
 
         /// <summary>

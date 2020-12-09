@@ -58,6 +58,14 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetLineScannedData(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
+            mockService
+                .Setup(m => m.GetCompleteDetail(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
+            mockService
+                .Setup(m => m.GetDeliveryBySaleOrderId(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object);
         }
 
@@ -98,6 +106,32 @@ namespace Omicron.SapAdapter.Test.Facade
             var type = "line";
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetCompleteDetail()
+        {
+            var order = 1000;
+            var response = await this.almacenFacade.GetCompleteDetail(order);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryBySaleOrderId()
+        {
+            var order = new List<int>();
+            var response = await this.almacenFacade.GetDeliveryBySaleOrderId(order);
 
             Assert.IsNotNull(response);
         }

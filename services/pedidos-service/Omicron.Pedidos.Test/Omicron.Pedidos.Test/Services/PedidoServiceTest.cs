@@ -968,5 +968,25 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateUserOrders()
+        {
+            // arrange
+            var listorders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1, Status = "Almacenado" },
+            };
+
+            // act
+            var result = await this.pedidosService.UpdateUserOrders(listorders);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

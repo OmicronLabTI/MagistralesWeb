@@ -254,5 +254,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrdersForAlmacen();
+
+        /// <summary>
+        /// Updates the user orders.
+        /// </summary>
+        /// <param name="userOrders">The orders.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateUserOrders(List<UserOrderDto> userOrders);
     }
 }

@@ -94,4 +94,52 @@
 		<column name="field" value="AlmacenMaxDayToLook"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.13">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="statusalmacen"
+			type="varchar(30)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.14">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="usercheckin"
+			type="varchar(50)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.15">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="datecheckin"
+			type="timestamp">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.16">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrremisionmgestrcuture"
+			type="VARCHAR(500)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.17">
+    <createTable tableName="productionremisionqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="pedidoId" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="remisionId" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="remisionqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog> 

@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Test.Services
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
@@ -55,9 +56,10 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog.Setup(m => m.Information(It.IsAny<string>()));
 
             var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object);
+            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
         }
 
         /// <summary>
@@ -73,13 +75,18 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
 
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProducts()));
+
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -117,6 +124,40 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.GetLineScannedData(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetCompleteDetail()
+        {
+            // arrange
+            var order = 1000;
+
+            // act
+            var response = await this.sapService.GetCompleteDetail(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryBySaleOrderId()
+        {
+            // arrange
+            var order = new List<int>();
+
+            // act
+            var response = await this.sapService.GetDeliveryBySaleOrderId(order);
 
             // assert
             Assert.IsNotNull(response);

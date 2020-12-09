@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Test
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
@@ -288,6 +289,27 @@ namespace Omicron.SapAdapter.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProducts()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
                 Success = true,
                 Comments = "15",
             };
