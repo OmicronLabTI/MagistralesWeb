@@ -13,7 +13,7 @@ export const CONST_NUMBER = {
     seven: 7,
     fifty: 50,
     oneHundred: 100,
-    oneThousand: 1000
+    oneThousand: 999
 };
 export const CONST_STRING = {
     empty: ''

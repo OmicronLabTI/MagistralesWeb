@@ -1,4 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {CONST_NUMBER, CONST_STRING} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
@@ -7,13 +16,16 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
   templateUrl: './add-comments-dialog.component.html',
   styleUrls: ['./add-comments-dialog.component.scss']
 })
-export class AddCommentsDialogComponent implements OnInit {
+export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
   comments = CONST_STRING.empty;
   newComments = CONST_STRING.empty;
   arrayComments: string [] = [];
+  isCorrectData = true;
+  @ViewChild('finishComments', {static: true}) finishComments: ElementRef;
   constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsData: any) {
     this.comments = this.commentsData || CONST_STRING.empty;
     this.arrayComments = this.comments.trim().split('&').filter( comment => comment !== CONST_STRING.empty);
+    console.log('length: ', this.comments.length)
 
   }
 
@@ -27,7 +39,14 @@ export class AddCommentsDialogComponent implements OnInit {
     return (this.comments.trim().length + this.newComments.trim().length) <= CONST_NUMBER.oneThousand;
   }
 
-  scroll(el: HTMLElement) {
-    el.scrollIntoView();
+  scroll() {
+    this.finishComments.nativeElement.scrollIntoView();
+  }
+  ngAfterViewInit(): void {
+    this.scroll();
+  }
+
+  checkData() {
+    this.isCorrectData = this.getIsCorrectData();
   }
 }

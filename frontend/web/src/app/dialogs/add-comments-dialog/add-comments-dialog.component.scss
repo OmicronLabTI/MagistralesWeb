@@ -8,7 +8,7 @@
   resize: none;
   padding: 5px;
   border-radius: 5px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 .border-none{
   border: none;
@@ -48,4 +48,11 @@
   border-bottom-width: .5px;
   border-bottom-style: solid;
   border-bottom-color: #c5c5c7;
+}
+.card-header-container-custom {
+  height: 9%;
+}
+.error-message-custom {
+  font-size: 10px;
+  margin-right: 40px;
 }

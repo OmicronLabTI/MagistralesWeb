@@ -1,9 +1,8 @@
 <div class="add-comments-container">
     <mat-card class="add-user-card">
-        <mat-card-header class="card-header-container border-none">
+        <mat-card-header class="card-header-container border-none card-header-container-custom">
             <mat-card-title ><span>Agregar comentarios</span>
             </mat-card-title>
-            <button (click)="scroll(target)">Click to scroll</button>
 
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
 
@@ -17,11 +16,12 @@
                        <div class="comments-by-user" *ngFor="let comment of arrayComments">
                            {{comment}}
                        </div>
-                        <div #target></div>
+                        <div #finishComments></div>
                     </div>
                     <textarea class="text-area-add-comments" cols="55" rows="6"
                               maxlength="1000"
                               [(ngModel)]="newComments"
+                              (ngModelChange)="checkData()"
                             >
                         </textarea>
                 </div>
@@ -29,8 +29,9 @@
 
         </mat-card-content>
         <mat-card-actions class="options-footer">
+            <mat-error class="error-message-custom" *ngIf="!isCorrectData">Máximo 1000 caracteres</mat-error>
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button [ngClass]="!(comments.trim().length > 4) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(comments.trim().length > 4)" (click)="saveComments()">
+            <button mat-button [ngClass]="!(newComments.trim().length > 4 && isCorrectData) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(newComments.trim().length > 4 && isCorrectData)" (click)="saveComments()">
                 Guardar
             </button>
         </mat-card-actions>
