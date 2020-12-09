@@ -8,6 +8,8 @@
 
 namespace Omicron.SapDiApi.Dtos.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class to assign.
     /// </summary>
@@ -29,18 +31,12 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The user that is assigning.</value>
-        public string BatchName { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The user that is assigning.</value>
-        public decimal Quantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The user that is assigning.</value>
         public string OrderType { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public List<AlmacenBatchDto> Batches { get; set; }
     }
 }

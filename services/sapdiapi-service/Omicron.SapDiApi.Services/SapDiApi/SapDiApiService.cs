@@ -569,10 +569,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                     if (product.OrderType != ServiceConstants.Magistral)
                     {
-                        double.TryParse(product.Quantity.ToString(), out var doubleQuantity);
-                        deliveryNote.Lines.BatchNumbers.Add();
-                        deliveryNote.Lines.BatchNumbers.Quantity = doubleQuantity;
-                        deliveryNote.Lines.BatchNumbers.BatchNumber = product.BatchName;
+                        foreach (var b in product.Batches)
+                        {
+                            double.TryParse(b.BatchQty.ToString(), out var doubleQuantity);
+                            deliveryNote.Lines.BatchNumbers.Add();
+                            deliveryNote.Lines.BatchNumbers.Quantity = doubleQuantity;
+                            deliveryNote.Lines.BatchNumbers.BatchNumber = b.BatchNumber;
+                        }
                     }
 
                     deliveryNote.Lines.Add();
