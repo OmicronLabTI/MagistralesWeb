@@ -109,14 +109,19 @@ namespace Omicron.SapAdapter.Services.Sap
 
             validBatches.ForEach(b =>
             {
-                var batch = new LineProductBatchesModel
+                var batchDate = b.FechaExp == null ? DateTime.Now.ToString("dd/MM/yyyy") : b.FechaExp;
+                DateTime.TryParse(batchDate, out var fechaExp);
+                if (fechaExp >= DateTime.Today)
                 {
-                    Batch = b.DistNumber,
-                    ExpDate = b.FechaExp,
-                    AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
-                };
+                    var batch = new LineProductBatchesModel
+                    {
+                        Batch = b.DistNumber,
+                        ExpDate = b.FechaExp,
+                        AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
+                    };
 
-                listBatchesModel.Add(batch);
+                    listBatchesModel.Add(batch);
+                }
             });
 
             var lineData = new LineScannerModel
