@@ -469,4 +469,17 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
+
+  addLineBreakAtFinish(wordToAddLineBreak: string) {
+    /*console.log('wordR: ', wordToAddLineBreak)
+    // wordToAddLineBreak = wordToAddLineBreak + '\n\n\n\n';
+    if ( wordToAddLineBreak.trim().substring(wordToAddLineBreak.length - CONST_NUMBER.two) === '\n') {
+      console.log('hay salto')
+      return wordToAddLineBreak;
+    } else {
+      console.log('no hay',wordToAddLineBreak)
+      return wordToAddLineBreak + '\n\n\n\n';
+
+    }*/
+  }
 }
