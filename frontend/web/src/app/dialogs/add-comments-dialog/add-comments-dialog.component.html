@@ -3,17 +3,25 @@
         <mat-card-header class="card-header-container border-none">
             <mat-card-title ><span>Agregar comentarios</span>
             </mat-card-title>
+            <button (click)="scroll(target)">Click to scroll</button>
+
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
 
         </mat-card-header>
         <mat-card-content class="content-card-container">
                 <div class="comment-content-container">
-                    <div class="before-comments-container">
-
+                    <div class="before-comments-container scroll-visible color-omicron font-style-omicron">
+                        <div class="no-users-registered " *ngIf="arrayComments.length === 0">
+                            <span>No hay comentarios</span>
+                        </div>
+                       <div class="comments-by-user" *ngFor="let comment of arrayComments">
+                           {{comment}}
+                       </div>
+                        <div #target></div>
                     </div>
                     <textarea class="text-area-add-comments" cols="55" rows="6"
                               maxlength="1000"
-                              [(ngModel)]="comments"
+                              [(ngModel)]="newComments"
                             >
                         </textarea>
                 </div>

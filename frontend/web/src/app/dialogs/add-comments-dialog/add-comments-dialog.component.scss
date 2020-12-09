@@ -7,6 +7,8 @@
   border: #6C90B3 1px solid;
   resize: none;
   padding: 5px;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 .border-none{
   border: none;
@@ -29,11 +31,21 @@
 .before-comments-container {
   width: 95%;
   height: 60%;
-  border: #a71d2a 1px solid;
+  border: #a79c9e 1px solid;
+  border-radius: 10px;
 }
 .disable-button-custom {
   width: 7rem;
   height: 3rem;
   background-color: #dbdfe4 !important;
   color: #424040 !important;
+}
+.comments-by-user {
+  width: 100%;
+  font-weight: 700;
+  background-color: #eaeae8;
+  padding: 5px;
+  border-bottom-width: .5px;
+  border-bottom-style: solid;
+  border-bottom-color: #c5c5c7;
 }
