@@ -63,10 +63,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalProducts = deliveryDetails.Count;
             deliveryDetails = this.GetOrdersToLook(deliveryDetails, parameters);
 
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
+            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
             var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, totalDeliveries, totalProducts, userOrders);
-            ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
         }
 
         /// <summary>
@@ -104,7 +104,10 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            return deliveries.Skip(offsetNumber).Take(limitNumber).ToList();
+            var pedidosId = deliveries.Select(x => x.DeliveryId).Distinct().ToList();
+            pedidosId = pedidosId.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            return deliveries.Where(x => pedidosId.Contains(x.DeliveryId)).ToList();
         }
 
         /// <summary>

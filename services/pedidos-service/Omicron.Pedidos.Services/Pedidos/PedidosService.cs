@@ -763,6 +763,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 Salesorderid = x.Salesorderid,
                 Status = x.Status,
+                Comments = x.Comments,
             });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
