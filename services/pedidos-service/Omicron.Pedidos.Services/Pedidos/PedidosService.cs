@@ -63,11 +63,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        /// <summary>
-        /// returns the orders.
-        /// </summary>
-        /// <param name="listIds">the list ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds)
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();
@@ -75,11 +71,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(orders), null);
         }
 
-        /// <summary>
-        /// Get the user order by fabrication order id.
-        /// </summary>
-        /// <param name="listIds">the list of ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();
@@ -87,11 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, orders, null);
         }
 
-        /// <summary>
-        /// Gets the QFB orders (ipad).
-        /// </summary>
-        /// <param name="userId">the user id.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
             var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
@@ -101,22 +89,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
-        /// <summary>
-        /// Gets the list of user orders by user id.
-        /// </summary>
-        /// <param name="listIds">the list of users.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrdersByUserId(List<string> listIds)
         {
             var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
             return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
         }
 
-        /// <summary>
-        /// Updates the formula for an order.
-        /// </summary>
-        /// <param name="updateFormula">upddates the formula.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
@@ -128,11 +108,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }
 
-        /// <summary>
-        /// Updates the status.
-        /// </summary>
-        /// <param name="updateStatusOrder">the status model.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
         {
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
@@ -155,11 +131,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
 
-        /// <summary>
-        /// updates order comments.
-        /// </summary>
-        /// <param name="updateComments">Fabrication order comments.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments)
         {
             var successfuly = new List<UserOrderModel>();
@@ -202,21 +174,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             return fabOrderToUpdate;
         }
 
-        /// <summary>
-        /// Gets the connection to sap di api.
-        /// </summary>
-        /// <returns>the conection.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> ConnectDiApi()
         {
             var sapResponse = await this.sapDiApi.GetSapDiApi(ServiceConstants.ConnectSapDiApi);
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(sapResponse.Response), null);
         }
 
-        /// <summary>
-        /// Change order status to finish.
-        /// </summary>
-        /// <param name="finishOrders">Orders to finish.</param>
-        /// <returns>Orders with updated info.</returns>urns>
+        /// <inheritdoc/>
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
             var logs = new List<OrderLogModel>();
@@ -319,11 +284,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
-        /// <summary>
-        /// Finish fabrication orders.
-        /// </summary>
-        /// <param name="finishOrders">Orders to finish.</param>
-        /// <returns>Orders with updated info.</returns>urns>
+        /// <inheritdoc/>
         public async Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders)
         {
             var logs = new List<OrderLogModel>();
@@ -438,11 +399,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
-        /// <summary>
-        /// Makes the call to assign batches.
-        /// </summary>
-        /// <param name="assignBatches">the batches.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
@@ -453,12 +410,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
-        /// <summary>
-        /// the signatures.
-        /// </summary>
-        /// <param name="signatureType">the type.</param>
-        /// <param name="signatureModel">the model.</param>
-        /// <returns>the value.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureModel signatureModel)
         {
             var ids = new List<string> { signatureModel.FabricationOrderId.ToString() };
@@ -506,11 +458,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
         }
 
-        /// <summary>
-        /// Get production order signatures.
-        /// </summary>
-        /// <param name="productionOrderId">Production order id.</param>
-        /// <returns>Operation result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOrderSignatures(int productionOrderId)
         {
             var ids = new List<string> { productionOrderId.ToString() };
@@ -532,11 +480,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, ServiceConstants.ReasonNotExistsOrder, null, null);
         }
 
-        /// <summary>
-        /// Finish the order by the QFB.
-        /// </summary>
-        /// <param name="updateOrderSignature">the model.</param>
-        /// <returns>the result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature)
         {
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
@@ -587,11 +531,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
-        /// <summary>
-        /// Create new isolated production order.
-        /// </summary>
-        /// <param name="isolatedFabOrder">Isolated production order.</param>
-        /// <returns>Operation result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
             var logs = new List<OrderLogModel>();
@@ -629,11 +569,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);
         }
 
-        /// <summary>
-        /// Gets the ordersby the filter.
-        /// </summary>
-        /// <param name="parameters">the params.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrders(Dictionary<string, string> parameters)
         {
             var localFilterOrders = await GetFabOrderUtils.GetOrdersByFilter(parameters, this.pedidosDao);
@@ -661,11 +597,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, total);
         }
 
-        /// <summary>
-        /// Gets the completed batch.
-        /// </summary>
-        /// <param name="orderId">the order id.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> CompletedBatches(int orderId)
         {
             var sapAdapterResponse = await this.sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetComponentsWithBatches, orderId));
@@ -679,11 +611,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
-        /// <summary>
-        /// gets the data to send to print.
-        /// </summary>
-        /// <param name="ordersId">the sales orders..</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> PrintOrders(List<int> ordersId)
         {
             var result = await await SendToGeneratePdfUtils.CreateModelGeneratePdf(ordersId, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, false);
@@ -710,11 +638,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
-        /// <summary>
-        /// Updates the saleorder comments.
-        /// </summary>
-        /// <param name="updateOrder">the order to update.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateSaleOrders(UpdateOrderCommentsModel updateOrder)
         {
             var saleOrders = await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { updateOrder.OrderId.ToString() });
@@ -724,11 +648,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, updateOrder, null);
         }
 
-        /// <summary>
-        /// Updates the orders designer label.
-        /// </summary>
-        /// <param name="updateDesignerLabels">the data to save.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateDesignerLabel(UpdateDesignerLabelModel updateDesignerLabels)
         {
             var ordersIdString = updateDesignerLabels.Details.Select(x => x.OrderId.ToString()).ToList();
@@ -757,11 +677,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, updateDesignerLabels, null);
         }
 
-        /// <summary>
-        /// Creates the pdf for the sale orders.
-        /// </summary>
-        /// <param name="ordersId">the orders.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId)
         {
             var listRoutes = new List<string>();
@@ -788,20 +704,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listErrorId), listRoutes, null);
         }
 
-        /// <summary>
-        /// Send the petition to delete.
-        /// </summary>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> DeleteFiles()
         {
             var response = await this.sapFileService.PostSimple(null, ServiceConstants.DeleteFiles);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
-        /// <summary>
-        /// Gets the orders for almacen.
-        /// </summary>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForAlmacen()
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
@@ -823,11 +733,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
         }
 
-        /// <summary>
-        /// Updates user orders.
-        /// </summary>
-        /// <param name="listOrders">the list of orders.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateUserOrders(List<UserOrderModel> listOrders)
         {
             var ids = listOrders.Select(x => x.Id).ToList();
@@ -845,6 +751,21 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
             return ServiceUtils.CreateResult(true, 200, null, true, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForDelivery()
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado })).ToList();
+            userOrders = userOrders.Where(x => x.IsSalesOrder).ToList();
+
+            var orderToReturn = userOrders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Status = x.Status,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }
 
         /// <summary>
