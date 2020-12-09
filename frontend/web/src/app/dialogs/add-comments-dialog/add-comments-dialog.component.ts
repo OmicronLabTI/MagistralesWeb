@@ -9,8 +9,13 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 })
 export class AddCommentsDialogComponent implements OnInit {
   comments = CONST_STRING.empty;
+  testComments = 'hola que tal soy german & conque podemos empezar para realizar esto paps&';
+  arrayComments: string [] = [];
   constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsData: any) {
-    this.comments = this.commentsData || CONST_STRING.empty;
+    // this.comments = this.commentsData || CONST_STRING.empty;
+    console.log('comments', this.testComments.trim().split('&'))
+    this.arrayComments = this.testComments.trim().split('&');
+
   }
 
   ngOnInit() {

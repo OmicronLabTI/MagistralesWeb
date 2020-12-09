@@ -22,6 +22,18 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.before-comments-container {
+  width: 95%;
+  height: 60%;
+  border: #a71d2a 1px solid;
+}
+.disable-button-custom {
+  width: 7rem;
+  height: 3rem;
+  background-color: #dbdfe4 !important;
+  color: #424040 !important;
 }

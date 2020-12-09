@@ -8,7 +8,10 @@
         </mat-card-header>
         <mat-card-content class="content-card-container">
                 <div class="comment-content-container">
-                    <textarea class="text-area-add-comments" cols="55" rows="20"
+                    <div class="before-comments-container">
+
+                    </div>
+                    <textarea class="text-area-add-comments" cols="55" rows="6"
                               maxlength="1000"
                               [(ngModel)]="comments"
                             >
@@ -19,7 +22,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="!(comments.trim().length > 0)" (click)="saveComments()">
+            <button mat-button [ngClass]="!(comments.trim().length > 4) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(comments.trim().length > 4)" (click)="saveComments()">
                 Guardar
             </button>
         </mat-card-actions>
