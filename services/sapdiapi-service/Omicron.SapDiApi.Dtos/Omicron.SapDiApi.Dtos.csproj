@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AlmacenBatchDto.cs" />
     <Compile Include="Models\AssginBatchDto.cs" />
     <Compile Include="Models\BatchesConfigurationDto.cs" />
     <Compile Include="Models\CloseProductionOrderDto.cs" />
