@@ -264,7 +264,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   addCommentsOnService(addCommentsResult: string) {
-    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(() => {
+    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult.trim()).subscribe(() => {
           this.reloadOrderDetail();
         },
         error => this.errorService.httpError(error));
