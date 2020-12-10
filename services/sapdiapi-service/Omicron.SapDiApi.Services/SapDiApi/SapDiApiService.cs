@@ -587,11 +587,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 if (update != 0)
                 {
                     _loggerProxy.Info($"The saleORder {saleOrderId} was tried to be delivered {errCode} - {errMsg} - {JsonConvert.SerializeObject(createDelivery)}");
-                    dictionaryResult.Add($"{saleOrderId}-Error", errMsg);
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {errMsg}");
                 }
-
-                _loggerProxy.Info($"The saleORder {saleOrderId} was delivered {errCode} - {errMsg}");
-                dictionaryResult.Add($"{saleOrderId}-Ok", "Ok");
+                else
+                {
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", "Ok");
+                }
             }
             catch(Exception ex)
             {
