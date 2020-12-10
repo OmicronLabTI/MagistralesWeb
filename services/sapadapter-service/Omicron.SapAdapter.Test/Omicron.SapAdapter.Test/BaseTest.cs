@@ -154,6 +154,32 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// Gets the delivery header.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<DeliverModel> DeliveryModel()
+        {
+            return new List<DeliverModel>
+            {
+                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000 },
+                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001 },
+            };
+        }
+
+        /// <summary>
+        /// Gets the deliveries.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<DeliveryDetailModel> GetDeliveryDetail()
+        {
+            return new List<DeliveryDetailModel>
+            {
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1 },
+                new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1 },
+            };
+        }
+
+        /// <summary>
         /// returns  data.
         /// </summary>
         /// <returns>the data.</returns>
@@ -162,6 +188,9 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchTransacitions>
             {
                 new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+
+                // almacen
+                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10 },
             };
         }
 
@@ -174,6 +203,9 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesTransactionQtyModel>
             {
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+
+                // almacen
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 2, ItemCode = "Linea1", SysNumber = 1 },
             };
         }
 
@@ -299,6 +331,48 @@ namespace Omicron.SapAdapter.Test
         /// </summary>
         /// <returns>the data.</returns>
         public ResultDto GetLineProducts()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderRemision()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRemision()
         {
             var listProducts = new List<LineProductsModel>
             {

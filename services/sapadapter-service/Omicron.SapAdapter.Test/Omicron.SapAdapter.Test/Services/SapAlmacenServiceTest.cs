@@ -179,22 +179,5 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
-
-        /// <summary>
-        /// Test the method to get the orders for almacen.
-        /// </summary>
-        /// <returns>the data.</returns>
-        [Test]
-        public async Task GetDelivery()
-        {
-            // arrange
-            var order = new Dictionary<string, string>();
-
-            // act
-            var response = await this.sapService.GetDelivery(order);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
     }
 }

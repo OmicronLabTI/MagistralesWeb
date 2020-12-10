@@ -27,6 +27,8 @@ namespace Omicron.SapAdapter.Test.Services
     [TestFixture]
     public class ISapAlmacenDeliverServiceTest : BaseTest
     {
+        private ISapAlmacenDeliveryService sapService;
+
         private ISapDao sapDao;
 
         private DatabaseContext context;
@@ -48,6 +50,10 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
+            this.context.DeliverModel.AddRange(this.DeliveryModel());
+            this.context.DeliveryDetailModel.AddRange(this.GetDeliveryDetail());
+            this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
+            this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -57,7 +63,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacenService = new Mock<IAlmacenService>();
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
+            this.sapService = new SapAlmacenDeliveryService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
         }
 
         /// <summary>
@@ -68,10 +74,26 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetDelivery()
         {
             // arrange
-            var order = new Dictionary<string, string>();
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act
-            var response = await this.sapService.GetDelivery(order);
+            var response = await service.GetDelivery(dictionary);
 
             // assert
             Assert.IsNotNull(response);
