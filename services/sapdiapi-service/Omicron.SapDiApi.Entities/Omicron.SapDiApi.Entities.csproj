@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Context\Connection.cs" />
     <Compile Include="Context\IConnection.cs" />
+    <Compile Include="Models\AlmacenBatchesModel.cs" />
     <Compile Include="Models\AssignBatchModel.cs" />
     <Compile Include="Models\BatchesConfigurationModel.cs" />
     <Compile Include="Models\CloseProductionOrderModel.cs" />

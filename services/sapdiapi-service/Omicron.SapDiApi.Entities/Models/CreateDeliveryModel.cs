@@ -8,6 +8,8 @@
 
 namespace Omicron.SapDiApi.Entities.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class to assign.
     /// </summary>
@@ -23,24 +25,18 @@ namespace Omicron.SapDiApi.Entities.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The user that is assigning.</value>
-        public string ItemCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The user that is assigning.</value>
-        public string BatchName { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The user that is assigning.</value>
-        public decimal Quantity { get; set; }
+        public string ItemCode { get; set; }        
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string OrderType { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public List<AlmacenBatchesModel> Batches { get; set; }
     }
 }

@@ -41,8 +41,8 @@
                   </g>
               </svg>
           </button>
-          <button  [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
-                   [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
+          <button  [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
+                   [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
                    *ngIf="dataService.getUserRole() === '4'"
                   (click)="ordersToDownloadQr()" >
               Descargar código QR&nbsp;

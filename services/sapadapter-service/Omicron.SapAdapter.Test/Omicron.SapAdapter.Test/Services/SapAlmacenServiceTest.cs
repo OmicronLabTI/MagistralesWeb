@@ -134,6 +134,23 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetLineScannedDataBatches()
+        {
+            // arrange
+            var order = "Linea1";
+
+            // act
+            var response = await this.sapService.GetLineScannedData(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetCompleteDetail()
         {
             // arrange

@@ -531,6 +531,18 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/userorders/delivery")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForDelivery()
+        {
+            var response = await this.pedidoFacade.GetOrdersForDelivery();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

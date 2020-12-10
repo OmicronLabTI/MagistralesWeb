@@ -109,14 +109,19 @@ namespace Omicron.SapAdapter.Services.Sap
 
             validBatches.ForEach(b =>
             {
-                var batch = new LineProductBatchesModel
+                var batchDate = b.FechaExp == null ? DateTime.Now.ToString("dd/MM/yyyy") : b.FechaExp;
+                DateTime.TryParse(batchDate, out var fechaExp);
+                if (fechaExp >= DateTime.Today)
                 {
-                    Batch = b.DistNumber,
-                    ExpDate = b.FechaExp,
-                    AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
-                };
+                    var batch = new LineProductBatchesModel
+                    {
+                        Batch = b.DistNumber,
+                        ExpDate = b.FechaExp,
+                        AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
+                    };
 
-                listBatchesModel.Add(batch);
+                    listBatchesModel.Add(batch);
+                }
             });
 
             var lineData = new LineScannerModel
@@ -153,15 +158,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters)
         {
-            var totalOrders = sapOrders.Count(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O"));
-            var totalPedidos = sapOrders.Where(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O")).Select(x => x.DocNum).Distinct().Count();
             var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
             var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();
             var listToReturn = new AlmacenOrdersModel
             {
                 SalesOrders = new List<SalesModel>(),
                 TotalItems = 0,
-                TotalSalesOrders = 0,
+                TotalSalesOrders = salesIds.Count,
             };
 
             foreach (var so in salesIds)
@@ -190,6 +193,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
+                listToReturn.TotalItems += productList.Count;
 
                 var salesOrderModel = new AlmacenSalesModel
                 {
@@ -214,9 +218,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                 };
-
-                listToReturn.TotalSalesOrders = totalPedidos;
-                listToReturn.TotalItems = totalOrders;
 
                 var saleModel = new SalesModel
                 {

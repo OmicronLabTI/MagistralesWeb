@@ -141,6 +141,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLineProduct = "orders?status=Almacenado";
 
         /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderDelivery = "userorders/delivery";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
