@@ -747,6 +747,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.StatusAlmacen = order.StatusAlmacen;
                 x.UserCheckIn = order.UserCheckIn;
                 x.DateTimeCheckIn = order.DateTimeCheckIn;
+                x.RemisionQr = order.RemisionQr;
             });
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
