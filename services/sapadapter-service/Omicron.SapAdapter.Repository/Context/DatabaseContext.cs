@@ -139,6 +139,14 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<DeliveryDetailModel> DeliveryDetailModel { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<DeliverModel> DeliverModel { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>

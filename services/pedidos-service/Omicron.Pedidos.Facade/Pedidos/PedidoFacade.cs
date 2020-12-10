@@ -409,5 +409,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateUserOrders(this.mapper.Map<List<UserOrderModel>>(userOrders)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersForDelivery()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrdersForDelivery());
+        }
     }
 }

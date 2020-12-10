@@ -346,6 +346,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/orders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersDelivery([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetDelivery(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

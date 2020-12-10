@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="DeliveryDetailModel.cs" company="Axity">
+// <copyright file="DeliverModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -13,10 +13,10 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
     using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// Class for the delivery detail.
+    /// Class for the delivery table.
     /// </summary>
-    [Table("DLN1")]
-    public class DeliveryDetailModel
+    [Table("ODLN")]
+    public class DeliverModel
     {
         /// <summary>
         /// Gets or sets Code.
@@ -24,49 +24,41 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Key]
         [Column("DocEntry")]
-        public int DeliveryId { get; set; }
+        public int PedidoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("LineNum")]
-        public int LineNum { get; set; }
+        [Column("DocNum")]
+        public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("BaseEntry")]
-        public int BaseEntry { get; set; }
+        [Column("CardName")]
+        public string Cliente { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ItemCode")]
-        public string ProductoId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("Dscription")]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("Quantity")]
-        public decimal Quantity { get; set; }
+        [Column("ShipToCode")]
+        public string Medico { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         [Column("DocDate")]
-        public DateTime DocDate { get; set; }
+        public DateTime FechaInicio { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("DocStatus")]
+        public string DeliveryStatus { get; set; }
     }
 }

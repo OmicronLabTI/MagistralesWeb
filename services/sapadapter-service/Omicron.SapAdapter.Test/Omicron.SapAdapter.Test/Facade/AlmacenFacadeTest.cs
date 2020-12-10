@@ -45,6 +45,7 @@ namespace Omicron.SapAdapter.Test.Facade
             };
 
             var mockService = new Mock<ISapAlmacenService>();
+            var mockDelivery = new Mock<ISapAlmacenDeliveryService>();
 
             mockService
                 .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
@@ -66,7 +67,11 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetDeliveryBySaleOrderId(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
-            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object);
+            mockDelivery
+                .Setup(m => m.GetDelivery(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
+            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object);
         }
 
         /// <summary>
@@ -132,6 +137,19 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var order = new List<int>();
             var response = await this.almacenFacade.GetDeliveryBySaleOrderId(order);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDelivery()
+        {
+            var dictionary = new Dictionary<string, string>();
+            var response = await this.almacenFacade.GetDelivery(dictionary);
 
             Assert.IsNotNull(response);
         }

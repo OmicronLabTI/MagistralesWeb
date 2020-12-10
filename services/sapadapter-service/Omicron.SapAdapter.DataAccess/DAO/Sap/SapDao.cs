@@ -562,6 +562,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums)
+        {
+            return await this.RetryQuery<DeliverModel>(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
+        {
+            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>
