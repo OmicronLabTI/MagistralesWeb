@@ -158,15 +158,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters)
         {
-            var totalOrders = sapOrders.Count(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O"));
-            var totalPedidos = sapOrders.Where(x => x.Detalles != null && !string.IsNullOrEmpty(x.Detalles.LineStatus) && x.Detalles.LineStatus.Equals("O")).Select(x => x.DocNum).Distinct().Count();
             var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
             var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();
             var listToReturn = new AlmacenOrdersModel
             {
                 SalesOrders = new List<SalesModel>(),
                 TotalItems = 0,
-                TotalSalesOrders = 0,
+                TotalSalesOrders = salesIds.Count,
             };
 
             foreach (var so in salesIds)
@@ -195,6 +193,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
+                listToReturn.TotalItems += productList.Count;
 
                 var salesOrderModel = new AlmacenSalesModel
                 {
@@ -219,9 +218,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                 };
-
-                listToReturn.TotalSalesOrders = totalPedidos;
-                listToReturn.TotalItems = totalOrders;
 
                 var saleModel = new SalesModel
                 {

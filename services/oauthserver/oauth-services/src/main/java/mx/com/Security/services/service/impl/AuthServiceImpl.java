@@ -37,7 +37,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.USUARIO_INACTIVO);
         }
 
-        boolean isAbleToApp = securityDO.getRole() == 2 || securityDO.getRole() == 6;
+        boolean isAbleToApp = securityDO.getRole() == 2 || securityDO.getRole() == 5;
 
         if(origin != null && !isAbleToApp && origin.toLowerCase().equals("app")){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
