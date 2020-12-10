@@ -125,8 +125,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             case ConstStatus.reasingado.toUpperCase():
               element.class = 'reasignado';
               break;
-            case ConstStatus.entregado.toUpperCase():
-              element.class = 'entregado';
+            case ConstStatus.almacenado.toUpperCase():
+              element.class = ConstStatus.almacenado.toLowerCase();
               break;
           }
           element.descripcionProducto = element.descripcionProducto.toUpperCase();
@@ -331,7 +331,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ordersToDownloadQr() {
     this.ordersReceivedFromRequest = [];
-    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder);
+    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrderQr);
     this.pedidosService.qrByEachOrder(this.ordersToSendAndDownloadQR)
         .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error) );
 
