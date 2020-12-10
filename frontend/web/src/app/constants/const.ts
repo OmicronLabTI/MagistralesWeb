@@ -86,7 +86,7 @@ export const ConstStatus = {
     asignado: 'Asignado',
     terminado: 'Terminado',
     reasingado: 'Reasignado',
-    entregado: 'Entregado',
+    almacenado: 'Almacenado',
 };
 export const HttpStatus = {
     ok: 200,
@@ -136,7 +136,8 @@ export enum FromToFilter {
     fromOrdersIsolatedCancel,
     fromOrderIsolatedReassign,
     fromOrderIsolatedReassignItems,
-    fromDefault
+    fromDefault,
+    fromDetailOrderQr
 }
 
 export const MaterialRequestPage = {

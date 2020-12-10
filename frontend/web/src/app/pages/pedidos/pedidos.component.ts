@@ -125,8 +125,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
             case ConstStatus.terminado:
               element.class = 'terminado';
               break;
-              case ConstStatus.entregado:
-                  element.class = 'entregado';
+              case ConstStatus.almacenado:
+                  element.class = ConstStatus.almacenado.toLowerCase();
                   break;
           }
         });
@@ -236,7 +236,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   cancelOrders() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.entregado)).map(order => {
+      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.almacenado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = order.docNum;
         return cancelOrder;
