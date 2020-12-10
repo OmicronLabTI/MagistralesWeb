@@ -97,7 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listBatchesModel = new List<LineProductBatchesModel>();
 
-            var itemCode = (await this.sapDao.GetProductById(code)).FirstOrDefault();
+            var itemCode = (await this.sapDao.GetProductByCodeBar(code)).FirstOrDefault();
 
             if (itemCode == null)
             {

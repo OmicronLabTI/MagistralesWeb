@@ -382,7 +382,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
         {
-            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.BarCode == itemCode));
+            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode));
         }
 
         /// <summary>
