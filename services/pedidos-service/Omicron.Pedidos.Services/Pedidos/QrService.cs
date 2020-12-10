@@ -45,6 +45,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IAlmacenService almacenService;
 
+        private readonly string folderName;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="QrService"/> class.
         /// </summary>
@@ -58,6 +60,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
+            this.folderName = Path.Combine("Resources", "Images");
         }
 
         /// <inheritdoc/>
@@ -70,10 +73,15 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var savedQrUserOrders = listSavedQr.Select(c => c.UserOrderId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.MagistralQrRoute).ToList();
+            var dictExistDb = listSavedQr.ToDictionary(k => k.UserOrderId, v => v.MagistralQrRoute);
 
+            var missingOrders = this.CheckIfQrExist(dictExistDb);
+            savedQrUserOrders.RemoveAll(x => missingOrders.Contains(x));
             saleOrders.RemoveAll(x => savedQrUserOrders.Contains(x.Id));
-            var urls = await this.GetUrlQrMagistral(saleOrders, parameters);
+
+            var urls = await this.GetUrlQrMagistral(saleOrders, parameters, savedQrRoutes);
             urls.AddRange(savedQrRoutes);
+            urls = urls.Distinct().ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
         }
@@ -85,8 +93,10 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var savedQrRemision = listSavedQr.Select(c => c.PedidoId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.RemisionQrRoute).ToList();
+            var dictExistDb = listSavedQr.ToDictionary(k => k.PedidoId, v => v.RemisionQrRoute);
 
             ordersId.RemoveAll(x => savedQrRemision.Contains(x));
+            ordersId.AddRange(this.CheckIfQrExist(dictExistDb));
 
             if (!ordersId.Any())
             {
@@ -112,10 +122,33 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var sapDelivery = await this.GetSapDelivery(ordersId);
-            var urls = await this.GetUrlQrRemision(saleOrders, parameters, sapDelivery);
+            var urls = await this.GetUrlQrRemision(saleOrders, parameters, sapDelivery, savedQrRoutes);
             urls.AddRange(savedQrRoutes);
+            urls = urls.Distinct().ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
+        }
+
+        /// <summary>
+        /// Check if the file exist in disc.
+        /// </summary>
+        /// <param name="listUrls">the urls.</param>
+        /// <returns>the data.</returns>
+        private List<int> CheckIfQrExist(Dictionary<int, string> listUrls)
+        {
+            var listNotExist = new List<int>();
+
+            foreach (var k in listUrls.Keys)
+            {
+                var splitUrl = listUrls[k].Split("/").ToList();
+                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{splitUrl.Last()}");
+                if (!File.Exists(pathTosave))
+                {
+                    listNotExist.Add(k);
+                }
+            }
+
+            return listNotExist;
         }
 
         /// <summary>
@@ -168,8 +201,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="saleOrders">the sale order.</param>
         /// <param name="parameters">The parameters.</param>
+        /// <param name="existingUrls">The existing urls.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetUrlQrMagistral(List<UserOrderModel> saleOrders, List<ParametersModel> parameters)
+        private async Task<List<string>> GetUrlQrMagistral(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls)
         {
             var baseAddres = this.configuration["QrImagesBaseRoute"];
             var listUrls = new List<string>();
@@ -184,13 +218,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{so.Productionorderid}.png");
 
-                    var foldername = Path.Combine("Resources", "Images");
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), foldername, $"{so.Productionorderid}.png");
-
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), foldername)))
+                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
                     {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), foldername));
+                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
@@ -203,7 +235,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                         UserOrderId = so.Id,
                     };
 
-                    listToSave.Add(modelToSave);
+                    if (!existingUrls.Contains(modelToSave.MagistralQrRoute))
+                    {
+                        listToSave.Add(modelToSave);
+                    }
+
                     listUrls.Add(currentAddres);
                 });
 
@@ -212,12 +248,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
-        /// Creates the url and the image.
+        /// Creates the urls and qrs.
         /// </summary>
-        /// <param name="saleOrders">the sale order.</param>
-        /// <param name="parameters">The parameters.</param>
+        /// <param name="saleOrders">the sale orders.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <param name="sapDeliveries">the sap deliveries.</param>
+        /// <param name="existingUrls">the existing urls.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<DeliveryDetailModel> sapDeliveries)
+        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<DeliveryDetailModel> sapDeliveries, List<string> existingUrls)
         {
             var baseAddres = this.configuration["QrImagesBaseRoute"];
             var listUrls = new List<string>();
@@ -235,13 +273,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, delivery.DeliveryId.ToString(), parameters);
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{delivery.DeliveryId}.png");
 
-                    var foldername = Path.Combine("Resources", "Images");
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), foldername, $"{delivery.DeliveryId}.png");
-
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), foldername)))
+                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
                     {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), foldername));
+                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
@@ -255,7 +291,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                         RemisionQrRoute = currentAddres,
                     };
 
-                    listToSave.Add(modelToSave);
+                    if (!existingUrls.Contains(modelToSave.RemisionQrRoute))
+                    {
+                        listToSave.Add(modelToSave);
+                    }
+
                     listUrls.Add(currentAddres);
                 });
 
