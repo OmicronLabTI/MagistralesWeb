@@ -110,7 +110,9 @@ namespace Omicron.SapAdapter.Services.Sap
             validBatches.ForEach(b =>
             {
                 var batchDate = b.FechaExp == null ? DateTime.Now.ToString("dd/MM/yyyy") : b.FechaExp;
-                DateTime.TryParse(batchDate, out var fechaExp);
+                var dateSplit = batchDate.Split("/");
+                var fechaExp = new DateTime(int.Parse(dateSplit[2]), int.Parse(dateSplit[1]), int.Parse(dateSplit[0]));
+
                 if (fechaExp >= DateTime.Today)
                 {
                     var batch = new LineProductBatchesModel
