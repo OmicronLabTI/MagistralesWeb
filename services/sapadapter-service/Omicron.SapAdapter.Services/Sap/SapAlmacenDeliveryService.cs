@@ -58,14 +58,11 @@ namespace Omicron.SapAdapter.Services.Sap
             listSaleOrders = listSaleOrders.OrderBy(x => x).Distinct().ToList();
 
             var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listSaleOrders)).OrderBy(x => x.DocDate).ThenBy(y => y.DeliveryId).ToList();
-
-            var totalDeliveries = deliveryDetails.DistinctBy(x => x.DeliveryId).Count();
-            var totalProducts = deliveryDetails.Count;
             deliveryDetails = this.GetOrdersToLook(deliveryDetails, parameters);
 
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
-            var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, totalDeliveries, totalProducts, userOrders);
+            var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, userOrders);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
         }
 
@@ -115,20 +112,18 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="details">the delivery details.</param>
         /// <param name="headers">the delivery header.</param>
-        /// <param name="totalDeliveries">the total deliveries.</param>
-        /// <param name="totalProducts">the total products.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, int totalDeliveries, int totalProducts, List<UserOrderModel> userOrders)
+        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders)
         {
+            var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
+
             var listToReturn = new AlmacenOrdersModel
             {
                 SalesOrders = new List<SalesModel>(),
-                TotalItems = totalProducts,
-                TotalSalesOrders = totalDeliveries,
+                TotalItems = listIds.Count,
+                TotalSalesOrders = 0,
             };
-
-            var listIds = details.Select(x => x.DeliveryId).Distinct();
 
             foreach (var d in listIds)
             {
@@ -177,6 +172,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Items = productList,
                 };
 
+                totalItems += productList.Count;
                 listToReturn.SalesOrders.Add(saleModel);
             }
 
