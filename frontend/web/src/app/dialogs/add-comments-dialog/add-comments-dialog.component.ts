@@ -25,14 +25,13 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
   constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsData: any) {
     this.comments = this.commentsData || CONST_STRING.empty;
     this.arrayComments = this.comments.trim().split('&').filter( comment => comment !== CONST_STRING.empty);
-    console.log('length: ', this.comments.length)
 
   }
 
   ngOnInit() {}
   saveComments() {
     if (this.getIsCorrectData()) {
-      this.dialogRef.close(`${this.comments} ${ this.newComments } &`);
+      this.dialogRef.close(`${this.comments.trim()}${this.newComments.trim()}&`.trim());
     }
   }
   getIsCorrectData() {
