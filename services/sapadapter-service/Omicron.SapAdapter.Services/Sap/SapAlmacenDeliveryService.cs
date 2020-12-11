@@ -121,15 +121,15 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new AlmacenOrdersModel
             {
                 SalesOrders = new List<SalesModel>(),
-                TotalItems = listIds.Count,
-                TotalSalesOrders = 0,
+                TotalItems = 0,
+                TotalSalesOrders = listIds.Count,
             };
 
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
-                var saleOrder = details.FirstOrDefault() != null ? details.FirstOrDefault().BaseEntry : 0;
+                var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid == saleOrder.ToString());
 
                 var doctor = header == null ? string.Empty : header.Medico;
@@ -172,7 +172,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Items = productList,
                 };
 
-                totalItems += productList.Count;
+                listToReturn.TotalItems += productList.Count;
                 listToReturn.SalesOrders.Add(saleModel);
             }
 
