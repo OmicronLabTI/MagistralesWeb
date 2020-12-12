@@ -55,8 +55,7 @@ namespace Omicron.Pedidos.Test
 
             var remisionQr = new RemisionQrModel
             {
-                FabOrdersId = new List<int>(),
-                ItemCode = new List<string>(),
+                RemisionId = 100,
                 NeedsCooling = true,
                 PedidoId = 300,
                 TotalPieces = 5,
