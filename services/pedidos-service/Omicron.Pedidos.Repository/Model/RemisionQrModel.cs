@@ -25,13 +25,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<int> FabOrdersId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public List<string> ItemCode { get; set; }
+        public int RemisionId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

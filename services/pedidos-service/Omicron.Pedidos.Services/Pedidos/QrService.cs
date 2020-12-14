@@ -266,10 +266,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .ForEach(so =>
                 {
                     var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                    var bitmap = this.CreateQr(parameters, so.RemisionQr);
-
                     var delivery = sapDeliveries.FirstOrDefault(y => y.BaseEntry.ToString().Equals(so.Salesorderid));
                     delivery = delivery == null ? new DeliveryDetailModel() : delivery;
+                    modelQr.RemisionId = delivery.DeliveryId;
+
+                    var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, delivery.DeliveryId.ToString(), parameters);
