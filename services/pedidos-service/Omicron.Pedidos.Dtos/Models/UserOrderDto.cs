@@ -87,5 +87,12 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// String user id.
         public string RemisionQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        public int DeliveryId { get; set; }
     }
 }

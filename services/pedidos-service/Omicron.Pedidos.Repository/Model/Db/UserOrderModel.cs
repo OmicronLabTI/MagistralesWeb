@@ -168,6 +168,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string RemisionQr { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("deliveryid")]
+        public int DeliveryId { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

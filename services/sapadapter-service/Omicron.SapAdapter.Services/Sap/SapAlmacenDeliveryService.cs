@@ -149,6 +149,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = ServiceConstants.Almacenado,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
+                    HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
