@@ -81,6 +81,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Almacenado = "Almacenado";
 
         /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string Empaquetado = "Empaquetado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";

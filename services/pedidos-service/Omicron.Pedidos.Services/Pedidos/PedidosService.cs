@@ -771,6 +771,22 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForInvoice()
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
+
+            var orderToReturn = userOrders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Productionorderid = x.Productionorderid,
+                Status = x.Status,
+                StatusAlmacen = x.StatusAlmacen,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+        }
+
         /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
