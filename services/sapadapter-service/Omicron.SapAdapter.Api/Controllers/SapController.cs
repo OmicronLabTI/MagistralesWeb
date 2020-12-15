@@ -372,6 +372,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="invoiceid">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/{invoiceid}/products")]
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceProducts(int invoiceid)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceProducts(invoiceid);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

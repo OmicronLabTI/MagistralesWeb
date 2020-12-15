@@ -59,5 +59,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetInvoice(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the invoices.
+        /// </summary>
+        /// <param name="invoiceId">the invoice id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetInvoiceProducts(int invoiceId);
     }
 }

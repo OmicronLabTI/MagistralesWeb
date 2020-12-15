@@ -76,6 +76,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetInvoice(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockInvoice
+                .Setup(m => m.GetInvoiceProducts(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
 
@@ -168,6 +172,18 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetInvoice(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoiceProducts()
+        {
+            var response = await this.almacenFacade.GetInvoiceProducts(10);
 
             Assert.IsNotNull(response);
         }

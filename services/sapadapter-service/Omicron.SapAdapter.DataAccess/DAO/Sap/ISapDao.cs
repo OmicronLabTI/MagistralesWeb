@@ -250,7 +250,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="docNums">the doc nums.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByDocNum(List<int> docNums);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByDeliveryID(List<int> docNums);
 
         /// <summary>
         /// Gets the invoice detail by docEntry.
@@ -258,5 +258,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docEntry">the doc entries.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry);
+
+        /// <summary>
+        /// Gets the invoice header by docnum.
+        /// </summary>
+        /// <param name="docNums">the docnum</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByDocEntry(List<int> ordersId);
     }
 }

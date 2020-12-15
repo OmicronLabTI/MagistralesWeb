@@ -47,11 +47,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
         }
 
-        /// <summary>
-        /// Gets the invoices.
-        /// </summary>
-        /// <param name="parameters">the parameters.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> GetInvoice(Dictionary<string, string> parameters)
         {
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
@@ -63,12 +59,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByDocNum(invoicesId)).ToList();
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByDeliveryID(invoicesId)).ToList();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
-            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(listIds)).ToList();
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
-
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
 
@@ -78,12 +72,27 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceDetails = invoiceDetails,
                 InvoiceHeader = invoiceHeaders,
                 LineProducts = lineProducts,
-                OrdersModel = fabOrders,
                 UserOrders = userOrders,
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceProducts(int invoiceId)
+        {
+            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
+            var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
+
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
+            invoiceHeader = invoiceHeader == null ? new InvoiceHeaderModel() : invoiceHeader;
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(new List<int> { invoiceHeader.InvoiceId })).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
+            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
+
+            var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders);
+            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
         /// <summary>
@@ -139,7 +148,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var deliveryDetails = retrieveModel.DeliveryDetailModel.Where(x => x.InvoiceId.HasValue && x.InvoiceId.Value == invoice.InvoiceId).ToList();
 
                 var salesId = deliveryDetails.Select(x => x.BaseEntry).ToList();
-                var orders = retrieveModel.OrdersModel.Where(x => salesId.Contains(x.PedidoId.Value)).ToList();
                 var userOrders = retrieveModel.UserOrders.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
                 var lineProducts = retrieveModel.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
 
@@ -245,7 +253,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productModel = new InvoiceProductModel
                 {
                     Batches = listBatches,
-                    Container = string.Empty,
+                    Container = invoice.Container,
                     Description = item.LargeDescription,
                     ItemCode = item.ProductoId,
                     NeedsCooling = item.NeedsCooling.Equals("Y"),
