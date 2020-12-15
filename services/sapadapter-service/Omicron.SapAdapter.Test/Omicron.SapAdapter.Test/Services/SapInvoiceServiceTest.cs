@@ -40,11 +40,10 @@ namespace Omicron.SapAdapter.Test.Services
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "TemporalAlmacenDelivery")
+                .UseInMemoryDatabase(databaseName: "TemporalAlmacenInvoice")
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.OrderModel.AddRange(this.GetOrderModel());
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
@@ -54,6 +53,8 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.DeliveryDetailModel.AddRange(this.GetDeliveryDetail());
             this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
+            this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
+            this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -71,13 +72,13 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetDelivery()
+        public async Task GetInvoice()
         {
             // arrange
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
@@ -110,23 +111,17 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
                 .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
-            var dictionary = new Dictionary<string, string>
-            {
-                { ServiceConstants.Offset, "0" },
-                { ServiceConstants.Limit, "10" },
-            };
-
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act
-            var response = await service.GetInvoiceProducts(10);
+            var response = await service.GetInvoiceProducts(1);
 
             // assert
             Assert.IsNotNull(response);
