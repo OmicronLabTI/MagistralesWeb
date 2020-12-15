@@ -147,6 +147,22 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<DeliverModel> DeliverModel { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<InvoiceHeaderModel> InvoiceHeaderModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        public virtual DbSet<InvoiceDetailModel> InvoiceDetailModel { get; set; }
+
+        /// <summary>
         /// model creating.
         /// </summary>
         /// <param name="modelBuilder">the builder.</param>
@@ -186,6 +202,12 @@ namespace Omicron.SapAdapter.Entities.Context
             modelBuilder.Entity<DeliveryDetailModel>().HasKey(table => new
             {
                 table.DeliveryId,
+                table.LineNum,
+            });
+
+            modelBuilder.Entity<InvoiceDetailModel>().HasKey(table => new
+            {
+                table.InvoiceId,
                 table.LineNum,
             });
         }

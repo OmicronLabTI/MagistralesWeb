@@ -1,60 +1,71 @@
 ﻿// <summary>
-// <copyright file="AlmacenSalesModel.cs" company="Axity">
+// <copyright file="InvoiceHeaderModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
+namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// The almacenSalesModel.
+    /// Class for the invoice header.
     /// </summary>
-    public class AlmacenSalesModel
+    [Table("OINV")]
+    public class InvoiceHeaderModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Key]
+        [Column("DocEntry")]
+        public int InvoiceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("DocNum")]
         public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime InitDate { get; set; }
+        [Column("CardName")]
+        public string Cliente { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Doctor { get; set; }
+        [Column("ShipToCode")]
+        public string Medico { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalItems { get; set; }
+        [Column("DocDate")]
+        public DateTime FechaInicio { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal TotalPieces { get; set; }
+        [Column("DocStatus")]
+        public string InvoiceStatus { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public bool HasInvoice { get; set; }
+        [Column("Address2")]
+        public string Address { get; set; }
     }
 }

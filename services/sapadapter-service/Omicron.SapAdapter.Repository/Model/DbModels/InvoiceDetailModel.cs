@@ -1,60 +1,79 @@
 ﻿// <summary>
-// <copyright file="AlmacenSalesModel.cs" company="Axity">
+// <copyright file="InvoiceDetailModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
+namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// The almacenSalesModel.
+    /// Class for the invoice detail.
     /// </summary>
-    public class AlmacenSalesModel
+    [Table("INV1")]
+    public class InvoiceDetailModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int DocNum { get; set; }
+        [Key]
+        [Column("DocEntry")]
+        public int InvoiceId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime InitDate { get; set; }
+        [Key]
+        [Column("LineNum")]
+        public int LineNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Doctor { get; set; }
+        [Column("ItemCode")]
+        public string ProductoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalItems { get; set; }
+        [Column("Dscription")]
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal TotalPieces { get; set; }
+        [Column("Quantity")]
+        public decimal Quantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Status { get; set; }
+        [Column("DocDate")]
+        public DateTime DocDate { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
+        /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public bool HasInvoice { get; set; }
+        [Column("BaseEntry")]
+        public int? BaseEntry { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_ENVASE")]
+        public string Container { get; set; }
     }
 }

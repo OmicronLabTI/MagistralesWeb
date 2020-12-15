@@ -149,6 +149,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = ServiceConstants.Almacenado,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
+                    HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -227,6 +228,12 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
+        /// <summary>
+        /// Get the batches by delivery.
+        /// </summary>
+        /// <param name="delivery">the delivery.</param>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
         private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode)
         {
             var listToReturn = new List<string>();

@@ -748,6 +748,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.UserCheckIn = order.UserCheckIn;
                 x.DateTimeCheckIn = order.DateTimeCheckIn;
                 x.RemisionQr = order.RemisionQr;
+                x.DeliveryId = order.DeliveryId;
             });
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
@@ -765,6 +766,22 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Salesorderid = x.Salesorderid,
                 Status = x.Status,
                 Comments = x.Comments,
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForInvoice()
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
+
+            var orderToReturn = userOrders.Select(x => new
+            {
+                Salesorderid = x.Salesorderid,
+                Productionorderid = x.Productionorderid,
+                Status = x.Status,
+                StatusAlmacen = x.StatusAlmacen,
             });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);

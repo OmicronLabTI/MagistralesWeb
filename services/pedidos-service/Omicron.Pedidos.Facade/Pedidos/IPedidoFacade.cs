@@ -267,5 +267,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrdersForDelivery();
+
+        /// <summary>
+        /// Gets the deliveries for the invoices.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForInvoice();
     }
 }

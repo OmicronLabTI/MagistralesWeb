@@ -195,6 +195,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetOrdersForDelivery())
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.GetOrdersForInvoice())
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -976,6 +980,22 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             // act
             var response = await this.pedidoFacade.GetOrdersForDelivery();
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetOrdersForInvoice()
+        {
+            // arrange
+            // act
+            var response = await this.pedidoFacade.GetOrdersForInvoice();
 
             // Assert
             Assert.IsNotNull(response);

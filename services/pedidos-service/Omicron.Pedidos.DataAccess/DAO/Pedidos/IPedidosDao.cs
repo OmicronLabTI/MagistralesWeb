@@ -199,5 +199,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="ordersId">th eorderd id.</param>
         /// <returns>the orders.</returns>
         Task<List<UserOrderModel>> GetUserOrdersById(List<int> ordersId);
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        /// <param name="statusForSale">the status for the sale.</param>
+        /// <param name="statusForOrder">the status for the order.</param>
+        Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder);
     }
 }

@@ -44,6 +44,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<ISapAlmacenFacade, SapAlmacenFacade>();
             Services.AddTransient<ISapAlmacenService, SapAlmacenService>();
             Services.AddTransient<ISapAlmacenDeliveryService, SapAlmacenDeliveryService>();
+            Services.AddTransient<ISapInvoiceService, SapInvoiceService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
             return Services;

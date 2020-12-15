@@ -320,6 +320,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return true;
         }
 
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder)
+        {
+            var userOrders = await this.databaseContext.UserOrderModel.Where(x => x.Status == statusForSale).ToListAsync();
+            var prodOrders = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.StatusAlmacen) && x.StatusAlmacen == statusForOrder).ToListAsync();
+            userOrders.AddRange(prodOrders);
+            return userOrders;
+        }
+
         /// <summary>
         /// Gets the fields with the dates.
         /// </summary>

@@ -46,6 +46,7 @@ namespace Omicron.SapAdapter.Test.Facade
 
             var mockService = new Mock<ISapAlmacenService>();
             var mockDelivery = new Mock<ISapAlmacenDeliveryService>();
+            var mockInvoice = new Mock<ISapInvoiceService>();
 
             mockService
                 .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
@@ -71,7 +72,15 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetDelivery(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
-            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object);
+            mockInvoice
+                .Setup(m => m.GetInvoice(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
+            mockInvoice
+                .Setup(m => m.GetInvoiceProducts(It.IsAny<int>()))
+                .Returns(Task.FromResult(response));
+
+            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
 
         /// <summary>
@@ -150,6 +159,31 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetDelivery(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoice()
+        {
+            var dictionary = new Dictionary<string, string>();
+            var response = await this.almacenFacade.GetInvoice(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoiceProducts()
+        {
+            var response = await this.almacenFacade.GetInvoiceProducts(10);
 
             Assert.IsNotNull(response);
         }

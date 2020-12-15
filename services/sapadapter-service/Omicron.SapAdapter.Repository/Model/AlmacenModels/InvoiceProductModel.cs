@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="AlmacenSalesModel.cs" company="Axity">
+// <copyright file="InvoiceProductModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,42 +8,42 @@
 
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
-    using System;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// The almacenSalesModel.
+    /// class for the product.
     /// </summary>
-    public class AlmacenSalesModel
+    public class InvoiceProductModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int DocNum { get; set; }
+        public string ItemCode { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime InitDate { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Doctor { get; set; }
+        public decimal Quantity { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalItems { get; set; }
+        public List<string> Batches { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal TotalPieces { get; set; }
+        public string Container { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -55,6 +55,24 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets a value indicating whether gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public bool HasInvoice { get; set; }
+        public bool NeedsCooling { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ProductType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool IsMagistral { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value.
+        /// </summary>
+        /// <value>The code.</value>
+        public int DeliveryId { get; set; }
     }
 }
