@@ -62,12 +62,19 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <returns>the data.</returns>
         public async Task<ResultDto> GetScannedData(string type, string code)
         {
-            if (type.Equals(FacadeConstants.Magistral))
+            switch (type)
             {
-                return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
-            }
+                case FacadeConstants.Magistral:
+                    return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
 
-            return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
+                case FacadeConstants.Linea:
+                    return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
+
+                case FacadeConstants.Remision:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetDeliveryScannedData(code));
+                default:
+                    return new ResultDto { Code = 400, Success = false, ExceptionMessage = "Not found" };
+            }
         }
 
         /// <summary>

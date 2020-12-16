@@ -17,5 +17,15 @@ namespace Omicron.SapAdapter.Facade.FacadeConstants
         /// the filter for orders.
         /// </summary>
         public const string Magistral = "magistral";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Linea = "linea";
+
+        /// <summary>
+        /// the filter for remision.
+        /// </summary>
+        public const string Remision = "remision";
     }
 }
