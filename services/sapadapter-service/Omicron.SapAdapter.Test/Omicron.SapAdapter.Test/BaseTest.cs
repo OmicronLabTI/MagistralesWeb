@@ -401,9 +401,14 @@ namespace Omicron.SapAdapter.Test
         /// <returns>the data.</returns>
         public ResultDto GetLineProductsRemision()
         {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
             var listProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch) },
             };
 
             return new ResultDto
@@ -448,6 +453,32 @@ namespace Omicron.SapAdapter.Test
             {
                 new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
                 new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", ItemCode = "Linea1" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsScannInvoice()
+        {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), ItemCode = "Linea1" },
             };
 
             return new ResultDto

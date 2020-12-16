@@ -72,6 +72,13 @@ namespace Omicron.SapAdapter.Facade.Sap
 
                 case FacadeConstants.Remision:
                     return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetDeliveryScannedData(code));
+
+                case FacadeConstants.RemisionMg:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetMagistralProductInvoice(code));
+
+                case FacadeConstants.RemisionLn:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetLineProductInvoice(code));
+
                 default:
                     return new ResultDto { Code = 400, Success = false, ExceptionMessage = "Not found" };
             }

@@ -84,6 +84,14 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetDeliveryScannedData(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
+            mockInvoice
+                .Setup(m => m.GetMagistralProductInvoice(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockInvoice
+                .Setup(m => m.GetLineProductInvoice(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
 
@@ -200,6 +208,34 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetScannedDataRemision()
         {
             var type = "remision";
+            var code = "750001000";
+            var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetScannedDataRemisionMg()
+        {
+            var type = "remisionmg";
+            var code = "750001000";
+            var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetScannedDataRemisionLn()
+        {
+            var type = "remisionln";
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 

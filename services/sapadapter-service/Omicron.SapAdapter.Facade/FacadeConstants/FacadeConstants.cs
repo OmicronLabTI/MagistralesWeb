@@ -27,5 +27,15 @@ namespace Omicron.SapAdapter.Facade.FacadeConstants
         /// the filter for remision.
         /// </summary>
         public const string Remision = "remision";
+
+        /// <summary>
+        /// the filter for remision.
+        /// </summary>
+        public const string RemisionMg = "remisionmg";
+
+        /// <summary>
+        /// the filter for remision.
+        /// </summary>
+        public const string RemisionLn = "remisionln";
     }
 }
