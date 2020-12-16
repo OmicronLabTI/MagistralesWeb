@@ -80,5 +80,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public int OrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value.
+        /// </summary>
+        /// <value>The code.</value>
+        public int SaleOrderId { get; set; }
     }
 }

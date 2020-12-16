@@ -153,5 +153,52 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryScannedDataMg()
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetMagistralProductInvoice("75000-1000");
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="code">the code to look.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("Linea1-1")]
+        [TestCase("Linea10-1")]
+        public async Task GetDeliveryScannedDataLn(string code)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProductsScannInvoice()));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetLineProductInvoice(code);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }
