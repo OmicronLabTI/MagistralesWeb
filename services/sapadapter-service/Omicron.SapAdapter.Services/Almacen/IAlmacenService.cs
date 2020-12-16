@@ -22,5 +22,13 @@ namespace Omicron.SapAdapter.Services.Almacen
         /// <param name="route">the route to send.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetAlmacenOrders(string route);
+
+        /// <summary>
+        /// Send data to almacen.
+        /// </summary>
+        /// <param name="route">the rote.</param>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> PostAlmacenOrders(string route, object dataToSend);
     }
 }
