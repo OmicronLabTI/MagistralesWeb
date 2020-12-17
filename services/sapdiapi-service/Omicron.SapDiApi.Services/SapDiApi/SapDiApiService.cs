@@ -561,6 +561,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     deliveryNote.Lines.BaseType = 17;
                     deliveryNote.Lines.WarehouseCode = saleOrder.Lines.WarehouseCode;
 
+                    deliveryNote.Lines.UserFields.Fields.Item("U_ENVASE").Value = saleOrder.Lines.UserFields.Fields.Item("U_ENVASE").Value;
+
                     deliveryNote.Lines.BaseEntry = saleOrderId;
                     deliveryNote.Lines.BaseLine = i;
 
