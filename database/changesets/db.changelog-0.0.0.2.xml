@@ -151,4 +151,45 @@
 		</column>
 	</addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.19">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="statusinvoice"
+			type="varchar(20)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.20">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrinvoice"
+			type="varchar(100)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.21">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="userinvoice"
+			type="varchar(50)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.22">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoicestored"
+			type="timestamp">
+		</column>
+	</addColumn>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.23">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoiceid"
+			type="int"
+			defaultValue="0">
+		</column>
+	</addColumn>
+  </changeSet>
 </databaseChangeLog> 
