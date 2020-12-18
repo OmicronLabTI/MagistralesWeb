@@ -8,6 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
+    using System;
+
     /// <summary>
     /// Class OrderLog Model.
     /// </summary>
@@ -78,5 +80,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// <value>
         /// String status.
         public int FinishedLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        public string ItemCode { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Test
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
@@ -45,6 +46,10 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 100, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1 },
                 new OrderModel { PedidoId = 101, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2 },
+
+                // For Almacen
+                new OrderModel { PedidoId = 75000, Cliente = "cliente", DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", },
+                new OrderModel { PedidoId = 75001, Cliente = "cliente", DocNum = 75001, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", },
             };
         }
 
@@ -72,6 +77,12 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 100, ProductoId = "Abc Aspirina", Container = "NA", Label = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 100, ProductoId = "Buscapina", Container = "NA", Label = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 101, ProductoId = "Abc Aspirina", Container = "NA", Label = "NA", Quantity = 10 },
+
+                // For Almacen
+                new DetallePedidoModel { Description = "Magistral1", DetalleId = 0, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Magistral2", DetalleId = 1, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Magistral3", DetalleId = 2, PedidoId = 75000, ProductoId = "Magistral2", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75001, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
             };
         }
 
@@ -121,6 +132,9 @@ namespace Omicron.SapAdapter.Test
             return new List<Batches>
             {
                 new Batches { AbsEntry = 1, DistNumber = "Lote1", ItemCode = "Abc Aspirina", SysNumber = 1 },
+
+                // For Almacen
+                new Batches { AbsEntry = 2, DistNumber = "Lote1", ItemCode = "Linea1", SysNumber = 1 },
             };
         }
 
@@ -133,6 +147,35 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesQuantity>
             {
                 new BatchesQuantity { AbsEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1, CommitQty = 10, Quantity = 10, WhsCode = "MN" },
+
+                // For Almacen
+                new BatchesQuantity { AbsEntry = 2, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the delivery header.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<DeliverModel> DeliveryModel()
+        {
+            return new List<DeliverModel>
+            {
+                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000 },
+                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001 },
+            };
+        }
+
+        /// <summary>
+        /// Gets the deliveries.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<DeliveryDetailModel> GetDeliveryDetail()
+        {
+            return new List<DeliveryDetailModel>
+            {
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1 },
+                new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1 },
             };
         }
 
@@ -145,6 +188,9 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchTransacitions>
             {
                 new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+
+                // almacen
+                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10 },
             };
         }
 
@@ -157,6 +203,9 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesTransactionQtyModel>
             {
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+
+                // almacen
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 2, ItemCode = "Linea1", SysNumber = 1 },
             };
         }
 
@@ -171,6 +220,11 @@ namespace Omicron.SapAdapter.Test
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%" },
                 new ProductoModel { IsMagistral = "N", ProductoId = "Ungüento 1", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR" },
                 new ProductoModel { IsMagistral = "N", ProductoId = "Cápsula 12ML", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR" },
+
+                // For almacen
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1" },
             };
         }
 
@@ -186,6 +240,11 @@ namespace Omicron.SapAdapter.Test
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 110, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 120, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 130, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
+
+                // For Almacen
+                new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1000, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1001, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
+                new OrdenFabricacionModel { ProductoId = "Magistral2", OrdenId = 1002, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
             };
         }
 
@@ -243,6 +302,90 @@ namespace Omicron.SapAdapter.Test
                 ExceptionMessage = string.Empty,
                 Success = true,
                 UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderModelAlmacen()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Finalizado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProducts()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderRemision()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRemision()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
             };
         }
     }

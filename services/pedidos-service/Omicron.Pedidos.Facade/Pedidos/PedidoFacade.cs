@@ -390,5 +390,30 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.DeleteFiles());
         }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetOrdersForAlmacen()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrdersForAlmacen());
+        }
+
+        /// <summary>
+        /// Updates the user orders.
+        /// </summary>
+        /// <param name="userOrders">The orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> UpdateUserOrders(List<UserOrderDto> userOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.UpdateUserOrders(this.mapper.Map<List<UserOrderModel>>(userOrders)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersForDelivery()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrdersForDelivery());
+        }
     }
 }

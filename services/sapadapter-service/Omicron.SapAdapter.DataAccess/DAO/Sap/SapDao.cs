@@ -171,6 +171,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsChecked = false,
                              CreatedDate = dp.CreatedDate,
                              Label = d.Label,
+                             NeedsCooling = p.NeedsCooling,
+                             Container = d.Container,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);
@@ -494,6 +496,82 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
         {
             return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         where order.FechaInicio >= initDate
+                         select new CompleteAlmacenOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = order.Cliente,
+                             Medico = order.Medico,                             
+                             FechaInicio = order.FechaInicio,
+                             Detalles = dp,
+                         });
+
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+        }
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <param name="saleOrderId">The order id.</param>
+        /// <returns>get the orders.</returns>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId)
+        {
+            var order = await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == saleOrderId);
+            var pedido = await this.databaseContext.DetallePedido.Where(x => x.PedidoId == saleOrderId).ToListAsync();
+
+            var listToReturn = new List<CompleteAlmacenOrderModel>();
+
+            pedido.ForEach(x =>
+            {
+                var model = new CompleteAlmacenOrderModel
+                {
+                    Cliente = order.Cliente,
+                    DocNum = order.DocNum,
+                    Detalles = x,
+                    FechaInicio = order.FechaInicio,
+                    Medico = order.Medico,
+                };
+
+                listToReturn.Add(model);
+            });
+
+            return listToReturn;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryBySaleOrder(List<int> ordersId)
+        {            
+            return (await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry))));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar)
+        {
+            return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums)
+        {
+            return await this.RetryQuery<DeliverModel>(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
+        {
+            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
         }
 
         /// <summary>

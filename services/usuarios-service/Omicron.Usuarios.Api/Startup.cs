@@ -75,6 +75,7 @@ namespace Omicron.Usuarios.Api
                 .CreateLogger();
 
             services.AddSingleton(Log.Logger);
+            this.AddCorsSvc(services);
 
             services.AddDiscoveryClient(this.Configuration);
 
@@ -155,9 +156,28 @@ namespace Omicron.Usuarios.Api
             app.UseMiddleware<ResponseMiddleware>();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 

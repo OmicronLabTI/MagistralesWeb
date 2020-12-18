@@ -25,13 +25,17 @@ namespace Omicron.Pedidos.Api.Controllers
     {
         private readonly IPedidoFacade pedidoFacade;
 
+        private readonly IQrFacade qrsFacade;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
-        public PedidosController(IPedidoFacade pedidoFacade)
+        /// <param name="qrsFacade">The qr Facade.</param>
+        public PedidosController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
+            this.qrsFacade = qrsFacade ?? throw new ArgumentException(nameof(qrsFacade));
         }
 
         /// <summary>
@@ -472,6 +476,69 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> DeleteFiles()
         {
             var response = await this.pedidoFacade.DeleteFiles();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">The orders ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/qr/magistral")]
+        [HttpPost]
+        public async Task<IActionResult> CreateQrMagistral(List<int> orderIds)
+        {
+            var response = await this.qrsFacade.CreateMagistralQr(orderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">The orders ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/qr/remision")]
+        [HttpPost]
+        public async Task<IActionResult> CreateQrRemision(List<int> orderIds)
+        {
+            var response = await this.qrsFacade.CreateRemisionQr(orderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/userorders/almacen")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForAlmacen()
+        {
+            var response = await this.pedidoFacade.GetOrdersForAlmacen();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="listUser">The list of users.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserOrders(List<UserOrderDto> listUser)
+        {
+            var response = await this.pedidoFacade.UpdateUserOrders(listUser);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/userorders/delivery")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForDelivery()
+        {
+            var response = await this.pedidoFacade.GetOrdersForDelivery();
             return this.Ok(response);
         }
 

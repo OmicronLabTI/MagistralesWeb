@@ -131,6 +131,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUsersById = "getUsersById";
 
         /// <summary>
+        /// url for the ones for almacen.
+        /// </summary>
+        public const string GetUserOrdersAlmancen = "userorders/almacen";
+
+        /// <summary>
+        /// Get the lines products for status almacenado.
+        /// </summary>
+        public const string GetLineProduct = "orders?status=Almacenado";
+
+        /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderDelivery = "userorders/delivery";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
@@ -169,6 +184,41 @@ namespace Omicron.SapAdapter.Services.Constants
         /// error when batche are missing.
         /// </summary>
         public const string NoNeedRecipe = "3";
+
+        /// <summary>
+        /// Status finalizado.
+        /// </summary>
+        public const string Finalizado = "Finalizado";
+
+        /// <summary>
+        /// status por recibir.
+        /// </summary>
+        public const string PorRecibir = "Por recibir";
+
+        /// <summary>
+        /// status almacenado.
+        /// </summary>
+        public const string Almacenado = "Almacenado";
+
+        /// <summary>
+        /// Magistral.
+        /// </summary>
+        public const string Magistral = "Magistral";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
+        public const string Linea = "de Línea";
+
+        /// <summary>
+        /// producto mixto.
+        /// </summary>
+        public const string Mixto = "Mixto";
+
+        /// <summary>
+        /// PT wharegouse.
+        /// </summary>
+        public const string PT = "PT";
 
         /// <summary>
         /// Gets the status of the order.

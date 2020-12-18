@@ -66,5 +66,19 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("UserText")]
         public string LargeDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("QryGroup29")]
+        public string NeedsCooling { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("CodeBars")]
+        public string BarCode { get; set; }
     }
 }

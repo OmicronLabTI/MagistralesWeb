@@ -150,5 +150,54 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="customListIds">Te custom list ids.</param>
         /// <returns>Related components.</returns>
         Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(List<int> customListIds);
+
+        /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="userOrderId">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="saleOrder">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave);
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status tu,</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>>GetOrderForAlmacen(string status);
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersById(List<int> ordersId);
     }
 }

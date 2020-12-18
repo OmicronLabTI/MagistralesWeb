@@ -13,7 +13,7 @@ export const CONST_NUMBER = {
     seven: 7,
     fifty: 50,
     oneHundred: 100,
-    oneThousand: 1000
+    oneThousand: 999
 };
 export const CONST_STRING = {
     empty: ''
@@ -69,7 +69,8 @@ export enum MessageType {
     finalizeOrder,
     saveBatches,
     materialRequest,
-    default
+    default,
+    ordersWithoutQr
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -85,7 +86,7 @@ export const ConstStatus = {
     asignado: 'Asignado',
     terminado: 'Terminado',
     reasingado: 'Reasignado',
-    entregado: 'Entregado',
+    almacenado: 'Almacenado',
 };
 export const HttpStatus = {
     ok: 200,
@@ -135,7 +136,8 @@ export enum FromToFilter {
     fromOrdersIsolatedCancel,
     fromOrderIsolatedReassign,
     fromOrderIsolatedReassignItems,
-    fromDefault
+    fromDefault,
+    fromDetailOrderQr
 }
 
 export const MaterialRequestPage = {

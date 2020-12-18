@@ -144,6 +144,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<ProductoModel>> GetProductById(string itemCode);
 
         /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar);
+
+        /// <summary>
         /// gets the valid batches by item.
         /// </summary>
         /// <param name="itemCode">the item code.</param>
@@ -203,5 +210,39 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="ids">gets the attachments by id</param>
         /// <returns>the attachaments.</returns>
         Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <param name="saleOrderId">The order id.</param>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryBySaleOrder(List<int> ordersId);
+
+        /// <summary>
+        /// Get the delivery orders headers.
+        /// </summary>
+        /// <param name="docuNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums);
+
+        /// <summary>
+        /// Get the delivery orders headers.
+        /// </summary>
+        /// <param name="docuNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums);
     }
 }

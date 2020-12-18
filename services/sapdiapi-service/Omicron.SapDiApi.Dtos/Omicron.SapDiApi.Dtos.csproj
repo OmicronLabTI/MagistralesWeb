@@ -62,11 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AlmacenBatchDto.cs" />
     <Compile Include="Models\AssginBatchDto.cs" />
     <Compile Include="Models\BatchesConfigurationDto.cs" />
     <Compile Include="Models\CloseProductionOrderDto.cs" />
     <Compile Include="Models\CompleteDetailDto.cs" />
     <Compile Include="Models\CompleteDetalleFormulaDto.cs" />
+    <Compile Include="Models\CreateDeliveryDto.cs" />
     <Compile Include="Models\OrderDto.cs" />
     <Compile Include="Models\OrderWithDetailDto.cs" />
     <Compile Include="Models\ResultDto.cs" />

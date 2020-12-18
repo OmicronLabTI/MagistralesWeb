@@ -516,6 +516,95 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the objects to create.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> CreateDelivery(List<CreateDeliveryModel> createDelivery)
+        {
+            var dictionaryResult = new Dictionary<string, string>();
+            var saleOrderId = createDelivery.First().SaleOrderId;
+            try
+            {
+                var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
+                
+                var saleOrderFound = saleOrder.GetByKey(saleOrderId);
+
+                if (!saleOrderFound)
+                {
+                    dictionaryResult.Add($"{saleOrderId}-Error", ServiceConstants.OrderNotFound);
+                    return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+                }
+
+                var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
+                deliveryNote.CardCode = saleOrder.CardCode;
+                deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
+                deliveryNote.DocType = BoDocumentTypes.dDocument_Items;
+                deliveryNote.DocumentSubType = BoDocumentSubType.bod_None;
+                deliveryNote.Address = saleOrder.Address;
+                deliveryNote.Address2 = saleOrder.Address2;
+                deliveryNote.ShipToCode = saleOrder.ShipToCode;
+                deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
+                deliveryNote.Comments = $"Basado en pedido: {saleOrderId}";
+
+                for (var i = 0; i < saleOrder.Lines.Count; i++)
+                {
+                    saleOrder.Lines.SetCurrentLine(i);
+                    var itemCode = saleOrder.Lines.ItemCode;
+
+                    deliveryNote.Lines.ItemCode = saleOrder.Lines.ItemCode;
+                    deliveryNote.Lines.Quantity = saleOrder.Lines.Quantity;
+                    deliveryNote.Lines.DiscountPercent = saleOrder.Lines.DiscountPercent;
+                    deliveryNote.Lines.TaxCode = saleOrder.Lines.TaxCode;
+
+                    deliveryNote.Lines.LineTotal = saleOrder.Lines.LineTotal;
+                    deliveryNote.Lines.BaseType = 17;
+                    deliveryNote.Lines.WarehouseCode = saleOrder.Lines.WarehouseCode;
+
+                    deliveryNote.Lines.BaseEntry = saleOrderId;
+                    deliveryNote.Lines.BaseLine = i;
+
+                    var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode));
+                    product = product == null ? new CreateDeliveryModel { OrderType = ServiceConstants.Magistral } : product;
+
+                    if (product.OrderType != ServiceConstants.Magistral)
+                    {
+                        foreach (var b in product.Batches)
+                        {
+                            double.TryParse(b.BatchQty.ToString(), out var doubleQuantity);
+                            deliveryNote.Lines.BatchNumbers.Add();
+                            deliveryNote.Lines.BatchNumbers.Quantity = doubleQuantity;
+                            deliveryNote.Lines.BatchNumbers.BatchNumber = b.BatchNumber;
+                        }
+                    }
+
+                    deliveryNote.Lines.Add();
+                }
+
+                var update = deliveryNote.Add();
+                company.GetLastError(out int errCode, out string errMsg);
+
+                if (update != 0)
+                {
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was tried to be delivered {errCode} - {errMsg} - {JsonConvert.SerializeObject(createDelivery)}");
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {errMsg}");
+                }
+                else
+                {
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", "Ok");
+                }
+            }
+            catch(Exception ex)
+            {
+                _loggerProxy.Info($"Error while Delivery {saleOrderId} {JsonConvert.SerializeObject(createDelivery)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
+                dictionaryResult.Add($"{saleOrderId}-ErrorHandled", "Error mientras se crea remisión");
+            }
+            
+            return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
+        /// <summary>
         /// sets the data to update.
         /// </summary>
         /// <param name="model">the model from controller.</param>

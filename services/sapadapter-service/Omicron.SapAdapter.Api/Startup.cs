@@ -19,6 +19,7 @@ namespace Omicron.SapAdapter.Api
     using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
+    using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Prometheus;
@@ -38,6 +39,8 @@ namespace Omicron.SapAdapter.Api
         private const string PedidoService = "http://pedidosservice/";
 
         private const string UserService = "http://usuariosservice/";
+
+        private const string AlmacenService = "http://almacenservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -119,7 +122,15 @@ namespace Omicron.SapAdapter.Api
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
+            services.AddHttpClient("almacen", c =>
+            {
+                c.BaseAddress = new Uri(AlmacenService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IAlmacenService, AlmacenService>();
+
             this.AddRedis(services, Log.Logger);
+            this.AddCorsSvc(services);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
@@ -161,9 +172,28 @@ namespace Omicron.SapAdapter.Api
             app.UseMiddleware<ResponseMiddleware>();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 

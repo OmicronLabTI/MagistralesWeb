@@ -120,6 +120,54 @@ namespace Omicron.Pedidos.Entities.Model
         public int FinishedLabel { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrmgestrcuture")]
+        public string MagistralQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("finalizeddate")]
+        public DateTime? FinalizedDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("statusalmacen")]
+        public string StatusAlmacen { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("usercheckin")]
+        public string UserCheckIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("datecheckin")]
+        public DateTime? DateTimeCheckIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrremisionmgestrcuture")]
+        public string RemisionQr { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

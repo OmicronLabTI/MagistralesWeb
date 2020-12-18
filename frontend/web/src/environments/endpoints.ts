@@ -46,7 +46,8 @@ export const Endpoints = {
     savedComments: `${environment.baseUrl}/api/pedidos/saleorder/comments`,
     viewPdf: `${environment.baseUrl}/api/pedidos/saleorder/pdf`,
     ordersToDelivered: `${environment.baseUrl}/api/pedidos/status/fabOrder`,
-    finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`
+    finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`,
+    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
@@ -62,5 +63,6 @@ export const Endpoints = {
 };
 
 export const TokenExcludedEndpoints = [
-  '/api/oauth/oauthrs'
+  '/api/oauth/oauthrs',
+  '/api/pedidos/resources/' // to excluded url to download images
 ];

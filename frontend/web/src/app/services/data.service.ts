@@ -276,6 +276,10 @@ export class DataService {
         firstMessage = 'Ya se ha generado una solicitud para la orden ';
         finishMessaje = '\n';
         break;
+      case MessageType.ordersWithoutQr:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no cuenta con código qr \n';
+        break;
     }
     if (!isFromCancel) {
       itemsWithError.forEach((order: string) => {
@@ -298,17 +302,17 @@ export class DataService {
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
-                && t.pedidoStatus !== ConstStatus.entregado))).length > 0;
+                && t.pedidoStatus !== ConstStatus.almacenado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
-            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.entregado)).length > 0;
+            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.almacenado)).length > 0;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
             || t.status === ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.entregado))).length > 0;
+            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.almacenado))).length > 0;
       case FromToFilter.fromOrderDetailLabel:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
@@ -458,11 +462,27 @@ export class DataService {
         return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum);
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId);
+      case FromToFilter.fromDetailOrderQr:
+        return dataToSearch.filter(t => t.isChecked && t.status !== ConstStatus.abierto && t.status !== ConstStatus.cancelado)
+            .map(order => order.ordenFabricacionId);
       case FromToFilter.fromOrdersIsolated:
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
     }
   }
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  addLineBreakAtFinish(wordToAddLineBreak: string) {
+    /*console.log('wordR: ', wordToAddLineBreak)
+    // wordToAddLineBreak = wordToAddLineBreak + '\n\n\n\n';
+    if ( wordToAddLineBreak.trim().substring(wordToAddLineBreak.length - CONST_NUMBER.two) === '\n') {
+      console.log('hay salto')
+      return wordToAddLineBreak;
+    } else {
+      console.log('no hay',wordToAddLineBreak)
+      return wordToAddLineBreak + '\n\n\n\n';
+
+    }*/
   }
 }

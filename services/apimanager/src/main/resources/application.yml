@@ -40,6 +40,9 @@ zuul:
     reporting:
       path: /reporting/**
       serviceId: reportingservice
+    almacen:
+      path: /almacen/**
+      serviceId: almacenservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000

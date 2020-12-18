@@ -243,26 +243,6 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task UpdateUserOrderStatusEntregado()
-        {
-            // arrange
-            var components = new List<UpdateStatusOrderModel>
-            {
-                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado" },
-            };
-
-            // act
-            var response = await this.pedidosService.UpdateStatusOrder(components);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// the processs.
-        /// </summary>
-        /// <returns>return nothing.</returns>
-        [Test]
         public async Task ConnectDiApi()
         {
             // act
@@ -970,6 +950,54 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await pedidoServiceLocal.CreateSaleOrderPdf(details);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacen()
+        {
+            // act
+            var result = await this.pedidosService.GetOrdersForAlmacen();
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task UpdateUserOrders()
+        {
+            // arrange
+            var listorders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1, Status = "Almacenado" },
+            };
+
+            // act
+            var result = await this.pedidosService.UpdateUserOrders(listorders);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForDelivery()
+        {
+            // act
+            var result = await this.pedidosService.GetOrdersForDelivery();
 
             // assert
             Assert.IsNotNull(result);
