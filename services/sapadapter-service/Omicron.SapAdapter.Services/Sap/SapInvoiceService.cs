@@ -333,11 +333,12 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<InvoiceDeliveryModel> GetDeliveryModel(List<DeliveryDetailModel> delivery, List<InvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
             var listToReturn = new List<InvoiceDeliveryModel>();
-            var userOrderStatus = userOrderModels.Where(z => !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
-            userOrderStatus.AddRange(lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
             delivery.DistinctBy(x => x.DeliveryId).ToList()
                 .ForEach(y =>
                 {
+                    var userOrderStatus = userOrderModels.Where(z => z.Salesorderid == y.BaseEntry.ToString() && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
+                    userOrderStatus.AddRange(lineProducts.Where(x => x.SaleOrderId == y.BaseEntry && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
+
                     var deliveryModel = new InvoiceDeliveryModel
                     {
                         DeliveryId = y.DeliveryId,

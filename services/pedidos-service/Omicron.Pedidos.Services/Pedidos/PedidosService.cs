@@ -764,14 +764,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetOrdersForDelivery()
         {
             var userOrders = (await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado })).ToList();
-            userOrders = userOrders.Where(x => x.IsSalesOrder).ToList();
 
-            var orderToReturn = userOrders.Select(x => new
-            {
-                Salesorderid = x.Salesorderid,
-                Status = x.Status,
-                Comments = x.Comments,
-            });
+            var orderToReturn = userOrders
+                .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
+                .Select(x => new
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    Comments = x.Comments,
+                }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }
@@ -781,13 +783,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
 
-            var orderToReturn = userOrders.Select(x => new
-            {
-                Salesorderid = x.Salesorderid,
-                Productionorderid = x.Productionorderid,
-                Status = x.Status,
-                StatusAlmacen = x.StatusAlmacen,
-            });
+            var orderToReturn = userOrders
+                .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
+                .Select(x => new
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
+                });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }
