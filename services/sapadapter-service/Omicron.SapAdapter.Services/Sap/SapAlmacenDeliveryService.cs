@@ -53,16 +53,15 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders();
             var lineProducts = await this.GetLineProducts();
 
-            var listSaleOrders = lineProducts.Select(x => x.SaleOrderId).ToList();
-            listSaleOrders.AddRange(userOrders.Select(x => int.Parse(x.Salesorderid)).ToList());
+            var listSaleOrders = lineProducts.Where(y => string.IsNullOrEmpty(y.ItemCode) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => x.SaleOrderId).Distinct().ToList();
+            listSaleOrders.AddRange(userOrders.Where(y => string.IsNullOrEmpty(y.Productionorderid) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => int.Parse(x.Salesorderid)).Distinct().ToList());
             listSaleOrders = listSaleOrders.OrderBy(x => x).Distinct().ToList();
 
             var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listSaleOrders)).OrderBy(x => x.DocDate).ThenBy(y => y.DeliveryId).ToList();
             deliveryDetails = this.GetOrdersToLook(deliveryDetails, parameters);
-
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
-            var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, userOrders);
+            var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, userOrders, lineProducts);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
         }
 
@@ -82,9 +81,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<LineProductsModel>> GetLineProducts()
         {
-            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
-            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
-            return lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList();
+            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLinesForDelivery);
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
         }
 
         /// <summary>
@@ -114,7 +112,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="headers">the delivery header.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders)
+        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -131,12 +129,14 @@ namespace Omicron.SapAdapter.Services.Sap
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid == saleOrder.ToString());
+                var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
+                var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
 
                 var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
 
-                var productList = await this.GetProductListModel(deliveryDetail);
+                var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
@@ -185,7 +185,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="deliveryDetails">The delivery details.</param>
         /// <returns>the data.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails)
+        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             var listToReturn = new List<ProductListModel>();
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry;
@@ -209,6 +209,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     listBatches = await this.GetBatchesByDelivery(order.DeliveryId, order.ProductoId);
                 }
 
+                var orderNum = string.IsNullOrEmpty(orderId) ? 0 : int.Parse(orderId);
+
                 var productModel = new ProductListModel
                 {
                     Container = saleDetail == null ? string.Empty : saleDetail.Container,
@@ -217,7 +219,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     NeedsCooling = item.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = order.Quantity,
-                    Status = ServiceConstants.Almacenado,
+                    Status = this.CalculateStatus(userOrders, lineProducts, item.IsMagistral, order.BaseEntry, orderNum, item.ProductoId),
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = listBatches,
                 };
@@ -249,6 +251,18 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return listToReturn;
+        }
+
+        private string CalculateStatus(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, string isMagistral, int saleOrder, int orderId, string itemCode)
+        {
+            if (isMagistral.Equals("Y"))
+            {
+                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid == saleOrder.ToString() && x.Productionorderid == orderId.ToString());
+                return userOrder == null ? ServiceConstants.Almacenado : userOrder.StatusAlmacen;
+            }
+
+            var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrder && x.ItemCode == itemCode);
+            return lineProduct == null ? ServiceConstants.Almacenado : lineProduct.StatusAlmacen;
         }
     }
 }
