@@ -128,7 +128,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Setup(m => m.GetAlmacenData(It.IsAny<string>()))
                 .Returns(Task.FromResult(responseAlmacen));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -148,34 +148,52 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
-        public async Task CreateInvoiceQr()
+        public async Task CreateInvoiceQrMagistral()
+        {
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+
+            var listOrdersId = new List<int> { 100 };
+
+            var response = await service.CreateInvoiceQr(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateInvoiceQrLinea()
         {
             // arrange
-            var remisionQr = new RemisionQrModel
+            var remisionQr = new InvoiceQrModel
             {
-                RemisionId = 100,
+                InvoiceId = 100,
                 NeedsCooling = true,
-                PedidoId = 300,
-                TotalPieces = 5,
             };
 
             var lineResult = new List<LineProductsModel>
             {
-                new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new LineProductsModel { SaleOrderId = 106, InvoiceQr = JsonConvert.SerializeObject(remisionQr) },
             };
 
             var responseAlmacen = this.GenerateResultModel(lineResult);
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Setup(m => m.PostAlmacenData(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(responseAlmacen));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
 
             var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
 
-            var listOrdersId = new List<int> { 106 };
+            var listOrdersId = new List<int> { 107 };
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 

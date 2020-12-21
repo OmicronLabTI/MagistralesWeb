@@ -110,7 +110,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
                 var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
-                var lineProducts = await this.GetOrdersFromAlmacenDict(route, ordersId);
+                var lineProducts = await this.GetOrdersFromAlmacenDict(route, null);
                 lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
@@ -158,7 +158,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var newOrder = new UserOrderModel
                     {
                         Salesorderid = y.SaleOrderId.ToString(),
-                        RemisionQr = y.RemisionQr,
+                        InvoiceQr = y.InvoiceQr,
                     };
 
                     saleOrders.Add(newOrder);
@@ -197,12 +197,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Get the lines product by ids.
         /// </summary>
-        /// <param name="ordersId">the orders.</param>
+        /// <param name="datatoSend">the orders.</param>
         /// <returns>the data.</returns>
-        private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(string route, List<int> ordersId)
+        private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(string route, object datatoSend)
         {
-            var response = await this.almacenService.GetSapAdapter(route);
-            return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
+            if (datatoSend == null)
+            {
+                var response = await this.almacenService.GetAlmacenData(route);
+                return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
+            }
+
+            var responsePost = await this.almacenService.PostAlmacenData(route, datatoSend);
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(responsePost.Response.ToString());
         }
 
         /// <summary>
@@ -343,7 +349,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
             saleOrders
-                .Where(x => !string.IsNullOrEmpty(x.RemisionQr))
+                .Where(x => !string.IsNullOrEmpty(x.InvoiceQr))
                 .ToList()
                 .ForEach(so =>
                 {
