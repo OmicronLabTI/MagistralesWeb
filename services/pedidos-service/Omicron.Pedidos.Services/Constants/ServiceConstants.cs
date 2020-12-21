@@ -281,6 +281,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenGetOrders = "orders";
 
         /// <summary>
+        /// Get the line products by invoice id.
+        /// </summary>
+        public const string AlmacenGetOrderByInvoice = "getline/invoiceId";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";

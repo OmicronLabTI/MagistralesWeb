@@ -14,7 +14,7 @@ namespace Omicron.Pedidos.Entities.Model.Db
     /// <summary>
     /// Class for the invoice qr model.
     /// </summary>
-    [Table("productionremisionqr")]
+    [Table("productionfacturaqr")]
     public class ProductionFacturaQrModel
     {
         /// <summary>

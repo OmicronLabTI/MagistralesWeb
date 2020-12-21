@@ -152,7 +152,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (!saleOrders.Any())
             {
-                var lineProducts = await this.GetOrdersFromAlmacenDict(string.Empty, invoiceIds);
+                var lineProducts = await this.GetOrdersFromAlmacenDict(ServiceConstants.AlmacenGetOrderByInvoice, invoiceIds);
                 lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
