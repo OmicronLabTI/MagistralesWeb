@@ -387,7 +387,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     Batches = listBatches,
                     Container = invoice.Container,
-                    Description = item.LargeDescription,
+                    Description = item.LargeDescription.ToUpper(),
                     ItemCode = item.ProductoId,
                     NeedsCooling = item.NeedsCooling.Equals("Y"),
                     ProductType = $"Producto {productType}",
