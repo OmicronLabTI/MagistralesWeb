@@ -91,28 +91,10 @@ namespace Omicron.Pedidos.Test.Services
                 TotalPieces = 5,
             };
 
-            var lineResult = new List<LineProductsModel>
-            {
-                new LineProductsModel { SaleOrderId = 300, RemisionQr = JsonConvert.SerializeObject(remisionQr) },
-            };
-
-            var sapResult = new List<DeliveryDetailModel>
-            {
-                new DeliveryDetailModel { BaseEntry = 300, DeliveryId = 200, LineNum = 1 },
-            };
-
-            var responseAlmacen = this.GenerateResultModel(lineResult);
-            var responseSap = this.GenerateResultModel(sapResult);
-
             var mockAlmacen = new Mock<IAlmacenService>();
-
             var mockSapAdapter = new Mock<ISapAdapter>();
-            mockSapAdapter
-                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(responseSap));
 
             var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
-
             var listOrdersId = new List<int> { 105 };
 
             var response = await service.CreateRemisionQr(listOrdersId);
@@ -142,13 +124,7 @@ namespace Omicron.Pedidos.Test.Services
                 new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr) },
             };
 
-            var sapResult = new List<DeliveryDetailModel>
-            {
-                new DeliveryDetailModel { BaseEntry = 106, DeliveryId = 200, LineNum = 1 },
-            };
-
             var responseAlmacen = this.GenerateResultModel(lineResult);
-            var responseSap = this.GenerateResultModel(sapResult);
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
@@ -156,15 +132,52 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(responseAlmacen));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
-            mockSapAdapter
-                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(responseSap));
 
             var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
 
             var listOrdersId = new List<int> { 106 };
 
             var response = await service.CreateRemisionQr(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateInvoiceQr()
+        {
+            // arrange
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+            };
+
+            var lineResult = new List<LineProductsModel>
+            {
+                new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+            };
+
+            var responseAlmacen = this.GenerateResultModel(lineResult);
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
+                .Returns(Task.FromResult(responseAlmacen));
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+
+            var listOrdersId = new List<int> { 106 };
+
+            var response = await service.CreateInvoiceQr(listOrdersId);
 
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);

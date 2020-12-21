@@ -516,6 +516,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrBottomTextRemision = "Remisión: {0} {1}";
 
         /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomTextFactura = "Factura: {0} {1}";
+
+        /// <summary>
         /// const for the cooling.
         /// </summary>
         public const string NeedsCooling = "\nRequiere refrigeración";

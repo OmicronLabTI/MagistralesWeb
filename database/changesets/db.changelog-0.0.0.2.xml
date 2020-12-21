@@ -192,4 +192,17 @@
 		</column>
 	</addColumn>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.24">
+    <createTable tableName="productionfacturaqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="facturaid" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="facturaqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog> 
