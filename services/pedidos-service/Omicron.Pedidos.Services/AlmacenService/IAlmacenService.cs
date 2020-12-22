@@ -21,6 +21,14 @@ namespace Omicron.Pedidos.Services.AlmacenService
         /// </summary>
         /// <param name="route">the route to send.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetSapAdapter(string route);
+        Task<ResultModel> GetAlmacenData(string route);
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <param name="dataToSend">The data to send.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> PostAlmacenData(string route, object dataToSend);
     }
 }

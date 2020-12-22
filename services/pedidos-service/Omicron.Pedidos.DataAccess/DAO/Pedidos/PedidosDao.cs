@@ -298,21 +298,27 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => ordersId.Contains(x.Id)).ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the qr if exist in table.
-        /// </summary>
-        /// <param name="saleOrder">the orders ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder)
         {
             return await this.databaseContext.ProductionRemisionQrModel.Where(x => saleOrder.Contains(x.PedidoId)).ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the qr if exist in table.
-        /// </summary>
-        /// <param name="modelsToSave">the orders ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
+        public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
+        {
+            return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionFacturaQrModel.AddRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave)
         {
             this.databaseContext.ProductionRemisionQrModel.AddRange(modelsToSave);
@@ -329,6 +335,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return userOrders;
         }
 
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => invoiceId.Contains(x.InvoiceId)).ToListAsync();
+        }
         /// <summary>
         /// Gets the fields with the dates.
         /// </summary>

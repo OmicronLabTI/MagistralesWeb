@@ -61,6 +61,12 @@ namespace Omicron.Pedidos.Test
                 TotalPieces = 5,
             };
 
+            var invoiceQr = new InvoiceQrModel
+            {
+                InvoiceId = 100,
+                NeedsCooling = false,
+            };
+
             return new List<UserOrderModel>
             {
                 new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
@@ -95,6 +101,9 @@ namespace Omicron.Pedidos.Test
                 // orders for invoice
                 new UserOrderModel { Id = 104, Productionorderid = null, Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
                 new UserOrderModel { Id = 105, Productionorderid = "2", Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+
+                // order for invoice qr
+                new UserOrderModel { Id = 106, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", InvoiceId = 100, InvoiceQr = JsonConvert.SerializeObject(invoiceQr) },
             };
         }
 

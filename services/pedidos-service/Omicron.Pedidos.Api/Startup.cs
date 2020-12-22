@@ -183,6 +183,18 @@ namespace Omicron.Pedidos.Api
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Images")),
                 RequestPath = "/resources",
             });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Delivery")),
+                RequestPath = "/resources/delivery",
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Invoice")),
+                RequestPath = "/resources/invoice",
+            });
             app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
