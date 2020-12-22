@@ -45,7 +45,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IAlmacenService almacenService;
 
-        private readonly string folderName;
+        private readonly string folerOrders;
+
+        private readonly string folderDelivery;
+
+        private readonly string folderInvoice;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QrService"/> class.
@@ -60,7 +64,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
-            this.folderName = Path.Combine("Resources", "Images");
+            this.folerOrders = Path.Combine("Resources", "Images");
+            this.folderDelivery = Path.Combine("Resources", "Delivery");
+            this.folderInvoice = Path.Combine("Resources", "Invoice");
         }
 
         /// <inheritdoc/>
@@ -184,7 +190,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var k in listUrls.Keys)
             {
                 var splitUrl = listUrls[k].Split("/").ToList();
-                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{splitUrl.Last()}");
+                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{splitUrl.Last()}");
                 if (!File.Exists(pathTosave))
                 {
                     listNotExist.Add(k);
@@ -255,11 +261,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{so.Productionorderid}.png");
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{so.Productionorderid}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
+                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders)))
                     {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
+                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders));
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
@@ -306,15 +312,15 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{modelQr.RemisionId}.png");
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery, $"{modelQr.RemisionId}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
+                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery)))
                     {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
+                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    var currentAddres = $"{baseAddres}{modelQr.RemisionId}.png";
+                    var currentAddres = $"{baseAddres}delivery/{modelQr.RemisionId}.png";
 
                     var modelToSave = new ProductionRemisionQrModel
                     {
@@ -356,15 +362,15 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                     var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
                     bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{modelQr.InvoiceId}.png");
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice, $"{modelQr.InvoiceId}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
+                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice)))
                     {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
+                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice));
                     }
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    var currentAddres = $"{baseAddres}{modelQr.InvoiceId}.png";
+                    var currentAddres = $"{baseAddres}invoice/{modelQr.InvoiceId}.png";
 
                     var modelToSave = new ProductionFacturaQrModel
                     {
