@@ -263,10 +263,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
                     var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{so.Productionorderid}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders)))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders));
-                    }
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders));
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
                     var currentAddres = $"{baseAddres}{so.Productionorderid}.png";
@@ -314,10 +311,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
                     var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery, $"{modelQr.RemisionId}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery)))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
-                    }
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
                     var currentAddres = $"{baseAddres}delivery/{modelQr.RemisionId}.png";
@@ -364,10 +358,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
                     var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice, $"{modelQr.InvoiceId}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice)))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice));
-                    }
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice));
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
                     var currentAddres = $"{baseAddres}invoice/{modelQr.InvoiceId}.png";

@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -394,6 +395,18 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var sapResults = await GetSalesOrdersFromSap(int.Parse(salesOrder.Salesorderid), sapAdapter);
             return sapResults.PreProductionOrders;
+        }
+
+        /// <summary>
+        /// check if the folder exist and created is if not.
+        /// </summary>
+        /// <param name="route">the route.</param>
+        public static void VerifyIfFolderExist(string route)
+        {
+            if (!Directory.Exists(route))
+            {
+                Directory.CreateDirectory(route);
+            }
         }
 
         /// <summary>
