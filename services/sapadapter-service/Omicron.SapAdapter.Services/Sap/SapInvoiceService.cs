@@ -168,6 +168,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, new List<int> { saleOrder });
             var lineProduct = lineOrders.FirstOrDefault(x => x.ItemCode == itemCode.ProductoId);
+            lineProduct = lineProduct == null ? new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) } : lineProduct;
             var batchModel = JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
             var batches = await this.GetBatchesForInvoice(itemCode, batchModel);
 
