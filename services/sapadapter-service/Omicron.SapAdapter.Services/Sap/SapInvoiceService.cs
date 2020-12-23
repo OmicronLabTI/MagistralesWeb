@@ -497,7 +497,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var header = (await this.sapDao.GetInvoiceHeaderByInvoiceId(new List<int> { deliveryDetails.InvoiceId.Value })).FirstOrDefault();
             header ??= new InvoiceHeaderModel();
 
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(new List<int> { header.InvoiceId })).FirstOrDefault(x => x.ProductoId == itemCode);
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(new List<int> { header.InvoiceId })).FirstOrDefault(x => x.BaseEntry.HasValue && x.ProductoId == itemCode && deliveryDetails.DeliveryId == x.BaseEntry.Value);
             invoiceDetails ??= new InvoiceDetailModel { BaseEntry = 0 };
 
             return new Tuple<InvoiceDetailModel, InvoiceHeaderModel>(invoiceDetails, header);
