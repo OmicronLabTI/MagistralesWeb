@@ -213,7 +213,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var productModel = new ProductListModel
                 {
-                    Container = saleDetail == null ? string.Empty : saleDetail.Container,
+                    Container = order.Container,
                     Description = item.LargeDescription.ToUpper(),
                     ItemCode = itemcode,
                     NeedsCooling = item.NeedsCooling,
