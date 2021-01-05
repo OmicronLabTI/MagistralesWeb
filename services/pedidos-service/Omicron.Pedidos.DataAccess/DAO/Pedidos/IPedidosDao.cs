@@ -190,8 +190,17 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Gets the orders for almance.
         /// </summary>
         /// <param name="status">The status tu,</param>
+        /// <param name="dateToLook">the min date to look.</param>
         /// <returns>the data.</returns>
-        Task<List<UserOrderModel>>GetOrderForAlmacen(string status);
+        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook);
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status tu,</param>
+        /// <param name="dateToLook">the min date to look.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook);
 
         /// <summary>
         /// GEts the orders by id.
