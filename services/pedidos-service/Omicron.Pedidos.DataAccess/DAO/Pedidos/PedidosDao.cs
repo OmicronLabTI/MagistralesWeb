@@ -278,14 +278,22 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return true;
         }
 
-        /// <summary>
-        /// Gets the orders for almance.
-        /// </summary>
-        /// <param name="status">The status to look.</param>
-        /// <returns>the data.</returns>
-        public async Task<List<UserOrderModel>> GetOrderForAlmacen(string status)
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToListAsync();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
+            orders = orders.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToList();
+            var saleOrderId = orders.Select(y => y.Salesorderid).ToList();
+
+            orders.AddRange(await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && saleOrderId.Contains(x.Salesorderid)).ToListAsync());
+            return orders;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
+        {
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
+            return orders.Where(x => x.IsSalesOrder && (x.Status != status || x.FinishedLabel != 1)).ToList();
         }
 
         /// <summary>

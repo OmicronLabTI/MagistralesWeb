@@ -346,7 +346,7 @@ namespace Omicron.SapAdapter.Test
             return new ResultDto
             {
                 Code = 200,
-                ExceptionMessage = string.Empty,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
                 Response = JsonConvert.SerializeObject(userOrders),
                 Success = true,
                 Comments = "15",
