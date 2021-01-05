@@ -776,6 +776,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Salesorderid = x.Salesorderid,
                     Productionorderid = x.Productionorderid,
                     Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
                     Comments = x.Comments,
                 }).ToList();
 
