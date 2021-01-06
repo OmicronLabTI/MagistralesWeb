@@ -716,11 +716,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
             var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
-            var orders = await this.pedidosDao.GetOrderForAlmacen(ServiceConstants.Finalizado);
-            orders = orders.Where(x => x.IsSalesOrder).ToList();
 
-            var ordersAlmacenado = await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado });
-            orders.AddRange(ordersAlmacenado);
+            int.TryParse(days, out var maxDays);
+            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
+            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, dateToLook);
+
+            var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, dateToLook);
+            var ordersId = ordersToIgnore.Where(x => x.IsSalesOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
 
             var ordersToReturn = orders.Select(x => new
             {
@@ -728,9 +732,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Productionorderid = x.Productionorderid,
                 Status = x.Status,
                 Comments = x.Comments,
-            });
+            }).ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), days);
         }
 
         /// <inheritdoc/>
@@ -772,6 +776,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Salesorderid = x.Salesorderid,
                     Productionorderid = x.Productionorderid,
                     Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
                     Comments = x.Comments,
                 }).ToList();
 
