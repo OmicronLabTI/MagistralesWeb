@@ -151,7 +151,7 @@ struct CommonStrings {
     static let errorInComments = "Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo"
     static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
-    static let errorLoadingOrders = "Hubo un error al cargar las órdenes de fabricación, por favor intentarlo de nuevo"
+    static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación, por favor inicia sesión nuevamente"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
 }
