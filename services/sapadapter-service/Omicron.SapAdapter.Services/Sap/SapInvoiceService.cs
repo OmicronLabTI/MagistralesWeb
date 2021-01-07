@@ -198,7 +198,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             invoiceHeader.ForEach(x =>
             {
-                var details = invoicesDetails.Where(x => x.InvoiceId == x.InvoiceId).ToList();
+                var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
             });
 
