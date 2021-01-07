@@ -1016,5 +1016,22 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("foraneo")]
+        [TestCase("local")]
+        public async Task GetOrdersForPackages(string type)
+        {
+            // act
+            var result = await this.pedidosService.GetOrdersForPackages(type);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

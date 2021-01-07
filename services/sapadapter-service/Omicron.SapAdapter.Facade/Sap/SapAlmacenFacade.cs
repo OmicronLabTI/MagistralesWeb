@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Facade.FacadeConstants;
     using Omicron.SapAdapter.Services.Sap;
 
@@ -116,6 +117,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetInvoiceProducts(int invoiceId)
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceProducts(invoiceId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoiceHeader(InvoicePackageSapLookDto dataToLook)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceHeader(this.mapper.Map<InvoicePackageSapLookModel>(dataToLook)));
         }
     }
 }

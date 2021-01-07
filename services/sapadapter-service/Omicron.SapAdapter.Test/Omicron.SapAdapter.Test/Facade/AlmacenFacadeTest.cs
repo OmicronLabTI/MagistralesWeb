@@ -17,6 +17,8 @@ namespace Omicron.SapAdapter.Test.Facade
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// Class for the QR test.
@@ -90,6 +92,10 @@ namespace Omicron.SapAdapter.Test.Facade
 
             mockInvoice
                 .Setup(m => m.GetLineProductInvoice(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockInvoice
+                .Setup(m => m.GetInvoiceHeader(It.IsAny<InvoicePackageSapLookModel>()))
                 .Returns(Task.FromResult(response));
 
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
@@ -238,6 +244,22 @@ namespace Omicron.SapAdapter.Test.Facade
             var type = "remisionln";
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoiceHeader()
+        {
+            // arrange
+            var data = new InvoicePackageSapLookDto();
+
+            // act
+            var response = await this.almacenFacade.GetInvoiceHeader(data);
 
             Assert.IsNotNull(response);
         }

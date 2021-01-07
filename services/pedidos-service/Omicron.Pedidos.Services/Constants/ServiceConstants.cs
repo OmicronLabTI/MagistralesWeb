@@ -86,6 +86,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Empaquetado = "Empaquetado";
 
         /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string Enviado = "Enviado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -536,9 +541,33 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// the status.
         /// </value>
+        public static List<string> StatusLocal { get; } = new List<string>
+        {
+            Empaquetado,
+            Enviado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusForaneo { get; } = new List<string>
+        {
+            Empaquetado,
+            Enviado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
         public static List<string> StatusAvoidReasignar { get; } = new List<string>
         {
-            "Finalizado",
+            Finalizado,
         };
 
         /// <summary>

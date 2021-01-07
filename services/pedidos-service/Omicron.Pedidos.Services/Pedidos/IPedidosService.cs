@@ -195,5 +195,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrdersForInvoice();
+
+        /// <summary>
+        /// Return the orders for packages.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersForPackages(string type);
     }
 }

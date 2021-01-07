@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Test.Services
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -196,6 +197,32 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await service.GetLineProductInvoice(code);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="type">the code to look.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("foraneo")]
+        [TestCase("local")]
+        public async Task GetInvoiceHeaders(string type)
+        {
+            // arrange
+            var dataTollok = new InvoicePackageSapLookModel
+            {
+                InvoiceDocNums = new List<int> { 2, 3 },
+                Limit = 10,
+                Offset = 0,
+                Type = type,
+            };
+
+            // act
+            var response = await this.sapInvoiceService.GetInvoiceHeader(dataTollok);
 
             // assert
             Assert.IsNotNull(response);
