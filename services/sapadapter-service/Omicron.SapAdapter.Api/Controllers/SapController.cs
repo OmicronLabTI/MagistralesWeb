@@ -385,6 +385,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="dataToLook">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/package/header")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvoiceHeader(InvoicePackageSapLookDto dataToLook)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceHeader(dataToLook);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

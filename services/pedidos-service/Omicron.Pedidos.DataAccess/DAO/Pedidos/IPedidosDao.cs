@@ -238,5 +238,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="invoiceId">the list of invoices.</param>
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listStatus">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus);
     }
 }

@@ -185,6 +185,26 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
+        {
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
+            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
+
+            var total = invoiceHeader.Count;
+            invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
+
+            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
+
+            invoiceHeader.ForEach(x =>
+            {
+                var details = invoicesDetails.Where(x => x.InvoiceId == x.InvoiceId).ToList();
+                x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, invoiceHeader, null, total);
+        }
+
         /// <summary>
         /// Gets the batches for the invoice.
         /// </summary>

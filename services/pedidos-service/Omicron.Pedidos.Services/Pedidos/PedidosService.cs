@@ -796,7 +796,28 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Productionorderid = x.Productionorderid,
                     Status = x.Status,
                     StatusAlmacen = x.StatusAlmacen,
-                });
+                })
+                .ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForPackages(string type)
+        {
+            var arrayStatus = type.Equals(ServiceConstants.Local.ToLower()) ? ServiceConstants.StatusLocal : ServiceConstants.StatusForaneo;
+            var userOrders = (await this.pedidosDao.GetUserOrderByStatusInvoice(arrayStatus)).ToList();
+
+            var orderToReturn = userOrders
+                .Where(x => x.IsSalesOrder)
+                .DistinctBy(y => y.InvoiceId)
+                .Select(x => new
+                {
+                    InvoiceId = x.InvoiceId,
+                    StatusAlmacen = x.StatusAlmacen,
+                    InvoiceStoreDate = x.InvoiceStoreDate,
+                })
+                .ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }

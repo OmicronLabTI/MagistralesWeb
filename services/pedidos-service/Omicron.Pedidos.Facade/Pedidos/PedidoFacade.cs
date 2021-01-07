@@ -282,5 +282,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrdersForInvoice());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersForPackages(string type)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetOrdersForPackages(type));
+        }
     }
 }
