@@ -205,18 +205,20 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
-        /// <param name="code">the code to look.</param>
+        /// <param name="type">the code to look.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetInvoiceHeader()
+        [TestCase("foraneo")]
+        [TestCase("local")]
+        public async Task GetInvoiceHeaders(string type)
         {
             // arrange
             var dataTollok = new InvoicePackageSapLookModel
             {
-                InvoiceDocNums = new List<int> { },
+                InvoiceDocNums = new List<int> { 2, 3 },
                 Limit = 10,
                 Offset = 0,
-                Type = "foraneo",
+                Type = type,
             };
 
             // act

@@ -1020,13 +1020,13 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="type">the type.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetOrdersForPackages()
+        [TestCase("foraneo")]
+        [TestCase("local")]
+        public async Task GetOrdersForPackages(string type)
         {
-            // arrange
-            var type = "foraneo";
-
             // act
             var result = await this.pedidosService.GetOrdersForPackages(type);
 

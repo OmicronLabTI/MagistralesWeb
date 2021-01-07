@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.Test.Facade
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// Class for the QR test.
