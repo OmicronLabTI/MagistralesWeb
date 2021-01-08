@@ -137,7 +137,10 @@ namespace Omicron.Pedidos.Test.Services
         public async Task UpdateSentOrders()
         {
             // arrange
-            var listUserOrders = new List<UserOrderModel>();
+            var listUserOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { InvoiceId = 100, StatusInvoice = "Enviado" },
+            };
 
             // act
             var result = await this.pedidosAlmacen.UpdateSentOrders(listUserOrders);

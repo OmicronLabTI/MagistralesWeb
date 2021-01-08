@@ -68,7 +68,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServiceAlmacen
-                .Setup(m => m.UpdateSentOrders(It.IsAny<UserOrderModel>()))
+                .Setup(m => m.UpdateSentOrders(It.IsAny<List<UserOrderModel>>()))
                 .Returns(Task.FromResult(response));
 
             this.almacenFacade = new PedidosAlmacenFacade(

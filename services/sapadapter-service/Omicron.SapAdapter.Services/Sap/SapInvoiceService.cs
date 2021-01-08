@@ -86,7 +86,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
-            invoiceHeader = invoiceHeader == null ? new InvoiceHeaderModel() : invoiceHeader;
+            invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
