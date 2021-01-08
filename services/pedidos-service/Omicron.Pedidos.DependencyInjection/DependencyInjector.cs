@@ -53,6 +53,8 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IQrFacade, QrFacade>();
             Services.AddTransient<IQrService, QrService>();
             Services.AddTransient<IAlmacenService, AlmacenService>();
+            Services.AddTransient<IPedidosAlmacenFacade, PedidosAlmacenFacade>();
+            Services.AddTransient<IPedidosAlmacenService, PedidosAlmacenService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }
