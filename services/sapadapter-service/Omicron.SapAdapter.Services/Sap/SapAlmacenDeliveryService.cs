@@ -128,7 +128,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
-                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid == saleOrder.ToString());
+                var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == saleOrder.ToString());
                 var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
                 var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
 
