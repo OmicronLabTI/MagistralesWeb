@@ -55,5 +55,11 @@ namespace Omicron.Reporting.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailForeignPackage(SendPackageDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailForeignPackage(this.mapper.Map<SendPackageModel>(request)));
+        }
     }
 }

@@ -58,6 +58,22 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailForeignPackage(SendPackageModel request)
+        {
+            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+
+            var body = string.Format(ServiceConstants.SentPackageBody, request.PackageId, request.TransportMode, request.TrackingNumber);
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                request.DestinyEmail,
+                ServiceConstants.SentPackage,
+                body,
+                request.DestinyEmail);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
         /// <summary>
         /// Build pdf file.
         /// </summary>
