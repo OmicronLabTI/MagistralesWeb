@@ -61,7 +61,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// selects the ships code.
         /// </summary>
-        public const string FindShipCodes = "Select TrnspCode , TrnspName  from OSHP;";
+        public const string FindShipCodes = "SELECT TrnspCode ,TrnspName FROM OSHP";
 
         /// <summary>
         /// selects data from WOR1 by DocEntry.

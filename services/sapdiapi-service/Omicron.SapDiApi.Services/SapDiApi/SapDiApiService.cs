@@ -526,8 +526,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var saleOrderId = createDelivery.First().SaleOrderId;
             try
             {
-                var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
-                
+                var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);                
                 var saleOrderFound = saleOrder.GetByKey(saleOrderId);
 
                 if (!saleOrderFound)
@@ -623,26 +622,24 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
 
                 var components = this.ExecuteQuery(ServiceConstants.FindShipCodes);
-                var trasnCode = -1;
+
                 if (components.RecordCount != 0)
                 {
                     for (var i = 0; i < components.RecordCount; i++)
                     {
-                        var name = components.Fields.Item("TrnspName").Value as string;
-                        var code = components.Fields.Item("TrnspCode").Value as int?;
+                        var name = (string)components.Fields.Item("TrnspName").Value;
+                        var code = components.Fields.Item("TrnspCode").Value;                        
 
                         if (name.ToLower().Equals(sendPackage.TransportMode.ToLower()))
                         {
-                            trasnCode = !code.HasValue ? 1 : code.Value;
+                            invoice.TrackingNumber = sendPackage.TrackingNumber;
+                            invoice.TransportationCode = code;
                             break;
                         }
 
                         components.MoveNext();
                     }
                 }
-
-                invoice.TrackingNumber = sendPackage.TrackingNumber;
-                invoice.TransportationCode = trasnCode;
 
                 var update = invoice.Update();
                 company.GetLastError(out int errCode, out string errMsg);
@@ -654,7 +651,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
                 else
                 {
-                    _loggerProxy.Info($"The saleORder {sendPackage.InvoiceId} was updated {errCode} - {errMsg}");
+                    _loggerProxy.Info($"The invoice {sendPackage.InvoiceId} was updated {errCode} - {errMsg}");
                     dictionaryResult.Add($"{sendPackage.InvoiceId}-Ok", "Ok");
                 }
 
@@ -662,7 +659,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             catch(Exception ex)
             {
                 _loggerProxy.Info($"Error while updating tracking invoice {sendPackage.InvoiceId} {JsonConvert.SerializeObject(sendPackage)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
-                dictionaryResult.Add($"{sendPackage.InvoiceId}-ErrorHandled", "Error mientras se actualiza información de envío");
+                dictionaryResult.Add($"{sendPackage.InvoiceId}-ErrorHandled", $"{ex.Message}");
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
