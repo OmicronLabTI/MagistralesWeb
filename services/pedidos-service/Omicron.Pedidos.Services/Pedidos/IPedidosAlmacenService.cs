@@ -45,9 +45,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Return the orders for packages.
         /// </summary>
-        /// <param name="type">the type.</param>
+        /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetOrdersForPackages(string type);
+        Task<ResultModel> GetOrdersForPackages(Dictionary<string, string> parameters);
 
         /// <summary>
         /// The list of users to update.

@@ -574,13 +574,13 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
-        /// <param name="type">The type of packages.</param>
+        /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        [Route("/userorders/packages/{type}")]
+        [Route("/userorders/packages")]
         [HttpGet]
-        public async Task<IActionResult> GetOrdersForPackages(string type)
+        public async Task<IActionResult> GetOrdersForPackages([FromQuery] Dictionary<string, string> parameters)
         {
-            var response = await this.pedidosAlmacenFacade.GetOrdersForPackages(type);
+            var response = await this.pedidosAlmacenFacade.GetOrdersForPackages(parameters);
             return this.Ok(response);
         }
 

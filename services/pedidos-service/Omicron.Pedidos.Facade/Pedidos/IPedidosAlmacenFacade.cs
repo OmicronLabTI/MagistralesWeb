@@ -45,9 +45,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Gets the order for the packages by type.
         /// </summary>
-        /// <param name="type">the type.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForPackages(string type);
+        Task<ResultDto> GetOrdersForPackages(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Updates whe the package is sent.

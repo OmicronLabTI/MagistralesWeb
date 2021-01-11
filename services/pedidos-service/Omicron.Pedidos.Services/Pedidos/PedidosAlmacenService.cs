@@ -37,16 +37,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForAlmacen()
         {
-            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
-            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var response = await this.GetParametersDateToLook(ServiceConstants.AlmacenMaxDayToLook);
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, response.Item1);
 
-            int.TryParse(days, out var maxDays);
-            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
-            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
-
-            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, dateToLook);
-
-            var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, dateToLook);
+            var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, response.Item1);
             var ordersId = ordersToIgnore.Where(x => x.IsSalesOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
 
             var ordersToReturn = orders.Select(x => new
@@ -57,7 +51,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Comments = x.Comments,
             }).ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), days);
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);
         }
 
         /// <inheritdoc/>
@@ -126,12 +120,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetOrdersForPackages(string type)
+        public async Task<ResultModel> GetOrdersForPackages(Dictionary<string, string> parameters)
         {
-            var arrayStatus = type.Equals(ServiceConstants.Local.ToLower()) ? ServiceConstants.StatusLocal : ServiceConstants.StatusForaneo;
+            var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
+            var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
             var userOrders = (await this.pedidosDao.GetUserOrderByStatusInvoice(arrayStatus)).ToList();
 
-            var orderToReturn = userOrders
+            var ordersToLoop = userOrders.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
+            ordersToLoop.AddRange(userOrders.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
+
+            var orderToReturn = ordersToLoop
                 .Where(x => x.IsSalesOrder)
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
@@ -142,7 +140,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
         }
 
         /// <inheritdoc/>
@@ -161,6 +159,22 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(orders);
 
             return ServiceUtils.CreateResult(true, 200, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Gets the data by the field, used for datetimes.
+        /// </summary>
+        /// <param name="fieldToLook">the field.</param>
+        /// <returns>the data.</returns>
+        private async Task<Tuple<DateTime, string>> GetParametersDateToLook(string fieldToLook)
+        {
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(fieldToLook);
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+
+            int.TryParse(days, out var maxDays);
+            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
+            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+            return new Tuple<DateTime, string>(dateToLook, days);
         }
     }
 }

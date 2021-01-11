@@ -63,9 +63,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetOrdersForPackages(string type)
+        public async Task<ResultDto> GetOrdersForPackages(Dictionary<string, string> parameters)
         {
-            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForPackages(type));
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForPackages(parameters));
         }
 
         /// <inheritdoc/>

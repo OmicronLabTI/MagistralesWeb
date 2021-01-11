@@ -205,4 +205,11 @@
       </column>
     </createTable>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.25">
+	<insert tableName="parameters"> 
+		<column name="value" value="30"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentMaxDays"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
