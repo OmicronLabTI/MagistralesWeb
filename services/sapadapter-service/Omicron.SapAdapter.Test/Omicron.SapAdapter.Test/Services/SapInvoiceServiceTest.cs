@@ -227,5 +227,33 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="code">the code to look.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("1")]
+        public async Task GetInvoiceData(string code)
+        {
+            // arrange
+            var packages = new List<PackageModel>();
+            var packagesResponse = this.GetResultDto(packages);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(packagesResponse));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetInvoiceData(code);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

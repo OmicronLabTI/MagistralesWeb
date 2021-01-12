@@ -166,6 +166,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesBySaleOrder = "getline/saleorder";
 
         /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetPackagesByInvoice = "getpackages/invoice";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
@@ -226,6 +231,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Empaquetado = "Empaquetado";
 
         /// <summary>
+        /// status not delivered.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -259,6 +269,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the local status.
         /// </summary>
         public const string Local = "Local";
+
+        /// <summary>
+        /// foregin package error.
+        /// </summary>
+        public const string ForeingPackage = "El paquete es foráneo y no puede ser entregado por un repartidor local";
+
+        /// <summary>
+        /// the packages is not available.
+        /// </summary>
+        public const string PackageNotAvailable = "El paquete se encuentra";
 
         /// <summary>
         /// Gets the status of the order.
