@@ -195,11 +195,15 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
+            var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.Cliente).ToList())).ToList();
 
             invoiceHeader.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
-                x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}-email";
+                var client = clients.FirstOrDefault(y => y.ClientId == x.Cliente);
+                client ??= new ClientCatalogModel();
+                x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
+                x.ClientEmail = client.Email;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeader, null, total);
