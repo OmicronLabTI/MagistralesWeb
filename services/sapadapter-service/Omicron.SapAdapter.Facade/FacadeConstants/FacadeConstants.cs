@@ -37,5 +37,10 @@ namespace Omicron.SapAdapter.Facade.FacadeConstants
         /// the filter for remision.
         /// </summary>
         public const string RemisionLn = "remisionln";
+
+        /// <summary>
+        /// the filter for factura.
+        /// </summary>
+        public const string Factura = "factura";
     }
 }

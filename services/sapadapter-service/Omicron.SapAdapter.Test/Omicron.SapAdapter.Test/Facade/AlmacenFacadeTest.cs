@@ -98,6 +98,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetInvoiceHeader(It.IsAny<InvoicePackageSapLookModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockInvoice
+                .Setup(m => m.GetInvoiceData(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
 
@@ -260,6 +264,20 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.almacenFacade.GetInvoiceHeader(data);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetScannedDataFactura()
+        {
+            var type = "factura";
+            var code = "750001000";
+            var response = await this.almacenFacade.GetScannedData(type, code);
 
             Assert.IsNotNull(response);
         }

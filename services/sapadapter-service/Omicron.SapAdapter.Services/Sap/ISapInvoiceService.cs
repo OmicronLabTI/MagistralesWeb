@@ -59,5 +59,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="dataToLook">the data to look.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook);
+
+        /// <summary>
+        /// Gets the code for the invoice.
+        /// </summary>
+        /// <param name="code">the invoice.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetInvoiceData(string code);
     }
 }
