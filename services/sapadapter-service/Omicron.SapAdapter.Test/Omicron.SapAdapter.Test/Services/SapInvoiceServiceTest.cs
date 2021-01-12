@@ -238,9 +238,15 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetInvoiceData(string code)
         {
             // arrange
-            var mockPedidos = new Mock<IPedidosService>();
+            var packages = new List<PackageModel>();
+            var packagesResponse = this.GetResultDto(packages);
 
+            var mockPedidos = new Mock<IPedidosService>();
             var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(packagesResponse));
+
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act

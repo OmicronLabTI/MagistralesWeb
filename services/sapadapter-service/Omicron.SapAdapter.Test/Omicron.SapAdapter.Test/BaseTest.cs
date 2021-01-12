@@ -498,5 +498,20 @@ namespace Omicron.SapAdapter.Test
                 Comments = "15",
             };
         }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
+        public ResultDto GetResultDto(object dataToSend)
+        {
+            return new ResultDto
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(dataToSend),
+            };
+        }
     }
 }
