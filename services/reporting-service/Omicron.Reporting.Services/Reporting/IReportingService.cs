@@ -30,5 +30,12 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request);
+
+        /// <summary>
+        /// Sends the emial to the receiver.
+        /// </summary>
+        /// <param name="request">the request.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> SendEmailForeignPackage(SendPackageModel request);
     }
 }

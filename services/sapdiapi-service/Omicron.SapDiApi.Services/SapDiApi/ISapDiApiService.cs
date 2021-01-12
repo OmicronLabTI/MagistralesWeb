@@ -74,6 +74,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> CreateDelivery(List<CreateDeliveryModel> createDelivery);
 
         /// <summary>
+        /// Updates the package tracking data.
+        /// </summary>
+        /// <param name="sendPackage">the data.</param>
+        /// <returns>the result</returns>
+        Task<ResultModel> UpdateTracking(SendPackageModel sendPackage);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>

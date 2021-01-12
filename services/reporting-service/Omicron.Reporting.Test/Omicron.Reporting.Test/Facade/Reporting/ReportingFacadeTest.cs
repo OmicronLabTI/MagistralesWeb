@@ -46,6 +46,10 @@ namespace Omicron.Reporting.Test.Facade.Request
             mockReportingService.SetReturnsDefault(fileResultModel);
             mockReportingService.SetReturnsDefault(Task.FromResult(resultModel));
 
+            mockReportingService
+                .Setup(m => m.SendEmailForeignPackage(It.IsAny<SendPackageModel>()))
+                .Returns(Task.FromResult(resultModel));
+
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
 
@@ -83,6 +87,24 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             // act
             var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailForeignPackage()
+        {
+            // arrange
+            var requests = new SendPackageDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailForeignPackage(requests);
 
             // arrange
             Assert.IsNotNull(response);

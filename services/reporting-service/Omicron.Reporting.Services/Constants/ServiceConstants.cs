@@ -32,5 +32,15 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string RawMaterialRequestEmailBody = "Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.";
+
+        /// <summary>
+        /// Subject of email.
+        /// </summary>
+        public const string SentPackage = "Paquete en envío";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SentPackageBody = "El paquete {0} será enviado por {1}, el número de guía es {2}";
     }
 }

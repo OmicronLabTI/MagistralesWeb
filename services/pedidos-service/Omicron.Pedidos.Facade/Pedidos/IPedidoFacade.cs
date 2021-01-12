@@ -248,37 +248,5 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> DeleteFiles();
-
-        /// <summary>
-        /// Gets the orders for almacen.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForAlmacen();
-
-        /// <summary>
-        /// Updates the user orders.
-        /// </summary>
-        /// <param name="userOrders">The orders.</param>
-        /// <returns>the data.</returns>
-        Task<ResultDto> UpdateUserOrders(List<UserOrderDto> userOrders);
-
-        /// <summary>
-        /// Get the orders for delivery.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForDelivery();
-
-        /// <summary>
-        /// Gets the deliveries for the invoices.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForInvoice();
-
-        /// <summary>
-        /// Gets the order for the packages by type.
-        /// </summary>
-        /// <param name="type">the type.</param>
-        /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForPackages(string type);
     }
 }

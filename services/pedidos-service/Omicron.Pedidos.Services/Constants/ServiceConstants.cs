@@ -91,6 +91,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Enviado = "Enviado";
 
         /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string Entregado = "Entregado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -516,6 +521,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
+        /// The max days to look.
+        /// </summary>
+        public const string SentMaxDaysToLook = "SentMaxDays";
+
+        /// <summary>
         /// const for the bottom temxt.
         /// </summary>
         public const string QrBottomTextOrden = "Orden: {0} {1}";
@@ -544,7 +554,6 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusLocal { get; } = new List<string>
         {
             Empaquetado,
-            Enviado,
         };
 
         /// <summary>
@@ -553,10 +562,10 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// the status.
         /// </value>
-        public static List<string> StatusForaneo { get; } = new List<string>
+        public static List<string> StatusDelivered { get; } = new List<string>
         {
-            Empaquetado,
             Enviado,
+            Entregado,
         };
 
         /// <summary>
