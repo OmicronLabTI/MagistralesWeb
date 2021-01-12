@@ -117,12 +117,16 @@ namespace Omicron.Pedidos.Test.Services
         /// <param name="type">the type.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("foraneo")]
-        [TestCase("local")]
-        public async Task GetOrdersForPackages(string type)
+        public async Task GetOrdersForPackages()
         {
+            // arrange
+            var dict = new Dictionary<string, string>
+            {
+                { "status", "Empaquetado,Enviado" },
+            };
+
             // act
-            var result = await this.pedidosAlmacen.GetOrdersForPackages(type);
+            var result = await this.pedidosAlmacen.GetOrdersForPackages(dict);
 
             // assert
             Assert.IsNotNull(result);

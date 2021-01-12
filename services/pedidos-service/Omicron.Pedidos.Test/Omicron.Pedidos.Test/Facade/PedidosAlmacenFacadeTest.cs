@@ -64,7 +64,7 @@ namespace Omicron.Pedidos.Test.Facade
                 .Returns(Task.FromResult(response));
 
             mockServiceAlmacen
-                .Setup(m => m.GetOrdersForPackages(It.IsAny<string>()))
+                .Setup(m => m.GetOrdersForPackages(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
             mockServiceAlmacen
@@ -150,7 +150,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task GetOrdersForPackages()
         {
             // arrange
-            var type = "foraneo";
+            var type = new Dictionary<string, string>();
 
             // act
             var response = await this.almacenFacade.GetOrdersForPackages(type);
