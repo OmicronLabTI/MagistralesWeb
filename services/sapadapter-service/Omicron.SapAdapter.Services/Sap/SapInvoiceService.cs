@@ -195,12 +195,12 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
-            var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.Cliente).ToList())).ToList();
+            var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.CardCode).ToList())).ToList();
 
             invoiceHeader.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
-                var client = clients.FirstOrDefault(y => y.ClientId == x.Cliente);
+                var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
                 client ??= new ClientCatalogModel();
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.ClientEmail = client.Email;

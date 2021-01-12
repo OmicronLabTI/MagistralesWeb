@@ -76,6 +76,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string Comments { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("CardCode")]
+        public string CardCode { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
