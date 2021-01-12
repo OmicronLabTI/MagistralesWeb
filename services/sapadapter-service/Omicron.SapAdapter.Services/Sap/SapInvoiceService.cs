@@ -209,8 +209,28 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceData(string code)
         {
             int.TryParse(code, out var intDocNum);
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { intDocNum })).ToList();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { intDocNum })).FirstOrDefault();
+            invoiceHeader ??= new InvoiceHeaderModel();
 
+            var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
+            var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
+
+            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderBy(x => x.AssignedDate.Value).FirstOrDefault().Status;
+
+            var model = new InvoiceDeliverModel
+            {
+                Address = invoiceHeader.Address,
+                Client = invoiceHeader.Cliente,
+                Comments = string.Empty,
+                Doctor = invoiceHeader.Medico,
+                PackageNumber = invoiceHeader.DocNum,
+                Status = status,
+            };
+
+            var comments = model.Address.Contains(ServiceConstants.NuevoLeon) ? string.Empty : ServiceConstants.ForeingPackage;
+            comments = !status.Equals(ServiceConstants.Empaquetado) && !status.Equals(ServiceConstants.NoEntregado) ? $"{ServiceConstants.PackageNotAvailable} {status}" : comments;
+
+            return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
         }
 
         /// <summary>

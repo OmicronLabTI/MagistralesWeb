@@ -152,7 +152,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             orders.ForEach(x =>
             {
                 var orderSent = userToUpdate.FirstOrDefault(y => y.InvoiceId == x.InvoiceId);
-                orderSent ??= new UserOrderModel { Comments = ServiceConstants.Local.ToLower() };
+                orderSent ??= new UserOrderModel { StatusInvoice = ServiceConstants.Empaquetado };
                 x.StatusInvoice = orderSent.StatusInvoice;
             });
 
