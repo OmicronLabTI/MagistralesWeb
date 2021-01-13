@@ -212,4 +212,11 @@
 		<column name="field" value="SentMaxDays"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.26">
+	<insert tableName="parameters"> 
+		<column name="value" value="1"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentLocalMaxDays"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
