@@ -61,5 +61,11 @@ namespace Omicron.Reporting.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailForeignPackage(this.mapper.Map<SendPackageModel>(request)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailLocalPackage(this.mapper.Map<SendLocalPackageModel>(sendLocalPackage)));
+        }
     }
 }
