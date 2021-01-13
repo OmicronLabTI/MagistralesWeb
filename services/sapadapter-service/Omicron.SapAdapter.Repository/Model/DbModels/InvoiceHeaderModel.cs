@@ -86,7 +86,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("Comments")]
+        [Column("U_Comentarios")]
         public string CommentsInvoice { get; set; }
 
         /// <summary>
