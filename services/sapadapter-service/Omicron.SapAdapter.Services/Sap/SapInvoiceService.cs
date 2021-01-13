@@ -225,7 +225,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 Address = invoiceHeader.Address,
                 Client = invoiceHeader.Cliente,
-                Comments = string.Empty,
+                Comments = invoiceHeader.CommentsInvoice,
                 Doctor = invoiceHeader.Medico,
                 PackageNumber = invoiceHeader.DocNum,
                 Status = status,
