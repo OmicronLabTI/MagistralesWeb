@@ -42,5 +42,10 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string SentPackageBody = "El paquete {0} será enviado por {1}, el número de guía es {2}";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SentPackageLocalBody = "El paquete {0} está en camino.";
     }
 }

@@ -31,6 +31,7 @@ namespace Omicron.Reporting.Services.Mapping
             this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
             this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
             this.CreateMap<SendPackageDto, SendPackageModel>();
+            this.CreateMap<SendLocalPackageDto, SendLocalPackageModel>();
         }
     }
 }

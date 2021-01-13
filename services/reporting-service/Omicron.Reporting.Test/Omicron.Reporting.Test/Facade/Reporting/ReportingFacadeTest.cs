@@ -50,6 +50,10 @@ namespace Omicron.Reporting.Test.Facade.Request
                 .Setup(m => m.SendEmailForeignPackage(It.IsAny<SendPackageModel>()))
                 .Returns(Task.FromResult(resultModel));
 
+            mockReportingService
+                .Setup(m => m.SendEmailLocalPackage(It.IsAny<SendLocalPackageModel>()))
+                .Returns(Task.FromResult(resultModel));
+
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
 
@@ -105,6 +109,24 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             // act
             var response = await this.reportingFacade.SendEmailForeignPackage(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailLocalPackage()
+        {
+            // arrange
+            var requests = new SendLocalPackageDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailLocalPackage(requests);
 
             // arrange
             Assert.IsNotNull(response);
