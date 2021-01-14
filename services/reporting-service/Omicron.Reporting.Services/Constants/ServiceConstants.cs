@@ -47,5 +47,10 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string SentPackageLocalBody = "El paquete {0} está en camino.";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SentPackageLocalBodyError = "El paquete {0} no se pude entregar por la razón: {1}";
     }
 }

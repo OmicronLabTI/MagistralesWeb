@@ -287,5 +287,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="clientId">the client id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId);
+
+        /// <summary>
+        /// Gets the ids.
+        /// </summary>
+        /// <param name="ids">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids);
     }
 }

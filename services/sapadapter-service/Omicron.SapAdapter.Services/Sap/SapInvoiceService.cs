@@ -195,6 +195,7 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
+            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeader.Select(x => x.TransportCode).ToList())).ToList();
             var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.CardCode).ToList())).ToList();
 
             invoiceHeader.ForEach(x =>
@@ -202,8 +203,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
                 var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
                 client ??= new ClientCatalogModel();
+
+                var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
+                company ??= new Repartidores { TrnspName = string.Empty };
+
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.ClientEmail = client.Email;
+                x.TransportName = company.TrnspName;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeader, null, total);
