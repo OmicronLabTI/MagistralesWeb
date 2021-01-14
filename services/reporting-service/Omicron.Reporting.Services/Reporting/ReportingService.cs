@@ -79,12 +79,12 @@ namespace Omicron.Reporting.Services
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
 
-            var body = string.Format(ServiceConstants.SentPackageLocalBody, sendLocalPackage.PackageId);
+            var bodyText = string.IsNullOrEmpty(sendLocalPackage.ReasonNotDelivered) ? string.Format(ServiceConstants.SentPackageLocalBody, sendLocalPackage.PackageId) : string.Format(ServiceConstants.SentPackageLocalBodyError, sendLocalPackage.PackageId, sendLocalPackage.ReasonNotDelivered);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 sendLocalPackage.DestinyEmail,
                 ServiceConstants.SentPackage,
-                body,
+                bodyText,
                 sendLocalPackage.DestinyEmail);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };

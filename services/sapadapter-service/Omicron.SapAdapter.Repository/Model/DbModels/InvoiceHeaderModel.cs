@@ -90,11 +90,33 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string CommentsInvoice { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("TrackNo")]
+        public string TrackingNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("TrnspCode")]
+        public short TransportCode { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
         /// Bool is production order.
         [NotMapped]
         public string ClientEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public string TransportName { get; set; }
     }
 }

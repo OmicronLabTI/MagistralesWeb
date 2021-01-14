@@ -80,6 +80,9 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<ClientCatalogModel> ClientCatalogModel { get; set; }
 
+        /// <inheritdoc/>
+        public virtual DbSet<Repartidores> Repartidores { get; set; }
+
         /// <summary>
         /// model creating.
         /// </summary>
