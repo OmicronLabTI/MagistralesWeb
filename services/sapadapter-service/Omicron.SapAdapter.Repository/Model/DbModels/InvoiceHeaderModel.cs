@@ -118,5 +118,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Bool is production order.
         [NotMapped]
         public string TransportName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public string SaleOrder { get; set; }
     }
 }

@@ -63,13 +63,16 @@ namespace Omicron.Reporting.Services
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
 
-            var body = string.Format(ServiceConstants.SentPackageBody, request.PackageId, request.TransportMode, request.TrackingNumber);
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber);
+            var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 request.DestinyEmail,
-                ServiceConstants.SentPackage,
+                string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                request.DestinyEmail);
+                smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
@@ -79,15 +82,39 @@ namespace Omicron.Reporting.Services
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
 
-            var bodyText = string.IsNullOrEmpty(sendLocalPackage.ReasonNotDelivered) ? string.Format(ServiceConstants.SentPackageLocalBody, sendLocalPackage.PackageId) : string.Format(ServiceConstants.SentPackageLocalBodyError, sendLocalPackage.PackageId, sendLocalPackage.ReasonNotDelivered);
+            var text = this.GetBodyForLocal(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 sendLocalPackage.DestinyEmail,
-                ServiceConstants.SentPackage,
-                bodyText,
-                sendLocalPackage.DestinyEmail);
+                text.Item1,
+                text.Item2,
+                smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="package">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        {
+            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
+            {
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBase, greetingError, payment, ServiceConstants.RefundPolicy);
+
+            return new Tuple<string, string>(subjectError, bodyError);
         }
 
         /// <summary>

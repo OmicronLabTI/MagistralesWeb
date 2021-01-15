@@ -505,6 +505,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
         }
 
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices)
+        {
+            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => invoices.Contains(x.InvoiceId)));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>
