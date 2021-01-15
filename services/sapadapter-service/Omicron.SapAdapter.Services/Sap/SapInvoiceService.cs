@@ -195,6 +195,11 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
+
+            var invoicesNull = new List<int?>();
+            invoicesDetails.Select(x => x.InvoiceId).ToList().ForEach(y => invoicesNull.Add(y));
+            var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
+
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeader.Select(x => x.TransportCode).ToList())).ToList();
             var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.CardCode).ToList())).ToList();
 
@@ -207,9 +212,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
                 company ??= new Repartidores { TrnspName = string.Empty };
 
+                var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
+
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
+                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeader, null, total);

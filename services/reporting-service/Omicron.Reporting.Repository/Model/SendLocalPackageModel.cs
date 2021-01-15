@@ -52,5 +52,11 @@ namespace Omicron.Reporting.Entities.Model
         /// String FirstName.
         /// </value>
         public string ReasonNotDelivered { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string SalesOrders { get; set; }
     }
 }
