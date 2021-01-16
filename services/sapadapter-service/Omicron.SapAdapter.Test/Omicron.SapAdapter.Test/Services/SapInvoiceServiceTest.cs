@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -214,9 +216,15 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetInvoiceHeaders(string type)
         {
             // arrange
+            var listUserOrder = new List<UserOrderModel>
+            {
+                new UserOrderModel { InvoiceId = 2, InvoiceStoreDate = DateTime.Now },
+                new UserOrderModel { InvoiceId = 3, InvoiceStoreDate = DateTime.Now },
+            };
+
             var dataTollok = new InvoicePackageSapLookModel
             {
-                InvoiceDocNums = new List<int> { 2, 3 },
+                InvoiceDocNums = listUserOrder,
                 Limit = 10,
                 Offset = 0,
                 Type = type,
