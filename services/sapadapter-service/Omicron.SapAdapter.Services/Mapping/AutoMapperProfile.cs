@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Mapping
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// Class Automapper.
@@ -28,6 +29,7 @@ namespace Omicron.SapAdapter.Services.Mapping
             this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<GetOrderFabDto, GetOrderFabModel>();
             this.CreateMap<InvoicePackageSapLookDto, InvoicePackageSapLookModel>();
+            this.CreateMap<UserOrderDto, UserOrderModel>();
         }
     }
 }

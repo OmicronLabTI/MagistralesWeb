@@ -188,22 +188,34 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
+            var invoices = dataToLook.InvoiceDocNums.Select(x => x.InvoiceId).ToList();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(invoices)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
 
             var total = invoiceHeader.Count;
-            invoiceHeader = invoiceHeader.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
+            var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
+            dataToLook.InvoiceDocNums.OrderByDescending(x => x.InvoiceStoreDate).ToList().ForEach(y =>
+            {
+                var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y.InvoiceId);
 
-            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeader.Select(x => x.InvoiceId).ToList())).ToList();
+                if (invoiceDb != null)
+                {
+                    invoiceHeaderOrdered.Add(invoiceDb);
+                }
+            });
+
+            invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
+
+            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
 
             var invoicesNull = new List<int?>();
             invoicesDetails.Select(x => x.InvoiceId).ToList().ForEach(y => invoicesNull.Add(y));
             var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
 
-            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeader.Select(x => x.TransportCode).ToList())).ToList();
-            var clients = (await this.sapDao.GetClientsById(invoiceHeader.Select(x => x.CardCode).ToList())).ToList();
+            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
+            var clients = (await this.sapDao.GetClientsById(invoiceHeaderOrdered.Select(x => x.CardCode).ToList())).ToList();
 
-            invoiceHeader.ForEach(x =>
+            invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
                 var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
@@ -220,7 +232,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
             });
 
-            return ServiceUtils.CreateResult(true, 200, null, invoiceHeader, null, total);
+            return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
         }
 
         /// <inheritdoc/>

@@ -31,7 +31,7 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<int> InvoiceDocNums { get; set; }
+        public List<UserOrderDto> InvoiceDocNums { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

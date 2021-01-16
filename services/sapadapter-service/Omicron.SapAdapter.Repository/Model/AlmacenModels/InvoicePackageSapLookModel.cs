@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
     using System.Collections.Generic;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
     /// Class for the sap data to look.
@@ -31,7 +32,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<int> InvoiceDocNums { get; set; }
+        public List<UserOrderModel> InvoiceDocNums { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
