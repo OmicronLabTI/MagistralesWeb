@@ -137,6 +137,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     InvoiceId = x.InvoiceId,
                     StatusAlmacen = x.StatusAlmacen,
                     InvoiceStoreDate = x.InvoiceStoreDate,
+                    StatusInvoice = x.StatusInvoice,
                 })
                 .ToList();
 
