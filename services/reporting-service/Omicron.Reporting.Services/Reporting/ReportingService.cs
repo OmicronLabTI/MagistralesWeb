@@ -58,6 +58,65 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailForeignPackage(SendPackageModel request)
+        {
+            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber);
+            var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                request.DestinyEmail,
+                string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
+                body,
+                smtpConfig.EmailCCDelivery);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
+        {
+            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+
+            var text = this.GetBodyForLocal(sendLocalPackage);
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                sendLocalPackage.DestinyEmail,
+                text.Item1,
+                text.Item2,
+                smtpConfig.EmailCCDelivery);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="package">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        {
+            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
+            {
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBase, greetingError, payment, ServiceConstants.RefundPolicy);
+
+            return new Tuple<string, string>(subjectError, bodyError);
+        }
+
         /// <summary>
         /// Build pdf file.
         /// </summary>

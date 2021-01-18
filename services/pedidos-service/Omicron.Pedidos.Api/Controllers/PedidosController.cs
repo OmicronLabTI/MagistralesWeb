@@ -27,15 +27,19 @@ namespace Omicron.Pedidos.Api.Controllers
 
         private readonly IQrFacade qrsFacade;
 
+        private readonly IPedidosAlmacenFacade pedidosAlmacenFacade;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
         /// <param name="qrsFacade">The qr Facade.</param>
-        public PedidosController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade)
+        /// <param name="pedidosAlmacen">The pedidos almacen facade.</param>
+        public PedidosController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
             this.qrsFacade = qrsFacade ?? throw new ArgumentException(nameof(qrsFacade));
+            this.pedidosAlmacenFacade = pedidosAlmacen ?? throw new ArgumentNullException(nameof(pedidosAlmacen));
         }
 
         /// <summary>
@@ -526,7 +530,7 @@ namespace Omicron.Pedidos.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrdersForAlmacen()
         {
-            var response = await this.pedidoFacade.GetOrdersForAlmacen();
+            var response = await this.pedidosAlmacenFacade.GetOrdersForAlmacen();
             return this.Ok(response);
         }
 
@@ -539,7 +543,7 @@ namespace Omicron.Pedidos.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserOrders(List<UserOrderDto> listUser)
         {
-            var response = await this.pedidoFacade.UpdateUserOrders(listUser);
+            var response = await this.pedidosAlmacenFacade.UpdateUserOrders(listUser);
             return this.Ok(response);
         }
 
@@ -551,7 +555,7 @@ namespace Omicron.Pedidos.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrdersForDelivery()
         {
-            var response = await this.pedidoFacade.GetOrdersForDelivery();
+            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery();
             return this.Ok(response);
         }
 
@@ -563,7 +567,33 @@ namespace Omicron.Pedidos.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrdersForInvoice()
         {
-            var response = await this.pedidoFacade.GetOrdersForInvoice();
+            var response = await this.pedidosAlmacenFacade.GetOrdersForInvoice();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/packages")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForPackages([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForPackages(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="listUser">The type of packages.</param>
+        /// <returns>the data.</returns>
+        [Route("/sent/orders")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateSentOrders(List<UserOrderDto> listUser)
+        {
+            var response = await this.pedidosAlmacenFacade.UpdateSentOrders(listUser);
             return this.Ok(response);
         }
 

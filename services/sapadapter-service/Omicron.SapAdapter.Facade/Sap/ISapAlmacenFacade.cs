@@ -66,5 +66,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="invoiceId">the invoice id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetInvoiceProducts(int invoiceId);
+
+        /// <summary>
+        /// Gets the headers from SAP.
+        /// </summary>
+        /// <param name="dataToLook">the data to look.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetInvoiceHeader(InvoicePackageSapLookDto dataToLook);
     }
 }

@@ -152,5 +152,21 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<InvoiceDetailModel> InvoiceDetailModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<ClientCatalogModel> ClientCatalogModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
+        DbSet<Repartidores> Repartidores { get; set; }
     }
 }

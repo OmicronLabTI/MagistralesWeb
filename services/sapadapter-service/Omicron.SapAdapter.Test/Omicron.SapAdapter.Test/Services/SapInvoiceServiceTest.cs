@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ namespace Omicron.SapAdapter.Test.Services
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -55,6 +58,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
             this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
             this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -196,6 +200,66 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await service.GetLineProductInvoice(code);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="type">the code to look.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("foraneo")]
+        [TestCase("local")]
+        public async Task GetInvoiceHeaders(string type)
+        {
+            // arrange
+            var listUserOrder = new List<UserOrderModel>
+            {
+                new UserOrderModel { InvoiceId = 2, InvoiceStoreDate = DateTime.Now },
+                new UserOrderModel { InvoiceId = 3, InvoiceStoreDate = DateTime.Now },
+            };
+
+            var dataTollok = new InvoicePackageSapLookModel
+            {
+                InvoiceDocNums = listUserOrder,
+                Limit = 10,
+                Offset = 0,
+                Type = type,
+            };
+
+            // act
+            var response = await this.sapInvoiceService.GetInvoiceHeader(dataTollok);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="code">the code to look.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("1")]
+        public async Task GetInvoiceData(string code)
+        {
+            // arrange
+            var packages = new List<PackageModel>();
+            var packagesResponse = this.GetResultDto(packages);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(packagesResponse));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetInvoiceData(code);
 
             // assert
             Assert.IsNotNull(response);

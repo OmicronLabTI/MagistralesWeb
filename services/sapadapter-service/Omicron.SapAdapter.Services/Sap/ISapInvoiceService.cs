@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// Interface for sap invoices.
@@ -51,5 +52,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="code">the code.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetLineProductInvoice(string code);
+
+        /// <summary>
+        /// Gets the data To look.
+        /// </summary>
+        /// <param name="dataToLook">the data to look.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook);
+
+        /// <summary>
+        /// Gets the code for the invoice.
+        /// </summary>
+        /// <param name="code">the invoice.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetInvoiceData(string code);
     }
 }

@@ -10,7 +10,6 @@ namespace Omicron.Pedidos.Test.Facade
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
@@ -182,22 +181,6 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.CreateSaleOrderPdf(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetOrdersForAlmacen())
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateUserOrders(It.IsAny<List<UserOrderModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetOrdersForDelivery())
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetOrdersForInvoice())
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
@@ -931,72 +914,6 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateSaleOrderPdf(orderId);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-        }
-
-        /// <summary>
-        /// test tet.
-        /// </summary>
-        /// <returns>test.</returns>
-        [Test]
-        public async Task GetOrdersForAlmacen()
-        {
-            // arrange
-            // act
-            var response = await this.pedidoFacade.GetOrdersForAlmacen();
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-        }
-
-        /// <summary>
-        /// test tet.
-        /// </summary>
-        /// <returns>test.</returns>
-        [Test]
-        public async Task UpdateUserOrders()
-        {
-            // arrange
-            var listUsers = new List<UserOrderDto>();
-
-            // act
-            var response = await this.pedidoFacade.UpdateUserOrders(listUsers);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-        }
-
-        /// <summary>
-        /// test tet.
-        /// </summary>
-        /// <returns>test.</returns>
-        [Test]
-        public async Task GetOrdersForDelivery()
-        {
-            // arrange
-            // act
-            var response = await this.pedidoFacade.GetOrdersForDelivery();
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-        }
-
-        /// <summary>
-        /// test tet.
-        /// </summary>
-        /// <returns>test.</returns>
-        [Test]
-        public async Task GetOrdersForInvoice()
-        {
-            // arrange
-            // act
-            var response = await this.pedidoFacade.GetOrdersForInvoice();
 
             // Assert
             Assert.IsNotNull(response);

@@ -48,19 +48,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
-            var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-            int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
-            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
-            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+            var userResponse = await this.GetUserOrdersToLook();
+            var lineProducts = await this.GetLineProductsToLook();
 
-            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(dateToLook)).ToList();
+            userResponse.Item3.AddRange(lineProducts.Item2);
+            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(userResponse.Item2)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
+            sapOrders = sapOrders.Where(x => !userResponse.Item3.Contains(x.DocNum)).ToList();
 
-            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
-            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
-
-            var listToReturn = await this.GetOrdersToReturn(userOrders, sapOrders, lineProducts, parameters);
+            var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders, lineProducts.Item1, parameters);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -149,6 +145,39 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var data = (await this.sapDao.GetDeliveryBySaleOrder(ordersId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+        }
+
+        /// <summary>
+        /// Gets the orders that are finalized and all the productin orders.
+        /// </summary>
+        /// <returns>thhe data.</returns>
+        private async Task<Tuple<List<UserOrderModel>, DateTime, List<int>>> GetUserOrdersToLook()
+        {
+            var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
+
+            int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
+            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
+            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+
+            var listIds = JsonConvert.DeserializeObject<List<int>>(userOrderModel.ExceptionMessage);
+            return new Tuple<List<UserOrderModel>, DateTime, List<int>>(userOrders, dateToLook, listIds);
+        }
+
+        /// <summary>
+        /// Gets the product lines to look and ignore.
+        /// </summary>
+        /// <returns>the data.</returns>
+        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook()
+        {
+            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
+            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
+
+            var listProductToReturn = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).ToList();
+            listProductToReturn.AddRange(lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).ToList());
+            var listIdToIgnore = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado).Select(y => y.SaleOrderId).ToList();
+
+            return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, listIdToIgnore);
         }
 
         /// <summary>
