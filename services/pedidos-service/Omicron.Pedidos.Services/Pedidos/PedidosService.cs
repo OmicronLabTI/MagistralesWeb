@@ -716,11 +716,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.AlmacenMaxDayToLook);
             var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
-            var orders = await this.pedidosDao.GetOrderForAlmacen(ServiceConstants.Finalizado);
-            orders = orders.Where(x => x.IsSalesOrder).ToList();
 
-            var ordersAlmacenado = await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado });
-            orders.AddRange(ordersAlmacenado);
+            int.TryParse(days, out var maxDays);
+            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
+            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, dateToLook);
+
+            var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, dateToLook);
+            var ordersId = ordersToIgnore.Where(x => x.IsSalesOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
 
             var ordersToReturn = orders.Select(x => new
             {
@@ -728,9 +732,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Productionorderid = x.Productionorderid,
                 Status = x.Status,
                 Comments = x.Comments,
-            });
+            }).ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, days);
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), days);
         }
 
         /// <inheritdoc/>
@@ -748,6 +752,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.UserCheckIn = order.UserCheckIn;
                 x.DateTimeCheckIn = order.DateTimeCheckIn;
                 x.RemisionQr = order.RemisionQr;
+                x.DeliveryId = order.DeliveryId;
+                x.StatusInvoice = order.StatusInvoice;
+                x.UserInvoiceStored = order.UserInvoiceStored;
+                x.InvoiceStoreDate = order.InvoiceStoreDate;
+                x.InvoiceQr = order.InvoiceQr;
+                x.InvoiceId = order.InvoiceId;
             });
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
@@ -758,14 +768,35 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetOrdersForDelivery()
         {
             var userOrders = (await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado })).ToList();
-            userOrders = userOrders.Where(x => x.IsSalesOrder).ToList();
 
-            var orderToReturn = userOrders.Select(x => new
-            {
-                Salesorderid = x.Salesorderid,
-                Status = x.Status,
-                Comments = x.Comments,
-            });
+            var orderToReturn = userOrders
+                .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
+                .Select(x => new
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
+                    Comments = x.Comments,
+                }).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForInvoice()
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
+
+            var orderToReturn = userOrders
+                .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
+                .Select(x => new
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
+                });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }

@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Almacen
 {
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
@@ -52,6 +53,21 @@ namespace Omicron.SapAdapter.Services.Almacen
                     throw new CustomServiceException(jsonString);
                 }
 
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> PostAlmacenOrders(string route, object dataToSend)
+        {
+            ResultDto result;
+            var stringContent = new StringContent(JsonConvert.SerializeObject(dataToSend), UnicodeEncoding.UTF8, "application/json");
+
+            var url = this.httpClient.BaseAddress + route;
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
+            {
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
             }
 

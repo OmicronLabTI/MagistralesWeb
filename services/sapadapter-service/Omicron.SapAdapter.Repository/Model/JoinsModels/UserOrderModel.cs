@@ -86,6 +86,6 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>
         /// String status.
-        public string ItemCode { get; set; }
+        public string StatusAlmacen { get; set; }
     }
 }

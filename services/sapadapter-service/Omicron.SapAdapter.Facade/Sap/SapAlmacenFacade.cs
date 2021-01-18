@@ -27,17 +27,21 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly ISapAlmacenDeliveryService sapAlmacenDeliveryService;
 
+        private readonly ISapInvoiceService sapInvoiceService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenFacade"/> class.
         /// </summary>
         /// <param name="mapper">the mapper.</param>
         /// <param name="sapAlmacenService">the sap almacen service.</param>
         /// <param name="sapAlmacenDelivery">The sap almacen delivery.</param>
-        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery)
+        /// <param name="sapInvoiceService">The sap invoice service.</param>
+        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService)
         {
             this.mapper = mapper;
             this.almacenService = sapAlmacenService ?? throw new ArgumentNullException(nameof(sapAlmacenService));
             this.sapAlmacenDeliveryService = sapAlmacenDelivery ?? throw new ArgumentNullException(nameof(sapAlmacenDelivery));
+            this.sapInvoiceService = sapInvoiceService ?? throw new ArgumentException(nameof(sapInvoiceService));
         }
 
         /// <summary>
@@ -58,12 +62,26 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <returns>the data.</returns>
         public async Task<ResultDto> GetScannedData(string type, string code)
         {
-            if (type.Equals(FacadeConstants.Magistral))
+            switch (type)
             {
-                return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
-            }
+                case FacadeConstants.Magistral:
+                    return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
 
-            return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
+                case FacadeConstants.Linea:
+                    return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
+
+                case FacadeConstants.Remision:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetDeliveryScannedData(code));
+
+                case FacadeConstants.RemisionMg:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetMagistralProductInvoice(code));
+
+                case FacadeConstants.RemisionLn:
+                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetLineProductInvoice(code));
+
+                default:
+                    return new ResultDto { Code = 400, Success = false, ExceptionMessage = "Not found" };
+            }
         }
 
         /// <summary>
@@ -86,6 +104,18 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetDelivery(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.sapAlmacenDeliveryService.GetDelivery(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoice(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoice(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoiceProducts(int invoiceId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceProducts(invoiceId));
         }
     }
 }

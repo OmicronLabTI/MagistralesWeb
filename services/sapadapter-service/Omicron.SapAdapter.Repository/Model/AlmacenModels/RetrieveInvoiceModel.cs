@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="AlmacenSalesModel.cs" company="Axity">
+// <copyright file="RetrieveInvoiceModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,53 +8,44 @@
 
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
-    using System;
+    using System.Collections.Generic;
+    using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
     /// <summary>
-    /// The almacenSalesModel.
+    /// Class for retrieving the invoices.
     /// </summary>
-    public class AlmacenSalesModel
+    public class RetrieveInvoiceModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int DocNum { get; set; }
+        public List<UserOrderModel> UserOrders { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime InitDate { get; set; }
+        public List<LineProductsModel> LineProducts { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Doctor { get; set; }
+        public List<InvoiceHeaderModel> InvoiceHeader { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalItems { get; set; }
+        public List<InvoiceDetailModel> InvoiceDetails { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal TotalPieces { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public bool HasInvoice { get; set; }
+        public List<DeliveryDetailModel> DeliveryDetailModel { get; set; }
     }
 }

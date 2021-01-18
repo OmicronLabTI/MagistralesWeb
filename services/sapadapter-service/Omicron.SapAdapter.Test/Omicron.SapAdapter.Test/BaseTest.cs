@@ -150,6 +150,7 @@ namespace Omicron.SapAdapter.Test
 
                 // For Almacen
                 new BatchesQuantity { AbsEntry = 2, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
+                new BatchesQuantity { AbsEntry = 3, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
             };
         }
 
@@ -174,8 +175,8 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliveryDetailModel>
             {
-                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1 },
-                new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1 },
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
+                new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
             };
         }
 
@@ -191,6 +192,7 @@ namespace Omicron.SapAdapter.Test
 
                 // almacen
                 new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10 },
+                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 3, DocNum = 1, DocQuantity = 10 },
             };
         }
 
@@ -206,6 +208,7 @@ namespace Omicron.SapAdapter.Test
 
                 // almacen
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 2, ItemCode = "Linea1", SysNumber = 1 },
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 3, ItemCode = "Linea1", SysNumber = 1 },
             };
         }
 
@@ -258,6 +261,30 @@ namespace Omicron.SapAdapter.Test
             {
                 new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
                 new CompleteDetailOrderModel { CodigoProducto = "Buscapina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 101, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<InvoiceHeaderModel> GetInvoiceHeader()
+        {
+            return new List<InvoiceHeaderModel>
+            {
+                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<InvoiceDetailModel> GetInvoiceDetails()
+        {
+            return new List<InvoiceDetailModel>
+            {
+                new InvoiceDetailModel { BaseEntry = 1, Container = "con", Description = "desc", DocDate = DateTime.Now, InvoiceId = 1, LineNum = 0, ProductoId = "Linea1", Quantity = 1 },
             };
         }
 
@@ -319,7 +346,7 @@ namespace Omicron.SapAdapter.Test
             return new ResultDto
             {
                 Code = 200,
-                ExceptionMessage = string.Empty,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
                 Response = JsonConvert.SerializeObject(userOrders),
                 Success = true,
                 Comments = "15",
@@ -374,9 +401,84 @@ namespace Omicron.SapAdapter.Test
         /// <returns>the data.</returns>
         public ResultDto GetLineProductsRemision()
         {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch) },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderInvoice()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsInvoide()
+        {
             var listProducts = new List<LineProductsModel>
             {
                 new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", ItemCode = "Linea1" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsScannInvoice()
+        {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), ItemCode = "Linea1" },
             };
 
             return new ResultDto

@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="AlmacenSalesModel.cs" company="Axity">
+// <copyright file="DeliveryScannedModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,30 +8,36 @@
 
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
-    using System;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// The almacenSalesModel.
+    /// The delivery scanned data.
     /// </summary>
-    public class AlmacenSalesModel
+    public class DeliveryScannedModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int DocNum { get; set; }
+        public int InvoiceId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime InitDate { get; set; }
+        public int DeliveryId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Doctor { get; set; }
+        public string Client { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int SaleOrder { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -52,9 +58,9 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public string Status { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
+        /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public bool HasInvoice { get; set; }
+        public List<InvoiceProductModel> Products { get; set; }
     }
 }

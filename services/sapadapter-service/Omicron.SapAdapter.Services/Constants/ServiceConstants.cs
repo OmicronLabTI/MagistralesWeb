@@ -141,9 +141,29 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLineProduct = "orders?status=Almacenado";
 
         /// <summary>
+        /// route for the delivery values.
+        /// </summary>
+        public const string GetLinesForDelivery = "delivery/orders";
+
+        /// <summary>
         /// Get the delivery orders.
         /// </summary>
         public const string GetUserOrderDelivery = "userorders/delivery";
+
+        /// <summary>
+        /// Get the user orders for invoices.
+        /// </summary>
+        public const string GetUserOrderInvoice = "userorders/invoice";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLinesForInvoice = "invoice/orders";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLinesBySaleOrder = "getline/saleorder";
 
         /// <summary>
         /// Get users by id.
@@ -201,6 +221,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Almacenado = "Almacenado";
 
         /// <summary>
+        /// the empaquetado status.
+        /// </summary>
+        public const string Empaquetado = "Empaquetado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -219,6 +244,21 @@ namespace Omicron.SapAdapter.Services.Constants
         /// PT wharegouse.
         /// </summary>
         public const string PT = "PT";
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string NuevoLeon = "Nuevo León";
+
+        /// <summary>
+        /// the foreign value.
+        /// </summary>
+        public const string Foraneo = "Foráneo";
+
+        /// <summary>
+        /// the local status.
+        /// </summary>
+        public const string Local = "Local";
 
         /// <summary>
         /// Gets the status of the order.

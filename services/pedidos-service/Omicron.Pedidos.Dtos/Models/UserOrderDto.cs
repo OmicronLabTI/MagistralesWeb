@@ -87,5 +87,52 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// String user id.
         public string RemisionQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        public int DeliveryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public string UserInvoiceStored { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public DateTime? InvoiceStoreDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public string InvoiceQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int InvoiceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public string StatusInvoice { get; set; }
     }
 }

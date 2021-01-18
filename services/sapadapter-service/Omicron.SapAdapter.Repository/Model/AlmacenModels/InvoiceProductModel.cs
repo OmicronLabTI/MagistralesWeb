@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="MagistralScannerModel.cs" company="Axity">
+// <copyright file="InvoiceProductModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,10 +8,12 @@
 
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// Class for the magistral scanner.
+    /// class for the product.
     /// </summary>
-    public class MagistralScannerModel
+    public class InvoiceProductModel
     {
         /// <summary>
         /// Gets or sets Code.
@@ -29,7 +31,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal Pieces { get; set; }
+        public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<string> Batches { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -41,7 +49,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string NeedsCooling { get; set; }
+        public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool NeedsCooling { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -50,15 +64,27 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public string ProductType { get; set; }
 
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether gets or sets a value.
         /// </summary>
         /// <value>The code.</value>
-        public int InvoiceId { get; set; }
+        public bool IsMagistral { get; set; }
 
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether gets or sets a value.
         /// </summary>
         /// <value>The code.</value>
         public int DeliveryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value.
+        /// </summary>
+        /// <value>The code.</value>
+        public int OrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value.
+        /// </summary>
+        /// <value>The code.</value>
+        public int SaleOrderId { get; set; }
     }
 }

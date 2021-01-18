@@ -198,6 +198,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<string> GetBatchCode(string productCode, string batchCode);
 
         /// <summary>
+        /// Gets the batches by a list of product ids and the dist number.
+        /// </summary>
+        /// <param name="productCode">the products.</param>
+        /// <param name="batchCode">the batch codes.</param>
+        /// <returns>the data.</returns>
+        Task<List<Batches>> GetBatchByProductDistNumber(List<string> productCode, List<string> batchCode);
+
+        /// <summary>
         /// Gets the value for the item code by filters. 
         /// </summary>
         /// <param name="criterials">the values to look.</param>
@@ -244,5 +252,33 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docuNums">the doc nums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums);
+
+        /// <summary>
+        /// Gets the invoiceHeader by doc num.
+        /// </summary>
+        /// <param name="docNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceId(List<int> docNums);
+
+        /// <summary>
+        /// Gets the invoice detail by docEntry.
+        /// </summary>
+        /// <param name="docEntry">the doc entries.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry);
+
+        /// <summary>
+        /// Gets the invoice header by docnum.
+        /// </summary>
+        /// <param name="docNums">the docnum</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByDocEntry(List<int> ordersId);
     }
 }
