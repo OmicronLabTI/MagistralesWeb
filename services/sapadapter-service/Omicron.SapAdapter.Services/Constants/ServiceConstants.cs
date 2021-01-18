@@ -41,6 +41,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// The type value.
+        /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string Label = "label";
@@ -246,6 +251,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Linea = "de Línea";
 
         /// <summary>
+        /// producto de linea.
+        /// </summary>
+        public const string Line = "linea";
+
+        /// <summary>
         /// producto mixto.
         /// </summary>
         public const string Mixto = "Mixto";
@@ -279,6 +289,44 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the packages is not available.
         /// </summary>
         public const string PackageNotAvailable = "El paquete se encuentra";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllTypes = "magistral,mixto,linea";
+
+        /// <summary>
+        /// Get the params.
+        /// </summary>
+        public const string GetParams = "params/contains/field";
+
+        /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string SentMaxDays = "SentMaxDays";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForUserOrder { get; } = new List<string>
+        {
+            Magistral.ToLower(),
+            Mixto.ToLower(),
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForLine { get; } = new List<string>
+        {
+            "linea",
+        };
 
         /// <summary>
         /// Gets the status of the order.

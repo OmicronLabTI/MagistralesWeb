@@ -20,6 +20,7 @@ namespace Omicron.SapAdapter.Api
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Prometheus;
@@ -41,6 +42,8 @@ namespace Omicron.SapAdapter.Api
         private const string UserService = "http://usuariosservice/";
 
         private const string AlmacenService = "http://almacenservice/";
+
+        private const string CatalogService = "http://catalogosservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -128,6 +131,13 @@ namespace Omicron.SapAdapter.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IAlmacenService, AlmacenService>();
+
+            services.AddHttpClient("catalogos", c =>
+            {
+                c.BaseAddress = new Uri(CatalogService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ICatalogsService, CatalogsService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);
