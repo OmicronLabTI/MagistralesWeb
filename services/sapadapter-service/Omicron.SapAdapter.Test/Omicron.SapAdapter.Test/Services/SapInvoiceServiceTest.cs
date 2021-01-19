@@ -216,10 +216,10 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetInvoiceHeaders(string type)
         {
             // arrange
-            var listUserOrder = new List<UserOrderModel>
+            var listUserOrder = new List<int>
             {
-                new UserOrderModel { InvoiceId = 2, InvoiceStoreDate = DateTime.Now },
-                new UserOrderModel { InvoiceId = 3, InvoiceStoreDate = DateTime.Now },
+                2,
+                3,
             };
 
             var dataTollok = new InvoicePackageSapLookModel
