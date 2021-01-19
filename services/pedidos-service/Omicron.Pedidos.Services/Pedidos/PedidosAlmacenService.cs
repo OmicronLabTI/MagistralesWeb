@@ -95,6 +95,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Status = x.Status,
                     StatusAlmacen = x.StatusAlmacen,
                     Comments = x.Comments,
+                    DeliveryId = x.DeliveryId,
                 }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
