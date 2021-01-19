@@ -143,7 +143,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var savedQrFactura = listSavedQr.Select(c => c.FacturaId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.FacturaQrRoute).ToList();
-            var dictExistDb = listSavedQr.ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
+            var dictExistDb = listSavedQr.DistinctBy(x => x.FacturaId).ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
 
             invoiceIds.RemoveAll(x => savedQrFactura.Contains(x));
             invoiceIds.AddRange(this.CheckIfQrExist(dictExistDb));

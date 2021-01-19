@@ -188,15 +188,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
-            var invoices = dataToLook.InvoiceDocNums.Select(x => x.InvoiceId).ToList();
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(invoices)).ToList();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
 
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
-            dataToLook.InvoiceDocNums.OrderByDescending(x => x.InvoiceStoreDate).ToList().ForEach(y =>
+            dataToLook.InvoiceDocNums.ForEach(y =>
             {
-                var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y.InvoiceId);
+                var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y);
 
                 if (invoiceDb != null)
                 {
