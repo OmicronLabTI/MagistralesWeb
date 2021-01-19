@@ -56,22 +56,22 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido {0} fue enviado por medio de la empresa de paquetería bajo la guía {1} a la dirección que tenemos registrada bajo su nombre.</p><p>Para conocer el estatus de su envío puede hacer click en el siguiente enlace:<br/><a href=\"http://www.dhl.com.mx/es/express.html\">http://www.dhl.com.mx/es/express.html</a></p>";
+        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> fue enviado por medio de la empresa de paquetería bajo la guía <b>{1}</b> a la dirección que tenemos registrada bajo su nombre.</p><p>Para conocer el estatus de su envío puede hacer click en el siguiente enlace:<br/><a href=\"http://www.dhl.com.mx/es/express.html\">http://www.dhl.com.mx/es/express.html</a></p>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido {0} ya está planificado para ser entregado en la dirección que tenemos registrada bajo su nombre.</p>";
+        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> ya está planificado para ser entregado en la dirección que tenemos registrada bajo su nombre.</p>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega de su pedido {0} no pudo ser realizada. Le pedimos por favor que para programar una nueva visita se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
+        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega de su pedido <b>{0}</b> no pudo ser realizada. Le pedimos por favor que para programar una nueva visita se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
 
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/>Número de cuenta: 0515319189<br/>Banco: Banorte<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: {0}<br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
+        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/>Número de cuenta: 0515319189<br/>Banco: Banorte<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
 
         /// <summary>
         /// refund policy.
