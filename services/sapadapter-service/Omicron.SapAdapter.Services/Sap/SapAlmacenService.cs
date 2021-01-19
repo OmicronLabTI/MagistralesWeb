@@ -66,10 +66,11 @@ namespace Omicron.SapAdapter.Services.Sap
             userResponse.Item2.AddRange(lineProducts.Item2);
 
             var sapOrders = await this.GetSapLinesToLook(userResponse.Item2, dateToLook, types);
+            var total = sapOrders.Select(x => x.DocNum).Distinct().Count();
 
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders, lineProducts.Item1, parameters);
 
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, total.ToString());
         }
 
         /// <inheritdoc/>
@@ -246,7 +247,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => x.Count() != orderHeaders.Where(y => y.PedidoId == x.Key).Count());
+                var listMixta = sapOrdersGroup.Where(x => x.Count() != orderHeaders.Where(y => y.PedidoId == x.Key).Count() && orderHeaders.Where(y => y.PedidoId == x.Key).Count() > 0);
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listHeaderToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));

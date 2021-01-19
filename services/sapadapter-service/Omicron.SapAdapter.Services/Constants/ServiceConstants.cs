@@ -303,7 +303,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the max days.
         /// </summary>
-        public const string SentMaxDays = "SentMaxDays";
+        public const string SentMaxDays = "AlmacenMaxDayToLook";
 
         /// <summary>
         /// Gets the status of the order.
