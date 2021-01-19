@@ -194,7 +194,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
-            dataToLook.InvoiceDocNums.OrderByDescending(x => x.InvoiceStoreDate).ToList().ForEach(y =>
+            dataToLook.InvoiceDocNums.OrderBy(x => x.InvoiceStoreDate).ToList().ForEach(y =>
             {
                 var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y.InvoiceId);
 
