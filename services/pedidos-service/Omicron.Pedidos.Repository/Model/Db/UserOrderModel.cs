@@ -221,6 +221,15 @@ namespace Omicron.Pedidos.Entities.Model
         public int InvoiceId { get; set; }
 
         /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("invoicetype")]
+        public string InvoiceType { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

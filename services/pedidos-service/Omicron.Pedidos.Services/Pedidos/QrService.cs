@@ -307,8 +307,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
                     var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
-                    var needsCooling = modelQr.NeedsCooling.Equals("Y");
-                    bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
                     var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery, $"{modelQr.RemisionId}.png");
 
                     ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
