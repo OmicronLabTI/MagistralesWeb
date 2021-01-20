@@ -219,4 +219,12 @@
 		<column name="field" value="SentLocalMaxDays"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.27">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoicetype"
+			type="varchar(20)">
+		</column>
+	</addColumn>
+  </changeSet>
 </databaseChangeLog> 

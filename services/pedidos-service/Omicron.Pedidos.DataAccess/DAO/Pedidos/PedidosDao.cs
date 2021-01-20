@@ -356,6 +356,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="types">the list of users.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

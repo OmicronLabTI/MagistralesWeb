@@ -433,6 +433,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string Qfb = "qfb";
 
         /// <summary>
