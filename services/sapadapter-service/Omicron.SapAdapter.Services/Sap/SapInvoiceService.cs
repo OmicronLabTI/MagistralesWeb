@@ -61,6 +61,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+            var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
@@ -76,7 +77,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{granTotal}");
         }
 
         /// <inheritdoc/>
