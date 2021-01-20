@@ -130,9 +130,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
 
             var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-
-            var count = ordersToLoop.Where(x => x.IsSalesOrder).DistinctBy(y => y.InvoiceId).ToList().Count;
-
+            var invoiceIDs = ordersToLoop.Where(x => x.IsSalesOrder).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList();
             ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
 
             var orderToReturn = ordersToLoop
@@ -147,7 +145,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, count.ToString(), dataToLook.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, JsonConvert.SerializeObject(invoiceIDs), dataToLook.Item2);
         }
 
         /// <inheritdoc/>
