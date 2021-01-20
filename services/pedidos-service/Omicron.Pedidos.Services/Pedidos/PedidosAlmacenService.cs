@@ -75,6 +75,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.InvoiceStoreDate = order.InvoiceStoreDate;
                 x.InvoiceQr = order.InvoiceQr;
                 x.InvoiceId = order.InvoiceId;
+                x.InvoiceType = order.InvoiceType;
             });
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);
