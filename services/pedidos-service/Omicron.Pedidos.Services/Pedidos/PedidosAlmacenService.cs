@@ -125,13 +125,18 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
-            var userOrders = (await this.pedidosDao.GetUserOrderByStatusInvoice(arrayStatus)).ToList();
+            var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.Local.ToLower();
 
-            var ordersToLoop = userOrders.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-            ordersToLoop.AddRange(userOrders.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
+            var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
+
+            var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
+
+            var count = ordersToLoop.Where(x => x.IsSalesOrder).DistinctBy(y => y.InvoiceId).ToList().Count;
+
+            ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
 
             var orderToReturn = ordersToLoop
-                .Where(x => x.IsSalesOrder)
+                .Where(x => x.IsSalesOrder && arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {
@@ -142,7 +147,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, count.ToString(), dataToLook.Item2);
         }
 
         /// <inheritdoc/>
