@@ -46,10 +46,10 @@ public class AuthServiceImpl implements IAuthService {
         boolean isAbleToWebDelivery = securityDO.getRole() == 6;
         boolean isAbleToWebMagistral = securityDO.getRole() == 1 || securityDO.getRole() == 3 || securityDO.getRole() == 4;
 
-        var needsThrowError = isAbleToApp && !origin.toLowerCase().equals("app");
-        needsThrowError = true ? needsThrowError : isAbleToWebMagistral && !origin.toLowerCase().equals("web");
-        needsThrowError = true ? needsThrowError : isAbleToAppAlmacen && origin.toLowerCase().equals("appalmacen");
-        needsThrowError = true ? needsThrowError : isAbleToWebMagistral && origin.toLowerCase().equals("webdelivery");
+        boolean needsThrowError = isAbleToApp && !origin.toLowerCase().equals("app");
+        needsThrowError = needsThrowError ? true : isAbleToWebMagistral && !origin.toLowerCase().equals("web");
+        needsThrowError = needsThrowError ? true : isAbleToAppAlmacen && !origin.toLowerCase().equals("appalmacen");
+        needsThrowError = needsThrowError ? true : isAbleToWebDelivery && !origin.toLowerCase().equals("webdelivery");
 
         if(needsThrowError){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
