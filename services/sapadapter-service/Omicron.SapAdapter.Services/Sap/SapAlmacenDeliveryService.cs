@@ -56,8 +56,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders();
             var lineProducts = await this.GetLineProducts();
 
-            var granTotal = userOrders.Select(x => x.DeliveryId).Distinct().ToList().Count;
-            granTotal += lineProducts.Select(x => x.DeliveryId).Distinct().ToList().Count;
+            var deliveryIds = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
+            deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
+
+            var granTotal = deliveryIds.Where(x => x != 0).Distinct().ToList().Count;
 
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
             var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, lineProducts);

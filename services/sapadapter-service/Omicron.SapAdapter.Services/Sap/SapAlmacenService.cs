@@ -60,9 +60,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var userResponse = await this.GetUserOrdersToLook();
             var lineProducts = await this.GetLineProductsToLook();
             var sapOrders = await this.GetSapLinesToLook(dateToLook, types, userResponse, lineProducts);
+            var totalFilter = sapOrders.Item1.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders.Item1, lineProducts.Item1, parameters);
 
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{sapOrders.Item1.Count}");
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{totalFilter}");
         }
 
         /// <inheritdoc/>
