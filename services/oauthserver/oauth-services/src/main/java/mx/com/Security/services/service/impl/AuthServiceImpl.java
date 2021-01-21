@@ -37,13 +37,21 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.USUARIO_INACTIVO);
         }
 
-        boolean isAbleToApp = securityDO.getRole() == 2 || securityDO.getRole() == 5;
-
-        if(origin != null && !isAbleToApp && origin.toLowerCase().equals("app")){
+        if (origin == null){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
 
-        if(origin != null && isAbleToApp && origin.toLowerCase().equals("web")){
+        boolean isAbleToApp = securityDO.getRole() == 2;
+        boolean isAbleToAppAlmacen = securityDO.getRole() == 5;
+        boolean isAbleToWebDelivery = securityDO.getRole() == 6;
+        boolean isAbleToWebMagistral = securityDO.getRole() == 1 || securityDO.getRole() == 3 || securityDO.getRole() == 4;
+
+        var needsThrowError = isAbleToApp && !origin.toLowerCase().equals("app");
+        needsThrowError = true ? needsThrowError : isAbleToWebMagistral && !origin.toLowerCase().equals("web");
+        needsThrowError = true ? needsThrowError : isAbleToAppAlmacen && origin.toLowerCase().equals("appalmacen");
+        needsThrowError = true ? needsThrowError : isAbleToWebMagistral && origin.toLowerCase().equals("webdelivery");
+
+        if(needsThrowError){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
     }
