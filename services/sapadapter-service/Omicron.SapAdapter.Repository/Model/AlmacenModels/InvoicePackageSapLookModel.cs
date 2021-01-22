@@ -32,7 +32,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<UserOrderModel> InvoiceDocNums { get; set; }
+        public List<int> InvoiceDocNums { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

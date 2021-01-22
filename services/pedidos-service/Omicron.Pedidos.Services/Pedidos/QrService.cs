@@ -143,7 +143,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var savedQrFactura = listSavedQr.Select(c => c.FacturaId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.FacturaQrRoute).ToList();
-            var dictExistDb = listSavedQr.ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
+            var dictExistDb = listSavedQr.DistinctBy(x => x.FacturaId).ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
 
             invoiceIds.RemoveAll(x => savedQrFactura.Contains(x));
             invoiceIds.AddRange(this.CheckIfQrExist(dictExistDb));
@@ -307,8 +307,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
                     var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
-                    var needsCooling = modelQr.NeedsCooling.Equals("Y");
-                    bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
                     var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery, $"{modelQr.RemisionId}.png");
 
                     ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
