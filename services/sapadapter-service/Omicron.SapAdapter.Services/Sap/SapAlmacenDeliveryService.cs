@@ -50,19 +50,20 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetDelivery(Dictionary<string, string> parameters)
         {
+            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var types = typesString.Split(",").ToList();
+
             var userOrders = await this.GetUserOrders();
             var lineProducts = await this.GetLineProducts();
 
-            var listSaleOrders = lineProducts.Where(y => string.IsNullOrEmpty(y.ItemCode) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => x.SaleOrderId).Distinct().ToList();
-            listSaleOrders.AddRange(userOrders.Where(y => string.IsNullOrEmpty(y.Productionorderid) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => int.Parse(x.Salesorderid)).Distinct().ToList());
-            listSaleOrders = listSaleOrders.OrderBy(x => x).Distinct().ToList();
+            var deliveryIds = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
+            deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listSaleOrders)).OrderBy(x => x.DocDate).ThenBy(y => y.DeliveryId).ToList();
-            deliveryDetails = this.GetOrdersToLook(deliveryDetails, parameters);
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+            var granTotal = deliveryIds.Where(x => x != 0).Distinct().ToList().Count;
 
-            var dataToReturn = await this.GetOrdersToReturn(deliveryDetails, deliveryHeaders, userOrders, lineProducts);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+            var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
+            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, lineProducts);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{sapResponse.Item3}");
         }
 
         /// <summary>
@@ -83,6 +84,58 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLinesForDelivery);
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// Gets the lines to loop.
+        /// </summary>
+        /// <param name="types">the types.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="lineModels">the line produtcs.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private async Task<Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>> GetOrdersByType(List<string> types, List<UserOrderModel> userOrders, List<LineProductsModel> lineModels, Dictionary<string, string> parameters)
+        {
+            var listSaleOrders = lineModels.Where(y => string.IsNullOrEmpty(y.ItemCode) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => x.SaleOrderId).ToList();
+            listSaleOrders.AddRange(userOrders.Where(y => string.IsNullOrEmpty(y.Productionorderid) && y.StatusAlmacen != ServiceConstants.Empaquetado).Select(x => int.Parse(x.Salesorderid)).ToList());
+            listSaleOrders = listSaleOrders.OrderBy(x => x).Distinct().ToList();
+
+            var saleDetail = (await this.sapDao.GetDetailByDocNum(listSaleOrders)).ToList();
+            var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(listSaleOrders)).ToList();
+            var sapOrdersGroup = saleDetail.GroupBy(x => x.PedidoId).ToList();
+
+            var listSalidIdToLook = new List<int>();
+            if (types.Contains(ServiceConstants.Magistral.ToLower()))
+            {
+                var listMagistral = sapOrdersGroup.Where(x => x.Count() == orderHeaders.Where(y => y.PedidoId == x.Key).Count());
+                var keys = listMagistral.Select(x => x.Key).ToList();
+
+                listSalidIdToLook.AddRange(saleDetail.Where(x => keys.Contains(x.PedidoId.Value)).Select(y => y.PedidoId.Value));
+            }
+
+            if (types.Contains(ServiceConstants.Mixto.ToLower()))
+            {
+                var listMixta = sapOrdersGroup.Where(x => x.Count() != orderHeaders.Where(y => y.PedidoId == x.Key).Count() && orderHeaders.Where(y => y.PedidoId == x.Key).Count() > 0);
+                var keysMixta = listMixta.Select(x => x.Key).ToList();
+
+                listSalidIdToLook.AddRange(saleDetail.Where(x => keysMixta.Contains(x.PedidoId.Value)).Select(y => y.PedidoId.Value));
+            }
+
+            if (types.Contains(ServiceConstants.Line))
+            {
+                var listMixta = sapOrdersGroup.Where(x => orderHeaders.Where(y => y.PedidoId == x.Key).Count() == 0);
+                var keysLine = listMixta.Select(x => x.Key).ToList();
+
+                listSalidIdToLook.AddRange(saleDetail.Where(x => keysLine.Contains(x.PedidoId.Value)).Select(y => y.PedidoId.Value));
+            }
+
+            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listSalidIdToLook)).OrderBy(x => x.DocDate).ThenBy(y => y.DeliveryId).ToList();
+            var filterCount = deliveryDetails.DistinctBy(x => x.DeliveryId).ToList().Count;
+
+            deliveryDetails = this.GetOrdersToLook(deliveryDetails, parameters);
+            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetails.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+
+            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>(deliveryDetails, deliveryHeaders, filterCount);
         }
 
         /// <summary>
