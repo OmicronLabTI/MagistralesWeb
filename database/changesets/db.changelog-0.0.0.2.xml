@@ -192,4 +192,39 @@
 		</column>
 	</addColumn>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.24">
+    <createTable tableName="productionfacturaqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="facturaid" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="facturaqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.25">
+	<insert tableName="parameters"> 
+		<column name="value" value="30"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentMaxDays"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.26">
+	<insert tableName="parameters"> 
+		<column name="value" value="1"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentLocalMaxDays"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.27">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoicetype"
+			type="varchar(20)">
+		</column>
+	</addColumn>
+  </changeSet>
 </databaseChangeLog> 

@@ -41,6 +41,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// The type value.
+        /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string Label = "label";
@@ -166,6 +171,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesBySaleOrder = "getline/saleorder";
 
         /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetPackagesByInvoice = "getpackages/invoice";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
@@ -226,6 +236,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Empaquetado = "Empaquetado";
 
         /// <summary>
+        /// status not delivered.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -234,6 +249,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// producto de linea.
         /// </summary>
         public const string Linea = "de Línea";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
+        public const string Line = "linea";
 
         /// <summary>
         /// producto mixto.
@@ -259,6 +279,54 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the local status.
         /// </summary>
         public const string Local = "Local";
+
+        /// <summary>
+        /// foregin package error.
+        /// </summary>
+        public const string ForeingPackage = "El paquete es foráneo y no puede ser entregado por un repartidor local";
+
+        /// <summary>
+        /// the packages is not available.
+        /// </summary>
+        public const string PackageNotAvailable = "El paquete se encuentra";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllTypes = "magistral,mixto,linea";
+
+        /// <summary>
+        /// Get the params.
+        /// </summary>
+        public const string GetParams = "params/contains/field";
+
+        /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string SentMaxDays = "AlmacenMaxDayToLook";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForUserOrder { get; } = new List<string>
+        {
+            Magistral.ToLower(),
+            Mixto.ToLower(),
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForLine { get; } = new List<string>
+        {
+            "linea",
+        };
 
         /// <summary>
         /// Gets the status of the order.

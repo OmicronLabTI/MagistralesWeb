@@ -14,7 +14,7 @@ public class AuthServiceTest extends BaseTest {
 
     @Test
     public void shouldReturnValidCredentials() {
-        authService.validateCredentials("guz", "QUJD", "");
+        authService.validateCredentials("guz", "QUJD", "web");
         Assert.assertTrue(true);
     }
 

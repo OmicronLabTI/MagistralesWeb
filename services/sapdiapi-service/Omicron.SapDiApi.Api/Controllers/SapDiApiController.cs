@@ -138,6 +138,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="updateTracking">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("invoice/tracking")]
+        public async Task<IHttpActionResult> UpdateTracking([FromBody] SendPackageDto updateTracking)
+        {
+            var result = await this.sapFacade.UpdateTracking(updateTracking);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

@@ -280,5 +280,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByDocEntry(List<int> ordersId);
+
+        /// <summary>
+        /// Gets te clients by the id.
+        /// </summary>
+        /// <param name="clientId">the client id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId);
+
+        /// <summary>
+        /// Gets the ids.
+        /// </summary>
+        /// <param name="ids">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids);
+
+        /// <summary>
+        /// Gets the deliveries by invoice.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices);
     }
 }

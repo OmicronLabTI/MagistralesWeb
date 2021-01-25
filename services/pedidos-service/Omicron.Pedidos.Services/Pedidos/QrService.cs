@@ -45,7 +45,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IAlmacenService almacenService;
 
-        private readonly string folderName;
+        private readonly string folerOrders;
+
+        private readonly string folderDelivery;
+
+        private readonly string folderInvoice;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QrService"/> class.
@@ -60,7 +64,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
-            this.folderName = Path.Combine("Resources", "Images");
+            this.folerOrders = Path.Combine("Resources", "Images");
+            this.folderDelivery = Path.Combine("Resources", "Delivery");
+            this.folderInvoice = Path.Combine("Resources", "Invoice");
         }
 
         /// <inheritdoc/>
@@ -108,7 +114,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (!saleOrders.Any())
             {
-                var lineProducts = await this.GetOrdersFromAlmacenDict(ordersId);
+                var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
+                var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
+                var lineProducts = await this.GetOrdersFromAlmacenDict(route, null);
                 lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
@@ -121,8 +129,49 @@ namespace Omicron.Pedidos.Services.Pedidos
                 });
             }
 
-            var sapDelivery = await this.GetSapDelivery(ordersId);
-            var urls = await this.GetUrlQrRemision(saleOrders, parameters, sapDelivery, savedQrRoutes);
+            var urls = await this.GetUrlQrRemision(saleOrders, parameters, savedQrRoutes);
+            urls.AddRange(savedQrRoutes);
+            urls = urls.Distinct().ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateInvoiceQr(List<int> invoiceIds)
+        {
+            var listSavedQr = await this.pedidosDao.GetQrFacturaRouteByInvoice(invoiceIds);
+
+            var savedQrFactura = listSavedQr.Select(c => c.FacturaId).ToList();
+            var savedQrRoutes = listSavedQr.Select(r => r.FacturaQrRoute).ToList();
+            var dictExistDb = listSavedQr.DistinctBy(x => x.FacturaId).ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
+
+            invoiceIds.RemoveAll(x => savedQrFactura.Contains(x));
+            invoiceIds.AddRange(this.CheckIfQrExist(dictExistDb));
+
+            if (!invoiceIds.Any())
+            {
+                return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
+            }
+
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
+            var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
+
+            if (!saleOrders.Any())
+            {
+                var lineProducts = await this.GetOrdersFromAlmacenDict(ServiceConstants.AlmacenGetOrderByInvoice, invoiceIds);
+                lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
+                {
+                    var newOrder = new UserOrderModel
+                    {
+                        Salesorderid = y.SaleOrderId.ToString(),
+                        InvoiceQr = y.InvoiceQr,
+                    };
+
+                    saleOrders.Add(newOrder);
+                });
+            }
+
+            var urls = await this.GetUrlQrFactura(saleOrders, parameters, savedQrRoutes);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -141,7 +190,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var k in listUrls.Keys)
             {
                 var splitUrl = listUrls[k].Split("/").ToList();
-                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{splitUrl.Last()}");
+                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{splitUrl.Last()}");
                 if (!File.Exists(pathTosave))
                 {
                     listNotExist.Add(k);
@@ -152,26 +201,20 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
-        /// Gets the order from sap.
-        /// </summary>
-        /// <param name="ordersId">the orders to look.</param>
-        /// <returns>the data.</returns>
-        private async Task<List<DeliveryDetailModel>> GetSapDelivery(List<int> ordersId)
-        {
-            var response = await this.sapAdapter.PostSapAdapter(ordersId, ServiceConstants.GetDelivery);
-            return JsonConvert.DeserializeObject<List<DeliveryDetailModel>>(response.Response.ToString());
-        }
-
-        /// <summary>
         /// Get the lines product by ids.
         /// </summary>
-        /// <param name="ordersId">the orders.</param>
+        /// <param name="datatoSend">the orders.</param>
         /// <returns>the data.</returns>
-        private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(List<int> ordersId)
+        private async Task<List<LineProductsModel>> GetOrdersFromAlmacenDict(string route, object datatoSend)
         {
-            var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
-            var response = await this.almacenService.GetSapAdapter($"{ServiceConstants.AlmacenGetOrders}{dictParam}");
-            return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
+            if (datatoSend == null)
+            {
+                var response = await this.almacenService.GetAlmacenData(route);
+                return JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
+            }
+
+            var responsePost = await this.almacenService.PostAlmacenData(route, datatoSend);
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(responsePost.Response.ToString());
         }
 
         /// <summary>
@@ -218,12 +261,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     var needsCooling = modelQr.NeedsCooling.Equals("Y");
                     bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{so.Productionorderid}.png");
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{so.Productionorderid}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
-                    }
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders));
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
                     var currentAddres = $"{baseAddres}{so.Productionorderid}.png";
@@ -252,10 +292,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="saleOrders">the sale orders.</param>
         /// <param name="parameters">the parameters.</param>
-        /// <param name="sapDeliveries">the sap deliveries.</param>
         /// <param name="existingUrls">the existing urls.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<DeliveryDetailModel> sapDeliveries, List<string> existingUrls)
+        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls)
         {
             var baseAddres = this.configuration["QrImagesBaseRoute"];
             var listUrls = new List<string>();
@@ -266,29 +305,21 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .ForEach(so =>
                 {
                     var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                    var delivery = sapDeliveries.FirstOrDefault(y => y.BaseEntry.ToString().Equals(so.Salesorderid));
-                    delivery = delivery == null ? new DeliveryDetailModel() : delivery;
-                    modelQr.RemisionId = delivery.DeliveryId;
-
                     var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
-                    var needsCooling = modelQr.NeedsCooling.Equals("Y");
-                    bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextRemision, delivery.DeliveryId.ToString(), parameters);
-                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderName, $"{delivery.DeliveryId}.png");
+                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery, $"{modelQr.RemisionId}.png");
 
-                    if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), this.folderName)))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), this.folderName));
-                    }
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderDelivery));
 
                     bitmap.Save(pathTosave, ImageFormat.Png);
-                    var currentAddres = $"{baseAddres}{delivery.DeliveryId}.png";
+                    var currentAddres = $"{baseAddres}delivery/{modelQr.RemisionId}.png";
 
                     var modelToSave = new ProductionRemisionQrModel
                     {
                         Id = Guid.NewGuid().ToString("D"),
                         PedidoId = int.Parse(so.Salesorderid),
-                        RemisionId = delivery.DeliveryId,
+                        RemisionId = modelQr.RemisionId,
                         RemisionQrRoute = currentAddres,
                     };
 
@@ -301,6 +332,52 @@ namespace Omicron.Pedidos.Services.Pedidos
                 });
 
             await this.pedidosDao.InsertQrRouteRemision(listToSave);
+            return listUrls;
+        }
+
+        /// <summary>
+        /// Creates the urls and qrs.
+        /// </summary>
+        /// <param name="saleOrders">the sale orders.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <param name="existingUrls">the existing urls.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls)
+        {
+            var baseAddres = this.configuration["QrImagesBaseRoute"];
+            var listUrls = new List<string>();
+            var listToSave = new List<ProductionFacturaQrModel>();
+            saleOrders
+                .Where(x => !string.IsNullOrEmpty(x.InvoiceQr))
+                .ToList()
+                .ForEach(so =>
+                {
+                    var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
+                    var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
+                    var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice, $"{modelQr.InvoiceId}.png");
+
+                    ServiceUtils.VerifyIfFolderExist(Path.Combine(Directory.GetCurrentDirectory(), this.folderInvoice));
+
+                    bitmap.Save(pathTosave, ImageFormat.Png);
+                    var currentAddres = $"{baseAddres}invoice/{modelQr.InvoiceId}.png";
+
+                    var modelToSave = new ProductionFacturaQrModel
+                    {
+                        Id = Guid.NewGuid().ToString("D"),
+                        FacturaId = modelQr.InvoiceId,
+                        FacturaQrRoute = currentAddres,
+                    };
+
+                    if (!existingUrls.Contains(modelToSave.FacturaQrRoute))
+                    {
+                        listToSave.Add(modelToSave);
+                    }
+
+                    listUrls.Add(currentAddres);
+                });
+
+            await this.pedidosDao.InsertQrRouteFactura(listToSave);
             return listUrls;
         }
 

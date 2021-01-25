@@ -306,21 +306,27 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => ordersId.Contains(x.Id)).ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the qr if exist in table.
-        /// </summary>
-        /// <param name="saleOrder">the orders ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder)
         {
             return await this.databaseContext.ProductionRemisionQrModel.Where(x => saleOrder.Contains(x.PedidoId)).ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the qr if exist in table.
-        /// </summary>
-        /// <param name="modelsToSave">the orders ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
+        public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
+        {
+            return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionFacturaQrModel.AddRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave)
         {
             this.databaseContext.ProductionRemisionQrModel.AddRange(modelsToSave);
@@ -335,6 +341,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             var prodOrders = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.StatusAlmacen) && x.StatusAlmacen == statusForOrder).ToListAsync();
             userOrders.AddRange(prodOrders);
             return userOrders;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => invoiceId.Contains(x.InvoiceId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="types">the list of users.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
         }
 
         /// <summary>

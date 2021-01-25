@@ -173,6 +173,20 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder);
 
         /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the list of invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId);
+
+        /// <summary>
+        /// Inserts the data to the data base.
+        /// </summary>
+        /// <param name="modelsToSave">the models to save.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
+
+        /// <summary>
         /// Gets the qr if exist in table.
         /// </summary>
         /// <param name="modelsToSave">the orders ids.</param>
@@ -217,5 +231,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="statusForSale">the status for the sale.</param>
         /// <param name="statusForOrder">the status for the order.</param>
         Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder);
+
+        /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the list of invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listStatus">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="types">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types);
     }
 }

@@ -41,8 +41,9 @@ namespace Omicron.Pedidos.Test.Api
             mockPedidoFacade.SetReturnsDefault(Task.FromResult(resultDto));
 
             var mockQrFacade = new Mock<IQrFacade>();
+            var mockrAlmacen = new Mock<IPedidosAlmacenFacade>();
 
-            this.controller = new PedidosController(mockPedidoFacade.Object, mockQrFacade.Object);
+            this.controller = new PedidosController(mockPedidoFacade.Object, mockQrFacade.Object, mockrAlmacen.Object);
         }
 
         /// <summary>

@@ -272,7 +272,11 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<InvoiceHeaderModel>
             {
-                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico" },
+                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico" },
+
+                // for packages
+                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico" },
+                new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C1", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico" },
             };
         }
 
@@ -285,6 +289,22 @@ namespace Omicron.SapAdapter.Test
             return new List<InvoiceDetailModel>
             {
                 new InvoiceDetailModel { BaseEntry = 1, Container = "con", Description = "desc", DocDate = DateTime.Now, InvoiceId = 1, LineNum = 0, ProductoId = "Linea1", Quantity = 1 },
+
+                // for packages
+                new InvoiceDetailModel { BaseEntry = 2, Container = "con", Description = "desc", DocDate = DateTime.Now, InvoiceId = 2, LineNum = 0, ProductoId = "Linea1", Quantity = 1 },
+                new InvoiceDetailModel { BaseEntry = 3, Container = "con", Description = "desc", DocDate = DateTime.Now, InvoiceId = 3, LineNum = 0, ProductoId = "Linea1", Quantity = 1 },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<ClientCatalogModel> GetClients()
+        {
+            return new List<ClientCatalogModel>
+            {
+                new ClientCatalogModel { ClientId = "C1", Email = "email" },
             };
         }
 
@@ -488,6 +508,36 @@ namespace Omicron.SapAdapter.Test
                 Response = JsonConvert.SerializeObject(listProducts),
                 Success = true,
                 Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
+        public ResultDto GetResultDto(object dataToSend)
+        {
+            return new ResultDto
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(dataToSend),
+            };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
+        public ResultModel GetResultModel(object dataToSend)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(dataToSend),
             };
         }
     }

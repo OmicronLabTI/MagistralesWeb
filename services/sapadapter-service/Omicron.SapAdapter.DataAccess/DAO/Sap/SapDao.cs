@@ -491,7 +491,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var batches = await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => batchCode.Contains(x.DistNumber)));
 
             return batches.Where(x => productCode.Contains(x.ItemCode)).ToList();
+        }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId)
+        {
+            return await this.RetryQuery<ClientCatalogModel>(this.databaseContext.ClientCatalogModel.Where(x => clientId.Contains(x.ClientId)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids)
+        {
+            return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
+        }
+
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices)
+        {
+            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => invoices.Contains(x.InvoiceId)));
         }
 
         /// <summary>

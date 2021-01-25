@@ -61,6 +61,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+            var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
@@ -76,7 +77,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{granTotal}");
         }
 
         /// <inheritdoc/>
@@ -86,7 +87,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
-            invoiceHeader = invoiceHeader == null ? new InvoiceHeaderModel() : invoiceHeader;
+            invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
@@ -183,6 +184,83 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
+        {
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
+            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
+
+            var total = invoiceHeader.Count;
+            var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
+            dataToLook.InvoiceDocNums.ForEach(y =>
+            {
+                var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y);
+
+                if (invoiceDb != null)
+                {
+                    invoiceHeaderOrdered.Add(invoiceDb);
+                }
+            });
+
+            invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
+
+            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
+
+            var invoicesNull = new List<int?>();
+            invoicesDetails.Select(x => x.InvoiceId).ToList().ForEach(y => invoicesNull.Add(y));
+            var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
+
+            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
+            var clients = (await this.sapDao.GetClientsById(invoiceHeaderOrdered.Select(x => x.CardCode).ToList())).ToList();
+
+            invoiceHeaderOrdered.ForEach(x =>
+            {
+                var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
+                var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
+                client ??= new ClientCatalogModel();
+
+                var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
+                company ??= new Repartidores { TrnspName = string.Empty };
+
+                var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
+
+                x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
+                x.ClientEmail = client.Email;
+                x.TransportName = company.TrnspName;
+                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceData(string code)
+        {
+            int.TryParse(code, out var intDocNum);
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { intDocNum })).FirstOrDefault();
+            invoiceHeader ??= new InvoiceHeaderModel();
+
+            var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
+            var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
+
+            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderBy(x => x.AssignedDate.Value).FirstOrDefault().Status;
+
+            var model = new InvoiceDeliverModel
+            {
+                Address = invoiceHeader.Address,
+                Client = invoiceHeader.Cliente,
+                Comments = invoiceHeader.CommentsInvoice,
+                Doctor = invoiceHeader.Medico,
+                PackageNumber = invoiceHeader.DocNum,
+                Status = status,
+            };
+
+            var comments = model.Address.Contains(ServiceConstants.NuevoLeon) ? string.Empty : ServiceConstants.ForeingPackage;
+            comments = !status.Equals(ServiceConstants.Empaquetado) && !status.Equals(ServiceConstants.NoEntregado) ? $"{ServiceConstants.PackageNotAvailable} {status}" : comments;
+
+            return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
         }
 
         /// <summary>

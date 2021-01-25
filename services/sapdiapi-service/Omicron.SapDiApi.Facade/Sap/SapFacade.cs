@@ -120,5 +120,11 @@ namespace Omicron.SapDiApi.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateDelivery(this.mapper.Map<List<CreateDeliveryModel>>(createDelivery)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateTracking(SendPackageDto sendPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateTracking(this.mapper.Map<SendPackageModel>(sendPackage)));
+        }
     }
 }
