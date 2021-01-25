@@ -375,6 +375,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
                 var orderStatus = ServiceConstants.PorRecibir;
+                var batches = new List<string>();
 
                 if (item.IsMagistral.Equals("Y"))
                 {
@@ -385,6 +386,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(item.ProductoId));
                     orderStatus = userFabLineOrder == null || !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+
+                    var lineOrder = userFabLineOrder ??= new LineProductsModel();
+                    var batchObject = !string.IsNullOrEmpty(lineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineOrder.BatchName) : new List<AlmacenBatchModel>();
+                    batchObject.ForEach(y => batches.Add(y.BatchNumber));
                 }
 
                 var productModel = new ProductListModel
@@ -397,6 +402,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Pieces = order.Detalles.Quantity,
                     Status = orderStatus,
                     IsMagistral = item.IsMagistral.Equals("Y"),
+                    Batches = batches,
                 };
 
                 listToReturn.Add(productModel);
