@@ -18,7 +18,6 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {SignaturePadModule} from 'angular2-signaturepad';
 
-
 @NgModule({
     declarations: [
         AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,

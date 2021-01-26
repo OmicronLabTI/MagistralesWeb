@@ -52,7 +52,8 @@ export enum HttpServiceTOCall {
     USERS,
     DETAIL_FORMULA,
     ORDERS_ISOLATED,
-    PRODUCTIVITY
+    PRODUCTIVITY,
+    INCIDENTS_LIST,
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -194,7 +195,10 @@ export const CONST_PRODUCTIVITY = {
 };
 
 export const RouterPaths = {
-  materialRequest: 'materialRequest'
+    materialRequest: 'materialRequest',
+    incidents: 'incidents',
+    incidentsList: 'incidentsList',
+    warehousePage: 'warehouse'
 };
 export enum TypeProperty {
     code,
