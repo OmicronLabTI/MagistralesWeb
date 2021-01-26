@@ -176,6 +176,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalSalesOrders = listIds.Count,
             };
 
+            var listSale = details.Where(x => listIds.Contains(x.DeliveryId)).Select(x => x.BaseEntry).ToList();
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, listSale);
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
@@ -189,7 +193,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
 
-                var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale);
+                var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale, incidents);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
@@ -238,7 +242,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="deliveryDetails">The delivery details.</param>
         /// <returns>the data.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents)
         {
             var listToReturn = new List<ProductListModel>();
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry;
@@ -264,6 +268,17 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var orderNum = string.IsNullOrEmpty(orderId) ? 0 : int.Parse(orderId);
 
+                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == order.BaseEntry && x.ItemCode == item.ProductoId);
+                incidentdb ??= new IncidentsModel();
+
+                var localIncident = new IncidentInfoModel
+                {
+                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Comments = incidentdb.Comments,
+                    Incidence = incidentdb.Incidence,
+                    Status = incidentdb.Status,
+                };
+
                 var productModel = new ProductListModel
                 {
                     Container = order.Container,
@@ -275,6 +290,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = this.CalculateStatus(userOrders, lineProducts, item.IsMagistral, order.BaseEntry, orderNum, item.ProductoId),
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = listBatches,
+                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
 
                 listToReturn.Add(productModel);
