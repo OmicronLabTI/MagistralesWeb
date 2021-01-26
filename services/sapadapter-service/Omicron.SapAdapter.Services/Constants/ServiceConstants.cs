@@ -176,6 +176,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetPackagesByInvoice = "getpackages/invoice";
 
         /// <summary>
+        /// gets the incidents by sale id.
+        /// </summary>
+        public const string GetIncidents = "incident/saleorder";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";

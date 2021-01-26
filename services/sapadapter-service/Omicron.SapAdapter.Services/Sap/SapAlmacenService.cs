@@ -265,6 +265,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalSalesOrders = salesIds.Count,
             };
 
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, salesIds);
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
             foreach (var so in salesIds)
             {
                 var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
@@ -287,7 +290,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var client = order == null ? string.Empty : order.Cliente;
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
 
-                var productList = await this.GetProductListModel(userOrders, orders, saleDetail, lineProducts);
+                var productList = await this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
@@ -359,8 +362,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="sapOrders">the sap orders.</param>
         /// <param name="detailsList">the detail List.</param>
         /// <param name="lineProductsModel">The lines products.</param>
+        /// <param name="incidents">The incidents.</param>
         /// <returns>the products.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<CompleteDetailOrderModel> detailsList, List<LineProductsModel> lineProductsModel)
+        private async Task<List<ProductListModel>> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<CompleteDetailOrderModel> detailsList, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents)
         {
             var listToReturn = new List<ProductListModel>();
             foreach (var order in sapOrders)
@@ -392,6 +396,17 @@ namespace Omicron.SapAdapter.Services.Sap
                     batchObject.ForEach(y => batches.Add(y.BatchNumber));
                 }
 
+                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == order.DocNum && x.ItemCode == item.ProductoId);
+                incidentdb ??= new IncidentsModel();
+
+                var localIncident = new IncidentInfoModel
+                {
+                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Comments = incidentdb.Comments,
+                    Incidence = incidentdb.Incidence,
+                    Status = incidentdb.Status,
+                };
+
                 var productModel = new ProductListModel
                 {
                     Container = order.Detalles.Container,
@@ -403,6 +418,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = orderStatus,
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = batches,
+                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
 
                 listToReturn.Add(productModel);
