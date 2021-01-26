@@ -266,6 +266,38 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetSapIds(List<int> salesIds)
+        {
+            var listToReturn = new List<SapIdsModel>();
+
+            var deliveries = (await this.sapDao.GetDeliveryBySaleOrder(salesIds)).ToList();
+            var invoicesIdToLook = deliveries.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList();
+            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdToLook)).ToList();
+
+            salesIds.ForEach(x =>
+            {
+                deliveries.Where(y => y.BaseEntry == x).ToList().ForEach(d =>
+                {
+                    var invoiceId = d.InvoiceId.HasValue ? d.InvoiceId.Value : 0;
+                    var localInvoice = invoices.FirstOrDefault(i => i.InvoiceId == invoiceId);
+                    localInvoice ??= new InvoiceHeaderModel();
+
+                    var model = new SapIdsModel
+                    {
+                        DeliveryId = d.DeliveryId,
+                        InvoiceId = localInvoice.DocNum,
+                        Itemcode = d.ProductoId,
+                        SaleOrderId = x,
+                    };
+
+                    listToReturn.Add(model);
+                });
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
         /// <summary>
         /// Gets the batches for the invoice.
         /// </summary>
