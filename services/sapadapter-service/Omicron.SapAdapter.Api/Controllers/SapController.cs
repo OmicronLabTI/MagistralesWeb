@@ -398,6 +398,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the delivery and invoice id by sale order..
+        /// </summary>
+        /// <param name="saleids">The sales id separated by commas.</param>
+        /// <returns>the data.</returns>
+        [Route("/sapids/saleorders")]
+        [HttpPost]
+        public async Task<IActionResult> GetSapIds(List<int> saleids)
+        {
+            var response = await this.sapAlmacenFacade.GetSapIds(saleids);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

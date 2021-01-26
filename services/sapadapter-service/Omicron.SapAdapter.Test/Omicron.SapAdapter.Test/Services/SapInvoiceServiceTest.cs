@@ -17,7 +17,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -264,6 +263,23 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await service.GetInvoiceData(code);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetSapIds()
+        {
+            // arrange
+            var listIds = new List<int> { 75000 };
+
+            // act
+            var response = await this.sapInvoiceService.GetSapIds(listIds);
 
             // assert
             Assert.IsNotNull(response);
