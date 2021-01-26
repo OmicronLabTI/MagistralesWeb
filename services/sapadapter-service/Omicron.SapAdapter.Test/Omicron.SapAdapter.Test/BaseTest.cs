@@ -395,6 +395,27 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetIncidents()
+        {
+            var listProducts = new List<IncidentsModel>
+            {
+                new IncidentsModel { SaleOrderId = 100, ItemCode = "Linea1" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
         /// Gets the user order model.
         /// </summary>
         /// <returns>the data.</returns>

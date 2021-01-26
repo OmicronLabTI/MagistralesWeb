@@ -90,6 +90,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetLineProducts()));
 
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
             var mockCatalogos = new Mock<ICatalogsService>();
             mockCatalogos
                 .Setup(m => m.GetParams(It.IsAny<string>()))

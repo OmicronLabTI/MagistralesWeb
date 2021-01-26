@@ -122,6 +122,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act

@@ -92,7 +92,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
 
-            var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders);
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, deliveryDetails.Select(x => x.BaseEntry).ToList());
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
+            var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
             return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
@@ -442,7 +445,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineProducts">the line products.</param>
         /// <param name="orders">the owor orders.</param>
         /// <returns>the products.</returns>
-        private async Task<List<InvoiceProductModel>> GetProductModels(List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders)
+        private async Task<List<InvoiceProductModel>> GetProductModels(List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, List<IncidentsModel> incidents)
         {
             var listToReturn = new List<InvoiceProductModel>();
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
@@ -462,6 +465,17 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice);
 
+                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == product.Item3 && x.ItemCode == item.ProductoId);
+                incidentdb ??= new IncidentsModel();
+
+                var localIncident = new IncidentInfoModel
+                {
+                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Comments = incidentdb.Comments,
+                    Incidence = incidentdb.Incidence,
+                    Status = incidentdb.Status,
+                };
+
                 var productModel = new InvoiceProductModel
                 {
                     Batches = listBatches,
@@ -476,6 +490,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryId = invoice.BaseEntry.Value,
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
+                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
 
                 listToReturn.Add(productModel);
@@ -544,8 +559,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var delivery = deliveries.FirstOrDefault();
             delivery = delivery == null ? new DeliveryDetailModel() : delivery;
 
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry });
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
             invoices = invoices.Where(x => x.BaseEntry.HasValue && x.BaseEntry.Value == delivery.DeliveryId).ToList();
-            var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders);
+            var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders, incidents);
 
             var deliveryData = new DeliveryScannedModel
             {
