@@ -1,1 +1,22 @@
-<p>range-date works!</p>
+<div class="range-date-component-container">
+    <div class="range-date-title">
+        Rango de fechas
+    </div>
+    <div class="dates-components-container">
+        <mat-form-field color="accent" appearance="outline" class="custom-date-range">
+            <mat-label class="title-Date">Desde: </mat-label>
+            <input matInput [matDatepicker]="picker4"
+                   readonly >
+            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+            <mat-datepicker #picker4 color="primary"></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field color="accent" appearance="outline" class="custom-date-range">
+            <mat-label class="title-Date">Hasta: </mat-label>
+            <input matInput [matDatepicker]="picker5"
+                   readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+            <mat-datepicker #picker5 color="primary"></mat-datepicker>
+        </mat-form-field>
+    </div>
+</div>
+<!--<button (click)="eventEmitter()">Clik me</button>-->

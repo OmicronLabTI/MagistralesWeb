@@ -34,15 +34,22 @@ export class IncidentsComponent implements OnInit {
 
     const optionsChart = {
       tooltips: {
-        enabled: false
+        enabled: true
       },
       plugins: {
-        labels: {
-          render: 'percentage',
-          fontColor: '#fff',
-          precision: 2,
-          fontStyle: 'bold',
-        }
+        labels: [
+          {
+            render: 'percentage',
+            fontColor: '#fff',
+            precision: 2,
+            fontStyle: 'bold',
+          },
+          {
+            render: 'label',
+            fontColor: '#000',
+            position: 'outside'
+          }
+        ]
       }
     };
     this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), {
@@ -54,4 +61,7 @@ export class IncidentsComponent implements OnInit {
     });
   }
 
+  checkNewRange(newRange: number) {
+    console.log('even on father: ', newRange + 4)
+  }
 }
