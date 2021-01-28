@@ -55,5 +55,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="usersToUpdate">the data to update.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateSentOrders(List<UserOrderDto> usersToUpdate);
+
+        /// <summary>
+        /// Gets the totals for graphs.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetAlmacenGraphData(Dictionary<string, string> parameters);
     }
 }

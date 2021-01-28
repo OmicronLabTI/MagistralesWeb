@@ -248,7 +248,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
             var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
 
-            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderBy(x => x.AssignedDate.Value).FirstOrDefault().Status;
+            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
             var model = new InvoiceDeliverModel
             {

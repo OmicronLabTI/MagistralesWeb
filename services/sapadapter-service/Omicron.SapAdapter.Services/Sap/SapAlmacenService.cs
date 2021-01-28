@@ -152,6 +152,25 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, data, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> AlmacenGraphCount(Dictionary<string, string> parameters)
+        {
+            var dates = ServiceUtils.GetDateFilter(parameters);
+
+            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var details = (await this.sapDao.GetDetailsbyDocDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).GroupBy(x => x.PedidoId).ToList();
+            var idsToReturn = new List<int>();
+            details.ForEach(x =>
+            {
+                if (x.All(y => lineProducts.Contains(y.ProductoId)))
+                {
+                    idsToReturn.Add(x.Key.Value);
+                }
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, idsToReturn, null, null);
+        }
+
         /// <summary>
         /// Gets the max days to look.
         /// </summary>

@@ -598,6 +598,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/graph")]
+        [HttpGet]
+        public async Task<IActionResult> GetAlmacenGraphData([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetAlmacenGraphData(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -148,6 +150,28 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await this.pedidosAlmacen.UpdateSentOrders(listUserOrders);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetAlmacenGraphData()
+        {
+            // arrange
+            var yesterday = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+            var today = DateTime.Now.ToString("dd/MM/yyyy");
+            var dict = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, $"{yesterday}-{today}" },
+            };
+
+            // act
+            var result = await this.pedidosAlmacen.GetAlmacenGraphData(dict);
 
             // assert
             Assert.IsNotNull(result);
