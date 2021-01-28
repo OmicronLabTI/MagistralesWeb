@@ -364,7 +364,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate >= endDate).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate <= endDate).ToListAsync();
         }
 
         /// <summary>
