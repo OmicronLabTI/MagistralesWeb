@@ -5,12 +5,14 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
+import { GraphShowComponent } from './graph-show/graph-show.component';
 
 @NgModule({
-  declarations: [RangeDateComponent],
-  exports: [
-    RangeDateComponent
-  ],
+  declarations: [RangeDateComponent, GraphShowComponent],
+    exports: [
+        RangeDateComponent,
+        GraphShowComponent
+    ],
     imports: [
         CommonModule,
         MatFormFieldModule,

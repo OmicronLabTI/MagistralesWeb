@@ -18,7 +18,6 @@ import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
-import {ConfigurationGraphic} from '../model/device/incidents.model';
 import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
 
 @Injectable({
@@ -479,10 +478,10 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getOptionsGraphToShow = (configurationGraph: ConfigurationGraphic ) => (
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
       {
         tooltips: {
-          enabled: configurationGraph.isPie,
+          enabled: isPie,
           callbacks: {
             label: (tooltipItem, data) => {
               return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} ( ${
@@ -493,10 +492,10 @@ export class DataService {
         legend: { display: false },
         title: {
           display: true,
-          text: configurationGraph.titleForGraph
+          text: titleForGraph
         },
         plugins: {
-          labels: configurationGraph.isPie ? [
+          labels: isPie ? [
             {
               render: 'label',
               fontColor: '#000',
@@ -505,6 +504,13 @@ export class DataService {
               position: 'outside'
             }
           ] : []
+        },
+        scales: {
+          yAxes: !isPie ? [{
+            ticks: {
+              beginAtZero: true
+            }
+          }] : []
         }
       }
   )

@@ -11,9 +11,15 @@
         <div class="range-container">
             <app-range-date maxMonthsRange="3" typeInitialRange="1" (newRangeEvent)="checkNewRange($event)"></app-range-date>
         </div>
-        <p>incidents works!</p>
-        <canvas #incidentsChart width="100%" height="33" style="margin-top: 5px;">
-        </canvas>
+        <div class="graphs-container">
+            <div class="incidents-container">
+                <app-graph-show [configurationGraph]="incidentsGraphCOnf"></app-graph-show>
+            </div>
+            <div class="incidents-container">
+
+            </div>
+        </div>
+
     </div>
 </div>
 

@@ -11,7 +11,7 @@ import {ComponentsModule} from '../../../components/components.module';
   imports: [
     CommonModule,
     IncidentsRoutingModule,
-    ComponentsModule
+    ComponentsModule,
   ]
 })
 export class IncidentsModule { }

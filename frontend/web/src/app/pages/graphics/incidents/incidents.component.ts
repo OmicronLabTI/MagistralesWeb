@@ -1,22 +1,20 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Chart} from 'chart.js';
+import {Component, OnInit} from '@angular/core';
 import {CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
 import {DataService} from '../../../services/data.service';
-import 'chartjs-plugin-labels';
+
 import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
+import {ConfigurationGraphic} from '../../../model/device/incidents.model';
 @Component({
   selector: 'app-incidents',
   templateUrl: './incidents.component.html',
   styleUrls: ['./incidents.component.scss']
 })
 export class IncidentsComponent implements OnInit {
-  @ViewChild('incidentsChart', {static: true}) incidentsChart: ElementRef;
-  myChart = CONST_STRING.empty;
   responseTest: IncidentsGraphicsMatrix [][] = [
     [
       {
         fieldKey: 'Producto derramado',
-        totalCount: 1,
+        totalCount: 0,
         graphType: "IncidentReason"
       },
       {
@@ -63,8 +61,8 @@ export class IncidentsComponent implements OnInit {
       }
     ]
   ];
-  incidentsGraphics: IncidentsGraphicsMatrix[] = [];
-  statusGraphics: IncidentsGraphicsMatrix[] = [];
+  incidentsGraphCOnf = new ConfigurationGraphic();
+  countTest = 0;
   constructor(private dataService: DataService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
@@ -73,17 +71,16 @@ export class IncidentsComponent implements OnInit {
   }
 
   checkNewRange(newRange: string) {
-
-    this.incidentsGraphics = this.responseTest[0][0].graphType === GraphType.incidentGraph ? this.responseTest[0] : this.responseTest[1];
-    this.statusGraphics = this.responseTest[1][0].graphType === GraphType.statusGraph ? this.responseTest[1] : this.responseTest[0];
-
-    this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), {
-      type: 'pie',
-      data: this.dataService.getDataForGraphic(this.incidentsGraphics),
-      options: this.dataService.getOptionsGraphToShow({isPie: false, titleForGraph: 'Incidencias'})
-    });
-
+    if (this.countTest !== 0 ) {
+      this.responseTest[0][0].totalCount = 20 + this.countTest;
+    }
+    this.incidentsGraphCOnf = new ConfigurationGraphic();
+    this.incidentsGraphCOnf.isPie = false;
+    this.incidentsGraphCOnf.titleForGraph = CONST_STRING.empty;
+    this.incidentsGraphCOnf.dataGraph = this.responseTest[0][0].graphType === GraphType.incidentGraph ?
+        this.responseTest[0] :
+        this.responseTest[1];
+    this.countTest ++;
+    // this.statusGraphics = this.responseTest[1][0].graphType === GraphType.statusGraph ? this.responseTest[1] : this.responseTest[0];
   }
-
-
 }
