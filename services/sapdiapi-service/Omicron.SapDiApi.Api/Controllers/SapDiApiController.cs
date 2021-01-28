@@ -140,6 +140,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// <summary>
         /// Create new isolated production order.
         /// </summary>
+        /// <param name="createDelivery">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("delivery/partial")]
+        public async Task<IHttpActionResult> CreateDeliveryPartial([FromBody] List<CreateDeliveryDto> createDelivery)
+        {
+            var result = await this.sapFacade.CreateDeliveryPartial(createDelivery);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
         /// <param name="updateTracking">Isolated production order.</param>
         /// <returns>Operation result.</returns>
         [HttpPost]
