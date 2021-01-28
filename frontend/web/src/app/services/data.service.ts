@@ -244,13 +244,18 @@ export class DataService {
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
-  transformDate(date: Date, isTest: boolean = false) {
-    if (!isTest) {
+  transformDate(date: Date, isSecondFormat: boolean = false) {
+    if (!isSecondFormat) {
       return this.datePipe.transform(date, 'dd/MM/yyyy');
     } else {
       return this.datePipe.transform(date, 'yyyy-MM-dd');
     }
   }
+
+  getDateArray(startDate: Date) {
+     return this.transformDate(startDate).split('/');
+  }
+
   getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
     let firstMessage = '';
@@ -472,17 +477,8 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-
-  addLineBreakAtFinish(wordToAddLineBreak: string) {
-    /*console.log('wordR: ', wordToAddLineBreak)
-    // wordToAddLineBreak = wordToAddLineBreak + '\n\n\n\n';
-    if ( wordToAddLineBreak.trim().substring(wordToAddLineBreak.length - CONST_NUMBER.two) === '\n') {
-      console.log('hay salto')
-      return wordToAddLineBreak;
-    } else {
-      console.log('no hay',wordToAddLineBreak)
-      return wordToAddLineBreak + '\n\n\n\n';
-
-    }*/
+  getPercentageByItem(valueItem: number, valuesArray: number[]) {
+    return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
   }
+
 }

@@ -9,18 +9,14 @@
     </div>
     <div class="list-users-container custom-content-container">
         <div class="range-container">
-            <app-range-date></app-range-date>
+            <app-range-date maxMonthsRange="3" typeInitialRange="1" (newRangeEvent)="checkNewRange($event)"></app-range-date>
         </div>
-        content
+        <p>incidents works!</p>
+        <canvas #incidentsChart width="100%" height="33" style="margin-top: 5px;">
+        </canvas>
     </div>
 </div>
-<!--<div class="container-list-page">
-    <app-range-date range="12345" (newRangeEvent)="checkNewRange($event)">
-    </app-range-date>
-    <p>incidents works!</p>
-    <canvas #incidentsChart width="100%" height="33" style="margin-top: 5px;">
-    </canvas>
-</div>-->
+
 
 
 

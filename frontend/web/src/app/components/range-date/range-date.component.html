@@ -6,6 +6,10 @@
         <mat-form-field color="accent" appearance="outline" class="custom-date-range">
             <mat-label class="title-Date">Desde: </mat-label>
             <input matInput [matDatepicker]="picker4"
+                   [(ngModel)]="startDate"
+                   [min]="minStartDate"
+                   [max]="finishDate"
+                   (ngModelChange)="onDataChange()"
                    readonly >
             <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
             <mat-datepicker #picker4 color="primary"></mat-datepicker>
@@ -13,6 +17,10 @@
         <mat-form-field color="accent" appearance="outline" class="custom-date-range">
             <mat-label class="title-Date">Hasta: </mat-label>
             <input matInput [matDatepicker]="picker5"
+                   [(ngModel)]="finishDate"
+                   [min]="startDate"
+                   [max]="maxFinishDate"
+                   (ngModelChange)="onDataChange()"
                    readonly>
             <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
             <mat-datepicker #picker5 color="primary"></mat-datepicker>

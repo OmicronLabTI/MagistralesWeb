@@ -207,6 +207,12 @@ export enum TypeProperty {
     requestQuantity
 }
 
+export enum TypeInitialRange {
+    onlyDefault,
+    monthCalendar,
+    mont
+}
+
 export enum TypeToSeeTap {
     order,
     receipt,
@@ -218,4 +224,8 @@ export const RolesType = {
     admin: '1',
     design: '4',
     warehouse: '5'
+};
+export const GraphType = {
+    statusGraph: 'status',
+    incidentGraph: 'IncidentReason'
 };
