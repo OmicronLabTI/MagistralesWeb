@@ -18,6 +18,8 @@ import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
+import {ConfigurationGraphic} from '../model/device/incidents.model';
+import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
 
 @Injectable({
   providedIn: 'root'
@@ -477,8 +479,49 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getPercentageByItem(valueItem: number, valuesArray: number[]) {
-    return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
-  }
+  getOptionsGraphToShow = (configurationGraph: ConfigurationGraphic ) => (
+      {
+        tooltips: {
+          enabled: configurationGraph.isPie,
+          callbacks: {
+            label: (tooltipItem, data) => {
+              return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} ( ${
+                  this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
+            }
+          }
+        },
+        legend: { display: false },
+        title: {
+          display: true,
+          text: configurationGraph.titleForGraph
+        },
+        plugins: {
+          labels: configurationGraph.isPie ? [
+            {
+              render: 'label',
+              fontColor: '#000',
+              precision: 2,
+              fontStyle: 'bold',
+              position: 'outside'
+            }
+          ] : []
+        }
+      }
+  )
+  getPercentageByItem = (valueItem: number, valuesArray: number[]) => (
+      `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`
+  )
+  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[]) => (
+    {
+      labels: itemsArray.map(item => item.fieldKey),
+      datasets: [{
+        backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850'],
+        data: itemsArray.map(item => item.totalCount),
+        borderColor: '#fff',
+        borderWidth: 3,
+        hoverBorderWidth: 10,
+        hoverBorderColor: '#c0c8ce'
+      }]
+    })
 
 }

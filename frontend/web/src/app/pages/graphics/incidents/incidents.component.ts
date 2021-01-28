@@ -12,7 +12,6 @@ import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 export class IncidentsComponent implements OnInit {
   @ViewChild('incidentsChart', {static: true}) incidentsChart: ElementRef;
   myChart = CONST_STRING.empty;
-  optionsChart = {};
   responseTest: IncidentsGraphicsMatrix [][] = [
     [
       {
@@ -71,63 +70,20 @@ export class IncidentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    const isPie = false;
-    this.optionsChart = {
-      tooltips: {
-        enabled: isPie,
-        callbacks: {
-          label: (tooltipItem, data) => {
-            return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} ( ${
-              this.dataService.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
-          }
-        }
-      },
-      legend: { display: false },
-       title: {
-        display: true,
-        text: 'Predicted world population (millions) in 2050'
-       },
-      plugins: {
-        labels: [
-          ( isPie ? {
-            render: 'label',
-            fontColor: '#000',
-            precision: 2,
-            fontStyle: 'bold',
-            position: 'outside'
-          } : {} )
-        ]
-      }
-    };
   }
 
   checkNewRange(newRange: string) {
 
     this.incidentsGraphics = this.responseTest[0][0].graphType === GraphType.incidentGraph ? this.responseTest[0] : this.responseTest[1];
     this.statusGraphics = this.responseTest[1][0].graphType === GraphType.statusGraph ? this.responseTest[1] : this.responseTest[0];
-    // console.log('getData: ', this.getDataForGraphic(this.incidentsGraphics))
+
     this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), {
-      type: 'bar',
-      data: this.getDataForGraphic(this.incidentsGraphics),
-      options: this.optionsChart
+      type: 'pie',
+      data: this.dataService.getDataForGraphic(this.incidentsGraphics),
+      options: this.dataService.getOptionsGraphToShow({isPie: false, titleForGraph: 'Incidencias'})
     });
 
   }
 
-  getDataForGraphic(itemsArray: IncidentsGraphicsMatrix[]) {
-    console.log('labels: ', itemsArray.map(item => item.fieldKey))
-    console.log('counts: ', itemsArray.map(item => item.totalCount))
-    return {
-      labels: itemsArray.map(item => item.fieldKey),
-      datasets: [{
-        label: 'Population (millions)',
-        backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850'],
-        data: itemsArray.map(item => item.totalCount),
-        borderColor: '#fff',
-        borderWidth: 3,
-        hoverBorderWidth: 10,
-        hoverBorderColor: '#c0c8ce'
-      }]
-    };
-  }
+
 }
