@@ -80,5 +80,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="salesid">the sales id separated by commas.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetSapIds(List<int> salesid);
+
+        /// <summary>
+        /// Retrieves the ids for the dates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AlmacenGraphCount(Dictionary<string, string> parameters);
     }
 }

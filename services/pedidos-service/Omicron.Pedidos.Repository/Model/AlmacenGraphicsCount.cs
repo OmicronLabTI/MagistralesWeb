@@ -1,100 +1,90 @@
 ﻿// <summary>
-// <copyright file="DetallePedidoModel.cs" company="Axity">
+// <copyright file="AlmacenGraphicsCount.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model
+namespace Omicron.Pedidos.Entities.Model
 {
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// class for the detalle del pedido.
+    /// class for graphic.
     /// </summary>
-    [Table("RDR1")]
-    public class DetallePedidoModel
+    public class AlmacenGraphicsCount
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("DocEntry")]
-        public int? PedidoId { get; set; }
+        public int RecibirTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("LineNum")]
-        public int DetalleId { get; set; }
+        public int AlmacenadosTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ItemCode")]
-        public string ProductoId { get; set; }
+        public int BackOrderTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("Dscription")]
-        public string Description { get; set; }
+        public int PendienteTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("Quantity")]
-        public decimal Quantity { get; set; }
+        public int LocalPackageTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("U_ETIQUETA")]
-        public string Label { get; set; }
+        public int LocalNotDeliveredTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("U_ENVASE")]
-        public string Container { get; set; }
+        public int LocalAsignedTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ShipToDesc")]
-        public string DestinyAddress { get; set; }
+        public int LocalInWayTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("U_RECETA")]
-        public string HasRecipe { get; set; }
+        public int LocalDeliveredTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("LineStatus")]
-        public string LineStatus { get; set; }
+        public int ForeignPackageTotal { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("DocDate")]
-        public DateTime DocDate { get; set; }
+        public int ForeignSentTotal { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<int> InvoiceIds { get; set; }
     }
 }

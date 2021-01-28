@@ -252,5 +252,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="types">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types);
+
+        /// <summary>
+        /// Get the data by finalized date.
+        /// </summary>
+        /// <param name="init">the date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate);
     }
 }

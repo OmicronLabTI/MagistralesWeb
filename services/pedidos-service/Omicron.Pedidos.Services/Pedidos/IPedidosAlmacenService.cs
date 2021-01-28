@@ -55,5 +55,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="userToUpdate">the list to update.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateSentOrders(List<UserOrderModel> userToUpdate);
+
+        /// <summary>
+        /// Gets the data for the graph.
+        /// </summary>
+        /// <param name="parameters">the dict.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetAlmacenGraphData(Dictionary<string, string> parameters);
     }
 }

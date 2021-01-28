@@ -410,26 +410,11 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Get sales order from SAP.
-        /// </summary>
-        /// <param name="salesOrderId">Sales order id.</param>
-        /// <returns>Sales order.</returns>
-        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
-        {
-            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-            var sapOrder = sapOrders.FirstOrDefault();
-            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
-            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
-            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
-        }
-
-        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
         /// <returns>the data.</returns>
-        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
+        public static Dictionary<string, DateTime> GetDictDates(string dateRange)
         {
             var dictToReturn = new Dictionary<string, DateTime>();
             var dates = dateRange.Split("-");
@@ -442,6 +427,21 @@ namespace Omicron.Pedidos.Services.Utils
             dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
             dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
             return dictToReturn;
+        }
+
+        /// <summary>
+        /// Get sales order from SAP.
+        /// </summary>
+        /// <param name="salesOrderId">Sales order id.</param>
+        /// <returns>Sales order.</returns>
+        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
+        {
+            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
+            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrder = sapOrders.FirstOrDefault();
+            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
+            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
+            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
         }
 
         /// <summary>

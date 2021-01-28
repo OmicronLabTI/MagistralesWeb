@@ -355,14 +355,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();
         }
 
-        /// <summary>
-        /// Returns the user order by user id.
-        /// </summary>
-        /// <param name="types">the list of users.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
         {
             return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate >= endDate).ToListAsync();
         }
 
         /// <summary>

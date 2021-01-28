@@ -167,6 +167,35 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, null, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetAlmacenGraphData(Dictionary<string, string> parameters)
+        {
+            var dates = ServiceUtils.GetDictDates(parameters[ServiceConstants.FechaInicio]);
+
+            var ordersByDates = (await this.pedidosDao.GetUserOrderByFinalizeDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
+            var idsPending = ordersByDates.Where(x => x.IsSalesOrder && x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).Select(y => y.Salesorderid).ToList();
+            var ordersPending = (await this.pedidosDao.GetUserOrderBySaleOrder(idsPending)).GroupBy(x => x.Salesorderid).ToList();
+
+            var packagedOrders = ordersByDates.Where(x => x.IsProductionOrder && !string.IsNullOrEmpty(x.InvoiceType)).DistinctBy(y => y.InvoiceId).ToList();
+            var model = new AlmacenGraphicsCount
+            {
+                RecibirTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Finalizado && x.FinishedLabel == 1),
+                AlmacenadosTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Almacenado),
+                BackOrderTotal = ordersByDates.Count(x => x.IsSalesOrder && x.StatusAlmacen == ServiceConstants.BackOrder),
+                PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 1) && x.All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
+                LocalPackageTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
+                LocalNotDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.NoEntregado),
+                LocalAsignedTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Asignado),
+                LocalInWayTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Camino),
+                LocalDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Entregado),
+                ForeignPackageTotal = packagedOrders.Count(x => x.InvoiceType != ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
+                ForeignSentTotal = packagedOrders.Count(x => x.InvoiceType != ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Enviado),
+                InvoiceIds = packagedOrders.Where(x => x.StatusInvoice == ServiceConstants.NoEntregado).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList(),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, model, null, null);
+        }
+
         /// <summary>
         /// Gets the data by the field, used for datetimes.
         /// </summary>
