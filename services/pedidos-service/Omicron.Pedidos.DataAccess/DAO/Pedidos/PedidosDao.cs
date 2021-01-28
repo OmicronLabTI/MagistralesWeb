@@ -279,14 +279,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook)
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
-            orders = orders.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToList();
-            var saleOrderId = orders.Select(y => y.Salesorderid).ToList();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
 
-            orders.AddRange(await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && saleOrderId.Contains(x.Salesorderid)).ToListAsync());
-            return orders;
+            var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
+            var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
+
+            var possiblePending = orders.Where(x => x.IsProductionOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
+            var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
+            var pendingOrders = await this.databaseContext.UserOrderModel.Where(x => isPending.Contains(x.Salesorderid)).ToListAsync();
+
+            pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
+            {
+                var orders = y.Where(z => z.IsProductionOrder).ToList();
+                if (y.Any(z => z.IsProductionOrder && z.Status == status && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status)))
+                {
+                    orderstoReturn.AddRange(pendingOrders);
+                }
+            });
+            return orderstoReturn;
         }
 
         /// <inheritdoc/>

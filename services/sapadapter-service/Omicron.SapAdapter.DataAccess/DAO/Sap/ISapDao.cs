@@ -315,5 +315,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DetallePedidoModel>> GetDetailsbyDocDate(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode);
     }
 }

@@ -205,8 +205,9 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// </summary>
         /// <param name="status">The status tu,</param>
         /// <param name="dateToLook">the min date to look.</param>
+        /// <param name="statusPending">The status for pending.</param>
         /// <returns>the data.</returns>
-        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook);
+        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending);
 
         /// <summary>
         /// Gets the orders for almance.
