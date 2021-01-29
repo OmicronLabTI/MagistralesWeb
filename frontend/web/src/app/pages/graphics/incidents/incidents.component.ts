@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
+import {Colors, CONST_NUMBER, CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
 import {DataService} from '../../../services/data.service';
 
 import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
@@ -14,7 +14,7 @@ export class IncidentsComponent implements OnInit {
     [
       {
         fieldKey: 'Producto derramado',
-        totalCount: 0,
+        totalCount: 1,
         graphType: "IncidentReason"
       },
       {
@@ -37,11 +37,11 @@ export class IncidentsComponent implements OnInit {
         totalCount: 5,
         graphType: "IncidentReason"
       },
-    /*  {
+     {
         fieldKey: "Producto dañado",
-        totalCount: 0,
+        totalCount: 6,
         graphType: "IncidentReason"
-      }*/
+      }
     ],
     [
       {
@@ -75,12 +75,14 @@ export class IncidentsComponent implements OnInit {
       this.responseTest[0][0].totalCount = 20 + this.countTest;
     }
     this.incidentsGraphCOnf = new ConfigurationGraphic();
-    this.incidentsGraphCOnf.isPie = false;
+    this.incidentsGraphCOnf.isPie = true;
     this.incidentsGraphCOnf.titleForGraph = CONST_STRING.empty;
     this.incidentsGraphCOnf.dataGraph = this.responseTest[0][0].graphType === GraphType.incidentGraph ?
         this.responseTest[0] :
         this.responseTest[1];
     this.countTest ++;
     // this.statusGraphics = this.responseTest[1][0].graphType === GraphType.statusGraph ? this.responseTest[1] : this.responseTest[0];
+
   }
+
 }

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
+  Colors,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
@@ -521,7 +522,7 @@ export class DataService {
     {
       labels: itemsArray.map(item => item.fieldKey),
       datasets: [{
-        backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850'],
+        backgroundColor: this.getRandomColorsArray(itemsArray.length),
         data: itemsArray.map(item => item.totalCount),
         borderColor: '#fff',
         borderWidth: 3,
@@ -529,5 +530,18 @@ export class DataService {
         hoverBorderColor: '#c0c8ce'
       }]
     })
+  getRandomColorsArray(lengthArrayForGraph: number) {
+    let countIndex = CONST_NUMBER.zero;
+    const range = Colors.length;
+    let colorsString: string[] = [];
+    for (let i = 0; i < lengthArrayForGraph; i++) {
+      if (range === countIndex) {
+        countIndex = CONST_NUMBER.zero;
+      }
+      colorsString = [...colorsString, Colors[countIndex]];
+      countIndex++;
+    }
+    return colorsString;
+  }
 
 }
