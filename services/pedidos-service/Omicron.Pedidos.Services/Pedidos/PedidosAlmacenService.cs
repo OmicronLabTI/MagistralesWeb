@@ -96,12 +96,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
                 .Select(x => new
                 {
-                    Salesorderid = x.Salesorderid,
-                    Productionorderid = x.Productionorderid,
-                    Status = x.Status,
-                    StatusAlmacen = x.StatusAlmacen,
-                    Comments = x.Comments,
-                    DeliveryId = x.DeliveryId,
+                    x.Salesorderid,
+                    x.Productionorderid,
+                    x.Status,
+                    x.StatusAlmacen,
+                    x.Comments,
+                    x.DeliveryId,
                 }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
