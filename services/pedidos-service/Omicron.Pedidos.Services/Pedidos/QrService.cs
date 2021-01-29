@@ -81,7 +81,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var savedQrRoutes = listSavedQr.Select(r => r.MagistralQrRoute).ToList();
             var dictExistDb = listSavedQr.ToDictionary(k => k.UserOrderId, v => v.MagistralQrRoute);
 
-            var missingOrders = this.CheckIfQrExist(dictExistDb);
+            var missingOrders = this.CheckIfQrExist(dictExistDb, this.folerOrders);
             savedQrUserOrders.RemoveAll(x => missingOrders.Contains(x));
             saleOrders.RemoveAll(x => savedQrUserOrders.Contains(x.Id));
 
@@ -95,14 +95,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CreateRemisionQr(List<int> ordersId)
         {
-            var listSavedQr = await this.pedidosDao.GetQrRemisionRouteBySaleOrder(ordersId);
+            var listSavedQr = await this.pedidosDao.GetQrRemisionRouteByDelivery(ordersId);
 
-            var savedQrRemision = listSavedQr.Select(c => c.PedidoId).ToList();
+            var savedQrRemision = listSavedQr.Select(c => c.RemisionId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.RemisionQrRoute).ToList();
-            var dictExistDb = listSavedQr.ToDictionary(k => k.PedidoId, v => v.RemisionQrRoute);
+            var dictExistDb = listSavedQr.ToDictionary(k => k.RemisionId, v => v.RemisionQrRoute);
 
             ordersId.RemoveAll(x => savedQrRemision.Contains(x));
-            ordersId.AddRange(this.CheckIfQrExist(dictExistDb));
+            ordersId.AddRange(this.CheckIfQrExist(dictExistDb, this.folderDelivery));
 
             if (!ordersId.Any())
             {
@@ -110,24 +110,27 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
-            var saleOrders = await this.GetOrdersBySaleOrder(ordersId);
+            var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
             if (!saleOrders.Any())
             {
-                var dictParam = $"?{ServiceConstants.SaleOrderId}={JsonConvert.SerializeObject(ordersId)}";
+                var dictParam = $"?{ServiceConstants.Delivery}={JsonConvert.SerializeObject(ordersId)}";
                 var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
                 var lineProducts = await this.GetOrdersFromAlmacenDict(route, null);
-                lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
+                lineProducts.ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
                     {
-                        Salesorderid = y.SaleOrderId.ToString(),
+                        DeliveryId = y.DeliveryId,
                         RemisionQr = y.RemisionQr,
+                        Salesorderid = y.SaleOrderId.ToString(),
                     };
 
                     saleOrders.Add(newOrder);
                 });
             }
+
+            saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).DistinctBy(y => y.DeliveryId).ToList();
 
             var urls = await this.GetUrlQrRemision(saleOrders, parameters, savedQrRoutes);
             urls.AddRange(savedQrRoutes);
@@ -146,7 +149,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dictExistDb = listSavedQr.DistinctBy(x => x.FacturaId).ToDictionary(k => k.FacturaId, v => v.FacturaQrRoute);
 
             invoiceIds.RemoveAll(x => savedQrFactura.Contains(x));
-            invoiceIds.AddRange(this.CheckIfQrExist(dictExistDb));
+            invoiceIds.AddRange(this.CheckIfQrExist(dictExistDb, this.folderInvoice));
 
             if (!invoiceIds.Any())
             {
@@ -182,15 +185,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// Check if the file exist in disc.
         /// </summary>
         /// <param name="listUrls">the urls.</param>
+        /// <param name="folders">the folders.</param>
         /// <returns>the data.</returns>
-        private List<int> CheckIfQrExist(Dictionary<int, string> listUrls)
+        private List<int> CheckIfQrExist(Dictionary<int, string> listUrls, string folders)
         {
             var listNotExist = new List<int>();
 
             foreach (var k in listUrls.Keys)
             {
                 var splitUrl = listUrls[k].Split("/").ToList();
-                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), this.folerOrders, $"{splitUrl.Last()}");
+                var pathTosave = Path.Combine(Directory.GetCurrentDirectory(), folders, $"{splitUrl.Last()}");
                 if (!File.Exists(pathTosave))
                 {
                     listNotExist.Add(k);
@@ -226,17 +230,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var stringOrdersId = ordersId.Select(x => x.ToString()).ToList();
             return (await this.pedidosDao.GetUserOrderByProducionOrder(stringOrdersId)).ToList();
-        }
-
-        /// <summary>
-        /// Gets the orders by the order id.
-        /// </summary>
-        /// <param name="ordersId">The orders id.</param>
-        /// <returns>The data.</returns>
-        private async Task<List<UserOrderModel>> GetOrdersBySaleOrder(List<int> ordersId)
-        {
-            var stringOrdersId = ordersId.Select(x => x.ToString()).ToList();
-            return (await this.pedidosDao.GetUserOrderBySaleOrder(stringOrdersId)).ToList();
         }
 
         /// <summary>

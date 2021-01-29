@@ -325,6 +325,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteByDelivery(List<int> delivery)
+        {
+            return await this.databaseContext.ProductionRemisionQrModel.Where(x => delivery.Contains(x.RemisionId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
         {
             return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
@@ -377,6 +383,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
         {
             return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate <= endDate).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => deliveryIds.Contains(x.DeliveryId)).ToListAsync();
         }
 
         /// <summary>
