@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Colors, CONST_NUMBER, CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
+import { CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
 import {DataService} from '../../../services/data.service';
 
 import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
-import {ConfigurationGraphic} from '../../../model/device/incidents.model';
+import {ConfigurationGraphic, ItemIndicator} from '../../../model/device/incidents.model';
+import {IncidentsService} from "../../../services/incidents.service";
+import {ErrorService} from "../../../services/error.service";
 @Component({
   selector: 'app-incidents',
   templateUrl: './incidents.component.html',
@@ -51,19 +53,21 @@ export class IncidentsComponent implements OnInit {
       },
       {
         fieldKey: "Atendiendo",
-        totalCount: 1,
+        totalCount: 2,
         graphType: "status"
       },
       {
         fieldKey: "Cerrada",
-        totalCount: 0,
+        totalCount: 1,
         graphType: "status"
       }
     ]
   ];
   incidentsGraphCOnf = new ConfigurationGraphic();
-  countTest = 0;
-  constructor(private dataService: DataService) {
+  statusGraph = new ConfigurationGraphic();
+  newIndicators: ItemIndicator[] = [];
+  constructor(private dataService: DataService, private incidentsService: IncidentsService,
+              private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
@@ -71,18 +75,22 @@ export class IncidentsComponent implements OnInit {
   }
 
   checkNewRange(newRange: string) {
-    if (this.countTest !== 0 ) {
-      this.responseTest[0][0].totalCount = 20 + this.countTest;
-    }
+    this.incidentsService.getIncidentsGraph(newRange).subscribe( ({response}) => this.generateConfigurationGraph(response)
+    , error => this.errorService.httpError(error));
+  }
+
+  newIteratorsEvent(newIterators: ItemIndicator[]) {
+      this.newIndicators = newIterators;
+  }
+  generateConfigurationGraph(response: IncidentsGraphicsMatrix[][]) {
     this.incidentsGraphCOnf = new ConfigurationGraphic();
     this.incidentsGraphCOnf.isPie = true;
     this.incidentsGraphCOnf.titleForGraph = CONST_STRING.empty;
-    this.incidentsGraphCOnf.dataGraph = this.responseTest[0][0].graphType === GraphType.incidentGraph ?
-        this.responseTest[0] :
-        this.responseTest[1];
-    this.countTest ++;
-    // this.statusGraphics = this.responseTest[1][0].graphType === GraphType.statusGraph ? this.responseTest[1] : this.responseTest[0];
+    this.incidentsGraphCOnf.dataGraph = response[0][0].graphType === GraphType.incidentGraph ? response[0] : response[1];
 
+    this.statusGraph = new ConfigurationGraphic();
+    this.statusGraph.titleForGraph = CONST_STRING.empty;
+    this.statusGraph.isPie = false;
+    this.statusGraph.dataGraph = response[1][0].graphType === GraphType.statusGraph ? response[1] : response[0];
   }
-
 }

@@ -5,4 +5,10 @@ export class ConfigurationGraphic {
     titleForGraph: string;
     dataGraph: IncidentsGraphicsMatrix[];
 }
+export class ItemIndicator {
+    nameItem: string;
+    background: string;
+    percentage: string;
+    count: number;
+}
 

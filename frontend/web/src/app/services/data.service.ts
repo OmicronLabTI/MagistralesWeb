@@ -485,8 +485,8 @@ export class DataService {
           enabled: isPie,
           callbacks: {
             label: (tooltipItem, data) => {
-              return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} ( ${
-                  this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
+              return `${data.labels[tooltipItem.index]}: ${
+                  this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
             }
           }
         },
@@ -499,12 +499,11 @@ export class DataService {
           labels: isPie ? [
             {
               render: 'label',
-              fontColor: '#000',
               precision: 2,
-              fontStyle: 'bold',
               position: 'outside'
             }
-          ] : []
+          ] : [
+          ]
         },
         scales: {
           yAxes: !isPie ? [{

@@ -2,17 +2,17 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ElementRef,
+  ElementRef, EventEmitter,
   Input,
   OnChanges,
-  OnInit,
+  OnInit, Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {Chart} from 'chart.js';
 import 'chartjs-plugin-labels';
 import {DataService} from '../../services/data.service';
-import {ConfigurationGraphic} from '../../model/device/incidents.model';
+import {ConfigurationGraphic, ItemIndicator} from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-graph-show',
@@ -22,6 +22,8 @@ import {ConfigurationGraphic} from '../../model/device/incidents.model';
 export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild('incidentsChart', {static: true}) incidentsChart: ElementRef;
   @Input() configurationGraph: ConfigurationGraphic;
+  @Output() newItemsIndicatorsEmitter = new EventEmitter<ItemIndicator[]>();
+  newItemsIndicators: ItemIndicator[] = [];
   myChart = undefined;
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
 
@@ -39,16 +41,36 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
       this.myChart.data = this.getDataGraphWithSort();
       this.myChart.options = this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph);
       this.myChart.update();
+      this.checkIfShouldGetIndicators();
     } else {
       this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), {
         type: this.configurationGraph.isPie ? 'pie' : 'bar',
         data: this.getDataGraphWithSort(),
         options: this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph)
       });
+      this.checkIfShouldGetIndicators();
+    }
+  }
+  checkIfShouldGetIndicators() {
+    if (this.configurationGraph.isPie) {
+      this.getDataIndicators();
     }
   }
   getDataGraphWithSort() {
     return this.dataService.getDataForGraphic(
-        this.configurationGraph.dataGraph.sort((a, b) => ( a.totalCount - b.totalCount)));
+        this.configurationGraph.dataGraph.sort((a, b) => ( b.totalCount - a.totalCount )));
+  }
+
+  getDataIndicators() {
+    this.newItemsIndicators = [];
+    this.myChart.data.labels.forEach((label, index) => {
+        this.newItemsIndicators = [...this.newItemsIndicators,
+          { nameItem: label,
+          background: this.myChart.data.datasets[0].backgroundColor[index],
+          percentage: this.dataService.getPercentageByItem(this.myChart.data.datasets[0].data[index], this.myChart.data.datasets[0].data),
+          count: this.myChart.data.datasets[0].data[index]
+          }];
+    });
+    this.newItemsIndicatorsEmitter.emit(this.newItemsIndicators.sort((a, b) => ( b.count - a.count )));
   }
 }

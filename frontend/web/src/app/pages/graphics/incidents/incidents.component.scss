@@ -8,6 +8,37 @@
 
     .incidents-container {
       width: 50%;
+
+      .title-graph {
+        color: #3b3f5c;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .only-graph-container {
+        width: 100%;
+        height: 85%;
+      }
+      .indicators-pie-container {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+
+
+        .indicator-container {
+          display: flex;
+          flex-direction: row;
+          margin: 0 0 5px 0;
+
+          .color-indicator{
+            width: 20px;
+            height: 20px;
+            margin-right: 3px;
+            border-radius: 5px;
+            background-color: #3b3f5c;
+          }
+        }
+      }
     }
+
   }
 }
