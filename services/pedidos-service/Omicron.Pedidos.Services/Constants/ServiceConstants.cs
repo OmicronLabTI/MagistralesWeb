@@ -652,6 +652,7 @@ namespace Omicron.Pedidos.Services.Constants
         {
             Pendiente,
             Finalizado,
+            Almacenado,
         };
     }
 }

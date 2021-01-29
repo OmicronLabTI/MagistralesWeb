@@ -285,7 +285,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var order = orders.FirstOrDefault();
 
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
-                var lineOrder = lineProducts.FirstOrDefault(x => x.SaleOrderId == so && string.IsNullOrEmpty(x.ItemCode));
+                var lineOrders = lineProducts.Where(x => x.SaleOrderId == so).ToList();
 
                 var userProdOrders = userOrders.Count(x => x.Salesorderid.Equals(so.ToString()) && !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Almacenado));
                 var lineProductsCount = lineProducts.Count(x => x.SaleOrderId == so && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado);
@@ -297,7 +297,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var doctor = order == null ? string.Empty : order.Medico;
 
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
-                var salesStatusLinea = ServiceConstants.PorRecibir;
+                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) ? userOrder.StatusAlmacen : salesStatusMagistral;
+
+                var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
 
                 var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
 

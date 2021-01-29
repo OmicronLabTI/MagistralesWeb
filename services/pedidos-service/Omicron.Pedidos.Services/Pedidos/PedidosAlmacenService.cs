@@ -38,7 +38,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetOrdersForAlmacen()
         {
             var response = await this.GetParametersDateToLook(ServiceConstants.AlmacenMaxDayToLook);
-            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, response.Item1, ServiceConstants.StatuPendingAlmacen);
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, response.Item1, ServiceConstants.StatuPendingAlmacen, ServiceConstants.Almacenado);
             var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, response.Item1);
 
             var odersToLook = orders.Select(x => x.Salesorderid).Distinct().ToList();
@@ -53,6 +53,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Status,
                 x.Comments,
                 x.DeliveryId,
+                x.StatusAlmacen,
             }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);

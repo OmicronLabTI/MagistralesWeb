@@ -279,23 +279,23 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending)
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
         {
             var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
 
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
             var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
 
-            var possiblePending = orders.Where(x => x.IsProductionOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
+            var possiblePending = orders.Where(x => x.IsProductionOrder && (x.Status.Equals(status) || x.Status.Equals(secondStatus)) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
             var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
             var pendingOrders = await this.databaseContext.UserOrderModel.Where(x => isPending.Contains(x.Salesorderid)).ToListAsync();
 
             pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
             {
                 var orders = y.Where(z => z.IsProductionOrder).ToList();
-                if (y.Any(z => z.IsProductionOrder && z.Status == status && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status)))
+                if (y.Any(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus) && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
                 {
-                    orderstoReturn.AddRange(pendingOrders);
+                    orderstoReturn.AddRange(y);
                 }
             });
             return orderstoReturn;
