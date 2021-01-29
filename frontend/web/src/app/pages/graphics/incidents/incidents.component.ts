@@ -4,65 +4,14 @@ import {DataService} from '../../../services/data.service';
 
 import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic, ItemIndicator} from '../../../model/device/incidents.model';
-import {IncidentsService} from "../../../services/incidents.service";
-import {ErrorService} from "../../../services/error.service";
+import {IncidentsService} from '../../../services/incidents.service';
+import {ErrorService} from '../../../services/error.service';
 @Component({
   selector: 'app-incidents',
   templateUrl: './incidents.component.html',
   styleUrls: ['./incidents.component.scss']
 })
 export class IncidentsComponent implements OnInit {
-  responseTest: IncidentsGraphicsMatrix [][] = [
-    [
-      {
-        fieldKey: 'Producto derramado',
-        totalCount: 1,
-        graphType: "IncidentReason"
-      },
-      {
-        fieldKey: "Nombre incorrecto",
-        totalCount: 2,
-        graphType: "IncidentReason"
-      },
-      {
-        fieldKey: "Pedido incompleto",
-        totalCount: 3,
-        graphType: "IncidentReason"
-      },
-      {
-        fieldKey: "Ingredientes incorrectos",
-        totalCount: 4,
-        graphType: "IncidentReason"
-      },
-      {
-        fieldKey: "Envase incorrecto",
-        totalCount: 5,
-        graphType: "IncidentReason"
-      },
-     {
-        fieldKey: "Producto dañado",
-        totalCount: 6,
-        graphType: "IncidentReason"
-      }
-    ],
-    [
-      {
-        fieldKey: "Abierta",
-        totalCount: 3,
-        graphType: "status"
-      },
-      {
-        fieldKey: "Atendiendo",
-        totalCount: 2,
-        graphType: "status"
-      },
-      {
-        fieldKey: "Cerrada",
-        totalCount: 1,
-        graphType: "status"
-      }
-    ]
-  ];
   incidentsGraphCOnf = new ConfigurationGraphic();
   statusGraph = new ConfigurationGraphic();
   newIndicators: ItemIndicator[] = [];
