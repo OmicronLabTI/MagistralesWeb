@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GraphShowComponent } from './graph-show.component';
+import {DatePipe} from '@angular/common';
 
 describe('GraphShowComponent', () => {
   let component: GraphShowComponent;
@@ -8,7 +9,8 @@ describe('GraphShowComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GraphShowComponent ]
+      declarations: [ GraphShowComponent ],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));

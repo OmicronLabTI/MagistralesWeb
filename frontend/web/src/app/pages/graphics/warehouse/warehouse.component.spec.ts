@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WarehouseComponent } from './warehouse.component';
+import {DatePipe} from '@angular/common';
 
 describe('WarehouseComponent', () => {
   let component: WarehouseComponent;
@@ -8,7 +9,8 @@ describe('WarehouseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WarehouseComponent ]
+      declarations: [ WarehouseComponent ],
+      providers: [DatePipe]
     })
     .compileComponents();
   }));
