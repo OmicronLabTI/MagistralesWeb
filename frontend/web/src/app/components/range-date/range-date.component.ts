@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
-import {CONST_NUMBER, TypeInitialRange} from '../../constants/const';
+import {CONST_NUMBER, CONST_STRING, TypeInitialRange} from '../../constants/const';
 import {DataService} from '../../services/data.service';
 
 @Component({
@@ -10,6 +10,7 @@ import {DataService} from '../../services/data.service';
 export class RangeDateComponent implements OnInit {
   @Input() maxMonthsRange = CONST_NUMBER.lessOne;
   @Input() typeInitialRange = CONST_NUMBER.lessOne;
+  @Input() titleRangeDate = CONST_STRING.empty;
   @Output() newRangeEvent = new EventEmitter<string>();
   initialDate: string[] = [];
   startDate = new Date();

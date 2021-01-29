@@ -7,4 +7,5 @@ export class IncidentsGraphicsMatrix {
     fieldKey: string;
     totalCount: number;
     graphType: string;
+    color?: string;
 }

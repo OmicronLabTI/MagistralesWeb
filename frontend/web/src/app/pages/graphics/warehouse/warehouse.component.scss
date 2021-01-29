@@ -1,0 +1,58 @@
+.custom-warehouse-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .title-graph-reception {
+    padding: 20px 20px 20px 0;
+  }
+
+  .reception-content-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 40px;
+
+    .reception-container {
+      width: 22%;
+      background-color: #3b3f5c;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+
+      .icon-reception-container {
+        font-size: 25px;
+        color: white;
+        font-weight: 700;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .title-reception {
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 10px;
+      }
+    }
+  }
+  .distribution-content-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    .local-container {
+      width: 50%;
+
+      .title-graph-distribution {
+        font-size: 13px;
+        font-weight: 600;
+        color: #888ea8;
+      }
+    }
+  }
+}

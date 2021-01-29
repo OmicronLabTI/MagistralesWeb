@@ -150,7 +150,15 @@ td{
   height: 12%;
 }
 
+.range-date-container{
+  width: 40%;
+  float: right;
+  text-align: right;
+  color: #3b3f5c;
+  font-size: 1rem;
+  font-weight: 600;
 
+}
 .filter-select{
   width: 50%;
   float: right;
@@ -768,4 +776,9 @@ a.breadcrumblink:hover{
 
 .mat-form-field-appearance-outline .mat-form-field-wrapper {
   margin: 0 !important;
+}
+.title-graph {
+  color: #3b3f5c;
+  font-size: 20px;
+  font-weight: 500;
 }

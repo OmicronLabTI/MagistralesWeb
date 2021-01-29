@@ -227,5 +227,18 @@ export const RolesType = {
 };
 export const GraphType = {
     statusGraph: 'status',
-    incidentGraph: 'IncidentReason'
+    incidentGraph: 'IncidentReason',
+    reception: 'Almacen'
+};
+export const ColorsReception = {
+    byReceive: '#007AFF',
+    backOrder: '#D87F01',
+    pending: '#B33D66',
+    warehoused: '#B51CAA'
+};
+export const TypeReception = {
+    byReceive: 'por recibir',
+    warehoused: 'almacenado',
+    backOrder: 'back order',
+    pending: 'pendiente'
 };

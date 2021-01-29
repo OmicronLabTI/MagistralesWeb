@@ -3,12 +3,13 @@
         <div class="title-list-container">
             <span>Incidencias</span>
         </div>
-        <div class="filter-select">
-            <app-range-date maxMonthsRange="3" typeInitialRange="1" (newRangeEvent)="checkNewRange($event)"></app-range-date>
+        <div class="range-date-container">
+            <app-range-date maxMonthsRange="3" typeInitialRange="1"
+                            titleRangeDate="Rango de creación de incidencia"
+                            (newRangeEvent)="checkNewRange($event)"></app-range-date>
         </div>
     </div>
     <div class="list-users-container custom-content-container">
-
         <div class="graphs-container">
             <div class="incidents-container">
                 <span class="title-graph">Tipo de falla: </span>
