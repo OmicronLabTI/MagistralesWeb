@@ -4,7 +4,7 @@
   flex-direction: column;
 
   .title-graph-reception {
-    padding: 20px 20px 20px 0;
+    padding: 0 0 20px 0;
   }
 
   .reception-content-container {
@@ -27,7 +27,7 @@
         font-size: 25px;
         color: white;
         font-weight: 700;
-        padding: 10px;
+        padding: 5px;
         display: flex;
         align-items: center;
       }
@@ -36,7 +36,7 @@
         color: white;
         font-size: 18px;
         font-weight: 600;
-        padding: 10px;
+        padding: 5px;
       }
     }
   }
@@ -47,9 +47,43 @@
 
     .local-container {
       width: 50%;
+      padding: 20px;
+
+      .mat-card-custom {
+        padding: 0 !important;
+
+        .mat-list-custom {
+          padding-top: 0 !important;
+
+          .item-local-container{
+            padding: 5px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+          }
+
+          .title-distribution {
+            width: 40%;
+            font-size: 18px;
+            font-weight: 300;
+            color: #888ea8;
+          }
+
+          .count-distribution {
+            width: 10%;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #6C90B3;
+            text-align: center;
+          }
+        }
+      }
 
       .title-graph-distribution {
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 600;
         color: #888ea8;
       }

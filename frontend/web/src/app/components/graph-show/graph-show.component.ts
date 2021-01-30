@@ -21,6 +21,7 @@ import {ConfigurationGraphic, ItemIndicator} from '../../model/device/incidents.
 })
 export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild('incidentsChart', {static: true}) incidentsChart: ElementRef;
+  @ViewChild('incidentsChartSmall', {static: true}) incidentsChartSmall: ElementRef;
   @Input() configurationGraph: ConfigurationGraphic;
   @Output() newItemsIndicatorsEmitter = new EventEmitter<ItemIndicator[]>();
   newItemsIndicators: ItemIndicator[] = [];
@@ -28,6 +29,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
 
   ngOnInit() {
+    console.log('configuration: ', this.configurationGraph)
   }
   ngAfterViewInit(): void {
     this.cdRef.detectChanges();
@@ -43,11 +45,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
       this.myChart.update();
       this.checkIfShouldGetIndicators();
     } else {
-      this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), {
-        type: this.configurationGraph.isPie ? 'pie' : 'bar',
-        data: this.getDataGraphWithSort(),
-        options: this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph)
-      });
+      this.generateInitConfigurationGraph();
       this.checkIfShouldGetIndicators();
     }
   }
@@ -73,4 +71,19 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
     });
     this.newItemsIndicatorsEmitter.emit(this.newItemsIndicators.sort((a, b) => ( b.count - a.count )));
   }
+
+  generateInitConfigurationGraph() {
+    if (!this.configurationGraph.isSmall) {
+      this.myChart = new Chart(this.incidentsChart.nativeElement.getContext('2d'), this.getConfiguration() );
+    } else {
+      this.myChart = new Chart(this.incidentsChartSmall.nativeElement.getContext('2d'), this.getConfiguration() );
+    }
+  }
+  getConfiguration = () => (
+      {
+        type: this.configurationGraph.isPie ? 'pie' : 'bar',
+        data: this.getDataGraphWithSort(),
+        options: this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph),
+      }
+  )
 }

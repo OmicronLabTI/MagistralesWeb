@@ -7,6 +7,7 @@ import {ComponentsModule} from '../../../components/components.module';
 import {MatCardModule} from '@angular/material/card';
 import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {ProgressBarModule} from 'angular-progress-bar';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
         ComponentsModule,
         MatCardModule,
         MatListModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        ProgressBarModule
     ]
 })
 export class WarehouseModule { }

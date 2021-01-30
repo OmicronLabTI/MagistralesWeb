@@ -4,6 +4,7 @@ export class ConfigurationGraphic {
     isPie: boolean;
     titleForGraph: string;
     dataGraph: IncidentsGraphicsMatrix[];
+    isSmall?: boolean;
 }
 export class ItemIndicator {
     nameItem: string;

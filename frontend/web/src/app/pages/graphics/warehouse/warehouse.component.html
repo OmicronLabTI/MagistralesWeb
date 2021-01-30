@@ -14,11 +14,17 @@
         <div class="reception-content-container">
             <div class="reception-container" [ngStyle]="{'background-color': receptionGraph.color}" *ngFor=" let receptionGraph of itemsGraph">
                 <div class="icon-reception-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></g></svg>
+                    <svg *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.byReceive" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></g></svg>
+                    <svg *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.backOrder" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></g></svg>
+                    <svg *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.pending" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></g></svg>
+                    <svg *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.warehoused"  xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></g></svg>
                     <span class="margin-left-options"> {{receptionGraph.totalCount}}</span>
                 </div>
                 <div class="title-reception">
-                    <span>{{receptionGraph.fieldKey}}</span>
+                    <span *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.byReceive">Pedidos por recibir</span>
+                    <span *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.backOrder">Pedidos Back Order</span>
+                    <span *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.pending">Pedidos pendientes</span>
+                    <span *ngIf="receptionGraph.fieldKey.toLowerCase() === typesGraph.warehoused">Pedidos almacenados</span>
                 </div>
             </div>
         </div>
@@ -26,19 +32,99 @@
         <div class="distribution-content-container">
             <div class="local-container">
                 <span class="title-graph-distribution">Locales</span>
-
-                <mat-card>
-                    <mat-list>
-                        <mat-list-item>Item 1</mat-list-item>
+                <progress-bar [progress]="10" [color]="'#0045ff'">
+                </progress-bar>
+                <mat-card class="mat-card-custom">
+                    <mat-list class="mat-list-custom">
+                        <mat-list-item >
+                            <div class="item-local-container">
+                                <div class="title-distribution">
+                                    Empaquetado
+                                </div>
+                                <div class="count-distribution">
+                                    123456
+                                </div>
+                            </div>
+                        </mat-list-item>
                         <mat-divider></mat-divider>
-                        <mat-list-item>Item 2</mat-list-item>
+                        <mat-list-item>
+                            <div class="item-local-container">
+                                <div class="title-distribution">
+                                    Asignados
+                                </div>
+                                <div class="count-distribution">
+                                    123456
+                                </div>
+                            </div>
+                        </mat-list-item>
                         <mat-divider></mat-divider>
-                        <mat-list-item>Item 3</mat-list-item>
+                        <mat-list-item>
+                        <div class="item-local-container">
+                            <div class="title-distribution">
+                                En camino
+                            </div>
+                            <div class="count-distribution">
+                                123456
+                            </div>
+                        </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>
+                        <div class="item-local-container">
+                            <div class="title-distribution">
+                                Entregados
+                            </div>
+                            <div class="count-distribution">
+                                123456
+                            </div>
+                        </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>
+                        <div class="item-local-container">
+                            <div class="title-distribution">
+                                No entregados
+                            </div>
+                            <div class="count-distribution">
+                                123456
+                            </div>
+                        </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
                     </mat-list>
+                        <app-graph-show [configurationGraph]="incidentsConfigurationGraph" ></app-graph-show>
                 </mat-card>
             </div>
             <div class="local-container">
-                fasdf
+                <span class="title-graph-distribution">Foráneo</span>
+                <progress-bar [progress]="15" [color]="'#c71d6f'">
+                </progress-bar>
+                <mat-card class="mat-card-custom">
+                    <mat-list class="mat-list-custom">
+                        <mat-list-item >
+                            <div class="item-local-container">
+                                <div class="title-distribution">
+                                    Empaquetado
+                                </div>
+                                <div class="count-distribution">
+                                    123456
+                                </div>
+                            </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>
+                            <div class="item-local-container">
+                                <div class="title-distribution">
+                                    Enviados
+                                </div>
+                                <div class="count-distribution">
+                                    123456
+                                </div>
+                            </div>
+                        </mat-list-item>
+
+                    </mat-list>
+                </mat-card>
             </div>
         </div>
     </div>

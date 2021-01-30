@@ -28,6 +28,7 @@
     "@angular/router": "~8.2.14",
     "@babel/compat-data": "^7.8.0",
     "@types/file-saver": "^2.0.1",
+    "angular-progress-bar": "^1.0.11",
     "angular2-signaturepad": "^2.11.0",
     "chart.js": "^2.9.3",
     "chartjs-plugin-labels": "^1.1.0",

@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from '../../../services/data.service';
-import {ColorsReception, GraphType, HttpServiceTOCall, TypeReception} from '../../../constants/const';
-import {IncidentsGraphicsMatrix} from ../../../model/http/incidents.model;
+import {ColorsReception, CONST_STRING, GraphType, HttpServiceTOCall, TypeReception} from '../../../constants/const';
+import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
+import {ConfigurationGraphic} from "../../../model/device/incidents.model";
 
 
 @Component({
@@ -87,18 +88,24 @@ export class WarehouseComponent implements OnInit {
       "graphType": "IncidentReason"
     }
   ];
-  typesReception = TypeReception;
   itemsGraph: IncidentsGraphicsMatrix[] = [];
+  incidentsConfigurationGraph = new ConfigurationGraphic();
+  typesGraph = TypeReception;
   constructor(private dataService: DataService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {
-    this.itemsGraph = this.getNewReceptionData(this.responseTest.filter( itemGraph => itemGraph.graphType === GraphType.reception));
-
   }
 
     checkNewRange(rangeDate: string) {
+      this.itemsGraph = this.getNewReceptionData(this.responseTest.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+
+      this.incidentsConfigurationGraph = new ConfigurationGraphic();
+      this.incidentsConfigurationGraph.isPie = true;
+      this.incidentsConfigurationGraph.titleForGraph = CONST_STRING.empty;
+      this.incidentsConfigurationGraph.dataGraph = this.responseTest.filter( itemGraph => itemGraph.graphType === GraphType.incidentGraph);
+      this.incidentsConfigurationGraph.isSmall = true;
       console.log('newRangeDate: ', rangeDate)
     }
 
