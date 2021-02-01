@@ -228,7 +228,11 @@ export const RolesType = {
 export const GraphType = {
     statusGraph: 'status',
     incidentGraph: 'IncidentReason',
-    reception: 'Almacen'
+    reception: 'Almacen',
+    packageLocal: 'PackageLocal',
+    foreignPackage: 'PackageForeign',
+    deliveredItemLocal: 'Entregado',
+    sentItemForeign: 'Enviado'
 };
 export const ColorsReception = {
     byReceive: '#007AFF',

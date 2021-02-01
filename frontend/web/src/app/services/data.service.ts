@@ -479,14 +479,19 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string, isWithFullTooltip: boolean = false) => (
       {
         tooltips: {
           enabled: isPie,
           callbacks: {
             label: (tooltipItem, data) => {
-              return `${data.labels[tooltipItem.index]}: ${
-                  this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              if (Boolean(isWithFullTooltip)) {
+                return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} (${
+                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
+              } else {
+                return `${data.labels[tooltipItem.index]}: ${
+                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              }
             }
           }
         },
@@ -514,9 +519,13 @@ export class DataService {
         }
       }
   )
-  getPercentageByItem = (valueItem: number, valuesArray: number[]) => (
-      `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`
-  )
+  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false){
+    if (!isOnlyNumberPercent) {
+      return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
+    } else {
+      return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
+    }
+}
   getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[]) => (
     {
       labels: itemsArray.map(item => item.fieldKey),

@@ -5,6 +5,7 @@ export class ConfigurationGraphic {
     titleForGraph: string;
     dataGraph: IncidentsGraphicsMatrix[];
     isSmall?: boolean;
+    isWithFullTooltip?: boolean;
 }
 export class ItemIndicator {
     nameItem: string;

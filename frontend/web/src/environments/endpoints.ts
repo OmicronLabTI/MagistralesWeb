@@ -62,6 +62,7 @@ export const Endpoints = {
   },
   incidents: {
     graphIncidents: `${environment.baseUrl}/api/almacen/incidents/graph`,
+    graphWarehouse: `${environment.baseUrl}/api/almacen/graphs`,
   }
 };
 

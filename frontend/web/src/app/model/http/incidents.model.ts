@@ -3,6 +3,9 @@ import {BaseResponseHttp} from './commons';
 export class IIncidentsGraphicRes extends BaseResponseHttp {
     response: IncidentsGraphicsMatrix[][];
 }
+export class IWarehouseGraphicRes extends BaseResponseHttp {
+    response: IncidentsGraphicsMatrix[];
+}
 export class IncidentsGraphicsMatrix {
     fieldKey: string;
     totalCount: number;

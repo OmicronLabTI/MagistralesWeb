@@ -29,7 +29,6 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
 
   ngOnInit() {
-    console.log('configuration: ', this.configurationGraph)
   }
   ngAfterViewInit(): void {
     this.cdRef.detectChanges();
@@ -41,7 +40,8 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   generateGraph() {
     if (this.myChart) {
       this.myChart.data = this.getDataGraphWithSort();
-      this.myChart.options = this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph);
+      this.myChart.options = this.dataService.getOptionsGraphToShow(
+          this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip);
       this.myChart.update();
       this.checkIfShouldGetIndicators();
     } else {
@@ -65,7 +65,8 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
         this.newItemsIndicators = [...this.newItemsIndicators,
           { nameItem: label,
           background: this.myChart.data.datasets[0].backgroundColor[index],
-          percentage: this.dataService.getPercentageByItem(this.myChart.data.datasets[0].data[index], this.myChart.data.datasets[0].data),
+          percentage: String(
+              this.dataService.getPercentageByItem(this.myChart.data.datasets[0].data[index], this.myChart.data.datasets[0].data)),
           count: this.myChart.data.datasets[0].data[index]
           }];
     });
@@ -83,7 +84,8 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
       {
         type: this.configurationGraph.isPie ? 'pie' : 'bar',
         data: this.getDataGraphWithSort(),
-        options: this.dataService.getOptionsGraphToShow(this.configurationGraph.isPie, this.configurationGraph.titleForGraph),
+        options: this.dataService.getOptionsGraphToShow(
+            this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip),
       }
   )
 }
