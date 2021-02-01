@@ -22,7 +22,7 @@ import {ConfigurationGraphic, ItemIndicator} from '../../model/device/incidents.
 export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild('incidentsChart', {static: true}) incidentsChart: ElementRef;
   @ViewChild('incidentsChartSmall', {static: true}) incidentsChartSmall: ElementRef;
-  @Input() configurationGraph: ConfigurationGraphic;
+  @Input() configurationGraph: ConfigurationGraphic = new ConfigurationGraphic();
   @Output() newItemsIndicatorsEmitter = new EventEmitter<ItemIndicator[]>();
   newItemsIndicators: ItemIndicator[] = [];
   myChart = undefined;

@@ -139,12 +139,12 @@ export class WarehouseComponent implements OnInit {
       this.percentageLocal = Number(
           this.dataService.getPercentageByItem(this.localPackages.filter(itemLocal =>
               itemLocal.fieldKey.toLowerCase() === GraphType.deliveredItemLocal.toLowerCase())[0].totalCount,
-              this.localPackages.map(itemLocal => itemLocal.totalCount), true));
+              this.localPackages.map(itemLocal => (itemLocal.totalCount)), true));
 
       this.percentageForeign = Number(
           this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
               itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
-              this.foreignPackages.map(itemLocal => itemLocal.totalCount), true));
+              this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true));
 
       // generate data finish
   }
