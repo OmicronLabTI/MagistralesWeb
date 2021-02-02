@@ -4,6 +4,8 @@ import { IncidentsListComponent } from './incidents-list.component';
 import {DatePipe} from '@angular/common';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {PipesModule} from '../../pipes/pipes.module';
+import {MATERIAL_COMPONENTS} from '../../app.material';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
@@ -14,7 +16,7 @@ describe('IncidentsListComponent', () => {
       declarations: [ IncidentsListComponent ],
       providers: [DatePipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [ PipesModule]
+      imports: [ PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule]
     })
     .compileComponents();
   }));
