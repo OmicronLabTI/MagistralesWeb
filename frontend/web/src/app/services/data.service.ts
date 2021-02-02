@@ -343,25 +343,29 @@ export class DataService {
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -374,8 +378,10 @@ export class DataService {
   getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
+
     const filterDataOrders = new  ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
+    filterDataOrders.isFromIncidents = resultSearchOrderModal.isFromIncidents;
 
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
@@ -415,6 +421,10 @@ export class DataService {
       if (resultSearchOrderModal.finlabel !== '' && resultSearchOrderModal.finlabel) {
         queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
+      }
+      if (resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero && resultSearchOrderModal.orderIncidents) {
+        queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
+        filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
       }
     }
 

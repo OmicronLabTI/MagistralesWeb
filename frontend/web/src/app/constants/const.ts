@@ -117,6 +117,7 @@ export const BOOLEANS = {
 export const ConstOrders = {
     modalOrders: 'orders',
     modalOrdersIsolated: 'ordersIsolated',
+    modalIncidents: 'incidents',
     defaultDateInit: '0',
     dateFinishType: '1'
 };
@@ -223,7 +224,8 @@ export const RolesType = {
     logistic: '3',
     admin: '1',
     design: '4',
-    warehouse: '5'
+    warehouse: '5',
+    incidents: '6'
 };
 export const GraphType = {
     statusGraph: 'status',
