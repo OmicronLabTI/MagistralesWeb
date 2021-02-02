@@ -205,6 +205,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, model, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetUserOrderByDeliveryOrder(List<int> deliveryIds)
+        {
+            var deliveries = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, deliveries, null, null);
+        }
+
         /// <summary>
         /// Gets the data by the field, used for datetimes.
         /// </summary>

@@ -75,6 +75,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetAlmacenGraphData(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServiceAlmacen
+                .Setup(m => m.GetUserOrderByDeliveryOrder(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new PedidosAlmacenFacade(
                 mockServiceAlmacen.Object,
                 mapper);
@@ -194,6 +198,24 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.almacenFacade.GetAlmacenGraphData(type);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetUserOrderByDeliveryOrder()
+        {
+            // arrange
+            var type = new List<int>();
+
+            // act
+            var response = await this.almacenFacade.GetUserOrderByDeliveryOrder(type);
 
             // Assert
             Assert.IsNotNull(response);
