@@ -20,7 +20,7 @@ import {ErrorService} from '../../../services/error.service';
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
-  responseTest: IncidentsGraphicsMatrix[]  = [
+/*  responseTest: IncidentsGraphicsMatrix[]  = [
     {
       fieldKey: 'Por Recibir',
       totalCount: 1,
@@ -96,7 +96,7 @@ export class WarehouseComponent implements OnInit {
       totalCount: 15,
       graphType: 'IncidentReason'
     }
-  ];
+  ];*/
   itemsGraph: IncidentsGraphicsMatrix[] = [];
   localPackages: IncidentsGraphicsMatrix[] = [];
   foreignPackages: IncidentsGraphicsMatrix[] = [];
@@ -113,40 +113,42 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-      /*this.incidentsService.getWarehouseGraph(rangeDate).subscribe(warehouseResult => console.log('warehouseResult: ', warehouseResult)
-            , error => this.errorService.httpError(error));*/
-      // generate data init
-      // items top
-      this.itemsGraph = this.getNewReceptionData(this.responseTest.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+      this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+            , error => this.errorService.httpError(error));
+  }
+  generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
+    // generate data init
+    // items top
+    this.itemsGraph = this.getNewReceptionData(response.filter( itemGraph => itemGraph.graphType === GraphType.reception));
 
-      // local package data
-      this.localPackages = this.responseTest.filter(
-          itemGraph => itemGraph.graphType.toLowerCase() === GraphType.packageLocal.toLowerCase());
+    // local package data
+    this.localPackages = response.filter(
+        itemGraph => itemGraph.graphType.toLowerCase() === GraphType.packageLocal.toLowerCase());
 
-      // foreign package data
-      this.foreignPackages = this.responseTest.filter(
-          itemGraph => itemGraph.graphType.toLowerCase() === GraphType.foreignPackage.toLowerCase());
+    // foreign package data
+    this.foreignPackages = response.filter(
+        itemGraph => itemGraph.graphType.toLowerCase() === GraphType.foreignPackage.toLowerCase());
 
-      this.incidentsConfigurationGraph = new ConfigurationGraphic();
-      this.incidentsConfigurationGraph.isPie = true;
-      this.incidentsConfigurationGraph.titleForGraph = CONST_STRING.empty;
-      this.incidentsConfigurationGraph.dataGraph = this.responseTest.filter(
-          itemGraph => itemGraph.graphType.toLowerCase() === GraphType.incidentGraph.toLowerCase());
-      this.incidentsConfigurationGraph.isSmall = true;
-      this.incidentsConfigurationGraph.isWithFullTooltip = true;
+    this.incidentsConfigurationGraph = new ConfigurationGraphic();
+    this.incidentsConfigurationGraph.isPie = true;
+    this.incidentsConfigurationGraph.titleForGraph = CONST_STRING.empty;
+    this.incidentsConfigurationGraph.dataGraph = response.filter(
+        itemGraph => itemGraph.graphType.toLowerCase() === GraphType.incidentGraph.toLowerCase());
+    this.incidentsConfigurationGraph.isSmall = true;
+    this.incidentsConfigurationGraph.isWithFullTooltip = true;
 
-      // percentage items data
-      this.percentageLocal = Number(
-          this.dataService.getPercentageByItem(this.localPackages.filter(itemLocal =>
-              itemLocal.fieldKey.toLowerCase() === GraphType.deliveredItemLocal.toLowerCase())[0].totalCount,
-              this.localPackages.map(itemLocal => (itemLocal.totalCount)), true));
+    // percentage items data
+    this.percentageLocal = Number(
+        this.dataService.getPercentageByItem(this.localPackages.filter(itemLocal =>
+            itemLocal.fieldKey.toLowerCase() === GraphType.deliveredItemLocal.toLowerCase())[0].totalCount,
+            this.localPackages.map(itemLocal => (itemLocal.totalCount)), true));
 
-      this.percentageForeign = Number(
-          this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
-              itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
-              this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true));
+    this.percentageForeign = Number(
+        this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
+            itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
+            this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true));
 
-      // generate data finish
+    // generate data finish
   }
 
   getNewReceptionData(incidentsGraphicsMatrices: IncidentsGraphicsMatrix[]) {
