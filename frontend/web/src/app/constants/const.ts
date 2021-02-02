@@ -188,6 +188,14 @@ export const pathRoles = {
     design: [
         'pedidos',
         'pdetalle',
+        'login',
+        '**'
+    ],
+    incidents: [
+        'incidents',
+        'incidentsList',
+        'login',
+        'warehouse',
         '**'
     ]
 };
@@ -225,7 +233,7 @@ export const RolesType = {
     admin: '1',
     design: '4',
     warehouse: '5',
-    incidents: '6'
+    incidents: '7'
 };
 export const GraphType = {
     statusGraph: 'status',
