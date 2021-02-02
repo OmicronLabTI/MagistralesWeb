@@ -785,3 +785,29 @@ a.breadcrumblink:hover{
 .progress-inner{
  font-weight: bold;
 }
+
+.open-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #e7515a !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+}
+.close-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #8dbf42 !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+}
+.attending-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #6C90B3 !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+
+}

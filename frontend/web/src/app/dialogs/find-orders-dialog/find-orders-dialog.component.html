@@ -81,17 +81,21 @@
                         <mat-form-field appearance="outline" class="custom-field custom-style-status">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
-                                <mat-option *ngIf="isFromSearchOrders" value="Abierto">Abierto</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Asignado">Asignado</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="En proceso">En proceso</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Pendiente">Pendiente</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Reasignado">Reasignado</mat-option>
-                                <mat-option value="Planificado">Planificado</mat-option>
-                                <mat-option *ngIf="isFromSearchOrders" value="Liberado">Liberado</mat-option>
-                                <mat-option value="Terminado">Terminado</mat-option>
-                                <mat-option value="Finalizado">Finalizado</mat-option>
-                                <mat-option value="Almacenado">Almacenado</mat-option>
-                                <mat-option value="Cancelado">Cancelado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Abierto">Abierto</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Asignado">Asignado</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="En proceso">En proceso</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Pendiente">Pendiente</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Reasignado">Reasignado</mat-option>
+                                <mat-option value="Planificado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Planificado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Liberado">Liberado</mat-option>
+                                <mat-option value="Terminado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Terminado</mat-option>
+                                <mat-option value="Finalizado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Finalizado</mat-option>
+                                <mat-option value="Almacenado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Almacenado</mat-option>
+                                <mat-option value="Cancelado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
+
+                                <mat-option value="Abierta" *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
+                                <mat-option value="Cerrada" *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
+                                <mat-option value="Atendiendo" *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>

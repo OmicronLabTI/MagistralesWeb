@@ -23,6 +23,7 @@ export class IncidentItem  {
     stage: string;
     comments: string;
     status: string;
+    classButton?: string;
 }
 export class IncidentsGraphicsMatrix {
     fieldKey: string;

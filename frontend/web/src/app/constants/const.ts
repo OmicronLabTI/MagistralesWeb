@@ -248,3 +248,14 @@ export const TypeReception = {
     backOrder: 'back order',
     pending: 'pendiente'
 };
+
+export const TypeStatusIncidents = {
+    open: 'Abierta',
+    close: 'Cerrada',
+    attending: 'Atendiendo',
+};
+export const ClassButton = {
+    openIncident: 'open-incident',
+    closeIncident: 'close-incident',
+    attendingIncident: 'attending-incident'
+};

@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { IncidentsListRoutingModule } from './incidents-list-routing.module';
 import {IncidentsListComponent} from './incidents-list.component';
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {PipesModule} from "../../pipes/pipes.module";
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {PipesModule} from '../../pipes/pipes.module';
+import {MatTableModule} from '@angular/material/table';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {PipesModule} from "../../pipes/pipes.module";
         IncidentsListRoutingModule,
         MatIconModule,
         MatButtonModule,
-        PipesModule
+        PipesModule,
+        MatTableModule
     ]
 })
 export class IncidentsListModule { }
