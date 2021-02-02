@@ -301,5 +301,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="invoices">the invoices.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices);
+
+        /// <summary>
+        /// Gets all line products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetAllLineProducts();
+
+        /// <summary>
+        /// gets the details by date.
+        /// </summary>
+        /// <param name="initDate">the init date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailsbyDocDate(DateTime initDate, DateTime endDate);
     }
 }

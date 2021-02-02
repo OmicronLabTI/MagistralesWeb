@@ -127,5 +127,17 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceHeader(this.mapper.Map<InvoicePackageSapLookModel>(dataToLook)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetSapIds(List<int> salesid)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetSapIds(salesid));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> AlmacenGraphCount(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.AlmacenGraphCount(parameters));
+        }
     }
 }

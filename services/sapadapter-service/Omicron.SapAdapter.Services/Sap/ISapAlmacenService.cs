@@ -51,5 +51,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetDeliveryBySaleOrderId(List<int> ordersId);
+
+        /// <summary>
+        /// Gets the ids for the lines products for hgraphs.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>The data.</returns>
+        Task<ResultModel> AlmacenGraphCount(Dictionary<string, string> parameters);
     }
 }

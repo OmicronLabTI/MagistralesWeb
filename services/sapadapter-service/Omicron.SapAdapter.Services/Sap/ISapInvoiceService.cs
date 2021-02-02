@@ -66,5 +66,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="code">the invoice.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetInvoiceData(string code);
+
+        /// <summary>
+        /// Gets the delivery and invoice id by sales id.
+        /// </summary>
+        /// <param name="salesIds">the sales id separated by coma.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetSapIds(List<int> salesIds);
     }
 }
