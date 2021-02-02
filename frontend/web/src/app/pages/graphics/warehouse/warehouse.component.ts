@@ -12,6 +12,7 @@ import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic} from '../../../model/device/incidents.model';
 import {IncidentsService} from '../../../services/incidents.service';
 import {ErrorService} from '../../../services/error.service';
+import {WarehouseMock} from '../../../../mocks/warehouseListMock';
 
 
 @Component({
@@ -20,83 +21,6 @@ import {ErrorService} from '../../../services/error.service';
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
-/*  responseTest: IncidentsGraphicsMatrix[]  = [
-    {
-      fieldKey: 'Por Recibir',
-      totalCount: 1,
-      graphType: 'Almacen'
-    },
-    {
-      fieldKey: 'Almacenado',
-      totalCount: 2,
-      graphType: 'Almacen'
-    },
-    {
-      fieldKey: 'Back order',
-      totalCount: 3,
-      graphType: 'Almacen'
-    },
-    {
-      fieldKey: 'Pendiente',
-      totalCount: 4,
-      graphType: 'Almacen'
-    },
-    {
-      fieldKey: 'Empaquetado',
-      totalCount: 5,
-      graphType: 'PackageLocal'
-    },
-    {
-      fieldKey: 'Asignado',
-      totalCount: 6,
-      graphType: 'PackageLocal'
-    },
-    {
-      fieldKey: 'En Camino',
-      totalCount: 7,
-      graphType: 'PackageLocal'
-    },
-    {
-      fieldKey: 'Entregado',
-      totalCount: 8,
-      graphType: 'PackageLocal'
-    },
-    {
-      fieldKey: 'No Entregado',
-      totalCount: 9,
-      graphType: 'PackageLocal'
-    },
-    {
-      fieldKey: 'Empaquetado',
-      totalCount: 10,
-      graphType: 'PackageForeign'
-    },
-    {
-      fieldKey: 'Enviado',
-      totalCount: 6,
-      graphType: 'PackageForeign'
-    },
-    {
-      fieldKey: 'Cerrado',
-      totalCount: 12,
-      graphType: 'IncidentReason'
-    },
-    {
-      fieldKey: 'Dirección incorrecta',
-      totalCount: 13,
-      graphType: 'IncidentReason'
-    },
-    {
-      fieldKey: 'Pedido no confirmado',
-      totalCount: 14,
-      graphType: 'IncidentReason'
-    },
-    {
-      fieldKey: 'Teléfono incorrecto',
-      totalCount: 15,
-      graphType: 'IncidentReason'
-    }
-  ];*/
   itemsGraph: IncidentsGraphicsMatrix[] = [];
   localPackages: IncidentsGraphicsMatrix[] = [];
   foreignPackages: IncidentsGraphicsMatrix[] = [];
@@ -113,8 +37,9 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-      this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
-            , error => this.errorService.httpError(error));
+      /*this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+            , error => this.errorService.httpError(error));*/
+    this.generateDataWarehouse(WarehouseMock.response) // only test dev
   }
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init

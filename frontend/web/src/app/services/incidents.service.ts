@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
-import {IIncidentsGraphicRes, IWarehouseGraphicRes} from '../model/http/incidents.model';
+import {IIncidentsGraphicRes, IIncidentsListRes, IWarehouseGraphicRes} from '../model/http/incidents.model';
 import {Endpoints} from '../../environments/endpoints';
 
 @Injectable({
@@ -15,5 +15,8 @@ export class IncidentsService {
   }
   getWarehouseGraph(rangeDate: string) {
     return this.consumeService.httpGet<IWarehouseGraphicRes>(`${Endpoints.incidents.graphWarehouse}?fini=${rangeDate}`);
+  }
+  getIncidentsList(queryString: string) {
+    return this.consumeService.httpGet<IIncidentsListRes>(`${Endpoints.incidents.incidentsList}${queryString}`);
   }
 }

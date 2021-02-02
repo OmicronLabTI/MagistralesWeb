@@ -3,6 +3,8 @@ import {DataService} from '../../services/data.service';
 import {CONST_NUMBER, CONST_STRING, ConstOrders, HttpServiceTOCall} from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {ParamsPedidos} from '../../model/http/pedidos';
+import {IncidentsService} from '../../services/incidents.service';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-incidents-list',
@@ -18,7 +20,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   queryString = CONST_STRING.empty;
   isSearchWithFilter = false;
   fullQueryStringIncidents = CONST_STRING.empty;
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private incidentsService: IncidentsService,
+              private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
     this.filterDataIncidents.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
@@ -28,7 +31,6 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
-      console.log('resultObs;: ', resultSearchOrderModal)
       if (resultSearchOrderModal.isFromIncidents) {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
@@ -43,7 +45,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
-    // this.getPedidos();
+    this.updateIncidentList();
     console.log('filterData', this.filterDataIncidents)
     console.log('fullString: ', this.fullQueryStringIncidents)
   }
@@ -57,5 +59,9 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
   getFullQueryString() {
     this.fullQueryStringIncidents = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+  }
+  updateIncidentList() {
+    this.incidentsService.getIncidentsList(this.fullQueryStringIncidents).subscribe( incidentsListResult =>
+        console.log('incidentsList: ', incidentsListResult), error => this.errorService.httpError(error));
   }
 }
