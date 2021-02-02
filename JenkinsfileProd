@@ -118,7 +118,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-pedidos-repository:latest"
                     }
-                }
+                }*/
 				echo 'Building SapAdapter'
                 dir ('services/sapadapter-service/'){
                     sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
@@ -130,7 +130,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-sapadapter-repository:latest"
                     }
-                }
+                }/*
 				echo 'Building warehouses'
                 dir ('services/warehouses-service/'){
                     sh 'dotnet publish Omicron.Warehouses.Api/Omicron.Warehouses.Api.csproj -c Release -o app/'
@@ -142,7 +142,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository:latest"
                     }
-                }*/
+                }
                 echo 'Building reporting'
                 dir ('services/reporting-service/'){
                     sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
@@ -154,7 +154,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-reporting-repository:latest"
                     }
-                }
+                }*/
             }
         }
         stage('Kubernetes Up') {
