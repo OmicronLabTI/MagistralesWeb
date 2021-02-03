@@ -256,6 +256,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string BackOrder = "Back Order";
 
         /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Recibir = "Recibir";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
