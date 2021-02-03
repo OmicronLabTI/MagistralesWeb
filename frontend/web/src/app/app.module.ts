@@ -17,11 +17,12 @@ import { MiListaComponent } from './dialogs/mi-lista/mi-lista.component';
 import { ComponentslistComponent } from './dialogs/componentslist/componentslist.component';
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {SignaturePadModule} from 'angular2-signaturepad';
+import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
 
 @NgModule({
     declarations: [
         AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
-        ComponentslistComponent, RequestSignatureDialogComponent,
+        ComponentslistComponent, RequestSignatureDialogComponent, AddCommentsDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -47,7 +48,8 @@ import {SignaturePadModule} from 'angular2-signaturepad';
         FindOrdersDialogComponent,
         MiListaComponent,
         ComponentslistComponent,
-        RequestSignatureDialogComponent
+        RequestSignatureDialogComponent,
+        AddCommentsDialogComponent
     ],
     exports: [
     ],

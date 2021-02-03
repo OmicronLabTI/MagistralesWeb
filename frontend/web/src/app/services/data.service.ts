@@ -20,6 +20,7 @@ import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
 import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
+import {CommentsConfig} from '../model/device/incidents.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,22 @@ export class DataService {
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   private openSignatureDialog = new Subject<any>();
   private newDataSignature = new Subject<any>();
+  private openCommentsDialog = new Subject<CommentsConfig>();
+  private newCommentsResult = new Subject<CommentsConfig>();
   constructor(private datePipe: DatePipe) { }
+
+  setNewCommentsResult(newCommentsConfig: CommentsConfig) {
+    this.newCommentsResult.next(newCommentsConfig);
+  }
+  getNewCommentsResult() {
+    return this.newCommentsResult.asObservable();
+  }
+  setOpenCommentsDialog(commentsConfig: CommentsConfig) {
+    this.openCommentsDialog.next(commentsConfig);
+  }
+  getOpenCommentsDialog() {
+    return this.openCommentsDialog.asObservable();
+  }
 
   setNewDataSignature(newSignature: any) {
     this.newDataSignature.next(newSignature);
@@ -529,7 +545,7 @@ export class DataService {
         }
       }
   )
-  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false){
+  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false) {
     if (!isOnlyNumberPercent) {
       return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
     } else {
@@ -561,5 +577,6 @@ export class DataService {
     }
     return colorsString;
   }
+
 
 }

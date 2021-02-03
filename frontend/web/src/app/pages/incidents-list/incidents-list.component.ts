@@ -12,8 +12,10 @@ import {Subscription} from 'rxjs';
 import {ParamsPedidos} from '../../model/http/pedidos';
 import {IncidentsService} from '../../services/incidents.service';
 import {ErrorService} from '../../services/error.service';
-import {IIncidentsListRes, IncidentItem} from '../../model/http/incidents.model';
+import {ChangeStatusIncidentReq, IIncidentsListRes, IncidentItem} from '../../model/http/incidents.model';
 import {MatTableDataSource} from '@angular/material/table';
+import {CommentsConfig} from '../../model/device/incidents.model';
+import {Messages} from '../../constants/messages';
 
 @Component({
   selector: 'app-incidents-list',
@@ -42,7 +44,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     'comments',
     'status'];
   dataSource = new MatTableDataSource<IncidentItem>();
-
+  currentIndex = CONST_NUMBER.zero;
   constructor(private dataService: DataService, private incidentsService: IncidentsService,
               private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
@@ -59,6 +61,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
+    this.subscriptionObservables.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+        this.onSuccessResult(newCommentsResult)));
     this.queryIncidentsString = `?fini=${this.filterDataIncidents.dateFull}`;
     this.getFullQueryString();
     this.updateIncidentList();
@@ -73,8 +77,6 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.updateIncidentList();
-    console.log('filterData', this.filterDataIncidents)
-    console.log('fullString: ', this.fullQueryStringIncidents)
   }
 
   openFindOrdersDialog() {
@@ -96,11 +98,13 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
 
     // paginator init again
     console.log('incidentsListResult: ', incidentsListResult)
-    this.getDataWithClass(incidentsListResult.response)
+    this.getDataWithClass(incidentsListResult.response);
   }
 
    getDataWithClass(response: IncidentItem[]) {
       response.forEach( itemIncident => {
+        itemIncident.status = itemIncident.saleOrder === 76244 ? TypeStatusIncidents.attending : itemIncident.status;
+        itemIncident.status = itemIncident.saleOrder === 76229 ? TypeStatusIncidents.attending : itemIncident.status;
         switch (itemIncident.status.toLowerCase()) {
           case TypeStatusIncidents.open.toLowerCase():
             itemIncident.classButton = ClassButton.openIncident;
@@ -114,5 +118,59 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
         }
       });
       this.dataSource.data = response;
+  }
+
+  onSuccessResult(newCommentsResult: CommentsConfig) {
+    if (newCommentsResult.isForClose) {
+      this.changeStatusIncidentService({
+        saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
+        status: TypeStatusIncidents.close, comments: newCommentsResult.comments,
+        itemCode: this.dataSource.data[this.currentIndex].itemCode});
+    }
+  }
+
+  reloadIncidentsList() {
+    this.updateIncidentList();
+    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
+
+  openCommentsDialog(index: number) {
+    this.currentIndex = index;
+    this.setOpenCommentsDialog(index);
+  }
+  openChangeComments(index: number) {
+    this.currentIndex = index;
+    if (this.dataSource.data[index].status.toLowerCase() === TypeStatusIncidents.attending.toLowerCase()) {
+      this.setOpenCommentsDialog(index, true);
+    } else if (this.dataSource.data[index].status.toLowerCase() === TypeStatusIncidents.open.toLowerCase()) {
+      this.changeStatusComments();
+    }
+  }
+  setOpenCommentsDialog(index: number, isForClose: boolean = false)  {
+    this.dataService.setOpenCommentsDialog({
+      comments: this.dataSource.data[index].comments,
+      isReadOnly: !isForClose,
+      isForClose});
+  }
+
+  private changeStatusComments() {
+    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} ${
+      this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
+    this.dataService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.changeStatusIncidentService({
+              saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
+              status: TypeStatusIncidents.attending,
+              comments: this.dataSource.data[this.currentIndex].comments,
+              itemCode: this.dataSource.data[this.currentIndex].itemCode});
+          }
+          });
+  }
+
+  changeStatusIncidentService(changeStatus: ChangeStatusIncidentReq) {
+    this.incidentsService.patchStatusIncidents(changeStatus).subscribe(() => {
+      this.reloadIncidentsList();
+    }, error => this.errorService.httpError(error));
   }
 }

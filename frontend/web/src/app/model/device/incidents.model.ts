@@ -13,4 +13,9 @@ export class ItemIndicator {
     percentage: string;
     count: number;
 }
+export class CommentsConfig {
+    comments: string;
+    isReadOnly?: boolean;
+    isForClose?: boolean;
+}
 

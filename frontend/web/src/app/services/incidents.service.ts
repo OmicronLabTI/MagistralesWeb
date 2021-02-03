@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
-import {IIncidentsGraphicRes, IIncidentsListRes, IWarehouseGraphicRes} from '../model/http/incidents.model';
+import {
+  ChangeStatusIncidentReq,
+  IIncidentsGraphicRes,
+  IIncidentsListRes,
+  IWarehouseGraphicRes
+} from '../model/http/incidents.model';
 import {Endpoints} from '../../environments/endpoints';
 
 @Injectable({
@@ -18,5 +23,8 @@ export class IncidentsService {
   }
   getIncidentsList(queryString: string) {
     return this.consumeService.httpGet<IIncidentsListRes>(`${Endpoints.incidents.incidentsList}${queryString}`);
+  }
+  patchStatusIncidents(changeStatus: ChangeStatusIncidentReq) {
+    return this.consumeService.httpPatch(Endpoints.incidents.changeStatus, changeStatus);
   }
 }

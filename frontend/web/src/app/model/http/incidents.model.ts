@@ -10,7 +10,6 @@ export class IWarehouseGraphicRes extends BaseResponseHttp {
 export class IIncidentsListRes extends BaseResponseHttp {
     response: IncidentItem[];
 }
-
 export class IncidentItem  {
     createDate: Date;
     saleOrder: number;
@@ -30,4 +29,10 @@ export class IncidentsGraphicsMatrix {
     totalCount: number;
     graphType: string;
     color?: string;
+}
+export class ChangeStatusIncidentReq {
+    saleOrderId: number;
+    itemCode: string;
+    comments: string;
+    status: string;
 }
