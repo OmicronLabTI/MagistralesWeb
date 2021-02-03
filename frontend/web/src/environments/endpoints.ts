@@ -59,6 +59,12 @@ export const Endpoints = {
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`
+  },
+  incidents: {
+    graphIncidents: `${environment.baseUrl}/api/almacen/incidents/graph`,
+    graphWarehouse: `${environment.baseUrl}/api/almacen/graphs`,
+    incidentsList: `${environment.baseUrl}/api/almacen/incidents`,
+    changeStatus: `${environment.baseUrl}/api/almacen/incidents`
   }
 };
 

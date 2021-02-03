@@ -13,6 +13,7 @@ export const CONST_NUMBER = {
     seven: 7,
     fifty: 50,
     oneHundred: 100,
+    threeHundred: 299,
     oneThousand: 999
 };
 export const CONST_STRING = {
@@ -52,7 +53,8 @@ export enum HttpServiceTOCall {
     USERS,
     DETAIL_FORMULA,
     ORDERS_ISOLATED,
-    PRODUCTIVITY
+    PRODUCTIVITY,
+    INCIDENTS_LIST,
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -116,6 +118,7 @@ export const BOOLEANS = {
 export const ConstOrders = {
     modalOrders: 'orders',
     modalOrdersIsolated: 'ordersIsolated',
+    modalIncidents: 'incidents',
     defaultDateInit: '0',
     dateFinishType: '1'
 };
@@ -145,24 +148,24 @@ export const MaterialRequestPage = {
 };
 
 export const Colors = [
-    'rgba(70, 61, 242, 95)',
-    'rgba(5, 112, 255, 100)',
-    'rgba(69, 216, 230, 90)',
-    'rgba(63, 252, 171, 99)',
-    'rgba(61, 242, 70, 95)',
-    'rgba(242, 141, 206, 95)',
-    'rgba(160, 230, 146, 90)',
-    'rgba(146, 200, 252, 99)',
-    'rgba(242, 141, 225, 95)',
-    'rgba(242, 99, 85, 95)',
-    'rgba(255, 223, 107, 100)',
-    'rgba(92, 230, 106, 90)',
-    'rgba(122, 179, 255, 100)',
-    'rgba(242, 85, 236, 95)',
-    'rgba(82, 233, 242, 95)',
-    'rgba(82, 100, 242, 95)',
-    'rgba(230, 176, 90, 90)',
-    'rgba(71, 255, 78, 100)'
+    'rgb(70,61,242)',
+    'rgb(23,119,246)',
+    'rgb(74,185,196)',
+    'rgb(82,189,144)',
+    'rgb(3,172,12)',
+    'rgb(248,126,204)',
+    'rgb(136,6,146)',
+    'rgb(246,114,62)',
+    'rgb(232,236,112)',
+    'rgb(123,83,132)',
+    'rgb(11,77,158)',
+    'rgb(230,92,175)',
+    'rgb(69,58,55)',
+    'rgb(127,112,208)',
+    'rgb(52,4,149)',
+    'rgb(224,168,125)',
+    'rgb(224,25,64)',
+    'rgb(62,90,63)'
 ];
 
 export const pathRoles = {
@@ -186,6 +189,14 @@ export const pathRoles = {
     design: [
         'pedidos',
         'pdetalle',
+        'login',
+        '**'
+    ],
+    incidents: [
+        'incidents',
+        'incidentsList',
+        'login',
+        'warehouse',
         '**'
     ]
 };
@@ -194,13 +205,22 @@ export const CONST_PRODUCTIVITY = {
 };
 
 export const RouterPaths = {
-  materialRequest: 'materialRequest'
+    materialRequest: 'materialRequest',
+    incidents: 'incidents',
+    incidentsList: 'incidentsList',
+    warehousePage: 'warehouse'
 };
 export enum TypeProperty {
     code,
     unit,
     description,
     requestQuantity
+}
+
+export enum TypeInitialRange {
+    onlyDefault,
+    monthCalendar,
+    mont
 }
 
 export enum TypeToSeeTap {
@@ -213,5 +233,38 @@ export const RolesType = {
     logistic: '3',
     admin: '1',
     design: '4',
-    warehouse: '5'
+    warehouse: '5',
+    incidents: '7'
+};
+export const GraphType = {
+    statusGraph: 'status',
+    incidentGraph: 'IncidentReason',
+    reception: 'Almacen',
+    packageLocal: 'PackageLocal',
+    foreignPackage: 'PackageForeign',
+    deliveredItemLocal: 'Entregado',
+    sentItemForeign: 'Enviado'
+};
+export const ColorsReception = {
+    byReceive: '#007AFF',
+    backOrder: '#D87F01',
+    pending: '#B33D66',
+    warehoused: '#B51CAA'
+};
+export const TypeReception = {
+    byReceive: 'por recibir',
+    warehoused: 'almacenado',
+    backOrder: 'back order',
+    pending: 'pendiente'
+};
+
+export const TypeStatusIncidents = {
+    open: 'Abierta',
+    close: 'Cerrada',
+    attending: 'Atendiendo',
+};
+export const ClassButton = {
+    openIncident: 'open-incident',
+    closeIncident: 'close-incident',
+    attendingIncident: 'attending-incident'
 };

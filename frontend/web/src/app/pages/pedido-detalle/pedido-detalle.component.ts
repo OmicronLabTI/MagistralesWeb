@@ -23,8 +23,8 @@ import {CancelOrderReq, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
-import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-comments-dialog.component';
 import {DownloadImagesService} from '../../services/download-images.service';
+import {CommentsConfig} from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -86,6 +86,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.signatureData = newDataSignature;
       this.sendToLabelsFinish();
     }));
+    this.subscriptionCallHttpDetail.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+      this.successNewComments(newCommentsResult)));
   }
 
   getDetallePedido() {
@@ -252,14 +254,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   addCommentsDialog() {
     if (!this.isCorrectToAddComments) {
-      this.dialog.open(AddCommentsDialogComponent, {
-        panelClass: 'custom-dialog-container',
-        data: this.dataSource.data[0].comments
-      }).afterClosed().subscribe(addCommentsResult => {
-        if ( addCommentsResult) {
-          this.addCommentsOnService(addCommentsResult);
-        }
-      });
+      this.dataService.setOpenCommentsDialog({comments: this.dataSource.data[0].comments});
     }
   }
 
@@ -361,6 +356,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.presentToastCustom(
         this.dataService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
         CONST_STRING.empty , true, false, ClassNames.popupCustom);
+  }
+
+  successNewComments(newCommentsResult: CommentsConfig) {
+    this.addCommentsOnService(newCommentsResult.comments);
   }
 }
 

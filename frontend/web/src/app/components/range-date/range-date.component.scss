@@ -1,0 +1,31 @@
+.range-date-component-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+
+  .range-date-title {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: #6c90b3 1px solid;
+    border-radius: 5px;
+    margin-bottom: 1.34375em;
+
+
+  }
+  .dates-components-container {
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+
+    .custom-date-range {
+      width: 50%;
+    }
+  }
+
+
+}
+
