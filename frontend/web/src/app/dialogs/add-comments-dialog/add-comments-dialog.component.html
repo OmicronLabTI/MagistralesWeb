@@ -34,11 +34,11 @@
                           [ngClass]="commentsConfig.isReadOnly ? 'custom-options-footer' : ''">
             <mat-error class="error-message-custom" *ngIf="!isCorrectData">Máximo 1000 caracteres</mat-error>
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal" *ngIf="!commentsConfig.isReadOnly">Cancelar</button>
-            <button mat-button *ngIf="!commentsConfig.isReadOnly" [ngClass]="!(newComments.trim().length > 4 && isCorrectData) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(newComments.trim().length > 4 && isCorrectData)" (click)="saveComments()">
+            <button mat-button *ngIf="!commentsConfig.isReadOnly && !commentsConfig.isForClose" [ngClass]="!(newComments.trim().length > 4 && isCorrectData) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(newComments.trim().length > 4 && isCorrectData)" (click)="saveComments()">
                 Guardar
             </button>
-            <button mat-button *ngIf="commentsConfig.isReadOnly" class="btn-add-modal btn--modal" mat-dialog-close (click)="saveComments()">
-                Aceptar
+            <button mat-button *ngIf="commentsConfig.isReadOnly || commentsConfig.isForClose" class="btn-add-modal btn--modal" mat-dialog-close (click)="saveComments()">
+                {{ commentsConfig.isReadOnly ? 'Aceptar' : 'Guardar' }}
             </button>
         </mat-card-actions>
     </mat-card>

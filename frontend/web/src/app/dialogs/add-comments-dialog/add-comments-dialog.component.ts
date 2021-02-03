@@ -32,8 +32,11 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
     this.maxLengthComments = this.commentsConfig.isForClose ? CONST_NUMBER.oneHundred.toString() : CONST_NUMBER.oneThousand.toString();
   }
   saveComments() {
-    if (this.commentsConfig.isReadOnly) {
-      this.dialogRef.close();
+    if (this.commentsConfig.isReadOnly || this.commentsConfig.isForClose ) {
+      this.dialogRef.close({
+        isReadOnly: this.commentsConfig.isReadOnly,
+        isForClose: this.commentsConfig.isForClose,
+        comments: CONST_STRING.empty});
     }
 
     if (this.getIsCorrectData()) {

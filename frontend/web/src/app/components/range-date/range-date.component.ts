@@ -31,8 +31,8 @@ export class RangeDateComponent implements OnInit {
   }
 
   onDataChange() {
-    this.minStartDate = this.dataService.getMaxMinDate(this.finishDate, this.maxMonthsRange, false);
-    this.maxFinishDate = this.dataService.getMaxMinDate(this.startDate, this.maxMonthsRange, true);
+    this.minStartDate = this.dataService.getMaxMinDate(this.finishDate, Number(this.maxMonthsRange), false);
+    this.maxFinishDate = this.dataService.getMaxMinDate(this.startDate, Number(this.maxMonthsRange), true);
     this.newRangeEvent.emit(this.dataService.getDateFormatted(this.startDate, this.finishDate, false));
   }
 }
