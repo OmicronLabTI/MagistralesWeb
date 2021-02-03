@@ -190,7 +190,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var ordersByDates = (await this.pedidosDao.GetUserOrderByFinalizeDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).Where(x => !x.IsIsolatedProductionOrder).ToList();
 
-            var idsSalesFinalized = ordersByDates.Where(x => x.IsSalesOrder).DistinctBy(x => x.Salesorderid).Select(y => y.Salesorderid).ToList();
+            var idsSalesFinalized = ordersByDates.Where(x => x.IsSalesOrder && x.Status == ServiceConstants.Finalizado).DistinctBy(x => x.Salesorderid).Select(y => y.Salesorderid).ToList();
             var idsPossiblePending = ordersByDates.Where(x => x.IsProductionOrder && (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado)).Select(y => y.Salesorderid).Distinct().ToList();
 
             var idsPending = idsPossiblePending.Where(x => !idsSalesFinalized.Any(y => y == x)).ToList();
@@ -202,7 +202,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 RecibirTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Finalizado && x.FinishedLabel == 1),
                 AlmacenadosTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Almacenado),
                 BackOrderTotal = ordersByDates.Count(x => x.IsSalesOrder && x.StatusAlmacen == ServiceConstants.BackOrder),
-                PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 1) && x.All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
+                PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 1) && x.Where(z => z.IsProductionOrder).All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
                 LocalPackageTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
                 LocalNotDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.NoEntregado),
                 LocalAsignedTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Asignado),
