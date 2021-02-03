@@ -53,10 +53,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
-            var listIds = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
-            listIds.AddRange(lineProducts.Select(y => y.SaleOrderId).Distinct());
+            var listIds = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => y.DeliveryId).ToList();
+            listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
+            listIds = listIds.Distinct().ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listIds)).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();

@@ -83,14 +83,6 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CreateRemisionQr()
         {
             // arrange
-            var remisionQr = new RemisionQrModel
-            {
-                RemisionId = 100,
-                NeedsCooling = true,
-                PedidoId = 300,
-                TotalPieces = 5,
-            };
-
             var mockAlmacen = new Mock<IAlmacenService>();
             var mockSapAdapter = new Mock<ISapAdapter>();
 
@@ -121,7 +113,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var lineResult = new List<LineProductsModel>
             {
-                new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 106 },
             };
 
             var responseAlmacen = this.GenerateResultModel(lineResult);

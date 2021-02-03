@@ -476,6 +476,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// delivery contants.
+        /// </summary>
+        public const string Delivery = "delivery";
+
+        /// <summary>
         /// the nvo leon state.
         /// </summary>
         public const string NuevoLeon = "Nuevo León";
@@ -652,6 +657,7 @@ namespace Omicron.Pedidos.Services.Constants
         {
             Pendiente,
             Finalizado,
+            Almacenado,
         };
     }
 }
