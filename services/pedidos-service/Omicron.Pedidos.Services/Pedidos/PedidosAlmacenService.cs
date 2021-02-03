@@ -92,8 +92,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = (await this.pedidosDao.GetUserOrderByStatus(new List<string> { ServiceConstants.Almacenado })).ToList();
 
-            var orderToReturn = userOrders
-                .Where(x => x.IsProductionOrder && string.IsNullOrEmpty(x.StatusInvoice))
+            var listToAdd = new List<UserOrderModel>();
+
+            userOrders.GroupBy(x => x.DeliveryId).ToList().ForEach(y =>
+            {
+                var products = y.Where(z => z.IsProductionOrder).ToList();
+
+                if (!products.All(z => z.StatusAlmacen == ServiceConstants.Empaquetado))
+                {
+                    listToAdd.AddRange(products);
+                }
+            });
+
+            var orderToReturn = listToAdd
                 .Select(x => new
                 {
                     x.Salesorderid,
@@ -112,14 +123,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
 
-            var orderToReturn = userOrders
-                .Where(x => string.IsNullOrEmpty(x.StatusInvoice))
+            var orderToReturn = userOrders.Where(y => y.IsProductionOrder && string.IsNullOrEmpty(y.StatusInvoice))
                 .Select(x => new
                 {
-                    Salesorderid = x.Salesorderid,
-                    Productionorderid = x.Productionorderid,
-                    Status = x.Status,
-                    StatusAlmacen = x.StatusAlmacen,
+                    x.Salesorderid,
+                    x.Productionorderid,
+                    x.Status,
+                    x.StatusAlmacen,
+                    x.DeliveryId,
                 })
                 .ToList();
 
@@ -136,11 +147,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
 
             var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-            var invoiceIDs = ordersToLoop.Where(x => x.IsSalesOrder).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList();
+            var invoiceIDs = ordersToLoop.Where(x => x.IsProductionOrder).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList();
             ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
 
             var orderToReturn = ordersToLoop
-                .Where(x => x.IsSalesOrder && arrayStatus.Contains(x.StatusInvoice))
+                .Where(x => x.IsProductionOrder && arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {

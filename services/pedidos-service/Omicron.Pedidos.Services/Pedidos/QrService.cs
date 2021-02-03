@@ -162,7 +162,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (!saleOrders.Any())
             {
                 var lineProducts = await this.GetOrdersFromAlmacenDict(ServiceConstants.AlmacenGetOrderByInvoice, invoiceIds);
-                lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).ToList().ForEach(y =>
+                lineProducts.ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
                     {
@@ -173,6 +173,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     saleOrders.Add(newOrder);
                 });
             }
+
+            saleOrders = saleOrders.DistinctBy(x => x.InvoiceId).ToList();
 
             var urls = await this.GetUrlQrFactura(saleOrders, parameters, savedQrRoutes);
             urls.AddRange(savedQrRoutes);
