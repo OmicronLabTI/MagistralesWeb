@@ -1,7 +1,12 @@
 .find-orders-container{
   width: 36rem;
   height: 32rem;
+
 }
+.find-orders-container-custom {
+  height: 20rem;
+}
+
 .orders-card{
   width: 100%;
   height: 100%;
@@ -27,10 +32,18 @@
   display: flex;
   flex-direction: row;
 
+  .status-custom-incidents {
+    margin-top: 38px !important;
+  }
+
 }
 .content-card-container{
   width: 100%;
   height: 75%;
+}
+.content-card-container-custom {
+  padding-top: 20px;
+  height: 60%;
 }
 .form-field-full{
   width: 100%;
@@ -46,6 +59,15 @@
   width: 65%;
   height: 100%;
   padding: 2%;
+
+  .error-date-custom-incidents {
+    padding: 10px;
+  }
+
+  .order-custom-incidents {
+      margin-top: 25px !important;
+  }
+
 }
 .form-field-right-no-padding {
   width: 65%;
@@ -77,6 +99,10 @@
   flex-direction: row;
   justify-content: flex-end;
 }
+.options-footer-custom{
+  height: 20%;
+}
+
 .btn-cancel-modal{
   font-size: 1em;
   background-color: #fff;
