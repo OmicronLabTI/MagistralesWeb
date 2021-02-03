@@ -103,8 +103,6 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
 
    getDataWithClass(response: IncidentItem[]) {
       response.forEach( itemIncident => {
-        itemIncident.status = itemIncident.saleOrder === 76244 ? TypeStatusIncidents.attending : itemIncident.status;
-        itemIncident.status = itemIncident.saleOrder === 76229 ? TypeStatusIncidents.attending : itemIncident.status;
         switch (itemIncident.status.toLowerCase()) {
           case TypeStatusIncidents.open.toLowerCase():
             itemIncident.classButton = ClassButton.openIncident;
