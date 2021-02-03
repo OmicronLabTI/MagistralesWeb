@@ -37,9 +37,8 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-      /*this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
-            , error => this.errorService.httpError(error));*/
-    this.generateDataWarehouse(WarehouseMock.response) // only test dev
+      this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+            , error => this.errorService.httpError(error));
   }
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init
@@ -66,12 +65,12 @@ export class WarehouseComponent implements OnInit {
     this.percentageLocal = Number(
         this.dataService.getPercentageByItem(this.localPackages.filter(itemLocal =>
             itemLocal.fieldKey.toLowerCase() === GraphType.deliveredItemLocal.toLowerCase())[0].totalCount,
-            this.localPackages.map(itemLocal => (itemLocal.totalCount)), true));
+            this.localPackages.map(itemLocal => (itemLocal.totalCount)), true)) || 0;
 
     this.percentageForeign = Number(
         this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
             itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
-            this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true));
+            this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true)) || 0;
 
     // generate data finish
   }
