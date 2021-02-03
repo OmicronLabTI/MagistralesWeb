@@ -62,5 +62,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the dict.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetAlmacenGraphData(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the data by delivery id.
+        /// </summary>
+        /// <param name="deliveryIds">the deliveries.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrderByDeliveryOrder(List<int> deliveryIds);
     }
 }

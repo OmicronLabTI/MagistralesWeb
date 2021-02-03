@@ -94,5 +94,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// Datetime userid.
         /// </value>
         public string InvoiceQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int DeliveryId { get; set; }
     }
 }

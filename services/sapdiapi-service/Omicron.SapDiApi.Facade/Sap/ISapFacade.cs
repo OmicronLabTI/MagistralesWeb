@@ -70,6 +70,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> CreateDelivery(List<CreateDeliveryDto> createDelivery);
 
         /// <summary>
+        /// Creates the delivery by products.
+        /// </summary>
+        /// <param name="createDeliveries">the deliveries.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryDto> createDeliveries);
+
+        /// <summary>
         /// Updates the value for tracking.
         /// </summary>
         /// <param name="sendPackage">the package.</param>

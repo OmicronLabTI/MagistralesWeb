@@ -523,6 +523,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.DocDate >= initDate && x.DocDate <= endDate));
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode)
+        {
+            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => itemCode.Contains(x.ProductoId)));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

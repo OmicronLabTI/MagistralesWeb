@@ -173,6 +173,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder);
 
         /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="delivery">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteByDelivery(List<int> delivery);
+
+        /// <summary>
         /// Gets the production qr invoice by invoiceid.
         /// </summary>
         /// <param name="invoiceId">the list of invoices.</param>
@@ -205,8 +212,10 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// </summary>
         /// <param name="status">The status tu,</param>
         /// <param name="dateToLook">the min date to look.</param>
+        /// <param name="statusPending">The status for pending.</param>
+        /// <param name="secondStatus">The second status.</param>
         /// <returns>the data.</returns>
-        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook);
+        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus);
 
         /// <summary>
         /// Gets the orders for almance.
@@ -260,5 +269,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate);
+
+        /// <summary>
+        /// Looks the orders by delivery id.
+        /// </summary>
+        /// <param name="deliveryIds">the deliveryies.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds);
     }
 }

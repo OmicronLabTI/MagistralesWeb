@@ -246,6 +246,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string NoEntregado = "No Entregado";
 
         /// <summary>
+        /// status pendiente.
+        /// </summary>
+        public const string Pendiente = "Pendiente";
+
+        /// <summary>
+        /// status back order.
+        /// </summary>
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";

@@ -74,6 +74,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> CreateDelivery(List<CreateDeliveryModel> createDelivery);
 
         /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the objects to create.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateDeliveryPartial(List<CreateDeliveryModel> createDelivery);
+
+        /// <summary>
         /// Updates the package tracking data.
         /// </summary>
         /// <param name="sendPackage">the data.</param>

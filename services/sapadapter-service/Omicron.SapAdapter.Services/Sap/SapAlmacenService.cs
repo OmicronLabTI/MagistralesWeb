@@ -56,10 +56,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
             var types = typesString.Split(",").ToList();
 
-            var dateToLook = await this.GetMaxDaysToLook();
             var userResponse = await this.GetUserOrdersToLook();
             var lineProducts = await this.GetLineProductsToLook();
-            var sapOrders = await this.GetSapLinesToLook(dateToLook, types, userResponse, lineProducts);
+            var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var totalFilter = sapOrders.Item1.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders.Item1, lineProducts.Item1, parameters);
 
@@ -172,33 +171,21 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// Gets the max days to look.
-        /// </summary>
-        /// <returns>the datetime.</returns>
-        private async Task<DateTime> GetMaxDaysToLook()
-        {
-            var routeParamas = $"{ServiceConstants.GetParams}?{ServiceConstants.SentMaxDays}={ServiceConstants.SentMaxDays}";
-            var catalogResponse = await this.catalogsService.GetParams(routeParamas);
-            var catalog = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString());
-            var catalogValue = catalog.FirstOrDefault();
-            catalogValue ??= new ParametersModel { Value = "10" };
-
-            int.TryParse(catalogValue.Value, out var maxDays);
-            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
-            return new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
-        }
-
-        /// <summary>
         /// Gets the orders that are finalized and all the productin orders.
         /// </summary>
         /// <returns>thhe data.</returns>
-        private async Task<Tuple<List<UserOrderModel>, List<int>>> GetUserOrdersToLook()
+        private async Task<Tuple<List<UserOrderModel>, List<int>, DateTime>> GetUserOrdersToLook()
         {
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
 
             var listIds = JsonConvert.DeserializeObject<List<int>>(userOrderModel.ExceptionMessage);
-            return new Tuple<List<UserOrderModel>, List<int>>(userOrders, listIds);
+
+            int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
+            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
+            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+
+            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, listIds, dateToLook);
         }
 
         /// <summary>
@@ -220,18 +207,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the sap orders to look.
         /// </summary>
-        /// <param name="dateToLook">the date max to look.</param>
         /// <param name="types">the types.</param>
         /// <param name="userOrdersTuple">the user order tuple.</param>
         /// <param name="lineProductTuple">the line product tuple.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapLinesToLook(DateTime dateToLook, List<string> types, Tuple<List<UserOrderModel>, List<int>> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
             var listHeaderToReturn = new List<CompleteAlmacenOrderModel>();
             var idsToIgnore = userOrdersTuple.Item2;
             idsToIgnore.AddRange(lineProductTuple.Item2);
 
-            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(dateToLook)).ToList();
+            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+
+            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
@@ -257,7 +245,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (types.Contains(ServiceConstants.Line))
             {
-                var listMixta = sapOrdersGroup.Where(x => orderHeaders.Where(y => y.PedidoId == x.Key).Count() == 0);
+                var listMixta = sapOrdersGroup.Where(x => orderHeaders.Where(y => y.PedidoId == x.Key).Count() == 0 && x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listHeaderToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
@@ -287,6 +275,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, salesIds);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
+            var productsIds = sapOrders.Where(x => salesIds.Contains(x.DocNum)).Select(y => y.Detalles.ProductoId).Distinct().ToList();
+            var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
+
             foreach (var so in salesIds)
             {
                 var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
@@ -294,7 +285,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var order = orders.FirstOrDefault();
 
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
-                var lineOrder = lineProducts.FirstOrDefault(x => x.SaleOrderId == so && string.IsNullOrEmpty(x.ItemCode));
+                var lineOrders = lineProducts.Where(x => x.SaleOrderId == so).ToList();
 
                 var userProdOrders = userOrders.Count(x => x.Salesorderid.Equals(so.ToString()) && !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Almacenado));
                 var lineProductsCount = lineProducts.Count(x => x.SaleOrderId == so && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado);
@@ -304,12 +295,18 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = orders.Count;
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
-                var salesStatus = userOrder == null || userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : userOrder.Status;
-                salesStatus = lineOrder == null ? salesStatus : lineOrder.StatusAlmacen;
+
+                var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
+                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) ? userOrder.StatusAlmacen : salesStatusMagistral;
+
+                var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
+
+                var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
+
                 var client = order == null ? string.Empty : order.Cliente;
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
 
-                var productList = await this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents);
+                var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
@@ -382,14 +379,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="detailsList">the detail List.</param>
         /// <param name="lineProductsModel">The lines products.</param>
         /// <param name="incidents">The incidents.</param>
+        /// <param name="products">the products id.</param>
         /// <returns>the products.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<CompleteDetailOrderModel> detailsList, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents)
+        private List<ProductListModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<CompleteDetailOrderModel> detailsList, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<ProductoModel> products)
         {
             var listToReturn = new List<ProductListModel>();
             foreach (var order in sapOrders)
             {
-                var item = (await this.sapDao.GetProductById(order.Detalles.ProductoId)).FirstOrDefault();
-                item = item == null ? new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty } : item;
+                var item = products.FirstOrDefault(x => order.Detalles.ProductoId == x.ProductoId);
+                item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
                 var fabOrder = detailsList.FirstOrDefault(x => x.CodigoProducto.Equals(order.Detalles.ProductoId));
                 var orderId = fabOrder == null ? string.Empty : fabOrder.OrdenFabricacionId.ToString();
@@ -398,17 +396,22 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
                 var orderStatus = ServiceConstants.PorRecibir;
+                var hasDelivery = false;
                 var batches = new List<string>();
 
                 if (item.IsMagistral.Equals("Y"))
                 {
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(orderId));
-                    orderStatus = userFabOrder == null || !userFabOrder.Status.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabOrder.Status;
+                    userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
+                    orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
+                    hasDelivery = userFabOrder.DeliveryId != 0;
                 }
                 else
                 {
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(item.ProductoId));
-                    orderStatus = userFabLineOrder == null || !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+                    userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
+                    orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+                    hasDelivery = userFabLineOrder.DeliveryId != 0;
 
                     var lineOrder = userFabLineOrder ??= new LineProductsModel();
                     var batchObject = !string.IsNullOrEmpty(lineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineOrder.BatchName) : new List<AlmacenBatchModel>();
@@ -438,6 +441,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
+                    HasDelivery = hasDelivery,
                 };
 
                 listToReturn.Add(productModel);
