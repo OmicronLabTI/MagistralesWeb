@@ -16,6 +16,8 @@ import {ChangeStatusIncidentReq, IIncidentsListRes, IncidentItem} from '../../mo
 import {MatTableDataSource} from '@angular/material/table';
 import {CommentsConfig} from '../../model/device/incidents.model';
 import {Messages} from '../../constants/messages';
+import {PageEvent} from '@angular/material/paginator';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-incidents-list',
@@ -45,8 +47,11 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     'status'];
   dataSource = new MatTableDataSource<IncidentItem>();
   currentIndex = CONST_NUMBER.zero;
+  isOnInit = true;
+  pageEvent: PageEvent;
+  lengthPaginator = CONST_NUMBER.zero;
   constructor(private dataService: DataService, private incidentsService: IncidentsService,
-              private errorService: ErrorService) {
+              private errorService: ErrorService, private titleService: Title) {
     this.dataService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
     this.filterDataIncidents.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
@@ -56,6 +61,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleService.setTitle('OmicronLab - Incidents');
     this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
       if (resultSearchOrderModal.isFromIncidents) {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
@@ -95,10 +101,9 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   onSuccessIncidentsList(incidentsListResult: IIncidentsListRes) {
-
-    // paginator init again
-    console.log('incidentsListResult: ', incidentsListResult)
+    this.lengthPaginator = incidentsListResult.comments;
     this.getDataWithClass(incidentsListResult.response);
+    this.isOnInit = false;
   }
 
    getDataWithClass(response: IncidentItem[]) {
@@ -170,5 +175,13 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.incidentsService.patchStatusIncidents(changeStatus).subscribe(() => {
       this.reloadIncidentsList();
     }, error => this.errorService.httpError(error));
+  }
+  changeDataEvent(event: PageEvent) {
+      this.pageIndex = event.pageIndex;
+      this.offset = (event.pageSize * (event.pageIndex));
+      this.limit = event.pageSize;
+      this.getFullQueryString();
+      this.updateIncidentList();
+      return event;
   }
 }

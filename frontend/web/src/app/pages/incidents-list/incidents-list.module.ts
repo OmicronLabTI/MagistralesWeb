@@ -7,6 +7,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {PipesModule} from '../../pipes/pipes.module';
 import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import {MatTableModule} from '@angular/material/table';
         MatIconModule,
         MatButtonModule,
         PipesModule,
-        MatTableModule
+        MatTableModule,
+        MatPaginatorModule
     ]
 })
 export class IncidentsListModule { }
