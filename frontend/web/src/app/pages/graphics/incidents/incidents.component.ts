@@ -36,6 +36,7 @@ export class IncidentsComponent implements OnInit {
     this.incidentsGraphCOnf.isPie = true;
     this.incidentsGraphCOnf.titleForGraph = CONST_STRING.empty;
     this.incidentsGraphCOnf.dataGraph = response[0][0].graphType === GraphType.incidentGraph ? response[0] : response[1];
+    // console.log('every: ', this.incidentsGraphCOnf.dataGraph.every( incident => ))
 
     this.statusGraph = new ConfigurationGraphic();
     this.statusGraph.titleForGraph = CONST_STRING.empty;

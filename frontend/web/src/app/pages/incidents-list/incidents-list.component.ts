@@ -42,6 +42,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     'itemCode',
     'type',
     'incident',
+    'batches',
     'stage',
     'comments',
     'status'];
@@ -127,7 +128,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     if (newCommentsResult.isForClose) {
       this.changeStatusIncidentService({
         saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
-        status: TypeStatusIncidents.close, comments: newCommentsResult.comments,
+        status: TypeStatusIncidents.close,
+        comments: newCommentsResult.comments,
         itemCode: this.dataSource.data[this.currentIndex].itemCode});
     }
   }
@@ -157,7 +159,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   private changeStatusComments() {
-    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} ${
+    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} - ${
       this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
     this.dataService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
