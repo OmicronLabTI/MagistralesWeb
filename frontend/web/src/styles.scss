@@ -115,6 +115,10 @@ body {
   font-size: 1.5em;
   font-family: 'Quicksand', sans-serif !important;
 }
+.custom-incident-alert {
+  color: #ee6976 !important;
+  font-weight: bold !important;
+}
 td{
   font-family: 'Quicksand', sans-serif !important;
 }
@@ -129,7 +133,9 @@ td{
 .scroll-custom::-webkit-scrollbar {
   display: none;
 }
-
+.display-none {
+  display: none !important;
+}
 /* Hide scrollbar for IE, Edge and Firefox */
 .scroll-custom {
   overflow-y: scroll;

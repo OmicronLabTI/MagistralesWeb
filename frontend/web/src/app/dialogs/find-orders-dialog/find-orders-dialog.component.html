@@ -14,8 +14,8 @@
                     <div class="form-field-full">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'"
-                                   type="number"
-                                   maxlength="7"
+                                   type="text"
+                                   maxlength="10"
                                    class="height-input"
                                    formControlName="docNum"
                                    (keydown)="changeDocNumber($event)">
@@ -103,8 +103,8 @@
                         <mat-form-field class="custom-field-full custom-order" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'order-custom-incidents' : ''"
                                         *ngIf="dataService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
                             <input matInput placeholder="Número de pedido"
-                                   type="number"
-                                   maxlength="7"
+                                   type="text"
+                                   maxlength="10"
                                    class="height-input"
                                    formControlName="orderIncidents"
                                    (keydown)="changeDocNumber($event)">

@@ -14,7 +14,10 @@
             <div class="incidents-container">
                 <span class="title-graph">Tipo de falla: </span>
                 <div class="only-graph-container">
-                    <app-graph-show [configurationGraph]="incidentsGraphCOnf" (newItemsIndicatorsEmitter)="newIteratorsEvent($event)"></app-graph-show>
+                    <div class="no-users-registered custom-incident-alert" *ngIf="isNoDataIncidentsGraph">
+                        <span>No hay incidencias por tipo de falla</span>
+                    </div>
+                    <app-graph-show  [configurationGraph]="incidentsGraphCOnf" (newItemsIndicatorsEmitter)="newIteratorsEvent($event)"></app-graph-show>
                 </div>
                 <div class="indicators-pie-container">
                     <div class="indicator-container" *ngFor="let indicator of newIndicators">
@@ -29,7 +32,10 @@
             </div>
             <div class="incidents-container ">
                 <span class="title-graph only-status-incidents">Estatus:</span>
-                <app-graph-show [configurationGraph]="statusGraph"></app-graph-show>
+                <div class="no-users-registered custom-incident-alert" *ngIf="isNoDataStatusGraph">
+                    <span>No hay incidencias por status</span>
+                </div>
+                <app-graph-show *ngIf="!isNoDataStatusGraph" [configurationGraph]="statusGraph"></app-graph-show>
             </div>
         </div>
 
