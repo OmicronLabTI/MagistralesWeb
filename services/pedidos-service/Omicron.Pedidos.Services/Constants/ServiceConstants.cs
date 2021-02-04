@@ -111,6 +111,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string BackOrder = "Back Order";
 
         /// <summary>
+        /// recibir value.
+        /// </summary>
+        public const string Recibir = "Recibir";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
