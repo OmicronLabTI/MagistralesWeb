@@ -53,7 +53,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
-            var listIds = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => y.DeliveryId).ToList();
+            var listIds = userOrders.Select(y => y.DeliveryId).ToList();
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
             listIds = listIds.Distinct().ToList();
 
@@ -451,8 +451,8 @@ namespace Omicron.SapAdapter.Services.Sap
             delivery.DistinctBy(x => x.DeliveryId).ToList()
                 .ForEach(y =>
                 {
-                    var userOrderStatus = userOrderModels.Where(z => z.Salesorderid == y.BaseEntry.ToString() && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
-                    userOrderStatus.AddRange(lineProducts.Where(x => x.SaleOrderId == y.BaseEntry && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
+                    var userOrderStatus = userOrderModels.Where(z => z.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
+                    userOrderStatus.AddRange(lineProducts.Where(x => x.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
 
                     var deliveryModel = new InvoiceDeliveryModel
                     {

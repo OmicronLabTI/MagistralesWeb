@@ -131,7 +131,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
             }
 
-            deliveryToReturn = deliveryToReturn.OrderBy(x => x.DocDate).ThenBy(y => y.DeliveryId).ToList();
+            deliveryToReturn = deliveryToReturn.OrderBy(x => x.DeliveryId).ToList();
             var filterCount = deliveryToReturn.DistinctBy(x => x.DeliveryId).ToList().Count;
 
             deliveryToReturn = this.GetOrdersToLook(deliveryToReturn, parameters);
