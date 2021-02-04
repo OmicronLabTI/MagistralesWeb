@@ -105,10 +105,12 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.lengthPaginator = incidentsListResult.comments;
     this.getDataWithClass(incidentsListResult.response);
     this.isOnInit = false;
+    console.log('dataSource: ', this.dataSource.data)
   }
 
    getDataWithClass(response: IncidentItem[]) {
       response.forEach( itemIncident => {
+        itemIncident.batches = itemIncident.saleOrder === 76225 ? 'batches 1 /2, batches2 /1, batche3 /1,' : itemIncident.batches // test only
         switch (itemIncident.status.toLowerCase()) {
           case TypeStatusIncidents.open.toLowerCase():
             itemIncident.classButton = ClassButton.openIncident;
@@ -120,6 +122,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
             itemIncident.classButton = ClassButton.attendingIncident;
             break;
         }
+        itemIncident.batchesDisplay = this.getDisplayBatchesData(itemIncident, false);
+        itemIncident.batchesTooltip = this.getDisplayBatchesData(itemIncident, true);
       });
       this.dataSource.data = response;
   }
@@ -185,5 +189,33 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
       this.getFullQueryString();
       this.updateIncidentList();
       return event;
+  }
+
+  getDisplayBatchesData(incident: IncidentItem, isForToolTip: boolean) {
+    const arrayBatches = this.getArrayBatches(incident);
+    if (isForToolTip) {
+      return arrayBatches;
+    } else {
+      return this.getArrayBatchesToDisplay(arrayBatches);
+    }
+  }
+
+  getArrayBatches(incident: IncidentItem): string[] {
+    return incident.batches.split(',').filter( batche => batche !== CONST_STRING.empty);
+  }
+
+  getArrayBatchesToDisplay(arrayBatches: string[]) {
+    if (arrayBatches.length > CONST_NUMBER.zero && arrayBatches.length <= CONST_NUMBER.two) {
+      return arrayBatches;
+    } else {
+      return arrayBatches.splice(CONST_NUMBER.zero, CONST_NUMBER.two);
+    }
+  }
+  getDataToDisplay(arrayBatches: string[]) {
+    let batchesDataDisplay = CONST_STRING.empty;
+    arrayBatches.forEach(
+        batche => batchesDataDisplay += `${batche} <br>`);
+
+    return batchesDataDisplay;
   }
 }
