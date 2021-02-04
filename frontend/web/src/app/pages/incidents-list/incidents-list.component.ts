@@ -211,11 +211,4 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
       return arrayBatches.splice(CONST_NUMBER.zero, CONST_NUMBER.two);
     }
   }
-  getDataToDisplay(arrayBatches: string[]) {
-    let batchesDataDisplay = CONST_STRING.empty;
-    arrayBatches.forEach(
-        batche => batchesDataDisplay += `${batche} <br>`);
-
-    return batchesDataDisplay;
-  }
 }
