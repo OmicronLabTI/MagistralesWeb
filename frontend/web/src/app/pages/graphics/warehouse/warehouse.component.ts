@@ -37,7 +37,7 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-       this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+    this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
             , error => this.errorService.httpError(error));
     // this.generateDataWarehouse(WarehouseMock.response) // for test
   }
@@ -55,8 +55,8 @@ export class WarehouseComponent implements OnInit {
         itemGraph => itemGraph.graphType.toLowerCase() === GraphType.foreignPackage.toLowerCase());
 
     this.incidentsConfigurationGraph = new ConfigurationGraphic();
-    this.incidentsConfigurationGraph.isPie = true;
-    this.incidentsConfigurationGraph.titleForGraph = CONST_STRING.empty;
+    this.incidentsConfigurationGraph.isPie = false;
+    this.incidentsConfigurationGraph.titleForGraph = 'No entregados';
     this.incidentsConfigurationGraph.dataGraph = response.filter(
         itemGraph => itemGraph.graphType.toLowerCase() === GraphType.incidentGraph.toLowerCase());
     this.incidentsConfigurationGraph.isSmall = true;
