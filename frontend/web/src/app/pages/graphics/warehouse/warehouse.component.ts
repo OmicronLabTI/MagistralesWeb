@@ -37,8 +37,9 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-      this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+       this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
             , error => this.errorService.httpError(error));
+    // this.generateDataWarehouse(WarehouseMock.response) // for test
   }
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init
