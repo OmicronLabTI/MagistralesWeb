@@ -56,17 +56,17 @@ const routes: Routes = [
   {
     path: `${RouterPaths.incidents}`,
     loadChildren: () => import('./pages/graphics/incidents/incidents.module').then(m => m.IncidentsModule),
-    // canActivate: [GuardService]
+    canActivate: [GuardService]
   },
   {
     path: `${RouterPaths.incidentsList}`,
     loadChildren: () => import('./pages/incidents-list/incidents-list.module').then(m => m.IncidentsListModule),
-    // canActivate: [GuardService]
+    canActivate: [GuardService]
   },
   {
     path: `${RouterPaths.warehousePage}`,
     loadChildren: () => import('./pages/graphics/warehouse/warehouse.module').then(m => m.WarehouseModule),
-    // canActivate: [GuardService]
+    canActivate: [GuardService]
   },
   {
     path: '**',

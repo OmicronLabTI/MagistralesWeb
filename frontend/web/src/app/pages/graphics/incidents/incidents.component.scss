@@ -1,11 +1,10 @@
 .custom-content-container {
   margin-bottom: 0 !important;
-
+   height: 650px !important;
   .graphs-container {
     width: 100%;
     display: flex;
     flex-direction: row;
-
     .incidents-container {
       width: 50%;
 
@@ -17,9 +16,12 @@
         height: 85%;
       }
       .indicators-pie-container {
+        margin-top: 2%;
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
+        height: 25%;
+        max-height: 35%;
 
 
         .indicator-container {
