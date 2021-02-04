@@ -128,7 +128,10 @@
                     </mat-card>
                 </div>
                 <div class="margin-top-graphic">
-                    <app-graph-show [configurationGraph]="incidentsConfigurationGraph" ></app-graph-show>
+                    <div class="no-users-registered custom-incident-alert" *ngIf="isNoDataNoDeliveredGraph">
+                        <span>No hay motivos de no entregados para graficar </span>
+                    </div>
+                    <app-graph-show *ngIf="!isNoDataNoDeliveredGraph" [configurationGraph]="incidentsConfigurationGraph" ></app-graph-show>
                 </div>
             </div>
         </div>

@@ -28,6 +28,7 @@ export class WarehouseComponent implements OnInit {
   typesGraph = TypeReception;
   percentageLocal = CONST_NUMBER.zero;
   percentageForeign = CONST_NUMBER.zero;
+  isNoDataNoDeliveredGraph = false;
   constructor(private dataService: DataService, private incidentsService: IncidentsService,
               private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
@@ -72,6 +73,9 @@ export class WarehouseComponent implements OnInit {
         this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
             itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
             this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true)) || 0;
+
+    this.isNoDataNoDeliveredGraph = this.incidentsConfigurationGraph.dataGraph.every( incident =>
+        incident.totalCount === CONST_NUMBER.zero);
 
     // generate data finish
   }

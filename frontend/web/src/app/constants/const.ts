@@ -203,6 +203,8 @@ export const pathRoles = {
         'incidentsList',
         'login',
         'warehouse',
+        'productividad',
+        'workLoad',
         '**'
     ]
 };
