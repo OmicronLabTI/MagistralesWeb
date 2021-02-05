@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
-  Colors,
+  Colors, ColorsBarGraph,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
@@ -552,11 +552,11 @@ export class DataService {
       return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
     }
 }
-  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[]) => (
+  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[], isBarGraph: boolean) => (
     {
       labels: itemsArray.map(item => item.fieldKey),
       datasets: [{
-        backgroundColor: this.getRandomColorsArray(itemsArray.length),
+        backgroundColor: this.getRandomColorsArray(itemsArray.length, isBarGraph),
         data: itemsArray.map(item => item.totalCount),
         borderColor: '#fff',
         borderWidth: 3,
@@ -564,15 +564,17 @@ export class DataService {
         hoverBorderColor: '#c0c8ce'
       }]
     })
-  getRandomColorsArray(lengthArrayForGraph: number) {
+  getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
     let countIndex = CONST_NUMBER.zero;
     const range = Colors.length;
+    const colorsArray = isBarGraph ? ColorsBarGraph : Colors;
+
     let colorsString: string[] = [];
     for (let i = 0; i < lengthArrayForGraph; i++) {
       if (range === countIndex) {
         countIndex = CONST_NUMBER.zero;
       }
-      colorsString = [...colorsString, Colors[countIndex]];
+      colorsString = [...colorsString, colorsArray[countIndex]];
       countIndex++;
     }
     return colorsString;

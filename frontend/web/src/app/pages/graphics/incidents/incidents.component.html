@@ -19,7 +19,7 @@
                     </div>
                     <app-graph-show  [configurationGraph]="incidentsGraphCOnf" (newItemsIndicatorsEmitter)="newIteratorsEvent($event)"></app-graph-show>
                 </div>
-                <div class="indicators-pie-container">
+                <div class="indicators-pie-container scroll-custom">
                     <div class="indicator-container" *ngFor="let indicator of newIndicators">
                         <div class="color-indicator"  [ngStyle]="{'background-color': indicator.background}"  >
 

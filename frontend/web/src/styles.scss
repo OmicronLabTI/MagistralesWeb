@@ -100,7 +100,7 @@ body {
   margin-bottom: 50px !important;
 }
 .title-list-container{
-  width: 50%;
+  width: 35%;
   float: left;
   font-weight: 600 !important;
   font-size: 1.6em;
@@ -111,12 +111,11 @@ body {
   height: 8%;
   display: flex;
   justify-content: center;
-  color: #5f606c;
+  color: #5f606c !important;
   font-size: 1.5em;
   font-family: 'Quicksand', sans-serif !important;
 }
 .custom-incident-alert {
-  color: #ee6976 !important;
   font-weight: bold !important;
 }
 td{
@@ -157,7 +156,7 @@ td{
 }
 
 .range-date-container{
-  width: 45%;
+  width: 65%;
   float: right;
   text-align: right;
   color: #3b3f5c;

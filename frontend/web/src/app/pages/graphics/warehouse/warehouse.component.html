@@ -30,72 +30,7 @@
         </div>
         <span class="title-graph title-graph-reception">Distribución</span>
         <div class="distribution-content-container">
-            <div class="local-container">
-                <span class="title-graph-distribution">Locales</span>
-                <progress-bar [progress]="percentageLocal" [color]="'#012584'" >
-                </progress-bar>
-                <mat-card class="mat-card-custom">
-                    <mat-list class="mat-list-custom">
-                        <mat-list-item >
-                            <div class="item-local-container">
-                                <div class="title-distribution">
-                                    Empaquetado
-                                </div>
-                                <div class="count-distribution">
-                                    {{localPackages[0].totalCount}}
-                                </div>
-                            </div>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                        <mat-list-item>
-                            <div class="item-local-container">
-                                <div class="title-distribution">
-                                    Asignados
-                                </div>
-                                <div class="count-distribution">
-                                    {{localPackages[1].totalCount}}
-                                </div>
-                            </div>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                        <mat-list-item>
-                        <div class="item-local-container">
-                            <div class="title-distribution">
-                                En camino
-                            </div>
-                            <div class="count-distribution">
-                                {{localPackages[2].totalCount}}
-                            </div>
-                        </div>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                        <mat-list-item>
-                        <div class="item-local-container">
-                            <div class="title-distribution">
-                                Entregados
-                            </div>
-                            <div class="count-distribution">
-                                {{localPackages[3].totalCount}}
-                            </div>
-                        </div>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                        <mat-list-item>
-                        <div class="item-local-container">
-                            <div class="title-distribution">
-                                No entregados
-                            </div>
-                            <div class="count-distribution">
-                                {{localPackages[4].totalCount}}
-                            </div>
-                        </div>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                    </mat-list>
-                        <app-graph-show [configurationGraph]="incidentsConfigurationGraph" ></app-graph-show>
-                </mat-card>
-            </div>
-            <div class="local-container">
+            <div class="local-container custom-foreign-container">
                 <span class="title-graph-distribution">Foráneo</span>
                 <progress-bar [progress]="percentageForeign" [color]="'#5e0e34'">
                 </progress-bar>
@@ -125,6 +60,79 @@
 
                     </mat-list>
                 </mat-card>
+            </div>
+            <div class="local-container custom-local-container">
+                <div class="content-local-container">
+                    <span class="title-graph-distribution">Locales</span>
+                    <progress-bar [progress]="percentageLocal" [color]="'#012584'" >
+                    </progress-bar>
+                    <mat-card class="mat-card-custom">
+                        <mat-list class="mat-list-custom">
+                            <mat-list-item >
+                                <div class="item-local-container">
+                                    <div class="title-distribution">
+                                        Empaquetado
+                                    </div>
+                                    <div class="count-distribution">
+                                        {{localPackages[0].totalCount}}
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <div class="item-local-container">
+                                    <div class="title-distribution">
+                                        Asignados
+                                    </div>
+                                    <div class="count-distribution">
+                                        {{localPackages[1].totalCount}}
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <div class="item-local-container">
+                                    <div class="title-distribution">
+                                        En camino
+                                    </div>
+                                    <div class="count-distribution">
+                                        {{localPackages[2].totalCount}}
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <div class="item-local-container">
+                                    <div class="title-distribution">
+                                        Entregados
+                                    </div>
+                                    <div class="count-distribution">
+                                        {{localPackages[3].totalCount}}
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <div class="item-local-container">
+                                    <div class="title-distribution">
+                                        No entregados
+                                    </div>
+                                    <div class="count-distribution">
+                                        {{localPackages[4].totalCount}}
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                        </mat-list>
+
+                    </mat-card>
+                </div>
+                <div class="margin-top-graphic">
+                    <div class="no-users-registered custom-incident-alert" *ngIf="isNoDataNoDeliveredGraph">
+                        <span>No hay motivos de no entregados para graficar </span>
+                    </div>
+                    <app-graph-show *ngIf="!isNoDataNoDeliveredGraph" [configurationGraph]="incidentsConfigurationGraph" ></app-graph-show>
+                </div>
             </div>
         </div>
     </div>

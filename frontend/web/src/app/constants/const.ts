@@ -167,6 +167,12 @@ export const Colors = [
     'rgb(224,25,64)',
     'rgb(62,90,63)'
 ];
+export const ColorsBarGraph = [
+    'rgb(224,168,125)',
+    'rgb(224,25,64)',
+    'rgb(62,90,63)',
+    'rgb(52,4,149)',
+];
 
 export const pathRoles = {
     admin: [
@@ -197,6 +203,8 @@ export const pathRoles = {
         'incidentsList',
         'login',
         'warehouse',
+        'productividad',
+        'workLoad',
         '**'
     ]
 };

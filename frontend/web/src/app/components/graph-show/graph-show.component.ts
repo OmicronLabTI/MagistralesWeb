@@ -55,9 +55,16 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
   getDataGraphWithSort() {
-    return this.dataService.getDataForGraphic(
-        this.configurationGraph.dataGraph.sort((a, b) => ( b.totalCount - a.totalCount )));
-  }
+    if (this.configurationGraph.isPie) {
+      return this.dataService.getDataForGraphic(
+          this.configurationGraph.dataGraph.sort((a, b) => ( b.totalCount - a.totalCount )),
+          false);
+    } else {
+      return this.dataService.getDataForGraphic(
+          this.configurationGraph.dataGraph.sort((a, b) => ( a.fieldKey.localeCompare(b.fieldKey) )),
+          true);
+    }
+   }
 
   getDataIndicators() {
     this.newItemsIndicators = [];

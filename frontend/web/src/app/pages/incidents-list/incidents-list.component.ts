@@ -120,6 +120,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
             itemIncident.classButton = ClassButton.attendingIncident;
             break;
         }
+        itemIncident.batchesDisplay = this.getDisplayBatchesData(itemIncident, false);
+        itemIncident.batchesTooltip = String(this.getDisplayBatchesData(itemIncident, true));
       });
       this.dataSource.data = response;
   }
@@ -185,5 +187,33 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
       this.getFullQueryString();
       this.updateIncidentList();
       return event;
+  }
+
+  getDisplayBatchesData(incident: IncidentItem, isForToolTip: boolean) {
+    const arrayBatches = this.getArrayBatches(incident);
+    if (isForToolTip) {
+      return this.getDataToDisplay(arrayBatches);
+    } else {
+      return this.getArrayBatchesToDisplay(arrayBatches);
+    }
+  }
+
+  getArrayBatches(incident: IncidentItem): string[] {
+    return incident.batches.split(',').filter( batche => batche !== CONST_STRING.empty);
+  }
+
+  getArrayBatchesToDisplay(arrayBatches: string[]) {
+    if (arrayBatches.length > CONST_NUMBER.zero && arrayBatches.length <= CONST_NUMBER.two) {
+      return arrayBatches;
+    } else {
+      return arrayBatches.splice(CONST_NUMBER.zero, CONST_NUMBER.two);
+    }
+  }
+  getDataToDisplay(arrayBatches: string[]) {
+    let batchesDataDisplay = CONST_STRING.empty;
+    arrayBatches.forEach(
+        batche => batchesDataDisplay += `${batche}, `);
+
+    return batchesDataDisplay;
   }
 }
