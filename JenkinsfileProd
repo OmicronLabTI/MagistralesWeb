@@ -26,6 +26,7 @@ pipeline {
         ).trim()
 	}
     stages {
+	/*
 		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
@@ -34,7 +35,7 @@ pipeline {
 				sh 'sudo docker system prune -f'
             }
         }
-		/*
+		*/
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -51,7 +52,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }/*
         stage('Build Federated Services') {
             steps {
                 echo 'Building Fedetared Services'
@@ -79,10 +80,8 @@ pipeline {
                 }
             }
         }
-		*/
         stage('Build Micro Services') {
             steps {
-			/*
                 echo 'Building ms1'
                 dir ('services/catalogos-service/'){
                     sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
@@ -118,7 +117,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-pedidos-repository:latest"
                     }
-                }*/
+                }
 				echo 'Building SapAdapter'
                 dir ('services/sapadapter-service/'){
                     sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
@@ -130,7 +129,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-sapadapter-repository:latest"
                     }
-                }/*
+                }
 				echo 'Building warehouses'
                 dir ('services/warehouses-service/'){
                     sh 'dotnet publish Omicron.Warehouses.Api/Omicron.Warehouses.Api.csproj -c Release -o app/'
@@ -154,7 +153,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-reporting-repository:latest"
                     }
-                }*/
+                }
             }
         }
         stage('Kubernetes Up') {
@@ -163,7 +162,7 @@ pipeline {
                 sh 'sudo kubectl apply -f deploy_prod.yaml'
             }
         }
-		/*
+		*/
 		stage('Deploy App Service'){
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
@@ -182,7 +181,6 @@ pipeline {
                 }
             }
         }
-		*/
         stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
