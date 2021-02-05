@@ -74,16 +74,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
-    this.filterDataOrders.isFromOrders = true;
-    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
-    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
-    this.getFullQueryString();
+    this.createInitRage();
   }
 
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
-    this.getPedidos();
     this.dataSource.paginator = this.paginator;
     this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
@@ -96,7 +91,18 @@ export class PedidosComponent implements OnInit, OnDestroy {
       }
     }));
   }
-
+  createInitRage() {
+     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
+          catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
+  }
+  getInitRange(daysInitRange: string) {
+      this.filterDataOrders.isFromOrders = true;
+      this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+      this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
+      this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
+      this.getFullQueryString();
+      this.getPedidos();
+  }
   getPedidos() {
     this.pedidosService.getPedidos(this.fullQueryString).subscribe(
       pedidoRes => {

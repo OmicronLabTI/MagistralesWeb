@@ -34,6 +34,7 @@ export const Endpoints = {
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
     checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
     getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`,
+    rangeDateInit: `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook`
 },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
