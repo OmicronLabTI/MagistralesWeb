@@ -3,7 +3,6 @@ import {DataService} from '../../../services/data.service';
 import {
   ColorsReception,
   CONST_NUMBER,
-  CONST_STRING,
   GraphType,
   HttpServiceTOCall,
   TypeReception
@@ -12,7 +11,6 @@ import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic} from '../../../model/device/incidents.model';
 import {IncidentsService} from '../../../services/incidents.service';
 import {ErrorService} from '../../../services/error.service';
-import {WarehouseMock} from '../../../../mocks/warehouseListMock';
 
 
 @Component({
@@ -40,7 +38,6 @@ export class WarehouseComponent implements OnInit {
   checkNewRange(rangeDate: string) {
     this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
             , error => this.errorService.httpError(error));
-    // this.generateDataWarehouse(WarehouseMock.response) // for test
   }
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init
@@ -57,7 +54,7 @@ export class WarehouseComponent implements OnInit {
 
     this.incidentsConfigurationGraph = new ConfigurationGraphic();
     this.incidentsConfigurationGraph.isPie = false;
-    this.incidentsConfigurationGraph.titleForGraph = 'No entregados';
+    this.incidentsConfigurationGraph.titleForGraph = 'MOTIVOS - No entregado';
     this.incidentsConfigurationGraph.dataGraph = response.filter(
         itemGraph => itemGraph.graphType.toLowerCase() === GraphType.incidentGraph.toLowerCase());
     this.incidentsConfigurationGraph.isSmall = true;
