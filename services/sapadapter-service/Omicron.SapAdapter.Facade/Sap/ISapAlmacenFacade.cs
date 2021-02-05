@@ -87,5 +87,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> AlmacenGraphCount(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Get the delivery parties.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDeliveryParties();
     }
 }

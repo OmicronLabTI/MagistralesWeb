@@ -170,6 +170,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, idsToReturn, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveryParties()
+        {
+            var parties = await this.sapDao.GetDeliveryCompanies();
+            return ServiceUtils.CreateResult(true, 200, null, parties, null, null);
+        }
+
         /// <summary>
         /// Gets the orders that are finalized and all the productin orders.
         /// </summary>
