@@ -110,6 +110,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetSapIds(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
+            mockService
+                .Setup(m => m.GetDeliveryParties())
+                .Returns(Task.FromResult(response));
+
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
 
@@ -312,6 +316,18 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var listids = new Dictionary<string, string>();
             var response = await this.almacenFacade.AlmacenGraphCount(listids);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryParties()
+        {
+            var response = await this.almacenFacade.GetDeliveryParties();
 
             Assert.IsNotNull(response);
         }
