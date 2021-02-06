@@ -26,7 +26,6 @@ pipeline {
         ).trim()
 	}
     stages {
-	/*
 		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
@@ -35,7 +34,6 @@ pipeline {
 				sh 'sudo docker system prune -f'
             }
         }
-		*/
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -52,7 +50,7 @@ pipeline {
                     }
                 }
             }
-        }/*
+        }
         stage('Build Federated Services') {
             steps {
                 echo 'Building Fedetared Services'
@@ -162,7 +160,6 @@ pipeline {
                 sh 'sudo kubectl apply -f deploy_prod.yaml'
             }
         }
-		*/
 		stage('Deploy App Service'){
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
