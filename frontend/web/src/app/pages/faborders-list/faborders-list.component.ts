@@ -24,6 +24,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
 import {Router} from '@angular/router';
+import {PedidosService} from '../../services/pedidos.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -70,13 +71,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private pedidosService: PedidosService
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    this.filterDataOrders.isFromOrders = false;
-    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
+    this.createInitRageOrders();
   }
 
   ngOnInit() {
@@ -97,10 +96,19 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
+  }
+  createInitRageOrders() {
+    this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
+        catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
+  }
+  getInitRange(daysInitRange: string) {
+    this.filterDataOrders.isFromOrders = false;
+    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
     this.getFullQueryString();
     this.getOrdersAction();
   }
-
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsOrdersIsolatedToUnLooked();
