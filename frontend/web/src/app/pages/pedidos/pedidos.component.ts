@@ -19,7 +19,7 @@ import {
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {
-    CancelOrderReq,
+    CancelOrderReq, Catalogs,
     ICreatePdfOrdersRes,
     IPedidoReq,
     IRecipesRes,
@@ -75,6 +75,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.createInitRage();
+
   }
 
   ngOnInit() {
@@ -92,13 +93,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
     }));
   }
   createInitRage() {
-     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
-          catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
+
+    this.pedidosService.getInitRangeDate().subscribe(({response}) =>
+            this.getInitRange(response.filter(catalog => catalog.field === 'MagistralesDaysToLook')[0].value),
+            error => this.errorService.httpError(error));
   }
-  getInitRange(daysInitRange: string) {
+  getInitRange(rangeDateResult: string ) {
       this.filterDataOrders.isFromOrders = true;
       this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-      this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
+      this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
       this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
       this.getFullQueryString();
       this.getPedidos();
