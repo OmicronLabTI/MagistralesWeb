@@ -505,18 +505,16 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string, isWithFullTooltip: boolean = false) => (
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
       {
         tooltips: {
-          enabled: isPie,
           callbacks: {
             label: (tooltipItem, data) => {
-              if (Boolean(isWithFullTooltip)) {
-                return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} (${
-                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
-              } else {
+              if (Boolean(isPie)) {
                 return `${data.labels[tooltipItem.index]}: ${
                     this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              } else {
+                return `${data.datasets[0].data[tooltipItem.index]}`;
               }
             }
           }
