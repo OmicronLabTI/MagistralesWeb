@@ -57,7 +57,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var types = typesString.Split(",").ToList();
 
             var userResponse = await this.GetUserOrdersToLook();
-            var lineProducts = await this.GetLineProductsToLook();
+            var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
+            var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var totalFilter = sapOrders.Item1.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders.Item1, lineProducts.Item1, parameters);
@@ -199,9 +200,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the product lines to look and ignore.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook()
+        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook(List<int> magistralIds)
         {
-            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
+            var lineProductsResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, magistralIds);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
             var listProductToReturn = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).ToList();
