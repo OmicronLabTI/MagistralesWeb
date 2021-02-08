@@ -162,7 +162,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var idsToReturn = new List<int>();
             details.ForEach(x =>
             {
-                if (x.All(y => lineProducts.Contains(y.ProductoId)))
+                if (x.Any(y => lineProducts.Contains(y.ProductoId)))
                 {
                     idsToReturn.Add(x.Key.Value);
                 }
