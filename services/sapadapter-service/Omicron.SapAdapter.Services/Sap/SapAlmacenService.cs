@@ -57,7 +57,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var types = typesString.Split(",").ToList();
 
             var userResponse = await this.GetUserOrdersToLook();
-            var lineProducts = await this.GetLineProductsToLook();
+            var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
+            var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var totalFilter = sapOrders.Item1.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders.Item1, lineProducts.Item1, parameters);
@@ -199,9 +200,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the product lines to look and ignore.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook()
+        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook(List<int> magistralIds)
         {
-            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLineProduct);
+            var lineProductsResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, magistralIds);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
             var listProductToReturn = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).ToList();
@@ -230,8 +231,11 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
-            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
+
+            idsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).Select(z => z.DocNum).ToList();
+            sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
@@ -304,7 +308,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var doctor = order == null ? string.Empty : order.Medico;
 
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
-                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) ? userOrder.StatusAlmacen : salesStatusMagistral;
+                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir ? userOrder.StatusAlmacen : salesStatusMagistral;
                 salesStatusMagistral = salesStatusMagistral == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : salesStatusMagistral;
 
                 var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
