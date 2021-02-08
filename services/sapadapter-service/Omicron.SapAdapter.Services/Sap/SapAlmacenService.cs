@@ -230,8 +230,11 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
-            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
+
+            idsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).Select(z => z.DocNum).ToList();
+            sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
@@ -304,7 +307,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var doctor = order == null ? string.Empty : order.Medico;
 
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
-                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) ? userOrder.StatusAlmacen : salesStatusMagistral;
+                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir ? userOrder.StatusAlmacen : salesStatusMagistral;
                 salesStatusMagistral = salesStatusMagistral == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : salesStatusMagistral;
 
                 var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
