@@ -6,7 +6,7 @@ import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/det
 import {
   CancelOrderReq,
   CreateIsolatedOrderReq,
-  ICancelOrdersRes,
+  ICancelOrdersRes, ICatalogRes,
   ICreateIsolatedOrderRes,
   ICreatePdfOrdersRes,
   IExistsBachCodeRes,
@@ -104,6 +104,9 @@ export class PedidosService {
   }
   finishLabels(labelsToFinish: IPedidoDetalleLabelReq) {
     return this.consumeService.httpPut<IPedidoDetalleListRes>(`${Endpoints.orders.finishLabels}`, labelsToFinish);
+  }
+  getInitRangeDate() {
+    return this.consumeService.httpGet<ICatalogRes>(`${Endpoints.pedidos.rangeDateInit}`);
   }
   qrByEachOrder(idsByEachOrders: number[]) {
     return this.consumeService.httpPost<IQrByOrdersRes>(`${Endpoints.orders.qrByOrder}`, idsByEachOrders);

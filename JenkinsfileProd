@@ -34,7 +34,6 @@ pipeline {
 				sh 'sudo docker system prune -f'
             }
         }
-		/*
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -79,10 +78,8 @@ pipeline {
                 }
             }
         }
-		*/
         stage('Build Micro Services') {
             steps {
-			/*
                 echo 'Building ms1'
                 dir ('services/catalogos-service/'){
                     sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
@@ -142,7 +139,7 @@ pipeline {
                         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
                         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository:latest"
                     }
-                }*/
+                }
                 echo 'Building reporting'
                 dir ('services/reporting-service/'){
                     sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
@@ -163,7 +160,6 @@ pipeline {
                 sh 'sudo kubectl apply -f deploy_prod.yaml'
             }
         }
-		/*
 		stage('Deploy App Service'){
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
@@ -182,7 +178,6 @@ pipeline {
                 }
             }
         }
-		*/
         stage('Testing Estress') {
             steps {
                 dir ('testing/stress/'){
