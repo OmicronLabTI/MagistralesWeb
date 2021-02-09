@@ -203,7 +203,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 RecibirTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Finalizado && x.FinishedLabel == 1 && (string.IsNullOrEmpty(x.StatusAlmacen) || x.StatusAlmacen == ServiceConstants.Recibir)),
                 AlmacenadosTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Almacenado),
                 BackOrderTotal = ordersByDates.Count(x => x.IsSalesOrder && x.StatusAlmacen == ServiceConstants.BackOrder),
-                PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 1) && x.Where(z => z.IsProductionOrder).All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
+                PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && (y.Status == ServiceConstants.Finalizado || y.Status == ServiceConstants.Almacenado) && y.FinishedLabel == 1) && x.Where(z => z.IsProductionOrder).All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
                 LocalPackageTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
                 LocalNotDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.NoEntregado),
                 LocalAsignedTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Asignado),
