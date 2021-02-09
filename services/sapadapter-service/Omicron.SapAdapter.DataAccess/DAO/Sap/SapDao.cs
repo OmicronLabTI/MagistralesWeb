@@ -535,6 +535,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)));
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds)
+        {
+            return await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>
