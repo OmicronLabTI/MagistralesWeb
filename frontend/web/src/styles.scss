@@ -686,6 +686,14 @@ a.breadcrumblink:hover{
   width: 100px;
 }
 
+.mat-stroked-button.close-sap {
+  display: flex;
+  justify-content: center;
+  background-color: #736705;
+  font-weight: 700 !important;
+  width: 100px;
+}
+
 .is-loading {
   width: 100%;
   height: 100%;

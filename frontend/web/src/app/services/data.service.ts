@@ -252,13 +252,17 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean, isProductivity: boolean = false) {
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean,
+                   isProductivity: boolean = false, numberCustomRange: number = CONST_NUMBER.lessOne) {
     if (isBeginDate) {
       if (isProductivity) {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
       } else {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
       }
+    }
+    if (numberCustomRange !== CONST_NUMBER.lessOne && numberCustomRange > CONST_NUMBER.zero) {
+      initDate = new Date(initDate.getTime() - (MODAL_FIND_ORDERS.operationDay * numberCustomRange));
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
