@@ -46,5 +46,6 @@ export class IncidentsComponent implements OnInit {
     this.statusGraph.isPie = false;
     this.statusGraph.dataGraph = response[1][0].graphType === GraphType.statusGraph ? response[1] : response[0];
     this.isNoDataStatusGraph = this.statusGraph.dataGraph.every( status => status.totalCount === CONST_NUMBER.zero);
+
   }
 }

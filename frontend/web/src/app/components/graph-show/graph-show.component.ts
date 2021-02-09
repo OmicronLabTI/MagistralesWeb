@@ -41,7 +41,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.myChart) {
       this.myChart.data = this.getDataGraphWithSort();
       this.myChart.options = this.dataService.getOptionsGraphToShow(
-          this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip);
+          this.configurationGraph.isPie, this.configurationGraph.titleForGraph);
       this.myChart.update();
       this.checkIfShouldGetIndicators();
     } else {
@@ -92,7 +92,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
         type: this.configurationGraph.isPie ? 'pie' : 'bar',
         data: this.getDataGraphWithSort(),
         options: this.dataService.getOptionsGraphToShow(
-            this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip),
+            this.configurationGraph.isPie, this.configurationGraph.titleForGraph),
       }
   )
 }
