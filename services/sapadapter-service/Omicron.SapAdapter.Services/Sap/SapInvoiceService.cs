@@ -492,11 +492,18 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = (await this.sapDao.GetProductById(invoice.ProductoId)).FirstOrDefault();
                 item = item == null ? new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty } : item;
 
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value);
+                var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
+
                 var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
                 if (item.IsMagistral.Equals("N"))
                 {
-                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, ServiceConstants.PT);
+                    var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == saleId && x.ItemCode == invoice.ProductoId);
+                    lineProduct ??= new LineProductsModel();
+                    var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
+
+                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, ServiceConstants.PT, batchName);
                 }
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice);
@@ -573,7 +580,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="itemCode">the item code.</param>
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, string warehouse)
+        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, string warehouse, List<AlmacenBatchModel> batchName)
         {
             var batchTransacion = await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, delivery);
             var lastBatch = batchTransacion == null || !batchTransacion.Any() ? 0 : batchTransacion.Last().LogEntry;
@@ -584,7 +591,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<string>();
             validBatches.Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>
             {
-                listToReturn.Add($"{z.DistNumber} | Cad: {z.FechaExp}");
+                var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
+                batch ??= new AlmacenBatchModel() { BatchQty = 0 };
+                listToReturn.Add($"{z.DistNumber} | {(int)batch.BatchQty} pz | Cad: {z.FechaExp}");
             });
 
             return listToReturn;
