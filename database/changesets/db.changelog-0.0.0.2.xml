@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="gramirez" id="changelog-2.1">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrmgestrcuture"
+			type="VARCHAR(300)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.2">
+	<insert tableName="parameters"> 
+		<column name="value" value="350"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralHeight"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.3">
+	<insert tableName="parameters"> 
+		<column name="value" value="350"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralWidth"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.4">
+	<insert tableName="parameters"> 
+		<column name="value" value="5"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralMargin"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.5">
+	<insert tableName="parameters"> 
+		<column name="value" value="115"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectx"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.6">
+	<insert tableName="parameters"> 
+		<column name="value" value="305"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRecty"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.7">
+	<insert tableName="parameters"> 
+		<column name="value" value="300"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectWidth"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.8">
+	<insert tableName="parameters"> 
+		<column name="value" value="250"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectHeight"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.9">
+    <createTable tableName="productionorderqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="userorderid" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="magistralqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.10">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="REPARTIDOR"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.11">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="finalizeddate"
+			type="Date">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.12">
+	<insert tableName="parameters"> 
+		<column name="value" value="15"/>
+		<column name="type" value="int"/>
+		<column name="field" value="AlmacenMaxDayToLook"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.13">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="statusalmacen"
+			type="varchar(30)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.14">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="usercheckin"
+			type="varchar(50)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.15">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="datecheckin"
+			type="timestamp">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.16">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrremisionmgestrcuture"
+			type="VARCHAR(500)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.17">
+    <createTable tableName="productionremisionqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="pedidoId" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="remisionId" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="remisionqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.18">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="deliveryid"
+			type="int"
+			defaultValue="0">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.19">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="statusinvoice"
+			type="varchar(20)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.20">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="qrinvoice"
+			type="varchar(100)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.21">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="userinvoice"
+			type="varchar(50)">
+		</column>
+	</addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.22">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoicestored"
+			type="timestamp">
+		</column>
+	</addColumn>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.23">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoiceid"
+			type="int"
+			defaultValue="0">
+		</column>
+	</addColumn>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.24">
+    <createTable tableName="productionfacturaqr">
+      <column name="Id" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>
+      <column name="facturaid" type="int">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="facturaqrroute" type="VARCHAR(500)">
+        <constraints nullable="true" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.25">
+	<insert tableName="parameters"> 
+		<column name="value" value="30"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentMaxDays"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.26">
+	<insert tableName="parameters"> 
+		<column name="value" value="1"/>
+		<column name="type" value="int"/>
+		<column name="field" value="SentLocalMaxDays"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.27">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="invoicetype"
+			type="varchar(20)">
+		</column>
+	</addColumn>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.28">
+	<insert tableName="roles"> 
+		<column name="roledescription" value="INCIDENCIAS"/>
+	</insert>
+  </changeSet>
+  
+  <changeSet author="gramirez" id="changelog-2.29">
+	<insert tableName="parameters"> 
+		<column name="value" value="http://www.dhl.com.mx/es/express.html"/>
+		<column name="type" value="string"/>
+		<column name="field" value="dhlEmail"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.30">
+	<insert tableName="parameters"> 
+		<column name="value" value="https://www.fedex.com/es-mx/tracking.html"/>
+		<column name="type" value="string"/>
+		<column name="field" value="fedexEmail"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.31">
+	<insert tableName="parameters"> 
+		<column name="value" value="http://www.sendex.mx/Rastreo/Rastreo/"/>
+		<column name="type" value="string"/>
+		<column name="field" value="sendaEmail"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.32">
+	<insert tableName="parameters"> 
+		<column name="value" value="https://www.tresguerras.com.mx/3G"/>
+		<column name="type" value="string"/>
+		<column name="field" value="tresguerrasEmail"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-2.33">
+	<insert tableName="parameters"> 
+		<column name="value" value="Tel: 81 1929 5571"/>
+		<column name="type" value="string"/>
+		<column name="field" value="tdvEmail"/>
+	</insert>
+  </changeSet>
+</databaseChangeLog> 

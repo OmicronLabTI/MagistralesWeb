@@ -16,7 +16,7 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {IPedidoDetalleLabelReq, IPedidoDetalleListRes, IQrByOrdersRes} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -107,6 +107,8 @@ export class PedidosService {
   }
   getInitRangeDate() {
     return this.consumeService.httpGet<ICatalogRes>(`${Endpoints.pedidos.rangeDateInit}`);
-
+  }
+  qrByEachOrder(idsByEachOrders: number[]) {
+    return this.consumeService.httpPost<IQrByOrdersRes>(`${Endpoints.orders.qrByOrder}`, idsByEachOrders);
   }
 }

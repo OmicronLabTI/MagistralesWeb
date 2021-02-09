@@ -42,7 +42,8 @@ public class SimpleFilter extends ZuulFilter {
            request.getRequestURI().contains("/index.html") ||
            request.getRequestURI().contains("/metrics") ||
            request.getRequestURI().contains("/swagger") ||
-           request.getRequestURI().contains("/favicon-")) {
+           request.getRequestURI().contains("/favicon-") ||
+           request.getRequestURI().contains("/api/pedidos/resources/")) {
             return null;
         }
 

@@ -26,109 +26,62 @@ namespace Omicron.SapAdapter.Entities.Context
         {
         }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<OrderModel> OrderModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<AsesorModel> AsesorModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<DetallePedidoModel> DetallePedido { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<ProductoModel> ProductoModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<DetalleFormulaModel> DetalleFormulaModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<ItemWarehouseModel> ItemWarehouseModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<Users> Users { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<BatchesQuantity> BatchesQuantity { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<Batches> Batches { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<BatchesTransactionQtyModel> BatchesTransactionQtyModel { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<BatchTransacitions> BatchTransacitions { get; set; }
 
-        /// <summary>
-        /// Gets or sets OrderModel.
-        /// </summary>
-        /// <value>
-        /// Object UserModel OrderModel.
-        /// </value>
+        /// <inheritdoc/>
         public virtual DbSet<AttachmentModel> AttachmentModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<DeliveryDetailModel> DeliveryDetailModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<DeliverModel> DeliverModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<InvoiceHeaderModel> InvoiceHeaderModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<InvoiceDetailModel> InvoiceDetailModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<ClientCatalogModel> ClientCatalogModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<Repartidores> Repartidores { get; set; }
 
         /// <summary>
         /// model creating.
@@ -165,6 +118,18 @@ namespace Omicron.SapAdapter.Entities.Context
             {
                 table.AbsEntry,
                 table.Line,
+            });
+
+            modelBuilder.Entity<DeliveryDetailModel>().HasKey(table => new
+            {
+                table.DeliveryId,
+                table.LineNum,
+            });
+
+            modelBuilder.Entity<InvoiceDetailModel>().HasKey(table => new
+            {
+                table.InvoiceId,
+                table.LineNum,
             });
         }
     }

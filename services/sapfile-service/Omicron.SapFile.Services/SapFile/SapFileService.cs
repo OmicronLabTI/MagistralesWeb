@@ -99,6 +99,7 @@ namespace Omicron.SapFile.Services.SapFile
                 groupedOrders.ToList().ForEach(x => {
                     var filePath = this.CreateSalesOrderReportWithProductionOrders(x.ToList());
                     this._loggerProxy.Info($"Create file for sales order: {filePath}.");
+                    dictResult.Add($"OK-{x.Key}", filePath);
                 });
             }
             catch(Exception ex)

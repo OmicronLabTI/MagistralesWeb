@@ -100,7 +100,7 @@ body {
   margin-bottom: 50px !important;
 }
 .title-list-container{
-  width: 50%;
+  width: 35%;
   float: left;
   font-weight: 600 !important;
   font-size: 1.6em;
@@ -111,9 +111,12 @@ body {
   height: 8%;
   display: flex;
   justify-content: center;
-  color: #5f606c;
+  color: #5f606c !important;
   font-size: 1.5em;
   font-family: 'Quicksand', sans-serif !important;
+}
+.custom-incident-alert {
+  font-weight: bold !important;
 }
 td{
   font-family: 'Quicksand', sans-serif !important;
@@ -129,7 +132,9 @@ td{
 .scroll-custom::-webkit-scrollbar {
   display: none;
 }
-
+.display-none {
+  display: none !important;
+}
 /* Hide scrollbar for IE, Edge and Firefox */
 .scroll-custom {
   overflow-y: scroll;
@@ -150,7 +155,15 @@ td{
   height: 12%;
 }
 
+.range-date-container{
+  width: 65%;
+  float: right;
+  text-align: right;
+  color: #3b3f5c;
+  font-size: 1rem;
+  font-weight: 600;
 
+}
 .filter-select{
   width: 50%;
   float: right;
@@ -665,7 +678,7 @@ a.breadcrumblink:hover{
   width: 100px;
 }
 
-.mat-stroked-button.entregado {
+.mat-stroked-button.almacenado {
   display: flex;
   justify-content: center;
   background-color: #1b7614;
@@ -769,18 +782,45 @@ a.breadcrumblink:hover{
 .only-margin {
   width: 8px;
 }
-// .mat-form-field-underline {
-//   caret-color: rgba(108, 144, 179, 1) !important;
+.range-container {
+  margin-left: 60%;
+  width: 40%;
+}
 
-// }
-// ::ng-deep.mat-form-field-underline {
-//   /*change color of underline*/
-//   background-color: rgba(108, 144, 179, 1) !important;
-// }
-// ::ng-deep.mat-form-field-ripple {
-//   /*change color of underline when focused*/
-//   background-color: rgba(108, 144, 179, 1) !important;
-// }
-// .mat-input-underline {
-//   caret-color: rgba(108, 144, 179, 1) !important;
-// }
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0 !important;
+}
+.title-graph {
+  color: #3b3f5c;
+  font-size: 20px;
+  font-weight: 500;
+}
+.progress-inner{
+ font-weight: bold;
+}
+
+.open-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #e7515a !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+}
+.close-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #8dbf42 !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+}
+.attending-incident {
+  display: flex;
+  justify-content: center;
+  background-color: #6C90B3 !important;
+  font-weight: 700 !important;
+  width: 130px;
+  color: white;
+
+}

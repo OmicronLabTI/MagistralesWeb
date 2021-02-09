@@ -87,9 +87,11 @@ class RootViewController: UIViewController {
             .withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
             guard let self = self else { return }
             self.lastRow = lastRow ?? IndexPath(row: 0, section: 0)
-            if data == nil {
+                if data == nil {
                 self.viewTable.alpha = 1.0
                 self.viewTable.isUserInteractionEnabled = true
+                print(self.rootViewModel.sections.count)
+                if self.rootViewModel.sections.count == 0 { return }
                 let section = self.rootViewModel.sections[self.lastRow.row]
                 self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
                 self.inboxViewModel.setSelection(section: section)
@@ -130,8 +132,18 @@ class RootViewController: UIViewController {
                 self?.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
-        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
-            AlertManager.shared.showAlert(message: error, view: self)
+        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] (error, logOut) in
+            if logOut {
+                let alert = UIAlertController(title: error, message: CommonStrings.empty, preferredStyle: .alert)
+                let acceptAct = UIAlertAction(title: CommonStrings.accept, style: .default, handler: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.rootViewModel.logoutDidTap.onNext(())
+                })
+                alert.addAction(acceptAct)
+                present(alert, animated: true, completion: nil)
+            } else  {
+                AlertManager.shared.showAlert(message: error, view: self)
+            }
         }).disposed(by: self.disposeBag)
         //Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)

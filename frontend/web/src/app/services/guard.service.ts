@@ -37,6 +37,13 @@ export class GuardService implements CanActivate {
             return pass;
           }
           break;
+        case RolesType.incidents:
+          pass = pathRoles.incidents.includes(route.url[CONST_NUMBER.zero].path);
+          if (!pass) {
+            this.router.navigate([pathRoles.incidents[CONST_NUMBER.zero]]);
+            return pass;
+          }
+          break;
       }
       return pass;
     } else {
