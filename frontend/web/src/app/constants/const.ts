@@ -38,6 +38,7 @@ export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
     perDay: 1000 * 3600 * 24,
     ninetyDays: (24 * 60 * 60 * 1000) * 91,
+    operationDay: (24 * 60 * 60 * 1000),
     ninetyDaysDifference: 90,
     keyEnter: 'Enter'
 };

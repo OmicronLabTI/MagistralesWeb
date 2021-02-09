@@ -161,16 +161,22 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
             var details = (await this.sapDao.GetDetailsbyDocDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).GroupBy(x => x.PedidoId).ToList();
-            var idsToReturn = new List<int>();
+            var idsToReturnLine = new List<int>();
+            var idsToReturnMix = new List<int>();
             details.ForEach(x =>
             {
-                if (x.Any(y => lineProducts.Contains(y.ProductoId)))
+                if (x.All(y => lineProducts.Contains(y.ProductoId)))
                 {
-                    idsToReturn.Add(x.Key.Value);
+                    idsToReturnLine.Add(x.Key.Value);
+                }
+
+                if (x.Any(y => lineProducts.Contains(y.ProductoId)) && !x.All(y => lineProducts.Contains(y.ProductoId)))
+                {
+                    idsToReturnMix.Add(x.Key.Value);
                 }
             });
 
-            return ServiceUtils.CreateResult(true, 200, null, idsToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, idsToReturnLine, JsonConvert.SerializeObject(idsToReturnMix), null);
         }
 
         /// <inheritdoc/>
