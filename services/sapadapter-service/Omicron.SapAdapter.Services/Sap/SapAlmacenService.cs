@@ -134,6 +134,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Description = itemCode.ProductoName,
                 ItemCode = itemCode.ProductoId,
                 ProductType = $"Producto {productType}",
+                NeedsCooling = itemCode.NeedsCooling,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);

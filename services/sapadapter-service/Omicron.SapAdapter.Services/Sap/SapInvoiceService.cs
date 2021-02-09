@@ -185,6 +185,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 InvoiceId = sapData.Item2.DocNum,
                 DeliveryId = sapData.Item1.BaseEntry.Value,
+                NeedsCooling = itemCode.NeedsCooling,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
