@@ -397,14 +397,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var lineProducts = retrieveModel.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
 
                 var doctor = invoice.Medico ?? string.Empty;
-                var totalDeliveries = deliveryDetails.Select(x => x.BaseEntry).Distinct().Count();
                 var totalProducts = invoiceDetails.Count;
 
                 var invoiceModel = new InvoiceSaleModel
                 {
                     Doctor = doctor,
                     Invoice = invoice.DocNum,
-                    Deliveries = totalDeliveries,
+                    Deliveries = 0,
                     Products = totalProducts,
                     InvoiceDocDate = invoice.FechaInicio,
                 };
@@ -419,7 +418,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Invoice = invoice.DocNum,
                     InvoiceDocDate = invoice.FechaInicio,
                     ProductType = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                    TotalDeliveries = totalDeliveries,
+                    TotalDeliveries = 0,
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,
                 };
@@ -431,7 +430,10 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceSale = invoiceModel,
                 };
 
-                listToReturn.TotalDeliveries += totalDeliveries;
+                invoiceModelToAdd.InvoiceHeader.TotalDeliveries = invoiceModelToAdd.Deliveries.Count;
+                invoiceModelToAdd.InvoiceSale.Deliveries = invoiceModelToAdd.Deliveries.Count;
+
+                listToReturn.TotalDeliveries += invoiceModelToAdd.Deliveries.Count;
                 listToReturn.Invoices.Add(invoiceModelToAdd);
             }
 
