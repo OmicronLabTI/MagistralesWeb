@@ -328,5 +328,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<IEnumerable<Repartidores>> GetDeliveryCompanies();
+
+        /// <summary>
+        /// Get Batches by products.
+        /// </summary>
+        /// <param name="productsIds">the products.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds);
     }
 }
