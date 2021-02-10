@@ -292,21 +292,47 @@ th.centered {
   text-align: right;
 }
 .confirm-button-class {
-  background: #6C90B3;
+  /*background: #6C90B3;
   color: white;
   width: 80px;
   height: 25px;
   z-index: -1;
   margin-left: 5px;
+  cursor: pointer !important;*/
+
+  cursor: pointer !important;
+  width: 7rem;
+  height: 2.5rem;
+  font-size: 1em;
+  color: #fff !important;
+  background-color: #6C90B3 !important;
+  border: 1px solid #6C90B3;
+  padding: 0 10px;
+  text-shadow: none;
+  font-weight: 300;
+  word-wrap: break-word;
+  margin: 5px;
+  border-radius: 0.25rem;
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+
 }
 
 .cancel-button-class {
   background: white;
   color: black;
-  width: 80px;
-  height: 25px;
-  border: black 1px solid;
+  width: 7rem;
+  height: 2.5rem;
+  font-size: 1em;
+  padding: 0 10px;
+  text-shadow: none;
+  font-weight: 300;
+  border: black .5px solid;
   margin-right: 5px;
+  cursor: pointer !important;
+  border-radius: 0.25rem;
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
 }
 
 .swal2-actions {
@@ -814,6 +840,7 @@ a.breadcrumblink:hover{
   font-weight: 700 !important;
   width: 130px;
   color: white;
+  cursor: default !important;
 }
 .attending-incident {
   display: flex;

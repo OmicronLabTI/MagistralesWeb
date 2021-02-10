@@ -32,13 +32,16 @@
                     <div class="form-field-left">
                         <mat-form-field appearance="outline" class="custom-field">
                             <mat-label>Fecha</mat-label>
-                            <mat-select formControlName="dateType" >
-                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="0">Inicio</mat-option>
-                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="1">Finalización</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="0">Orden fabricación</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="1">Término QFB</mat-option>
-                                <mat-option *ngIf="filterData.filterOrdersData.isFromIncidents" value="0">Fecha Creación</mat-option>
-
+                            <input matInput
+                                   *ngIf="filterData.filterOrdersData.isFromIncidents"
+                                   type="text"
+                                   value="Fecha Creación"
+                                    readonly>
+                            <mat-select formControlName="dateType" *ngIf="!filterData.filterOrdersData.isFromIncidents">
+                                <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="1">Finalización</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="0">Orden fabricación</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders" value="1">Término QFB</mat-option>
                             </mat-select>
                             <mat-error *ngIf="findOrdersForm?.controls.dateType?.errors?.required">
                                 Tipo de fecha es <strong>requerido</strong>
@@ -94,8 +97,9 @@
                                 <mat-option value="Cancelado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
 
                                 <mat-option value="Abierta" *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
-                                <mat-option value="Cerrada" *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
                                 <mat-option value="Atendiendo" *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>
+                                <mat-option value="Cerrada" *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
+
                             </mat-select>
                         </mat-form-field>
                     </div>
