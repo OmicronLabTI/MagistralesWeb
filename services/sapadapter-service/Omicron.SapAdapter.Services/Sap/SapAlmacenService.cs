@@ -444,7 +444,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         var batch = batchesDataBase.FirstOrDefault(z => z.DistNumber == y.BatchNumber && z.ItemCode == item.ProductoId);
                         batch ??= new Batches();
                         var expirationDate = batch.ExpDate.HasValue ? batch.ExpDate.Value.ToString("dd/MM/yyyy") : string.Empty;
-                        batches.Add($"{y.BatchNumber} | Cad: {expirationDate}");
+                        batches.Add($"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {expirationDate}");
                     });
                 }
 
