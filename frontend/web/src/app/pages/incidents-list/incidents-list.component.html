@@ -83,7 +83,8 @@
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">LOTE / PIEZAS DAÑADAS </th>
                     <td mat-cell
                         matTooltip="{{element.batchesTooltip}}"
-                        matTooltipPosition="right" *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide">
+                        matTooltipPosition="right" *matCellDef="let element; let i = index;"
+                        class="color-text-intables tdcell tdcell-center mobile-hide batches-value-custom">
                         <div class="batches-container">
                             <span *ngFor="let batcheTitle of element.batchesDisplay"> {{batcheTitle}}</span>
                         </div>

@@ -192,7 +192,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   getDisplayBatchesData(incident: IncidentItem, isForToolTip: boolean) {
     const arrayBatches = this.getArrayBatches(incident);
     if (isForToolTip) {
-      return this.getDataToDisplay(arrayBatches);
+      return this.getDataToDisplay(arrayBatches).trim().slice(0, -1);
     } else {
       return this.getArrayBatchesToDisplay(arrayBatches);
     }
