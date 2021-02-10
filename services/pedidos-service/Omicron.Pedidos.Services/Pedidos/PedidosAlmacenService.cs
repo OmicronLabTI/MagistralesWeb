@@ -196,7 +196,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var idsPending = idsPossiblePending.Where(x => !idsSalesFinalized.Any(y => y == x)).ToList();
             var ordersPending = (await this.pedidosDao.GetUserOrderBySaleOrder(idsPending)).GroupBy(x => x.Salesorderid).ToList();
+
             ordersPending = ordersPending.Where(x => !x.Any(y => y.StatusAlmacen == ServiceConstants.BackOrder)).ToList();
+            ordersPending = ordersPending.Where(x => !x.All(y => y.StatusAlmacen == ServiceConstants.Almacenado)).ToList();
 
             var packagedOrders = ordersByDates.Where(x => x.IsProductionOrder && !string.IsNullOrEmpty(x.InvoiceType)).DistinctBy(y => y.InvoiceId).ToList();
             var model = new AlmacenGraphicsCount
