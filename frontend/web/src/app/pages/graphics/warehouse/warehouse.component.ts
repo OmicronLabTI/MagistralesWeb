@@ -19,6 +19,7 @@ import {ErrorService} from '../../../services/error.service';
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
+  itemsGraphReceive: IncidentsGraphicsMatrix[] = [];
   itemsGraph: IncidentsGraphicsMatrix[] = [];
   localPackages: IncidentsGraphicsMatrix[] = [];
   foreignPackages: IncidentsGraphicsMatrix[] = [];
@@ -42,7 +43,8 @@ export class WarehouseComponent implements OnInit {
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init
     // items top
-    this.itemsGraph = this.getNewReceptionData(response.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+    this.itemsGraphReceive = this.getNewReceptionData(response.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+    this.itemsGraph = [this.itemsGraphReceive[0], this.itemsGraphReceive[3], this.itemsGraphReceive[2], this.itemsGraphReceive[1]];
 
     // local package data
     this.localPackages = response.filter(
