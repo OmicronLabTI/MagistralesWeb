@@ -124,7 +124,7 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 116, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 5, InvoiceType = "local", StatusInvoice = "No Entregado" },
                 new UserOrderModel { Id = 117, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 6, InvoiceType = "foraneo", StatusInvoice = "Empaquetado" },
                 new UserOrderModel { Id = 118, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 7, InvoiceType = "foraneo", StatusInvoice = "Enviado" },
-                new UserOrderModel { Id = 119, Productionorderid = null, Salesorderid = "202", StatusAlmacen = "Back Order", FinalizedDate = DateTime.Now },
+                new UserOrderModel { Id = 119, Productionorderid = null, Salesorderid = "202", Status = "Recibir", StatusAlmacen = "Back Order", FinalizedDate = DateTime.Now },
                 new UserOrderModel { Id = 120, Productionorderid = null, Salesorderid = "203", Status = "Almacenado", FinalizedDate = DateTime.Now },
             };
         }
