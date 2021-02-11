@@ -199,6 +199,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             ordersPending = ordersPending.Where(x => !x.Any(y => y.StatusAlmacen == ServiceConstants.BackOrder)).ToList();
             ordersPending = ordersPending.Where(x => !x.All(y => y.StatusAlmacen == ServiceConstants.Almacenado)).ToList();
+            ordersPending = ordersPending.Where(x => x.All(y => y.StatusAlmacen != ServiceConstants.Empaquetado)).ToList();
             ordersPending = ordersPending.Where(x => x.All(y => string.IsNullOrEmpty(y.StatusInvoice))).ToList();
 
             var packagedOrders = ordersByDates.Where(x => x.IsProductionOrder && !string.IsNullOrEmpty(x.InvoiceType)).DistinctBy(y => y.InvoiceId).ToList();
