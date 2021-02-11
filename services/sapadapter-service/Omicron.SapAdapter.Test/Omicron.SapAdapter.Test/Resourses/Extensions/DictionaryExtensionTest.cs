@@ -70,6 +70,46 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         }
 
         /// <summary>
+        /// Get numeric values.
+        /// </summary>
+        /// <param name="key">Element key.</param>
+        /// <param name="expectedResult">Expected result.</param>
+        [TestCase("offset", 0)]
+        public void Get_NumericValuesErrorValueZero(string key, int expectedResult)
+        {
+            // Arrange
+            Dictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                { "offset",  string.Empty },
+            };
+
+            // Act
+            var result = parameters.Get<string, string, int>(key);
+
+            // Assert
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        /// <summary>
+        /// Get numeric values.
+        /// </summary>
+        /// <param name="key">Element key.</param>
+        /// <param name="value">value set.</param>
+        [TestCase("offset", 20)]
+        public void Get_NumericValuesError(string key, int value)
+        {
+            // Arrange
+            Dictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                { "aaa",  string.Empty },
+                { "nnnn",  string.Empty },
+            };
+
+            // Act
+            Assert.Throws<KeyNotFoundException>(() => parameters.Get<string, string, int>(key));
+        }
+
+        /// <summary>
         /// Decode query string parameters.
         /// </summary>
         /// <param name="key">Element key.</param>

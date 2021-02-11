@@ -164,7 +164,7 @@ namespace Omicron.Pedidos.Test.Services
         {
             // arrange
             var yesterday = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
-            var today = DateTime.Now.ToString("dd/MM/yyyy");
+            var today = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy");
             var dict = new Dictionary<string, string>
             {
                 { ServiceConstants.FechaInicio, $"{yesterday}-{today}" },

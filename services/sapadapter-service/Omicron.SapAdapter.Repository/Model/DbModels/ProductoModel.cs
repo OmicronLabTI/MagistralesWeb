@@ -78,7 +78,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("QryGroup29")]
+        [Column("QryGroup33")]
         public string NeedsCooling { get; set; }
 
         /// <summary>
