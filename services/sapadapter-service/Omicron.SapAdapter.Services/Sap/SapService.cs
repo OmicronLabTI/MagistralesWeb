@@ -196,8 +196,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
-            var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+            var userOrders = new List<UserOrderModel>();
+
+            if (returnDetails)
+            {
+                var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
+                userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+            }
 
             foreach (var o in ordenFab)
             {
