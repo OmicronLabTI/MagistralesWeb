@@ -29,7 +29,11 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.maxLengthComments = this.commentsConfig.isForClose ? CONST_NUMBER.oneHundred.toString() : CONST_NUMBER.oneThousand.toString();
+    if (this.commentsConfig.isForClose) {
+      this.maxLengthComments = String(CONST_NUMBER.threeHundred - (this.comments.trim().length + CONST_NUMBER.one));
+    } else {
+      this.maxLengthComments = String(CONST_NUMBER.oneThousand - (this.comments.trim().length + CONST_NUMBER.one));
+    }
   }
   saveComments() {
     if (this.commentsConfig.isReadOnly || this.commentsConfig.isForClose ) {
