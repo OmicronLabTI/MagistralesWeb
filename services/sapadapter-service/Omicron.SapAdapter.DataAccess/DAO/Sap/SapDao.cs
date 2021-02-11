@@ -261,6 +261,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
+        {
+            return await this.RetryQuery<DetalleFormulaModel>(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
+        }
+
+        /// <inheritdoc/>
         public async Task<Users> GetSapUserById(int userId)
         {
             var query = await this.databaseContext.Users.FirstOrDefaultAsync(x => x.UserId == userId);
@@ -284,7 +290,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId)
         {
-            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId));            
+            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId));
         }
 
         /// <inheritdoc/>

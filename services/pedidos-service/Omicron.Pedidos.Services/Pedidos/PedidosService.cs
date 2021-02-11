@@ -82,7 +82,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).ToList();
             var resultFormula = await this.GetSapOrders(userOrders);
 
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);

@@ -102,6 +102,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
 
         /// <summary>
+        /// Get the formula by orders.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns></returns>
+        Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId);
+
+        /// <summary>
         /// gets the sap user.
         /// </summary>
         /// <param name="userId">the user id.</param>
