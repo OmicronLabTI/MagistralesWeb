@@ -34,6 +34,7 @@ export const Endpoints = {
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
     checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
     getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`,
+    rangeDateInit: `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook`
 },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
@@ -59,6 +60,12 @@ export const Endpoints = {
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`
+  },
+  incidents: {
+    graphIncidents: `${environment.baseUrl}/api/almacen/incidents/graph`,
+    graphWarehouse: `${environment.baseUrl}/api/almacen/graphs`,
+    incidentsList: `${environment.baseUrl}/api/almacen/incidents`,
+    changeStatus: `${environment.baseUrl}/api/almacen/incidents`
   }
 };
 

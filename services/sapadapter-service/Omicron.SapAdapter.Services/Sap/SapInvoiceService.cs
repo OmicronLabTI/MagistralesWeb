@@ -53,15 +53,22 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
-            var listIds = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
-            listIds.AddRange(lineProducts.Select(y => y.SaleOrderId).Distinct());
+            var listIds = userOrders.Select(y => y.DeliveryId).ToList();
+            listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
+            listIds = listIds.Distinct().ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(listIds)).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
+
+            var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
+            deliveryIds.AddRange(lineProducts.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId));
+            deliveryIds = deliveryIds.Distinct().ToList();
+            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && deliveryIds.Contains(y.BaseEntry.Value)).Select(x => x.BaseEntry.Value).Distinct().Count();
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
@@ -77,7 +84,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{granTotal}");
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{remisionTotal}-{granTotal}");
         }
 
         /// <inheritdoc/>
@@ -92,7 +99,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
 
-            var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders);
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, deliveryDetails.Select(x => x.BaseEntry).ToList());
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
+            var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
             return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
@@ -181,6 +191,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 InvoiceId = sapData.Item2.DocNum,
                 DeliveryId = sapData.Item1.BaseEntry.Value,
+                NeedsCooling = itemCode.NeedsCooling,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
@@ -245,7 +256,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
             var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
 
-            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderBy(x => x.AssignedDate.Value).FirstOrDefault().Status;
+            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
             var model = new InvoiceDeliverModel
             {
@@ -261,6 +272,38 @@ namespace Omicron.SapAdapter.Services.Sap
             comments = !status.Equals(ServiceConstants.Empaquetado) && !status.Equals(ServiceConstants.NoEntregado) ? $"{ServiceConstants.PackageNotAvailable} {status}" : comments;
 
             return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetSapIds(List<int> salesIds)
+        {
+            var listToReturn = new List<SapIdsModel>();
+
+            var deliveries = (await this.sapDao.GetDeliveryBySaleOrder(salesIds)).ToList();
+            var invoicesIdToLook = deliveries.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList();
+            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdToLook)).ToList();
+
+            salesIds.ForEach(x =>
+            {
+                deliveries.Where(y => y.BaseEntry == x).ToList().ForEach(d =>
+                {
+                    var invoiceId = d.InvoiceId.HasValue ? d.InvoiceId.Value : 0;
+                    var localInvoice = invoices.FirstOrDefault(i => i.InvoiceId == invoiceId);
+                    localInvoice ??= new InvoiceHeaderModel();
+
+                    var model = new SapIdsModel
+                    {
+                        DeliveryId = d.DeliveryId,
+                        InvoiceId = localInvoice.DocNum,
+                        Itemcode = d.ProductoId,
+                        SaleOrderId = x,
+                    };
+
+                    listToReturn.Add(model);
+                });
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
 
         /// <summary>
@@ -360,14 +403,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var lineProducts = retrieveModel.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
 
                 var doctor = invoice.Medico ?? string.Empty;
-                var totalDeliveries = deliveryDetails.Select(x => x.BaseEntry).Distinct().Count();
                 var totalProducts = invoiceDetails.Count;
 
                 var invoiceModel = new InvoiceSaleModel
                 {
                     Doctor = doctor,
                     Invoice = invoice.DocNum,
-                    Deliveries = totalDeliveries,
+                    Deliveries = 0,
                     Products = totalProducts,
                     InvoiceDocDate = invoice.FechaInicio,
                 };
@@ -382,7 +424,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Invoice = invoice.DocNum,
                     InvoiceDocDate = invoice.FechaInicio,
                     ProductType = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                    TotalDeliveries = totalDeliveries,
+                    TotalDeliveries = 0,
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,
                 };
@@ -394,7 +436,10 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceSale = invoiceModel,
                 };
 
-                listToReturn.TotalDeliveries += totalDeliveries;
+                invoiceModelToAdd.InvoiceHeader.TotalDeliveries = invoiceModelToAdd.Deliveries.Count;
+                invoiceModelToAdd.InvoiceSale.Deliveries = invoiceModelToAdd.Deliveries.Count;
+
+                listToReturn.TotalDeliveries += invoiceModelToAdd.Deliveries.Count;
                 listToReturn.Invoices.Add(invoiceModelToAdd);
             }
 
@@ -415,8 +460,8 @@ namespace Omicron.SapAdapter.Services.Sap
             delivery.DistinctBy(x => x.DeliveryId).ToList()
                 .ForEach(y =>
                 {
-                    var userOrderStatus = userOrderModels.Where(z => z.Salesorderid == y.BaseEntry.ToString() && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
-                    userOrderStatus.AddRange(lineProducts.Where(x => x.SaleOrderId == y.BaseEntry && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
+                    var userOrderStatus = userOrderModels.Where(z => z.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
+                    userOrderStatus.AddRange(lineProducts.Where(x => x.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
 
                     var deliveryModel = new InvoiceDeliveryModel
                     {
@@ -442,7 +487,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineProducts">the line products.</param>
         /// <param name="orders">the owor orders.</param>
         /// <returns>the products.</returns>
-        private async Task<List<InvoiceProductModel>> GetProductModels(List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders)
+        private async Task<List<InvoiceProductModel>> GetProductModels(List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, List<IncidentsModel> incidents)
         {
             var listToReturn = new List<InvoiceProductModel>();
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
@@ -453,14 +498,32 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = (await this.sapDao.GetProductById(invoice.ProductoId)).FirstOrDefault();
                 item = item == null ? new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty } : item;
 
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value);
+                var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
+
                 var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
                 if (item.IsMagistral.Equals("N"))
                 {
-                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, ServiceConstants.PT);
+                    var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == saleId && x.ItemCode == invoice.ProductoId);
+                    lineProduct ??= new LineProductsModel();
+                    var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
+
+                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, ServiceConstants.PT, batchName);
                 }
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice);
+
+                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == product.Item3 && x.ItemCode == item.ProductoId);
+                incidentdb ??= new IncidentsModel();
+
+                var localIncident = new IncidentInfoModel
+                {
+                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Comments = incidentdb.Comments,
+                    Incidence = incidentdb.Incidence,
+                    Status = incidentdb.Status,
+                };
 
                 var productModel = new InvoiceProductModel
                 {
@@ -476,6 +539,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryId = invoice.BaseEntry.Value,
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
+                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
 
                 listToReturn.Add(productModel);
@@ -522,7 +586,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="itemCode">the item code.</param>
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, string warehouse)
+        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, string warehouse, List<AlmacenBatchModel> batchName)
         {
             var batchTransacion = await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, delivery);
             var lastBatch = batchTransacion == null || !batchTransacion.Any() ? 0 : batchTransacion.Last().LogEntry;
@@ -533,7 +597,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<string>();
             validBatches.Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>
             {
-                listToReturn.Add($"{z.DistNumber} | Cad: {z.FechaExp}");
+                var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
+                batch ??= new AlmacenBatchModel() { BatchQty = 0 };
+                listToReturn.Add($"{z.DistNumber} | {(int)batch.BatchQty} pz | Cad: {z.FechaExp}");
             });
 
             return listToReturn;
@@ -544,8 +610,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var delivery = deliveries.FirstOrDefault();
             delivery = delivery == null ? new DeliveryDetailModel() : delivery;
 
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry });
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
+
             invoices = invoices.Where(x => x.BaseEntry.HasValue && x.BaseEntry.Value == delivery.DeliveryId).ToList();
-            var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders);
+            var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders, incidents);
 
             var deliveryData = new DeliveryScannedModel
             {
@@ -570,7 +639,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<Tuple<InvoiceDetailModel, InvoiceHeaderModel>> GetSaleOrderInvoiceDataByItemCode(int saleOrder, string itemCode)
         {
-            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(new List<int> { saleOrder })).FirstOrDefault(x => x.InvoiceId.HasValue);
+            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(new List<int> { saleOrder })).FirstOrDefault(x => x.ProductoId == itemCode && x.InvoiceId.HasValue);
             deliveryDetails ??= new DeliveryDetailModel { InvoiceId = 0 };
 
             var header = (await this.sapDao.GetInvoiceHeaderByInvoiceId(new List<int> { deliveryDetails.InvoiceId.Value })).FirstOrDefault();

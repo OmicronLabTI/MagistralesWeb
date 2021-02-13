@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -87,8 +88,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetLineProducts()));
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProducts()))
+                .Returns(Task.FromResult(this.GetIncidents()));
 
             var mockCatalogos = new Mock<ICatalogsService>();
             mockCatalogos
@@ -190,6 +192,42 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.GetDeliveryBySaleOrderId(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task AlmacenGraphCount()
+        {
+            // arrange
+            var yesterday = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+            var today = DateTime.Now.ToString("dd/MM/yyyy");
+            var dict = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, $"{yesterday}-{today}" },
+            };
+
+            // act
+            var response = await this.sapService.AlmacenGraphCount(dict);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryParties()
+        {
+            // act
+            var response = await this.sapService.GetDeliveryParties();
 
             // assert
             Assert.IsNotNull(response);

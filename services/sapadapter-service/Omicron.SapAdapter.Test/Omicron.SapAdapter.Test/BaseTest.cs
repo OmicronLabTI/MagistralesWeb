@@ -83,6 +83,10 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "Magistral2", DetalleId = 1, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral3", DetalleId = 2, PedidoId = 75000, ProductoId = "Magistral2", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75001, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
+
+                // for graphs
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75002, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 1, PedidoId = 75002, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
             };
         }
 
@@ -151,6 +155,18 @@ namespace Omicron.SapAdapter.Test
                 // For Almacen
                 new BatchesQuantity { AbsEntry = 2, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
                 new BatchesQuantity { AbsEntry = 3, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
+            };
+        }
+
+        /// <summary>
+        /// returns the detalle formula.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        public List<ProductoModel> ProdcutModels()
+        {
+            return new List<ProductoModel>
+            {
+                new ProductoModel { IsLine = "Y", IsMagistral = "N", ProductoId = "Linea1" },
             };
         }
 
@@ -227,7 +243,7 @@ namespace Omicron.SapAdapter.Test
                 // For almacen
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y" },
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
             };
         }
 
@@ -395,6 +411,27 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetIncidents()
+        {
+            var listProducts = new List<IncidentsModel>
+            {
+                new IncidentsModel { SaleOrderId = 100, ItemCode = "Linea1" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
         /// Gets the user order model.
         /// </summary>
         /// <returns>the data.</returns>
@@ -402,7 +439,7 @@ namespace Omicron.SapAdapter.Test
         {
             var userOrders = new List<UserOrderModel>
             {
-                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036 },
             };
 
             return new ResultDto
@@ -428,7 +465,7 @@ namespace Omicron.SapAdapter.Test
 
             var listProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch) },
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), DeliveryId = 46037 },
             };
 
             return new ResultDto

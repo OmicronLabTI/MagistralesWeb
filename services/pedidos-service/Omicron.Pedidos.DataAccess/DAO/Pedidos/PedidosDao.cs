@@ -279,14 +279,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook)
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
-            orders = orders.Where(x => x.Status.Equals(status) && x.FinishedLabel == 1).ToList();
-            var saleOrderId = orders.Select(y => y.Salesorderid).ToList();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
 
-            orders.AddRange(await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && saleOrderId.Contains(x.Salesorderid)).ToListAsync());
-            return orders;
+            var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
+            var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
+
+            var possiblePending = orders.Where(x => x.IsProductionOrder && (x.Status.Equals(status) || x.Status.Equals(secondStatus)) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
+            var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
+            var pendingOrders = await this.databaseContext.UserOrderModel.Where(x => isPending.Contains(x.Salesorderid)).ToListAsync();
+
+            pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
+            {
+                var orders = y.Where(z => z.IsProductionOrder).ToList();
+                if (y.Any(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus) && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                {
+                    orderstoReturn.AddRange(y);
+                }
+            });
+            return orderstoReturn;
         }
 
         /// <inheritdoc/>
@@ -310,6 +322,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder)
         {
             return await this.databaseContext.ProductionRemisionQrModel.Where(x => saleOrder.Contains(x.PedidoId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteByDelivery(List<int> delivery)
+        {
+            return await this.databaseContext.ProductionRemisionQrModel.Where(x => delivery.Contains(x.RemisionId)).ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -337,10 +355,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder)
         {
-            var userOrders = await this.databaseContext.UserOrderModel.Where(x => x.Status == statusForSale).ToListAsync();
-            var prodOrders = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.StatusAlmacen) && x.StatusAlmacen == statusForOrder).ToListAsync();
-            userOrders.AddRange(prodOrders);
-            return userOrders;
+            return await this.databaseContext.UserOrderModel.Where(x => x.StatusAlmacen == statusForSale || x.StatusAlmacen == statusForOrder).ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -355,14 +370,22 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();
         }
 
-        /// <summary>
-        /// Returns the user order by user id.
-        /// </summary>
-        /// <param name="types">the list of users.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
         {
             return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate <= endDate).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => deliveryIds.Contains(x.DeliveryId)).ToListAsync();
         }
 
         /// <summary>

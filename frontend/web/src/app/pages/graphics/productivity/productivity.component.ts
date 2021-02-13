@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 
 import { Title } from '@angular/platform-browser';
 import { MatPaginator, MatTableDataSource} from '@angular/material';
-import {DataService} from '../../services/data.service';
+import {DataService} from '../../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
 import {

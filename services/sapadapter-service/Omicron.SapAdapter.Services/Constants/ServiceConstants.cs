@@ -146,6 +146,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLineProduct = "orders?status=Almacenado";
 
         /// <summary>
+        /// Get the lines products for status almacenado.
+        /// </summary>
+        public const string GetLineProductPedidos = "almacen/orders";
+
+        /// <summary>
         /// route for the delivery values.
         /// </summary>
         public const string GetLinesForDelivery = "delivery/orders";
@@ -174,6 +179,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Value  for the lines for invoice.
         /// </summary>
         public const string GetPackagesByInvoice = "getpackages/invoice";
+
+        /// <summary>
+        /// gets the incidents by sale id.
+        /// </summary>
+        public const string GetIncidents = "incident/saleorder";
 
         /// <summary>
         /// Get users by id.
@@ -239,6 +249,21 @@ namespace Omicron.SapAdapter.Services.Constants
         /// status not delivered.
         /// </summary>
         public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// status pendiente.
+        /// </summary>
+        public const string Pendiente = "Pendiente";
+
+        /// <summary>
+        /// status back order.
+        /// </summary>
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Recibir = "Recibir";
 
         /// <summary>
         /// Magistral.

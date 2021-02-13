@@ -572,6 +572,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get the user order by Pedido id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/deliveryOrders")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderByDeliveryOrder(List<int> listIds)
+        {
+            var response = await this.pedidosAlmacenFacade.GetUserOrderByDeliveryOrder(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
@@ -594,6 +607,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> UpdateSentOrders(List<UserOrderDto> listUser)
         {
             var response = await this.pedidosAlmacenFacade.UpdateSentOrders(listUser);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/graph")]
+        [HttpGet]
+        public async Task<IActionResult> GetAlmacenGraphData([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetAlmacenGraphData(parameters);
             return this.Ok(response);
         }
 

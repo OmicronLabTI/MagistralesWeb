@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {DataService} from '../../services/data.service';
-import {CONST_NUMBER, HttpServiceTOCall} from '../../constants/const';
-import {PedidosService} from '../../services/pedidos.service';
-import {ErrorService} from '../../services/error.service';
-import {WorkLoad} from '../../model/http/pedidos';
+import {DataService} from '../../../services/data.service';
+import {CONST_NUMBER, HttpServiceTOCall} from '../../../constants/const';
+import {PedidosService} from '../../../services/pedidos.service';
+import {ErrorService} from '../../../services/error.service';
+import {WorkLoad} from '../../../model/http/pedidos';
 
 @Component({
   selector: 'app-work-load',

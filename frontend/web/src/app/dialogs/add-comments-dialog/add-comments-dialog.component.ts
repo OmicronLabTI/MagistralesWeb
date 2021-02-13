@@ -1,6 +1,4 @@
 import {
-  AfterContentInit,
-  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -10,6 +8,7 @@ import {
 } from '@angular/core';
 import {CONST_NUMBER, CONST_STRING} from '../../constants/const';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {CommentsConfig} from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-add-comments-dialog',
@@ -21,17 +20,33 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
   newComments = CONST_STRING.empty;
   arrayComments: string [] = [];
   isCorrectData = true;
+  maxLengthComments = CONST_STRING.empty;
   @ViewChild('finishComments', {static: true}) finishComments: ElementRef;
-  constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsData: any) {
-    this.comments = this.commentsData || CONST_STRING.empty;
+  constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsConfig: any) {
+    this.comments = this.commentsConfig.comments || CONST_STRING.empty;
     this.arrayComments = this.comments.trim().split('&').filter( comment => comment !== CONST_STRING.empty);
 
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.commentsConfig.isForClose) {
+      this.maxLengthComments = String(CONST_NUMBER.threeHundred - (this.comments.trim().length + CONST_NUMBER.one));
+    } else {
+      this.maxLengthComments = String(CONST_NUMBER.oneThousand - (this.comments.trim().length + CONST_NUMBER.one));
+    }
+  }
   saveComments() {
+    if (this.commentsConfig.isReadOnly || this.commentsConfig.isForClose ) {
+      this.dialogRef.close({
+        isReadOnly: this.commentsConfig.isReadOnly,
+        isForClose: this.commentsConfig.isForClose,
+        comments: CONST_STRING.empty});
+    }
+
     if (this.getIsCorrectData()) {
-      this.dialogRef.close(`${this.comments.trim()}${this.newComments.trim()}&`.trim());
+      this.dialogRef.close({comments: `${this.comments.trim()}${this.newComments.trim()}&`.trim(),
+                            isReadOnly: this.commentsConfig.isReadOnly,
+                            isForClose: this.commentsConfig.isForClose} as CommentsConfig);
     }
   }
   getIsCorrectData() {

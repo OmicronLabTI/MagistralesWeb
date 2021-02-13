@@ -43,6 +43,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("QryGroup31")]
+        public string IsLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [Column("OnHand")]
         public decimal OnHand { get; set; }
 
@@ -71,7 +78,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("QryGroup29")]
+        [Column("QryGroup33")]
         public string NeedsCooling { get; set; }
 
         /// <summary>

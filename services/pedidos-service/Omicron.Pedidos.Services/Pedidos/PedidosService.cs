@@ -82,7 +82,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).ToList();
             var resultFormula = await this.GetSapOrders(userOrders);
 
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);
@@ -375,7 +375,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
                 listSalesOrder.Add(int.Parse(salesOrder.Salesorderid));
 
-                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)) && !preProductionOrders.Any())
+                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado) || x.Status.Equals(ServiceConstants.Almacenado)) && !preProductionOrders.Any())
                 {
                     salesOrder.CloseUserId = userId;
                     salesOrder.CloseDate = DateTime.Now.FormatedDate();
@@ -761,7 +761,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<List<CompleteFormulaWithDetalle>> GetSapOrders(List<UserOrderModel> userOrders)
         {
             var resultFormula = new List<CompleteFormulaWithDetalle>();
-            var listsOfData = ServiceUtils.GetGroupsOfList(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList(), 5);
+            var listsOfData = ServiceUtils.GetGroupsOfList(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList(), 20);
 
             await Task.WhenAll(listsOfData.Select(async x =>
             {

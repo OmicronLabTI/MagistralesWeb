@@ -8,17 +8,17 @@
 
 namespace Omicron.SapAdapter.Test.Facade
 {
-    using System.Threading.Tasks;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// Class for the QR test.
@@ -70,6 +70,10 @@ namespace Omicron.SapAdapter.Test.Facade
                 .Setup(m => m.GetDeliveryBySaleOrderId(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
+            mockService
+                .Setup(m => m.AlmacenGraphCount(It.IsAny<Dictionary<string, string>>()))
+                .Returns(Task.FromResult(response));
+
             mockDelivery
                 .Setup(m => m.GetDelivery(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
@@ -100,6 +104,14 @@ namespace Omicron.SapAdapter.Test.Facade
 
             mockInvoice
                 .Setup(m => m.GetInvoiceData(It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockInvoice
+                .Setup(m => m.GetSapIds(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            mockService
+                .Setup(m => m.GetDeliveryParties())
                 .Returns(Task.FromResult(response));
 
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
@@ -278,6 +290,44 @@ namespace Omicron.SapAdapter.Test.Facade
             var type = "factura";
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetSapIds()
+        {
+            var listids = new List<int>();
+            var response = await this.almacenFacade.GetSapIds(listids);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task AlmacenGraphCount()
+        {
+            var listids = new Dictionary<string, string>();
+            var response = await this.almacenFacade.AlmacenGraphCount(listids);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryParties()
+        {
+            var response = await this.almacenFacade.GetDeliveryParties();
 
             Assert.IsNotNull(response);
         }

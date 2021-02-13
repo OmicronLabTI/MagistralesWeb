@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
+  Colors, ColorsBarGraph,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
@@ -18,6 +19,8 @@ import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
+import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
+import {CommentsConfig} from '../model/device/incidents.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +45,22 @@ export class DataService {
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   private openSignatureDialog = new Subject<any>();
   private newDataSignature = new Subject<any>();
+  private openCommentsDialog = new Subject<CommentsConfig>();
+  private newCommentsResult = new Subject<CommentsConfig>();
   constructor(private datePipe: DatePipe) { }
+
+  setNewCommentsResult(newCommentsConfig: CommentsConfig) {
+    this.newCommentsResult.next(newCommentsConfig);
+  }
+  getNewCommentsResult() {
+    return this.newCommentsResult.asObservable();
+  }
+  setOpenCommentsDialog(commentsConfig: CommentsConfig) {
+    this.openCommentsDialog.next(commentsConfig);
+  }
+  getOpenCommentsDialog() {
+    return this.openCommentsDialog.asObservable();
+  }
 
   setNewDataSignature(newSignature: any) {
     this.newDataSignature.next(newSignature);
@@ -234,7 +252,8 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean, isProductivity: boolean = false) {
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean,
+                   isProductivity: boolean = false, numberCustomRange: number = CONST_NUMBER.lessOne) {
     if (isBeginDate) {
       if (isProductivity) {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
@@ -242,15 +261,23 @@ export class DataService {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
       }
     }
+    if (numberCustomRange !== CONST_NUMBER.lessOne && numberCustomRange > CONST_NUMBER.zero) {
+      initDate = new Date(initDate.getTime() - (MODAL_FIND_ORDERS.operationDay * numberCustomRange));
+    }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
-  transformDate(date: Date, isTest: boolean = false) {
-    if (!isTest) {
+  transformDate(date: Date, isSecondFormat: boolean = false) {
+    if (!isSecondFormat) {
       return this.datePipe.transform(date, 'dd/MM/yyyy');
     } else {
       return this.datePipe.transform(date, 'yyyy-MM-dd');
     }
   }
+
+  getDateArray(startDate: Date) {
+     return this.transformDate(startDate).split('/');
+  }
+
   getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
     let firstMessage = '';
@@ -336,25 +363,29 @@ export class DataService {
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -367,8 +398,10 @@ export class DataService {
   getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
+
     const filterDataOrders = new  ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
+    filterDataOrders.isFromIncidents = resultSearchOrderModal.isFromIncidents;
 
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
@@ -408,6 +441,10 @@ export class DataService {
       if (resultSearchOrderModal.finlabel !== '' && resultSearchOrderModal.finlabel) {
         queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
+      }
+      if (resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero && resultSearchOrderModal.orderIncidents) {
+        queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
+        filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
       }
     }
 
@@ -472,17 +509,78 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-
-  addLineBreakAtFinish(wordToAddLineBreak: string) {
-    /*console.log('wordR: ', wordToAddLineBreak)
-    // wordToAddLineBreak = wordToAddLineBreak + '\n\n\n\n';
-    if ( wordToAddLineBreak.trim().substring(wordToAddLineBreak.length - CONST_NUMBER.two) === '\n') {
-      console.log('hay salto')
-      return wordToAddLineBreak;
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
+      {
+        tooltips: {
+          callbacks: {
+            label: (tooltipItem, data) => {
+              if (Boolean(isPie)) {
+                return `${data.labels[tooltipItem.index]}: ${
+                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              } else {
+                return `${data.datasets[0].data[tooltipItem.index]}`;
+              }
+            }
+          }
+        },
+        legend: { display: false },
+        title: {
+          display: true,
+          text: titleForGraph
+        },
+        plugins: {
+          labels: isPie ? [
+            {
+              render: 'label',
+              precision: 2,
+              position: 'outside'
+            }
+          ] : [
+          ]
+        },
+        scales: {
+          yAxes: !isPie ? [{
+            ticks: {
+              beginAtZero: true
+            }
+          }] : []
+        }
+      }
+  )
+  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false) {
+    if (!isOnlyNumberPercent) {
+      return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
     } else {
-      console.log('no hay',wordToAddLineBreak)
-      return wordToAddLineBreak + '\n\n\n\n';
+      return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
+    }
+}
+  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[], isBarGraph: boolean) => (
+    {
+      labels: itemsArray.map(item => item.fieldKey),
+      datasets: [{
+        backgroundColor: this.getRandomColorsArray(itemsArray.length, isBarGraph),
+        data: itemsArray.map(item => item.totalCount),
+        borderColor: '#fff',
+        borderWidth: 3,
+        hoverBorderWidth: 10,
+        hoverBorderColor: '#c0c8ce'
+      }]
+    })
+  getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
+    let countIndex = CONST_NUMBER.zero;
+    const range = Colors.length;
+    const colorsArray = isBarGraph ? ColorsBarGraph : Colors;
 
-    }*/
+    let colorsString: string[] = [];
+    for (let i = 0; i < lengthArrayForGraph; i++) {
+      if (range === countIndex) {
+        countIndex = CONST_NUMBER.zero;
+      }
+      colorsString = [...colorsString, colorsArray[countIndex]];
+      countIndex++;
+    }
+    return colorsString;
   }
+
+
 }

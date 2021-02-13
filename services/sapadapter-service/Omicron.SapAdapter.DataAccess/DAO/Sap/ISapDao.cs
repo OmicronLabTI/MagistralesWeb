@@ -102,6 +102,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
 
         /// <summary>
+        /// Get the formula by orders.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns></returns>
+        Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId);
+
+        /// <summary>
         /// gets the sap user.
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -301,5 +308,39 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="invoices">the invoices.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices);
+
+        /// <summary>
+        /// Gets all line products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetAllLineProducts();
+
+        /// <summary>
+        /// gets the details by date.
+        /// </summary>
+        /// <param name="initDate">the init date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailsbyDocDate(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode);
+
+        /// <summary>
+        /// Gets the delivery parties.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<Repartidores>> GetDeliveryCompanies();
+
+        /// <summary>
+        /// Get Batches by products.
+        /// </summary>
+        /// <param name="productsIds">the products.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds);
     }
 }

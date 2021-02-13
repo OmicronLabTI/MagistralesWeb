@@ -73,5 +73,17 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.UpdateSentOrders(this.mapper.Map<List<UserOrderModel>>(usersToUpdate)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetAlmacenGraphData(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetAlmacenGraphData(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetUserOrderByDeliveryOrder(List<int> deliveryIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrderByDeliveryOrder(deliveryIds));
+        }
     }
 }

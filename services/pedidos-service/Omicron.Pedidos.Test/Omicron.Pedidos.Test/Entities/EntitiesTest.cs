@@ -9,6 +9,7 @@ namespace Omicron.Pedidos.Test.Entities
 {
     using AutoFixture;
     using NUnit.Framework;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
 
@@ -61,6 +62,15 @@ namespace Omicron.Pedidos.Test.Entities
             new AutomaticAssingModel(),
             new CustomComponentListModel(),
             new ComponentCustomComponentListModel(),
+            new DeliveryDetailModel(),
+            new FinalizaGeneratePdfModel(),
+            new ParametersModel(),
+            new UpdateDesignerLabelDetailModel(),
+            new UpdateDesignerLabelDetailDto(),
+            new UserOrderDto(),
+            new ProductionRemisionQrModel(),
+            new ProductionFacturaQrModel(),
+            new AlmacenGraphicsCount(),
         };
 
         /// <summary>

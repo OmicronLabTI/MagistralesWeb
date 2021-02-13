@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS, ValidDigits} from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { PedidosService} from '../../services/pedidos.service';
 import { ErrorService} from '../../services/error.service';
@@ -37,7 +37,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({
-            docNum: ['', [Validators.maxLength(50)]],
+            docNum: ['', [Validators.maxLength(10)]],
             dateType: ['', []],
             fini: ['', []],
             ffin: ['', []],
@@ -47,12 +47,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             clientName: ['', [Validators.maxLength(80)]],
             label: ['', []],
             finlabel: ['', []],
+            orderIncidents: ['', [Validators.maxLength(10)]]
         });
         this.isToResetData = // add more filter to receive
             this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
             || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode
             || this.filterData.filterOrdersData.clientName || this.filterData.filterOrdersData.label
-            || this.filterData.filterOrdersData.finlabel;
+            || this.filterData.filterOrdersData.finlabel || this.filterData.filterOrdersData.orderIncidents;
     }
 
     async ngOnInit() {
@@ -96,6 +97,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             this.filterData.filterOrdersData.label : '');
         this.findOrdersForm.get('finlabel').setValue(this.filterData.filterOrdersData.finlabel ?
             this.filterData.filterOrdersData.finlabel : '');
+        this.findOrdersForm.get('orderIncidents').setValue(this.filterData.filterOrdersData.orderIncidents ?
+            this.filterData.filterOrdersData.orderIncidents : '');
 
         if (this.filterData.filterOrdersData.docNum) {
             this.getDisableForDocNum();
@@ -116,6 +119,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                         this.withValue(formData.status) || this.withValue(formData.qfb) ||
                         this.withValue(formData.productCode) || this.withValue(formData.clientName) ||
                         this.withValue(formData.label) || this.withValue(formData.finlabel)
+                        || this.withValue(formData.orderIncidents)
                     )) {
                     this.changeValidatorsForDocNum();
                 } else {
@@ -132,13 +136,12 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&
                 dateToCompare.getFullYear() === baseDate.getFullYear();
     }
-    withValue(value) {
-        return value !== null && value !== undefined && value !== '';
-    }
 
     searchOrders() {
         this.trimFilterValues();
-        this.dialogRef.close({...this.findOrdersForm.value, isFromOrders: this.filterData.filterOrdersData.isFromOrders});
+        this.dialogRef.close({...this.findOrdersForm.value,
+                             isFromOrders: this.filterData.filterOrdersData.isFromOrders,
+                             isFromIncidents: this.filterData.filterOrdersData.isFromIncidents});
     }
 
     getMaxDate() {
@@ -162,6 +165,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('orderIncidents').disable({onlySelf: true, emitEvent: false});
     }
     getDisableOnlyForDocNum() {
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
@@ -175,6 +179,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').setValue('');
         this.findOrdersForm.get('label').setValue('');
         this.findOrdersForm.get('finlabel').setValue('');
+        this.findOrdersForm.get('orderIncidents').setValue('');
     }
     enableAllParamsSearch() {
         this.getDisableForDocNum();
@@ -193,6 +198,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').enable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('orderIncidents').enable({onlySelf: true, emitEvent: false});
     }
     changeValidatorsForDocNum() {
         this.isToResetData = true;
@@ -209,7 +215,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             && this.findOrdersForm.get('productCode').value !== null) || (this.findOrdersForm.get('clientName').value !== CONST_STRING.empty
             && this.findOrdersForm.get('clientName').value !== null) || (this.findOrdersForm.get('label').value !== CONST_STRING.empty
             && this.findOrdersForm.get('label').value !== null) || (this.findOrdersForm.get('finlabel').value !== CONST_STRING.empty
-            && this.findOrdersForm.get('finlabel').value !== null))) {
+            && this.findOrdersForm.get('finlabel').value !== null) ||
+            (this.findOrdersForm.get('orderIncidents').value !== CONST_STRING.empty
+                && this.findOrdersForm.get('orderIncidents').value !== null))) {
             this.searchOrders();
         }
     }
@@ -220,15 +228,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     changeDocNumber(event: KeyboardEvent) {
-        let invalidChars = [ "-", "+", "e", "." ];
-        let currentValue = this.findOrdersForm.get('docNum').value;
-        if (invalidChars.includes(event.key) || (event.key == '0' && !this.withValue(currentValue)))
-        {
+        if (!ValidDigits.includes(event.key) ) {
             event.preventDefault();
         }
-        if (this.withValue(currentValue) && `${currentValue}`.length == 7 && !isNaN(event.key as any))
-        {
-            event.preventDefault();
-        }
+
+    }
+
+    withValue(value) {
+        return value !== null && value !== undefined && value !== '';
     }
 }

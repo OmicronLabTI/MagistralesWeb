@@ -91,9 +91,29 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Enviado = "Enviado";
 
         /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Camino = "En Camino";
+
+        /// <summary>
         /// value for empaquetado.
         /// </summary>
         public const string Entregado = "Entregado";
+
+        /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// status back order.
+        /// </summary>
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
+        /// recibir value.
+        /// </summary>
+        public const string Recibir = "Recibir";
 
         /// <summary>
         /// orden de venta plan.
@@ -461,6 +481,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// delivery contants.
+        /// </summary>
+        public const string Delivery = "delivery";
+
+        /// <summary>
         /// the nvo leon state.
         /// </summary>
         public const string NuevoLeon = "Nuevo León";
@@ -625,6 +650,19 @@ namespace Omicron.Pedidos.Services.Constants
             Terminado,
             Finalizado,
             Reasignado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatuPendingAlmacen { get; } = new List<string>
+        {
+            Pendiente,
+            Finalizado,
+            Almacenado,
         };
     }
 }
