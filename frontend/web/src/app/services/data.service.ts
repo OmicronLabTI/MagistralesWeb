@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
-  Colors,
+  Colors, ColorsBarGraph,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
@@ -252,13 +252,17 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean, isProductivity: boolean = false) {
+  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean,
+                   isProductivity: boolean = false, numberCustomRange: number = CONST_NUMBER.lessOne) {
     if (isBeginDate) {
       if (isProductivity) {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
       } else {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
       }
+    }
+    if (numberCustomRange !== CONST_NUMBER.lessOne && numberCustomRange > CONST_NUMBER.zero) {
+      initDate = new Date(initDate.getTime() - (MODAL_FIND_ORDERS.operationDay * numberCustomRange));
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
@@ -505,18 +509,16 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string, isWithFullTooltip: boolean = false) => (
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
       {
         tooltips: {
-          enabled: isPie,
           callbacks: {
             label: (tooltipItem, data) => {
-              if (Boolean(isWithFullTooltip)) {
-                return `${data.labels[tooltipItem.index]}: ${data.datasets[0].data[tooltipItem.index]} (${
-                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)} )`;
-              } else {
+              if (Boolean(isPie)) {
                 return `${data.labels[tooltipItem.index]}: ${
                     this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              } else {
+                return `${data.datasets[0].data[tooltipItem.index]}`;
               }
             }
           }
@@ -552,11 +554,11 @@ export class DataService {
       return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
     }
 }
-  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[]) => (
+  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[], isBarGraph: boolean) => (
     {
       labels: itemsArray.map(item => item.fieldKey),
       datasets: [{
-        backgroundColor: this.getRandomColorsArray(itemsArray.length),
+        backgroundColor: this.getRandomColorsArray(itemsArray.length, isBarGraph),
         data: itemsArray.map(item => item.totalCount),
         borderColor: '#fff',
         borderWidth: 3,
@@ -564,15 +566,17 @@ export class DataService {
         hoverBorderColor: '#c0c8ce'
       }]
     })
-  getRandomColorsArray(lengthArrayForGraph: number) {
+  getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
     let countIndex = CONST_NUMBER.zero;
     const range = Colors.length;
+    const colorsArray = isBarGraph ? ColorsBarGraph : Colors;
+
     let colorsString: string[] = [];
     for (let i = 0; i < lengthArrayForGraph; i++) {
       if (range === countIndex) {
         countIndex = CONST_NUMBER.zero;
       }
-      colorsString = [...colorsString, Colors[countIndex]];
+      colorsString = [...colorsString, colorsArray[countIndex]];
       countIndex++;
     }
     return colorsString;

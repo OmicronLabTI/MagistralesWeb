@@ -3,7 +3,6 @@ import {DataService} from '../../../services/data.service';
 import {
   ColorsReception,
   CONST_NUMBER,
-  CONST_STRING,
   GraphType,
   HttpServiceTOCall,
   TypeReception
@@ -12,7 +11,6 @@ import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic} from '../../../model/device/incidents.model';
 import {IncidentsService} from '../../../services/incidents.service';
 import {ErrorService} from '../../../services/error.service';
-import {WarehouseMock} from '../../../../mocks/warehouseListMock';
 
 
 @Component({
@@ -21,6 +19,7 @@ import {WarehouseMock} from '../../../../mocks/warehouseListMock';
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
+  itemsGraphReceive: IncidentsGraphicsMatrix[] = [];
   itemsGraph: IncidentsGraphicsMatrix[] = [];
   localPackages: IncidentsGraphicsMatrix[] = [];
   foreignPackages: IncidentsGraphicsMatrix[] = [];
@@ -28,6 +27,7 @@ export class WarehouseComponent implements OnInit {
   typesGraph = TypeReception;
   percentageLocal = CONST_NUMBER.zero;
   percentageForeign = CONST_NUMBER.zero;
+  isNoDataNoDeliveredGraph = false;
   constructor(private dataService: DataService, private incidentsService: IncidentsService,
               private errorService: ErrorService) {
     this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
@@ -37,13 +37,14 @@ export class WarehouseComponent implements OnInit {
   }
 
   checkNewRange(rangeDate: string) {
-      this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
+    this.incidentsService.getWarehouseGraph(rangeDate).subscribe(({response}) => this.generateDataWarehouse(response)
             , error => this.errorService.httpError(error));
   }
   generateDataWarehouse(response: IncidentsGraphicsMatrix[]) {
     // generate data init
     // items top
-    this.itemsGraph = this.getNewReceptionData(response.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+    this.itemsGraphReceive = this.getNewReceptionData(response.filter( itemGraph => itemGraph.graphType === GraphType.reception));
+    this.itemsGraph = [this.itemsGraphReceive[0], this.itemsGraphReceive[3], this.itemsGraphReceive[2], this.itemsGraphReceive[1]];
 
     // local package data
     this.localPackages = response.filter(
@@ -54,8 +55,8 @@ export class WarehouseComponent implements OnInit {
         itemGraph => itemGraph.graphType.toLowerCase() === GraphType.foreignPackage.toLowerCase());
 
     this.incidentsConfigurationGraph = new ConfigurationGraphic();
-    this.incidentsConfigurationGraph.isPie = true;
-    this.incidentsConfigurationGraph.titleForGraph = CONST_STRING.empty;
+    this.incidentsConfigurationGraph.isPie = false;
+    this.incidentsConfigurationGraph.titleForGraph = 'MOTIVOS - No entregado';
     this.incidentsConfigurationGraph.dataGraph = response.filter(
         itemGraph => itemGraph.graphType.toLowerCase() === GraphType.incidentGraph.toLowerCase());
     this.incidentsConfigurationGraph.isSmall = true;
@@ -71,6 +72,9 @@ export class WarehouseComponent implements OnInit {
         this.dataService.getPercentageByItem(this.foreignPackages.filter(itemLocal =>
             itemLocal.fieldKey.toLowerCase() === GraphType.sentItemForeign.toLowerCase())[0].totalCount,
             this.foreignPackages.map(itemLocal => (itemLocal.totalCount)), true)) || 0;
+
+    this.isNoDataNoDeliveredGraph = this.incidentsConfigurationGraph.dataGraph.every( incident =>
+        incident.totalCount === CONST_NUMBER.zero);
 
     // generate data finish
   }

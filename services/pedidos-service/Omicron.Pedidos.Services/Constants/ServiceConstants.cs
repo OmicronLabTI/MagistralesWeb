@@ -108,7 +108,12 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// status back order.
         /// </summary>
-        public const string BackOrder = "Back order";
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
+        /// recibir value.
+        /// </summary>
+        public const string Recibir = "Recibir";
 
         /// <summary>
         /// orden de venta plan.

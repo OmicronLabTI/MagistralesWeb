@@ -26,9 +26,11 @@ namespace Omicron.Reporting.Test.Services.Request
         /// <summary>
         /// gets the orders test.
         /// </summary>
+        /// <param name="party">The party.</param>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task SendEmailForeignPackage()
+        [TestCase("DHL")]
+        public async Task SendEmailForeignPackage(string party)
         {
             // arrange
             var request = new SendPackageModel
@@ -36,13 +38,23 @@ namespace Omicron.Reporting.Test.Services.Request
                 DestinyEmail = "email",
                 PackageId = 1,
                 TrackingNumber = "asdf",
-                TransportMode = "DHL",
+                TransportMode = party,
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = string.Empty },
+                new ParametersModel { Field = "SmtpPort", Value = "0" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = string.Empty },
+                new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
+                new ParametersModel { Field = $"{party}Email", Value = "email@email.com" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
             mockCatalog
-                .Setup(m => m.GetSmtpConfig())
-                .Returns(Task.FromResult(new SmtpConfigModel()));
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
 
             var mockEmail = new Mock<IOmicronMailClient>();
             mockEmail
@@ -53,7 +65,6 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailForeignPackage(request);
-
             Assert.IsNotNull(result);
         }
 

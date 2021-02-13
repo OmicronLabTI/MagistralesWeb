@@ -38,6 +38,7 @@ export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
     perDay: 1000 * 3600 * 24,
     ninetyDays: (24 * 60 * 60 * 1000) * 91,
+    operationDay: (24 * 60 * 60 * 1000),
     ninetyDaysDifference: 90,
     keyEnter: 'Enter'
 };
@@ -167,6 +168,12 @@ export const Colors = [
     'rgb(224,25,64)',
     'rgb(62,90,63)'
 ];
+export const ColorsBarGraph = [
+    'rgb(224,168,125)',
+    'rgb(224,25,64)',
+    'rgb(62,90,63)',
+    'rgb(52,4,149)',
+];
 
 export const pathRoles = {
     admin: [
@@ -197,6 +204,8 @@ export const pathRoles = {
         'incidentsList',
         'login',
         'warehouse',
+        'productividad',
+        'workLoad',
         '**'
     ]
 };
@@ -268,3 +277,4 @@ export const ClassButton = {
     closeIncident: 'close-incident',
     attendingIncident: 'attending-incident'
 };
+export const ValidDigits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace'];

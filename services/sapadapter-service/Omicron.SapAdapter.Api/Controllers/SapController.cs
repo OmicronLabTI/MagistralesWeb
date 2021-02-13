@@ -424,6 +424,18 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/delivery/parties")]
+        [HttpGet]
+        public async Task<IActionResult> GetDeliveryParties()
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveryParties();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

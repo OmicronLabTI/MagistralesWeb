@@ -58,5 +58,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>The data.</returns>
         Task<ResultModel> AlmacenGraphCount(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the delivery parties.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetDeliveryParties();
     }
 }

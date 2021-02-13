@@ -88,11 +88,8 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetLineProducts()));
-
-            mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProducts()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
             var mockCatalogos = new Mock<ICatalogsService>();
@@ -217,6 +214,20 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.AlmacenGraphCount(dict);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryParties()
+        {
+            // act
+            var response = await this.sapService.GetDeliveryParties();
 
             // assert
             Assert.IsNotNull(response);

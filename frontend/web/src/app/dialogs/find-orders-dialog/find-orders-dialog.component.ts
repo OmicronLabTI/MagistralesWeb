@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS, ValidDigits} from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { PedidosService} from '../../services/pedidos.service';
 import { ErrorService} from '../../services/error.service';
@@ -37,7 +37,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({
-            docNum: ['', [Validators.maxLength(50)]],
+            docNum: ['', [Validators.maxLength(10)]],
             dateType: ['', []],
             fini: ['', []],
             ffin: ['', []],
@@ -47,7 +47,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             clientName: ['', [Validators.maxLength(80)]],
             label: ['', []],
             finlabel: ['', []],
-            orderIncidents: ['', []]
+            orderIncidents: ['', [Validators.maxLength(10)]]
         });
         this.isToResetData = // add more filter to receive
             this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
@@ -135,9 +135,6 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         return dateToCompare.getDate() === baseDate.getDate() &&
                 dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&
                 dateToCompare.getFullYear() === baseDate.getFullYear();
-    }
-    withValue(value) {
-        return value !== null && value !== undefined && value !== '';
     }
 
     searchOrders() {
@@ -231,15 +228,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     changeDocNumber(event: KeyboardEvent) {
-        let invalidChars = [ "-", "+", "e", "." ];
-        let currentValue = this.findOrdersForm.get('docNum').value;
-        if (invalidChars.includes(event.key) || (event.key == '0' && !this.withValue(currentValue)))
-        {
+        if (!ValidDigits.includes(event.key) ) {
             event.preventDefault();
         }
-        if (this.withValue(currentValue) && `${currentValue}`.length == 7 && !isNaN(event.key as any))
-        {
-            event.preventDefault();
-        }
+
+    }
+
+    withValue(value) {
+        return value !== null && value !== undefined && value !== '';
     }
 }

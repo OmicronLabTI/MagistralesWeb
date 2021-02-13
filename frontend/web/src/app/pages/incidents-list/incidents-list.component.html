@@ -36,7 +36,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="createDate">
-                    <th mat-header-cell *matHeaderCellDef class="mobile-hide text-center"> FECHA DE INCIDENCIA </th>
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide text-center"> FECHA INCIDENCIA </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide text-center"> {{element.createDate | date: 'dd/MM/yyyy'}} </td>
                 </ng-container>
 
@@ -47,12 +47,16 @@
 
                 <ng-container matColumnDef="delivery">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  REMISIÓN </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide"> {{element.delivery}} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide">
+                        {{element.delivery !== 0 ? element.delivery : '' }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="invoice">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  FACTURA </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide asesor"> {{element.invoice}} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide asesor">
+                        {{element.invoice  !== 0 ? element.invoice : '' }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="itemCode">
@@ -75,6 +79,17 @@
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide"> {{element.stage}}</td>
                 </ng-container>
 
+                <ng-container matColumnDef="batches">
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">LOTE / PIEZAS DAÑADAS </th>
+                    <td mat-cell
+                        matTooltip="{{element.batchesTooltip}}"
+                        matTooltipPosition="right" *matCellDef="let element; let i = index;"
+                        class="color-text-intables tdcell tdcell-center mobile-hide batches-value-custom">
+                        <div class="batches-container">
+                            <span *ngFor="let batcheTitle of element.batchesDisplay"> {{batcheTitle}}</span>
+                        </div>
+                </ng-container>
+
                 <ng-container matColumnDef="comments">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide color-title-white">{{ '<<<<<<<<' }}  </th>
                     <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide">
@@ -87,10 +102,11 @@
                 </ng-container>
 
                 <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE INCIDENCIA</th>
+                    <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS INCIDENCIA</th>
                     <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center mobile-hide">
                         <div class="center-status">
-                            <button mat-stroked-button (click)="openChangeComments(i)" [ngClass]="element.classButton">{{element.status}}</button>
+                            <button mat-stroked-button
+                                    (click)="openChangeComments(i)" [ngClass]="element.classButton">{{element.status}}</button>
                         </div>
                 </ng-container>
 
@@ -98,8 +114,8 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
             <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
-                <span *ngIf="!isOnInit">No hay pedidos registrados</span>
-                <span *ngIf="isOnInit"> Cargando pedidos ...</span>-
+                <span *ngIf="!isOnInit">No hay incidencias registradas</span>
+                <span *ngIf="isOnInit"> Cargando incidencias ...</span>-
             </div>
             <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
                 <mat-paginator

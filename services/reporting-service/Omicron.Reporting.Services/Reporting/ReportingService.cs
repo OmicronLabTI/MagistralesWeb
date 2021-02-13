@@ -8,7 +8,9 @@
 namespace Omicron.Reporting.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Clients;
@@ -61,9 +63,20 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailForeignPackage(SendPackageModel request)
         {
-            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var emailParty = $"{request.TransportMode.ToLower().Replace(" ", string.Empty)}{ServiceConstants.DelPartyEmail}";
+            var listToLook = new List<string> { emailParty };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
-            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber);
+            var config = await this.catalogsService.GetParams(listToLook);
+
+            var smtpConfig = this.GetSmtpConfig(config);
+            var deliveryEmailModel = config.FirstOrDefault(x => x.Field.Contains(emailParty));
+            var email = deliveryEmailModel == null ? string.Empty : deliveryEmailModel.Value;
+
+            var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
+            var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
+
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
             var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
 
@@ -91,6 +104,23 @@ namespace Omicron.Reporting.Services
                 smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
+        /// Gets the smtp config.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private SmtpConfigModel GetSmtpConfig(List<ParametersModel> parameters)
+        {
+            return new SmtpConfigModel
+            {
+                SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
+                SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
+                SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
+                SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
+                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+            };
         }
 
         /// <summary>

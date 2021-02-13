@@ -42,6 +42,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     'itemCode',
     'type',
     'incident',
+    'batches',
     'stage',
     'comments',
     'status'];
@@ -119,6 +120,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
             itemIncident.classButton = ClassButton.attendingIncident;
             break;
         }
+        itemIncident.batchesDisplay = this.getDisplayBatchesData(itemIncident, false);
+        itemIncident.batchesTooltip = String(this.getDisplayBatchesData(itemIncident, true));
       });
       this.dataSource.data = response;
   }
@@ -127,7 +130,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     if (newCommentsResult.isForClose) {
       this.changeStatusIncidentService({
         saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
-        status: TypeStatusIncidents.close, comments: newCommentsResult.comments,
+        status: TypeStatusIncidents.close,
+        comments: newCommentsResult.comments,
         itemCode: this.dataSource.data[this.currentIndex].itemCode});
     }
   }
@@ -157,7 +161,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   private changeStatusComments() {
-    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} ${
+    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} - ${
       this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
     this.dataService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
@@ -183,5 +187,33 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
       this.getFullQueryString();
       this.updateIncidentList();
       return event;
+  }
+
+  getDisplayBatchesData(incident: IncidentItem, isForToolTip: boolean) {
+    const arrayBatches = this.getArrayBatches(incident);
+    if (isForToolTip) {
+      return this.getDataToDisplay(arrayBatches).trim().slice(0, -1);
+    } else {
+      return this.getArrayBatchesToDisplay(arrayBatches);
+    }
+  }
+
+  getArrayBatches(incident: IncidentItem): string[] {
+    return incident.batches.split(',').filter( batche => batche !== CONST_STRING.empty);
+  }
+
+  getArrayBatchesToDisplay(arrayBatches: string[]) {
+    if (arrayBatches.length > CONST_NUMBER.zero && arrayBatches.length <= CONST_NUMBER.two) {
+      return arrayBatches;
+    } else {
+      return arrayBatches.splice(CONST_NUMBER.zero, CONST_NUMBER.two);
+    }
+  }
+  getDataToDisplay(arrayBatches: string[]) {
+    let batchesDataDisplay = CONST_STRING.empty;
+    arrayBatches.forEach(
+        batche => batchesDataDisplay += `${batche}, `);
+
+    return batchesDataDisplay;
   }
 }

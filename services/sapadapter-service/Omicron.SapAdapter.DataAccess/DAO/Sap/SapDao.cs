@@ -261,6 +261,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
+        {
+            return await this.RetryQuery<DetalleFormulaModel>(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
+        }
+
+        /// <inheritdoc/>
         public async Task<Users> GetSapUserById(int userId)
         {
             var query = await this.databaseContext.Users.FirstOrDefaultAsync(x => x.UserId == userId);
@@ -284,7 +290,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId)
         {
-            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId));            
+            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId));
         }
 
         /// <inheritdoc/>
@@ -527,6 +533,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode)
         {
             return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => itemCode.Contains(x.ProductoId)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
+        {
+            return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds)
+        {
+            return await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
         }
 
         /// <summary>

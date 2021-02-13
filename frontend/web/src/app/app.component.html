@@ -68,8 +68,8 @@
           </div>
 
           <mat-menu #menu="matMenu">
-            <button mat-menu-item *ngIf="role !== '7'" (click)="goToPage(['productividad'])">Productividad</button>
-            <button mat-menu-item *ngIf="role !== '7'" (click)="goToPage(['workLoad'])">Carga de trabajo</button>
+            <button mat-menu-item (click)="goToPage(['productividad'])">Productividad</button>
+            <button mat-menu-item (click)="goToPage(['workLoad'])">Carga de trabajo</button>
             <!--check role for menu -->
             <button mat-menu-item *ngIf="role === '7'" (click)="goToPage(['incidents'])">Incidencias</button>
             <button mat-menu-item *ngIf="role === '7'" (click)="goToPage(['warehouse'])">Almacén</button>

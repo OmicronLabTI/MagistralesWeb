@@ -41,7 +41,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.myChart) {
       this.myChart.data = this.getDataGraphWithSort();
       this.myChart.options = this.dataService.getOptionsGraphToShow(
-          this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip);
+          this.configurationGraph.isPie, this.configurationGraph.titleForGraph);
       this.myChart.update();
       this.checkIfShouldGetIndicators();
     } else {
@@ -55,9 +55,16 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
   getDataGraphWithSort() {
-    return this.dataService.getDataForGraphic(
-        this.configurationGraph.dataGraph.sort((a, b) => ( b.totalCount - a.totalCount )));
-  }
+    if (this.configurationGraph.isPie) {
+      return this.dataService.getDataForGraphic(
+          this.configurationGraph.dataGraph.sort((a, b) => ( b.totalCount - a.totalCount )),
+          false);
+    } else {
+      return this.dataService.getDataForGraphic(
+          this.configurationGraph.dataGraph.sort((a, b) => ( a.fieldKey.localeCompare(b.fieldKey) )),
+          true);
+    }
+   }
 
   getDataIndicators() {
     this.newItemsIndicators = [];
@@ -85,7 +92,7 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
         type: this.configurationGraph.isPie ? 'pie' : 'bar',
         data: this.getDataGraphWithSort(),
         options: this.dataService.getOptionsGraphToShow(
-            this.configurationGraph.isPie, this.configurationGraph.titleForGraph, this.configurationGraph.isWithFullTooltip),
+            this.configurationGraph.isPie, this.configurationGraph.titleForGraph),
       }
   )
 }

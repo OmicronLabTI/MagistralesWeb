@@ -23,6 +23,8 @@ export class IncidentItem  {
     comments: string;
     status: string;
     classButton?: string;
+    batchesDisplay?: any;
+    batchesTooltip?: string;
 }
 export class IncidentsGraphicsMatrix {
     fieldKey: string;
