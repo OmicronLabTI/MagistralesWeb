@@ -204,8 +204,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsToDelete.components = componentsToDeleteOnSave;
-              console.log('deleteComponents: ', detailComponentsToDelete)
-              /*this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
+
+              this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
                 this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
                 this.oldDataFormulaDetail.details = this.dataSource.data;
                 this.createMessageOkHttp();
@@ -215,7 +215,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
-              });*/
+              });
             }
           });
   }
