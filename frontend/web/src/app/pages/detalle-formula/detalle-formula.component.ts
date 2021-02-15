@@ -93,6 +93,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           detail.description = detail.description.toUpperCase();
           detail.isChecked = false;
           const warehouseSplit = detail.warehouseQuantity.toString().split('.');
+          detail.stock = detail.stock || CONST_NUMBER.zero;
           const stockSplit = detail.stock.toString().split('.');
           detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
               `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
@@ -199,12 +200,12 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
               componentsToDeleteOnSave.forEach( component => {
                 component.action = CONST_DETAIL_FORMULA.delete;
-                component.stock = Number(component.stock.toString().replace(',', ''));
+                component.stock = Number(component.stock.toString().replace(',', '')) || 0;
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsToDelete.components = componentsToDeleteOnSave;
-
-              this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
+              console.log('deleteComponents: ', detailComponentsToDelete)
+              /*this.pedidosService.updateFormula(detailComponentsToDelete).subscribe( () => {
                 this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
                 this.oldDataFormulaDetail.details = this.dataSource.data;
                 this.createMessageOkHttp();
@@ -214,7 +215,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               }, error => {
                 this.getDetalleFormula();
                 this.errorService.httpError(error);
-              });
+              });*/
             }
           });
   }
