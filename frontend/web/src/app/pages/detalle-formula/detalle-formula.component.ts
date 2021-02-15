@@ -200,7 +200,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
               componentsToDeleteOnSave.forEach( component => {
                 component.action = CONST_DETAIL_FORMULA.delete;
-                component.stock = Number(component.stock.toString().replace(',', '')) || 0;
+                component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsToDelete.components = componentsToDeleteOnSave;
