@@ -45,6 +45,28 @@ namespace Omicron.Pedidos.Test
         /// <returns>the user.</returns>
         public List<UserOrderModel> GetUserOrderModel()
         {
+            var magistralQr = new MagistralQrModel
+            {
+                NeedsCooling = "Y",
+                ProductionOrder = 100,
+                Quantity = 1,
+                SaleOrder = 100,
+            };
+
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+            };
+
+            var invoiceQr = new InvoiceQrModel
+            {
+                InvoiceId = 100,
+                NeedsCooling = false,
+            };
+
             return new List<UserOrderModel>
             {
                 new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
@@ -69,6 +91,41 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
                 new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = "29/08/2020" },
                 new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
+
+                // orders for almacen
+                new UserOrderModel { Id = 98, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 99, Productionorderid = "301", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+
+                // Orders for Qr.
+                new UserOrderModel { Id = 100, Productionorderid = "300", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 101, Productionorderid = "301", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 102, Productionorderid = "302", Salesorderid = "105", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 103, Productionorderid = "303", Salesorderid = "105", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 105 },
+
+                // orders for invoice
+                new UserOrderModel { Id = 104, Productionorderid = null, Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 105, Productionorderid = "2", Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+
+                // order for invoice qr
+                new UserOrderModel { Id = 106, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", InvoiceId = 100, InvoiceQr = JsonConvert.SerializeObject(invoiceQr) },
+
+                // orders for packages
+                new UserOrderModel { Id = 107, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", InvoiceId = 100, InvoiceQr = JsonConvert.SerializeObject(invoiceQr), StatusInvoice = "Empaquetado", InvoiceType = "local" },
+                new UserOrderModel { Id = 108, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = "29/08/2020", InvoiceId = 101, InvoiceQr = JsonConvert.SerializeObject(invoiceQr), StatusInvoice = "Empaquetado", InvoiceType = "local" },
+
+                // order pending for graph
+                new UserOrderModel { Id = 109, Productionorderid = null, Salesorderid = "700", Status = "Liberado", FinalizedDate = DateTime.Now },
+                new UserOrderModel { Id = 110, Productionorderid = "300", Salesorderid = "700", Status = "Finalizado", FinalizedDate = DateTime.Now, FinishedLabel = 1 },
+                new UserOrderModel { Id = 111, Productionorderid = "301", Salesorderid = "700", Status = "Pendiente", FinalizedDate = DateTime.Now, },
+                new UserOrderModel { Id = 112, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 1, InvoiceType = "local", StatusInvoice = "Empaquetado" },
+                new UserOrderModel { Id = 113, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 2, InvoiceType = "local", StatusInvoice = "Asignado" },
+                new UserOrderModel { Id = 114, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 3, InvoiceType = "local", StatusInvoice = "En Camino" },
+                new UserOrderModel { Id = 115, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 4, InvoiceType = "local", StatusInvoice = "Entregado" },
+                new UserOrderModel { Id = 116, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 5, InvoiceType = "local", StatusInvoice = "No Entregado" },
+                new UserOrderModel { Id = 117, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 6, InvoiceType = "foraneo", StatusInvoice = "Empaquetado" },
+                new UserOrderModel { Id = 118, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 7, InvoiceType = "foraneo", StatusInvoice = "Enviado" },
+                new UserOrderModel { Id = 119, Productionorderid = null, Salesorderid = "202", Status = "Recibir", StatusAlmacen = "Back Order", FinalizedDate = DateTime.Now },
+                new UserOrderModel { Id = 120, Productionorderid = null, Salesorderid = "203", Status = "Almacenado", FinalizedDate = DateTime.Now },
             };
         }
 
@@ -460,6 +517,23 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = users,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Generates a result model.
+        /// </summary>
+        /// <param name="dataToSend">the data.</param>
+        /// <returns>the dta.</returns>
+        public ResultModel GenerateResultModel(object dataToSend)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(dataToSend),
                 Success = true,
                 UserError = string.Empty,
             };

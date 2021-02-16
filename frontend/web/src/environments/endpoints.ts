@@ -47,7 +47,8 @@ export const Endpoints = {
     savedComments: `${environment.baseUrl}/api/pedidos/saleorder/comments`,
     viewPdf: `${environment.baseUrl}/api/pedidos/saleorder/pdf`,
     ordersToDelivered: `${environment.baseUrl}/api/pedidos/status/fabOrder`,
-    finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`
+    finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`,
+    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral`
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,
@@ -59,9 +60,16 @@ export const Endpoints = {
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`
+  },
+  incidents: {
+    graphIncidents: `${environment.baseUrl}/api/almacen/incidents/graph`,
+    graphWarehouse: `${environment.baseUrl}/api/almacen/graphs`,
+    incidentsList: `${environment.baseUrl}/api/almacen/incidents`,
+    changeStatus: `${environment.baseUrl}/api/almacen/incidents`
   }
 };
 
 export const TokenExcludedEndpoints = [
-  '/api/oauth/oauthrs'
+  '/api/oauth/oauthrs',
+  '/api/pedidos/resources/' // to excluded url to download images
 ];

@@ -63,6 +63,7 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<ComponentCustomComponentListDto, ComponentCustomComponentListModel>();
             this.CreateMap<UpdateDesignerLabelDto, UpdateDesignerLabelModel>();
             this.CreateMap<UpdateDesignerLabelDetailDto, UpdateDesignerLabelDetailModel>();
+            this.CreateMap<UserOrderDto, UserOrderModel>();
         }
     }
 }

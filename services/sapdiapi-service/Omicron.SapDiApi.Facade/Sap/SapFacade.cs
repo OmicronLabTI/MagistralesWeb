@@ -110,5 +110,26 @@ namespace Omicron.SapDiApi.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assginBatches)));
         }
+
+        /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the deliveries.</param>
+        /// <returns>the status.</returns>
+        public async Task<ResultDto> CreateDelivery(List<CreateDeliveryDto> createDelivery)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateDelivery(this.mapper.Map<List<CreateDeliveryModel>>(createDelivery)));
+        }
+
+        public async Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryDto> createDeliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateDeliveryPartial(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateTracking(SendPackageDto sendPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateTracking(this.mapper.Map<SendPackageModel>(sendPackage)));
+        }
     }
 }

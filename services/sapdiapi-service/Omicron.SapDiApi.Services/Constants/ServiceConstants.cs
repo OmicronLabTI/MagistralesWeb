@@ -59,6 +59,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// selects the ships code.
+        /// </summary>
+        public const string FindShipCodes = "SELECT TrnspCode ,TrnspName FROM OSHP";
+
+        /// <summary>
         /// selects data from WOR1 by DocEntry.
         /// </summary>
         public const string FindWor1ByDocEntry = "SELECT DocEntry, LineNum, BaseQty, IssuedQty, wareHouse, ItemCode, VisOrder FROM WOR1 WHERE DocEntry = {0}";
@@ -112,6 +117,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// deletes the batch.
         /// </summary>
         public const string DeleteBatch = "delete";
+
+        /// <summary>
+        /// Const for he magistral.
+        /// </summary>
+        public const string Magistral = "magistral";
 
         /// <summary>
         /// Fail reason.
