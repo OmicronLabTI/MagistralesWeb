@@ -19,7 +19,7 @@ class RootViewModel {
     var dataFilter = PublishSubject<[Order]?>()
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
     var refreshSelection: PublishSubject<Int> = PublishSubject()
-    var error: PublishSubject<(String, Bool)> = PublishSubject()
+    var error: PublishSubject<String> = PublishSubject()
     let disposeBag = DisposeBag()
     var showRefreshControl: PublishSubject<Void> = PublishSubject<Void>()
     var logoutDidTap = PublishSubject<Void>()
@@ -113,15 +113,14 @@ class RootViewModel {
                     guard let self = self else { return }
                     print(err)
                     self.showRefreshControl.onNext(())
-                    let logOut = true
-                    self.error.onNext((CommonStrings.errorLoadingOrders, logOut))
+                    self.error.onNext(CommonStrings.errorLoadingOrders)
                     if self.needsRefresh {
                         self.loading.onNext(false)
                         self.needsRefresh.toggle()
                     }
             }).disposed(by: disposeBag)
         } else {
-            self.error.onNext((CommonStrings.errorLoadingOrders, false))
+            self.error.onNext(CommonStrings.errorLoadingOrders)
             self.showRefreshControl.onNext(())
         }
     }

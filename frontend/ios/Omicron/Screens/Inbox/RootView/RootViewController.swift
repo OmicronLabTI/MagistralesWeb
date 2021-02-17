@@ -132,18 +132,8 @@ class RootViewController: UIViewController {
                 self?.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
-        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] (error, logOut) in
-            if logOut {
-                let alert = UIAlertController(title: error, message: CommonStrings.empty, preferredStyle: .alert)
-                let acceptAct = UIAlertAction(title: CommonStrings.accept, style: .default, handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.rootViewModel.logoutDidTap.onNext(())
-                })
-                alert.addAction(acceptAct)
-                present(alert, animated: true, completion: nil)
-            } else  {
-                AlertManager.shared.showAlert(message: error, view: self)
-            }
+        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
+            AlertManager.shared.showAlert(message: error, view: self)
         }).disposed(by: self.disposeBag)
         //Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
