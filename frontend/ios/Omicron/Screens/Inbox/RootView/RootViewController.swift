@@ -87,9 +87,11 @@ class RootViewController: UIViewController {
             .withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
             guard let self = self else { return }
             self.lastRow = lastRow ?? IndexPath(row: 0, section: 0)
-            if data == nil {
+                if data == nil {
                 self.viewTable.alpha = 1.0
                 self.viewTable.isUserInteractionEnabled = true
+                print(self.rootViewModel.sections.count)
+                if self.rootViewModel.sections.count == 0 { return }
                 let section = self.rootViewModel.sections[self.lastRow.row]
                 self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
                 self.inboxViewModel.setSelection(section: section)

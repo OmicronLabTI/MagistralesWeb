@@ -63,6 +63,27 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder);
 
         /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the deliveries.</param>
+        /// <returns>the status.</returns>
+        Task<ResultDto> CreateDelivery(List<CreateDeliveryDto> createDelivery);
+
+        /// <summary>
+        /// Creates the delivery by products.
+        /// </summary>
+        /// <param name="createDeliveries">the deliveries.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryDto> createDeliveries);
+
+        /// <summary>
+        /// Updates the value for tracking.
+        /// </summary>
+        /// <param name="sendPackage">the package.</param>
+        /// <returns></returns>
+        Task<ResultDto> UpdateTracking(SendPackageDto sendPackage);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

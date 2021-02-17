@@ -220,6 +220,13 @@
             <param name="isolatedFabOrder">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDelivery(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

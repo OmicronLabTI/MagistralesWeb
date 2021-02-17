@@ -42,4 +42,16 @@
     <ProjectReference Include="..\Omicron.Pedidos.Resources\Omicron.Pedidos.Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Resources\Delivery\json.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Resources\Images\json.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Resources\Invoice\json.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

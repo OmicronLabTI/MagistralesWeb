@@ -52,8 +52,8 @@ export class ParamsPedidos {
     clientName?: string;
     label?: string;
     finlabel: string;
-
-
+    isFromIncidents?: boolean;
+    orderIncidents?: number;
 }
 
 export class ProcessOrders {

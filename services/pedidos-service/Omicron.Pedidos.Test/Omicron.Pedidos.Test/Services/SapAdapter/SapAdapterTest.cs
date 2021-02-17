@@ -5,9 +5,11 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Pedidos.Test.Services.SapAdapter
 {
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Services.SapAdapter;
 
     /// <summary>
@@ -46,6 +48,32 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
 
             // Assert
             Assert.IsTrue(result.Success);
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
+        public void GetError()
+        {
+            // Arrange
+            var client = this.CreateClientFailure();
+
+            // Act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetSapAdapter("endpoint"));
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
+        public void PostError()
+        {
+            // Arrange
+            var client = this.CreateClientFailure();
+
+            // Act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostSapAdapter(new { }, "endpoint"));
         }
     }
 }

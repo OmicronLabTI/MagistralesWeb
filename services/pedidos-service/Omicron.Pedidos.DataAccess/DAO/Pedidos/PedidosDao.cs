@@ -247,6 +247,148 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName)
+        {
+            return await this.databaseContext.ParametersModel.Where(x => x.Field.Contains(fieldName)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="userOrderId">the orders ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId)
+        {
+            return await this.databaseContext.ProductionOrderQr.Where(x => userOrderId.Contains(x.UserOrderId)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave)
+        {
+            this.databaseContext.ProductionOrderQr.AddRange(modelsToSave);
+            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
+        {
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
+
+            var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
+            var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
+
+            var possiblePending = orders.Where(x => x.IsProductionOrder && (x.Status.Equals(status) || x.Status.Equals(secondStatus)) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
+            var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
+            var pendingOrders = await this.databaseContext.UserOrderModel.Where(x => isPending.Contains(x.Salesorderid)).ToListAsync();
+
+            pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
+            {
+                var orders = y.Where(z => z.IsProductionOrder).ToList();
+                if (y.Any(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus) && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                {
+                    orderstoReturn.AddRange(y);
+                }
+            });
+            return orderstoReturn;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
+        {
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate == null || x.FinalizedDate >= dateToLook).ToListAsync();
+            return orders.Where(x => x.IsSalesOrder && (x.Status != status || x.FinishedLabel != 1)).ToList();
+        }
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        public async Task<List<UserOrderModel>> GetUserOrdersById(List<int> ordersId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => ordersId.Contains(x.Id)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder)
+        {
+            return await this.databaseContext.ProductionRemisionQrModel.Where(x => saleOrder.Contains(x.PedidoId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteByDelivery(List<int> delivery)
+        {
+            return await this.databaseContext.ProductionRemisionQrModel.Where(x => delivery.Contains(x.RemisionId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
+        {
+            return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionFacturaQrModel.AddRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionRemisionQrModel.AddRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.StatusAlmacen == statusForSale || x.StatusAlmacen == statusForOrder).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => invoiceId.Contains(x.InvoiceId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate <= endDate).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => deliveryIds.Contains(x.DeliveryId)).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>

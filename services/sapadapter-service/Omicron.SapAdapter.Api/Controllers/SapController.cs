@@ -27,6 +27,8 @@ namespace Omicron.SapAdapter.Api.Controllers
     {
         private readonly ISapFacade sapFacade;
 
+        private readonly ISapAlmacenFacade sapAlmacenFacade;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -37,9 +39,11 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
-        public SapController(ISapFacade sapFacade, ILogger logger)
+        /// <param name="sapAlmacenFacade">the sap almacen.</param>
+        public SapController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
+            this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));
             this.logger = logger;
         }
 
@@ -286,6 +290,149 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             var result = await this.sapFacade.ValidateOrder(orderId);
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrders([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetOrders(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="type">The type of scanned item.</param>
+        /// <param name="code">The code scanned.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/{type}/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrder(string type, string code)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedData(type, code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="saleorderid">The type of scanned item.</param>
+        /// <returns>the data.</returns>
+        [Route("/complete/detail/{saleorderid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetCompleteDetail(int saleorderid)
+        {
+            var response = await this.sapAlmacenFacade.GetCompleteDetail(saleorderid);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="ordersId">The type of scanned item.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/orderids")]
+        [HttpPost]
+        public async Task<IActionResult> GetDeliveryBySaleOrderId(List<int> ordersId)
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveryBySaleOrderId(ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/orders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersDelivery([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetDelivery(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/orders")]
+        [HttpGet]
+        public async Task<IActionResult> GetInvoice([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoice(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="invoiceid">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/{invoiceid}/products")]
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceProducts(int invoiceid)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceProducts(invoiceid);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="dataToLook">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/package/header")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvoiceHeader(InvoicePackageSapLookDto dataToLook)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceHeader(dataToLook);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the delivery and invoice id by sale order..
+        /// </summary>
+        /// <param name="saleids">The sales id separated by commas.</param>
+        /// <returns>the data.</returns>
+        [Route("/sapids/saleorders")]
+        [HttpPost]
+        public async Task<IActionResult> GetSapIds(List<int> saleids)
+        {
+            var response = await this.sapAlmacenFacade.GetSapIds(saleids);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/graph")]
+        [HttpGet]
+        public async Task<IActionResult> AlmacenGraphCount([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.AlmacenGraphCount(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/delivery/parties")]
+        [HttpGet]
+        public async Task<IActionResult> GetDeliveryParties()
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveryParties();
+            return this.Ok(response);
         }
 
         /// <summary>

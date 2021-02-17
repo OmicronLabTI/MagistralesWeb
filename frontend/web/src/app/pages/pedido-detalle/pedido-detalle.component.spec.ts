@@ -9,17 +9,30 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {PedidosService} from '../../services/pedidos.service';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {DetailOrderMock} from '../../../mocks/detailOrder.Mock';
+import {DownloadImagesService} from '../../services/download-images.service';
+import {UrlsOfQrEachOrderMock} from '../../../mocks/urlsOfQrEachOrderMock';
+import {ErrorService} from "../../services/error.service";
+import {error} from "util";
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
   let fixture: ComponentFixture<PedidoDetalleComponent>;
   let pedidosServiceSpy;
+  let downloadImagesServiceSpy;
+  let errorServiceSpy;
   beforeEach(async(() => {
-    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getPedidos', 'processOrders', 'getDetallePedido'
+    errorServiceSpy = pedidosServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
     ]);
+    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
+      'getPedidos', 'processOrders', 'getDetallePedido', 'qrByEachOrder'
+    ]);
+    downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
+    pedidosServiceSpy.qrByEachOrder.and.callFake( () => {
+      return of(UrlsOfQrEachOrderMock);
+    });
     pedidosServiceSpy.getDetallePedido.and.callFake(() => {
       return of(DetailOrderMock);
     });
@@ -32,7 +45,9 @@ describe('PedidoDetalleComponent', () => {
         BrowserAnimationsModule],
       declarations: [ PedidoDetalleComponent ],
       providers: [DatePipe,
-        { provide: PedidosService, useValue: pedidosServiceSpy }]
+        { provide: PedidosService, useValue: pedidosServiceSpy },
+        { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy }]
     })
     .compileComponents();
   }));
@@ -45,7 +60,6 @@ describe('PedidoDetalleComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
   it('should getDetallePedido', () => {
     component.docNum = '60026';
     component.getDetallePedido();
@@ -99,5 +113,33 @@ describe('PedidoDetalleComponent', () => {
     component.setAll(false);
     expect(component.allComplete).toBe(false);
     expect(component.dataSource.data.every(detail => !detail.isChecked)).toBeTruthy();
+  });
+
+  it('should call ordersToDownloadQr()', () => {
+    component.dataSource.data = [
+      {
+        status: 'Planificado',
+        pedidoStatus: 'Planificado',
+        isChecked: true,
+      } as IPedidoDetalleReq
+    ];
+    component.ordersToDownloadQr();
+    expect(pedidosServiceSpy.qrByEachOrder).toHaveBeenCalled();
+    expect(downloadImagesServiceSpy.downloadImageFromUrl).toHaveBeenCalledTimes(1);
+  });
+  it('should call ordersToDownloadQr() error', () => {
+    pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.dataSource.data = [
+      {
+        status: 'Planificado',
+        pedidoStatus: 'Planificado',
+        isChecked: true,
+      } as IPedidoDetalleReq
+    ];
+    component.ordersToDownloadQr();
+    expect(pedidosServiceSpy.qrByEachOrder).toHaveBeenCalled();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
 });
