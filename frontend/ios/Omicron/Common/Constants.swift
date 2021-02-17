@@ -151,6 +151,7 @@ struct CommonStrings {
     static let errorInComments = "Ocurrió un error al guardar los comentarios, por favor intentarlo de nuevo"
     static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+    // swiftlint:disable line_length
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
