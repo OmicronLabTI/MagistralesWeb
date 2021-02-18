@@ -17,7 +17,7 @@ extension InboxViewController {
                 identifier: ViewControllerIdentifiers.signaturePadViewController) as? SignaturePadViewController
             signatureVC?.titleView = titleView
             signatureVC?.originView = ViewControllerIdentifiers.inboxViewController
-            signatureVC?.modalPresentationStyle = .overCurrentContext
+            signatureVC?.modalPresentationStyle = .overFullScreen
             self.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: disposeBag)
     }
