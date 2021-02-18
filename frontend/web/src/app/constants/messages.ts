@@ -6,6 +6,7 @@ export const Messages = {
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
   deleteUsers: ' ¿Desea eliminar el(los) usuario(s) seleccionado(s) ?',
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s) ?',
+  refuseOrders: '¿Deseas cambiar a estatus rechazado el(los) pedido(s) seleccionado(s) ?',
   processOrdersDetail: '¿Deseas cambiar a estatus planificado los registros seleccionados?',
   placeOrder: '¿Deseas asignar el(los) pedido(s) seleccionado(s) a',
   reassignOrder: '¿Deseas reasignar el(los) pedido(s) seleccionado(s) a',

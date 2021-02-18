@@ -19,7 +19,7 @@ import {
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {
-    CancelOrderReq, Catalogs,
+    CancelOrderReq,
     ICreatePdfOrdersRes,
     IPedidoReq,
     IRecipesRes,
@@ -179,8 +179,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
-        this.ordersToProcess.listIds = this.dataSource.data.filter(t =>
-            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
+        this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           resProcessOrder => {
@@ -358,4 +357,26 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 }
                 , error => this.errorService.httpError(error));
     }
+    getOrdersOnlyOpen() {
+        return this.dataSource.data.filter(t =>
+            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
+    }
+
+    ordersToRefuse() {
+
+        this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
+            .then((result: any) => {
+                if (result.isConfirmed) {
+                    console.log('confirm refuse');
+                    // this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForClose: true});
+
+                }
+            });
+    }
+
+   /* successNewComments(newCommentsResult: CommentsConfig) {
+        console.log('comments to refuse', newCommentsResult.comments.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne));
+        // console.log('ordersToRefuse', this.getOrdersOnlyOpen())
+        // ready comments and orders to send on service after check service response to make message of orders to refuse failed
+    }*/
 }
