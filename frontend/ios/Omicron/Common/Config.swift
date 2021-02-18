@@ -35,13 +35,11 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return "http://201.163.179.28:8000/api"
-//            return "https://magistralesprod.omicronlab.com.mx/api"
+            return URLRoot.qaServer
         case .stagingRelease,
              .appstore,
              .release:
-            return "http://201.163.179.28:8000/api"
-//            return "https://magistralesprod.omicronlab.com.mx/api"
+            return URLRoot.qaServer
         }
     }()
 
@@ -49,11 +47,11 @@ struct Config {
             switch env {
             case .debug,
                  .stagingDebug:
-                return "http://172.30.5.49:5100/"
+                return URLRoot.omicronServer
             case .stagingRelease,
                  .appstore,
                  .release:
-                return "http://172.30.5.49:5100/"
+                return URLRoot.omicronServer
             }
         }()
     static var isRunningTests: Bool {
