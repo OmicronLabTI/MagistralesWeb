@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
@@ -49,6 +50,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         private readonly ILogger logger;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapService"/> class.
         /// </summary>
@@ -58,7 +61,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="configuration">App configuration.</param>
         /// <param name="logger">the logger.</param>
         /// <param name="getProductionOrderUtils">the getproduction order utisl.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils)
+        /// <param name="redisService">The reddis service.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
@@ -66,6 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.logger = logger;
             this.getProductionOrderUtils = getProductionOrderUtils;
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <summary>
@@ -88,6 +93,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
+
+            var key = ServiceUtils.PrepareKeyForRedisFromDic(parameters, ServiceConstants.Pedido);
+            var ids = JsonConvert.SerializeObject(orders.Select(x => x.DocNum).OrderBy(x => x).ToList());
+            await this.redisService.WriteToRedis(key, ids, new TimeSpan(24, 0, 0));
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
@@ -129,6 +138,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Comments = pedido == null ? null : pedido.Comments;
                 x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
                 x.FinishedLabel = userOrder.FinishedLabel;
+                x.PedidoId = docId;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
@@ -594,6 +604,21 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDetails(Dictionary<string, string> parameters)
+        {
+            var redisKey = ServiceUtils.PrepareKeyForRedisFromDic(parameters, ServiceConstants.Pedido);
+            var value = await this.redisService.GetRedisKey(redisKey);
+            value = string.IsNullOrEmpty(value) ? JsonConvert.SerializeObject(new List<int>()) : value;
+            var listIds = value.Contains("[") && value.Contains("]") ? JsonConvert.DeserializeObject<List<int>>(value) : new List<int>();
+            var index = ServiceUtils.GetKeyToLook(parameters, listIds);
+
+            var current = parameters.ContainsKey(ServiceConstants.Current) ? parameters[ServiceConstants.Current] : "0";
+            int.TryParse(current, out int currentInt);
+            var id = listIds.Any() ? listIds[index] : currentInt;
+            return await this.GetOrderDetails(id);
         }
 
         /// <summary>

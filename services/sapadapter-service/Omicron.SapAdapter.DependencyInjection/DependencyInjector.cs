@@ -16,6 +16,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -41,6 +42,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<ISapDao, SapDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
+            Services.AddTransient<IRedisService, RedisService>();
             return Services;
         }
 
