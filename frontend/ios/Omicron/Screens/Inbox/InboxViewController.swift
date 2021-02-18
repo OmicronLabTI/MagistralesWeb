@@ -332,6 +332,7 @@ class InboxViewController: UIViewController {
     func initComponents() {
         self.processButton.isEnabled = false
         self.pendingButton.isEnabled = false
+        self.finishedButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(
             button: self.finishedButton,
             title: StatusNameConstants.finishedStatus,
@@ -373,6 +374,7 @@ class InboxViewController: UIViewController {
             }
             self.processButton.isEnabled = false
             self.pendingButton.isEnabled = false
+            self.finishedButton.isEnabled = false
         }).disposed(by: disposeBag)
     }
     func chageStatusName(index: Int) {
@@ -405,7 +407,7 @@ class InboxViewController: UIViewController {
         case 1:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
-                finishedButtonIsHidden: true,
+                finishedButtonIsHidden: false,
                 pendingButtonIsHidden: false)
         case 2:
             self.changePropertyIsHiddenStatusButtons(
@@ -517,6 +519,7 @@ class InboxViewController: UIViewController {
             })
             processButton.isEnabled = true
             pendingButton.isEnabled = true
+            finishedButton.isEnabled = true
         } else {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 self?.removeOrdersSelectedVerticalSpace.constant = -60
@@ -524,6 +527,7 @@ class InboxViewController: UIViewController {
             })
             processButton.isEnabled = false
             pendingButton.isEnabled = false
+            finishedButton.isEnabled = false
         }
 
     }
