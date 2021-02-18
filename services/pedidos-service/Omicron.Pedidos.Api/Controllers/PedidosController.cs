@@ -194,6 +194,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// reject order (status to reject).
         /// </summary>
         /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/reject")]
         [HttpPut]
         public async Task<IActionResult> RejectSalesOrders(List<OrderIdDto> rejectOrders)
