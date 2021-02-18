@@ -18,15 +18,11 @@ class InboxViewModel {
     var processDidTap = PublishSubject<Void>()
     var indexSelectedOfTable = PublishSubject<Int>()
     var statusDataGrouped: BehaviorSubject<[SectionModel<String, Order>]> = BehaviorSubject(value: [])
-    var ordersTemp: [Order] = []
-    var sectionOrders: [SectionModel<String, Order>] = []
     var loading =  PublishSubject<Bool>()
     var showAlertToChangeOrderOfStatus = PublishSubject<MessageToChangeStatus>()
     var refreshDataWhenChangeProcessIsSucces = PublishSubject<Void>()
     var showAlert = PublishSubject<String>()
     var title = PublishSubject<String>()
-    var selectedOrder: Order?
-    var disposeBag = DisposeBag()
     var similarityViewButtonDidTap = PublishSubject<Void>()
     var similarityViewButtonIsEnable = PublishSubject<Bool>()
     var normalViewButtonDidTap = PublishSubject<Void>()
@@ -44,40 +40,40 @@ class InboxViewModel {
     var hasConnection = PublishSubject<Bool>()
     var resetData = PublishSubject<Void>()
     var showSignatureVc = PublishSubject<String>()
+    var finishOrders = PublishSubject<Void>()
+
+    var normalSort = true
+    var similaritySort = false
+    var groupSort = false
     var qfbSignatureIsGet = false
     var sqfbSignature = String()
     var technicalSignatureIsGet = false
     var technicalSignature = String()
-    var finishOrders = PublishSubject<Void>()
+    var selectedOrder: Order?
+    var disposeBag = DisposeBag()
+    var ordersTemp: [Order] = []
+    var sectionOrders: [SectionModel<String, Order>] = []
+
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
-    var normalSort = true
-    var similaritySort = false
-    var groupSort = false
-    // swiftlent:disable function_body_length
+
     init() {
-        pendingDidTap.subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(
-                message: CommonStrings.confirmationMessagePendingStatus,
-                typeOfStatus: StatusNameConstants.penddingStatus)
-            self?.showAlertToChangeOrderOfStatus.onNext(message)
-        }).disposed(by: disposeBag)
+        // Funcionalidad para el botón de Pendiente
+        pendingDidTapBinding()
         // Funcionalidad para el botón de En Proceso
-        processDidTap.subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(
-                message: CommonStrings.confirmationMessageProcessStatus,
-                typeOfStatus: StatusNameConstants.inProcessStatus)
-            self?.showAlertToChangeOrderOfStatus.onNext(message)
-        }).disposed(by: disposeBag)
-        finishedDidTap.subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(
-                message: CommonStrings.confirmationMessageFinishedStatus,
-                typeOfStatus: StatusNameConstants.finishedStatus)
-            self?.showAlertToChangeOrderOfStatus.onNext(message)
-        }).disposed(by: disposeBag)
+        processDidTapBinding()
+        // Funcionalidad para el botón de Terminado
+        finishedDidTapBinding()
         // Funcionalidad para agrupar los cards por similitud
         self.similarityViewButtonAction()
         // Funcionalidad para mostrar la vista normal en los cards
+        normalViewButtonDidTapBinding()
+        // Funcionalidad para mostra la vista ordenada número de orden
+        groupByOrderNumberButtonDidTapBinding()
+        initExtension()
+    }
+
+    func normalViewButtonDidTapBinding() {
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             self?.pendingButtonIsEnable.onNext(false)
@@ -90,7 +86,9 @@ class InboxViewModel {
             self?.changeStatusSort(normal: true, similarity: false, grouped: false)
             self?.resetData.onNext(())
         }).disposed(by: self.disposeBag)
-        // Funcionalidad para mostra la vista ordenada número de orden
+    }
+
+    func groupByOrderNumberButtonDidTapBinding() {
         groupByOrderNumberButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             self?.pendingButtonIsEnable.onNext(false)
@@ -106,7 +104,33 @@ class InboxViewModel {
             self?.changeStatusSort(normal: false, similarity: false, grouped: true)
             self?.resetData.onNext(())
         }).disposed(by: self.disposeBag)
-        initExtension()
+    }
+
+    func finishedDidTapBinding() {
+        finishedDidTap.subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(
+                message: CommonStrings.confirmationMessageFinishedStatus,
+                typeOfStatus: StatusNameConstants.finishedStatus)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
+        }).disposed(by: disposeBag)
+    }
+
+    func pendingDidTapBinding() {
+        pendingDidTap.subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(
+                message: CommonStrings.confirmationMessagePendingStatus,
+                typeOfStatus: StatusNameConstants.penddingStatus)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
+        }).disposed(by: disposeBag)
+    }
+
+    func processDidTapBinding() {
+        processDidTap.subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(
+                message: CommonStrings.confirmationMessageProcessStatus,
+                typeOfStatus: StatusNameConstants.inProcessStatus)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
+        }).disposed(by: disposeBag)
     }
 
     func initExtension() {
@@ -130,7 +154,7 @@ class InboxViewModel {
             guard let self = self else { return }
             print(error.localizedDescription)
             self.loading.onNext(false)
-            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
+            self.showAlert.onNext(CommonStrings.errorPDF)
         }).disposed(by: disposeBag)
     }
 
@@ -172,12 +196,13 @@ class InboxViewModel {
         resetData.onNext(())
         let groupBySimilarity = data
             .filter { $0.value.count > 1 }
-            .sorted { ($0.key ?? "").localizedStandardCompare( $1.key ?? "") == .orderedAscending }
+            .sorted { ($0.key ?? CommonStrings.empty)
+                .localizedStandardCompare( $1.key ?? CommonStrings.empty) == .orderedAscending }
         if groupBySimilarity.count > 0 {
             let sectionsModelsBySimilarity = groupBySimilarity
                 .map({ [unowned self] (orders) -> SectionModel<String, Order> in
                 return SectionModel(
-                    model: "\(titleForOrdersWithSimilarity) \(orders.key ?? "")",
+                    model: "\(titleForOrdersWithSimilarity) \(orders.key ?? CommonStrings.empty)",
                     items: self.sortByBaseBocumentAscending(orders: orders.value))
             })
             sectionModels.append(contentsOf: sectionsModelsBySimilarity)
@@ -199,13 +224,13 @@ class InboxViewModel {
         var data1 = data
         var sectionModels: [SectionModel<String, Order>] = []
         resetData.onNext(())
-        if let cero = data1["0"] {
+        if let cero = data1[CommonStrings.zero] {
             sectionModels.append(SectionModel(model: "\(CommonStrings.ordersWithoutOrder)", items: cero))
-            data1.removeValue(forKey: "0")
+            data1.removeValue(forKey: CommonStrings.zero)
         }
         let sections = data1.map({ [unowned self] (orders) -> SectionModel<String, Order> in
             return SectionModel(
-                model: "\(CommonStrings.order) \(orders.key ?? "")",
+                model: "\(CommonStrings.order) \(orders.key ?? CommonStrings.empty)",
                 items: self.sortByBaseBocumentAscending(orders: orders.value))
         })
         let sortedSections = sections.sorted { $0.model < $1.model }
@@ -372,7 +397,7 @@ class InboxViewModel {
             guard let self = self else { return }
             self.hasConnection.onNext(false)
             self.loading.onNext(false)
-            self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
+            self.showAlert.onNext(CommonStrings.errorPDF)
         }).disposed(by: disposeBag)
 
     }
@@ -382,19 +407,17 @@ class InboxViewModel {
             loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
                   let indexPathOfOrdersSelected = indexPathOfOrdersSelected else {
-                fatalError("Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected")
+                fatalError(CommonStrings.errorUserIdIndexPathOfOrdersSelected)
             }
-            var orderIds = [Int]()
-            indexPathOfOrdersSelected.forEach { (indexPath) in
-                let orderId = self.sectionOrders[indexPath.section].items[indexPath.row].productionOrderId
-                orderIds.append(orderId ?? 0)
-            }
+            let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
             let finishOrder = FinishOrder(
                 userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
                 technicalSignature: technicalSignature)
+
             networkManager.finishOrder(order: finishOrder)
                 .subscribe(onNext: { [weak self] _ in
                     self?.loading.onNext(false)
+                    self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                     // Checar que error se va a mandar desde back para las ordenes que no se pueden terminar
                 }, onError: { [weak self] error in
                     self?.loading.onNext(false)
@@ -402,6 +425,16 @@ class InboxViewModel {
                     fatalError(error.localizedDescription)
                 }).disposed(by: disposeBag)
         }
+    }
+
+    func getFabOrderIDs(indexPathOfOrdersSelected: [IndexPath]) -> [Int] {
+        guard indexPathOfOrdersSelected.count > 0 else { return []}
+        var fabOrderIDs = [Int]()
+        indexPathOfOrdersSelected.forEach { (indexPath) in
+            let orderId = self.sectionOrders[indexPath.section].items[indexPath.row].productionOrderId
+            fabOrderIDs.append(orderId ?? 0)
+        }
+        return fabOrderIDs
     }
 
 }

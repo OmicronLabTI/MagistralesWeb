@@ -140,7 +140,7 @@ class OrderDetailRequest: Codable {
     let fechaFin, comments, warehouse: String
     let components: [Component]
     init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String,
-         comments: String, warehouse: String ,components: [Component]) {
+         comments: String, warehouse: String, components: [Component]) {
         self.fabOrderID = fabOrderID
         self.plannedQuantity = plannedQuantity
         self.fechaFin = fechaFin
