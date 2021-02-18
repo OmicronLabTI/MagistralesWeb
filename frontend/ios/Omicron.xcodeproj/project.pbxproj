@@ -30,6 +30,8 @@
 		388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */; };
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
 		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
+		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
+		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
 		7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */; };
@@ -158,6 +160,8 @@
 		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
+		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
+		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsTableViewCell.swift; sourceTree = "<group>"; };
@@ -465,6 +469,8 @@
 			children = (
 				98015CC624AFBC6D00E7772F /* LoginTest.swift */,
 				7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */,
+				49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */,
+				49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */,
 				7C75C32F24DC77C800CBA3C3 /* RootView.swift */,
 				98015CC824AFBC6D00E7772F /* Info.plist */,
 				7C56BDF924EDCF6D0039B2E7 /* OrderDetailTest.swift */,
@@ -963,7 +969,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */,
+				49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */,
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
+				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,
 				1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */,
 				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,

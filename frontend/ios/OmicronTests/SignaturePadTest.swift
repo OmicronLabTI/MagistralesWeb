@@ -128,4 +128,24 @@ class SignaturePadTest: XCTestCase {
         // When
         XCTAssertEqual(self.signaturePadViewModel?.lotsViewModel.technicalSignatureIsGet, true)
     }
+
+    func testAcceptDidTapSignatureQFBInboxViewController() {
+        let testIUmage = UIImage(named: ImagesNames.closeEye)
+        signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleQFB)
+        signaturePadViewModel?.getSignature.onNext(testIUmage!)
+        signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.inboxViewController)
+        signaturePadViewModel?.acceptDidTap.onNext(())
+        let isQfbSignatureGet = signaturePadViewModel?.inboxVM.qfbSignatureIsGet ?? false
+        XCTAssertTrue(isQfbSignatureGet)
+    }
+    
+    func testAcceptDidTapSignatureTechnicalalInboxViewController () {
+        let testIUmage = UIImage(named: ImagesNames.closeEye)
+        signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleTechnical)
+        signaturePadViewModel?.getSignature.onNext(testIUmage!)
+        signaturePadViewModel?.whoRequestSignature.onNext(ViewControllerIdentifiers.inboxViewController)
+        signaturePadViewModel?.acceptDidTap.onNext(())
+        let istechnicalSignatureGet = signaturePadViewModel?.inboxVM.technicalSignatureIsGet
+        XCTAssertTrue(istechnicalSignatureGet ?? false)
+    }
 }
