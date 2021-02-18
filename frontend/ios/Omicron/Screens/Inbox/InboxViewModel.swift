@@ -43,6 +43,12 @@ class InboxViewModel {
     var orderURLPDF = PublishSubject<String>()
     var hasConnection = PublishSubject<Bool>()
     var resetData = PublishSubject<Void>()
+    var showSignatureVc = PublishSubject<String>()
+    var qfbSignatureIsGet = false
+    var sqfbSignature = String()
+    var technicalSignatureIsGet = false
+    var technicalSignature = String()
+    var finishOrders = PublishSubject<Void>()
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     var normalSort = true
@@ -61,6 +67,12 @@ class InboxViewModel {
             let message = MessageToChangeStatus(
                 message: CommonStrings.confirmationMessageProcessStatus,
                 typeOfStatus: StatusNameConstants.inProcessStatus)
+            self?.showAlertToChangeOrderOfStatus.onNext(message)
+        }).disposed(by: disposeBag)
+        finishedDidTap.subscribe(onNext: { [weak self] _ in
+            let message = MessageToChangeStatus(
+                message: CommonStrings.confirmationMessageFinishedStatus,
+                typeOfStatus: StatusNameConstants.finishedStatus)
             self?.showAlertToChangeOrderOfStatus.onNext(message)
         }).disposed(by: disposeBag)
         // Funcionalidad para agrupar los cards por similitud
@@ -363,6 +375,33 @@ class InboxViewModel {
             self.showAlert.onNext("Por el momento no es posible mostrar el PDF del pedido, intenta más tarde")
         }).disposed(by: disposeBag)
 
+    }
+
+    func callFinishOrderService(indexPathOfOrdersSelected: [IndexPath]?) {
+        if qfbSignatureIsGet && technicalSignatureIsGet {
+            loading.onNext(true)
+            guard let userID = Persistence.shared.getUserData()?.id,
+                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else {
+                fatalError("Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected")
+            }
+            var orderIds = [Int]()
+            indexPathOfOrdersSelected.forEach { (indexPath) in
+                let orderId = self.sectionOrders[indexPath.section].items[indexPath.row].productionOrderId
+                orderIds.append(orderId ?? 0)
+            }
+            let finishOrder = FinishOrder(
+                userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
+                technicalSignature: technicalSignature)
+            networkManager.finishOrder(order: finishOrder)
+                .subscribe(onNext: { [weak self] _ in
+                    self?.loading.onNext(false)
+                    // Checar que error se va a mandar desde back para las ordenes que no se pueden terminar
+                }, onError: { [weak self] error in
+                    self?.loading.onNext(false)
+                    self?.showAlert.onNext(CommonStrings.errorFinishOrders)
+                    fatalError(error.localizedDescription)
+                }).disposed(by: disposeBag)
+        }
     }
 
 }

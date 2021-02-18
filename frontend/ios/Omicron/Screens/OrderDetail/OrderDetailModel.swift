@@ -197,10 +197,10 @@ class ChangeStatusRespose: HttpResponse {
 }
 class FinishOrder: Codable {
     var userId: String?
-    var fabricationOrderId: Int?
+    var fabricationOrderId: [Int]?
     var qfbSignature: String?
     var technicalSignature: String?
-    init(userId: String, fabricationOrderId: Int, qfbSignature: String, technicalSignature: String) {
+    init(userId: String, fabricationOrderId: [Int], qfbSignature: String, technicalSignature: String) {
         self.userId = userId
         self.fabricationOrderId = fabricationOrderId
         self.qfbSignature = qfbSignature

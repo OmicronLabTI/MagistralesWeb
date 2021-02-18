@@ -93,6 +93,7 @@ struct CommonStrings {
     static let addComponentTitle = "Agregar Componentes"
     static let confirmationMessagePendingStatus = "La orden cambiará a estatus Pendiente, ¿quieres continuar?"
     static let confirmationMessageProcessStatus = "La orden cambiará a estatus En proceso ¿quieres continuar?"
+    static let confirmationMessageFinishedStatus = "La orden cambiará a estatus Terminado ¿quieres continuar?"
     static let errorToChangeStatus = "Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo"
     static let process = "Proceso"
     static let pending = "Pendiente"
@@ -155,6 +156,8 @@ struct CommonStrings {
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
+    static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
+    static let errorFinishOrders = "Ocurrió un error al finalizar las ordenes, por favor intentarlo de nuevo"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

@@ -305,7 +305,7 @@ class LotsViewModel {
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 guard response.code == 400, !(response.success ?? false) else {
-                    self.showSignatureView.onNext("Firma del  QFB")
+                    self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
@@ -336,7 +336,7 @@ class LotsViewModel {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(
-                userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId,
+                userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: [self.orderId],
                 qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
             self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
@@ -344,7 +344,7 @@ class LotsViewModel {
                 self?.rootViewModel.needsRefresh = true
                 }, onError: {[weak self] error in
                     self?.loading.onNext(false)
-                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
+                    self?.showMessage.onNext(CommonStrings.errorFinishOrder)
                     print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
         }

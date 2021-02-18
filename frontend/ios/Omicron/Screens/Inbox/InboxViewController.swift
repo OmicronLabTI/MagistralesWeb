@@ -35,6 +35,7 @@ class InboxViewController: UIViewController {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var orderDetailVM: OrderDetailViewModel
     let disposeBag = DisposeBag()
     var productID = 0
     var indexPathsSelected: [IndexPath] = []
@@ -218,6 +219,8 @@ class InboxViewController: UIViewController {
         self.modelBindingExtention1()
         self.modelBindingExtension2()
         self.modelBindingExtension3()
+        self.showSignatureVC()
+        self.finishOrders()
     }
     func modelBindingExtention1() {
         // Habilita o deshabilita el botón de agrupamiento por similaridad
@@ -272,12 +275,18 @@ class InboxViewController: UIViewController {
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { _ in
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                 self?.view.isUserInteractionEnabled = false
-                self?.inboxViewModel.changeStatus(
-                    indexPath: self?.indexPathsSelected,
-                    typeOfStatus: data.typeOfStatus)
-            })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
+                if data.typeOfStatus == StatusNameConstants.finishedStatus {
+                    // Primero se verifica si se pueden finalizar
+                    self?.inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
+                } else {
+                    // Si la respuesta es OK se cambiará a status pendiente, se mandan los index selecionados para cambiar el status
+                    self?.inboxViewModel.changeStatus(
+                        indexPath: self?.indexPathsSelected,
+                        typeOfStatus: data.typeOfStatus)
+                }
+            })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)

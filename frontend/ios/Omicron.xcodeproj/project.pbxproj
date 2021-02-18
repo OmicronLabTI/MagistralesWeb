@@ -29,6 +29,7 @@
 		1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF032212519388C0040DC65 /* ChartViewModel.swift */; };
 		388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */; };
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
+		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
 		7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */; };
@@ -154,8 +155,9 @@
 		1EF032212519388C0040DC65 /* ChartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewModel.swift; sourceTree = "<group>"; };
 		2CB66FAA4E49873A00418BE5 /* Pods-Omicron.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.release.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.release.xcconfig"; sourceTree = "<group>"; };
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
-		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
+		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
+		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
+		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsTableViewCell.swift; sourceTree = "<group>"; };
@@ -404,6 +406,7 @@
 				7C844BB124D3BA5800D26B96 /* SplitViewController.swift */,
 				1E9674AE254338A40004344C /* OrderPDF.swift */,
 				1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */,
+				49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -945,6 +948,7 @@
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
+				49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */,
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,

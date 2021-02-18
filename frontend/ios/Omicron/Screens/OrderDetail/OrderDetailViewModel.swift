@@ -109,7 +109,7 @@ class OrderDetailViewModel {
     func terminateOrChangeStatusOfAnOrder(actionType: String) {
         switch actionType {
         case StatusNameConstants.finishedStatus:        // Realiza el proceso para terminar la orden
-            self.validIfOrderCanBeFinalized()
+            self.validIfOrderCanBeFinalized(orderId: orderId)
         case StatusNameConstants.inProcessStatus:       // Realiza el proceso para cambiar el estatus a proceso
             self.changeStatus(actionType: actionType)
         case StatusNameConstants.penddingStatus:        // Realiza el proceso para cambiar el status a pendiente
@@ -191,7 +191,7 @@ class OrderDetailViewModel {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!,
-                                          fabricationOrderId: self.orderId,
+                                          fabricationOrderId: [self.orderId],
                                           qfbSignature: self.sqfbSignature,
                                           technicalSignature: self.technicalSignature)
             self.networkManager.finishOrder(order: finishOrder)
@@ -204,14 +204,14 @@ class OrderDetailViewModel {
             }).disposed(by: self.disposeBag)
         }
     }
-    func validIfOrderCanBeFinalized() {
+    func validIfOrderCanBeFinalized(orderId: Int) {
         self.loading.onNext(true)
         networkManager.getValidateOrder(orderId: orderId)
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 guard response.code == 400, !(response.success ?? false) else {
-                    self.showSignatureView.onNext("Firma del  QFB")
+                    self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }

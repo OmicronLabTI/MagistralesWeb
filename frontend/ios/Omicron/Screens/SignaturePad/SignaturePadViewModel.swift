@@ -24,6 +24,7 @@ class SignaturePadViewModel {
     let whoRequestSignature = PublishSubject<String>()
     @Injected var orderDetailVC: OrderDetailViewModel
     @Injected var lotsViewModel: LotsViewModel
+    @Injected var inboxVM: InboxViewModel
     init() {
         let input = Observable.combineLatest(self.getTypeSignature,
                                              self.getSignature, self.whoRequestSignature)
@@ -43,8 +44,12 @@ class SignaturePadViewModel {
                         self?.lotsViewModel.qfbSignatureIsGet = true
                         self?.lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
                         self?.lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+                    case ViewControllerIdentifiers.inboxViewController:
+                        self?.inboxVM.qfbSignatureIsGet = true
+                        self?.inboxVM.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.inboxVM.showSignatureVc.onNext(CommonStrings.signatureViewTitleTechnical)
                     default:
-                        print("")
+                        break
                     }
                 }
                 if data.signatureType == CommonStrings.signatureViewTitleTechnical {
@@ -57,8 +62,12 @@ class SignaturePadViewModel {
                         self?.lotsViewModel.technicalSignatureIsGet = true
                         self?.lotsViewModel.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
                         self?.lotsViewModel.callFinishOrderService()
+                    case ViewControllerIdentifiers.inboxViewController:
+                        self?.inboxVM.technicalSignatureIsGet = true
+                        self?.inboxVM.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
+                        self?.inboxVM.finishOrders.onNext(())
                     default:
-                        print("")
+                        break
                     }
                     self?.dismissSignatureView.onNext(())
                 }
