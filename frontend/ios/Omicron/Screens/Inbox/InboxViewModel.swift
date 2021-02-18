@@ -42,6 +42,7 @@ class InboxViewModel {
     var selectOrder = PublishSubject<Int?>()
     var orderURLPDF = PublishSubject<String>()
     var hasConnection = PublishSubject<Bool>()
+    var resetData = PublishSubject<Void>()
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     var normalSort = true
@@ -75,6 +76,7 @@ class InboxViewModel {
             self?.normalViewButtonIsEnable.onNext(false)
             self?.groupedByOrderNumberIsEnable.onNext(true)
             self?.changeStatusSort(normal: true, similarity: false, grouped: false)
+            self?.resetData.onNext(())
         }).disposed(by: self.disposeBag)
         // Funcionalidad para mostra la vista ordenada número de orden
         groupByOrderNumberButtonDidTap.subscribe(onNext: { [weak self] _ in
@@ -90,6 +92,7 @@ class InboxViewModel {
             self?.similarityViewButtonIsEnable.onNext(true)
             self?.groupedByOrderNumberIsEnable.onNext(false)
             self?.changeStatusSort(normal: false, similarity: false, grouped: true)
+            self?.resetData.onNext(())
         }).disposed(by: self.disposeBag)
         initExtension()
     }
@@ -123,6 +126,7 @@ class InboxViewModel {
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             self?.pendingButtonIsEnable.onNext(false)
+            self?.resetData.onNext(())
             if self?.ordersTemp != nil {
                 for order in self!.ordersTemp {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
@@ -153,6 +157,7 @@ class InboxViewModel {
         var sectionModels: [SectionModel<String, Order>] = []
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto
         // y se agrupan por "Producto: [productCode]"
+        resetData.onNext(())
         let groupBySimilarity = data
             .filter { $0.value.count > 1 }
             .sorted { ($0.key ?? "").localizedStandardCompare( $1.key ?? "") == .orderedAscending }
@@ -181,6 +186,7 @@ class InboxViewModel {
     func groupedByOrderNumber(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
         var data1 = data
         var sectionModels: [SectionModel<String, Order>] = []
+        resetData.onNext(())
         if let cero = data1["0"] {
             sectionModels.append(SectionModel(model: "\(CommonStrings.ordersWithoutOrder)", items: cero))
             data1.removeValue(forKey: "0")
@@ -194,9 +200,12 @@ class InboxViewModel {
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
     }
-    func setSelection(section: SectionOrder) {
+    func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
         let ordering = sortByBaseBocumentAscending(orders: section.orders)
         ordersTemp = ordering
+        if removeSelecteds {
+            resetData.onNext(())
+        }
         if normalSort {
             statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
             sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
@@ -279,11 +288,11 @@ class InboxViewModel {
             }
             self.networkManager.changeStatusOrder(changeStatusRequest: orders)
                 .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
-                self?.refreshDataWhenChangeProcessIsSucces.onNext(())
-                self?.processButtonIsEnable.onNext(false)
-                self?.pendingButtonIsEnable.onNext(false)
-                self?.rootViewModel.needsRefresh = true
-                self?.loading.onNext(false)
+                    self?.processButtonIsEnable.onNext(false)
+                    self?.pendingButtonIsEnable.onNext(false)
+                    self?.rootViewModel.needsRefresh = true
+                    self?.loading.onNext(false)
+                    self?.refreshDataWhenChangeProcessIsSucces.onNext(())
                 }, onError: { [weak self] _ in
                     self?.loading.onNext(false)
                     self?.showAlert.onNext(CommonStrings.errorToChangeStatus)

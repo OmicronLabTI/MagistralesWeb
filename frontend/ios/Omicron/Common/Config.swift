@@ -30,6 +30,7 @@ struct Config {
             return .release
         #endif
     }()
+
     static let baseUrl: String = {
         switch env {
         case .debug,
@@ -43,6 +44,7 @@ struct Config {
 //            return "https://magistralesprod.omicronlab.com.mx/api"
         }
     }()
+
     static let serverOmicron: String = {
             switch env {
             case .debug,

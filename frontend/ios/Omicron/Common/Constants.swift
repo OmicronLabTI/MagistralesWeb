@@ -160,6 +160,8 @@ struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
     static let SFProDisplayRegular = "SFProDisplay-Regular"
     static let SFProDisplayMedium = "SFProDisplay-Medium"
+    static let SFProDisplayLight = "SFProDisplay-Ligth"
+    static let SFProDisplaySemibold = "SFProDisplay-Semibold"
 }
 struct StatusNameConstants {
     static let assignedStatus = "Asignadas"
