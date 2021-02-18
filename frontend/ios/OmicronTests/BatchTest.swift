@@ -58,7 +58,7 @@ class BatchesTest: XCTestCase {
         // When
         let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
         // Then
-        XCTAssertFalse(result)
+        XCTAssertTrue(result)
     }
     func testCalculateExpiredBatchShoudBeFalseWithNilValue() {
         // Given

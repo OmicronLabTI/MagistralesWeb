@@ -66,7 +66,7 @@ class OrderDetailTest: XCTestCase {
         let qfbSignature = "lgfklgl"
         let technicalSignature = "dkdfkdfk"
         let finishOrder = FinishOrder(
-            userId: userId, fabricationOrderId: fabricationOrderId,
+            userId: userId, fabricationOrderId: [fabricationOrderId],
             qfbSignature: qfbSignature, technicalSignature: technicalSignature)
         // When
         self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { res in

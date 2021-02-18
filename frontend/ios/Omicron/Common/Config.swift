@@ -35,11 +35,11 @@ struct Config {
         switch env {
         case .debug,
              .stagingDebug:
-            return URLRoot.qaServer
+            return URLRoot.devServer
         case .stagingRelease,
              .appstore,
              .release:
-            return URLRoot.qaServer
+            return URLRoot.devServer
         }
     }()
 
