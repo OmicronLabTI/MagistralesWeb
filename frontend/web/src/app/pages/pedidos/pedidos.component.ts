@@ -342,8 +342,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
     });
   }
 
-  openNewTabByOrder(param: (string | any)[]) {
-        this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`, TypeToSeeTap.system);
+  openNewTabByOrder(order: number) {
+      this.router.navigate([RouterPaths.orderDetail, order]);
+
+        // this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`, TypeToSeeTap.system);
   }
     viewPedidosWithPdf() {
         this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))
