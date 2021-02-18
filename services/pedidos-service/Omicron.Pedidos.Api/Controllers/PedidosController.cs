@@ -191,6 +191,18 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        [Route("/salesOrder/reject")]
+        [HttpPut]
+        public async Task<IActionResult> RejectSalesOrders(List<OrderIdDto> rejectOrders)
+        {
+            var response = await this.pedidoFacade.RejectSalesOrders(rejectOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</param>

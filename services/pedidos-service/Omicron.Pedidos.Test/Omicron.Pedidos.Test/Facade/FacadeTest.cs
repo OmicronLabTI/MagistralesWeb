@@ -664,6 +664,38 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>returns nothing.</returns>
         [Test]
+        public async Task RejectSalesOrders()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdDto>
+            {
+                new OrderIdDto
+                {
+                    OrderId = 123, UserId = "abc-abc",
+                },
+                new OrderIdDto
+                {
+                    OrderId = 456, UserId = "def-def",
+                },
+            };
+
+            // act
+            var response = await this.pedidoFacade.RejectSalesOrders(salesOrders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
         public async Task CloseFabOrders()
         {
             // arrange

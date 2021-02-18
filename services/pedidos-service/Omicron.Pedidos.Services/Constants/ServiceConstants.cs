@@ -81,6 +81,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Entregado = "Entregado";
 
         /// <summary>
+        /// status entregado.
+        /// </summary>
+        public const string Rechazado = "Rechazado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";

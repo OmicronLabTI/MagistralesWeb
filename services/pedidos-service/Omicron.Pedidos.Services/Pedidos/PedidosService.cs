@@ -333,6 +333,54 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        public async Task<ResultModel> RejectSalesOrders(List<OrderIdModel> rejectOrders)
+        {
+            var ordersId = rejectOrders.Select(x => x.OrderId.ToString()).ToList();
+            var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).ToList();
+            var failedOrdersId = failedOrders.Select(x => x.Salesorderid).ToList();
+            var succesfulyOrdersId = ordersId.Where(x => !failedOrdersId.Contains(x)).ToList();
+            var succesfulyOrders = rejectOrders.Where(x => succesfulyOrdersId.Contains(x.OrderId.ToString()));
+            var failed = new List<object>();
+
+            foreach (var order in failedOrders)
+            {
+                var orderFail = new
+                {
+                    userId = order.Userid,
+                    orderId = order.Salesorderid,
+                    reason = "El pedido ya se inicializó",
+                };
+                failed.Add(orderFail);
+            }
+
+            // insert to database
+            foreach (var orderRejected in succesfulyOrders)
+            {
+                UserOrderModel newOrderRejected = new UserOrderModel();
+                newOrderRejected.Salesorderid = orderRejected.OrderId.ToString();
+                newOrderRejected.Userid = orderRejected.UserId;
+                newOrderRejected.Status = ServiceConstants.Rechazado;
+                newOrderRejected.Comments = "comments";
+
+                // await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newOrderRejected });
+            }
+
+            // getasesorname
+            // sendEmail
+            var results = new
+            {
+                success = succesfulyOrders.Distinct(),
+                failed = failed.Distinct(),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
         /// Finish fabrication orders.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>
