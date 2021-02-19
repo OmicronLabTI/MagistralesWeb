@@ -28,4 +28,9 @@ extension InboxViewController {
                 indexPathOfOrdersSelected: self?.indexPathsSelected)
         }).disposed(by: disposeBag)
     }
+
+    func isUserInteractionEnabledBinding() {
+        inboxViewModel.isUserInteractionEnabled
+            .bind(to: view.rx.isUserInteractionEnabled).disposed(by: disposeBag)
+    }
 }

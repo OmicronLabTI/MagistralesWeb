@@ -41,6 +41,7 @@ class InboxViewModel {
     var resetData = PublishSubject<Void>()
     var showSignatureVc = PublishSubject<String>()
     var finishOrders = PublishSubject<Void>()
+    var isUserInteractionEnabled = PublishSubject<Bool>()
 
     var normalSort = true
     var similaritySort = false
@@ -413,17 +414,20 @@ class InboxViewModel {
             let finishOrder = FinishOrder(
                 userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
                 technicalSignature: technicalSignature)
-
-            networkManager.finishOrder(order: finishOrder)
-                .subscribe(onNext: { [weak self] _ in
-                    self?.loading.onNext(false)
-                    self?.refreshDataWhenChangeProcessIsSucces.onNext(())
-                    // Checar que error se va a mandar desde back para las ordenes que no se pueden terminar
-                }, onError: { [weak self] error in
-                    self?.loading.onNext(false)
-                    self?.showAlert.onNext(CommonStrings.errorFinishOrders)
-                    fatalError(error.localizedDescription)
-                }).disposed(by: disposeBag)
+            loading.onNext(false)
+            isUserInteractionEnabled.onNext(true)
+            //self.refreshDataWhenChangeProcessIsSucces.onNext(())
+//            networkManager.finishOrder(order: finishOrder)
+//                .subscribe(onNext: { [weak self] _ in
+//                    self?.loading.onNext(false)
+//                    self?.isUserInteractionEnabled.onNext(true)
+//                    self?.refreshDataWhenChangeProcessIsSucces.onNext(())
+//                    // Checar que error se va a mandar desde back para las ordenes que no se pueden terminar
+//                }, onError: { [weak self] error in
+//                    self?.loading.onNext(false)
+//                    self?.showAlert.onNext(CommonStrings.errorFinishOrders)
+//                    fatalError(error.localizedDescription)
+//                }).disposed(by: disposeBag)
         }
     }
 

@@ -221,6 +221,7 @@ class InboxViewController: UIViewController {
         self.modelBindingExtension3()
         self.showSignatureVC()
         self.finishOrders()
+        isUserInteractionEnabledBinding()
     }
     func modelBindingExtention1() {
         // Habilita o deshabilita el botón de agrupamiento por similaridad
