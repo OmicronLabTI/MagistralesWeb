@@ -353,7 +353,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var orderId = new Dictionary<string, string>();
 
             // act
-            var response = await this.sapFacade.GetDetails(orderId);
+            var response = await this.sapFacade.GetDetails(orderId, "ped");
 
             // assert
             this.AssertResponse(response);

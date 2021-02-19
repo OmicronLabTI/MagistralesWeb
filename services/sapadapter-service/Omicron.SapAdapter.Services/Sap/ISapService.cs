@@ -147,7 +147,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the consecutive or previous.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
+        /// <param name="kind">the kind to look.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetDetails(Dictionary<string, string> parameters);
+        Task<ResultModel> GetDetails(Dictionary<string, string> parameters, string kind);
     }
 }
