@@ -24,7 +24,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'ordenfabricacion/:ordenid',
+    path: 'ordenfabricacion/:ordenid/:detailsOrders/:isFromDetail/:filters',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },

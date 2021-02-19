@@ -271,4 +271,10 @@ export class FabordersListComponent implements OnInit, OnDestroy {
                       this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
                       , CONST_NUMBER.zero.toString()]);
     }
+
+  goToFormulaDetail(fabOrderId: string) {
+    this.dataService.changeRouterForFormula(fabOrderId,
+        CONST_STRING.empty,
+        CONST_NUMBER.zero, this.queryString);
+  }
 }

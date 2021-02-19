@@ -194,7 +194,8 @@ export const CONST_PRODUCTIVITY = {
 
 export const RouterPaths = {
   materialRequest: 'materialRequest',
-  orderDetail: 'pdetalle'
+  orderDetail: 'pdetalle',
+  detailFormula: 'ordenfabricacion'
 };
 export enum TypeProperty {
     code,

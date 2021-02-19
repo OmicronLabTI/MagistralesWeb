@@ -1,13 +1,26 @@
 
 <div class="container-list-page">
     <div class="header-page">
-      <div class="title-list-container">
-        <span>Detalle</span>
-        <div class="breadcrumb"><a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToOrders(['pedidos'])">Pedidos&nbsp;/</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument === 0" (click)="goToOrders(['ordenes'])">Órdenes de fabricación </a> / Fórmula </div>
+      <div class="title-list-container custom-title-list-container">
+          <div>
+              <span>Detalle</span>
+              <div class="breadcrumb"><a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToOrders(['pedidos'])">Pedidos&nbsp;/</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument === 0" (click)="goToOrders(['ordenes'])">Órdenes de fabricación </a> / Fórmula </div>
+          </div>
+          <div class="icon-next-container">
+              <mat-icon (click)="changeDetailFormula(0)"  class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle fórmula">undo</mat-icon>
+          </div>
       </div>
-      <div class="filter-select">
-          <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido: </span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
-        <div class="docbase-status">Orden de fabricación: <span class="spnstatus">{{ordenFabricacionId}}</span> </div>
+      <div class="filter-select custom-title-list-container">
+          <div class="icon-next-container">
+              <mat-icon (click)="changeDetailFormula(1)" class="color-omicron cursor-pointer width-icon-next-order"  matTooltip="Siguiente detalle fórmula">redo</mat-icon>
+          </div>
+          <div>
+              <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido: </span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
+              <div class="docbase-status">Orden de fabricación: currentOrdenFabricacionId
+                  <span *ngIf="isFromDetail" class="spnstatus">{{ordenFabricacionId}}</span>
+                  <span *ngIf="!isFromDetail" class="spnstatus">{{currentOrdenFabricacionId}}</span>
+              </div>
+          </div>
       </div>
     </div>
     <div class="description-container">

@@ -92,7 +92,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       ({response}) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
   }
   onSuccessDetailPedido(response: IPedidoDetalleReq[]) {
-    this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
+    // remove comments to Prod
+    // this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
     this.dataSource.data.forEach(element => {
       this.docStatus = element.pedidoStatus;
@@ -357,6 +358,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.paramsDetailOrder.current = order;
     this.baseQueryString = filters;
     this.getDetallePedido();
+
   }
 
   carouselDetail(typeCarousel: number) {
@@ -370,10 +372,17 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
   }
   generateFullQueryString(optionCarouselDetail: string) {
-    this.carouselDetailService(`${this.baseQueryString}&current=${this.paramsDetailOrder.current}&advance=${optionCarouselDetail}`);
+    this.carouselDetailService(this.dataService.getFullStringForCarousel(
+                                this.baseQueryString, this.paramsDetailOrder.current, optionCarouselDetail));
   }
   carouselDetailService(queryStringFull: string) {
      this.pedidosService.getDetailCarousel(queryStringFull).subscribe(({response}) =>
          this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
+  }
+
+  goToDetailFormula(ordenFabricacionId: string) {
+    this.dataService.changeRouterForFormula(ordenFabricacionId,
+        this.dataSource.data.map(detail => detail.ordenFabricacionId).toString(),
+        CONST_NUMBER.one, CONST_STRING.empty);
   }
 }
