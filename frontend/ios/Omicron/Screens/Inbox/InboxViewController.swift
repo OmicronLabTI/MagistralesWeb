@@ -35,7 +35,7 @@ class InboxViewController: UIViewController {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
-    @Injected var orderDetailVM: OrderDetailViewModel
+
     let disposeBag = DisposeBag()
     var productID = 0
     var indexPathsSelected: [IndexPath] = []
