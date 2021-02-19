@@ -7,12 +7,12 @@
             <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / Detalle del pedido</div>
         </div>
           <div class="icon-next-container">
-              <mat-icon class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle">undo</mat-icon>
+              <mat-icon (click)="carouselDetail(0)" class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle">undo</mat-icon>
           </div>
           </div>
         <div class="filter-select custom-title-list-container">
             <div class="icon-next-container">
-                <mat-icon class="color-omicron cursor-pointer width-icon-next-order"  matTooltip="Siguiente detalle">redo</mat-icon>
+                <mat-icon (click)="carouselDetail(1)" class="color-omicron cursor-pointer width-icon-next-order"  matTooltip="Siguiente detalle">redo</mat-icon>
             </div>
             <div>
                 <img src="assets/icons/comments.png" class="img-comments" matTooltip="Agregar comentarios"
@@ -21,7 +21,7 @@
                 <img src="assets/icons/no-comments.png" class="img-comments cursor-pointer" matTooltip="Agregar comentarios"
                      *ngIf="dataSource.data[0].comments === null || dataSource.data[0].comments === ''" (click)="addCommentsDialog()" alt="no-comments"
                      [ngClass]="isCorrectToAddComments ? 'cursor-none' : ' cursor-pointer'" />
-                <div class="docbase">Número de pedido: <span class="spandoc">{{docNum}}</span></div>
+                <div class="docbase">Número de pedido: <span class="spandoc">{{paramsDetailOrder.current}}</span></div>
                 <div class="docbase-status">Estatus del pedido: <span class="spnstatus">{{docStatus}}</span> </div>
             </div>
         </div>

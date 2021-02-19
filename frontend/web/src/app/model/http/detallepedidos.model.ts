@@ -25,6 +25,7 @@ export class IPedidoDetalleReq {
     comments: string;
     label: string;
     finishedLabel: number;
+    pedidoId?: number;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;

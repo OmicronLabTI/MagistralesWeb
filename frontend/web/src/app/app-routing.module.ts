@@ -19,7 +19,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'pdetalle/:id',
+    path: 'pdetalle/:id/:filters',
     loadChildren: () => import('./pages/pedido-detalle/pedido-detalle.module').then(m => m.PedidoDetalleModule),
     canActivate: [GuardService]
   },

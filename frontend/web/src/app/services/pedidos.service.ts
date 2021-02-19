@@ -32,6 +32,9 @@ export class PedidosService {
   getDetallePedido(docNum: string) {
     return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.getDetallePedido + docNum);
   }
+  getDetailCarousel(queryStringFull: string) {
+    return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.detailCarousel + queryStringFull);
+  }
   getFormulaDetail(orderNum: string) {
     return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
   }

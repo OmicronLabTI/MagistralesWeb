@@ -208,7 +208,14 @@ export enum TypeToSeeTap {
     receipt,
     system
 }
-
+export enum CarouselOption {
+    backDetail,
+    nextDetail
+}
+export const CarouselOptionString = {
+    backDetail: 'b',
+    nextDetail: 'f'
+};
 export const RolesType = {
     logistic: '3',
     admin: '1',
