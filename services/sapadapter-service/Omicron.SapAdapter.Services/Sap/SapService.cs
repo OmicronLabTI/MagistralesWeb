@@ -266,25 +266,35 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the object.</returns>
         public async Task<ResultModel> GetAsesorsByOrderId(List<OrderIdModel> salesOrder)
         {
-            var asesors = new List<object>();
+            // var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder.Select(x => x.OrderId).ToList())).ToList();
+            var asesorsCompleted = new List<SalesAsesorModel>();
+            /*
             foreach (var order in salesOrder)
             {
-                var asesor = (await this.sapDao.GetAsesorWithEmailByIds(order.OrderId)).FirstOrDefault();
-
-                if (!ReferenceEquals(null, asesor))
+                var asesor = asesors.FirstOrDefault(x => x.OrderId == order.OrderId);
+                if (asesor == null)
                 {
-                    asesors.Add(new
+                    asesorsCompleted.Add(new SalesAsesorModel
                     {
-                        asesorId = asesor.AsesorId,
-                        firstName = asesor.FirstName,
-                        lastName = asesor.LastName,
-                        email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
-                        orderId = order.OrderId,
+                        FirstName = string.Empty,
+                        LastName = string.Empty,
+                        Email = string.Empty,
+                        OrderId = order.OrderId,
                     });
+                    continue;
                 }
-            }
 
-            return ServiceUtils.CreateResult(true, 200, null, asesors, null, asesors.Count);
+                asesorsCompleted.Add(new SalesAsesorModel
+                {
+                    AsesorId = asesor.AsesorId,
+                    FirstName = asesor.FirstName,
+                    LastName = asesor.LastName,
+                    Email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
+                    OrderId = asesor.OrderId,
+                });
+            }
+            */
+            return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
         }
 
         /// <summary>

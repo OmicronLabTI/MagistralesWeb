@@ -22,9 +22,15 @@ namespace Omicron.Pedidos.Dtos.Models
         public string Comments { get; set; }
 
         /// <summary>
+        /// Gets or sets user id.
+        /// </summary>
+        /// <value>The code.</value>
+        public string UserId { get; set; }
+
+        /// <summary>
         /// Gets or sets list orders.
         /// </summary>
         /// <value>The list orders.</value>
-        public List<OrderIdDto> OrdersId { get; set; }
+        public List<int> OrdersId { get; set; }
     }
 }

@@ -14,12 +14,6 @@ namespace Omicron.SapAdapter.Dtos.Models
     public class OrderIdDto
     {
         /// <summary>
-        /// Gets or sets user id.
-        /// </summary>
-        /// <value>The code.</value>
-        public string UserId { get; set; }
-
-        /// <summary>
         /// Gets or sets order indentifier.
         /// </summary>
         /// <value>The order id.</value>

@@ -106,6 +106,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrderFinished = "La orden {0} paso a Finalizado";
 
         /// <summary>
+        /// when the order not goes to Rejected.
+        /// </summary>
+        public const string OrderNotRejectedBecauseExits = "El pedido ya tiene ordenes de fabricación";
+
+        /// <summary>
         /// cuando se asigna un pedido.
         /// </summary>
         public const string AsignarVenta = "Se asigno el pedido a {0}";
@@ -214,6 +219,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// gets the formula for each order.
         /// </summary>
         public const string GetFormula = "qfb/formula";
+
+        /// <summary>
+        /// gets the asesors email.
+        /// </summary>
+        public const string GetAsesorsMail = "asesors";
 
         /// <summary>
         /// gets the last isolated production order id.

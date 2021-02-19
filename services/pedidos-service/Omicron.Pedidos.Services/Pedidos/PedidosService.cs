@@ -339,42 +339,45 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Order with updated info.</returns>
         public async Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders)
         {
-            List<OrderIdModel> ordersList = rejectOrders.OrdersId;
-            var ordersId = ordersList.Select(x => x.OrderId.ToString()).ToList();
-            var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).ToList();
-            var failedOrdersId = failedOrders.Select(x => x.Salesorderid).ToList();
-            var succesfulyOrdersId = ordersId.Where(x => !failedOrdersId.Contains(x)).ToList();
-            var succesfulyOrders = ordersList.Where(x => succesfulyOrdersId.Contains(x.OrderId.ToString()));
+            var ordersId = rejectOrders.OrdersId.Select(x => x.ToString()).ToList();
+            var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
+            var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
+            var succesfuly = new List<UserOrderModel>();
             var failed = new List<object>();
 
-            foreach (var order in failedOrders)
+            foreach (var orderId in failedOrders)
             {
                 var orderFail = new
                 {
-                    userId = order.Userid,
-                    orderId = order.Salesorderid,
-                    reason = "El pedido ya se inicializó",
+                    orderId = orderId,
+                    reason = ServiceConstants.OrderNotRejectedBecauseExits,
                 };
                 failed.Add(orderFail);
             }
 
-            // insert to database
-            foreach (var orderRejected in succesfulyOrders)
+            foreach (var orderToRejectedId in succesfulyOrdersId)
             {
-                UserOrderModel newOrderRejected = new UserOrderModel();
-                newOrderRejected.Salesorderid = orderRejected.OrderId.ToString();
-                newOrderRejected.Userid = orderRejected.UserId;
-                newOrderRejected.Status = ServiceConstants.Rechazado;
-                newOrderRejected.Comments = rejectOrders.Comments;
-
-                await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newOrderRejected });
+                succesfuly.Add(new UserOrderModel
+                {
+                    Salesorderid = orderToRejectedId,
+                    Userid = rejectOrders.UserId,
+                    Status = ServiceConstants.Rechazado,
+                    Comments = rejectOrders.Comments,
+                });
             }
 
+            await this.pedidosDao.InsertUserOrder(succesfuly);
+
             // getasesorname
+            var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => new { OrderId = int.Parse(x.Salesorderid) }).Distinct(), ServiceConstants.GetAsesorsMail);
+            var resultAsesorEmail = JsonConvert.DeserializeObject<List<object>>(JsonConvert.SerializeObject(resultAsesors.Response));
+
+            // var resultAsesorEmail = JsonConvert.DeserializeObject<List<tipalo>>(JsonConvert.SerializeObject(resultAsesor.Response));
+
             // sendEmail
             var results = new
             {
-                success = succesfulyOrders.Distinct(),
+                success = succesfuly.Select(x => new { OrderId = x.Salesorderid }).Distinct(),
                 failed = failed.Distinct(),
             };
 

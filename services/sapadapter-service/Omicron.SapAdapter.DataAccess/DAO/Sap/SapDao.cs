@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Serilog;
 
     /// <summary>
@@ -136,23 +137,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// gets the asesors by salesOrderId.
         /// </summary>
-        /// <param name="docEntry">the list of salesOrderId.</param>        
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
         /// <returns>the data.</returns>
-        public async Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIds(int docEntry)
+        public async Task<IEnumerable<SalesAsesorModel>> GetAsesorWithEmailByIds(List<int> docsEntry)
         {
-             var query = (from order in this.databaseContext.OrderModel
+             var query = (from order in this.databaseContext.OrderModel.Where(x => docsEntry.Contains(x.PedidoId)) 
                           join salesPerson in this.databaseContext.SalesPersonModel on order.AsesorId equals salesPerson.AsesorId
-                          where order.PedidoId == docEntry
-                          select new SalesPersonModel
-                          {
-                              EmpleadoId = salesPerson.EmpleadoId,
+                          select new SalesAsesorModel
+                          {                              
                               AsesorId = salesPerson.AsesorId,
                               FirstName = salesPerson.FirstName,
                               LastName = salesPerson.LastName,
-                              Email = salesPerson.Email
+                              Email = string.IsNullOrEmpty(salesPerson.Email) ? string.Empty : salesPerson.Email, 
+                              OrderId = order.PedidoId
                           });
 
-            return await this.RetryQuery<SalesPersonModel>(query);
+            return await this.RetryQuery<SalesAsesorModel>(query);
         }
         /// <summary>
         /// gets the details.
