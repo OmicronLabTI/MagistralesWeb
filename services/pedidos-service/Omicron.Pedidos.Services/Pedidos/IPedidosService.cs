@@ -85,7 +85,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="rejectOrders">Orders to finish.</param>
         /// <returns>Order with updated info.</returns>
-        Task<ResultModel> RejectSalesOrders(List<OrderIdModel> rejectOrders);
+        Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders);
 
         /// <summary>
         /// Finish fabrication orders.

@@ -337,13 +337,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="rejectOrders">Orders to reject.</param>
         /// <returns>Order with updated info.</returns>
-        public async Task<ResultModel> RejectSalesOrders(List<OrderIdModel> rejectOrders)
+        public async Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders)
         {
-            var ordersId = rejectOrders.Select(x => x.OrderId.ToString()).ToList();
+            List<OrderIdModel> ordersList = rejectOrders.OrdersId;
+            var ordersId = ordersList.Select(x => x.OrderId.ToString()).ToList();
             var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).ToList();
             var failedOrdersId = failedOrders.Select(x => x.Salesorderid).ToList();
             var succesfulyOrdersId = ordersId.Where(x => !failedOrdersId.Contains(x)).ToList();
-            var succesfulyOrders = rejectOrders.Where(x => succesfulyOrdersId.Contains(x.OrderId.ToString()));
+            var succesfulyOrders = ordersList.Where(x => succesfulyOrdersId.Contains(x.OrderId.ToString()));
             var failed = new List<object>();
 
             foreach (var order in failedOrders)
@@ -364,9 +365,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newOrderRejected.Salesorderid = orderRejected.OrderId.ToString();
                 newOrderRejected.Userid = orderRejected.UserId;
                 newOrderRejected.Status = ServiceConstants.Rechazado;
-                newOrderRejected.Comments = "comments";
+                newOrderRejected.Comments = rejectOrders.Comments;
 
-                // await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newOrderRejected });
+                await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newOrderRejected });
             }
 
             // getasesorname

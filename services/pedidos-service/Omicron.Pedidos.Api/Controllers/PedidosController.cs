@@ -197,7 +197,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Order with updated info.</returns>
         [Route("/salesOrder/reject")]
         [HttpPut]
-        public async Task<IActionResult> RejectSalesOrders(List<OrderIdDto> rejectOrders)
+        public async Task<IActionResult> RejectSalesOrders(RejectOrdersDto rejectOrders)
         {
             var response = await this.pedidoFacade.RejectSalesOrders(rejectOrders);
             return this.Ok(response);

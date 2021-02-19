@@ -667,7 +667,9 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task RejectSalesOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdDto>
+            var salesOrders = new RejectOrdersDto();
+            salesOrders.Comments = "comentatios";
+            salesOrders.OrdersId = new List<OrderIdDto>
             {
                 new OrderIdDto
                 {

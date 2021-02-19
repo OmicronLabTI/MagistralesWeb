@@ -25,6 +25,6 @@ namespace Omicron.Pedidos.Dtos.Models
         /// Gets or sets list orders.
         /// </summary>
         /// <value>The list orders.</value>
-        public List<object> OrdersId { get; set; }
+        public List<OrderIdDto> OrdersId { get; set; }
     }
 }

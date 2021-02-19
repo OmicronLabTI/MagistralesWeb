@@ -532,10 +532,20 @@ namespace Omicron.Pedidos.Test.Services
         public async Task RejectSalesOrders()
         {
             // arrange
-            var salesOrders = new List<OrderIdModel>
+            var salesOrders = new RejectOrdersModel();
+            salesOrders.Comments = "comentatios";
+            salesOrders.OrdersId = new List<OrderIdModel>
             {
-                new OrderIdModel { OrderId = 104, UserId = "abc", },
+                new OrderIdModel
+                {
+                    OrderId = 123, UserId = "abc-abc",
+                },
+                new OrderIdModel
+                {
+                    OrderId = 456, UserId = "def-def",
+                },
             };
+
             var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             var mockSapAdapter = new Mock<ISapAdapter>();

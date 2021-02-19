@@ -195,9 +195,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="rejectOrders">Orders to reject.</param>
         /// <returns>Order with updated info.</returns>
-        public async Task<ResultDto> RejectSalesOrders(List<OrderIdDto> rejectOrders)
+        public async Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.RejectSalesOrders(this.mapper.Map<List<OrderIdModel>>(rejectOrders)));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.RejectSalesOrders(this.mapper.Map<RejectOrdersModel>(rejectOrders)));
         }
 
         /// <summary>

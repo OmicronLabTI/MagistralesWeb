@@ -113,7 +113,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="rejectOrders">Orders to reject.</param>
         /// <returns>Order with updated info.</returns>
-        Task<ResultDto> RejectSalesOrders(List<OrderIdDto> rejectOrders);
+        Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders);
 
         /// <summary>
         /// Cancel fabrication orders.
