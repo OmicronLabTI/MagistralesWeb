@@ -90,6 +90,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        public async Task<ResultDto> GetAsesorsByOrderId(List<OrderIdDto> salesOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetAsesorsByOrderId(this.mapper.Map<List<OrderIdModel>>(salesOrder)));
+        }
+
+        /// <summary>
         /// Get fabrication orders by criterial.
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>

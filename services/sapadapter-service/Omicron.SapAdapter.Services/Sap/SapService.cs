@@ -260,6 +260,34 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        public async Task<ResultModel> GetAsesorsByOrderId(List<OrderIdModel> salesOrder)
+        {
+            var asesors = new List<object>();
+            foreach (var order in salesOrder)
+            {
+                var asesor = (await this.sapDao.GetAsesorWithEmailByIds(order.OrderId)).FirstOrDefault();
+
+                if (!ReferenceEquals(null, asesor))
+                {
+                    asesors.Add(new
+                    {
+                        asesorId = asesor.AsesorId,
+                        firstName = asesor.FirstName,
+                        lastName = asesor.LastName,
+                        email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
+                        orderId = order.OrderId,
+                    });
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, asesors, null, asesors.Count);
+        }
+
+        /// <summary>
         /// Get fabrication orders by criterial.
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>

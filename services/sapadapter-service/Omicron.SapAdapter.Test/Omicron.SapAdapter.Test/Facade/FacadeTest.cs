@@ -127,6 +127,26 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task GetAsesorsByOrderId()
+        {
+            // arrange
+            var salesOrders = new List<OrderIdDto>
+            {
+                new OrderIdDto { OrderId = 12, UserId = "abc", },
+            };
+
+            // act
+            var response = await this.sapFacade.GetAsesorsByOrderId(salesOrders);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetOrderFormula()
         {
             // arrange

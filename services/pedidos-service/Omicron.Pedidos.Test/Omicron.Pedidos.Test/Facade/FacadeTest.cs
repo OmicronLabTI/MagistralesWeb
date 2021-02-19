@@ -668,16 +668,16 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // arrange
             var salesOrders = new RejectOrdersDto();
-            salesOrders.Comments = "comentatios";
+            salesOrders.Comments = "comentarios";
             salesOrders.OrdersId = new List<OrderIdDto>
             {
                 new OrderIdDto
                 {
-                    OrderId = 123, UserId = "abc-abc",
+                    OrderId = 234, UserId = "6f8febd5-03ee-4cc5-a510-e16d1ac84184",
                 },
                 new OrderIdDto
                 {
-                    OrderId = 456, UserId = "def-def",
+                    OrderId = 235, UserId = "6f8febd5-03ee-4cc5-a510-e16d1ac84184",
                 },
             };
 
@@ -685,7 +685,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.RejectSalesOrders(salesOrders);
 
             // Assert
-            Assert.IsNotNull(response);
+            // Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
             Assert.IsNotNull(response.Response);
             Assert.IsEmpty(response.ExceptionMessage);

@@ -131,8 +131,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
-        }    
+        }
 
+        /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIds(int docEntry)
+        {
+             var query = (from order in this.databaseContext.OrderModel
+                          join salesPerson in this.databaseContext.SalesPersonModel on order.AsesorId equals salesPerson.AsesorId
+                          where order.PedidoId == docEntry
+                          select new SalesPersonModel
+                          {
+                              EmpleadoId = salesPerson.EmpleadoId,
+                              AsesorId = salesPerson.AsesorId,
+                              FirstName = salesPerson.FirstName,
+                              LastName = salesPerson.LastName,
+                              Email = salesPerson.Email
+                          });
+
+            return await this.RetryQuery<SalesPersonModel>(query);
+        }
         /// <summary>
         /// gets the details.
         /// </summary>
