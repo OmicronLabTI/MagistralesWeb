@@ -20,6 +20,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
@@ -206,8 +207,21 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<CompleteFormulaWithDetalle>();
             var dictUser = new Dictionary<int, string>();
 
-            var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+            var userOrders = new List<UserOrderModel>();
+
+            if (returnDetails)
+            {
+                var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
+                userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+            }
+
+            var detailsFormula = !returnDetails ? (await this.sapDao.GetDetalleFormulaByProdOrdId(ordenFab.Select(x => x.OrdenId).Distinct().ToList())).ToList() : new List<DetalleFormulaModel>();
+            var pedidos = (await this.sapDao.GetDetailByDocNum(ordenFab.Where(y => y.PedidoId.HasValue).Select(x => x.PedidoId.Value).Distinct().ToList())).ToList();
+
+            var prodcutsIds = ordenFab.Select(x => x.ProductoId).ToList();
+            prodcutsIds.AddRange(detailsFormula.Select(x => x.ItemCode));
+            prodcutsIds = prodcutsIds.Distinct().ToList();
+            var listProducts = (await this.sapDao.GetProductByIds(prodcutsIds)).ToList();
 
             foreach (var o in ordenFab)
             {
@@ -218,14 +232,22 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
-                var details = await this.GetDetailsByOrder(o.OrdenId);
-                details = details.OrderBy(x => x.Description).ToList();
+                var details = new List<CompleteDetalleFormulaModel>();
 
-                var pedido = (await this.sapDao.GetPedidoById(o.PedidoId.Value)).FirstOrDefault(p => p.ProductoId == o.ProductoId);
-                var item = (await this.sapDao.GetProductById(o.ProductoId)).FirstOrDefault();
+                if (returnDetails)
+                {
+                    details = await this.GetDetailsByOrder(o.OrdenId);
+                    details = details.OrderBy(x => x.Description).ToList();
+                }
+
+                var pedido = pedidos.FirstOrDefault(p => p.ProductoId == o.ProductoId);
+                var item = listProducts.FirstOrDefault(i => i.ProductoId == o.ProductoId);
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 var comments = userOrder != null ? userOrder.Comments : string.Empty;
                 var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
+
+                var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
+                var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
 
                 var formulaDetalle = new CompleteFormulaWithDetalle
                 {
@@ -254,7 +276,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
                     Comments = comments,
                     HasBatches = details.Any(x => x.HasBatches),
-                    HasMissingStock = details.Any(y => y.Stock == 0),
+                    HasMissingStock = returnDetails ? details.Any(y => y.Stock == 0) : itemsByFormula.Any(y => y.OnHand == 0),
                     Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
                 };
 

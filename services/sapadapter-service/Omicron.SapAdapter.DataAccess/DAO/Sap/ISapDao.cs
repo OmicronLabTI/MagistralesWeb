@@ -102,6 +102,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
 
         /// <summary>
+        /// Gets the formula by orders.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId);
+
+        /// <summary>
         /// gets the sap user.
         /// </summary>
         /// <param name="userId">the user id.</param>
@@ -203,5 +210,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="ids">gets the attachments by id</param>
         /// <returns>the attachaments.</returns>
         Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
+
+        /// <summary>
+        /// Get the delivery orders headers.
+        /// </summary>
+        /// <param name="docuNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums);
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode);
     }
 }
