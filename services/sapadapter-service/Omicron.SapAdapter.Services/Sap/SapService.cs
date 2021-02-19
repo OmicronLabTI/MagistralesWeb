@@ -294,6 +294,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 });
             }
             */
+            asesorsCompleted.Add(new SalesAsesorModel
+            {
+                AsesorId = 125,
+                FirstName = "firsname",
+                LastName = "ame",
+                Email = "Email",
+                OrderId = 125,
+            });
+
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
         }
 
