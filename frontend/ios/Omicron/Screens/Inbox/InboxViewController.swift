@@ -163,7 +163,7 @@ class InboxViewController: UIViewController {
             }
         })
         dataSource
-            .configureSupplementaryView = { (dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
+            .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath) -> UICollectionReusableView in
                 let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
@@ -307,7 +307,8 @@ class InboxViewController: UIViewController {
             self?.hideButtons(index: row)
             self?.goToTop()
         }).disposed(by: disposeBag)
-        collectionView.rx.didScroll.subscribe({ _ in
+        collectionView.rx.didScroll.subscribe({ [weak self] _ in
+            guard let self = self else { return }
             self.collectionView.removeMoreIndicator()
         }).disposed(by: disposeBag)
         inboxViewModel.showKPIView.observeOn(MainScheduler.instance)

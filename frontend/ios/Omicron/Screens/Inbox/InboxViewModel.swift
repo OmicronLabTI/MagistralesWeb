@@ -434,8 +434,8 @@ class InboxViewModel {
     func getFabOrderIDs(indexPathOfOrdersSelected: [IndexPath]) -> [Int] {
         guard indexPathOfOrdersSelected.count > 0 else { return []}
         var fabOrderIDs = [Int]()
-        indexPathOfOrdersSelected.forEach { (indexPath) in
-            let orderId = self.sectionOrders[indexPath.section].items[indexPath.row].productionOrderId
+        indexPathOfOrdersSelected.forEach { [weak self] (indexPath) in
+            let orderId = self?.sectionOrders[indexPath.section].items[indexPath.row].productionOrderId
             fabOrderIDs.append(orderId ?? 0)
         }
         return fabOrderIDs

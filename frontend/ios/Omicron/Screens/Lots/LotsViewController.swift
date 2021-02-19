@@ -198,7 +198,7 @@ class LotsViewController: UIViewController {
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
-                                         handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
+                                         handler: { [weak self] _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
