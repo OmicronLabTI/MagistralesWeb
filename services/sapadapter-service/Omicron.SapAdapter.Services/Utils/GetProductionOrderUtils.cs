@@ -62,7 +62,6 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 this.logger.Information("Busqueda por fecha.");
                 listToReturn.AddRange((await this.sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
-                this.logger.Information("Fin de busqueda por fecha.");
             }
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))

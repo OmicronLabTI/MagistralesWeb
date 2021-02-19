@@ -483,6 +483,8 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
 
+            var key = ServiceUtils.PrepareKeyForRedisFromDic(orderFabModel.Filters, ServiceConstants.Orden);
+
             if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
                 orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
@@ -490,6 +492,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
                 orders = this.getProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
                 var orderCount = orders.Count;
+
+                var idsForRedis = JsonConvert.SerializeObject(orders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
+                await this.redisService.WriteToRedis(key, idsForRedis, new TimeSpan(24, 0, 0));
+
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
                 return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
@@ -497,8 +503,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             this.logger.Information("Busqueda por filtros");
             var dataBaseOrders = (await this.getProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter)).OrderBy(x => x.OrdenId).ToList();
-            this.logger.Information("Consulta por filtros exitosa");
             var total = dataBaseOrders.Count;
+
+            var ids = JsonConvert.SerializeObject(dataBaseOrders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
+            await this.redisService.WriteToRedis(key, ids, new TimeSpan(24, 0, 0));
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
             ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(ordersToReturn) : ordersToReturn;
@@ -629,9 +637,9 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetDetails(Dictionary<string, string> parameters)
+        public async Task<ResultModel> GetDetails(Dictionary<string, string> parameters, string kind)
         {
-            var redisKey = ServiceUtils.PrepareKeyForRedisFromDic(parameters, ServiceConstants.Pedido);
+            var redisKey = ServiceUtils.PrepareKeyForRedisFromDic(parameters, kind);
             var value = await this.redisService.GetRedisKey(redisKey);
             value = string.IsNullOrEmpty(value) ? JsonConvert.SerializeObject(new List<int>()) : value;
             var listIds = value.Contains("[") && value.Contains("]") ? JsonConvert.DeserializeObject<List<int>>(value) : new List<int>();
@@ -640,7 +648,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var current = parameters.ContainsKey(ServiceConstants.Current) ? parameters[ServiceConstants.Current] : "0";
             int.TryParse(current, out int currentInt);
             var id = listIds.Any() ? listIds[index] : currentInt;
-            return await this.GetOrderDetails(id);
+
+            return kind == ServiceConstants.Pedido ? await this.GetOrderDetails(id) : await this.GetOrderFormula(new List<int> { id }, true, true);
         }
 
         /// <summary>

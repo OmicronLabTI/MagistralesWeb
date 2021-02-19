@@ -220,7 +220,7 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 if (!ServiceConstants.KeysToIgnoreRedis.Contains(key))
                 {
-                    keyToReturn.Append($"{key}-{dictToTransform[key]}-");
+                    keyToReturn.Append($"{key.Trim()}-{dictToTransform[key]}-");
                 }
             }
 

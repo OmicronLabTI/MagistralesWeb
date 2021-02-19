@@ -214,9 +214,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetDetails(Dictionary<string, string> parameters)
+        public async Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters, kind));
         }
     }
 }

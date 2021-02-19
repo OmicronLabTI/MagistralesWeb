@@ -186,6 +186,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Pedido = "ped";
 
         /// <summary>
+        /// Orden value.
+        /// </summary>
+        public const string Orden = "ord";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -245,6 +250,7 @@ namespace Omicron.SapAdapter.Services.Constants
             Limit,
             Advance,
             Current,
+            NeedsLargeDsc,
         };
     }
 }

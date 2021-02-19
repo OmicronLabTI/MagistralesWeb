@@ -845,7 +845,7 @@ namespace Omicron.SapAdapter.Test.Services
             var dict = new Dictionary<string, string>();
 
             // act
-            var response = await this.sapService.GetDetails(dict);
+            var response = await this.sapService.GetDetails(dict, "ped");
 
             // assert
             Assert.IsNotNull(response);
@@ -891,7 +891,7 @@ namespace Omicron.SapAdapter.Test.Services
             var dict = new Dictionary<string, string>();
 
             // act
-            var response = await sapService.GetDetails(dict);
+            var response = await sapService.GetDetails(dict, "ped");
 
             // assert
             Assert.IsNotNull(response);
