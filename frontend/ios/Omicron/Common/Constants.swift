@@ -51,6 +51,7 @@ struct ViewControllerIdentifiers {
     static let headerCollectionViewCell = "HeaderCollectionViewCell"
     static let headerReuseIdentifier = "header"
     static let showErrorViewController = "showError"
+    static let mostCommonComponentsTableViewCell = "MostCommonComponentsTableViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)

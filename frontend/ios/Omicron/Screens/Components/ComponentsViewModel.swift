@@ -22,6 +22,7 @@ class ComponentsViewModel {
     var selectedComponent = BehaviorSubject<ComponentO?>(value: nil)
     var saveDidTap = PublishSubject<ComponentFormValues>()
     var saveSuccess = PublishSubject<Void>()
+    var bindingData = BehaviorSubject<[ComponentO]>(value: [])
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var networkManager: NetworkManager
@@ -94,6 +95,21 @@ class ComponentsViewModel {
         }, onError: { [weak self] _ in
             self?.dataError.onNext(Constants.Errors.errorData.rawValue)
             self?.loading.onNext(false)
+        }).disposed(by: disposeBag)
+    }
+
+    func getMostCommonComponentsService() {
+        loading.onNext(true)
+        networkManager.getMostCommonComponents().subscribe(onNext: { [weak self] res in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            if let components = res.response {
+                self.bindingData.onNext(components)
+            }
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.dataError.onNext(Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag)
     }
 }

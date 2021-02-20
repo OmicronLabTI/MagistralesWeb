@@ -39,19 +39,19 @@ class NetworkManager: SessionProtocol {
     }
     private lazy var providerChoseed = MoyaProvider<ApiService>()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
-        NetworkLoggerPlugin(
-            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
-    ])) {
-        self.provider = provider
-    }
-    
-//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
-//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
+//        NetworkLoggerPlugin(
+//            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
 //    ])) {
 //        self.provider = provider
 //    }
+
+    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub, plugins: [
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
+    ])) {
+        self.provider = provider
+    }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
         let data = Renew(refresh_token: Persistence.shared.getLoginData()?.refreshToken ?? "")
@@ -132,6 +132,12 @@ class NetworkManager: SessionProtocol {
     // Obtiene listado de componentes
     func getComponents(data: ComponentRequest) -> Observable<ComponentResponse> {
         let req: ApiService = ApiService.getComponents(data: data)
+        let res: Observable<ComponentResponse> = makeRequest(request: req)
+        return res
+    }
+    // Obtiene el listado de componentes más comunes
+    func getMostCommonComponents() -> Observable<ComponentResponse> {
+        let req: ApiService = ApiService.getMostCommonComponents
         let res: Observable<ComponentResponse> = makeRequest(request: req)
         return res
     }

@@ -17,12 +17,18 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var tagsView: TagListView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var labelNoResults: UILabel!
+    @IBOutlet weak var mostCommontTableView: UITableView!
+    @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
     var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
         viewModelBinding()
+        hideMostCommonComponents()
+        bindingDataToMostComoonTable()
+        itemSelectedOfMostCommonComponentsTable()
+        componentsViewModel.getMostCommonComponentsService()
     }
     func viewModelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: componentsViewModel.searchFilter).disposed(by: disposeBag)
@@ -71,6 +77,7 @@ class ComponentsViewController: UIViewController {
         self.title = CommonStrings.addComponentTitle
         self.isModalInPresentation = true
         self.tableView.delegate = self
+        self.mostCommontTableView.delegate = self
         self.tagsView.isHidden = true
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
@@ -81,6 +88,30 @@ class ComponentsViewController: UIViewController {
     }
     @objc func cancelButtonTap(sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
+    }
+
+    private func hideMostCommonComponents() {
+        self.searchBar.rx.textDidBeginEditing.subscribe(onNext: { [weak self] _ in
+            self?.heightMostCommonTableConstraint.constant = 0
+        }).disposed(by: disposeBag)
+    }
+
+    private func bindingDataToMostComoonTable() {
+        componentsViewModel.bindingData.bind(
+            to: mostCommontTableView.rx.items(
+                cellIdentifier: ViewControllerIdentifiers.mostCommonComponentsTableViewCell,
+                cellType: MostCommonComponentsTableViewCell.self)) {_, data, cell in
+            cell.productCodeLabel.text = data.productId
+            cell.descriptionLabel.text = data.description?.uppercased()
+        }.disposed(by: disposeBag)
+    }
+
+    private func itemSelectedOfMostCommonComponentsTable() {
+        self.mostCommontTableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
+            self?.componentsViewModel.selectedComponent.onNext(data)
+            let compFormVC = ComponentFormViewController()
+            self?.navigationController?.pushViewController(compFormVC, animated: true)
+        }).disposed(by: disposeBag)
     }
 }
 extension ComponentsViewController: TagListViewDelegate {

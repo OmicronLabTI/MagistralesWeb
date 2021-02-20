@@ -26,6 +26,7 @@ enum ApiService {
     case getValidateOrder(orderId: Int)
     case postOrdersPDF(orders: [Int])
     case getConnect
+    case getMostCommonComponents
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -77,6 +78,8 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/saleorder/pdf"
         case .getConnect:
             return "SapDiApi/connect"
+        case .getMostCommonComponents:
+            return ""
         }
     }
     var method: Moya.Method {
@@ -94,7 +97,8 @@ extension ApiService: AuthorizedTargetType {
              .getComponents,
              .getWorkload,
              .getValidateOrder,
-             .getConnect:
+             .getConnect,
+             .getMostCommonComponents:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -112,7 +116,8 @@ extension ApiService: AuthorizedTargetType {
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
              .getValidateOrder,
-             .getConnect:
+             .getConnect,
+             .getMostCommonComponents:
             return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
@@ -223,6 +228,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getConnect:
             guard let url = Bundle.main.url(forResource: "connect", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getMostCommonComponents:
+            guard let url = Bundle.main.url(forResource: "GetMostCommonComponnets", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

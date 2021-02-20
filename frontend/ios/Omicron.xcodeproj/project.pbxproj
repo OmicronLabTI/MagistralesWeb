@@ -117,6 +117,10 @@
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
 		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
 		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
+		4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
+		4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
+		4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
+		4930B45325E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
 		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
@@ -250,6 +254,8 @@
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
+		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
+		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -610,6 +616,7 @@
 				7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */,
 				7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */,
 				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
+				4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -651,6 +658,7 @@
 				987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */,
 				989391D8250AE174004750D8 /* ComponentFormViewController.swift */,
 				7C7DDC72251007750049B43C /* ComponentsTableViewCell.swift */,
+				4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -870,6 +878,7 @@
 				38554C6F25DF2B70006F476B /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				38554C7025DF2B70006F476B /* assingBatchesResponse.json in Resources */,
 				38554C7125DF2B70006F476B /* refresh_token.json in Resources */,
+				4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */,
 				38554C7225DF2B70006F476B /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -902,6 +911,7 @@
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
+				4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */,
 				7C8284A024F46FA30043ACE8 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1116,6 +1126,7 @@
 				38554C1E25DF2B70006F476B /* ConnectModel.swift in Sources */,
 				38554C1F25DF2B70006F476B /* OrderDetailFormViewController.swift in Sources */,
 				38554C2025DF2B70006F476B /* Workload.swift in Sources */,
+				4930B45325E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				38554C2125DF2B70006F476B /* CommentsViewModel.swift in Sources */,
 				38554C2225DF2B70006F476B /* OrderDetailViewController.swift in Sources */,
 				38554C2325DF2B70006F476B /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
@@ -1183,6 +1194,7 @@
 				1EC2920D254B4D90002FD4E3 /* ConnectModel.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
 				1EF03220251932DA0040DC65 /* Workload.swift in Sources */,
+				4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */,
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
 				1E85E51D25224505007636E8 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
