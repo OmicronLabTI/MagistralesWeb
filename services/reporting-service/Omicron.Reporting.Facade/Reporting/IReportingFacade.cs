@@ -29,5 +29,12 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request);
+
+        /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request);
     }
 }
