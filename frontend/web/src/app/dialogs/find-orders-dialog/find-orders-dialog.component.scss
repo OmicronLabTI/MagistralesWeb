@@ -46,6 +46,11 @@
   width: 65%;
   height: 100%;
   padding: 2%;
+
+  .error-on-range-date {
+    border-radius: 5px;
+    background-color: #fdeced;
+  }
 }
 .form-field-right-no-padding {
   width: 65%;
@@ -63,10 +68,12 @@
   flex-direction: row;
   justify-content: center;
 }
+
 .date-init{
   width: 50%;
   height: 100%;
 }
+
 .date-picker-custom{
   max-width: 100%;
 }

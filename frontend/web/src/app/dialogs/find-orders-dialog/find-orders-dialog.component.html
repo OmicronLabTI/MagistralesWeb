@@ -43,19 +43,16 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <div class="dates-container">
+                        <div class="dates-container" [ngClass]=" findOrdersForm.invalid ? 'error-on-range-date' : ''"
+                             matTooltip="El rango de fechas debe ser menor a 3 meses" [matTooltipDisabled]="!findOrdersForm.invalid">
                             <div class="date-init">
-                                <mat-form-field class="date-picker-custom" appearance="outline">
+                                <mat-form-field class="date-picker-custom" appearance="outline" >
                                     <mat-label>fecha de</mat-label>
                                     <input matInput [matDatepicker]="dp3"
                                            formControlName="fini"
-
                                            [max]="dateFin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                                     <mat-datepicker #dp3 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
-                                    <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
-                                        Fecha de es <strong>requerido</strong>
-                                    </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="date-init">
@@ -65,9 +62,6 @@
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
-                                    <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
-                                        Fecha hasta es <strong>requerido</strong>
-                                    </mat-error>
                                 </mat-form-field>
                             </div>
                         </div>
@@ -178,10 +172,17 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <div class="form-field-right">
-                        <mat-error *ngIf="findOrdersForm.invalid" class="font-style-omicron">
-                            El rango de fechas debe ser menor a 3 meses
-                        </mat-error>
+                    <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
+                            <mat-label>Clasificación de pedido</mat-label>
+                            <mat-select formControlName="qfb">
+                                <mat-option >Bioelite</mat-option>
+                                <mat-option >Bioequal</mat-option>
+                                <mat-option >Magistral</mat-option>
+                                <mat-option >Mixto</mat-option>
+                              <!--  <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>-->
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
             </form>
