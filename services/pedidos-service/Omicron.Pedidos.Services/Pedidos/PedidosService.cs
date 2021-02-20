@@ -26,6 +26,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
+    using Omicron.Pedidos.Services.Reporting;
 
     /// <summary>
     /// the pedidos service.
@@ -44,6 +45,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IConfiguration configuration;
 
+        private readonly IReportingService reportingService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -53,7 +56,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="userService">The user service.</param>
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="configuration">The configuration.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration)
+        /// <param name="reporting"> The reporting service. </param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
@@ -61,6 +65,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
         }
 
         /// <summary>
@@ -367,6 +372,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
+
+            var resultSendEmail = await this.reportingService.GetReportingService("ping");
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => new { orderId = int.Parse(x.Salesorderid) }).Distinct(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
