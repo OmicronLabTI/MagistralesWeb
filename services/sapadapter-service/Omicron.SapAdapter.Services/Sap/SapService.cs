@@ -266,9 +266,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the object.</returns>
         public async Task<ResultModel> GetAsesorsByOrderId(List<OrderIdModel> salesOrder)
         {
-            // var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder.Select(x => x.OrderId).ToList())).ToList();
+            var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder.Select(x => x.OrderId).ToList())).ToList();
             var asesorsCompleted = new List<SalesAsesorModel>();
-            /*
+
             foreach (var order in salesOrder)
             {
                 var asesor = asesors.FirstOrDefault(x => x.OrderId == order.OrderId);
@@ -289,19 +289,10 @@ namespace Omicron.SapAdapter.Services.Sap
                     AsesorId = asesor.AsesorId,
                     FirstName = asesor.FirstName,
                     LastName = asesor.LastName,
-                    Email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
+                    Email = "jedgarr04@gmail.com", // string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
                     OrderId = asesor.OrderId,
                 });
             }
-            */
-            asesorsCompleted.Add(new SalesAsesorModel
-            {
-                AsesorId = 125,
-                FirstName = "firsname",
-                LastName = "ame",
-                Email = "Email",
-                OrderId = 125,
-            });
 
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
         }
