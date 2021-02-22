@@ -108,7 +108,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// when the order not goes to Rejected.
         /// </summary>
-        public const string OrderNotRejectedBecauseExits = "El pedido ya tiene ordenes de fabricación";
+        public const string OrderNotRejectedBecauseExits = "El pedido {0} ya tiene ordenes de fabricación";
 
         /// <summary>
         /// cuando se asigna un pedido.
