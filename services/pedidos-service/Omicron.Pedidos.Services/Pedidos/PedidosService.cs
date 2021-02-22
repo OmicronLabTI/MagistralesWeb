@@ -26,6 +26,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
+    using Omicron.Pedidos.Services.Reporting;
 
     /// <summary>
     /// the pedidos service.
@@ -44,6 +45,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IConfiguration configuration;
 
+        private readonly IReportingService reportingService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -53,7 +56,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="userService">The user service.</param>
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="configuration">The configuration.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration)
+        /// <param name="reporting"> The reporting service. </param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
@@ -61,6 +65,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
         }
 
         /// <summary>
@@ -329,6 +334,67 @@ namespace Omicron.Pedidos.Services.Pedidos
             };
 
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
+            return ServiceUtils.CreateResult(true, 200, null, results, null);
+        }
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        public async Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders)
+        {
+            var ordersId = rejectOrders.OrdersId.Select(x => x.ToString()).ToList();
+            var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
+            var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
+            var succesfuly = new List<UserOrderModel>();
+            var failed = new List<object>();
+
+            foreach (var orderId in failedOrders)
+            {
+                var orderFail = new
+                {
+                    orderId = orderId,
+                    reason = ServiceConstants.OrderNotRejectedBecauseExits,
+                };
+                failed.Add(orderFail);
+            }
+
+            foreach (var orderToRejectedId in succesfulyOrdersId)
+            {
+                succesfuly.Add(new UserOrderModel
+                {
+                    Salesorderid = orderToRejectedId,
+                    Userid = rejectOrders.UserId,
+                    Status = ServiceConstants.Rechazado,
+                    Comments = rejectOrders.Comments,
+                });
+            }
+
+            await this.pedidosDao.InsertUserOrder(succesfuly);
+            var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
+            var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
+            var asesorsToReportingEmail = new List<object>();
+
+            foreach (var asesor in resultAsesorEmail)
+            {
+                asesorsToReportingEmail.Add(new
+                {
+                    destinyEmail = asesor.Email,
+                    salesOrders = asesor.OrderId.ToString(),
+                    comments = rejectOrders.Comments,
+                });
+            }
+
+            // send Emails
+            this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
+
+            var results = new
+            {
+                success = succesfuly.Select(x => new { OrderId = x.Salesorderid }).Distinct(),
+                failed = failed.Distinct(),
+            };
+
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 

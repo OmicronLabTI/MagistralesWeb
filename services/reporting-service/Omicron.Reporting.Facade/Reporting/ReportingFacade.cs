@@ -55,5 +55,15 @@ namespace Omicron.Reporting.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
         }
+
+        /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request)
+        {
+           return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailRejectedOrder(this.mapper.Map<SendRejectedEmailModel>(request)));
+        }
     }
 }

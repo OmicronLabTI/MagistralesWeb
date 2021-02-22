@@ -21,6 +21,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Reporting;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -49,6 +50,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IPedidosDao, PedidosDao>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();
+            Services.AddTransient<IReportingService, ReportingService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }

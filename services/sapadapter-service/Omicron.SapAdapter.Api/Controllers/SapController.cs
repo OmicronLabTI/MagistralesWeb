@@ -96,6 +96,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        [Route("/asesors")]
+        [HttpPost]
+        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<int> salesOrder)
+        {
+            var result = await this.sapFacade.GetAsesorsByOrderId(salesOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Obtiene las formulas de la orden de fabricacion.
         /// </summary>
         /// <param name="ordenId">the order id.</param>

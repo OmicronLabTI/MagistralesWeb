@@ -45,6 +45,9 @@ namespace Omicron.Reporting.Test.Facade.Request
             var mockReportingService = new Mock<IReportingService>();
             mockReportingService.SetReturnsDefault(fileResultModel);
             mockReportingService.SetReturnsDefault(Task.FromResult(resultModel));
+            mockReportingService
+                .Setup(m => m.SendEmailRejectedOrder(It.IsAny<SendRejectedEmailModel>()))
+                .Returns(Task.FromResult(resultModel));
 
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
@@ -87,6 +90,23 @@ namespace Omicron.Reporting.Test.Facade.Request
             // arrange
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailRejectedOrder()
+        {
+            // arrange
+            var requests = new SendRejectedEmailDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailRejectedOrder(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
         }
     }
 }

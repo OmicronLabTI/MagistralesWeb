@@ -23,6 +23,7 @@ namespace Omicron.Pedidos.Api
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Reporting;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
@@ -128,6 +129,13 @@ namespace Omicron.Pedidos.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapFileService, SapFileService>();
+
+            services.AddHttpClient("reportingService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["ReportingService"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IReportingService, ReportingService>();
 
             this.AddRedis(services, Log.Logger);
 

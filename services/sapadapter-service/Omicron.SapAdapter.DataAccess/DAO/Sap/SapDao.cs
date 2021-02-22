@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Serilog;
 
     /// <summary>
@@ -131,8 +132,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
-        }    
+        }
 
+        /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<SalesAsesorModel>> GetAsesorWithEmailByIds(List<int> docsEntry)
+        {
+             var query = (from order in this.databaseContext.OrderModel.Where(x => docsEntry.Contains(x.PedidoId)) 
+                          join salesPerson in this.databaseContext.SalesPersonModel on order.AsesorId equals salesPerson.AsesorId
+                          select new SalesAsesorModel
+                          {                              
+                              AsesorId = salesPerson.AsesorId,
+                              FirstName = salesPerson.FirstName,
+                              LastName = salesPerson.LastName,
+                              Email = string.IsNullOrEmpty(salesPerson.Email) ? string.Empty : salesPerson.Email, 
+                              OrderId = order.PedidoId
+                          });
+
+            return await this.RetryQuery<SalesAsesorModel>(query);
+        }
         /// <summary>
         /// gets the details.
         /// </summary>

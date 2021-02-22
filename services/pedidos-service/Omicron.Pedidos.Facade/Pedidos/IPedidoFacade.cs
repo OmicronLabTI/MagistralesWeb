@@ -109,6 +109,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders);
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
