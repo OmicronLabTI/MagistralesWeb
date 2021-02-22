@@ -35,9 +35,10 @@ class  OrderDetailFormViewModel {
                                    warehouse: werehouse, pendingQuantity: data.details?[index].pendingQuantity ?? 0,
                                    stock: data.details?[index].stock ?? 0,
                                    warehouseQuantity: data.details?[index].warehouseQuantity ?? 0,
-                                   action: "update")]
+                                   action: Actions.update.rawValue)]
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
-            dateString: data.dueDate ?? CommonStrings.empty, withFormat: "yyyy-MM-dd")
+            dateString: data.dueDate ?? CommonStrings.empty, withFormat: DateFormat.yyyymmdd
+        )
         let order = OrderDetailRequest(
             fabOrderID: data.productionOrderID ?? 0,
             plannedQuantity: data.plannedQuantity ?? 0.0,
@@ -46,13 +47,12 @@ class  OrderDetailFormViewModel {
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("Se registraron los cambios correctamente")
+                self?.showAlert.onNext(CommonStrings.changesSuccess)
                 self?.response.onNext(res.response ?? CommonStrings.empty)
                 self?.success.onNext(data.details?[index].orderFabID ?? 0)
-                }, onError: {  [weak self] error in
+                }, onError: {  [weak self] _ in
                     self?.loading.onNext(false)
-                    self?.showAlert.onNext("Hubo un error al editar el elemento,  intente de nuevo")
-                    print(error.localizedDescription)
+                    self?.showAlert.onNext(Constants.Errors.editItemTable.rawValue)
             }).disposed(by: self.disposeBag)
     }
 }

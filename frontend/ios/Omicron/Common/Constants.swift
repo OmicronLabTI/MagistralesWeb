@@ -16,6 +16,7 @@ struct Constants {
         case errorSave = "Lo sentimos, ocurrió un error al guardar la información"
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
+        case editItemTable = "Hubo un error al editar el elemento,  intente de nuevo"
     }
     enum Tags: Int {
         case loading = 101
@@ -161,6 +162,7 @@ struct CommonStrings {
     static let errorPDF = "Por el momento no es posible mostrar el PDF del pedido, intenta más tarde"
     static let zero = "0"
     static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
+    static let changesSuccess = "Se registraron los cambios correctamente"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -221,4 +223,12 @@ struct URLRoot {
     static let qaServer = "http://201.163.179.28:8000/api"
     static let prodServer = "https://magistralesprod.omicronlab.com.mx/api"
     static let omicronServer = "http://172.30.5.49:5100/"
+}
+
+enum Actions: String {
+    case update = "update"
+}
+
+struct DateFormat {
+    static let yyyymmdd = "yyyy-MM-dd"
 }
