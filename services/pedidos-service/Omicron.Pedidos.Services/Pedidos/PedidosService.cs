@@ -550,51 +550,72 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature)
         {
-            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(new List<string> { updateOrderSignature.FabricationOrderId.ToString() })).FirstOrDefault();
-            orders = orders == null ? new UserOrderModel() : orders;
+            var listProductionOrders = new List<string>();
+            updateOrderSignature.FabricationOrderId.ForEach(x => listProductionOrders.Add(x.ToString()));
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(listProductionOrders)).ToList();
 
-            var orderSignature = await this.pedidosDao.GetSignaturesByUserOrderId(orders.Id);
+            var userModelIds = orders.Select(x => x.Id).Distinct().ToList();
+            var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(userModelIds)).ToList();
+
             var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature);
             var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature);
 
-            if (orderSignature == null)
+            var listSignatureToInsert = new List<UserOrderSignatureModel>();
+            var listToUpdate = new List<UserOrderSignatureModel>();
+            userModelIds.ForEach(id =>
             {
-                var newSignature = new UserOrderSignatureModel
+                var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == id);
+
+                if (signature == null)
                 {
-                    TechnicalSignature = newTechSignatureAsByte,
-                    QfbSignature = newQfbSignatureAsByte,
-                    UserOrderId = orders.Id,
-                };
+                    var newSignature = new UserOrderSignatureModel
+                    {
+                        TechnicalSignature = newTechSignatureAsByte,
+                        QfbSignature = newQfbSignatureAsByte,
+                        UserOrderId = id,
+                    };
 
-                await this.pedidosDao.InsertOrderSignatures(newSignature);
-            }
-            else
+                    listSignatureToInsert.Add(newSignature);
+                }
+                else
+                {
+                    signature.TechnicalSignature = newTechSignatureAsByte;
+                    signature.QfbSignature = newQfbSignatureAsByte;
+                    listToUpdate.Add(signature);
+                }
+            });
+
+            await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
+            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
+
+            orders.ForEach(o =>
             {
-                orderSignature.TechnicalSignature = newTechSignatureAsByte;
-                orderSignature.QfbSignature = newQfbSignatureAsByte;
-                await this.pedidosDao.SaveOrderSignatures(orderSignature);
-            }
+                o.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
+                o.Status = ServiceConstants.Terminado;
+            });
 
-            orders.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
-            orders.Status = ServiceConstants.Terminado;
+            var listorderToUpdate = new List<UserOrderModel>(orders);
 
-            var listToUpdate = new List<UserOrderModel> { orders };
-
-            if (!string.IsNullOrEmpty(orders.Salesorderid))
+            if (orders.Any(x => !string.IsNullOrEmpty(x.Salesorderid)))
             {
-                var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { orders.Salesorderid })).ToList();
-                var saleOrder = allOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
-                var areInvalidOrders = allOrders.Any(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid != orders.Productionorderid && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
-                var preProdOrderSap = await ServiceUtils.GetPreProductionOrdersFromSap(saleOrder, this.sapAdapter);
+                var saleOrders = orders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).Select(y => y.Salesorderid).Distinct().ToList();
+                var allOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(saleOrders)).ToList();
 
-                saleOrder.Status = areInvalidOrders || preProdOrderSap.Any() ? saleOrder.Status : ServiceConstants.Terminado;
-                listToUpdate.Add(saleOrder);
+                var saleOrder = allOrders.Where(x => x.IsSalesOrder).ToList();
+                var saleIds = saleOrder.Select(y => int.Parse(y.Salesorderid)).ToList();
+                var preProdOrderSap = await ServiceUtils.GetSalesOrdersFromSap(saleIds, this.sapAdapter);
+
+                saleOrder.ForEach(sale =>
+                {
+                    var orderBySale = allOrders.Where(x => x.Salesorderid == sale.Salesorderid).ToList();
+                    var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
+                    var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Item1.Order.DocNum == int.Parse(sale.Salesorderid));
+                    sale.Status = areInvalidOrders || tupleValues.Item2.Any() ? sale.Status : ServiceConstants.Terminado;
+                    listorderToUpdate.Add(sale);
+                });
             }
 
-            await this.pedidosDao.UpdateUserOrders(listToUpdate);
-            var orderLogs = ServiceUtils.CreateOrderLog(updateOrderSignature.UserId, new List<int> { updateOrderSignature.FabricationOrderId }, $"{ServiceConstants.OrdenTerminada} {updateOrderSignature.UserId}", ServiceConstants.OrdenFab);
-            await this.pedidosDao.InsertOrderLog(orderLogs);
-
+            await this.pedidosDao.UpdateUserOrders(listorderToUpdate);
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
