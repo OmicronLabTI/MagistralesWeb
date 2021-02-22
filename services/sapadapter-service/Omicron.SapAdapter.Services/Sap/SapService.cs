@@ -266,6 +266,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the object.</returns>
         public async Task<ResultModel> GetAsesorsByOrderId(List<OrderIdModel> salesOrder)
         {
+            /*
             var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder.Select(x => x.OrderId).ToList())).ToList();
             var asesorsCompleted = new List<SalesAsesorModel>();
 
@@ -293,8 +294,40 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderId = asesor.OrderId,
                 });
             }
+            */
+            var asesorsMock = new List<SalesAsesorModel>();
+            asesorsMock.Add(new SalesAsesorModel
+            {
+                FirstName = "damnie",
+                LastName = "lasname",
+                Email = "jedgarr04@gmail.com",
+                OrderId = 84077,
+            });
+            asesorsMock.Add(new SalesAsesorModel
+            {
+                FirstName = "juan",
+                LastName = "lasname",
+                Email = "jedgarr04@gmail.com",
+                OrderId = 84075,
+            });
+            asesorsMock.Add(new SalesAsesorModel
+            {
+                FirstName = "juani",
+                LastName = "lasname",
+                Email = string.Empty,
+                OrderId = 234,
+            });
 
-            return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
+            asesorsMock.Add(new SalesAsesorModel
+            {
+                FirstName = "juani",
+                LastName = "lasname",
+                Email = string.Empty,
+                OrderId = 235,
+            });
+
+            // return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
+            return ServiceUtils.CreateResult(true, 200, null, asesorsMock, null, asesorsMock.Count);
         }
 
         /// <summary>

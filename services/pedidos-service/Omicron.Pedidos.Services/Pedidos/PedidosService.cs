@@ -376,6 +376,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => new { orderId = int.Parse(x.Salesorderid) }).Distinct(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
 
+            /*
             var asesorsToReportingEmail = new List<object>();
             foreach (var asesor in resultAsesorEmail)
             {
@@ -386,6 +387,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     comments = rejectOrders.Comments,
                 });
             }
+            */
 
             // sendEmail
             //  var resultSendEmail = await this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, "ping");
