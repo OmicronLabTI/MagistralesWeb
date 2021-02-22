@@ -75,15 +75,13 @@ class OrderDetailFormViewController: FormViewController {
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
                     if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) ?? false) {
-                        let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
-                        let baseQuantity = Decimal(string: row.value ?? "0")
-                        let requiredQuantity = self?.dataOfTable?.plannedQuantity ?? 0.0
-                        let result = baseQuantity ?? 0 * requiredQuantity
-                        requireQuantityField?.value =
-                            self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
-                            String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
-                            String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
-                        requireQuantityField?.reload()
+                        guard let baseQuantity = Decimal(string: row.value ?? "0"),
+                              let requiredQuantity = self?.dataOfTable?.plannedQuantity else {
+                            self?.assigResultToRequireQty(result: Decimal(0))
+                            return
+                        }
+                        let result = baseQuantity * requiredQuantity
+                        self?.assigResultToRequireQty(result: result)
                     }
                 }
                 // Validaciones
@@ -130,15 +128,13 @@ class OrderDetailFormViewController: FormViewController {
                 $0.onCellHighlightChanged { [weak self] _, row in
                     if !(row.value?.isEmpty ?? true) && !(row.value == "0")
                         && ((self?.canOperation(rowValue: row.value ?? "d")) ?? false) {
-                        let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = self?.dataOfTable?.plannedQuantity ?? 1
-                        let result = requiredQuantity ?? 0  / baseQuantity
-                        let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
-                        baseQuantityField?.value =
-                            self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
-                                String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
-                            String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
-                        baseQuantityField?.reload()
+                        guard let requiredQuantity = Decimal(string: row.value ?? "0"),
+                              let baseQuantity = self?.dataOfTable?.plannedQuantity else {
+                            self?.assingResultToBaseQtyField(result: Decimal(0))
+                            return
+                        }
+                        let result = requiredQuantity / baseQuantity
+                        self?.assingResultToBaseQtyField(result: result)
                     }
                 }
                 // Validaciones
@@ -264,5 +260,23 @@ class OrderDetailFormViewController: FormViewController {
         let range = NSRange(location: 0, length: rowValue.description.utf16.count)
         let regex = try? NSRegularExpression(pattern: "^([0-9]+)?(\\.([0-9]{1,6})?)?$")
         return regex?.firstMatch(in: rowValue.description, options: [], range: range) != nil
+    }
+
+    func assingResultToBaseQtyField(result: Decimal) {
+        let baseQuantityField = self.form.rowBy(tag: "baseQuantity") as? TextRow
+        baseQuantityField?.value =
+            self.dataOfTable?.details?[self.indexOfItemSelected].unit == "Pieza" ?
+                String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
+            String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+        baseQuantityField?.reload()
+    }
+
+    func assigResultToRequireQty(result: Decimal) {
+        let requireQuantityField = self.form.rowBy(tag: "requiredQuantity") as? TextRow
+        requireQuantityField?.value =
+            self.dataOfTable?.details?[self.indexOfItemSelected].unit == "Pieza" ?
+            String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
+            String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
+        requireQuantityField?.reload()
     }
 }
