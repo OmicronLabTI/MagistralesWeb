@@ -8,6 +8,8 @@
 
 namespace Omicron.Reporting.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class for constatns.
     /// </summary>
@@ -32,5 +34,40 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string RawMaterialRequestEmailBody = "Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string CustomerServiceEmail = "EmailAtencionAClientes";
+
+        /// <summary>
+        /// The local.
+        /// </summary>
+        public const string InRejectedEmailSubject = "Su pedido {0} de OmicronLab fue rechazado";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentRejectedOrder = "Estimado Asesor. Le informamos que su pedido fue rechazado";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SendEmailHtmlBase = @"<html><body>{0}{1}</body></html>";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValuesForEmail { get; } = new List<string>
+        {
+          "EmailMiddleware",
+          "EmailMiddlewarePassword",
+          "SmtpServer",
+          "SmtpPort",
+          "EmailCCDelivery",
+        };
     }
 }

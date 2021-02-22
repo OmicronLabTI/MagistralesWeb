@@ -29,7 +29,6 @@ namespace Omicron.Reporting.Services.Clients
                 client.Dispose();
                 message.Dispose();
             };
-
             await client.SendMailAsync(message);
         }
     }

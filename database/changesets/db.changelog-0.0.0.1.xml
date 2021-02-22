@@ -658,4 +658,11 @@
 		<column name="field" value="MagistralesDaysToLook"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-1.72">
+	<insert tableName="parameters"> 
+		<column name="value" value="sc1@o-lab.mx"/>
+		<column name="type" value="string"/>
+		<column name="field" value="EmailAtencionAClientes"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
