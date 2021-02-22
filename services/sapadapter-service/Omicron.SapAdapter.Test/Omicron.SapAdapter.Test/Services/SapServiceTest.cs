@@ -190,8 +190,8 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var salesOrders = new List<OrderIdModel>
             {
-                new OrderIdModel { OrderId = 12, UserId = "abc", },
-                new OrderIdModel { OrderId = 13, UserId = "cde", },
+                new OrderIdModel { OrderId = 12, },
+                new OrderIdModel { OrderId = 13, },
             };
 
             // act

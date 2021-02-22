@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Test.Facade
             // arrange
             var salesOrders = new List<OrderIdDto>
             {
-                new OrderIdDto { OrderId = 12, UserId = "abc", },
+                new OrderIdDto { OrderId = 12 },
             };
 
             // act
