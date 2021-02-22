@@ -143,8 +143,8 @@ class NetworkManager: SessionProtocol {
     }
 
     // Obtiene la carga de trabajo
-    func getValidateOrder(orderId: Int) -> Observable<ValidateOrderModel> {
-        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
+    func validateOrders(orderIDs: [Int]) -> Observable<ValidateOrderModel> {
+        let req: ApiService = ApiService.validateOrders(orderId: orderIDs)
         let res: Observable<ValidateOrderModel> = makeRequest(request: req)
         return res
     }

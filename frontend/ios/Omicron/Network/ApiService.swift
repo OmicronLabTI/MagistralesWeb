@@ -23,7 +23,7 @@ enum ApiService {
     case askIfOrderCanBeFinalized(orderId: Int)
     case getComponents(data: ComponentRequest)
     case getWorkload(data: WorkloadRequest)
-    case getValidateOrder(orderId: Int)
+    case validateOrders(orderId: [Int])
     case postOrdersPDF(orders: [Int])
     case getConnect
 }
@@ -71,7 +71,7 @@ extension ApiService: AuthorizedTargetType {
             return "sapadapter/componentes"
         case .getWorkload:
             return "/pedidos/qfb/workload"
-        case .getValidateOrder(let orderId):
+        case .validateOrders(let orderId):
             return "/sapadapter/validate/order/\(orderId)"
         case .postOrdersPDF:
             return "/pedidos/saleorder/pdf"
@@ -84,7 +84,8 @@ extension ApiService: AuthorizedTargetType {
         case .login,
              .renew,
              .finishOrder,
-             .postOrdersPDF:
+             .postOrdersPDF,
+             .validateOrders:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -93,7 +94,6 @@ extension ApiService: AuthorizedTargetType {
              .askIfOrderCanBeFinalized,
              .getComponents,
              .getWorkload,
-             .getValidateOrder,
              .getConnect:
             return .get
         case .deleteItemOfOrdenDetail,
@@ -111,7 +111,7 @@ extension ApiService: AuthorizedTargetType {
              .getLots,
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
-             .getValidateOrder,
+             .validateOrders,
              .getConnect:
             return .requestPlain
         case .renew(let data):
@@ -209,7 +209,7 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
 
-        case .getValidateOrder:
+        case .validateOrders:
             guard let url = Bundle.main.url(forResource: "getValidateOrder", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
