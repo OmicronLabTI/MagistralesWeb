@@ -38,7 +38,7 @@ class OrderDetailFormViewController: FormViewController {
     // swiftlint:disable function_body_length
     // swiftlint:disable:next cyclomatic_complexity
     func buildForm() {
-        LabelRow.defaultCellUpdate = { cell, row in
+        LabelRow.defaultCellUpdate = { cell, _ in
             cell.contentView.backgroundColor = .red
             cell.textLabel?.textColor = .white
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 9)
@@ -64,12 +64,12 @@ class OrderDetailFormViewController: FormViewController {
             <<< TextRow { [weak self] in
                 $0.title = "Cantidad base: "
                 $0.tag = "baseQuantity"
-                $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
+                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
                     String(
-                        format: "%.0f", self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity ?? 0)
+                        format: "%.0f", self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].baseQuantity ?? 0)
                     : self?.formatter.string(
                         from: NSNumber(
-                            value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].baseQuantity! ?? 0))
+                            value: self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].baseQuantity ?? 0))
                 $0.cellSetup { cell, _ in
                     cell.textField.keyboardType = .decimalPad
                 }
@@ -78,9 +78,9 @@ class OrderDetailFormViewController: FormViewController {
                         let requireQuantityField = self?.form.rowBy(tag: "requiredQuantity") as? TextRow
                         let baseQuantity = Decimal(string: row.value ?? "0")
                         let requiredQuantity = self?.dataOfTable?.plannedQuantity ?? 0.0
-                        let result = baseQuantity! * requiredQuantity
+                        let result = baseQuantity ?? 0 * requiredQuantity
                         requireQuantityField?.value =
-                            self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
+                            self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
                             String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
                             String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         requireQuantityField?.reload()
@@ -99,8 +99,8 @@ class OrderDetailFormViewController: FormViewController {
                  }
             }
             .onRowValidationChanged { cell, row in
-                let rowIndex = row.indexPath!.row
-                while row.section!.count > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
+                let rowIndex = row.indexPath?.row ?? 0
+                while row.section?.count ?? 0 > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
                     row.section?.remove(at: rowIndex + 1)
                 }
                 if !row.isValid {
@@ -118,11 +118,11 @@ class OrderDetailFormViewController: FormViewController {
             }
             <<< TextRow { [weak self] in
                 $0.title = "Cantidad requerida: "
-                $0.value =  self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
+                $0.value =  self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
                     String(format: "%.0f",
-                           self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0) :
+                           self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0) :
                     self?.formatter.string(from: NSNumber(
-                        value: self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].requiredQuantity! ?? 0))
+                        value: self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0))
                 $0.tag = "requiredQuantity"
                 $0.cellSetup { cell, _ in
                     cell.textField.keyboardType = .decimalPad
@@ -131,11 +131,11 @@ class OrderDetailFormViewController: FormViewController {
                     if !(row.value?.isEmpty ?? true) && !(row.value == "0")
                         && ((self?.canOperation(rowValue: row.value ?? "d")) ?? false) {
                         let requiredQuantity = Decimal(string: row.value ?? "0")
-                        let baseQuantity = self?.dataOfTable?.plannedQuantity!
-                        let result = requiredQuantity!  / baseQuantity!
+                        let baseQuantity = self?.dataOfTable?.plannedQuantity ?? 1
+                        let result = requiredQuantity ?? 0  / baseQuantity
                         let baseQuantityField = self?.form.rowBy(tag: "baseQuantity") as? TextRow
                         baseQuantityField?.value =
-                            self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
+                            self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
                                 String(format: "%.0f", NSDecimalNumber(decimal: result).doubleValue) :
                             String(format: "%.6f", NSDecimalNumber(decimal: result).doubleValue)
                         baseQuantityField?.reload()
@@ -154,8 +154,8 @@ class OrderDetailFormViewController: FormViewController {
                 }
             }
                         .onRowValidationChanged { cell, row in
-                let rowIndex = row.indexPath!.row
-                while row.section!.count > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
+                let rowIndex = row.indexPath?.row ?? 0
+                while row.section?.count ?? 0 > rowIndex + 1 && row.section?[rowIndex  + 1] is LabelRow {
                     row.section?.remove(at: rowIndex + 1)
                 }
                 if !row.isValid {
@@ -164,7 +164,7 @@ class OrderDetailFormViewController: FormViewController {
                             $0.title = validationMsg
                             $0.cell.height = { 28 }
                         }
-                        let indexPath = row.indexPath!.row + index + 1
+                        let indexPath = row.indexPath?.row ?? 0 + index + 1
                         row.section?.insert(labelRow, at: indexPath)
                     }
                 } else {
@@ -173,7 +173,7 @@ class OrderDetailFormViewController: FormViewController {
             }
             <<< TextRow { [weak self] in
                 $0.title = "Unidad:"
-                $0.value = self?.dataOfTable!.details![self?.indexOfItemSelected ?? 0].unit
+                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit
                 $0.disabled = true
             }.cellUpdate { cell, _ in
                 cell.titleLabel?.textColor = .black
@@ -183,7 +183,7 @@ class OrderDetailFormViewController: FormViewController {
                 $0.title = "Almacén: "
                 $0.tag = "werehouse"
                 $0.options = CommonStrings.options
-                $0.value = self?.dataOfTable?.details![self?.indexOfItemSelected ?? 0].warehouse ?? ""
+                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? ""
             }
             .cellUpdate { cell, _ in
                 cell.detailTextLabel?.textColor = .black
@@ -227,10 +227,11 @@ class OrderDetailFormViewController: FormViewController {
             && self.canOperation(rowValue: (self.requiredQuantity?.value) ?? "r") {
             let requiredQuantityValue = Double( self.requiredQuantity?.value ?? "0.0")
             let baseQuantityValue = Double(self.baseQuantity?.value ?? "0.0")
+            guard let dataOfTable = self.dataOfTable else { return }
             self.orderDetailFormViewModel.editItemTable(index: self.indexOfItemSelected,
-                                                        data: self.dataOfTable!, baseQuantity: baseQuantityValue ?? 0.0,
+                                                        data: dataOfTable, baseQuantity: baseQuantityValue ?? 0.0,
                                                         requiredQuantity: requiredQuantityValue ?? 0.0,
-                                                        werehouse: (werehouse?.value)!)
+                                                        werehouse: werehouse?.value ?? CommonStrings.empty)
         }
     }
     func viewModelBinding () {
