@@ -54,6 +54,7 @@ export class ParamsPedidos {
     finlabel: string;
     current?: string;
     advance?: string;
+    clasification?: string;
 
 
 }
