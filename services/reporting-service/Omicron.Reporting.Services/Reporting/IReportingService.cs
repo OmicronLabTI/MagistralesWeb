@@ -30,5 +30,12 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request);
+
+        /// <summary>
+        /// Submit email.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request);
     }
 }

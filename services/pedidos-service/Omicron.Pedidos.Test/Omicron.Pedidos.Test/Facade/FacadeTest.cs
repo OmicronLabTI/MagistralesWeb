@@ -183,6 +183,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.CreateSaleOrderPdf(It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.RejectSalesOrders(It.IsAny<RejectOrdersModel>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -649,6 +653,35 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CloseSalesOrders(salesOrders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task RejectSalesOrders()
+        {
+            // arrange
+            var salesOrders = new RejectOrdersDto();
+            salesOrders.Comments = "comentarios";
+            salesOrders.UserId = "123-abc";
+            salesOrders.OrdersId = new List<int>
+            {
+                234,
+                235,
+            };
+
+            // act
+            var response = await this.pedidoFacade.RejectSalesOrders(salesOrders);
 
             // Assert
             Assert.IsNotNull(response);

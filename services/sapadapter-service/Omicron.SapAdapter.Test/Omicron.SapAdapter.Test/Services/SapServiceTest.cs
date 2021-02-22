@@ -190,6 +190,26 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
+        public async Task GetAsesorsByOrderId()
+        {
+            // arrange
+            var salesOrders = new List<int>
+            {
+                12,
+                13,
+            };
+
+            // act
+            var result = await this.sapService.GetAsesorsByOrderId(salesOrders);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
         public async Task GetOrdersTodayById()
         {
             // arrange
@@ -820,7 +840,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test to get recipes.
         /// </summary>
-        /// <returns>The data.</returns>
+        /// <returns>the data.</returns>
         [Test]
         public async Task ValidateOrder()
         {

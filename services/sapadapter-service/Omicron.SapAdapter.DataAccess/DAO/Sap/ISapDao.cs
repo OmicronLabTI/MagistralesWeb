@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
     /// <summary>
     /// the IsapDao.
@@ -71,6 +72,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="pedidoId">the product id.</param>        
         /// <returns>the data.</returns>
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId);
+
+        /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        Task<IEnumerable<SalesAsesorModel>> GetAsesorWithEmailByIds(List<int> docsEntry);
 
         /// <summary>
         /// gets the fabrication orders by sales order id.

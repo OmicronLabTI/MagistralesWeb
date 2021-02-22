@@ -29,6 +29,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
+    using Omicron.Pedidos.Services.Reporting;
 
     /// <summary>
     /// class for the test.
@@ -48,6 +49,8 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<IConfiguration> configuration;
 
+        private Mock<IReportingService> reportingService;
+
         /// <summary>
         /// The set up.
         /// </summary>
@@ -64,6 +67,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
+            this.reportingService = new Mock<IReportingService>();
             this.sapAdapter = new Mock<ISapAdapter>();
             this.sapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
@@ -94,7 +98,7 @@ namespace Omicron.Pedidos.Test.Services
             this.configuration.SetupGet(x => x[It.Is<string>(s => s == "OmicronFilesAddress")]).Returns("http://localhost:5002/");
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
         }
 
         /// <summary>
@@ -154,7 +158,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
 
-            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
@@ -209,7 +213,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
 
-            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidosServiceLocal = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidosServiceLocal.UpdateComponents(asignar);
@@ -365,7 +369,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUsers = new Mock<IUsersService>();
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.UpdateBatches(new List<AssignBatchModel> { update });
@@ -404,7 +408,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
 
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.FinishOrder(update);
@@ -443,7 +447,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
 
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.FinishOrder(update);
@@ -470,7 +474,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetMissingBatches()));
 
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.CompletedBatches(orderId));
@@ -514,10 +518,62 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
-            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task RejectSalesOrders()
+        {
+            // arrange
+            var salesOrders = new RejectOrdersModel();
+            salesOrders.Comments = "comentatios";
+            salesOrders.OrdersId = new List<int>
+            {
+                123,
+                456,
+            };
+
+            var mockContent = new Dictionary<int, string> { { 0, "Ok" } };
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
+                .Returns(Task.FromResult(this.GetRecipes()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
+            var mockResult = new ResultModel();
+            mockResult.Success = true;
+            mockResult.Code = 200;
+            mockResult.Response = JsonConvert.SerializeObject(mockContent);
+
+            mockSaDiApiLocal
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(mockResult));
+
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
+
+            // act
+            var response = await pedidoServiceLocal.RejectSalesOrders(salesOrders);
 
             // assert
             Assert.IsNotNull(response);
@@ -569,7 +625,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
-            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
@@ -623,7 +679,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
-            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.CloseFabOrders(salesOrders);
@@ -667,7 +723,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(mockResultSapAdapter));
 
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSapDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockSapDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var response = await pedidoServiceLocal.CreateIsolatedProductionOrder(order);
@@ -799,7 +855,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetBatches()));
 
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var result = await pedidoServiceLocal.CompletedBatches(orderId);
@@ -835,7 +891,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
-            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, mockDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var result = await pedidoServiceLocal.PrintOrders(orderId);
@@ -895,7 +951,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUsers = new Mock<IUsersService>();
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var result = await pedidoServiceLocal.UpdateSaleOrders(orderId);
@@ -928,7 +984,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUsers = new Mock<IUsersService>();
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
@@ -966,7 +1022,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimple(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object);
 
             // act
             var result = await pedidoServiceLocal.CreateSaleOrderPdf(details);

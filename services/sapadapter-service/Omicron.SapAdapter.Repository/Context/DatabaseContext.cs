@@ -43,6 +43,14 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<AsesorModel> AsesorModel { get; set; }
 
         /// <summary>
+        /// Gets or sets salesPersonModel.
+        /// </summary>
+        /// <value>
+        /// Object salesPersonModel.
+        /// </value>
+        public virtual DbSet<SalesPersonModel> SalesPersonModel { get; set; }
+
+        /// <summary>
         /// Gets or sets OrderModel.
         /// </summary>
         /// <value>

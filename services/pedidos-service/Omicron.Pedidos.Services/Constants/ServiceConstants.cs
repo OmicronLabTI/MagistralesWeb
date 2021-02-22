@@ -81,6 +81,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Entregado = "Entregado";
 
         /// <summary>
+        /// status entregado.
+        /// </summary>
+        public const string Rechazado = "Rechazado";
+
+        /// <summary>
         /// orden de venta plan.
         /// </summary>
         public const string OrdenVentaPlan = "Orden de venta planificada";
@@ -99,6 +104,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// when the order goes to Finished.
         /// </summary>
         public const string OrderFinished = "La orden {0} paso a Finalizado";
+
+        /// <summary>
+        /// when the order not goes to Rejected.
+        /// </summary>
+        public const string OrderNotRejectedBecauseExits = "El pedido ya tiene ordenes de fabricación";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -181,6 +191,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErroAlAsignar = "Error al asignar";
 
         /// <summary>
+        /// error al asignar.
+        /// </summary>
+        public const string ErrorToRejectedAnOrder = "Hubo un error al enviar emails";
+
+        /// <summary>
         /// error no user available.
         /// </summary>
         public const string ErrorQfbAutomatico = "Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual";
@@ -209,6 +224,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// gets the formula for each order.
         /// </summary>
         public const string GetFormula = "qfb/formula";
+
+        /// <summary>
+        /// gets the asesors email.
+        /// </summary>
+        public const string GetAsesorsMail = "asesors";
 
         /// <summary>
         /// gets the last isolated production order id.
@@ -299,6 +319,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// creates the pdfs.
         /// </summary>
         public const string CreateSalePdf = "create/sale/pdf";
+
+        /// <summary>
+        /// send emails to rejected orders.
+        /// </summary>
+        public const string SendEmailToRejectedOrders = "rejection/order/email";
 
         /// <summary>
         /// deletes the files.
