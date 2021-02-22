@@ -406,7 +406,7 @@ class OrderDetailViewController: UIViewController {
             self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true,
                                              hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
         default:
-            print("")
+            break
         }
     }
     // swiftlint:disable function_parameter_count
@@ -444,8 +444,9 @@ extension OrderDetailViewController: UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
         -> UISwipeActionsConfiguration? {
-            if self.statusType == StatusNameConstants.inProcessStatus ||
-                self.statusType == StatusNameConstants.reassignedStatus {
+            if (self.statusType == StatusNameConstants.inProcessStatus ||
+                self.statusType == StatusNameConstants.reassignedStatus) &&
+                (orderDetail.count > 0 && !(orderDetail[0].details?[indexPath.row].hasBatches ?? true)) {
                 // Lógica para editar un item de la tabla
                 let editItem = UIContextualAction(
                 style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
