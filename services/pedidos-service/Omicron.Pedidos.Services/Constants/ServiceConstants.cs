@@ -191,6 +191,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErroAlAsignar = "Error al asignar";
 
         /// <summary>
+        /// error al asignar.
+        /// </summary>
+        public const string ErrorToRejectedAnOrder = "Hubo un error al enviar emails";
+
+        /// <summary>
         /// error no user available.
         /// </summary>
         public const string ErrorQfbAutomatico = "Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual";
@@ -314,6 +319,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// creates the pdfs.
         /// </summary>
         public const string CreateSalePdf = "create/sale/pdf";
+
+        /// <summary>
+        /// send emails to rejected orders.
+        /// </summary>
+        public const string SendEmailToRejectedOrders = "rejection/order/email";
 
         /// <summary>
         /// deletes the files.
