@@ -25,8 +25,6 @@ namespace Omicron.SapAdapter.Services.Mapping
         {
             this.CreateMap<ResultDto, ResultModel>();
             this.CreateMap<ResultModel, ResultDto>();
-            this.CreateMap<OrderIdModel, OrderIdDto>();
-            this.CreateMap<OrderIdDto, OrderIdModel>();
             this.CreateMap<GetOrderFabDto, GetOrderFabModel>();
         }
     }

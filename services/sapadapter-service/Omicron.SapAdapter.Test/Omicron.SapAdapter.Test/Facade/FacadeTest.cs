@@ -130,9 +130,10 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetAsesorsByOrderId()
         {
             // arrange
-            var salesOrders = new List<OrderIdDto>
+            var salesOrders = new List<int>
             {
-                new OrderIdDto { OrderId = 12 },
+                12,
+                13,
             };
 
             // act

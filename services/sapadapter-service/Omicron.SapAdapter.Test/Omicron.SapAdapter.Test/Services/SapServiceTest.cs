@@ -193,10 +193,10 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetAsesorsByOrderId()
         {
             // arrange
-            var salesOrders = new List<OrderIdModel>
+            var salesOrders = new List<int>
             {
-                new OrderIdModel { OrderId = 12, },
-                new OrderIdModel { OrderId = 13, },
+                12,
+                13,
             };
 
             // act

@@ -372,17 +372,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
-
-            var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => new { orderId = int.Parse(x.Salesorderid) }).Distinct(), ServiceConstants.GetAsesorsMail);
-
-            if (!resultAsesors.Success)
-            {
-                var userError = ServiceConstants.ErrorToRejectedAnOrder;
-                return ServiceUtils.CreateResult(false, resultAsesors.Code, userError, null, null);
-            }
-
+            var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
             var asesorsToReportingEmail = new List<object>();
+
             foreach (var asesor in resultAsesorEmail)
             {
                 asesorsToReportingEmail.Add(new

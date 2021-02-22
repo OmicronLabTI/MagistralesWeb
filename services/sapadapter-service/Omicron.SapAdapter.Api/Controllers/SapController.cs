@@ -102,7 +102,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <returns>the object.</returns>
         [Route("/asesors")]
         [HttpPost]
-        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<OrderIdDto> salesOrder)
+        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<int> salesOrder)
         {
             var result = await this.sapFacade.GetAsesorsByOrderId(salesOrder);
             return this.Ok(result);

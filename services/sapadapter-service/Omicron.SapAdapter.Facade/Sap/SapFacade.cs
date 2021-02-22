@@ -94,9 +94,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="salesOrder">the orderId list.</param>
         /// <returns>the object.</returns>
-        public async Task<ResultDto> GetAsesorsByOrderId(List<OrderIdDto> salesOrder)
+        public async Task<ResultDto> GetAsesorsByOrderId(List<int> salesOrder)
         {
-            return this.mapper.Map<ResultDto>(await this.sapService.GetAsesorsByOrderId(this.mapper.Map<List<OrderIdModel>>(salesOrder)));
+            return this.mapper.Map<ResultDto>(await this.sapService.GetAsesorsByOrderId(salesOrder));
         }
 
         /// <summary>

@@ -59,7 +59,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="salesOrder">the orderId list.</param>
         /// <returns>the object.</returns>
-        Task<ResultDto> GetAsesorsByOrderId(List<OrderIdDto> salesOrder);
+        Task<ResultDto> GetAsesorsByOrderId(List<int> salesOrder);
 
         /// <summary>
         /// Get fabrication orders by criterial.

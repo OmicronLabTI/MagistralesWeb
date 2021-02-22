@@ -296,14 +296,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="salesOrder">the orderId list.</param>
         /// <returns>the object.</returns>
-        public async Task<ResultModel> GetAsesorsByOrderId(List<OrderIdModel> salesOrder)
+        public async Task<ResultModel> GetAsesorsByOrderId(List<int> salesOrder)
         {
-            var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder.Select(x => x.OrderId).ToList())).ToList();
+            var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder)).ToList();
             var asesorsCompleted = new List<SalesAsesorModel>();
 
             foreach (var order in salesOrder)
             {
-                var asesor = asesors.FirstOrDefault(x => x.OrderId == order.OrderId);
+                var asesor = asesors.FirstOrDefault(x => x.OrderId == order);
                 if (asesor == null)
                 {
                     asesorsCompleted.Add(new SalesAsesorModel
@@ -311,7 +311,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         FirstName = string.Empty,
                         LastName = string.Empty,
                         Email = string.Empty,
-                        OrderId = order.OrderId,
+                        OrderId = order,
                     });
                     continue;
                 }
@@ -321,7 +321,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     AsesorId = asesor.AsesorId,
                     FirstName = asesor.FirstName,
                     LastName = asesor.LastName,
-                    Email = "jedgarr04@gmail.com", // string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
+                    Email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
                     OrderId = asesor.OrderId,
                 });
             }
