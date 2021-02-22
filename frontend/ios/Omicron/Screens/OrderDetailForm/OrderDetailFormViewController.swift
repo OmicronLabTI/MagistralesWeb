@@ -52,21 +52,25 @@ class OrderDetailFormViewController: FormViewController {
         }
         let fieldShouldNotNegativeNumbers = RuleClosure<String> { rowValue in
             let range = NSRange(location: 0, length: rowValue?.description.utf16.count ?? 0)
-            let regex = try? NSRegularExpression(pattern: "^([0-9]+)?(\\.([0-9]{1,6})?)?$")
-            return !(regex?.firstMatch(in: rowValue?.description ?? "", options: [], range: range) != nil) ?
-                ValidationError(msg: "No se permite números negativos, caracteres o más de 6 decimas") : nil
+            let regex = try? NSRegularExpression(pattern: RegularExpresions.onlyNumbers.rawValue)
+            return !(regex?.firstMatch(
+                        in: rowValue?.description ?? CommonStrings.empty, options: [], range: range) != nil) ?
+                ValidationError(msg: Constants.Errors.validatingNumbers.rawValue) : nil
         }
         let fieldNoEmpty = RuleClosure<String> { rowValue in
-        return (rowValue == nil || rowValue!.isEmpty) ? ValidationError(msg: "El campo no puede ir vacio") : nil
+            return (rowValue == nil || rowValue!.isEmpty) ? ValidationError(
+                msg: Constants.Errors.emptyField.rawValue) : nil
         }
         form
-            +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!, footer: "")
+            +++ Section(header: self.dataOfTable!.details![self.indexOfItemSelected].detailDescription!,
+                        footer: CommonStrings.empty)
             <<< TextRow { [weak self] in
-                $0.title = "Cantidad base: "
-                $0.tag = "baseQuantity"
-                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
+                $0.title = CommonStrings.baseQtyTitle
+                $0.tag = CommonStrings.baseQtyField
+                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == CommonStrings.piece ?
                     String(
-                        format: "%.0f", self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].baseQuantity ?? 0)
+                        format: DecimalFormat.zero.rawValue,
+                        self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].baseQuantity ?? 0)
                     : self?.formatter.string(
                         from: NSNumber(
                             value: self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].baseQuantity ?? 0))
@@ -75,7 +79,7 @@ class OrderDetailFormViewController: FormViewController {
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
                     if row.value != nil && ((self?.canOperation(rowValue: row.value ?? "f")) ?? false) {
-                        guard let baseQuantity = Decimal(string: row.value ?? "0"),
+                        guard let baseQuantity = Decimal(string: row.value ?? CommonStrings.zero),
                               let requiredQuantity = self?.dataOfTable?.plannedQuantity else {
                             self?.assigResultToRequireQty(result: Decimal(0))
                             return
@@ -114,20 +118,20 @@ class OrderDetailFormViewController: FormViewController {
                 }
             }
             <<< TextRow { [weak self] in
-                $0.title = "Cantidad requerida: "
-                $0.value =  self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == "Pieza" ?
-                    String(format: "%.0f",
+                $0.title = CommonStrings.reqQtyTitle
+                $0.value =  self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit == CommonStrings.piece ?
+                    String(format: DecimalFormat.zero.rawValue,
                            self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0) :
                     self?.formatter.string(from: NSNumber(
                         value: self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].requiredQuantity ?? 0))
-                $0.tag = "requiredQuantity"
+                $0.tag = CommonStrings.reqQtyField
                 $0.cellSetup { cell, _ in
                     cell.textField.keyboardType = .decimalPad
                 }
                 $0.onCellHighlightChanged { [weak self] _, row in
-                    if !(row.value?.isEmpty ?? true) && !(row.value == "0")
+                    if !(row.value?.isEmpty ?? true) && !(row.value == CommonStrings.zero)
                         && ((self?.canOperation(rowValue: row.value ?? "d")) ?? false) {
-                        guard let requiredQuantity = Decimal(string: row.value ?? "0"),
+                        guard let requiredQuantity = Decimal(string: row.value ?? CommonStrings.zero),
                               let baseQuantity = self?.dataOfTable?.plannedQuantity else {
                             self?.assingResultToBaseQtyField(result: Decimal(0))
                             return
@@ -166,7 +170,7 @@ class OrderDetailFormViewController: FormViewController {
                 }
             }
             <<< TextRow { [weak self] in
-                $0.title = "Unidad:"
+                $0.title = CommonStrings.unit
                 $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].unit
                 $0.disabled = true
             }.cellUpdate { cell, _ in
@@ -174,29 +178,29 @@ class OrderDetailFormViewController: FormViewController {
                 cell.textField.textColor = .black
             }
             <<< PickerInlineRow<String> { [weak self] in
-                $0.title = "Almacén: "
-                $0.tag = "werehouse"
+                $0.title = CommonStrings.werehouseTitle
+                $0.tag = CommonStrings.werehouseProperty
                 $0.options = CommonStrings.options
-                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? ""
+                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? CommonStrings.empty
             }
             .cellUpdate { cell, _ in
                 cell.detailTextLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow { [weak self] in
-                $0.title = "Aceptar"
+                $0.title = CommonStrings.OKConst
                 $0.disabled = Condition.function(
-                    self?.form.allRows.compactMap { $0.tag } ?? [""], { !$0.validate().isEmpty })
+                    self?.form.allRows.compactMap { $0.tag } ?? [CommonStrings.empty], { !$0.validate().isEmpty })
             }
             .onCellSelection { [weak self] _, row in
                 row.section?.form?.validate()
                 if row.isValid && !row.isDisabled {
-                    self?.baseQuantity = self?.form.rowBy(tag: "baseQuantity")
-                    self?.requiredQuantity = self?.form.rowBy(tag: "requiredQuantity")
-                    self?.werehouse = self?.form.rowBy(tag: "werehouse")
-                    let alert = UIAlertController(title: "¿Deseas guardar los cambios ingresados?",
+                    self?.baseQuantity = self?.form.rowBy(tag: CommonStrings.baseQtyField)
+                    self?.requiredQuantity = self?.form.rowBy(tag: CommonStrings.reqQtyField)
+                    self?.werehouse = self?.form.rowBy(tag: CommonStrings.werehouseProperty)
+                    let alert = UIAlertController(title: CommonStrings.saveChanges,
                                                   message: nil, preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive,
+                    let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
                                                      handler: {[weak self] _ in
                                                         self?.navigationController?.popViewController(animated: true)})
                     let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
@@ -207,7 +211,7 @@ class OrderDetailFormViewController: FormViewController {
                 }
             }
             <<< ButtonRow {
-                $0.title = "Cancelar"
+                $0.title = CommonStrings.cancel
             }
             .cellSetup { cell, _ in
                 cell.tintColor = .red

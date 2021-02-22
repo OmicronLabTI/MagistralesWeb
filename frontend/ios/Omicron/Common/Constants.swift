@@ -17,6 +17,8 @@ struct Constants {
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
         case editItemTable = "Hubo un error al editar el elemento,  intente de nuevo"
+        case validatingNumbers = "No se permite números negativos, caracteres o más de 6 decimas"
+        case emptyField = "El campo no puede ir vacio"
     }
     enum Tags: Int {
         case loading = 101
@@ -163,6 +165,13 @@ struct CommonStrings {
     static let zero = "0"
     static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
     static let changesSuccess = "Se registraron los cambios correctamente"
+    static let baseQtyTitle = "Cantidad base: "
+    static let baseQtyField = "baseQuantity"
+    static let reqQtyTitle = "Cantidad requerida: "
+    static let reqQtyField = "requiredQuantity"
+    static let werehouseTitle = "Almacén: "
+    static let werehouseProperty = "werehouse"
+    static let saveChanges = "¿Deseas guardar los cambios ingresados?"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -231,4 +240,12 @@ enum Actions: String {
 
 struct DateFormat {
     static let yyyymmdd = "yyyy-MM-dd"
+}
+
+enum RegularExpresions: String {
+    case onlyNumbers = "^([0-9]+)?(\\.([0-9]{1,6})?)?$"
+}
+
+enum DecimalFormat: String {
+    case zero = "%.0f"
 }
