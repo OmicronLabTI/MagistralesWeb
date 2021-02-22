@@ -76,6 +76,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string ItemCode = "code";
 
         /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Current = "current";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Advance = "advance";
+
+        /// <summary>
         /// the abierto status.
         /// </summary>
         public const string Abierto = "Abierto";
@@ -171,6 +181,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string NoNeedRecipe = "3";
 
         /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Pedido = "ped";
+
+        /// <summary>
+        /// Orden value.
+        /// </summary>
+        public const string Orden = "ord";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -216,6 +236,21 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { "%C3%9C", "Ü" },
             { "%C3%BC", "ü" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> KeysToIgnoreRedis { get; } = new List<string>
+        {
+            Offset,
+            Limit,
+            Advance,
+            Current,
+            NeedsLargeDsc,
         };
     }
 }

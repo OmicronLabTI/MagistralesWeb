@@ -222,5 +222,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.ValidateOrder(orderId));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters, kind));
+        }
     }
 }

@@ -70,6 +70,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/orders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ped");
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Obtiene las formulas de la orden de fabricacion.
         /// </summary>
         /// <param name="ordenId">the order id.</param>
@@ -234,6 +247,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             var result = await this.sapFacade.GetFabOrders(orderFabDto);
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/faborders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetFabDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ord");
+            return this.Ok(response);
         }
 
         /// <summary>

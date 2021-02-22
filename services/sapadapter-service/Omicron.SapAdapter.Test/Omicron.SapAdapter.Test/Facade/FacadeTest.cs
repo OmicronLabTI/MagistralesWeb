@@ -363,6 +363,23 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDetails()
+        {
+            // arrange
+            var orderId = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetDetails(orderId, "ped");
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

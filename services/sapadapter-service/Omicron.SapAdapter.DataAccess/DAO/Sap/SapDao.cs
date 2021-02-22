@@ -329,6 +329,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
+        {
+            return await this.RetryQuery<DetalleFormulaModel>(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
+        }
+
         /// <summary>
         /// gets the sap user.
         /// </summary>
@@ -515,6 +521,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
         {
             return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
+        {
+            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode)
+        {
+            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => itemCode.Contains(x.ProductoId)));
         }
 
         /// <summary>

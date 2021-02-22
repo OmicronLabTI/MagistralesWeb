@@ -23,6 +23,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -69,6 +70,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidoService = new Mock<IPedidosService>();
             var mockUserService = new Mock<IUsersService>();
             var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
 
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
@@ -87,9 +89,12 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
+            mockRedis
+                .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
         }
 
         /// <summary>
@@ -843,8 +848,70 @@ namespace Omicron.SapAdapter.Test.Services
             var order = 200;
 
             // act
-            // Assert.ThrowsAsync<CustomServiceException>(async () => await this.sapService.ValidateOrder(order));
             var response = await this.sapService.ValidateOrder(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>The data.</returns>
+        [Test]
+        public async Task GetDetails()
+        {
+            // arrange
+            var dict = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapService.GetDetails(dict, "ped");
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>The data.</returns>
+        [Test]
+        public async Task GetDetailsWithRedis()
+        {
+            // arrange
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockLog = new Mock<ILogger>();
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+
+            mockPedidoService
+                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            mockRedis
+                .Setup(m => m.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult("[100]"));
+
+            this.sapDao = new SapDao(this.context, mockLog.Object);
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+
+            var dict = new Dictionary<string, string>();
+
+            // act
+            var response = await sapService.GetDetails(dict, "ped");
 
             // assert
             Assert.IsNotNull(response);
