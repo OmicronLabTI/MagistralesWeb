@@ -314,7 +314,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 FirstName = "juani",
                 LastName = "lasname",
-                Email = string.Empty,
+                Email = "jedgarr04@gmail.com",
                 OrderId = 234,
             });
 
