@@ -600,28 +600,23 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultModel> ValidateOrder(int orderId)
+        public async Task<ResultModel> ValidateOrder(List<int> orderId)
         {
             var listErrors = new List<OrderValidationResponse>();
             var listErrorsBatches = new OrderValidationResponse { Type = ServiceConstants.BatchesAreMissingError, ListItems = new List<string>() };
             var listErrorStock = new OrderValidationResponse { Type = ServiceConstants.MissingWarehouseStock, ListItems = new List<string>() };
 
-            (await this.sapDao.GetDetalleFormula(orderId)).ToList().ForEach(x =>
+            var componentes = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
+            componentes.ForEach(x =>
             {
                 if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
                 {
-                    listErrorStock.ListItems.Add(x.ProductId);
+                    listErrorStock.ListItems.Add($"{x.OrderFabId}-{x.ProductId}");
                 }
             });
 
-            var resultBatches = await this.GetBatchesComponents(orderId);
-            ((List<BatchesComponentModel>)resultBatches.Response).ForEach(x =>
-            {
-                if (!x.LotesAsignados.Any() || x.TotalNecesario > 0)
-                {
-                    listErrorsBatches.ListItems.Add(x.CodigoProducto);
-                }
-            });
+            var resultBatches = await this.getProductionOrderUtils.GetIncompleteProducts(orderId);
+            resultBatches.ForEach(x => listErrorsBatches.ListItems.Add(x));
 
             listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
             listErrorStock.ListItems = listErrorStock.ListItems.OrderBy(x => x).ToList();
@@ -697,8 +692,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<ValidBatches>> GetValidBatches(string item, string almacen)
         {
             var listToReturn = new List<ValidBatches>();
-            var product = (await this.sapDao.GetProductById(item)).FirstOrDefault();
-            var batches = (await this.sapDao.GetValidBatches(product.ProductoId, almacen)).ToList();
+            var batches = (await this.sapDao.GetValidBatches(item, almacen)).ToList();
 
             batches.ForEach(x =>
             {
@@ -733,7 +727,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new List<AssignedBatches>();
             }
 
-            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(lastTransaction.LogEntry)).ToList();
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(new List<int> { lastTransaction.LogEntry })).ToList();
 
             batchesQty.ForEach(x =>
             {

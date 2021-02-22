@@ -14,6 +14,8 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Services.Constants;
     using Serilog;
 
@@ -126,6 +128,59 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return listOrders;
+        }
+
+        /// <summary>
+        /// Gets if the batches are complete.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<string>> GetIncompleteProducts(List<int> ordersId)
+        {
+            var listToReturn = new List<string>();
+            var listTransaction = new List<int>();
+            var componentes = (await this.sapDao.GetComponentByBatches(ordersId)).ToList();
+            var assignedBatches = (await this.sapDao.GetBatchesTransactionByOrderItem(ordersId)).ToList();
+
+            assignedBatches.GroupBy(x => new { x.DocNum, x.ItemCode }).ToList().ForEach(x =>
+            {
+                var lastTransaction = x.Any() ? x.OrderBy(y => y.LogEntry).Last(z => z.DocQuantity > 0) : null;
+
+                if (lastTransaction != null)
+                {
+                    listTransaction.Add(lastTransaction.LogEntry);
+                }
+            });
+
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listTransaction)).ToList();
+
+            assignedBatches.GroupBy(x => x.DocNum).ToList().ForEach(g =>
+            {
+                componentes.Where(x => x.OrderFabId == g.Key).ToList().ForEach(i =>
+                {
+                    var transactions = g.Where(item => item.ItemCode == i.ProductId).ToList();
+                    var lastTransaction = transactions.Any() ? transactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
+
+                    if (lastTransaction == null)
+                    {
+                        listToReturn.Add($"{g.Key}-{i.ProductId}");
+                    }
+                    else
+                    {
+                        var logEntry = lastTransaction.LogEntry;
+                        var batches = batchesQty.Where(b => b.ItemCode == i.ProductId && logEntry == b.LogEntry).ToList();
+                        var cantidadSeleccionada = batches.Sum(b => b.AllocQty);
+                        var totalNecesario = Math.Round(i.PendingQuantity - cantidadSeleccionada, 6);
+
+                        if (totalNecesario > 0)
+                        {
+                            listToReturn.Add($"{g.Key}-{i.ProductId}");
+                        }
+                    }
+                });
+            });
+
+            return listToReturn;
         }
     }
 }

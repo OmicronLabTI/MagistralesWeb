@@ -208,7 +208,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="orderId">the order.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> ValidateOrder(int orderId)
+        public async Task<ResultDto> ValidateOrder(List<int> orderId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.ValidateOrder(orderId));
         }

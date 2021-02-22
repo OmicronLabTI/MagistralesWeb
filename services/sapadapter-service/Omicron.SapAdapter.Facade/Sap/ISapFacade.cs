@@ -140,7 +140,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="orderId">the order.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> ValidateOrder(int orderId);
+        Task<ResultDto> ValidateOrder(List<int> orderId);
 
         /// <summary>
         /// Gets the consecutive or previos from the filter.
