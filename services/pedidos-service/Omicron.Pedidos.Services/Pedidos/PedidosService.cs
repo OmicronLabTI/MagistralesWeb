@@ -354,8 +354,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var orderFail = new
                 {
-                    orderId = orderId,
-                    reason = ServiceConstants.OrderNotRejectedBecauseExits,
+                    reason = string.Format(ServiceConstants.OrderNotRejectedBecauseExits, orderId),
                 };
                 failed.Add(orderFail);
             }
