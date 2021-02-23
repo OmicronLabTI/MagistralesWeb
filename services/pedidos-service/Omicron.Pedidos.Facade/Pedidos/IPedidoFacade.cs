@@ -116,6 +116,14 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders);
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetQfbOrdersByStatus(string status, string userId);
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para

@@ -489,6 +489,20 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        [Route("/qfbOrders/{status}/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetQfbOrdersByStatus([FromRoute] string status, [FromRoute] string userId)
+        {
+            var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, userId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
