@@ -298,10 +298,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   requestMaterial() {
-    this.router.navigate([RouterPaths.materialRequest,
-      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString(),
-      CONST_NUMBER.one]);
-  }
+        this.router.navigate([RouterPaths.materialRequest,
+            this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
+            CONST_NUMBER.one]);
+    }
 
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {

@@ -54,8 +54,8 @@
                     </g>
                 </svg>
             </button>
-                <button [disabled]="!isThereOrdersToPlace" mat-raised-button
-                    [ngClass]="isThereOrdersToPlace ? 'button-blue' : 'disable-button'"
+               <button mat-raised-button
+                    class="button-blue"
                     (click)="requestMaterial()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">Solicitud de insumos</button>
                 <button [disabled]="!isThereOrdersToPlan" mat-raised-button
                         [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"

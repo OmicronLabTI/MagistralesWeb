@@ -62,10 +62,10 @@
                   (click)="finishOrdersLabels()" *ngIf="dataService.getUserRole() === '4'">
               Terminar etiquetas &nbsp;
           </button>
-          <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
-                  [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
+          <button mat-raised-button
+                  class="button-blue"
                   (click)="materialRequestDetail()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-              Solicitud de insumos &nbsp;
+              Solicitud de insumos
           </button>
         <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button
                 [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'"

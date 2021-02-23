@@ -243,8 +243,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
     materialRequestDetail() {
         this.router.navigate([RouterPaths.materialRequest,
-          this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString(),
-          CONST_NUMBER.zero.toString()]);
+          this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
+          CONST_NUMBER.zero]);
     }
     getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
