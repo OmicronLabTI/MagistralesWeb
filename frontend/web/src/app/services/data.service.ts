@@ -43,7 +43,8 @@ export class DataService {
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   private openSignatureDialog = new Subject<any>();
   private newDataSignature = new Subject<any>();
-  constructor(private datePipe: DatePipe, private router: Router) { }
+  constructor(private datePipe: DatePipe, private router: Router
+  ) { }
 
   setNewDataSignature(newSignature: any) {
     this.newDataSignature.next(newSignature);

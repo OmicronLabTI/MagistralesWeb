@@ -8,10 +8,11 @@ import { ILoginReq } from '../model/http/security.model';
 import { Observable } from 'rxjs';
 import { Endpoints } from 'src/environments/endpoints';
 import {DatePipe} from '@angular/common';
+import {RouterTestingModule} from '@angular/router/testing';
 describe('SecurityService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
-      HttpClientTestingModule
+      HttpClientTestingModule, RouterTestingModule
     ],
     providers: [
       DataService,
