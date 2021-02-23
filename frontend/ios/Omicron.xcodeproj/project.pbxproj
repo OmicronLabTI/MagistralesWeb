@@ -117,14 +117,14 @@
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
 		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
 		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
-		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
-		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
-		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
-		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
 		4930B45325E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
+		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
+		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
+		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
@@ -258,10 +258,10 @@
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
-		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
-		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
 		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
+		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
+		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -828,6 +828,7 @@
 					};
 					98015CC124AFBC6D00E7772F = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1240;
 						TestTargetID = 98015CAB24AFBC6C00E7772F;
 					};
 					98015CCC24AFBC6D00E7772F = {

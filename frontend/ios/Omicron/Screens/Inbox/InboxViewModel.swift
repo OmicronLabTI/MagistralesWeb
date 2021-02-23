@@ -408,9 +408,7 @@ class InboxViewModel {
         if qfbSignatureIsGet && technicalSignatureIsGet {
             loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
-                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else {
-                fatalError(CommonStrings.errorUserIdIndexPathOfOrdersSelected)
-            }
+                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
             let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
             let finishOrder = FinishOrder(
                 userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
