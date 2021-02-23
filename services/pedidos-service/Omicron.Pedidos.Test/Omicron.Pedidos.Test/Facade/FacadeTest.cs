@@ -191,6 +191,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.RejectSalesOrders(It.IsAny<RejectOrdersModel>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.GetQfbOrdersByStatus(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -274,6 +278,29 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetFabOrderByUserID(ids);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetQfbOrdersByStatus()
+        {
+            // arrange
+            var status = "Asignado";
+            var iduser = "abc-cde";
+
+            // act
+            var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, iduser);
 
             // Assert
             Assert.IsNotNull(response);

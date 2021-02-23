@@ -189,6 +189,24 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task GetQfbOrdersByStatus()
+        {
+            // arrange
+            var status = "Asignado";
+            var iduser = "abc-cde";
+
+            // act
+            var response = await this.pedidosService.GetQfbOrdersByStatus(status, iduser);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task UpdateComponents()
         {
             // arrange
