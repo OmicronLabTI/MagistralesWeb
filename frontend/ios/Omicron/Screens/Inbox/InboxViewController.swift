@@ -30,38 +30,27 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var removeOrdersSelectedView: UIView!
     @IBOutlet weak var removeOrdersSelectedVerticalSpace: NSLayoutConstraint!
     var order = PublishSubject<Int>()
+
     // MARK: - Variables
-    private var bindingCollectionView = true
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
 
+    private var bindingCollectionView = true
     let disposeBag = DisposeBag()
     var productID = 0
     var indexPathsSelected: [IndexPath] = []
     var lastColor = UIColor.blue
+
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = StatusNameConstants.assignedStatus
-        self.collectionView.allowsMultipleSelection = true
-
+        collectionView.allowsMultipleSelection = true
         viewModelBinding()
-        self.initComponents()
-        collectionView.register(
-            UINib(
-                nibName: ViewControllerIdentifiers.cardCollectionViewCell,
-                bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
-        collectionView.register(
-            UINib(
-                nibName: ViewControllerIdentifiers.cardIsolatedOrderCollectionViewCell,
-                bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier)
-        collectionView.register(
-            UINib(
-                nibName: ViewControllerIdentifiers.headerCollectionViewCell,
-                bundle: nil),
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
+        initComponents()
+        extensionInitComponents()
+        registerCellsOfCollectionView()
         finishedButton.isHidden = true
         pendingButton.isHidden = true
         navigationItem.rightBarButtonItem = getOmniconLogo()
@@ -78,6 +67,7 @@ class InboxViewController: UIViewController {
         removeOrdersSelectedView.layer.cornerRadius = removeOrdersSelectedView.frame.width / 2
 
     }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
@@ -87,9 +77,29 @@ class InboxViewController: UIViewController {
             bindingCollectionView.toggle()
         }
     }
+
+    // MARK: - Functions
+    func registerCellsOfCollectionView() {
+        collectionView.register(
+            UINib(
+                nibName: ViewControllerIdentifiers.cardCollectionViewCell,
+                bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier)
+        collectionView.register(
+            UINib(
+                nibName: ViewControllerIdentifiers.cardIsolatedOrderCollectionViewCell,
+                bundle: nil), forCellWithReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier)
+        collectionView.register(
+            UINib(
+                nibName: ViewControllerIdentifiers.headerCollectionViewCell,
+                bundle: nil),
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
+    }
+
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
+
     func returnCardIsolateOrderCollectionViewCell(
         indexPath: IndexPath, element: SectionModel<String, Order>.Item,
         decimalPart: Double?) -> CardIsolatedOrderCollectionViewCell {
@@ -100,7 +110,8 @@ class InboxViewController: UIViewController {
         cell?.order = element
         cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            String(format: DecimalFormat.six.rawValue,
+                   NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
@@ -113,6 +124,7 @@ class InboxViewController: UIViewController {
         }
         return cell!
     }
+
     func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
                                       decimalPart: Double?) -> CardCollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
@@ -131,7 +143,8 @@ class InboxViewController: UIViewController {
             cell?.tagDescriptionLabel.textColor = .systemGreen
         }
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            String(format: DecimalFormat.six.rawValue,
+                   NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
@@ -144,6 +157,7 @@ class InboxViewController: UIViewController {
         }
         return cell!
     }
+
     func viewModelBindingCollectionView() {
         // Pinta las cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(
@@ -163,14 +177,15 @@ class InboxViewController: UIViewController {
             }
         })
         dataSource
-            .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath) -> UICollectionReusableView in
+            .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath)
+                -> UICollectionReusableView in
                 let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
                     for: indexPath) as? HeaderCollectionViewCell
                 let headerText = dataSource.sectionModels[indexPath.section].identity
                 header?.productID.text = headerText
-                if headerText.contains("Pedido") {
+                if headerText.contains(CommonStrings.orderTitile) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
@@ -188,7 +203,7 @@ class InboxViewController: UIViewController {
             .bind(to: collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
-    // MARK: - Functions
+
     func viewModelBinding() {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
@@ -258,7 +273,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.title
             .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
-            var message: String = ""
+            var message = String()
             if let orders = data.first {
                 if orders.items.count == 0 && statusId != -1 {
                     message = "No tienes órdenes \(title)"
@@ -278,14 +293,10 @@ class InboxViewController: UIViewController {
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                 self?.view.isUserInteractionEnabled = false
                 if data.typeOfStatus == StatusNameConstants.finishedStatus {
-                    // Primero se verifica si se pueden finalizar
                     self?.inboxViewModel.validOrders(indexPathOfOrdersSelected: self?.indexPathsSelected)
-//                    self?.inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
                 } else {
-                    // Si la respuesta es OK se cambiará a status pendiente, se mandan los index selecionados para cambiar el status
                     self?.inboxViewModel.changeStatus(
-                        indexPath: self?.indexPathsSelected,
-                        typeOfStatus: data.typeOfStatus)
+                        indexPath: self?.indexPathsSelected, typeOfStatus: data.typeOfStatus)
                 }
             })
             alert.addAction(cancelAction)
@@ -359,6 +370,8 @@ class InboxViewController: UIViewController {
             title: StatusNameConstants.inProcessStatus,
             color: OmicronColors.processStatus,
             titleColor: OmicronColors.processStatus)
+    }
+    func extensionInitComponents() {
         self.similarityViewButton.setTitle("", for: .normal)
         self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
         self.normalViewButton.setTitle("", for: .normal)

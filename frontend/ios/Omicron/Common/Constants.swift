@@ -172,6 +172,7 @@ struct CommonStrings {
     static let werehouseTitle = "Almacén: "
     static let werehouseProperty = "werehouse"
     static let saveChanges = "¿Deseas guardar los cambios ingresados?"
+    static let orderTitile = "Pedido"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -248,4 +249,5 @@ enum RegularExpresions: String {
 
 enum DecimalFormat: String {
     case zero = "%.0f"
+    case six = "%6f"
 }
