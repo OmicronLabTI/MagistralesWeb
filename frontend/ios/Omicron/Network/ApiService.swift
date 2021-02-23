@@ -79,7 +79,7 @@ extension ApiService: AuthorizedTargetType {
         case .getConnect:
             return "SapDiApi/connect"
         case .getMostCommonComponents:
-            return ""
+            return "/sapadapter/common/components"
         }
     }
     var method: Moya.Method {
