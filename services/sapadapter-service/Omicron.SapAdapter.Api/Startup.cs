@@ -34,9 +34,7 @@ namespace Omicron.SapAdapter.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
-
         private const string PedidoService = "http://pedidosservice/";
-
         private const string UserService = "http://usuariosservice/";
 
         /// <summary>

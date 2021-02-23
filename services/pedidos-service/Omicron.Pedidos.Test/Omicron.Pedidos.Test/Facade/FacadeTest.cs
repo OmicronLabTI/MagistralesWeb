@@ -159,6 +159,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetCustomComponentListByProductId(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
+            mockFormulasPedidosServices
+               .Setup(m => m.DeleteCustomComponentList(It.IsAny<Dictionary<string, string>>()))
+               .Returns(Task.FromResult(response));
+
             mockProductivityService
                 .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
@@ -620,7 +624,7 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             var updateBatches = new FinishOrderDto
             {
-                FabricationOrderId = 200,
+                FabricationOrderId = new List<int> { 200 },
                 TechnicalSignature = "signture",
                 QfbSignature = "asf",
                 UserId = "abc",
@@ -830,6 +834,24 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // act
             var response = await this.pedidoFacade.GetCustomComponentListByProductId(string.Empty);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task DeleteCustomComponentList()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.DeleteCustomComponentList(parameters);
 
             // Assert
             Assert.IsNotNull(response);

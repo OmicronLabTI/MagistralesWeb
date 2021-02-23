@@ -150,5 +150,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="customListIds">Te custom list ids.</param>
         /// <returns>Related components.</returns>
         Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(List<int> customListIds);
+
+        /// <summary>
+        /// Get all custom component lists for product id and name.
+        /// </summary>
+        /// <param name="productId">Te product id.</param>
+        /// <param name="name">Te name.</param>
+        /// <returns>Related lists.</returns>
+        Task<List<CustomComponentListModel>> GetCustomComponentListByProductAndName(string productId, string name);
+
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        Task<bool> DeleteCustomComponentList(CustomComponentListModel customComponentList);
+        
+        /// <summary>
+        /// Delete components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns>
+        Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components);
+        
     }
 }

@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// finish order model.
     /// </summary>
@@ -23,7 +25,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets fabrication order id.
         /// </summary>
         /// <value>The fabrication order id.</value>
-        public int FabricationOrderId { get; set; }
+        public List<int> FabricationOrderId { get; set; }
 
         /// <summary>
         /// Gets or sets the signature image on base 64.

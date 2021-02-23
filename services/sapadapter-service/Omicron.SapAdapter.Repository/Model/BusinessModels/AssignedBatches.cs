@@ -30,5 +30,11 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>The code.</value>
         public int SysNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int OrderFabId { get; set; }
     }
 }

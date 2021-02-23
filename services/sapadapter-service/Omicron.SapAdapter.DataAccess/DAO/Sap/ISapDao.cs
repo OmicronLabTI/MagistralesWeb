@@ -110,6 +110,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
 
         /// <summary>
+        /// gets the realtion between WOR1, OITM ans OITW.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(List<int> orderId);
+
+        /// <summary>
         /// Gets the formula by orders.
         /// </summary>
         /// <param name="ordersId">the orders.</param>
@@ -152,6 +159,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(int orderId);
 
         /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="orderId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(List<int> orderId);
+
+        /// <summary>
         /// Gets the item by code.
         /// </summary>
         /// <param name="itemCode">the item code.</param>
@@ -175,11 +189,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId);
 
         /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);
+
+        /// <summary>
         /// Gets the record from ITL1 by log entry.
         /// </summary>
         /// <param name="logEntry">the log entry.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry);
+        Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry);
 
         /// <summary>
         /// Get last id of isolated production order created.

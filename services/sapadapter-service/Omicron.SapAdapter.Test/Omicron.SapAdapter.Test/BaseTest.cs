@@ -145,6 +145,7 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchTransacitions>
             {
                 new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+                new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 2, DocNum = 200, DocQuantity = 10 },
             };
         }
 
@@ -157,6 +158,7 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesTransactionQtyModel>
             {
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 2, ItemCode = "Abc Aspirina", SysNumber = 1 },
             };
         }
 
