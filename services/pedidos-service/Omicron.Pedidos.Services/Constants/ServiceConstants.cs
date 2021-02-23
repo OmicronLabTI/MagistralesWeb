@@ -466,6 +466,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Personalizado = "Personalizada";
 
         /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string Name = "name";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string ProductId = "productId";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
