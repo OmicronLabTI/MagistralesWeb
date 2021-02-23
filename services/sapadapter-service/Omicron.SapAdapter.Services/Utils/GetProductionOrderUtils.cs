@@ -142,13 +142,17 @@ namespace Omicron.SapAdapter.Services.Utils
             var componentes = (await this.sapDao.GetComponentByBatches(ordersId)).ToList();
             var assignedBatches = (await this.sapDao.GetBatchesTransactionByOrderItem(ordersId)).ToList();
 
+            var componentIds = componentes.Select(x => $"{x.OrderFabId}-{x.ProductId}").ToList();
             assignedBatches.GroupBy(x => new { x.DocNum, x.ItemCode }).ToList().ForEach(x =>
             {
-                var lastTransaction = x.Any() ? x.OrderBy(y => y.LogEntry).Last(z => z.DocQuantity > 0) : null;
-
-                if (lastTransaction != null)
+                if (componentIds.Contains($"{x.Key.DocNum}-{x.Key.ItemCode}"))
                 {
-                    listTransaction.Add(lastTransaction.LogEntry);
+                    var lastTransaction = x.Any() ? x.OrderBy(y => y.LogEntry).Last(z => z.DocQuantity > 0) : null;
+
+                    if (lastTransaction != null)
+                    {
+                        listTransaction.Add(lastTransaction.LogEntry);
+                    }
                 }
             });
 
