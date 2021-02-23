@@ -300,7 +300,7 @@ class LotsViewModel {
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
 
-        networkManager.getValidateOrder(orderId: orderId)
+        networkManager.validateOrders(orderIDs: [orderId])
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -309,17 +309,12 @@ class LotsViewModel {
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
-                var messageConcat = ""
+                var messageConcat = String()
                 for error in errors {
                     if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat += "No es posible Terminar, faltan lotes para: "
-                        messageConcat += "\n"
-                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
-                        messageConcat += "\n\n"
+                        messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
                     } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat += "No es posible Terminar, falta existencia para: "
-                        messageConcat += "\n"
-                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                        messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
                     }
                 }
                 self.showMessage.onNext(messageConcat)

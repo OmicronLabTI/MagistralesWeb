@@ -54,6 +54,7 @@ class InboxViewModel {
     var disposeBag = DisposeBag()
     var ordersTemp: [Order] = []
     var sectionOrders: [SectionModel<String, Order>] = []
+    var indexPathOfOrdersSelected: [IndexPath]?
 
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -403,7 +404,7 @@ class InboxViewModel {
 
     }
 
-    func callFinishOrderService(indexPathOfOrdersSelected: [IndexPath]?) {
+    func callFinishOrderService() {
         if qfbSignatureIsGet && technicalSignatureIsGet {
             loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
@@ -414,21 +415,50 @@ class InboxViewModel {
             let finishOrder = FinishOrder(
                 userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
                 technicalSignature: technicalSignature)
-            loading.onNext(false)
-            isUserInteractionEnabled.onNext(true)
-            //self.refreshDataWhenChangeProcessIsSucces.onNext(())
-//            networkManager.finishOrder(order: finishOrder)
-//                .subscribe(onNext: { [weak self] _ in
-//                    self?.loading.onNext(false)
-//                    self?.isUserInteractionEnabled.onNext(true)
-//                    self?.refreshDataWhenChangeProcessIsSucces.onNext(())
-//                    // Checar que error se va a mandar desde back para las ordenes que no se pueden terminar
-//                }, onError: { [weak self] error in
-//                    self?.loading.onNext(false)
-//                    self?.showAlert.onNext(CommonStrings.errorFinishOrders)
-//                    fatalError(error.localizedDescription)
-//                }).disposed(by: disposeBag)
+            networkManager.finishOrder(order: finishOrder)
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.loading.onNext(false)
+                    self.isUserInteractionEnabled.onNext(true)
+                    self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                }, onError: { [weak self] error in
+                    guard let self = self else { return }
+                    self.loading.onNext(false)
+                    self.showAlert.onNext(CommonStrings.errorFinishOrders)
+                    fatalError(error.localizedDescription)
+                }).disposed(by: disposeBag)
         }
+    }
+
+    func validOrders(indexPathOfOrdersSelected: [IndexPath]?) {
+        loading.onNext(true)
+        self.indexPathOfOrdersSelected = indexPathOfOrdersSelected
+        guard let indexPathOfOrdersSelected = indexPathOfOrdersSelected else {
+            fatalError(CommonStrings.errorUserIdIndexPathOfOrdersSelected)
+        }
+        let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        networkManager.validateOrders(orderIDs: orderIds).subscribe(onNext: { [weak self] response in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            guard response.code == 400, !(response.success ?? false) else {
+                self.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
+                return
+            }
+            guard let errors = response.response, errors.count > 0 else { return }
+            var messageConcat = String()
+            for error in errors {
+                if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
+                    messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
+                } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
+                    messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                }
+            }
+            self.showAlert.onNext(messageConcat)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.showAlert.onNext(Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag)
     }
 
     func getFabOrderIDs(indexPathOfOrdersSelected: [IndexPath]) -> [Int] {

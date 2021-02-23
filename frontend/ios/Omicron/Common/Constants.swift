@@ -16,6 +16,9 @@ struct Constants {
         case errorSave = "Lo sentimos, ocurrió un error al guardar la información"
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
+        case editItemTable = "Hubo un error al editar el elemento,  intente de nuevo"
+        case validatingNumbers = "No se permite números negativos, caracteres o más de 6 decimas"
+        case emptyField = "El campo no puede ir vacio"
     }
     enum Tags: Int {
         case loading = 101
@@ -162,6 +165,15 @@ struct CommonStrings {
     static let errorPDF = "Por el momento no es posible mostrar el PDF del pedido, intenta más tarde"
     static let zero = "0"
     static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
+    static let changesSuccess = "Se registraron los cambios correctamente"
+    static let baseQtyTitle = "Cantidad base: "
+    static let baseQtyField = "baseQuantity"
+    static let reqQtyTitle = "Cantidad requerida: "
+    static let reqQtyField = "requiredQuantity"
+    static let werehouseTitle = "Almacén: "
+    static let werehouseProperty = "werehouse"
+    static let saveChanges = "¿Deseas guardar los cambios ingresados?"
+    static let orderTitile = "Pedido"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -222,4 +234,21 @@ struct URLRoot {
     static let qaServer = "http://201.163.179.28:8000/api"
     static let prodServer = "https://magistralesprod.omicronlab.com.mx/api"
     static let omicronServer = "http://172.30.5.49:5100/"
+}
+
+enum Actions: String {
+    case update = "update"
+}
+
+struct DateFormat {
+    static let yyyymmdd = "yyyy-MM-dd"
+}
+
+enum RegularExpresions: String {
+    case onlyNumbers = "^([0-9]+)?(\\.([0-9]{1,6})?)?$"
+}
+
+enum DecimalFormat: String {
+    case zero = "%.0f"
+    case six = "%6f"
 }

@@ -39,19 +39,19 @@ class NetworkManager: SessionProtocol {
     }
     private lazy var providerChoseed = MoyaProvider<ApiService>()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
-//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
-//        NetworkLoggerPlugin(
-//            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
-//    ])) {
-//        self.provider = provider
-//    }
-
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub, plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
+    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
+        NetworkLoggerPlugin(
+            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
     ])) {
         self.provider = provider
     }
+
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
+//    ])) {
+//        self.provider = provider
+//    }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
         let data = Renew(refresh_token: Persistence.shared.getLoginData()?.refreshToken ?? "")
@@ -149,8 +149,8 @@ class NetworkManager: SessionProtocol {
     }
 
     // Obtiene la carga de trabajo
-    func getValidateOrder(orderId: Int) -> Observable<ValidateOrderModel> {
-        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
+    func validateOrders(orderIDs: [Int]) -> Observable<ValidateOrderModel> {
+        let req: ApiService = ApiService.validateOrders(orderId: orderIDs)
         let res: Observable<ValidateOrderModel> = makeRequest(request: req)
         return res
     }

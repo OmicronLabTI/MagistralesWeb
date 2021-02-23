@@ -99,10 +99,11 @@ class Detail {
     var productID, detailDescription: String?
     var baseQuantity, requiredQuantity, pendingQuantity, stock, warehouseQuantity, consumed, available: Double?
     var unit, warehouse: String?
+    var hasBatches: Bool?
     init(orderFabID: Int, productID: String, detailDescription: String, baseQuantity: Double,
          requiredQuantity: Double, pendingQuantity: Double, stock: Double,
          warehouseQuantity: Double,
-         consumed: Double, available: Double, unit: String, warehouse: String) {
+         consumed: Double, available: Double, unit: String, warehouse: String, hasBatches: Bool) {
         self.orderFabID = orderFabID
         self.productID = productID
         self.detailDescription = detailDescription
@@ -115,6 +116,7 @@ class Detail {
         self.available = available
         self.unit = unit
         self.warehouse = warehouse
+        self.hasBatches = hasBatches
     }
     required init?(map: Map) { }
 }
@@ -132,6 +134,7 @@ extension Detail: Mappable {
         self.pendingQuantity <- map["pendingQuantity"]
         self.stock <- map["stock"]
         self.warehouseQuantity <- map["warehouseQuantity"]
+        self.hasBatches <- map["hasBatches"]
     }
 }
 class OrderDetailRequest: Codable {

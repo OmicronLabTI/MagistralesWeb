@@ -23,7 +23,7 @@ enum ApiService {
     case askIfOrderCanBeFinalized(orderId: Int)
     case getComponents(data: ComponentRequest)
     case getWorkload(data: WorkloadRequest)
-    case getValidateOrder(orderId: Int)
+    case validateOrders(orderId: [Int])
     case postOrdersPDF(orders: [Int])
     case getConnect
     case getMostCommonComponents
@@ -72,8 +72,8 @@ extension ApiService: AuthorizedTargetType {
             return "sapadapter/componentes"
         case .getWorkload:
             return "/pedidos/qfb/workload"
-        case .getValidateOrder(let orderId):
-            return "/sapadapter/validate/order/\(orderId)"
+        case .validateOrders:
+            return "/sapadapter/validate/order"
         case .postOrdersPDF:
             return "/pedidos/saleorder/pdf"
         case .getConnect:
@@ -87,7 +87,8 @@ extension ApiService: AuthorizedTargetType {
         case .login,
              .renew,
              .finishOrder,
-             .postOrdersPDF:
+             .postOrdersPDF,
+             .validateOrders:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -96,7 +97,6 @@ extension ApiService: AuthorizedTargetType {
              .askIfOrderCanBeFinalized,
              .getComponents,
              .getWorkload,
-             .getValidateOrder,
              .getConnect,
              .getMostCommonComponents:
             return .get
@@ -115,7 +115,6 @@ extension ApiService: AuthorizedTargetType {
              .getLots,
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
-             .getValidateOrder,
              .getConnect,
              .getMostCommonComponents:
             return .requestPlain
@@ -134,6 +133,8 @@ extension ApiService: AuthorizedTargetType {
         case .getWorkload(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .postOrdersPDF(let data):
+            return .requestJSONEncodable(data)
+        case .validateOrders(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -214,8 +215,8 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
 
-        case .getValidateOrder:
-            guard let url = Bundle.main.url(forResource: "getValidateOrder", withExtension: "json"),
+        case .validateOrders:
+            guard let url = Bundle.main.url(forResource: "ValidateOrders", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

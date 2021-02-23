@@ -72,6 +72,21 @@ class UtilsManager {
         formatter.numberStyle = .decimal
         return formatter
     }
+    func messageErrorWhenNoBatches(error: ValidateOrder) -> String {
+        var messageConcat = String()
+        messageConcat += "No es posible Terminar, faltan lotes para: "
+        messageConcat += "\n"
+        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+        messageConcat += "\n\n"
+        return messageConcat
+    }
+    func messageErrorWhenOutOfStock(error: ValidateOrder) -> String {
+        var messageConcat = String()
+        messageConcat += "No es posible Terminar, falta existencia para: "
+        messageConcat += "\n"
+        messageConcat += error.listItems?.joined(separator: ", ") ?? CommonStrings.empty
+        return messageConcat
+    }
 }
 open class DecimalTransform: TransformType {
     public typealias Object = Decimal

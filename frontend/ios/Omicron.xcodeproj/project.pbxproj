@@ -117,6 +117,10 @@
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
 		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
 		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
+		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
+		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
+		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
@@ -254,6 +258,8 @@
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
+		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
+		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
 		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
@@ -441,6 +447,7 @@
 			children = (
 				7C5C6DA024E8F46C00662508 /* OrderDetailFormViewController.swift */,
 				7C5C6DA224E8F48500662508 /* OrderDetailFormViewModel.swift */,
+				49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */,
 			);
 			path = OrderDetailForm;
 			sourceTree = "<group>";
@@ -616,6 +623,7 @@
 				7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */,
 				7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */,
 				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
+				4951104025E556E2007BE4DF /* ValidateOrders.json */,
 				4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */,
 			);
 			path = Mocks;
@@ -868,6 +876,7 @@
 				38554C6525DF2B70006F476B /* UserInfo.json in Resources */,
 				38554C6625DF2B70006F476B /* SF-Pro-Display-Light.ttf in Resources */,
 				38554C6725DF2B70006F476B /* requestChangeStatusProcess.json in Resources */,
+				4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				38554C6825DF2B70006F476B /* SF-Pro-Display-Regular.otf in Resources */,
 				38554C6925DF2B70006F476B /* orderDetail.json in Resources */,
 				38554C6A25DF2B70006F476B /* updateOrDeleteItemOfTable.json in Resources */,
@@ -901,6 +910,7 @@
 				7C980E0624E3245000D58A85 /* UserInfo.json in Resources */,
 				388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */,
 				7C56BE0224EDE9900039B2E7 /* requestChangeStatusProcess.json in Resources */,
+				4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
 				7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */,
@@ -1172,6 +1182,7 @@
 				38554C4B25DF2B70006F476B /* InboxModel.swift in Sources */,
 				38554C4C25DF2B70006F476B /* PDFViewController.swift in Sources */,
 				38554C4D25DF2B70006F476B /* SceneDelegate.swift in Sources */,
+				4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				38554C4E25DF2B70006F476B /* LotsAvailableTableViewCell.swift in Sources */,
 				38554C4F25DF2B70006F476B /* NetworkModel.swift in Sources */,
 				38554C5025DF2B70006F476B /* LotsModel.swift in Sources */,
@@ -1240,6 +1251,7 @@
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				1E83B0732534F34C00755026 /* PDFViewController.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
+				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
