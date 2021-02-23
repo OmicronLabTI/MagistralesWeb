@@ -47,7 +47,7 @@ namespace Omicron.Pedidos.Api.Controllers
             return this.Ok(response);
         }
 
-        /// <summary>
+        /// <summary>F
         /// planificar by order.
         /// </summary>
         /// <param name="processByOrder">process by order.</param>
@@ -395,6 +395,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetCustomComponentListByProductId([FromQuery]string productId)
         {
             var response = await this.pedidoFacade.GetCustomComponentListByProductId(productId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Delete custom components list.
+        /// </summary>
+        /// <param name="parameters">The custom list.</param>
+        /// <returns>Custom list.</returns>
+        [Route("/components/custom")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCustomComponentList([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.DeleteCustomComponentList(parameters);
             return this.Ok(response);
         }
 

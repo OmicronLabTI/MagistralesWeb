@@ -333,6 +333,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The user id.</param>
+        /// <returns>New custom list.</returns>
+        public async Task<ResultDto> DeleteCustomComponentList(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.formulaPedidosService.DeleteCustomComponentList(parameters));
+        }
+
+        /// <summary>
         /// Gets the workload.
         /// </summary>
         /// <param name="parameters">the filters.</param>

@@ -209,6 +209,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetCustomComponentListByProductId(string productId);
 
         /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        Task<ResultDto> DeleteCustomComponentList(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Gets the workload.
         /// </summary>
         /// <param name="parameters">the filters.</param>

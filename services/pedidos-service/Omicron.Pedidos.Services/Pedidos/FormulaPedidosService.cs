@@ -87,6 +87,35 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The user id.</param>
+        /// <returns>New custom list.</returns>
+        public async Task<ResultModel> DeleteCustomComponentList(Dictionary<string, string> parameters)
+        {
+            var name = parameters.ContainsKey(ServiceConstants.Name) ? parameters[ServiceConstants.Name] : string.Empty;
+            var productId = parameters.ContainsKey(ServiceConstants.ProductId) ? parameters[ServiceConstants.ProductId] : string.Empty;
+            CustomComponentListModel customComponList = new CustomComponentListModel();
+
+            customComponList = await this.GetCustomComponentListByProductAndName(productId, name);
+            if (customComponList.Id != 0)
+            {
+                var listTocustom = new List<int> { customComponList.Id };
+                List<ComponentCustomComponentListModel> customComponListComponent = new List<ComponentCustomComponentListModel>();
+                customComponListComponent = await this.pedidosDao.GetComponentsByCustomListId(listTocustom);
+                if (await this.pedidosDao.DeleteComponentsOfCustomList(customComponListComponent))
+                {
+                    if (await this.pedidosDao.DeleteCustomComponentList(customComponList))
+                    {
+                        return ServiceUtils.CreateResult(true, 200, null, customComponList.Id, null);
+                    }
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 300, ServiceConstants.ReasonUnexpectedError, 0, null);
+        }
+
+        /// <summary>
         /// Validate if custom list exist.
         /// </summary>
         /// <param name="customList">Custom list to validate.</param>
@@ -95,6 +124,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var customLists = await this.pedidosDao.GetCustomComponentListByProduct(customList.ProductId);
             return customLists.Any(x => x.Name.ToLower().Equals(customList.Name.ToLower()));
+        }
+
+        /// <summary>
+        /// Validate if custom list exist for with productId and name expecific.
+        /// </summary>
+        /// <param name="productId">Custom list to validate.</param>
+        /// <param name="name">Custom name to validate.</param>
+        /// <returns>Flag result.</returns>urns>
+        private async Task<CustomComponentListModel> GetCustomComponentListByProductAndName(string productId, string name)
+        {
+            var customLists = await this.pedidosDao.GetCustomComponentListByProductAndName(productId, name);
+            if (customLists.Any())
+            {
+               return customLists.FirstOrDefault();
+            }
+
+            return new CustomComponentListModel
+            {
+                Id = 0,
+                Name = string.Empty,
+                ProductId = string.Empty,
+                Components = null,
+                CreationUserId = string.Empty,
+                CreationDate = string.Empty,
+            };
         }
     }
 }

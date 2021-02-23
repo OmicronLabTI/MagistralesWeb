@@ -247,6 +247,41 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Get all custom component lists for product id and name.
+        /// </summary>
+        /// <param name="productId">Te product id.</param>
+        /// <param name="name">Te product id.</param>
+        /// <returns>Related lists.</returns>
+        public async Task<List<CustomComponentListModel>> GetCustomComponentListByProductAndName(string productId, string name)
+        {
+            return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId) && x.Name.Equals(name) ).ToListAsync();
+        }
+
+        /// <summary>
+        /// Delete components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns> 
+        public async Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components)
+        {
+            this.databaseContext.ComponentsCustomComponentLists.RemoveRange(components);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> DeleteCustomComponentList(CustomComponentListModel customComponentList)
+        {
+            this.databaseContext.CustomComponentLists.Remove(customComponentList);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
