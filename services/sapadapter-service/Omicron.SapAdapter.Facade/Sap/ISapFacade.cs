@@ -156,5 +156,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="kind">The kind to look.</param>
         /// <returns>the dict.</returns>
         Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind);
+
+        /// <summary>
+        /// Gets the most common components.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetMostCommonComponents();
     }
 }
