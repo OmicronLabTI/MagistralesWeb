@@ -43,6 +43,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
             Services.AddTransient<IRedisService, RedisService>();
+            Services.AddTransient<IComponentsService, ComponentsService>();
             return Services;
         }
 
