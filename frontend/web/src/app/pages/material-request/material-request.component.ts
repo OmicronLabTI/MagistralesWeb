@@ -140,9 +140,9 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     const newComponentsToSend = new RawRequestPost();
     this.setModelData();
     newComponentsToSend.data = this.oldData;
-    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds; // preguntarle a gus que si es que es libre la solicitud que le mando
-    newComponentsToSend.userId = this.dataService.getUserId();                     // porque al parecer si lo hacer pero solo para validar
-    console.log('requestToSend: ', newComponentsToSend)
+    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || []; // preguntarle a gus que si es que es libre la solicitud que le mando
+    newComponentsToSend.userId = this.dataService.getUserId();
+
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe( resultMaterialPost => {
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);

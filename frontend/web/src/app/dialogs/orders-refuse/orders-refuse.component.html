@@ -1,0 +1,24 @@
+<div class="refuse-comments-container">
+    <mat-card class="add-user-card">
+        <mat-card-header class="card-header-container border-none">
+            <mat-card-title ><span>Agregar comentarios</span>
+            </mat-card-title>
+            <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="comments-refuse-container">
+                    <textarea class="tex-area-refuse" cols="42" rows="8"
+                              maxlength="300"
+                              [(ngModel)]="commentsRefuse"
+                    >
+                        </textarea>
+            </div>
+        </mat-card-content>
+        <mat-card-actions class="options-refuse-container">
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
+            <button mat-button class="btn-add-modal btn--modal" (click)="saveCommentsResult()">
+                Guardar
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

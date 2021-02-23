@@ -32,7 +32,8 @@ import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Router} from '@angular/router';
-import {IOrdersRefuseReq, ReasonRefuse} from "../../model/http/detallepedidos.model";
+import {IOrdersRefuseReq, ReasonRefuse} from '../../model/http/detallepedidos.model';
+import {OrdersRefuseComponent} from '../../dialogs/orders-refuse/orders-refuse.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -72,7 +73,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
-    private router: Router
+    private router: Router,
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
     this.createInitRage();
@@ -190,8 +191,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               this.dataService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
-              this.getPedidos();
-              this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+              this.showMessagesAndRefresh();
             }
             this.dataService.setIsLoading(false);
           },
@@ -201,6 +201,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+  showMessagesAndRefresh() {
+      this.getPedidos();
+      this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
   }
   changeDataEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -368,32 +372,37 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
-                    this.confirmedToRefuse();
+                     this.showCommentsToRefuse();
                     // this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForClose: true});
                 }
             });
     }
-
-   /* successNewComments(newCommentsResult: CommentsConfig) {
-        console.log('comments to refuse', newCommentsResult.comments.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne));
-        // console.log('ordersToRefuse', this.getOrdersOnlyOpen())
-        // ready comments and orders to send on service after check service response to make message of orders to refuse failed
-    }*/
-    confirmedToRefuse() {
+    ordersToRefuseService(comments: string) {
         const ordersToRefuseReq = new IOrdersRefuseReq();
-        ordersToRefuseReq.comments = '';
+        ordersToRefuseReq.comments = comments;
         ordersToRefuseReq.userId = this.dataService.getUserId();
         ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
-        console.log('confirm refuse', ordersToRefuseReq);
 
         this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
             this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
     }
     successRefuseResult(failed: ReasonRefuse[]) {
         if (failed.length === CONST_NUMBER.zero) {
+            this.showMessagesAndRefresh();
             return;
         }
         this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
-                , 'info', CONST_STRING.empty, false, true, ClassNames.popupCustom);
+                , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
+        this.getPedidos();
+    }
+
+    showCommentsToRefuse() {
+        this.dialog.open(OrdersRefuseComponent, {
+            panelClass: 'custom-dialog-container',
+        }).afterClosed().subscribe(ordersRefuseResult => {
+            if (ordersRefuseResult.isOk) {
+                this.ordersToRefuseService(ordersRefuseResult.comments);
+            }
+        });
     }
 }
