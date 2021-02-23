@@ -16,7 +16,12 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {
+  IOrdersRefuseReq,
+  IPedidoDetalleLabelReq,
+  IPedidoDetalleListRes,
+  IPedidoRefuseRes
+} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -112,6 +117,8 @@ export class PedidosService {
   }
   getInitRangeDate() {
     return this.consumeService.httpGet<ICatalogRes>(`${Endpoints.pedidos.rangeDateInit}`);
-
+  }
+  putRefuseOrders(refuseOrdersReq: IOrdersRefuseReq) {
+    return this.consumeService.httpPut<IPedidoRefuseRes>(Endpoints.pedidos.refuseOrdersService, refuseOrdersReq);
   }
 }

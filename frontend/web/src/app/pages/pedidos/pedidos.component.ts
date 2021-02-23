@@ -32,6 +32,7 @@ import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Router} from '@angular/router';
+import {IOrdersRefuseReq, ReasonRefuse} from "../../model/http/detallepedidos.model";
 
 @Component({
   selector: 'app-pedidos',
@@ -367,9 +368,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
-                    console.log('confirm refuse');
+                    this.confirmedToRefuse();
                     // this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForClose: true});
-
                 }
             });
     }
@@ -379,4 +379,21 @@ export class PedidosComponent implements OnInit, OnDestroy {
         // console.log('ordersToRefuse', this.getOrdersOnlyOpen())
         // ready comments and orders to send on service after check service response to make message of orders to refuse failed
     }*/
+    confirmedToRefuse() {
+        const ordersToRefuseReq = new IOrdersRefuseReq();
+        ordersToRefuseReq.comments = '';
+        ordersToRefuseReq.userId = this.dataService.getUserId();
+        ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
+        console.log('confirm refuse', ordersToRefuseReq);
+
+        this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
+            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
+    }
+    successRefuseResult(failed: ReasonRefuse[]) {
+        if (failed.length === CONST_NUMBER.zero) {
+            return;
+        }
+        this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
+                , 'info', CONST_STRING.empty, false, true, ClassNames.popupCustom);
+    }
 }
