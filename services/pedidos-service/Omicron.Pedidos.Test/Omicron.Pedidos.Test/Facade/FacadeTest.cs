@@ -620,7 +620,7 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             var updateBatches = new FinishOrderDto
             {
-                FabricationOrderId = 200,
+                FabricationOrderId = new List<int> { 200 },
                 TechnicalSignature = "signture",
                 QfbSignature = "asf",
                 UserId = "abc",

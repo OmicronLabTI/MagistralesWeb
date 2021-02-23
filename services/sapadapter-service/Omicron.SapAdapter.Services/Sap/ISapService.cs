@@ -148,7 +148,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> ValidateOrder(int orderId);
+        Task<ResultModel> ValidateOrder(List<int> orderId);
 
         /// <summary>
         /// Gets the consecutive or previous.

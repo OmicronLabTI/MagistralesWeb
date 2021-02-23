@@ -84,6 +84,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapfileMock = new Mock<ISapFileService>();
             var configMock = new Mock<IConfiguration>();
+            this.reportingService = new Mock<IReportingService>();
 
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object);

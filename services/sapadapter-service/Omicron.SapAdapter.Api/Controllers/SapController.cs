@@ -317,13 +317,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the recipes by all orders id.
         /// </summary>
-        /// <param name="orderId">the order ids.</param>
+        /// <param name="ordersId">the order ids.</param>
         /// <returns>the data.</returns>
-        [Route("/validate/order/{orderId}")]
-        [HttpGet]
-        public async Task<IActionResult> ValidateOrder(int orderId)
+        [Route("/validate/order")]
+        [HttpPost]
+        public async Task<IActionResult> ValidateOrder(List<int> ordersId)
         {
-            var result = await this.sapFacade.ValidateOrder(orderId);
+            var result = await this.sapFacade.ValidateOrder(ordersId);
             return this.Ok(result);
         }
 

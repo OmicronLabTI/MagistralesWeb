@@ -354,7 +354,7 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task ValidateOrder()
         {
             // arrange
-            var orderId = 10;
+            var orderId = new List<int>();
 
             // act
             var response = await this.sapFacade.ValidateOrder(orderId);

@@ -388,7 +388,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var update = new FinishOrderModel
             {
-                FabricationOrderId = 100,
+                FabricationOrderId = new List<int> { 100 },
                 TechnicalSignature = "QXhpdHkyMDIw",
                 QfbSignature = "QXhpdHkyMDIw",
                 UserId = "abc",
@@ -427,7 +427,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var update = new FinishOrderModel
             {
-                FabricationOrderId = 101,
+                FabricationOrderId = new List<int> { 101 },
                 TechnicalSignature = "QXhpdHkyMDIw",
                 QfbSignature = "QXhpdHkyMDIw",
                 UserId = "abc",

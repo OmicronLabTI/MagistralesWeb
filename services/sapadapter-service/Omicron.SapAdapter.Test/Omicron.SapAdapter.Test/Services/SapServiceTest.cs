@@ -845,7 +845,7 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task ValidateOrder()
         {
             // arrange
-            var order = 200;
+            var order = new List<int> { 200 };
 
             // act
             var response = await this.sapService.ValidateOrder(order);
