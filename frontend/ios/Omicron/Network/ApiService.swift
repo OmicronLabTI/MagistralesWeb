@@ -98,7 +98,6 @@ extension ApiService: AuthorizedTargetType {
              .getComponents,
              .getWorkload,
              .getConnect,
-             .validateOrders,
              .getContainer:
             return .get
         case .deleteItemOfOrdenDetail,
@@ -116,7 +115,6 @@ extension ApiService: AuthorizedTargetType {
              .getLots,
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
-             .validateOrders,
              .getConnect,
              .getContainer:
             return .requestPlain
