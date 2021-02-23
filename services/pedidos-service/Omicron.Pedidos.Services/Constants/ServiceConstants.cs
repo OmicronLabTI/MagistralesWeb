@@ -475,7 +475,8 @@ namespace Omicron.Pedidos.Services.Constants
         /// </summary>
         public const string RedisComponents = "redisComponents";
 
-        /// Get users by id.
+        /// <summary>
+        /// the insert value.
         /// </summary>
         public const string Name = "name";
 
@@ -483,7 +484,6 @@ namespace Omicron.Pedidos.Services.Constants
         /// Get users by id.
         /// </summary>
         public const string ProductId = "productId";
-
 
         /// <summary>
         /// Gets the status of the order.
