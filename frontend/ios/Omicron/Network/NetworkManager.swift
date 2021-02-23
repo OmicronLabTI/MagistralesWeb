@@ -46,7 +46,7 @@ class NetworkManager: SessionProtocol {
     ])) {
         self.provider = provider
     }
-    
+
 //    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
 //        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
 //    ])) {

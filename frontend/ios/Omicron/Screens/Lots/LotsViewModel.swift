@@ -313,15 +313,8 @@ class LotsViewModel {
                 for error in errors {
                     if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
                         messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
-//                        messageConcat += "No es posible Terminar, faltan lotes para: "
-//                        messageConcat += "\n"
-//                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
-//                        messageConcat += "\n\n"
                     } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-//                        messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
-//                        messageConcat += "No es posible Terminar, falta existencia para: "
-//                        messageConcat += "\n"
-//                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                        messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
                     }
                 }
                 self.showMessage.onNext(messageConcat)

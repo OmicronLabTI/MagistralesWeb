@@ -22,13 +22,6 @@ extension InboxViewController {
         }).disposed(by: disposeBag)
     }
 
-    func finishOrders() {
-        inboxViewModel.finishOrders.subscribe(onNext: { [weak self] _ in
-            self?.inboxViewModel.callFinishOrderService(
-                indexPathOfOrdersSelected: self?.indexPathsSelected)
-        }).disposed(by: disposeBag)
-    }
-
     func isUserInteractionEnabledBinding() {
         inboxViewModel.isUserInteractionEnabled
             .bind(to: view.rx.isUserInteractionEnabled).disposed(by: disposeBag)

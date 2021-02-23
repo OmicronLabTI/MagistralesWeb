@@ -71,8 +71,8 @@ extension ApiService: AuthorizedTargetType {
             return "sapadapter/componentes"
         case .getWorkload:
             return "/pedidos/qfb/workload"
-        case .validateOrders(let orderId):
-            return "/sapadapter/validate/order/\(orderId)"
+        case .validateOrders:
+            return "/sapadapter/validate/order"
         case .postOrdersPDF:
             return "/pedidos/saleorder/pdf"
         case .getConnect:
@@ -111,7 +111,6 @@ extension ApiService: AuthorizedTargetType {
              .getLots,
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
-             .validateOrders,
              .getConnect:
             return .requestPlain
         case .renew(let data):
@@ -129,6 +128,8 @@ extension ApiService: AuthorizedTargetType {
         case .getWorkload(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .postOrdersPDF(let data):
+            return .requestJSONEncodable(data)
+        case .validateOrders(let data):
             return .requestJSONEncodable(data)
         }
     }
@@ -210,7 +211,7 @@ extension ApiService: AuthorizedTargetType {
             return data
 
         case .validateOrders:
-            guard let url = Bundle.main.url(forResource: "getValidateOrder", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "ValidateOrders", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

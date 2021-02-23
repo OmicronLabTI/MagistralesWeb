@@ -119,6 +119,8 @@
 		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
+		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
@@ -253,6 +255,7 @@
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
+		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -614,6 +617,7 @@
 				7C5DFB0B251C1B580041B2AC /* finishedOrderResponse.json */,
 				7C5DFB0D251C43C20041B2AC /* updateOrDeleteItemOfTable.json */,
 				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
+				4951104025E556E2007BE4DF /* ValidateOrders.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -864,6 +868,7 @@
 				38554C6525DF2B70006F476B /* UserInfo.json in Resources */,
 				38554C6625DF2B70006F476B /* SF-Pro-Display-Light.ttf in Resources */,
 				38554C6725DF2B70006F476B /* requestChangeStatusProcess.json in Resources */,
+				4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				38554C6825DF2B70006F476B /* SF-Pro-Display-Regular.otf in Resources */,
 				38554C6925DF2B70006F476B /* orderDetail.json in Resources */,
 				38554C6A25DF2B70006F476B /* updateOrDeleteItemOfTable.json in Resources */,
@@ -896,6 +901,7 @@
 				7C980E0624E3245000D58A85 /* UserInfo.json in Resources */,
 				388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */,
 				7C56BE0224EDE9900039B2E7 /* requestChangeStatusProcess.json in Resources */,
+				4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
 				7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */,

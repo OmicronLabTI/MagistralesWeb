@@ -78,7 +78,7 @@ class SignaturePadViewModel {
         case ViewControllerIdentifiers.inboxViewController:
             inboxVM.technicalSignatureIsGet = true
             inboxVM.technicalSignature = data.signature.toBase64() ?? CommonStrings.empty
-            inboxVM.finishOrders.onNext(())
+            inboxVM.callFinishOrderService()
         default:
             break
         }

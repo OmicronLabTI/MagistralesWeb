@@ -19,7 +19,7 @@ enum Environment {
 struct Config {
 
     #if DEVELOPMENT
-    static let baseUrl = URLRoot.qaServer
+    static let baseUrl = URLRoot.devServer
     #else
     static let baseUrl = URLRoot.prodServer
     #endif

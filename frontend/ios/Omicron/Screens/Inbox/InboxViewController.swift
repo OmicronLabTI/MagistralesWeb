@@ -220,7 +220,6 @@ class InboxViewController: UIViewController {
         self.modelBindingExtension2()
         self.modelBindingExtension3()
         self.showSignatureVC()
-        self.finishOrders()
         isUserInteractionEnabledBinding()
     }
     func modelBindingExtention1() {
@@ -280,7 +279,8 @@ class InboxViewController: UIViewController {
                 self?.view.isUserInteractionEnabled = false
                 if data.typeOfStatus == StatusNameConstants.finishedStatus {
                     // Primero se verifica si se pueden finalizar
-                    self?.inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
+                    self?.inboxViewModel.validOrders(indexPathOfOrdersSelected: self?.indexPathsSelected)
+//                    self?.inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
                 } else {
                     // Si la respuesta es OK se cambiará a status pendiente, se mandan los index selecionados para cambiar el status
                     self?.inboxViewModel.changeStatus(
