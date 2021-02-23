@@ -28,6 +28,16 @@
 		1EF03220251932DA0040DC65 /* Workload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF0321F251932DA0040DC65 /* Workload.swift */; };
 		1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF032212519388C0040DC65 /* ChartViewModel.swift */; };
 		381B3BC325E01F2F0077F764 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
+		381B3BCA25E0315E0077F764 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BC925E0315E0077F764 /* ContainerViewController.swift */; };
+		381B3BCB25E0315E0077F764 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BC925E0315E0077F764 /* ContainerViewController.swift */; };
+		381B3BD525E0316B0077F764 /* ContainerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BD425E0316B0077F764 /* ContainerViewModel.swift */; };
+		381B3BD625E0316B0077F764 /* ContainerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BD425E0316B0077F764 /* ContainerViewModel.swift */; };
+		381B3BDC25E032460077F764 /* container.json in Resources */ = {isa = PBXBuildFile; fileRef = 381B3BDB25E032460077F764 /* container.json */; };
+		381B3BDD25E032460077F764 /* container.json in Resources */ = {isa = PBXBuildFile; fileRef = 381B3BDB25E032460077F764 /* container.json */; };
+		381B3BE725E032B40077F764 /* ContainerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BE625E032B40077F764 /* ContainerModel.swift */; };
+		381B3BE825E032B40077F764 /* ContainerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BE625E032B40077F764 /* ContainerModel.swift */; };
+		381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */; };
+		381B3BF325E034B80077F764 /* ContainerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */; };
 		38554C1C25DF2B70006F476B /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		38554C1D25DF2B70006F476B /* LotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */; };
 		38554C1E25DF2B70006F476B /* ConnectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */; };
@@ -247,6 +257,11 @@
 		1EF032212519388C0040DC65 /* ChartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewModel.swift; sourceTree = "<group>"; };
 		2CB66FAA4E49873A00418BE5 /* Pods-Omicron.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.release.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.release.xcconfig"; sourceTree = "<group>"; };
 		35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		381B3BC925E0315E0077F764 /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
+		381B3BD425E0316B0077F764 /* ContainerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewModel.swift; sourceTree = "<group>"; };
+		381B3BDB25E032460077F764 /* container.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = container.json; sourceTree = "<group>"; };
+		381B3BE625E032B40077F764 /* ContainerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerModel.swift; sourceTree = "<group>"; };
+		381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
 		38554C7825DF2B70006F476B /* Omicron QA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Omicron QA.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		38554C7925DF2B70006F476B /* Omicron copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Omicron copy-Info.plist"; path = "/Users/vicentesiis/Documents/iOS/app-ios-formulas/frontend/ios/Omicron copy-Info.plist"; sourceTree = "<absolute>"; };
 		38554C8225DF2BAC006F476B /* Info-QA.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-QA.plist"; sourceTree = "<group>"; };
@@ -390,6 +405,17 @@
 				1EF0321F251932DA0040DC65 /* Workload.swift */,
 			);
 			path = Chart;
+			sourceTree = "<group>";
+		};
+		381B3BC825E031390077F764 /* Container */ = {
+			isa = PBXGroup;
+			children = (
+				381B3BC925E0315E0077F764 /* ContainerViewController.swift */,
+				381B3BD425E0316B0077F764 /* ContainerViewModel.swift */,
+				381B3BE625E032B40077F764 /* ContainerModel.swift */,
+				381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */,
+			);
+			path = Container;
 			sourceTree = "<group>";
 		};
 		71F4FDF4DE06818D4C96C7A4 /* Pods */ = {
@@ -605,6 +631,7 @@
 			isa = PBXGroup;
 			children = (
 				1EC2920A254B4C9F002FD4E3 /* connect.json */,
+				381B3BDB25E032460077F764 /* container.json */,
 				1EF0321D251931B30040DC65 /* workload.json */,
 				980F234224DA11900073E2C8 /* refresh_token.json */,
 				980F234424DA11AE0073E2C8 /* login.json */,
@@ -676,6 +703,7 @@
 		98C8C03624AFCB9800018A88 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				381B3BC825E031390077F764 /* Container */,
 				1EF03223251938970040DC65 /* Chart */,
 				987BDFDE2509867200D9C6E4 /* Components */,
 				7CF2EA3624F6C5DD0005602F /* SignaturePad */,
@@ -871,6 +899,7 @@
 				4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				38554C6825DF2B70006F476B /* SF-Pro-Display-Regular.otf in Resources */,
 				38554C6925DF2B70006F476B /* orderDetail.json in Resources */,
+				381B3BDD25E032460077F764 /* container.json in Resources */,
 				38554C6A25DF2B70006F476B /* updateOrDeleteItemOfTable.json in Resources */,
 				38554C6B25DF2B70006F476B /* HeaderCollectionViewCell.xib in Resources */,
 				38554C6C25DF2B70006F476B /* Status.json in Resources */,
@@ -904,6 +933,7 @@
 				4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
+				381B3BDC25E032460077F764 /* container.json in Resources */,
 				7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */,
 				1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */,
 				7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */,
@@ -1150,6 +1180,7 @@
 				38554C3625DF2B70006F476B /* LotsSelectedTableViewCell.swift in Sources */,
 				38554C3725DF2B70006F476B /* ComponentsViewModel.swift in Sources */,
 				38554C3825DF2B70006F476B /* LotsViewController.swift in Sources */,
+				381B3BF325E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
 				38554C3925DF2B70006F476B /* ExtensionsUI.swift in Sources */,
 				38554C3A25DF2B70006F476B /* SplitViewController.swift in Sources */,
 				38554C3B25DF2B70006F476B /* ComponentsModel.swift in Sources */,
@@ -1161,8 +1192,10 @@
 				38554C4125DF2B70006F476B /* ChartViewModel.swift in Sources */,
 				38554C4225DF2B70006F476B /* OrderDetailFormViewModel.swift in Sources */,
 				38554C4325DF2B70006F476B /* OrderPDF.swift in Sources */,
+				381B3BCB25E0315E0077F764 /* ContainerViewController.swift in Sources */,
 				38554C4425DF2B70006F476B /* Persistence.swift in Sources */,
 				38554C4525DF2B70006F476B /* SignaturePadViewController.swift in Sources */,
+				381B3BE825E032B40077F764 /* ContainerModel.swift in Sources */,
 				38554C4625DF2B70006F476B /* RootViewController.swift in Sources */,
 				38554C4725DF2B70006F476B /* CommentsViewController.swift in Sources */,
 				38554C4825DF2B70006F476B /* InboxViewController.swift in Sources */,
@@ -1173,6 +1206,7 @@
 				38554C4D25DF2B70006F476B /* SceneDelegate.swift in Sources */,
 				4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				38554C4E25DF2B70006F476B /* LotsAvailableTableViewCell.swift in Sources */,
+				381B3BD625E0316B0077F764 /* ContainerViewModel.swift in Sources */,
 				38554C4F25DF2B70006F476B /* NetworkModel.swift in Sources */,
 				38554C5025DF2B70006F476B /* LotsModel.swift in Sources */,
 				381B3BC325E01F2F0077F764 /* ExtensionInboxViewController.swift in Sources */,
@@ -1218,6 +1252,7 @@
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
+				381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
 				7C844BB224D3BA5800D26B96 /* SplitViewController.swift in Sources */,
 				987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */,
@@ -1229,8 +1264,10 @@
 				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
 				7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */,
 				1E9674AF254338A40004344C /* OrderPDF.swift in Sources */,
+				381B3BCA25E0315E0077F764 /* ContainerViewController.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */,
+				381B3BE725E032B40077F764 /* ContainerModel.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
@@ -1241,6 +1278,7 @@
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
+				381B3BD525E0316B0077F764 /* ContainerViewModel.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,
 				49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */,

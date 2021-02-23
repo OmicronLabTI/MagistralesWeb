@@ -163,6 +163,13 @@ class NetworkManager: SessionProtocol {
         return res
     }
 
+    // Obtiene los envases requeridos para los pedidos asignados
+    func getContainer() -> Observable<ContainerResponse> {
+        let req: ApiService = ApiService.getContainer
+        let res: Observable<ContainerResponse> = makeRequest(request: req)
+        return res
+    }
+
     private func makeRequest<T: BaseMappable>(request: ApiService, needsVPN: Bool = false) -> Observable<T> {
         providerChoseed = provider
         if needsVPN { providerChoseed = MoyaProvider<ApiService>(requestClosure: requestTimeoutClosure) }

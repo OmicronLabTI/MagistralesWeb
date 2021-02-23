@@ -26,6 +26,7 @@ enum ApiService {
     case validateOrders(orderId: [Int])
     case postOrdersPDF(orders: [Int])
     case getConnect
+    case getContainer
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -77,6 +78,8 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/saleorder/pdf"
         case .getConnect:
             return "SapDiApi/connect"
+        case .getContainer:
+            return ""
         }
     }
     var method: Moya.Method {
@@ -94,7 +97,9 @@ extension ApiService: AuthorizedTargetType {
              .askIfOrderCanBeFinalized,
              .getComponents,
              .getWorkload,
-             .getConnect:
+             .getConnect,
+             .validateOrders,
+             .getContainer:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -111,7 +116,9 @@ extension ApiService: AuthorizedTargetType {
              .getLots,
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
-             .getConnect:
+             .validateOrders,
+             .getConnect,
+             .getContainer:
             return .requestPlain
         case .renew(let data):
             return .requestJSONEncodable(data)
@@ -224,6 +231,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getConnect:
             guard let url = Bundle.main.url(forResource: "connect", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getContainer:
+            guard let url = Bundle.main.url(forResource: "container", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
