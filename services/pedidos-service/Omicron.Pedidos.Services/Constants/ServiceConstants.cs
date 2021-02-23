@@ -466,6 +466,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Personalizado = "Personalizada";
 
         /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string Insert = "insert";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponents = "redisComponents";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -518,6 +528,18 @@ namespace Omicron.Pedidos.Services.Constants
             Finalizado,
             Reasignado,
             Entregado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ListComponentsMostAssigned { get; } = new List<string>
+        {
+            "EN",
+            "EM",
         };
     }
 }
