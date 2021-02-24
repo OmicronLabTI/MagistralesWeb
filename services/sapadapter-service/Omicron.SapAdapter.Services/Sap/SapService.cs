@@ -633,7 +633,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var componentes = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
             componentes.ForEach(x =>
             {
-                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
+                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity > x.WarehouseQuantity)
                 {
                     listErrorStock.ListItems.Add($"{x.OrderFabId}-{x.ProductId}");
                 }
