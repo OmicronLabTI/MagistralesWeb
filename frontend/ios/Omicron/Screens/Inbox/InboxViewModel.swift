@@ -147,7 +147,7 @@ class InboxViewModel {
         }).disposed(by: disposeBag)
     }
 
-    private func postOrderPDf(orders: [Int]) {
+    func postOrderPDf(orders: [Int]) {
         networkManager.postOrdersPDF(orders: orders).subscribe(onNext: { [weak self] response in
             guard let self = self, response.response?.count ?? 0 > 0 else { return }
             self.loading.onNext(false)
@@ -431,9 +431,7 @@ class InboxViewModel {
     func validOrders(indexPathOfOrdersSelected: [IndexPath]?) {
         loading.onNext(true)
         self.indexPathOfOrdersSelected = indexPathOfOrdersSelected
-        guard let indexPathOfOrdersSelected = indexPathOfOrdersSelected else {
-            fatalError(CommonStrings.errorUserIdIndexPathOfOrdersSelected)
-        }
+        guard let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
         let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
         networkManager.validateOrders(orderIDs: orderIds).subscribe(onNext: { [weak self] response in
             guard let self = self else { return }

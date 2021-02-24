@@ -222,7 +222,7 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
         case .postOrdersPDF:
-            guard let url = Bundle.main.url(forResource: "order_pdf", withExtension: "json"),
+            guard let url = Bundle.main.url(forResource: "PostOrderPDF", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

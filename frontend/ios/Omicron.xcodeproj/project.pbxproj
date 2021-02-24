@@ -125,6 +125,9 @@
 		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */; };
+		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
+		49C082C525E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
 		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
@@ -262,6 +265,8 @@
 		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
+		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
+		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -594,6 +599,7 @@
 				1E72B27F251B9C46009F56FC /* CommentsTest.swift */,
 				7C5DFB15251C82740041B2AC /* BatchTest.swift */,
 				7C5DFB19251D50920041B2AC /* OrderDetailFormTest.swift */,
+				49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */,
 			);
 			path = OmicronTests;
 			sourceTree = "<group>";
@@ -625,6 +631,7 @@
 				7C5DFB11251C7DFE0041B2AC /* assingBatchesResponse.json */,
 				4951104025E556E2007BE4DF /* ValidateOrders.json */,
 				4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */,
+				49C082C325E5C193000ED4FA /* PostOrderPDF.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -884,6 +891,7 @@
 				38554C6B25DF2B70006F476B /* HeaderCollectionViewCell.xib in Resources */,
 				38554C6C25DF2B70006F476B /* Status.json in Resources */,
 				38554C6D25DF2B70006F476B /* login.json in Resources */,
+				49C082C525E5C193000ED4FA /* PostOrderPDF.json in Resources */,
 				38554C6E25DF2B70006F476B /* Main.storyboard in Resources */,
 				38554C6F25DF2B70006F476B /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				38554C7025DF2B70006F476B /* assingBatchesResponse.json in Resources */,
@@ -918,6 +926,7 @@
 				1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */,
 				7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */,
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
+				49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
@@ -1282,6 +1291,7 @@
 				7C56BDFC24EDD6720039B2E7 /* UtilsTest.swift in Sources */,
 				7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */,
 				1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */,
+				49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */,
 				7C56BDFA24EDCF6D0039B2E7 /* OrderDetailTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
