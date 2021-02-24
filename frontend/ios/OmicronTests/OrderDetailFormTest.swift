@@ -58,4 +58,10 @@ class OrderDetailFormTest: XCTestCase {
         self.orderDetailFormViewModel!
             .editItemTable(index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
     }
+
+    func testEditItemOfTableUpdateWhenDataIsEmpty() {
+        let data = OrderDetail()
+        orderDetailFormViewModel?.editItemTable(
+            index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
+    }
 }

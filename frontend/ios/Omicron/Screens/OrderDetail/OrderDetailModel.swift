@@ -33,6 +33,7 @@ class OrderDetail {
     var realEndDate, productLabel, container, comments: String?
     var isChecked: Bool?
     var details: [Detail]?
+    init() { }
     init(productionOrderID: Int, code: String, productDescription: String, type: String,
          status: String, plannedQuantity: Decimal, unit: String, warehouse: String,
          number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String,
