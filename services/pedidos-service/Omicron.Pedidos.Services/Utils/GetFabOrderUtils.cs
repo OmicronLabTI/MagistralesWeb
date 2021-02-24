@@ -31,6 +31,14 @@ namespace Omicron.Pedidos.Services.Utils
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
+
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                docNumEnd += 1;
+                var listIdString = new List<string>();
+                Enumerable.Range(docNumInit, docNumEnd - docNumInit).ToList().ForEach(x => listIdString.Add(x.ToString()));
+
                 return (await pedidosDao.GetUserOrderByProducionOrder(new List<string> { parameters[ServiceConstants.DocNum] })).ToList();
             }
 

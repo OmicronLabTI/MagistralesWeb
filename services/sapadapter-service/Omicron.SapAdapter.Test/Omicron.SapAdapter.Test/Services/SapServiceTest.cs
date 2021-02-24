@@ -728,7 +728,7 @@ namespace Omicron.SapAdapter.Test.Services
                 OrdersId = new List<int> { 120 },
                 Filters = new Dictionary<string, string>
                 {
-                    { ServiceConstants.DocNum, "100" },
+                    { ServiceConstants.DocNum, "100-100" },
                 },
             };
 
