@@ -136,18 +136,24 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
-                var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
 
-                if (ordersById == null)
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                var ordersById = orderModels.Where(x => x.DocNum >= docNumInit && x.DocNum <= docNumEnd).ToList();
+
+                if (!ordersById.Any())
                 {
                     return new List<CompleteOrderModel>();
                 }
 
-                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
-                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                ordersById.ForEach(x =>
+                {
+                    var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                    x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                });
 
-                return new List<CompleteOrderModel> { ordersById };
+                return ordersById;
             }
 
             if (parameters.ContainsKey(ServiceConstants.Status))

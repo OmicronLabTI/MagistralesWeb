@@ -695,8 +695,11 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                return (await this.sapDao.GetAllOrdersById(docNum)).ToList();
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
+
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                return (await this.sapDao.GetAllOrdersById(docNumInit, docNumEnd)).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.FechaInicio))
