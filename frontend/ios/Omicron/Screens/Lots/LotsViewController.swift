@@ -260,6 +260,19 @@ class LotsViewController: UIViewController {
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
         }.disposed(by: self.disposeBag)
+
+        lotsAvailablesTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.addLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)
+        lotsSelectedTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.removeLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)
+        lotsViewModel.enableAddButton.bind(to: addLotButton.rx.isEnabled).disposed(by: disposeBag)
+        lotsViewModel.enableRemoveButton.bind(to: removeLotButton.rx.isEnabled).disposed(by: disposeBag)
     }
     func modelViewBindingExtension4() {
         // Muestra un AlertMessage
@@ -308,6 +321,8 @@ class LotsViewController: UIViewController {
         self.lineDocTable.tableFooterView = UIView()
         self.lotsAvailablesTable.tableFooterView = UIView()
         self.lotsSelectedTable.tableFooterView = UIView()
+        addLotButton.isEnabled = false
+        removeLotButton.isEnabled = false
         if self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending {
             self.addLotButton.isEnabled = false
             self.removeLotButton.isEnabled = false

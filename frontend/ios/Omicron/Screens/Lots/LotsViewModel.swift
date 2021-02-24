@@ -43,6 +43,8 @@ class LotsViewModel {
     var pendingButtonDidTap = PublishSubject<Void>()
     var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
     var changeColorLabels = PublishSubject<Void>()
+    var enableAddButton = PublishSubject<Bool>()
+    var enableRemoveButton = PublishSubject<Bool>()
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -70,6 +72,7 @@ class LotsViewModel {
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in
             self?.availableSelected.onNext(nil)
+            self?.enableAddButton.onNext(false)
             guard let product = productSelected else { return }
             guard let available = availableSelected else { return }
             guard let doc = self?.documentLines
@@ -124,6 +127,7 @@ class LotsViewModel {
     func removeLotAction() {
         let inputsRemove = Observable.combineLatest(productSelected, batchSelected)
         self.removeLotDidTap.withLatestFrom(inputsRemove).subscribe(onNext: { [weak self] document, batch in
+            self?.enableRemoveButton.onNext(false)
             if let existing = self?.selectedBatches.first(where: { batchItem in
                 return batchItem.batchNumber == batch?.numeroLote
             }) {
