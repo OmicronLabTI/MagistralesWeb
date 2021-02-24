@@ -692,7 +692,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>List.</returns>
         public async Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId)
         {
-            var packaginList = new List<object>();
+            var packaginList = new List<PackingRequiredModel>();
             var resultOrders = await this.pedidosService.GetPedidosService(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
             var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => x.ItemCode.Contains("EN") || x.ItemCode.Contains("EM")).ToList();

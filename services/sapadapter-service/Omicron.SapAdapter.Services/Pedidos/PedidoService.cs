@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// clase de pedido Service.
@@ -71,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    throw new System.Exception();
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
                 }
 
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
