@@ -17,6 +17,7 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var tagsView: TagListView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var labelNoResults: UILabel!
+    @IBOutlet weak var noResultsLabel: UILabel!
     @IBOutlet weak var mostCommontTableView: UITableView!
     @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
@@ -72,6 +73,9 @@ class ComponentsViewController: UIViewController {
         self.componentsViewModel.dataResults.map({ data -> Bool in
             return data.count > 0
         }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)
+        componentsViewModel.bindingData.map({ data -> Bool in
+            return data.count > 0
+        }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
     }
     func initComponents() {
         self.title = CommonStrings.addComponentTitle
