@@ -19,6 +19,14 @@ namespace Omicron.Reporting.Dtos.Model
         /// <value>
         /// String FirstName.
         /// </value>
+        public string CustomerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Email.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
         public string DestinyEmail { get; set; }
 
         /// <summary>
