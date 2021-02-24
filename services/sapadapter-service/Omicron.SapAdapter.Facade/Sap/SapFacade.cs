@@ -228,5 +228,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters, kind));
         }
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        public async Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId));
+        }
     }
 }

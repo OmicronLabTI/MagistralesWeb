@@ -54,5 +54,30 @@ namespace Omicron.SapAdapter.Services.Pedidos
 
             return result;
         }
+
+        /// <summary>
+        /// Makes a get to pedidos service.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetPedidosService(string route)
+        {
+            ResultDto result;
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new System.Exception();
+                }
+
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
     }
 }

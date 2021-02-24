@@ -126,6 +126,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Terminado = "Terminado";
 
         /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string Asignado = "Asignado";
+
+        /// <summary>
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
@@ -134,6 +139,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// route to get the user fab order.
         /// </summary>
         public const string GetUserOrders = "getUserOrder/fabOrder";
+
+        /// <summary>
+        /// route to get the user fab order.
+        /// </summary>
+        public const string GetOrdersByStatusAndUserId = "qfbOrders/{0}/{1}";
 
         /// <summary>
         /// Get users by id.
