@@ -117,4 +117,14 @@ class ComponetsTest: XCTestCase {
         }).disposed(by: self.disposeBag!)
         componentsViewModel?.searchDidTap.onNext(())
     }
+    func testRemoveChip() {
+        componentsViewModel?.dataChips.subscribe(onNext: { res in
+            if res.count == 2 {
+                XCTAssertEqual(res[0], "Ivermectina")
+                XCTAssertEqual(res[1], "Exicpiente")
+            }
+        }).disposed(by: disposeBag!)
+        componentsViewModel?.dataChips.onNext(["Crema", "Ivermectina", "Exicpiente"])
+        componentsViewModel?.removeChip.onNext("Crema")
+    }
 }
