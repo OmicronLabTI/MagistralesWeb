@@ -145,11 +145,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                           join salesPerson in this.databaseContext.SalesPersonModel on order.AsesorId equals salesPerson.AsesorId
                           select new SalesAsesorModel
                           {                              
-                              AsesorId = salesPerson.AsesorId,
-                              FirstName = salesPerson.FirstName,
-                              LastName = salesPerson.LastName,
                               Email = string.IsNullOrEmpty(salesPerson.Email) ? string.Empty : salesPerson.Email, 
-                              OrderId = order.PedidoId
+                              OrderId = order.PedidoId,
+                              Cliente = order.Cliente
                           });
 
             return await this.RetryQuery<SalesAsesorModel>(query);
