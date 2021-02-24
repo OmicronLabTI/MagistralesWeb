@@ -20,6 +20,34 @@
                ReferencedContainer = "container:Omicron.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "98015CC124AFBC6D00E7772F"
+               BuildableName = "OmicronTests.xctest"
+               BlueprintName = "OmicronTests"
+               ReferencedContainer = "container:Omicron.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "98015CCC24AFBC6D00E7772F"
+               BuildableName = "OmicronUITests.xctest"
+               BlueprintName = "OmicronUITests"
+               ReferencedContainer = "container:Omicron.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -29,6 +57,26 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "98015CC124AFBC6D00E7772F"
+               BuildableName = "OmicronTests.xctest"
+               BlueprintName = "OmicronTests"
+               ReferencedContainer = "container:Omicron.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "98015CCC24AFBC6D00E7772F"
+               BuildableName = "OmicronUITests.xctest"
+               BlueprintName = "OmicronUITests"
+               ReferencedContainer = "container:Omicron.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
