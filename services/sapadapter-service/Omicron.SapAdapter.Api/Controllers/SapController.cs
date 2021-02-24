@@ -83,6 +83,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        [Route("/orders/packingRequired/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Obtiene las formulas de la orden de fabricacion.
         /// </summary>
         /// <param name="ordenId">the order id.</param>
