@@ -59,11 +59,11 @@ class InboxViewController: UIViewController {
         lpgr.minimumPressDuration = 0.5
         lpgr.delaysTouchesBegan = true
         self.collectionView.addGestureRecognizer(lpgr)
-        let tapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(InboxViewController.tappedPressed(gesture:))
-        )
-        self.collectionView.addGestureRecognizer(tapGestureRecognizer)
+//        let tapGestureRecognizer = UITapGestureRecognizer(
+//            target: self,
+//            action: #selector(InboxViewController.tappedPressed(gesture:))
+//        )
+//        self.view.addGestureRecognizer(tapGestureRecognizer)
         removeOrdersSelectedView.layer.cornerRadius = removeOrdersSelectedView.frame.width / 2
 
     }
@@ -330,6 +330,7 @@ class InboxViewController: UIViewController {
             self.cardsView.isHidden = show
         }).disposed(by: disposeBag)
     }
+    // swiftlint:disable cyclomatic_complexity
     func modelBindingExtension3() {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -350,6 +351,30 @@ class InboxViewController: UIViewController {
                 guard let self = self else { return }
                 if hasConnection { self.order.onNext(self.productID) }
             }).disposed(by: disposeBag)
+
+        collectionView.rx.itemSelected.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self = self else { return }
+                guard self.indexPathsSelected.count > 0 else {
+                    let orders = self.inboxViewModel.sectionOrders
+                    let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
+                    guard let order = orderOptional else { return }
+                    self.detailTapped(order: order)
+                    return
+                }
+                self.updateCellWithIndexPath(indexPath)
+        }).disposed(by: self.disposeBag)
+        collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] indexPath in
+            guard let self = self else { return }
+            guard self.indexPathsSelected.count > 0 else {
+                let orders = self.inboxViewModel.sectionOrders
+                let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
+                guard let order = orderOptional else { return }
+                self.detailTapped(order: order)
+                return
+            }
+            self.updateCellWithIndexPath(indexPath)
+        }).disposed(by: disposeBag)
     }
     func initComponents() {
         self.processButton.isEnabled = false
@@ -489,44 +514,16 @@ class InboxViewController: UIViewController {
         let position = gesture.location(in: self.collectionView)
 
         if let indexPath = self.collectionView.indexPathForItem(at: position) {
-            DispatchQueue.main.async {
-                self.updateCellWithIndexPath(indexPath)
-            }
+            self.updateCellWithIndexPath(indexPath)
         }
-    }
-
-    @objc func tappedPressed(gesture: UITapGestureRecognizer!) {
-
-        let position = gesture.location(in: self.collectionView)
-        if let indexPath = self.collectionView.indexPathForItem(at: position) {
-            if indexPathsSelected.count > 0 {
-                DispatchQueue.main.async {
-                    self.updateCellWithIndexPath(indexPath)
-                }
-            } else {
-                let orders = self.inboxViewModel.sectionOrders
-                let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
-                guard let order = orderOptional else { return }
-                self.detailTapped(order: order)
-            }
-        }
-
     }
 
     func updateCellWithIndexPath(_ indexPath: IndexPath) {
 
-        if let cell = self.collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
-            if indexPathsSelected.contains(indexPath) {
-                cell.isSelected = false
-            } else {
-                cell.isSelected = true
-            }
-        } else if let cell = self.collectionView.cellForItem(at: indexPath) as? CardIsolatedOrderCollectionViewCell {
-            if indexPathsSelected.contains(indexPath) {
-                cell.isSelected = false
-            } else {
-                cell.isSelected = true
-            }
+        if indexPathsSelected.contains(indexPath) {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        } else {
+            collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
         }
 
         let indexOptional = indexPathsSelected.firstIndex(of: indexPath)

@@ -47,5 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { LottieManager() }.scope(Resolver.shared)
         Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
+        Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
     }
 }
