@@ -53,7 +53,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentComentRejectedOrder = " <p> <b> Observaciones: </b> <br/><br/> <b>[comentarios ingresados en WEB]</b>  <br/><br/>{0}<br/><br/></p>";
+        public const string SentComentRejectedOrder = " <p> <b>Observaciones:</b> <br/><br/> <b>{0}</b> <br/><br/> </p>";
 
         /// <summary>
         /// refund policy.
