@@ -344,6 +344,18 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
+        [Route("/common/components")]
+        [HttpGet]
+        public async Task<IActionResult> GetMostCommonComponents()
+        {
+            var result = await this.sapFacade.GetMostCommonComponents();
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
         [Route("/ping")]
         [HttpGet]
         public IActionResult Ping()

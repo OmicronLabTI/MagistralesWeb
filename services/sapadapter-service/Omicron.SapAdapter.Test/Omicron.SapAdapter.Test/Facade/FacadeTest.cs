@@ -39,6 +39,7 @@ namespace Omicron.SapAdapter.Test.Facade
             this.mapper = mapperConfiguration.CreateMapper();
 
             var mockSapServices = new Mock<ISapService>();
+            var mockComponentes = new Mock<IComponentsService>();
 
             var response = new ResultModel
             {
@@ -50,8 +51,9 @@ namespace Omicron.SapAdapter.Test.Facade
             };
 
             mockSapServices.SetReturnsDefault(Task.FromResult(response));
+            mockComponentes.SetReturnsDefault(Task.FromResult(response));
 
-            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
+            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper, mockComponentes.Object);
         }
 
         /// <summary>
@@ -375,6 +377,20 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetDetails(orderId, "ped");
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetMostCommonComponents()
+        {
+            // act
+            var response = await this.sapFacade.GetMostCommonComponents();
 
             // assert
             this.AssertResponse(response);

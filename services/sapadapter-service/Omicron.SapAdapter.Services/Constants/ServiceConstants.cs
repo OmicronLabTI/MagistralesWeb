@@ -201,6 +201,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Orden = "ord";
 
         /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponents = "redisComponents";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

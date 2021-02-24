@@ -21,12 +21,13 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
-    using Omicron.Pedidos.Services.Reporting;
 
     /// <summary>
     /// the pedidos service.
@@ -47,6 +48,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IReportingService reportingService;
 
+        private readonly IRedisService redis;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -57,7 +60,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="configuration">The configuration.</param>
         /// <param name="reporting"> The reporting service. </param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting)
+        /// <param name="redisService">The redis Service.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
@@ -66,6 +70,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
+            this.redis = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <summary>
@@ -129,6 +134,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
             }
+
+            var utils = new PedidosUtils(this.redis);
+            var listComponents = updateFormula.Components.Where(x => x.Action == ServiceConstants.Insert).Select(y => y.ProductId).ToList();
+            listComponents = listComponents.Where(x => ServiceConstants.ListComponentsMostAssigned.Any(y => x.Contains(y))).ToList();
+            await utils.UpdateMostUsedComponents(listComponents);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }

@@ -25,15 +25,19 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly ISapService sapService;
 
+        private readonly IComponentsService componentsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>
         /// <param name="sapService">the sap service.</param>
         /// <param name="mapper">the mapper.</param>
-        public SapFacade(ISapService sapService, IMapper mapper)
+        /// <param name="componentsService">The component Service.</param>
+        public SapFacade(ISapService sapService, IMapper mapper, IComponentsService componentsService)
         {
             this.mapper = mapper;
             this.sapService = sapService ?? throw new ArgumentNullException(nameof(sapService));
+            this.componentsService = componentsService ?? throw new ArgumentNullException(nameof(componentsService));
         }
 
         /// <summary>
@@ -227,6 +231,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters, kind));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetMostCommonComponents()
+        {
+            return this.mapper.Map<ResultDto>(await this.componentsService.GetMostCommonComponents());
         }
 
         /// <summary>
