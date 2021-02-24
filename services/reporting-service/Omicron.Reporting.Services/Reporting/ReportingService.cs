@@ -126,10 +126,10 @@ namespace Omicron.Reporting.Services
         /// <returns>the text.</returns>
         private Tuple<string, string> GetBodyForRejectedEmail(RejectedOrdersModel order)
         {
-            var subject = string.Format(ServiceConstants.InRejectedEmailSubject, order.SalesOrders);
-            var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders);
-            var commment = order.Comments != string.Empty ? $" Comentarios: {order.Comments}" : string.Empty;
-            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment);
+            var subject = string.Format(ServiceConstants.InRejectedEmailSubject, order.SalesOrders, order.CustomerName);
+            var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
+            var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
+            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailRejectedOrderClosing);
             return new Tuple<string, string>(subject, body);
         }
 

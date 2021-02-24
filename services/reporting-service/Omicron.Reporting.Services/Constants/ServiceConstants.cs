@@ -43,17 +43,27 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// The local.
         /// </summary>
-        public const string InRejectedEmailSubject = "Su pedido {0} de OmicronLab fue rechazado";
+        public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta #{0}; {1}";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentRejectedOrder = "Estimado Asesor. Le informamos que su pedido fue rechazado";
+        public const string SentRejectedOrder = " <p> Buen día, es un gusto saludarle <br/><br/> Hemos detectado que la orden de venta <b>{0}</b> correspondiente al cliente <b>{1}</b> incumple con los requisitos obligatorios para poder comenzar su elaboración. <br/><br/>  </p>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentComentRejectedOrder = " <p> <b> Observaciones: </b> <br/><br/> <b>[comentarios ingresados en WEB]</b>  <br/><br/>{0}<br/><br/></p>";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailRejectedOrderClosing = " Quedamos atentos a sus comentarios. <br/> Departamento Magistrales";
 
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBase = @"<html><body>{0}{1}</body></html>";
+        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}</body></html>";
 
         /// <summary>
         /// Gets the status of the order.
