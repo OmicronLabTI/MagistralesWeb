@@ -101,7 +101,7 @@ extension ApiService: AuthorizedTargetType {
              .getComponents,
              .getWorkload,
              .getConnect,
-             .getMostCommonComponents:
+             .getMostCommonComponents,
              .getContainer:
             return .get
         case .deleteItemOfOrdenDetail,
@@ -120,7 +120,7 @@ extension ApiService: AuthorizedTargetType {
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
              .getConnect,
-             .getMostCommonComponents:
+             .getMostCommonComponents,
              .getContainer:
             return .requestPlain
         case .renew(let data):
@@ -240,6 +240,10 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getMostCommonComponents:
             guard let url = Bundle.main.url(forResource: "GetMostCommonComponnets", withExtension: "json"),
+                  let data = try? Data(contentsOf: url) else {
+                      return Data()
+              }
+              return data
         case .getContainer:
             guard let url = Bundle.main.url(forResource: "container", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
