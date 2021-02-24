@@ -80,8 +80,8 @@ namespace Omicron.Pedidos.Services.Utils
             fabOrderModel.ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid.Equals(x.OrdenId.ToString()));
-                userOrder = userOrder == null ? new UserOrderModel() : userOrder;
-                var status = userOrder.Status == null ? ServiceConstants.Abierto : userOrder.Status;
+                userOrder ??= new UserOrderModel();
+                var status = userOrder.Status ?? ServiceConstants.Abierto;
 
                 var user = users.FirstOrDefault(y => y.Id.Equals(userOrder.Userid));
 
@@ -93,11 +93,12 @@ namespace Omicron.Pedidos.Services.Utils
                     Description = x.ProdName,
                     Quantity = x.Quantity,
                     CreateDate = x.CreatedDate.ToString("dd/MM/yyyy"),
-                    FinishDate = userOrder.FinishDate == null ? string.Empty : userOrder.FinishDate,
+                    FinishDate = userOrder.FinishDate ?? string.Empty,
                     Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
                     Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     Unit = x.Unit,
                     HasMissingStock = x.HasMissingStock,
+                    Batch = userOrder.BatchFinalized,
                 };
 
                 listToReturn.Add(fabOrder);
