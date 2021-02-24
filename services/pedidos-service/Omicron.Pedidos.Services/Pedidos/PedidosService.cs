@@ -493,6 +493,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     productionOrder.CloseDate = DateTime.Now.FormatedDate();
                     productionOrder.Status = ServiceConstants.Finalizado;
 
+                    var batch = orderToFinish.Batches != null && orderToFinish.Batches.Any() ? orderToFinish.Batches.FirstOrDefault() : new BatchesConfigurationModel { BatchCode = string.Empty };
+                    productionOrder.BatchFinalized = batch.BatchCode;
+
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
                     successfuly.Add(orderIdModel);
