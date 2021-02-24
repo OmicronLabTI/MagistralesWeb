@@ -381,6 +381,23 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Get packing required for order in assigned status.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetPackingRequiredForOrderInAssignedStatus()
+        {
+            // Arrange
+            var userId = "abc-123";
+
+            // act
+            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

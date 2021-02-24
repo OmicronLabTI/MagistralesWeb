@@ -28,6 +28,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
+    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// class for the test.
@@ -79,6 +80,10 @@ namespace Omicron.SapAdapter.Test.Services
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockPedidoService
+                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
@@ -915,6 +920,23 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Get packing required for order in assigned status.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetPackingRequiredForOrderInAssignedStatus()
+        {
+            // arrange
+            var userId = "123-abc";
+
+            // act
+            var result = await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId);
+
+            // assert
+            Assert.IsNotNull(result);
         }
     }
 }

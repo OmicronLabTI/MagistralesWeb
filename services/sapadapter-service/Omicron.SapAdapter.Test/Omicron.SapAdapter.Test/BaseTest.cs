@@ -247,5 +247,27 @@ namespace Omicron.SapAdapter.Test
                 UserError = string.Empty,
             };
         }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultDtoGetPedidosService()
+        {
+            var users = new List<int>
+            {
+                123,
+                234,
+            };
+
+            return new ResultDto
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
+            };
+        }
     }
 }
