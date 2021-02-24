@@ -765,7 +765,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var dic = new Dictionary<string, string>
             {
-                { ServiceConstants.DocNum, "100" },
+                { ServiceConstants.DocNum, "100-100" },
             };
 
             // act
