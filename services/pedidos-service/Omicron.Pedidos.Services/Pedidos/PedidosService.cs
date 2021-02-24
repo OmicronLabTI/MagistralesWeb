@@ -408,6 +408,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetQfbOrdersByStatus(string status, string userId)
+        {
+            var userOrdersFab = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status == status && x.IsProductionOrder).ToList();
+            var ordersFabIds = userOrdersFab.Select(x => x.Productionorderid).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, ordersFabIds, null);
+        }
+
+        /// <summary>
         /// Finish fabrication orders.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>

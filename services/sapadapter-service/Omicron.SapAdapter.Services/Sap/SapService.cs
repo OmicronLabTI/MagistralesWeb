@@ -686,6 +686,33 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        public async Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            var packaginList = new List<PackingRequiredModel>();
+            var resultOrders = await this.pedidosService.GetPedidosService(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
+            var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
+            var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => x.ItemCode.Contains("EN") || x.ItemCode.Contains("EM")).ToList();
+            var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
+            foreach (var product in products)
+            {
+                var quantity = detailsFormula.Where(x => x.ItemCode == product.ProductoId).Sum(x => x.RequiredQty);
+                packaginList.Add(new PackingRequiredModel
+                {
+                    CodeItem = product.ProductoId,
+                    Description = product.ProductoName,
+                    Quantity = quantity,
+                    Unit = product.Unit,
+                });
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, packaginList, null, null);
+        }
+
+        /// <summary>
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>

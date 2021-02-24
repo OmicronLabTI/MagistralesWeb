@@ -162,5 +162,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetMostCommonComponents();
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId);
     }
 }

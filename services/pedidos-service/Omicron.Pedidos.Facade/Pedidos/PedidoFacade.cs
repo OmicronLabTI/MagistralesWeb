@@ -201,6 +201,17 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetQfbOrdersByStatus(string status, string userId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetQfbOrdersByStatus(status, userId));
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para

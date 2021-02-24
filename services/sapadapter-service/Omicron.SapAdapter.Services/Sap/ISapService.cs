@@ -157,5 +157,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="kind">the kind to look.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetDetails(Dictionary<string, string> parameters, string kind);
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId);
     }
 }
