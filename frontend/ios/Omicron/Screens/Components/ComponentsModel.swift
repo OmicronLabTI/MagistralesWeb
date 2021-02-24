@@ -57,6 +57,7 @@ class ComponentO: Mappable {
     var stock: Decimal?
     var warehouseQuantity: Decimal?
     required init?(map: Map) {}
+    init() { }
     func mapping(map: Map) {
         self.orderFabId <- map["orderFabId"]
         self.productId <- map["productId"]

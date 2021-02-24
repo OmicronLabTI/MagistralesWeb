@@ -66,7 +66,8 @@ class ComponentsViewModel {
                 plannedQuantity: order.plannedQuantity ?? 0, fechaFin: (order.finishDate != nil ?
                     UtilsManager.shared.formattedDateFromString(
                         dateString: order.finishDate!, withFormat: "yyyy-MM-dd") : "") ?? "",
-                comments: "", warehouse: (self?.orderDetailViewModel.tempOrderDetailData?.warehouse)!,
+                comments: "",
+                warehouse: self?.orderDetailViewModel.tempOrderDetailData?.warehouse ?? CommonStrings.empty,
                 components: [component])
             self?.saveComponent(req: orderDetailReq)
         }).subscribe().disposed(by: disposeBag)
