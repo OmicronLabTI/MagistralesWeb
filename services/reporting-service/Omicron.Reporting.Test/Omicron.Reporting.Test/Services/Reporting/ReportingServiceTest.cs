@@ -47,7 +47,7 @@ namespace Omicron.Reporting.Test.Services.Request
                     new RejectedOrdersModel
                     {
                         CustomerName = "Name Customer",
-                        DestinyEmail = "erikasarai.rosas@axity.com",
+                        DestinyEmail = "erika.rosas@axity.com",
                         SalesOrders = "99983",
                         Comments = "este es un comentario",
                     },

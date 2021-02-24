@@ -665,4 +665,9 @@
 		<column name="field" value="EmailAtencionAClientes"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-1.73">
+    <sql endDelimiter=";">
+        update parameters set value = 'mzuniga@o-lab.mx' where field = 'EmailAtencionAClientes'
+    </sql>
+  </changeSet>
 </databaseChangeLog> 
