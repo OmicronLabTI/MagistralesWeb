@@ -52,9 +52,12 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                var orders = (await this.sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
-                return await this.CompleteOrder(orders);
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                docNumEnd += 1;
+                var listIds = Enumerable.Range(docNumInit, docNumEnd - docNumInit).ToList();
+                return (await this.sapDao.GetFabOrderById(listIds)).ToList();
             }
 
             var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
@@ -120,11 +123,15 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public async Task<List<OrdenFabricacionModel>> CompleteOrder(List<OrdenFabricacionModel> listOrders)
         {
+            var items = (await this.sapDao.GetProductByIds(listOrders.Select(x => x.ProductoId).ToList())).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(listOrders.Select(x => x.OrdenId).ToList())).ToList();
             foreach (var order in listOrders)
             {
-                var item = (await this.sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
+                var item = items.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 order.ProdName = item == null ? order.ProdName : item.LargeDescription;
-                order.HasMissingStock = (await this.sapDao.GetDetalleFormula(order.OrdenId)).Any(y => y.Stock == 0);
+
+                var localDetails = details.Where(x => x.OrderFabId == order.OrdenId).ToList();
+                order.HasMissingStock = localDetails.Any(y => y.Stock == 0);
             }
 
             return listOrders;

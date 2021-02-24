@@ -109,13 +109,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int id)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end)
         {
             var query = (from order in this.databaseContext.OrderModel
                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                              where order.PedidoId == id && producto.IsMagistral == "Y"
+                              where order.PedidoId >= init && order.PedidoId <= end && producto.IsMagistral == "Y"
                               select new CompleteOrderModel
                               {
                                   DocNum = order.DocNum,
