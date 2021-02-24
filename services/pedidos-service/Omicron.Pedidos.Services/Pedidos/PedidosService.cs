@@ -391,14 +391,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 asesorsToReportingEmail.Add(new
                 {
                     customerName = asesor.Cliente,
-                    destinyEmail = asesor.Email,
+                    destinyEmail = "jedgarr04@gmail.com", // asesor.Email,
                     salesOrders = asesor.OrderId.ToString(),
                     comments = rejectOrders.Comments,
                 });
             }
 
             // send Emails
-            // this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
+            this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
             var results = new
             {
                 success = succesfuly.Select(x => new { OrderId = x.Salesorderid }).Distinct(),
