@@ -166,13 +166,11 @@ class BatchesTest: XCTestCase {
         self.lotsViewModel!.saveLotsDidTap.onNext(())
     }
     func testValidIfOrderCanBeFinalizedNotNull() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: {
-            res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res)
         }).disposed(by: self.disposeBag!)    }
     func testValidIfOrderCanBeFinalizedValidCode() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: {
-            res in
+        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.code == 200)
         }).disposed(by: self.disposeBag!)
     }

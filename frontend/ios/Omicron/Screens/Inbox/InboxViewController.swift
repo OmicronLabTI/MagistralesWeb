@@ -330,7 +330,7 @@ class InboxViewController: UIViewController {
             self.cardsView.isHidden = show
         }).disposed(by: disposeBag)
     }
-    // swiftlint:disable cyclomatic_complexity
+
     func modelBindingExtension3() {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in

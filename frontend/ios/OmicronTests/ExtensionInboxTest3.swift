@@ -81,11 +81,11 @@ class ExtensionInboxTest3: XCTestCase {
         }).disposed(by: disposeBag!)
         inboxViewModel?.callFinishOrderService()
     }
-    
+
     func testValidOrders() {
         let ordersSelelected = IndexPath(row: 0, section: 0)
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
-        
+
         inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
     }
 }

@@ -138,7 +138,7 @@ class SignaturePadTest: XCTestCase {
         let isQfbSignatureGet = signaturePadViewModel?.inboxVM.qfbSignatureIsGet ?? false
         XCTAssertTrue(isQfbSignatureGet)
     }
-    
+
     func testAcceptDidTapSignatureTechnicalalInboxViewController () {
         let testIUmage = UIImage(named: ImagesNames.closeEye)
         signaturePadViewModel?.getTypeSignature.onNext(CommonStrings.signatureViewTitleTechnical)

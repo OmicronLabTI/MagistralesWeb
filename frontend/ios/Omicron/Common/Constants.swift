@@ -19,6 +19,10 @@ struct Constants {
         case editItemTable = "Hubo un error al editar el elemento,  intente de nuevo"
         case validatingNumbers = "No se permite números negativos, caracteres o más de 6 decimas"
         case emptyField = "El campo no puede ir vacio"
+        case loadBatches = "Hubo un error al cargar los lotes, por favor de intentarlo de nuevo"
+        case assignedBatches = "Hubo un error al asignar los siguientes lotes"
+        case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
+        case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
     }
     enum Tags: Int {
         case loading = 101
@@ -174,6 +178,10 @@ struct CommonStrings {
     static let werehouseProperty = "werehouse"
     static let saveChanges = "¿Deseas guardar los cambios ingresados?"
     static let orderTitile = "Pedido"
+    static let finishOrderMessage = "¿Deseas terminar la orden?"
+    static let noBatchesAssigned = "No hay lotes asignados"
+    static let noChanges = "No se han realizado modificaciones de lotes"
+    static let processSuccess = "Proceso realizado correctamente"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -238,10 +246,13 @@ struct URLRoot {
 
 enum Actions: String {
     case update = "update"
+    case delete = "delete"
+    case insert = "insert"
 }
 
 struct DateFormat {
     static let yyyymmdd = "yyyy-MM-dd"
+    static let ddMMyyyy = "dd/MM/yyyy"
 }
 
 enum RegularExpresions: String {

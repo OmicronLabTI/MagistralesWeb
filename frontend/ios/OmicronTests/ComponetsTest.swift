@@ -139,7 +139,7 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.dataChips.onNext(["Crema", "Ivermectina", "Exicpiente"])
         componentsViewModel?.removeChip.onNext("Crema")
     }
-    
+
     func testSaveDidTapSuccess() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
@@ -163,7 +163,7 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
-    
+
     func testSaveDidTapDataEmpty() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
@@ -176,7 +176,7 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
-    
+
     func testSaveDidTapOrderSelectedIsNil() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
@@ -189,7 +189,7 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
-    
+
     func testSaveDidTapOrderIsNil() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
@@ -203,7 +203,7 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
-    
+
     func testGetMostComponetService() {
         componentsViewModel?.bindingData.subscribe(onNext: { res in
             if res.count == 2 {
