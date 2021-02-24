@@ -151,7 +151,7 @@ namespace Omicron.SapAdapter.Test.Services
             var dates = DateTime.Now.ToString("dd/MM/yyyy");
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.DocNum, "100" },
+                { ServiceConstants.DocNum, "100-100" },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
             };
@@ -215,7 +215,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.DocNum, "100" },
+                { ServiceConstants.DocNum, "100-100" },
             };
 
             // act
