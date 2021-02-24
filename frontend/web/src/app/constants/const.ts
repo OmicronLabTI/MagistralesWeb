@@ -91,6 +91,7 @@ export const ConstStatus = {
 export const HttpStatus = {
     ok: 200,
     created: 201,
+    redirection: 300,
     badRequest: 400,
     unauthorized: 401,
     forbidden: 403,

@@ -3,6 +3,7 @@ export const Messages = {
   generic: 'No es posible establecer conexión, intenta más tarde',
   connectionRefused: 'Ocurrió un error, no hay conexión con el servidor ',
   credentialsInvalid: 'Credenciales inválidas',
+  redirectionError: 'Ocurrió un error inesperado',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
   deleteUsers: ' ¿Desea eliminar el(los) usuario(s) seleccionado(s) ?',
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s) ?',
@@ -56,5 +57,6 @@ export const Messages = {
   thereNoOrderProcess: 'No existen ordenes Planificadas para los pedidos seleccionados',
   labelsFinish: '¿Deseas pasar a terminado las etiquetas de la(s) orden(es) seleccionada(s)?',
   removeLabelFinish: '¿Deseas quitar la selección de la etiqueta ',
-  deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)'
+  deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)',
+  noComponentsToCreateList: 'No existen componentes para crear una lista'
 };

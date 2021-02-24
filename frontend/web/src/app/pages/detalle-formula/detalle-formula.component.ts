@@ -295,16 +295,20 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openMiListaDialog() {
-     this.dialog.open(MiListaComponent, {
-      panelClass: 'custom-dialog-container',
-      data: {
+    if (this.dataSource.data.length > CONST_NUMBER.zero) {
+      this.dialog.open(MiListaComponent, {
+        panelClass: 'custom-dialog-container',
+        data: {
           data: this.dataSource.data,
           code: this.oldDataFormulaDetail.code,
           description: this.oldDataFormulaDetail.productDescription
-      }
-    }).afterClosed().subscribe((result) => {
-      this.isSaveToMyList = !result;
-    });
+        }
+      }).afterClosed().subscribe((result) => {
+        this.isSaveToMyList = !result;
+      });
+    } else {
+      this.dataService.presentToastCustom(Messages.noComponentsToCreateList, 'info', CONST_STRING.empty, true, false );
+    }
   }
 
   getIsElementsToSave() {

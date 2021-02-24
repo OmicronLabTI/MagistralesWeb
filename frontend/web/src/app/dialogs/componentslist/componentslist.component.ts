@@ -6,6 +6,7 @@ import { DataService } from 'src/app/services/data.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
 import { MatTableDataSource} from '@angular/material';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-componentslist',
@@ -20,7 +21,8 @@ export class ComponentslistComponent implements AfterViewInit {
     private dialogRef: MatDialogRef<ComponentslistComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
-    private orderService: OrdersService
+    private orderService: OrdersService,
+    private errorService: ErrorService
   ) { }
 
   ngAfterViewInit() {
@@ -39,6 +41,12 @@ export class ComponentslistComponent implements AfterViewInit {
         this.dialogRef.close({componentes: element.components});
       }
     });
+  }
+  removeCustomList(element: BaseComponent) {
+    console.log('element: ', element)
+    this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( deleteListResult => {
+      console.log('deleteResult: ', deleteListResult)
+    }, error =>  this.errorService.httpError(error));
   }
 
 }

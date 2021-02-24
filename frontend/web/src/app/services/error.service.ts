@@ -18,6 +18,9 @@ export class ErrorService {
       case HttpStatus.timeOut:
         this.dataService.setMessageGeneralCallHttp({title: Messages.timeout, icon: 'error', isButtonAccept: true});
         break;
+      case HttpStatus.redirection:
+        this.dataService.setMessageGeneralCallHttp({title: Messages.redirectionError, icon: 'error', isButtonAccept: true});
+        break;
       case HttpStatus.notFound:
       case HttpStatus.connectionRefused:
         this.dataService.setMessageGeneralCallHttp({title: Messages.connectionRefused, icon: 'error', isButtonAccept: true});
