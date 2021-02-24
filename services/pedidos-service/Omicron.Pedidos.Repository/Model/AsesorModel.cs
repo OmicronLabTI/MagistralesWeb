@@ -16,24 +16,6 @@ public class AsesorModel
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int AsesorId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string FirstName { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string LastName { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         public string Email { get; set; }
 
         /// <summary>
@@ -41,5 +23,11 @@ public class AsesorModel
         /// </summary>
         /// <value>The code.</value>
         public int OrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Cliente { get; set; }
     }
 }

@@ -381,6 +381,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
+
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
             var asesorsToReportingEmail = new List<object>();
@@ -389,6 +390,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 asesorsToReportingEmail.Add(new
                 {
+                    customerName = asesor.Cliente,
                     destinyEmail = asesor.Email,
                     salesOrders = asesor.OrderId.ToString(),
                     comments = rejectOrders.Comments,
@@ -397,7 +399,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             // send Emails
             this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
-
             var results = new
             {
                 success = succesfuly.Select(x => new { OrderId = x.Salesorderid }).Distinct(),
