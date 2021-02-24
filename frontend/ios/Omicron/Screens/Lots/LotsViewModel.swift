@@ -233,7 +233,13 @@ class LotsViewModel {
                         batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto,
                         action: "insert", sysNumber: firstAvailable.sysNumber,
                         expiredBatch: firstAvailable.expiredBatch)
-                    doc.totalNecesario = 0
+                    if let totalNecesario = lot.totalNecesario,
+                       let cantidadSeleccionada = firstAvailable.cantidadSeleccionada {
+                        let result = totalNecesario - cantidadSeleccionada
+                        doc.totalNecesario = result.isSignMinus ? result * -1 : result
+                    } else {
+                        doc.totalNecesario = 0
+                    }
                     guard let firstBatch = doc.lotesDisponibles?.first else { return }
                     doc.totalSeleccionado = firstBatch.cantidadSeleccionada ?? 0
                     self.selectedBatches.append(batch)
