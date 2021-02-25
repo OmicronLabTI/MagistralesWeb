@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IOrdersRes} from '../model/http/ordenfabricacion';
-import { IMyListRes, IMyCustomListRes } from '../model/http/listacomponentes';
+import {IMyListRes, IMyCustomListRes, ICustomListDelete} from '../model/http/listacomponentes';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +21,9 @@ export class OrdersService {
 
   getCustomList(code) {
     return this.consumeService.httpGet<IMyCustomListRes>(Endpoints.orders.saveMyList + code);
+  }
+  deleteCustomList(deleteListReq: ICustomListDelete) {
+    return this.consumeService.httpDelete(`${Endpoints.orders.customList}?name=${deleteListReq.name}&productId=${deleteListReq.productId}`);
+    // validar con erika para que se cabie de verbo oh la info se lo envio por queryParams
   }
 }

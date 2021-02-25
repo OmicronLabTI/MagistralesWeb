@@ -91,6 +91,7 @@ export const ConstStatus = {
 export const HttpStatus = {
     ok: 200,
     created: 201,
+    redirection: 300,
     badRequest: 400,
     unauthorized: 401,
     forbidden: 403,
@@ -193,7 +194,9 @@ export const CONST_PRODUCTIVITY = {
 };
 
 export const RouterPaths = {
-  materialRequest: 'materialRequest'
+  materialRequest: 'materialRequest',
+  orderDetail: 'pdetalle',
+  detailFormula: 'ordenfabricacion'
 };
 export enum TypeProperty {
     code,
@@ -207,7 +210,14 @@ export enum TypeToSeeTap {
     receipt,
     system
 }
-
+export enum CarouselOption {
+    backDetail,
+    nextDetail
+}
+export const CarouselOptionString = {
+    backDetail: 'b',
+    nextDetail: 'f'
+};
 export const RolesType = {
     logistic: '3',
     admin: '1',

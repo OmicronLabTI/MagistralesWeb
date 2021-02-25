@@ -17,6 +17,7 @@ import {of, throwError} from 'rxjs';
 import {ComponentSearchMock} from '../../../mocks/componentsMock';
 import {ErrorService} from '../../services/error.service';
 import {PageEvent} from '@angular/material/paginator';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
@@ -35,7 +36,7 @@ describe('ComponentSearchComponent', () => {
     });
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatTableModule,
-        MatDialogModule,
+        MatDialogModule, RouterTestingModule,
         MatCheckboxModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatChipsModule],
       declarations: [ ComponentSearchComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -11,11 +11,12 @@ import {
     IPlaceOrdersAutomaticReq,
     ProcessOrdersDetailReq
 } from '../model/http/pedidos';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('PedidosService', () => {
   beforeEach(() => {
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
+          imports: [HttpClientTestingModule, RouterTestingModule],
           providers: [DatePipe]
         });
       });

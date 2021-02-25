@@ -22,7 +22,7 @@ import {SignaturePadModule} from 'angular2-signaturepad';
 @NgModule({
     declarations: [
         AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
-        ComponentslistComponent, RequestSignatureDialogComponent,
+        ComponentslistComponent, RequestSignatureDialogComponent
     ],
     imports: [
         BrowserModule,

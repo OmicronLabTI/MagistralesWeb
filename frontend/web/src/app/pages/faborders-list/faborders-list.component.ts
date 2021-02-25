@@ -35,12 +35,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'pedido',
     'orden',
     'codigoproducto',
     'descripcion',
     'cantidadplanificada',
+    'lote',
     'fechaorden',
     'fechatermino',
     'qfbasignado',
@@ -266,9 +266,15 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(() => this.getOrdersAction());
   }
 
-    materialRequestIsolatedOrder() {
-     this.router.navigate([RouterPaths.materialRequest,
-                      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
-                      , CONST_NUMBER.zero.toString()]);
-    }
+  materialRequestIsolatedOrder() {
+    this.router.navigate([RouterPaths.materialRequest,
+      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
+      , CONST_NUMBER.zero]);
+  }
+
+  goToFormulaDetail(fabOrderId: string) {
+    this.dataService.changeRouterForFormula(fabOrderId,
+        CONST_STRING.empty,
+        CONST_NUMBER.zero, this.queryString);
+  }
 }

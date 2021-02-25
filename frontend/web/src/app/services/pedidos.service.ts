@@ -16,7 +16,12 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleLabelReq, IPedidoDetalleListRes} from '../model/http/detallepedidos.model';
+import {
+  IOrdersRefuseReq,
+  IPedidoDetalleLabelReq,
+  IPedidoDetalleListRes,
+  IPedidoRefuseRes
+} from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,10 +37,15 @@ export class PedidosService {
   getDetallePedido(docNum: string) {
     return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.getDetallePedido + docNum);
   }
-  getFormulaDetail(orderNum: string) {
-    return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
+  getDetailCarousel(queryStringFull: string) {
+    return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.detailCarousel + queryStringFull);
   }
-
+  getFormulaDetail(orderNum: string) {
+    return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.formulaDetail}/${orderNum}`);
+  }
+  getFormulaCarousel(queryString: string) {
+    return this.consumeService.httpGet<IFormulaRes>(Endpoints.pedidos.formulaCarousel + queryString);
+  }
   processOrders(ordersToProcess) {
     return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrders, ordersToProcess);
   }
@@ -107,6 +117,8 @@ export class PedidosService {
   }
   getInitRangeDate() {
     return this.consumeService.httpGet<ICatalogRes>(`${Endpoints.pedidos.rangeDateInit}`);
-
+  }
+  putRefuseOrders(refuseOrdersReq: IOrdersRefuseReq) {
+    return this.consumeService.httpPut<IPedidoRefuseRes>(Endpoints.pedidos.refuseOrdersService, refuseOrdersReq);
   }
 }
