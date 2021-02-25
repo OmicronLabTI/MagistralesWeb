@@ -7,19 +7,19 @@
       {
           "codeItem": "EM-014",
           "description": "ALCOHOL ETILICO DESNATURALIZADO 96°",
-          "quantity": 300,
+          "quantity": 30,
           "unit": "Pieza"
       },
       {
           "codeItem": "EN-036",
           "description": "DISCO R-70 P/POMADERA 40Z.",
-          "quantity": 20,
+          "quantity": 500,
           "unit": "Pieza"
       },
       {
-          "codeItem": "EN-073",
+          "codeItem": "EN -073",
           "description": "POMADERA 4 OZ CUERPO BLANCO",
-          "quantity": 48,
+          "quantity": 10,
           "unit": "Pieza"
       }
   ],

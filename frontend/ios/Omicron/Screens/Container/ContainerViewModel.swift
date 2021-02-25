@@ -27,6 +27,9 @@ class ContainerViewModel {
             .subscribe(onNext: { [weak self] containerResponse in
                 guard let self = self else { return }
                 self.loading.onNext(false)
+                containerResponse.response?.sort(by: { (first, second) -> Bool in
+                    return first.quantity ?? .zero > second.quantity ?? .zero
+                })
                 self.containerData.onNext(containerResponse.response ?? [])
                 }, onError: { error in
                     print(error)

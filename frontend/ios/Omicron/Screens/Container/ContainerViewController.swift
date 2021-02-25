@@ -60,7 +60,7 @@ class ContainerViewController: UIViewController {
                 cellIdentifier: "container_cell",
                 cellType: ContainerTableViewCell.self
             )) { _, data, cell in
-                cell.containerLabel.text = ("Código: \(data.codeItem ?? "")")
+                cell.containerLabel.text = data.codeItem
                 cell.quantityLabel.text = data.unit == CommonStrings.piece ?
                                                 String(format: "%.0f", data.quantity ?? 0.0) :
                                                 self.formatter.string(from: NSNumber(value: data.quantity ?? 0.0))
