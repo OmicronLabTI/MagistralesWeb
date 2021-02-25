@@ -159,6 +159,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.DocNum, "100-100" },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
+                { ServiceConstants.OrderType, "MN" },
             };
 
             // act
