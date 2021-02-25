@@ -27,7 +27,7 @@ enum ApiService {
     case postOrdersPDF(orders: [Int])
     case getConnect
     case getMostCommonComponents
-    case getContainer
+    case getContainer(userId: String)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -81,8 +81,8 @@ extension ApiService: AuthorizedTargetType {
             return "SapDiApi/connect"
         case .getMostCommonComponents:
             return "/sapadapter/common/components"
-        case .getContainer:
-            return ""
+        case .getContainer(let userId):
+            return "/sapadapter/orders/packingRequired/\(userId)"
         }
     }
     var method: Moya.Method {

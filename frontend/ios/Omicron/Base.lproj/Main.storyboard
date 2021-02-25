@@ -269,33 +269,40 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qIT-bi-nWs">
                                                 <rect key="frame" x="0.0" y="50" width="739.5" height="40"/>
                                                 <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="jGm-0l-bDk">
-                                                        <rect key="frame" x="619.5" y="0.0" width="120" height="40"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jGm-0l-bDk">
+                                                        <rect key="frame" x="559.5" y="0.0" width="180" height="40"/>
                                                         <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3T9-Ay-IoM">
-                                                                <rect key="frame" x="0.0" y="0.0" width="30" height="40"/>
-                                                                <state key="normal" image="rectangle.and.pencil.and.ellipsis" catalog="system"/>
-                                                                <connections>
-                                                                    <segue destination="DFv-v6-0yB" kind="presentation" id="Xii-GQ-1RA"/>
-                                                                </connections>
-                                                            </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cg1-AF-K6X">
-                                                                <rect key="frame" x="30" y="0.0" width="30" height="40"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="54.5" height="40"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UNM-JG-4xw">
-                                                                <rect key="frame" x="60" y="0.0" width="30" height="40"/>
+                                                                <rect key="frame" x="62.5" y="0.0" width="55" height="40"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMB-nN-aT4">
-                                                                <rect key="frame" x="90" y="0.0" width="30" height="40"/>
+                                                                <rect key="frame" x="125.5" y="0.0" width="54.5" height="40"/>
                                                                 <state key="normal" title="Button"/>
                                                             </button>
                                                         </subviews>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="120" id="69c-lr-cIE"/>
+                                                            <constraint firstAttribute="width" constant="180" id="69c-lr-cIE"/>
                                                         </constraints>
                                                     </stackView>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3T9-Ay-IoM">
+                                                        <rect key="frame" x="519.5" y="7.5" width="20" height="25"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="25" id="KbL-20-Vjs"/>
+                                                            <constraint firstAttribute="width" constant="20" id="o0x-kV-M4V"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <state key="normal" image="frasco">
+                                                            <color key="titleColor" red="0.3294117647" green="0.50196078430000002" blue="0.65098039220000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <segue destination="DFv-v6-0yB" kind="presentation" id="Xii-GQ-1RA"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -303,6 +310,8 @@
                                                     <constraint firstItem="jGm-0l-bDk" firstAttribute="top" secondItem="qIT-bi-nWs" secondAttribute="top" id="S7y-Fs-GLr"/>
                                                     <constraint firstAttribute="bottom" secondItem="jGm-0l-bDk" secondAttribute="bottom" id="qjZ-WS-YWV"/>
                                                     <constraint firstAttribute="trailing" secondItem="jGm-0l-bDk" secondAttribute="trailing" id="twv-Vk-hs8"/>
+                                                    <constraint firstItem="3T9-Ay-IoM" firstAttribute="centerY" secondItem="qIT-bi-nWs" secondAttribute="centerY" id="xhP-FY-wqJ"/>
+                                                    <constraint firstItem="jGm-0l-bDk" firstAttribute="leading" secondItem="3T9-Ay-IoM" secondAttribute="trailing" constant="20" id="xvs-fj-fHt"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -381,6 +390,7 @@
                         <outlet property="processButton" destination="7P0-go-amH" id="Dpc-G5-zPv"/>
                         <outlet property="removeOrdersSelectedVerticalSpace" destination="v36-Kz-jyc" id="cK3-0l-SKE"/>
                         <outlet property="removeOrdersSelectedView" destination="GqF-UZ-NUM" id="gZZ-xT-a0a"/>
+                        <outlet property="showContainersButtons" destination="3T9-Ay-IoM" id="zD5-AC-0fr"/>
                         <outlet property="similarityViewButton" destination="UNM-JG-4xw" id="ldK-jN-Oji"/>
                         <segue destination="Dvp-ad-RrX" kind="show" identifier="OrderDetailViewController" id="Wlv-14-Wdl"/>
                     </connections>
@@ -1488,8 +1498,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YdJ-QI-Ebs">
                                 <rect key="frame" x="0.0" y="0.0" width="700" height="48"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lista de envases" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lZE-jf-VzG">
-                                        <rect key="frame" x="282.5" y="13.5" width="135.5" height="21.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lista de envases requeridos:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lZE-jf-VzG">
+                                        <rect key="frame" x="234" y="13.5" width="232.5" height="21.5"/>
                                         <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -2075,7 +2085,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="b7C-aR-kJn">
-                                        <rect key="frame" x="0.0" y="42" width="704" height="462"/>
+                                        <rect key="frame" x="0.0" y="42" width="704" height="657"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No hay resultados" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="K7c-ch-I4L">
                                             <rect key="frame" x="0.0" y="106.5" width="704" height="44"/>
@@ -2455,6 +2465,7 @@
         <image name="LoginButtonImage" width="91" height="90"/>
         <image name="OmicronLogo" width="844" height="378"/>
         <image name="cleaning" width="100" height="100"/>
+        <image name="frasco" width="115" height="143"/>
         <image name="imageView:6h6-SY-x1Z:image" width="80" height="80">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05T
@@ -8698,7 +8709,6 @@ AAW0EA
 </mutableData>
         </image>
         <image name="pieChart" width="512" height="512"/>
-        <image name="rectangle.and.pencil.and.ellipsis" catalog="system" width="128" height="81"/>
         <image name="square.and.arrow.down.on.square" catalog="system" width="122" height="128"/>
         <systemColor name="darkTextColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

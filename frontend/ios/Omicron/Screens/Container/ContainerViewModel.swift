@@ -20,13 +20,13 @@ class ContainerViewModel {
     var disposeBag = DisposeBag()
 
     func getContainerData() {
+        guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
         loading.onNext(true)
         networkManager
-            .getContainer()
+            .getContainer(userId: userId)
             .subscribe(onNext: { [weak self] containerResponse in
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                print(containerResponse)
                 self.containerData.onNext(containerResponse.response ?? [])
                 }, onError: { error in
                     print(error)

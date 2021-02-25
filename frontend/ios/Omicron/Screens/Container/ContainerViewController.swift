@@ -25,6 +25,7 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModeBinding()
+        isModalInPresentation = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -59,7 +60,7 @@ class ContainerViewController: UIViewController {
                 cellIdentifier: "container_cell",
                 cellType: ContainerTableViewCell.self
             )) { _, data, cell in
-                cell.containerLabel.text = ("Código: \(data.container ?? "")")
+                cell.containerLabel.text = ("Código: \(data.codeItem ?? "")")
                 cell.quantityLabel.text = data.unit == CommonStrings.piece ?
                                                 String(format: "%.0f", data.quantity ?? 0.0) :
                                                 self.formatter.string(from: NSNumber(value: data.quantity ?? 0.0))

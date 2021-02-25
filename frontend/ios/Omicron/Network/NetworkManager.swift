@@ -170,8 +170,8 @@ class NetworkManager: SessionProtocol {
     }
 
     // Obtiene los envases requeridos para los pedidos asignados
-    func getContainer() -> Observable<ContainerResponse> {
-        let req: ApiService = ApiService.getContainer
+    func getContainer(userId: String) -> Observable<ContainerResponse> {
+        let req: ApiService = ApiService.getContainer(userId: userId)
         let res: Observable<ContainerResponse> = makeRequest(request: req)
         return res
     }

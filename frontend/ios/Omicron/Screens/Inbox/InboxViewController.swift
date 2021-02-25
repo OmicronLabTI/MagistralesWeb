@@ -29,6 +29,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var cardsView: UIView!
     @IBOutlet weak var removeOrdersSelectedView: UIView!
     @IBOutlet weak var removeOrdersSelectedVerticalSpace: NSLayoutConstraint!
+    @IBOutlet weak var showContainersButtons: UIButton!
     var order = PublishSubject<Int>()
 
     // MARK: - Variables
@@ -453,31 +454,37 @@ class InboxViewController: UIViewController {
                 processButtonIsHidden: false,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: false)
+            showContainersButtons.isHidden = false
         case 1:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: false,
                 pendingButtonIsHidden: false)
+            showContainersButtons.isHidden = true
         case 2:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: false,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         case 3:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         case 4:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         default:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         }
     }
     private func changePropertyIsHiddenStatusButtons(

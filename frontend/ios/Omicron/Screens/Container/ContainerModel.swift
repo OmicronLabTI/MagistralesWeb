@@ -26,7 +26,7 @@ class ContainerResponse: HttpResponse {
 
 class Container: Mappable {
 
-    var container: String?
+    var codeItem: String?
     var description: String?
     var quantity: Float?
     var unit: String?
@@ -34,7 +34,7 @@ class Container: Mappable {
     required init?(map: Map) {}
 
     func mapping(map: Map) {
-        self.container <- map["container"]
+        self.codeItem <- map["codeItem"]
         self.description <- map["description"]
         self.quantity <- map["quantity"]
         self.unit <- map["unit"]
