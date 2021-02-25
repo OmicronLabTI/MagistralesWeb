@@ -152,6 +152,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Activo = user.Activo;
             usertoUpdate.Piezas = user.Piezas;
             usertoUpdate.Asignable = user.Asignable;
+            usertoUpdate.Classification = user.Classification;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
