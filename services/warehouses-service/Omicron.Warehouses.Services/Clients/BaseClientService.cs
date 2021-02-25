@@ -32,6 +32,7 @@ namespace Omicron.Warehouses.Services.Clients
         protected BaseClientService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+            this.httpClient.Timeout = new System.TimeSpan(0, 10, 0);
         }
 
         /// <summary>
