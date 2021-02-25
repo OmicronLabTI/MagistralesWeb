@@ -60,13 +60,22 @@ namespace Omicron.Warehouses.Services.Request
             request.SigningUserName = $"{user.FirstName} {user.LastName}";
 
             var results = new SuccessFailResults<object>();
-            var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
-            request.ProductionOrderIds = valitateExistsResults.Missing;
 
-            if (!request.ProductionOrderIds.Any())
+            (List<int> Missing, List<int> Existing) valitateExistsResults;
+            List<int> exiting = new List<int> { };
+            List<int> missing = new List<int> { };
+
+            if (request.ProductionOrderIds.Any())
             {
-                valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
-                return ServiceUtils.CreateResult(true, 200, null, results, null);
+                valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
+                exiting.AddRange(valitateExistsResults.Existing);
+                missing.AddRange(valitateExistsResults.Missing);
+                request.ProductionOrderIds = valitateExistsResults.Missing;
+                if (!request.ProductionOrderIds.Any())
+                {
+                    valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
+                    return ServiceUtils.CreateResult(true, 200, null, results, null);
+                }
             }
 
             await this.InsertRequest(userId, request);
@@ -78,8 +87,15 @@ namespace Omicron.Warehouses.Services.Request
             }
 
             await this.InsertRequestDetail(request);
-            valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
-            valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
+
+            if (request.ProductionOrderIds.Any())
+            {
+                exiting.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
+                missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
+                return ServiceUtils.CreateResult(true, 200, null, results, null);
+            }
+
+            results.AddSuccesResult(new { ProductionOrderId = 0 });
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
@@ -133,7 +149,11 @@ namespace Omicron.Warehouses.Services.Request
         /// </returns>
         public async Task<RawMaterialRequestModel> InsertRequestDetail(RawMaterialRequestModel request)
         {
-            await this.requestDao.InsertOrdersOfRawMaterialRequest(request.ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { RequestId = request.Id, ProductionOrderId = x }).ToList());
+            if (request.ProductionOrderIds.Any())
+            {
+                await this.requestDao.InsertOrdersOfRawMaterialRequest(request.ProductionOrderIds.Select(x => new RawMaterialRequestOrderModel { RequestId = request.Id, ProductionOrderId = x }).ToList());
+            }
+
             await this.CreateDetail(request.Id, request.OrderedProducts);
             return request;
         }
