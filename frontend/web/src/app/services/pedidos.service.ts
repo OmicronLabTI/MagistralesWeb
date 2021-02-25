@@ -41,7 +41,7 @@ export class PedidosService {
     return this.consumeService.httpGet<IPedidoDetalleListRes>(Endpoints.pedidos.detailCarousel + queryStringFull);
   }
   getFormulaDetail(orderNum: string) {
-    return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.getFormulaDetail}/${orderNum}`);
+    return this.consumeService.httpGet<IFormulaRes>(`${Endpoints.pedidos.formulaDetail}/${orderNum}`);
   }
   getFormulaCarousel(queryString: string) {
     return this.consumeService.httpGet<IFormulaRes>(Endpoints.pedidos.formulaCarousel + queryString);

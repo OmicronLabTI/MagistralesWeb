@@ -58,5 +58,6 @@ export const Messages = {
   labelsFinish: '¿Deseas pasar a terminado las etiquetas de la(s) orden(es) seleccionada(s)?',
   removeLabelFinish: '¿Deseas quitar la selección de la etiqueta ',
   deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)',
-  noComponentsToCreateList: 'No existen componentes para crear una lista'
+  noComponentsToCreateList: 'No existen componentes para crear una lista',
+  removeListComponents: '¿Deseas borrar la lista de componentes llamada '
 };

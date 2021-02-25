@@ -23,6 +23,7 @@ export class OrdersService {
     return this.consumeService.httpGet<IMyCustomListRes>(Endpoints.orders.saveMyList + code);
   }
   deleteCustomList(deleteListReq: ICustomListDelete) {
+    console.log('deleteListReq:' , deleteListReq)
     return this.consumeService.httpDelete(Endpoints.orders.customList, deleteListReq);
   }
 }

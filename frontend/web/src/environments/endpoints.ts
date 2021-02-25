@@ -19,7 +19,7 @@ export const Endpoints = {
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
     detailCarousel: `${environment.baseUrl}/api/sapadapter/faborders/details`,
     processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
-    getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
+    formulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
     formulaCarousel: `${environment.baseUrl}/api/sapadapter/faborders/details`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
     components: `${environment.baseUrl}/api/sapadapter/componentes`,
