@@ -135,6 +135,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="value">the value to look.</param>
         /// <returns>the value.</returns>
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value);
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value);
 
         /// <summary>

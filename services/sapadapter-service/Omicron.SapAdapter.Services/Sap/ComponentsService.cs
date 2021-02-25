@@ -69,7 +69,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(true, 200, null, new List<CompleteDetalleFormulaModel>(), null, null);
             }
 
-            redisComponents = redisComponents.OrderBy(x => x.Total).ToList();
+            redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
             var listToReturn = await this.sapDao.GetItemsByContainsItemCode(ids);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
