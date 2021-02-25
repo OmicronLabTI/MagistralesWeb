@@ -51,6 +51,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string FinishedLabel = "finlabel";
 
         /// <summary>
+        /// The order type dict.
+        /// </summary>
+        public const string OrderType = "ordtype";
+
+        /// <summary>
         /// if needs the large description.
         /// </summary>
         public const string NeedsLargeDsc = "Ldsc";
