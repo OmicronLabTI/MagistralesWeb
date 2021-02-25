@@ -104,7 +104,7 @@ export class ConsumeService {
     });
   }
 
-  httpDelete<T>(url: string, body: any, headers?) {
+  httpDelete<T>(url: string) {
     let objHeaders = new HttpHeaders();
     if (headers) {
       Object.keys(headers).forEach((key) => {
@@ -114,7 +114,7 @@ export class ConsumeService {
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {
-      this.http.delete<any>(url, body)
+      this.http.delete<any>(url)
           .subscribe(response => {
             this.successObserver(observer, response);
           }, err => {

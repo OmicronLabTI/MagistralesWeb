@@ -24,6 +24,7 @@ export class OrdersService {
   }
   deleteCustomList(deleteListReq: ICustomListDelete) {
     console.log('deleteListReq:' , deleteListReq)
-    return this.consumeService.httpDelete(Endpoints.orders.customList, deleteListReq);
+    return this.consumeService.httpDelete(Endpoints.orders.customList);
+    // validar con erika para que se cabie de verbo oh la info se lo envio por queryParams
   }
 }

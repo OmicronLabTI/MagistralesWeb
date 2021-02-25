@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, AfterViewInit } from '@angular/core';
 
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { BaseComponent } from 'src/app/model/http/listacomponentes';
@@ -45,7 +45,7 @@ export class ComponentslistComponent implements AfterViewInit {
     });
   }
   removeCustomList(element: BaseComponent) {
-    console.log('element: ', element)
+    console.log('elementRemove: ', element)
 
     this.dataService.presentToastCustom(`${Messages.removeListComponents} ${element.name.toUpperCase()}?`,
         'question', '', true, true).then( (res: any) => {
