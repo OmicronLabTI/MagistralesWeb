@@ -181,6 +181,11 @@ namespace Omicron.SapAdapter.Services.Utils
                 orderModels = orderModels.Where(x => x.FinishedLabel.ToString() == parameters[ServiceConstants.FinishedLabel]).ToList();
             }
 
+            if (parameters.ContainsKey(ServiceConstants.OrderType))
+            {
+                orderModels = orderModels.Where(x => x.OrderType == parameters[ServiceConstants.OrderType]).ToList();
+            }
+
             orderModels.ForEach(x =>
             {
                 var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));

@@ -68,7 +68,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        PedidoStatus = order.PedidoStatus,
                                        AtcEntry = order.AtcEntry,
                                        IsChecked = false,
-                                       Detalles = dp
+                                       Detalles = dp,
+                                       OrderType = order.OrderType,
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -99,7 +100,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    PedidoStatus = order.PedidoStatus,
                                    AtcEntry = order.AtcEntry,
                                    IsChecked = false,
-                                   Detalles = dp
+                                   Detalles = dp,
+                                   OrderType = order.OrderType,
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -128,7 +130,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   PedidoStatus = order.PedidoStatus,
                                   AtcEntry = order.AtcEntry,
                                   IsChecked = false,
-                                  Detalles = detalle
+                                  Detalles = detalle,
+                                  OrderType = order.OrderType,
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
