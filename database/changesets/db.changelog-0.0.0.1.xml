@@ -665,12 +665,17 @@
 		<column name="field" value="EmailAtencionAClientes"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-1.73">
+      <sql endDelimiter=";">
+          update parameters set value = 'mzuniga@o-lab.mx' where field = 'EmailAtencionAClientes'
+      </sql>
+  </changeSet>
   <changeSet author="erosas" id="changelog-1.74">
-	<addColumn tableName ="usersorders">
-		<column 
-			name="batchfinalized"
-			type="varchar(50)">
-		</column>
-	</addColumn>  
+    <addColumn tableName ="usersorders">
+      <column 
+        name="batchfinalized"
+        type="varchar(50)">
+      </column>
+    </addColumn>  
   </changeSet>
 </databaseChangeLog> 

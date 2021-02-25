@@ -71,6 +71,7 @@ namespace Omicron.Warehouses.Services.Request
                 exiting.AddRange(valitateExistsResults.Existing);
                 missing.AddRange(valitateExistsResults.Missing);
                 request.ProductionOrderIds = valitateExistsResults.Missing;
+
                 if (!request.ProductionOrderIds.Any())
                 {
                     valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));

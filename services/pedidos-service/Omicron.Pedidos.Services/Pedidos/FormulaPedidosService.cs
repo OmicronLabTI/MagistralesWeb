@@ -95,24 +95,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var name = parameters.ContainsKey(ServiceConstants.Name) ? parameters[ServiceConstants.Name] : string.Empty;
             var productId = parameters.ContainsKey(ServiceConstants.ProductId) ? parameters[ServiceConstants.ProductId] : string.Empty;
-            CustomComponentListModel customComponList = new CustomComponentListModel();
 
-            customComponList = await this.GetCustomComponentListByProductAndName(productId, name);
+            var customComponList = await this.GetCustomComponentListByProductAndName(productId, name);
             if (customComponList.Id != 0)
             {
                 var listTocustom = new List<int> { customComponList.Id };
-                List<ComponentCustomComponentListModel> customComponListComponent = new List<ComponentCustomComponentListModel>();
-                customComponListComponent = await this.pedidosDao.GetComponentsByCustomListId(listTocustom);
-                if (await this.pedidosDao.DeleteComponentsOfCustomList(customComponListComponent))
-                {
-                    if (await this.pedidosDao.DeleteCustomComponentList(customComponList))
-                    {
-                        return ServiceUtils.CreateResult(true, 200, null, customComponList.Id, null);
-                    }
-                }
+                var customComponListComponent = await this.pedidosDao.GetComponentsByCustomListId(listTocustom);
+
+                await this.pedidosDao.DeleteComponentsOfCustomList(customComponListComponent);
+                await this.pedidosDao.DeleteCustomComponentList(customComponList);
+                return ServiceUtils.CreateResult(true, 200, null, customComponList.Id, null);
             }
 
-            return ServiceUtils.CreateResult(true, 300, ServiceConstants.ReasonUnexpectedError, 0, null);
+            return ServiceUtils.CreateResult(false, 300, ServiceConstants.ReasonUnexpectedError, 0, null);
         }
 
         /// <summary>

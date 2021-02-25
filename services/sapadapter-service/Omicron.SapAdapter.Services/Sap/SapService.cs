@@ -299,32 +299,18 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetAsesorsByOrderId(List<int> salesOrder)
         {
             var asesors = (await this.sapDao.GetAsesorWithEmailByIds(salesOrder)).ToList();
+            var asesorsIDwithoutEmail = salesOrder.Where(x => !asesors.Select(x => x.OrderId).ToList().Contains(x)).ToList();
+            var asesorsWithoutEmail = (await this.sapDao.GetOrdersById(asesorsIDwithoutEmail)).ToList();
             var asesorsCompleted = new List<SalesAsesorModel>();
 
-            foreach (var order in salesOrder)
-            {
-                var asesor = asesors.FirstOrDefault(x => x.OrderId == order);
-                if (asesor == null)
-                {
-                    asesorsCompleted.Add(new SalesAsesorModel
-                    {
-                        FirstName = string.Empty,
-                        LastName = string.Empty,
-                        Email = string.Empty,
-                        OrderId = order,
-                    });
-                    continue;
-                }
-
+            asesorsCompleted.AddRange(asesors);
+            asesorsWithoutEmail.ForEach(x =>
                 asesorsCompleted.Add(new SalesAsesorModel
                 {
-                    AsesorId = asesor.AsesorId,
-                    FirstName = asesor.FirstName,
-                    LastName = asesor.LastName,
-                    Email = string.IsNullOrEmpty(asesor.Email) ? string.Empty : asesor.Email,
-                    OrderId = asesor.OrderId,
-                });
-            }
+                    Email = string.Empty,
+                    OrderId = x.PedidoId,
+                    Cliente = x.Cliente,
+                }));
 
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
         }
@@ -647,7 +633,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var componentes = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
             componentes.ForEach(x =>
             {
-                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity >= x.WarehouseQuantity)
+                if (x.WarehouseQuantity <= 0 || x.RequiredQuantity > x.WarehouseQuantity)
                 {
                     listErrorStock.ListItems.Add($"{x.OrderFabId}-{x.ProductId}");
                 }
