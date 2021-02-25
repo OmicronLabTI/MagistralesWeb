@@ -173,7 +173,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 3, 4));
+            Assert.IsTrue(this.CheckAction(response, false, 3, 4));
             Assert.Zero(int.Parse(response.Response.ToString()));
         }
 
