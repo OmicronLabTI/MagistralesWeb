@@ -70,13 +70,18 @@ class InboxViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
+        super.viewDidAppear(animated)
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
         self.splitViewController?.presentsWithGesture = false
         if bindingCollectionView {
             viewModelBindingCollectionView()
             bindingCollectionView.toggle()
         }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        splitViewController?.preferredDisplayMode = .primaryHidden
     }
 
     // MARK: - Functions

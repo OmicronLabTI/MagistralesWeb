@@ -59,7 +59,7 @@ class OrderDetailViewController: UIViewController {
         super.viewDidLoad()
         self.tableView.delegate = self
         self.title = CommonStrings.formulaDetail
-        splitViewController!.preferredDisplayMode = .allVisible
+//        splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.initComponents()
         self.tableView.allowsMultipleSelectionDuringEditing = false
@@ -69,13 +69,13 @@ class OrderDetailViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        splitViewController!.preferredDisplayMode = .allVisible
+//        splitViewController!.preferredDisplayMode = .primaryHidden
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
+//        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
