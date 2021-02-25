@@ -61,10 +61,17 @@ namespace Omicron.Warehouses.Services.Request
 
             var results = new SuccessFailResults<object>();
 
+            (List<int> Missing, List<int> Existing) valitateExistsResults;
+            List<int> exiting = new List<int> { };
+            List<int> missing = new List<int> { };
+
             if (request.ProductionOrderIds.Any())
             {
-                var valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
+                valitateExistsResults = await this.ValidateExistingByProductionOrderIds(request.ProductionOrderIds);
+                exiting.AddRange(valitateExistsResults.Existing);
+                missing.AddRange(valitateExistsResults.Missing);
                 request.ProductionOrderIds = valitateExistsResults.Missing;
+
                 if (!request.ProductionOrderIds.Any())
                 {
                     valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
@@ -81,9 +88,15 @@ namespace Omicron.Warehouses.Services.Request
             }
 
             await this.InsertRequestDetail(request);
-            /*valitateExistsResults.Existing.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
-            valitateExistsResults.Missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));*/
 
+            if (request.ProductionOrderIds.Any())
+            {
+                exiting.ForEach(x => results.AddFailedResult(new { ProductionOrderId = x }, string.Format(ErrorReasonConstants.ReasonRawMaterialRequestAlreadyExists, x)));
+                missing.ForEach(x => results.AddSuccesResult(new { ProductionOrderId = x }));
+                return ServiceUtils.CreateResult(true, 200, null, results, null);
+            }
+
+            results.AddSuccesResult(new { ProductionOrderId = 0 });
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
