@@ -14,6 +14,7 @@ import {of} from 'rxjs';
 import {UserListMock} from '../../../mocks/userListMock';
 import {RolesMock} from '../../../mocks/rolesMock';
 import {QfbWithNumberMock} from '../../../mocks/qfbWithNumberMock';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
@@ -42,7 +43,8 @@ describe('FindOrdersDialogComponent', () => {
         BrowserAnimationsModule,
         HttpClientTestingModule,
         MATERIAL_COMPONENTS,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+          RouterTestingModule
       ],
       declarations: [ FindOrdersDialogComponent ],
       providers: [

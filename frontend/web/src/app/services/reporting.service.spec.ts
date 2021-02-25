@@ -4,12 +4,12 @@ import { ConsumeService } from './consume.service';
 import { DatePipe } from '@angular/common';
 
 import { ReportingService } from './reporting.service';
-import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ReportingService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe, ConsumeService]
   }));
 

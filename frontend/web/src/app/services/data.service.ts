@@ -10,7 +10,7 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS,
+  MODAL_FIND_ORDERS, RouterPaths,
   TypeToSeeTap
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
@@ -18,6 +18,7 @@ import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,8 @@ export class DataService {
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   private openSignatureDialog = new Subject<any>();
   private newDataSignature = new Subject<any>();
-  constructor(private datePipe: DatePipe) { }
+  constructor(private datePipe: DatePipe, private router: Router
+  ) { }
 
   setNewDataSignature(newSignature: any) {
     this.newDataSignature.next(newSignature);
@@ -409,6 +411,10 @@ export class DataService {
         queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
+      if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
+        queryString = `${queryString}&clasification=${resultSearchOrderModal.clasification}`;
+        filterDataOrders.clasification = resultSearchOrderModal.clasification;
+      }
     }
 
     return [filterDataOrders, queryString];
@@ -468,5 +474,12 @@ export class DataService {
   }
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number, filters: string) {
+    this.router.navigate([RouterPaths.detailFormula,
+      ordenFabricacionId, ordersIds, isFromOrders, filters]);
+  }
+  getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
+    return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
   }
 }

@@ -13,6 +13,7 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { MiListaComponent } from './mi-lista.component';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('MiListaComponent', () => {
   let component: MiListaComponent;
@@ -28,7 +29,7 @@ describe('MiListaComponent', () => {
         MatDialogModule,
         MatCheckboxModule,
         MatFormFieldModule, MatInputModule,
-        BrowserAnimationsModule],
+        BrowserAnimationsModule, RouterTestingModule],
       declarations: [ MiListaComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [

@@ -2,9 +2,11 @@ import {TestBed} from '@angular/core/testing';
 import {DatePipe} from '@angular/common';
 import {DataService} from './data.service';
 import {ConstStatus, FromToFilter, HttpServiceTOCall, MessageType} from '../constants/const';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
+    imports: [RouterTestingModule],
     providers: [DatePipe]
   }));
 

@@ -40,6 +40,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   allComplete = false;
   isThereToDelete = false;
   isToDownload = false;
+  isFreeRequest = false;
   constructor(private router: Router,
               private dialog: MatDialog,
               private materialReService: MaterialRequestService,
@@ -55,7 +56,9 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.activeRoute.paramMap.subscribe(params => {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
-      this.getPreMaterialRequestH();
+      this.isFreeRequest = Number(this.dataToRequest) === CONST_NUMBER.zero;
+
+      this.validateRequest();
       this.dataService.setUrlActive(this.isOrder ? HttpServiceTOCall.ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
     });
     this.subscription.add(this.dataService.getNewMaterialComponent().subscribe( resultNewMaterialComponent => {
@@ -130,15 +133,16 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-    this.dataService.setOpenSignatureDialog(this.oldData.signature);
+    this.dataService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
   }
 
   sendRequest() {
     const newComponentsToSend = new RawRequestPost();
     this.setModelData();
     newComponentsToSend.data = this.oldData;
-    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds;
+    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || []; // preguntarle a gus que si es que es libre la solicitud que le mando
     newComponentsToSend.userId = this.dataService.getUserId();
+
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe( resultMaterialPost => {
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
@@ -240,5 +244,10 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     let newIdsStrings = [];
     idToMessage.forEach( id => newIdsStrings = [...newIdsStrings, ` ${ id.toString()}`]);
     return newIdsStrings;
+  }
+  validateRequest() {
+    if (!this.isFreeRequest) {
+      this.getPreMaterialRequestH();
+    }
   }
 }

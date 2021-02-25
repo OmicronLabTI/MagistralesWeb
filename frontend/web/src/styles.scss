@@ -769,6 +769,23 @@ a.breadcrumblink:hover{
 .only-margin {
   width: 8px;
 }
+.custom-title-list-container {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+}
+.icon-next-container {
+  padding: 20px;
+}
+.width-icon-next-order {
+  font-size: 40px !important;
+}
+.padding-tp {
+  padding-top: 10px !important;
+}
+.border-none{
+  border: none;
+}
 // .mat-form-field-underline {
 //   caret-color: rgba(108, 144, 179, 1) !important;
 

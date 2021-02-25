@@ -7,6 +7,7 @@ import {FormsModule} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {DatePipe} from '@angular/common';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -16,7 +17,7 @@ describe('FinalizeOrdersComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ FinalizeOrdersComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule],
+      imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [{ provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: {finalizeData: {filterOrdersData: []} } },
         DatePipe]

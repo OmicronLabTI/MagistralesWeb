@@ -52,6 +52,9 @@ export class ParamsPedidos {
     clientName?: string;
     label?: string;
     finlabel: string;
+    current?: string;
+    advance?: string;
+    clasification?: string;
 
 
 }

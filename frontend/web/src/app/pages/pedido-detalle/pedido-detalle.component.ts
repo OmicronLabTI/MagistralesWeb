@@ -5,6 +5,7 @@ import {IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish} from '../../mo
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../../services/data.service';
 import {
+  CarouselOption, CarouselOptionString,
   ClassNames,
   CONST_NUMBER,
   CONST_STRING,
@@ -19,7 +20,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, OrderToDelivered, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -32,7 +33,6 @@ import {AddCommentsDialogComponent} from '../../dialogs/add-comments-dialog/add-
 })
 export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
-  docNum: string;
   docStatus: string;
   displayedColumns: string[] = [
     'seleccion',
@@ -61,6 +61,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
+  paramsDetailOrder = new ParamsPedidos();
+  baseQueryString = CONST_STRING.empty;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -70,10 +72,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.docNum = params.get('id');
-      this.titleService.setTitle('Pedido ' + this.docNum);
+      // this.docNum = params.get('id');
+      this.generateParamsToGetDetail(params.get('id'), params.get('filters'));
+      this.titleService.setTitle('Pedido ' + params.get('id'));
     });
-    this.getDetallePedido();
     this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
         this.getDetallePedido();
@@ -86,62 +88,65 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getDetallePedido() {
-    this.pedidosService.getDetallePedido(this.docNum).subscribe(
-      (pedidoDetalleRes) => {
-        this.dataSource.data = pedidoDetalleRes.response;
-        this.dataSource.data.forEach(element => {
-          this.docStatus = element.pedidoStatus;
-          element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
-          element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
-          element.status = element.status === '' ? ConstStatus.abierto : element.status;
-          switch (element.status.toUpperCase()) {
-            case ConstStatus.abierto.toUpperCase():
-              element.class = 'abierto';
-              break;
-            case ConstStatus.planificado.toUpperCase():
-              element.class = 'planificado';
-              break;
-            case ConstStatus.asignado.toUpperCase():
-              element.class = 'asignado';
-              break;
-            case ConstStatus.pendiente.toUpperCase():
-              element.class = 'pendiente';
-              break;
-            case ConstStatus.terminado.toUpperCase():
-              element.class = 'terminado';
-              break;
-            case ConstStatus.enProceso.toUpperCase():
-              element.class = 'proceso';
-              break;
-            case ConstStatus.finalizado.toUpperCase():
-              element.class = 'finalizado';
-              break;
-            case ConstStatus.cancelado.toUpperCase():
-              element.class = 'cancelado';
-              break;
-            case ConstStatus.reasingado.toUpperCase():
-              element.class = 'reasignado';
-              break;
-            case ConstStatus.entregado.toUpperCase():
-              element.class = 'entregado';
-              break;
-          }
-          element.descripcionProducto = element.descripcionProducto.toUpperCase();
-        });
-        this.isThereOrdersToViewPdf = false;
-        this.isThereOrdersDetailToDelivered = false;
-        this.isThereOrdersToFinishLabel = false;
-        this.isThereOrdersDetailToPlan = false;
-        this.isThereOrdersDetailToPlace = false;
-        this.isThereOrdersDetailToCancel = false;
-        this.isThereOrdersDetailToFinalize = false;
-        this.isThereOrdersDetailToReassign = false;
-        this.allComplete = false;
-        this.isOnInit = false;
-        this.signatureData = CONST_STRING.empty;
-        this.isCorrectToAddComments = this.dataSource.data.every(order => order.status === ConstStatus.abierto
-                                                                 && order.ordenFabricacionId === CONST_NUMBER.zero);
-      }, error => this.errorService.httpError(error));
+    this.pedidosService.getDetallePedido(this.paramsDetailOrder.current).subscribe(
+      ({response}) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
+  }
+  onSuccessDetailPedido(response: IPedidoDetalleReq[]) {
+    // remove comments to Prod
+    // this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
+    this.dataSource.data = response;
+    this.dataSource.data.forEach(element => {
+      this.docStatus = element.pedidoStatus;
+      element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
+      element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
+      element.status = element.status === '' ? ConstStatus.abierto : element.status;
+      switch (element.status.toUpperCase()) {
+        case ConstStatus.abierto.toUpperCase():
+          element.class = 'abierto';
+          break;
+        case ConstStatus.planificado.toUpperCase():
+          element.class = 'planificado';
+          break;
+        case ConstStatus.asignado.toUpperCase():
+          element.class = 'asignado';
+          break;
+        case ConstStatus.pendiente.toUpperCase():
+          element.class = 'pendiente';
+          break;
+        case ConstStatus.terminado.toUpperCase():
+          element.class = 'terminado';
+          break;
+        case ConstStatus.enProceso.toUpperCase():
+          element.class = 'proceso';
+          break;
+        case ConstStatus.finalizado.toUpperCase():
+          element.class = 'finalizado';
+          break;
+        case ConstStatus.cancelado.toUpperCase():
+          element.class = 'cancelado';
+          break;
+        case ConstStatus.reasingado.toUpperCase():
+          element.class = 'reasignado';
+          break;
+        case ConstStatus.entregado.toUpperCase():
+          element.class = 'entregado';
+          break;
+      }
+      element.descripcionProducto = element.descripcionProducto.toUpperCase();
+    });
+    this.isThereOrdersToViewPdf = false;
+    this.isThereOrdersDetailToDelivered = false;
+    this.isThereOrdersToFinishLabel = false;
+    this.isThereOrdersDetailToPlan = false;
+    this.isThereOrdersDetailToPlace = false;
+    this.isThereOrdersDetailToCancel = false;
+    this.isThereOrdersDetailToFinalize = false;
+    this.isThereOrdersDetailToReassign = false;
+    this.allComplete = false;
+    this.isOnInit = false;
+    this.signatureData = CONST_STRING.empty;
+    this.isCorrectToAddComments = this.dataSource.data.every(order => order.status === ConstStatus.abierto
+        && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
   updateAllComplete() {
@@ -196,7 +201,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
         .then((result: any) => {
           if (result.isConfirmed) {
-            this.detailsOrderToProcess.pedidoId = Number(this.docNum);
+            this.detailsOrderToProcess.pedidoId = Number(this.paramsDetailOrder.current);
             this.detailsOrderToProcess.userId = this.dataService.getUserId();
             this.detailsOrderToProcess.productId =
                 this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
@@ -238,8 +243,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
     materialRequestDetail() {
         this.router.navigate([RouterPaths.materialRequest,
-          this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString(),
-          CONST_NUMBER.zero.toString()]);
+          this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
+          CONST_NUMBER.zero]);
     }
     getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
@@ -264,7 +269,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   addCommentsOnService(addCommentsResult: string) {
-    this.pedidosService.savedComments( Number(this.docNum), addCommentsResult).subscribe(() => {
+    this.pedidosService.savedComments( Number(this.paramsDetailOrder.current), addCommentsResult).subscribe(() => {
           this.reloadOrderDetail();
         },
         error => this.errorService.httpError(error));
@@ -341,10 +346,43 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   viewOrdersWithPdf() {
-    this.pedidosService.getOrdersPdfViews([Number(this.docNum)])
+    this.pedidosService.getOrdersPdfViews([Number(this.paramsDetailOrder.current)])
         .subscribe( viewPdfResult => {
-          viewPdfResult.response.forEach( pdfUrl => this.dataService.openNewTapByUrl( pdfUrl, TypeToSeeTap.order, Number(this.docNum)));
+          viewPdfResult.response.forEach( pdfUrl =>
+              this.dataService.openNewTapByUrl( pdfUrl, TypeToSeeTap.order, Number(this.paramsDetailOrder.current)));
           }
             , error => this.errorService.httpError(error));
+  }
+
+  generateParamsToGetDetail(order: string, filters: string) {
+    this.paramsDetailOrder.current = order;
+    this.baseQueryString = filters;
+    this.getDetallePedido();
+
+  }
+
+  carouselDetail(typeCarousel: number) {
+    switch (typeCarousel) {
+      case CarouselOption.backDetail:
+        this.generateFullQueryString(CarouselOptionString.backDetail);
+        break;
+      case CarouselOption.nextDetail:
+        this.generateFullQueryString(CarouselOptionString.nextDetail);
+        break;
+    }
+  }
+  generateFullQueryString(optionCarouselDetail: string) {
+    this.carouselDetailService(this.dataService.getFullStringForCarousel(
+                                this.baseQueryString, this.paramsDetailOrder.current, optionCarouselDetail));
+  }
+  carouselDetailService(queryStringFull: string) {
+     this.pedidosService.getDetailCarousel(queryStringFull).subscribe(({response}) =>
+         this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
+  }
+
+  goToDetailFormula(ordenFabricacionId: string) {
+    this.dataService.changeRouterForFormula(ordenFabricacionId,
+        this.dataSource.data.map(detail => detail.ordenFabricacionId).toString(),
+        CONST_NUMBER.one, CONST_STRING.empty);
   }
 }

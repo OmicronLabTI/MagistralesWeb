@@ -47,12 +47,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             clientName: ['', [Validators.maxLength(80)]],
             label: ['', []],
             finlabel: ['', []],
+            clasification: ['', []],
         });
         this.isToResetData = // add more filter to receive
             this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
             || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode
             || this.filterData.filterOrdersData.clientName || this.filterData.filterOrdersData.label
-            || this.filterData.filterOrdersData.finlabel;
+            || this.filterData.filterOrdersData.finlabel || this.filterData.filterOrdersData.clasification;
     }
 
     async ngOnInit() {
@@ -96,10 +97,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             this.filterData.filterOrdersData.label : '');
         this.findOrdersForm.get('finlabel').setValue(this.filterData.filterOrdersData.finlabel ?
             this.filterData.filterOrdersData.finlabel : '');
+        this.findOrdersForm.get('clasification').setValue(this.filterData.filterOrdersData.clasification ?
+            this.filterData.filterOrdersData.clasification : '');
 
         if (this.filterData.filterOrdersData.docNum) {
             this.getDisableForDocNum();
-        } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status) {
+        } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status
+            || this.filterData.filterOrdersData.clasification) {
             this.getDisableOnlyForDocNum();
         }
         this.getMaxDate();
@@ -115,7 +119,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                         (this.withValue(formData.dateType) && formData.dateType !== ConstOrders.defaultDateInit) ||
                         this.withValue(formData.status) || this.withValue(formData.qfb) ||
                         this.withValue(formData.productCode) || this.withValue(formData.clientName) ||
-                        this.withValue(formData.label) || this.withValue(formData.finlabel)
+                        this.withValue(formData.label) || this.withValue(formData.finlabel) ||
+                        this.withValue(formData.clasification)
                     )) {
                     this.changeValidatorsForDocNum();
                 } else {
@@ -162,6 +167,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('clasification').disable({onlySelf: true, emitEvent: false});
     }
     getDisableOnlyForDocNum() {
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
@@ -175,6 +181,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').setValue('');
         this.findOrdersForm.get('label').setValue('');
         this.findOrdersForm.get('finlabel').setValue('');
+        this.findOrdersForm.get('clasification').setValue('');
     }
     enableAllParamsSearch() {
         this.getDisableForDocNum();
@@ -193,6 +200,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').enable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('clasification').enable({onlySelf: true, emitEvent: false});
     }
     changeValidatorsForDocNum() {
         this.isToResetData = true;
@@ -209,7 +217,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             && this.findOrdersForm.get('productCode').value !== null) || (this.findOrdersForm.get('clientName').value !== CONST_STRING.empty
             && this.findOrdersForm.get('clientName').value !== null) || (this.findOrdersForm.get('label').value !== CONST_STRING.empty
             && this.findOrdersForm.get('label').value !== null) || (this.findOrdersForm.get('finlabel').value !== CONST_STRING.empty
-            && this.findOrdersForm.get('finlabel').value !== null))) {
+            && this.findOrdersForm.get('finlabel').value !== null) || (this.findOrdersForm.get('clasification').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('clasification').value !== null))) {
             this.searchOrders();
         }
     }

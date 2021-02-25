@@ -5,9 +5,10 @@ import {PedidosComponent} from './pedidos.component';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import { ReactiveFormsModule , FormsModule} from '@angular/forms';
 import {PipesModule} from '../../pipes/pipes.module';
+import {OrdersRefuseComponent} from '../../dialogs/orders-refuse/orders-refuse.component';
 
 @NgModule({
-  declarations: [PedidosComponent],
+  declarations: [PedidosComponent, OrdersRefuseComponent],
   imports: [
     CommonModule,
     PedidosRoutingModule,
@@ -16,6 +17,7 @@ import {PipesModule} from '../../pipes/pipes.module';
     FormsModule,
     PipesModule
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  entryComponents: [OrdersRefuseComponent]
 })
 export class PedidosModule { }
