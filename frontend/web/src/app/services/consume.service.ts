@@ -105,12 +105,12 @@ export class ConsumeService {
   }
 
   httpDelete<T>(url: string) {
-    let objHeaders = new HttpHeaders();
-    if (headers) {
-      Object.keys(headers).forEach((key) => {
-        objHeaders = objHeaders.append(key, headers[key]);
-      });
-    }
+    /*    let objHeaders = new HttpHeaders();
+      if (headers) {
+         Object.keys(headers).forEach((key) => {
+           objHeaders = objHeaders.append(key, headers[key]);
+         });
+       }*/
 
     this.dataService.setIsLoading(true);
     return new Observable<T>(observer => {

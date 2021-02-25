@@ -35,12 +35,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'pedido',
     'orden',
     'codigoproducto',
     'descripcion',
     'cantidadplanificada',
+    'lote',
     'fechaorden',
     'fechatermino',
     'qfbasignado',
