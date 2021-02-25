@@ -72,7 +72,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      // this.docNum = params.get('id');
       this.generateParamsToGetDetail(params.get('id'), params.get('filters'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
@@ -92,8 +91,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       ({response}) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
   }
   onSuccessDetailPedido(response: IPedidoDetalleReq[]) {
-    // remove comments to Prod
-    // this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
+    this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
     this.dataSource.data.forEach(element => {
       this.docStatus = element.pedidoStatus;
@@ -130,6 +128,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           break;
         case ConstStatus.entregado.toUpperCase():
           element.class = 'entregado';
+          break;
+        case ConstStatus.rechazado.toUpperCase():
+          element.class = 'rechazado';
           break;
       }
       element.descripcionProducto = element.descripcionProducto.toUpperCase();

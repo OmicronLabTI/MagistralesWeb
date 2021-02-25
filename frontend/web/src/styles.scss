@@ -672,6 +672,13 @@ a.breadcrumblink:hover{
   font-weight: 700 !important;
   width: 100px;
 }
+.mat-stroked-button.rechazado {
+  display: flex;
+  justify-content: center;
+  background-color: #B54252;
+  font-weight: 700 !important;
+  width: 100px;
+}
 
 .mat-stroked-button.close-sap {
   display: flex;

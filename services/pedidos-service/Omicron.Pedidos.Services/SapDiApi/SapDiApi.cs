@@ -39,6 +39,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
         public SapDiApi(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.httpClient.Timeout = new System.TimeSpan(0, 30, 0);
             this.logger = logger;
         }
 

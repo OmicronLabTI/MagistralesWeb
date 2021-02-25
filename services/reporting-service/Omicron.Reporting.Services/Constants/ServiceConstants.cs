@@ -43,7 +43,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// The local.
         /// </summary>
-        public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta #{0}; {1}";
+        public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
 
         /// <summary>
         /// Sent local package.
@@ -61,9 +61,14 @@ namespace Omicron.Reporting.Services.Constants
         public const string EmailRejectedOrderClosing = " Quedamos atentos a sus comentarios. <br/> Departamento Magistrales";
 
         /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailFarewall = "<p> Le pedimos de la manera más atenta tomar la acción correspondiente.<br/> Agradecemos de antemano su seguimiento, y pedimos una disculpa por los inconvenientes ocasionados.</p>";
+
+        /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}</body></html>";
+        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}{3}</body></html>";
 
         /// <summary>
         /// Gets the status of the order.
