@@ -46,12 +46,12 @@ class OrderDetailViewController: UIViewController {
     @Injected var lottieManager: LottieManager
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
-    var statusType: String = ""
+    var statusType = String()
     var indexOfTableToEditItem: Int = -1
     let formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
     var orderDetail: [OrderDetail] = []
     var refreshControl = UIRefreshControl()
-    var destiny = ""
+    var destiny = String()
     var isolatedOrder = false
     var emptyStockProductId: [String] = []
     // MARK: Life Cycles
@@ -59,7 +59,6 @@ class OrderDetailViewController: UIViewController {
         super.viewDidLoad()
         self.tableView.delegate = self
         self.title = CommonStrings.formulaDetail
-//        splitViewController!.preferredDisplayMode = .allVisible
         self.showButtonsByStatusType(statusType: statusType)
         self.initComponents()
         self.tableView.allowsMultipleSelectionDuringEditing = false
@@ -69,13 +68,8 @@ class OrderDetailViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-//        splitViewController!.preferredDisplayMode = .primaryHidden
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
-//        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {

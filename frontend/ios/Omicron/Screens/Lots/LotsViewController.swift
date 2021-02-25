@@ -63,6 +63,7 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
         self.setupKeyboard()
+        splitViewController?.preferredDisplayMode = .primaryHidden
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -78,6 +79,10 @@ class LotsViewController: UIViewController {
                 weakSelf.lineDocTable.delegate?.tableView?(weakSelf.lineDocTable, didSelectRowAt: firstRow)
             }
         }).subscribe().disposed(by: disposeBag)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        splitViewController?.preferredDisplayMode = .primaryHidden
     }
     // MARK: - Functions
     func viewModelBinding() {
