@@ -17,6 +17,7 @@ export const Messages = {
   deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s) ?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados ?',
   leftWithoutSave: 'Existen cambios sin guardar, ¿Deseas salir sin guardar los cambios?',
+  leftWithoutSaveOnCarousel: 'Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
   onlyPositiveNumber: 'Ingresar valores mayores a cero',

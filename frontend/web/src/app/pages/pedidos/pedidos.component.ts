@@ -139,6 +139,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
               case ConstStatus.entregado:
                   element.class = 'entregado';
                   break;
+                  case ConstStatus.rechazado:
+                  element.class = 'rechazado';
+                  break;
           }
         });
         this.isTherePedidosToViewPdf = false;
