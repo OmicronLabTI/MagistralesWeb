@@ -31,13 +31,11 @@ export class ComponentslistComponent implements AfterViewInit {
 
   getCustomList() {
     this.orderService.getCustomList('?productId=' + this.data.code).subscribe( result => {
-      console.log('response', result.response)
       this.dataSource.data = result.response;
     });
   }
 
   selectComponent(element: BaseComponent) {
-    console.log('element: ', element)
     this.dataService.presentToastCustom(Messages.confirmReplaceWithListComponents, 'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
         this.dialogRef.close({componentes: element.components});
@@ -45,13 +43,11 @@ export class ComponentslistComponent implements AfterViewInit {
     });
   }
   removeCustomList(element: BaseComponent) {
-    console.log('elementRemove: ', element)
-
     this.dataService.presentToastCustom(`${Messages.removeListComponents} ${element.name.toUpperCase()}?`,
         'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
-        this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( deleteListResult => {
-          console.log('deleteResult: ', deleteListResult)
+        this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( () => {
+          this.dataService.setMessageGeneralCallHttp({isButtonAccept: false, icon: 'success', title: Messages.success});
           this.getCustomList();
         }, error =>  this.errorService.httpError(error));
       }});

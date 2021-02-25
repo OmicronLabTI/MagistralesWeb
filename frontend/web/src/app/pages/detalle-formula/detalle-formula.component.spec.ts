@@ -89,13 +89,13 @@ describe('DetalleFormulaComponent', () => {
     ]);
   });*/
 
-  it('should call getDetalleFormula ok', () => {
+  /*it('should call getDetalleFormula ok', () => {
     component.ordenFabricacionId = '1234';
     component.getDetalleFormula();
     expect(pedidosServiceSpy.getFormulaDetail).toHaveBeenCalledWith(component.ordenFabricacionId);
   });
 
-  /*it('should call getFormulaDetail error', () => {
+  it('should call getFormulaDetail error', () => {
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return throwError({ status: 500 });
     });

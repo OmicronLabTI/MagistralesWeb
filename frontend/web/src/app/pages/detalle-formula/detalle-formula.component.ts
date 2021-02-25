@@ -183,7 +183,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
-              console.log('detailcomponentstosave: ', detailComponentsTOSave)
+
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
@@ -340,19 +340,18 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
          }
       }
     });
-    console.log('componentsReceiveAfterForEach: ', components)
+
     newDataToUpdate.forEach( component => {
       components.splice(components.findIndex( componentI => componentI.productId === component.productId)
           , CONST_NUMBER.one);
       this.dataSource.data.splice(this.dataSource.data.findIndex( element => element.productId === component.productId)
           , CONST_NUMBER.one );
     });
-    console.log('newDataToUpdate: ', newDataToUpdate)
+
     this.componentsToDelete.push(...this.dataSource.data.filter(
       component =>
         (component.isInDb === undefined)
     ));
-    console.log('deleteComponents: ', this.componentsToDelete)
     const newData: IFormulaDetalleReq[] = [];
     // tslint:disable-next-line: radix
     const orderFabricacionId = parseInt(this.ordenFabricacionId);

@@ -23,8 +23,7 @@ export class OrdersService {
     return this.consumeService.httpGet<IMyCustomListRes>(Endpoints.orders.saveMyList + code);
   }
   deleteCustomList(deleteListReq: ICustomListDelete) {
-    console.log('deleteListReq:' , deleteListReq)
-    return this.consumeService.httpDelete(Endpoints.orders.customList);
+    return this.consumeService.httpDelete(`${Endpoints.orders.customList}?name=${deleteListReq.name}&productId=${deleteListReq.productId}`);
     // validar con erika para que se cabie de verbo oh la info se lo envio por queryParams
   }
 }
