@@ -391,7 +391,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 asesorsToReportingEmail.Add(new
                 {
                     customerName = asesor.Cliente,
-                    destinyEmail = asesor.Email,
+                    destinyEmail = "eliasdanielsanchezlopez@gmail.com", // asesor.Email,
                     salesOrders = asesor.OrderId.ToString(),
                     comments = rejectOrders.Comments,
                 });
