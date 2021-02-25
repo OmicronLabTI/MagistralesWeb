@@ -21,9 +21,7 @@ export class MiListaComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
     private orderService: OrdersService
-  ) {
-    console.log('ListComponents: ', this.data.data)
-  }
+  ) {}
 
   ngOnInit() {
   }
@@ -37,14 +35,6 @@ export class MiListaComponent implements OnInit {
         datos.data.name = this.name.value;
         datos.data.productId = this.data.code;
         datos.data.components = this.data.data;
-        /*datos.data.components = [];
-        this.data.data.forEach(element => {
-          datos.data.components.push({
-            productId: element.productId,
-            description: element.description,
-            baseQuantity: element.baseQuantity
-          });
-        });*/
         const nameFC = this.name.value;
         this.orderService.saveMyListComponent(datos).subscribe( result => {
           if (result.response === 0) {

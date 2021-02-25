@@ -383,6 +383,18 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   changeDetailFormula(optionChangeDetail: number) {
+    if (this.dataService.getIsToSaveAnything()) {
+      this.dataService.presentToastCustom(Messages.leftWithoutSaveOnCarousel, 'question', '', true, true)
+          .then((savedResult: any) => {
+            if (savedResult.isConfirmed) {
+              this.changeFormulaValidate(optionChangeDetail);
+            }
+          });
+    } else {
+      this.changeFormulaValidate(optionChangeDetail);
+    }
+  }
+  changeFormulaValidate(optionChangeDetail: number) {
     switch (optionChangeDetail) {
       case CarouselOption.backDetail:
         if (this.isFromDetail) {
@@ -403,10 +415,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         }
         break;
     }
-
-
   }
-
   changeFormulaByIndex(backDetail: CarouselOption) {
       let currentIndex = this.detailOrders.findIndex( order => order === this.ordenFabricacionId);
       if (backDetail === CarouselOption.backDetail) {
