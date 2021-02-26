@@ -35,7 +35,8 @@ describe('AddUserDialogComponent', () => {
     password: 'QXhpdHkyMDIwaGh4eA==',
     piezas: 10,
     role: 3,
-    userName: 'a44'
+    userName: 'a44',
+    classification: 'BE'
   };
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
@@ -112,6 +113,7 @@ describe('AddUserDialogComponent', () => {
     expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
     expect(component.addUserForm.get('piezas').value).toEqual(userEditSpec.piezas);
     expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());
+    expect(component.addUserForm.get('classificationQFB').value).toEqual(userEditSpec.classification);
   });
   it('should ngOnInit create faild', () => {
     userServiceSpy.getRoles.and.callFake(() => {

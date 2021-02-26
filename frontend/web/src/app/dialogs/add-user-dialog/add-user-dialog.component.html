@@ -90,7 +90,21 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
+                            <mat-label>Selecciona clasificación</mat-label>
+                            <mat-select formControlName="classificationQFB"> 
+                                <mat-option value=""></mat-option>
+                                <mat-option value="MN">MN</mat-option>
+                                <mat-option value="BE">BE</mat-option>
+                                <mat-option value="MG">MG</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm.controls.classificationQFB.hasError('required')">
+                                Clasificación <strong>requerida</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
                             <mat-label>Selecciona asignación</mat-label>
                             <mat-select formControlName="asignable">
                                 <mat-option value="1">Encendido</mat-option>
@@ -101,8 +115,10 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
+                </div>
+                <div class="row-form-user-status" *ngIf="isForEditModal">
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user" *ngIf="isForEditModal">
+                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
                             <mat-label>Selecciona estatus</mat-label>
                             <mat-select formControlName="activo">
                                 <mat-option value="0">Inactivo</mat-option>
@@ -113,7 +129,6 @@
                             Estatus es <strong>requerido</strong>
                         </mat-error>
                     </div>
-
                 </div>
             </form>
 
