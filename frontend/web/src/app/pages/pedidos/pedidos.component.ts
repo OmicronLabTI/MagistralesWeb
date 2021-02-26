@@ -282,6 +282,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
+      console.log('fullstringModal', this.fullQueryString)
     this.getPedidos();
   }
 
