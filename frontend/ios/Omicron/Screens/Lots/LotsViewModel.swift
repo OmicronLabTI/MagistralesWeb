@@ -79,8 +79,9 @@ class LotsViewModel {
             guard let available = availableSelected else { return }
             guard let doc = self?.documentLines
                 .first(where: { $0.codigoProducto == product.codigoProducto }) else { return }
-            let quantity = (available.cantidadSeleccionada ?? 0)
-            if quantity == 0 || quantity > (doc.totalNecesario ?? 0) || (available.cantidadDisponible ?? 0) == 0 {
+            let quantity = available.cantidadSeleccionada ?? 0
+            if quantity == 0 || quantity > (doc.totalNecesario ?? 0) || (available.cantidadDisponible ?? 0)
+                == 0 || quantity > (available.cantidadDisponible ?? 0) {
                 return
             }
             if let existing = self?.selectedBatches.first(where: { batch in
