@@ -70,32 +70,6 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Method to get all orders.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>List of orders.</returns>
-        [Route("/orders/details")]
-        [HttpGet]
-        public async Task<IActionResult> GetDetails([FromQuery] Dictionary<string, string> parameters)
-        {
-            var response = await this.sapFacade.GetDetails(parameters, "ped");
-            return this.Ok(response);
-        }
-
-        /// <summary>
-        /// Method to get required packing.
-        /// </summary>
-        /// <param name="userId">The parameters.</param>
-        /// <returns>List.</returns>
-        [Route("/orders/packingRequired/{userId}")]
-        [HttpGet]
-        public async Task<IActionResult> GetPackingRequiredForOrderInAssignedStatus(string userId)
-        {
-            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
-            return this.Ok(response);
-        }
-
-        /// <summary>
         /// Obtiene las formulas de la orden de fabricacion.
         /// </summary>
         /// <param name="ordenId">the order id.</param>
@@ -105,19 +79,6 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetOrderFormula(int ordenId)
         {
             var result = await this.sapFacade.GetOrderFormula(new List<int> { ordenId }, true, true);
-            return this.Ok(result);
-        }
-
-        /// <summary>
-        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
-        /// </summary>
-        /// <param name="salesOrder">the orderId list.</param>
-        /// <returns>the object.</returns>
-        [Route("/asesors")]
-        [HttpPost]
-        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<int> salesOrder)
-        {
-            var result = await this.sapFacade.GetAsesorsByOrderId(salesOrder);
             return this.Ok(result);
         }
 
@@ -263,19 +224,6 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
-        /// Method to get all orders.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>List of orders.</returns>
-        [Route("/faborders/details")]
-        [HttpGet]
-        public async Task<IActionResult> GetFabDetails([FromQuery] Dictionary<string, string> parameters)
-        {
-            var response = await this.sapFacade.GetDetails(parameters, "ord");
-            return this.Ok(response);
-        }
-
-        /// <summary>
         /// Get products management by batches with criterials.
         /// </summary>
         /// <param name="parameters">the filters.</param>
@@ -350,6 +298,58 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             var result = await this.sapFacade.GetMostCommonComponents();
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/orders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ped");
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        [Route("/orders/packingRequired/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        [Route("/asesors")]
+        [HttpPost]
+        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<int> salesOrder)
+        {
+            var result = await this.sapFacade.GetAsesorsByOrderId(salesOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/faborders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetFabDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ord");
+            return this.Ok(response);
         }
 
         /// <summary>
