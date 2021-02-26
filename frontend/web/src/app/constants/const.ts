@@ -225,3 +225,15 @@ export const RolesType = {
     design: '4',
     warehouse: '5'
 };
+export const OrderType = {
+    bioElite: 'MN',
+    bioEqual: 'BE',
+    magistral: 'MG',
+    mixto: 'MX',
+};
+export const ClassCssOrderType = {
+    mn: 'clasification-mn',
+    be: 'clasification-be',
+    mg: 'clasification-mg',
+    mx: 'clasification-mx'
+};

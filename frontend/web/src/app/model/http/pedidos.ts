@@ -85,8 +85,10 @@ export class IPedidoReq {
     hasRecipte?: string;
     qfb?: string;
     class?: string;
+    classClasification?: string;
     labelType: string;
     finishedLabel: number;
+    orderType: string;
 }
 
 export class CancelOrderReq {
