@@ -42,6 +42,8 @@ class InboxViewController: UIViewController {
     var productID = 0
     var indexPathsSelected: [IndexPath] = []
     var lastColor = UIColor.blue
+    var lastIndexPath: IndexPath?
+    var lastRect: CGRect?
 
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -77,6 +79,10 @@ class InboxViewController: UIViewController {
             viewModelBindingCollectionView()
             bindingCollectionView.toggle()
         }
+//        guard let lastIndexPath = lastIndexPath else { return }
+//        collectionView.scrollRectToVisible(<#T##rect: CGRect##CGRect#>, animated: <#T##Bool#>)
+//        guard let lastRect = lastRect else { return }
+//        collectionView.scrollRectToVisible(lastRect, animated: true)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -352,7 +358,7 @@ class InboxViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         // Muestra un mensaje AlertViewController
         inboxViewModel.showAlert.observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] message in
+            .subscribe(onNext: { [unowned self] message inƒreload
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         inboxViewModel.hasConnection.observeOn(MainScheduler.instance)
@@ -365,6 +371,8 @@ class InboxViewController: UIViewController {
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
                 guard self.indexPathsSelected.count > 0 else {
+                    self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
+                    self.lastIndexPath = indexPath
                     let orders = self.inboxViewModel.sectionOrders
                     let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
                     guard let order = orderOptional else { return }
@@ -376,6 +384,8 @@ class InboxViewController: UIViewController {
         collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] indexPath in
             guard let self = self else { return }
             guard self.indexPathsSelected.count > 0 else {
+                self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
+                self.lastIndexPath = indexPath
                 let orders = self.inboxViewModel.sectionOrders
                 let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
                 guard let order = orderOptional else { return }
@@ -384,6 +394,16 @@ class InboxViewController: UIViewController {
             }
             self.updateCellWithIndexPath(indexPath)
         }).disposed(by: disposeBag)
+
+        inboxViewModel
+            .reloadData
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self, let lastRect = self.lastRect else { return }
+                self.collectionView.scrollRectToVisible(lastRect, animated: true)
+            })
+            .disposed(by: self.disposeBag)
+
     }
     func initComponents() {
         self.processButton.isEnabled = false

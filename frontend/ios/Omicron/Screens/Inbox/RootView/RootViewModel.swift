@@ -86,6 +86,7 @@ class RootViewModel {
     }
     func getOrders(isUpdate: Bool = false) {
         if isUpdate { needsRefresh = true }
+        needsRefresh = true
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
             chartViewModel.getWorkload()
