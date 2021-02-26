@@ -481,26 +481,31 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="itemCode">the item code.</param>
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse)
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
             var listToReturn = new List<CompleteBatchesJoinModel>();
-            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => x.ItemCode == itemCode && x.WhsCode == warehouse && x.Quantity > 0).ToListAsync()).ToList();
+            var listItems = components.Select(x => x.ProductId).ToList();
+
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            querybatches = querybatches.Where(x => components.Any(y => y.ProductId == x.ItemCode && y.Warehouse == x.WhsCode)).ToList();
 
             var validBatches = querybatches.Select(x => x.SysNumber);
 
-            var batches = (await this.databaseContext.Batches.Where(x => x.ItemCode == itemCode && validBatches.Contains(x.SysNumber)).ToListAsync()).ToList();
+            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            batches = batches.Where(x => validBatches.Contains(x.SysNumber)).ToList();
 
             querybatches.ForEach(x =>
             {
-                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
-                batch = batch == null ? new Batches() : batch;
+                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber && x.ItemCode == y.ItemCode);
+                batch ??= new Batches();
                 listToReturn.Add(new CompleteBatchesJoinModel
                 {
-                    CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
-                    Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
-                    DistNumber = batch.DistNumber == null ? string.Empty : batch.DistNumber,
+                    CommitQty = x.CommitQty ?? 0,
+                    Quantity = x.Quantity ?? 0,
+                    DistNumber = batch.DistNumber ?? string.Empty,
                     SysNumber = x.SysNumber,
                     FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
+                    ItemCode = x.ItemCode,
                 });
             });
 
