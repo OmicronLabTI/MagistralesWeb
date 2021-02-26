@@ -638,7 +638,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 if (x.WarehouseQuantity <= 0 || x.RequiredQuantity > x.WarehouseQuantity)
                 {
-                    listErrorStock.ListItems.Add($"{x.OrderFabId}-{x.ProductId}");
+                    listErrorStock.ListItems.Add($"{x.OrderFabId} {x.ProductId}");
                 }
             });
 
