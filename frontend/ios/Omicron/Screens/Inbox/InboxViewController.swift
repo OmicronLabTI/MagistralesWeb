@@ -571,6 +571,7 @@ class InboxViewController: UIViewController {
             self.collectionView.reloadData()
             self.processButton.isEnabled = false
             self.pendingButton.isEnabled = false
+            self.finishedButton.isEnabled = false
         }
         if self.removeOrdersSelectedVerticalSpace.constant > 0 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
