@@ -20,7 +20,7 @@ import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/sear
 })
 export class UserListComponent implements OnInit, OnDestroy {
     isAllComplete = false;
-    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'pieces', 'asignable', 'status', 'actions'];
+    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'clasfqf', 'pieces', 'asignable', 'status', 'actions'];
     dataSource = new MatTableDataSource<IUserReq>();
     pageSize = CONST_NUMBER.ten;
     pageEvent: PageEvent;

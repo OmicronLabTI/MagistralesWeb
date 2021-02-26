@@ -417,14 +417,17 @@ namespace Omicron.SapAdapter.Services.Sap
             var componentes = (await this.sapDao.GetComponentByBatches(ordenId)).ToList();
             var listToReturn = new List<BatchesComponentModel>();
 
+            var lotes = await this.GetValidBatches(componentes);
+            var batches = await this.GetTransacitionBatches(componentes, lotes);
+
             foreach (var x in componentes)
             {
+                var localLotes = lotes.Where(y => y.ItemCode == x.ProductId && y.Quantity > 0).ToList();
+                var lotesNames = localLotes.Select(x => x.SysNumber).ToList();
+                var localBatches = batches.Where(y => lotesNames.Contains(y.SysNumber)).ToList();
+
                 double.TryParse(x.PendingQuantity.ToString(), out double totalNecesario);
-
-                var lotes = await this.GetValidBatches(x.ProductId, x.Warehouse);
-                var batches = await this.GetTransacitionBatches(ordenId, x.ProductId, lotes);
-
-                var totalBatches = batches.Any() ? batches.Sum(y => y.CantidadSeleccionada) : 0;
+                var totalBatches = localBatches.Any() ? localBatches.Sum(y => y.CantidadSeleccionada) : 0;
                 double.TryParse(totalBatches.ToString(), out var doubleTotalBathches);
 
                 totalNecesario = Math.Round(totalNecesario, 6);
@@ -437,8 +440,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     DescripcionProducto = x.Description,
                     TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
                     TotalSeleccionado = doubleTotalBathches,
-                    Lotes = lotes,
-                    LotesAsignados = batches,
+                    Lotes = localLotes,
+                    LotesAsignados = localBatches,
                 });
             }
 
@@ -740,13 +743,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Get the valid batches by component.
         /// </summary>
-        /// <param name="item">the item.</param>
-        /// <param name="almacen">the almacen.</param>
+        /// <param name="details">the details.</param>
         /// <returns>the value.</returns>
-        private async Task<List<ValidBatches>> GetValidBatches(string item, string almacen)
+        private async Task<List<ValidBatches>> GetValidBatches(List<CompleteDetalleFormulaModel> details)
         {
             var listToReturn = new List<ValidBatches>();
-            var batches = (await this.sapDao.GetValidBatches(item, almacen)).ToList();
+            var batches = (await this.sapDao.GetValidBatches(details)).ToList();
 
             batches.ForEach(x =>
             {
@@ -757,6 +759,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     CantidadAsignada = x.CommitQty,
                     CantidadDisponible = Math.Round(x.Quantity - x.CommitQty, 6),
                     FechaExp = x.FechaExp,
+                    ItemCode = x.ItemCode,
+                    Quantity = x.Quantity,
                 });
             });
 
@@ -786,6 +790,48 @@ namespace Omicron.SapAdapter.Services.Sap
             batchesQty.ForEach(x =>
             {
                 var batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber);
+                listToReturn.Add(new AssignedBatches
+                {
+                    CantidadSeleccionada = x.AllocQty,
+                    NumeroLote = batch == null ? string.Empty : batch.NumeroLote,
+                    SysNumber = x.SysNumber,
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Get the valid transacionst.
+        /// </summary>
+        /// <param name="components">the componentes.</param>
+        /// <param name="validBatches">the valid batches.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<AssignedBatches>> GetTransacitionBatches(List<CompleteDetalleFormulaModel> components, List<ValidBatches> validBatches)
+        {
+            var listToReturn = new List<AssignedBatches>();
+            var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { components.FirstOrDefault().OrderFabId })).ToList();
+
+            var listLastTransacionts = new List<BatchTransacitions>();
+            components.ForEach(x =>
+            {
+                var trasnByCode = batchTransactions.Where(y => y.ItemCode == x.ProductId).OrderBy(z => z.LogEntry).ToList();
+                var lastTransacion = trasnByCode.Any() ? trasnByCode.Last(x => x.DocQuantity > 0) : null;
+                listLastTransacionts.Add(lastTransacion);
+            });
+
+            listLastTransacionts = listLastTransacionts.Where(x => x != null).ToList();
+
+            if (!listLastTransacionts.Any())
+            {
+                return new List<AssignedBatches>();
+            }
+
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransacionts.Select(x => x.LogEntry).ToList())).ToList();
+
+            batchesQty.ForEach(x =>
+            {
+                var batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber && x.ItemCode == y.ItemCode);
                 listToReturn.Add(new AssignedBatches
                 {
                     CantidadSeleccionada = x.AllocQty,
