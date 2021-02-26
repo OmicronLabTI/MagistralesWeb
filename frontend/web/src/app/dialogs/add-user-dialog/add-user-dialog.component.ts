@@ -42,7 +42,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       password: ['', [Validators.required, Validators.pattern(CONST_USER_DIALOG.patternPassWord)]],
       activo: ['', [Validators.required]],
       piezas: [CONST_USER_DIALOG.defaultNumberOfPieces, [Validators.required, Validators.maxLength(5)]],
-      asignable: ['', [Validators.required]]
+      asignable: ['', [Validators.required]],
+      classificationQFB: ['', [Validators.required]]
     });
 
   }
@@ -59,9 +60,13 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
         this.addUserForm.get('piezas').disable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('asignable').disable({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('classificationQFB').disable({onlySelf: true, emitEvent: false});
       } else {
         this.addUserForm.get('piezas').enable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('asignable').enable({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('classificationQFB').enable({onlySelf: true, emitEvent: false});
+        // this.addUserForm.controls['classificationQFB'].setValidators(Validators.required);
+        this.addUserForm.get('classificationQFB').setValidators(Validators.required);
       }
     });
     this.usersService.getRoles().subscribe(rolesRes => {
@@ -87,19 +92,19 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
-
+      this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification.toString());
     }
   }
 
   saveUser() {
-
     if (!this.isForEditModal) {
       const user: IUserReq = {
         ...this.addUserForm.value,
         password: btoa(this.addUserForm.get('password').value),
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
-        piezas: Number(this.addUserForm.get('piezas').value)
+        piezas: Number(this.addUserForm.get('piezas').value),
+        classificationQFB: Number(this.addUserForm.get('classificationQFB').value)
       };
       this.usersService.createUserService(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
@@ -114,7 +119,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
         activo: Number(this.addUserForm.get('activo').value),
-        piezas: Number(this.addUserForm.get('piezas').value)
+        piezas: Number(this.addUserForm.get('piezas').value),
+        classificationQFB: Number(this.addUserForm.get('classificationQFB').value)
       };
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);
