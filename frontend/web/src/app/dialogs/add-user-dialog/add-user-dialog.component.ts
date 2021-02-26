@@ -96,7 +96,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
-      this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification.toString());
+      this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
     }
   }
 
