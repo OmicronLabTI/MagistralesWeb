@@ -412,7 +412,7 @@ export class DataService {
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
       if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
-        queryString = `${queryString}&clasification=${resultSearchOrderModal.clasification}`;
+        queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
         filterDataOrders.clasification = resultSearchOrderModal.clasification;
       }
     }
