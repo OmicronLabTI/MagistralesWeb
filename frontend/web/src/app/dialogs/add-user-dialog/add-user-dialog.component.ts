@@ -108,7 +108,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         role: Number(this.addUserForm.get('userTypeR').value),
         asignable: Number(this.addUserForm.get('asignable').value),
         piezas: Number(this.addUserForm.get('piezas').value),
-        classificationQFB: Number(this.addUserForm.get('classificationQFB').value)
+        classification: this.addUserForm.get('classificationQFB').value
       };
       this.usersService.createUserService(user).subscribe( () => {
             this.createMessageOk(Messages.success, 'success', false);
@@ -124,7 +124,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         asignable: Number(this.addUserForm.get('asignable').value),
         activo: Number(this.addUserForm.get('activo').value),
         piezas: Number(this.addUserForm.get('piezas').value),
-        classificationQFB: Number(this.addUserForm.get('classificationQFB').value)
+        classification: this.addUserForm.get('classificationQFB').value
       };
       this.usersService.updateUser(user).subscribe( () => {
         this.createMessageOk(Messages.success, 'success', false);

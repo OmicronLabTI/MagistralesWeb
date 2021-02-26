@@ -80,9 +80,9 @@
                 <ng-container matColumnDef="clasfqf">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > CLASIFICACIÓN</th>
                         <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                            {{element.role !== 'MN' && element.role !== 'BE' && element.role !== 'MG' ? 'NO APLICA' : element.classification}}
+                            {{element.role !== 1 && element.role !== 3 && element.role !== 4 && element.role !== 5 ? element.classification : 'NO APLICA'}}
                         </td>
-                    </ng-container>
+                </ng-container>
 
                 <ng-container matColumnDef="pieces">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
