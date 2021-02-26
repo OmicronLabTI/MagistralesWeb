@@ -58,15 +58,19 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
       }
       if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
+
+
         this.addUserForm.get('piezas').disable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('asignable').disable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('classificationQFB').disable({onlySelf: true, emitEvent: false});
+        this.addUserForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+
       } else {
         this.addUserForm.get('piezas').enable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('asignable').enable({onlySelf: true, emitEvent: false});
         this.addUserForm.get('classificationQFB').enable({onlySelf: true, emitEvent: false});
-        // this.addUserForm.controls['classificationQFB'].setValidators(Validators.required);
-        this.addUserForm.get('classificationQFB').setValidators(Validators.required);
+        this.addUserForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+
       }
     });
     this.usersService.getRoles().subscribe(rolesRes => {
@@ -164,4 +168,5 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.saveUser();
     }
   }
+
 }
