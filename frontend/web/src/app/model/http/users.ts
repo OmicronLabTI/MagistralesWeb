@@ -29,6 +29,7 @@ export class IUserReq {
     asignable?: number;
     userTypeR?: string;
     isChecked?: boolean = false;
+    classification?: string;
 }
 export class UserRes {
     activo: number;
