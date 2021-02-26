@@ -93,11 +93,12 @@
                         <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
                             <mat-label>Selecciona clasificación</mat-label>
                             <mat-select formControlName="classificationQFB"> 
+                                <mat-option value=""></mat-option>
                                 <mat-option value="MN">MN</mat-option>
                                 <mat-option value="BE">BE</mat-option>
                                 <mat-option value="MG">MG</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="!addUserForm?.controls.classificationQFB?.errors?.required">
+                            <mat-error *ngIf="addUserForm.controls.classificationQFB.hasError('required')">
                                 Clasificación <strong>requerida</strong>
                             </mat-error>
                         </mat-form-field>
