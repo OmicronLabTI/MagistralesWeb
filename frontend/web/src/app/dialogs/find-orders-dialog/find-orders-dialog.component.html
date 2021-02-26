@@ -190,12 +190,12 @@
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
-                            <mat-label>Clasificación de pedido</mat-label>
+                            <mat-label>Tipo</mat-label>
                             <mat-select formControlName="clasification">
-                                <mat-option value="MN">Bioelite</mat-option>
-                                <mat-option value="BE">Bioequal</mat-option>
-                                <mat-option value="MG">Magistral</mat-option>
-                                <mat-option value="MX">Mixto</mat-option>
+                                <mat-option value="MN">Bioelite(MN)</mat-option>
+                                <mat-option value="BE">Bioequal(BE)</mat-option>
+                                <mat-option value="MG">Magistral(MG)</mat-option>
+                                <mat-option value="MX">Mixto(MX)</mat-option>
                               <!--  <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>-->
                             </mat-select>
                         </mat-form-field>
