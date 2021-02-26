@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="SapAdapterController.cs" company="Axity">
+// <copyright file="SapAdapterAlmacenController.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class SapAdapterController : ControllerBase
+    public class SapAdapterAlmacenController : ControllerBase
     {
         private readonly ISapFacade sapFacade;
 
@@ -35,12 +35,12 @@ namespace Omicron.SapAdapter.Api.Controllers
         private readonly ILogger logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SapAdapterController"/> class.
+        /// Initializes a new instance of the <see cref="SapAdapterAlmacenController"/> class.
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
         /// <param name="sapAlmacenFacade">the sap almacen.</param>
-        public SapAdapterController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
+        public SapAdapterAlmacenController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
             this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));

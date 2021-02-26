@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="OrdersController.cs" company="Axity">
+// <copyright file="OrdersAlmacenController.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -21,7 +21,7 @@ namespace Omicron.Pedidos.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrdersAlmacenController : ControllerBase
     {
         private readonly IPedidoFacade pedidoFacade;
 
@@ -30,12 +30,12 @@ namespace Omicron.Pedidos.Api.Controllers
         private readonly IPedidosAlmacenFacade pedidosAlmacenFacade;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrdersController"/> class.
+        /// Initializes a new instance of the <see cref="OrdersAlmacenController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
         /// <param name="qrsFacade">The qr Facade.</param>
         /// <param name="pedidosAlmacen">The pedidos almacen facade.</param>
-        public OrdersController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
+        public OrdersAlmacenController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
             this.qrsFacade = qrsFacade ?? throw new ArgumentException(nameof(qrsFacade));
