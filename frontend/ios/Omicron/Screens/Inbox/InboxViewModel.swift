@@ -80,7 +80,7 @@ class InboxViewModel {
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
             self?.processButtonIsEnable.onNext(false)
             self?.pendingButtonIsEnable.onNext(false)
-            let ordering = self?.sortByBaseBocumentAscending(orders: self!.ordersTemp)
+            let ordering = self?.sortByBaseBocumentAscending(orders: self?.ordersTemp ?? [])
             self?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering ?? [])]
             self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering ?? [])])
             self?.similarityViewButtonIsEnable.onNext(true)
@@ -96,7 +96,8 @@ class InboxViewModel {
             self?.processButtonIsEnable.onNext(false)
             self?.pendingButtonIsEnable.onNext(false)
             if self?.ordersTemp != nil {
-                let dataGroupedByBaseDocument = Dictionary(grouping: self!.ordersTemp, by: { "\($0.baseDocument!)" })
+                let dataGroupedByBaseDocument = Dictionary(grouping: self?.ordersTemp ?? [],
+                                                           by: { "\($0.baseDocument ?? 0)" })
                 let ordersGroupedAndSorted = self?.groupedByOrderNumber(data: dataGroupedByBaseDocument)
                 self?.sectionOrders = ordersGroupedAndSorted ?? []
                 self?.statusDataGrouped.onNext(ordersGroupedAndSorted ?? [])
@@ -167,7 +168,7 @@ class InboxViewModel {
             self?.pendingButtonIsEnable.onNext(false)
             self?.resetData.onNext(())
             if self?.ordersTemp != nil {
-                for order in self!.ordersTemp {
+                for order in self?.ordersTemp ?? [] {
                     let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
                     if let codeProduct = itemCodeInArray?.first {
                         order.productCode = codeProduct
@@ -176,7 +177,7 @@ class InboxViewModel {
                     }
                 }
                 // Se agrupa las ordenes por código de producto
-                let dataGroupedByProductCode = Dictionary(grouping: self!.ordersTemp, by: {$0.productCode})
+                let dataGroupedByProductCode = Dictionary(grouping: self?.ordersTemp ?? [], by: {$0.productCode})
                 let sectionModels = self?.groupedWithSimilarityOrWithoutSimilarity(
                     data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
                     titleForOrdersWithSimilarity: CommonStrings.product)
@@ -275,7 +276,7 @@ class InboxViewModel {
             groupedByOrderNumberIsEnable.onNext(true)
         } else {
             processButtonIsEnable.onNext(false)
-            let dataGroupedByBaseDocument = Dictionary(grouping: ordersTemp, by: { "\($0.baseDocument!)" })
+            let dataGroupedByBaseDocument = Dictionary(grouping: ordersTemp, by: { "\($0.baseDocument ?? 0)" })
             let ordersGroupedAndSorted = groupedByOrderNumber(data: dataGroupedByBaseDocument)
             sectionOrders = ordersGroupedAndSorted
             statusDataGrouped.onNext(ordersGroupedAndSorted)
@@ -298,10 +299,10 @@ class InboxViewModel {
         orders.sorted {
             switch ($0, $1) {
             case let (aCode, bCode):
-                if aCode.baseDocument! != bCode.baseDocument! {
-                    return aCode.baseDocument! < bCode.baseDocument!
+                if aCode.baseDocument ?? 0 != bCode.baseDocument ?? 0 {
+                    return aCode.baseDocument ?? 0 < bCode.baseDocument ?? 0
                 } else {
-                    return aCode.productionOrderId! < bCode.productionOrderId!
+                    return aCode.productionOrderId ?? 0 < bCode.productionOrderId ?? 0
                 }
             }
         }
@@ -321,10 +322,11 @@ class InboxViewModel {
         if !status.isEmpty {
             // Obtiene las ordenes a cambialas de status mediante el indexPath
             var orders: [ChangeStatusRequest] = []
-            for index in indexPath! {
+            for index in indexPath ?? [] {
                 let card = self.sectionOrders[index.section].items[index.row]
                 let order = ChangeStatusRequest(
-                    userId: (Persistence.shared.getUserData()?.id)!, orderId: card.productionOrderId!, status: status)
+                    userId: (Persistence.shared.getUserData()?.id) ?? CommonStrings.empty,
+                    orderId: card.productionOrderId ?? 0, status: status)
                 orders.append(order)
             }
             self.networkManager.changeStatusOrder(changeStatusRequest: orders)
