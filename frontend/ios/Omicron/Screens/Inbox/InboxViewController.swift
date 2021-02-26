@@ -135,7 +135,7 @@ class InboxViewController: UIViewController {
             cell?.isSelected = false
         }
         cell?.itemCode.text = element.itemCode
-        return cell!
+        return cell ?? CardIsolatedOrderCollectionViewCell()
     }
 
     func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
@@ -170,7 +170,7 @@ class InboxViewController: UIViewController {
         }
         cell?.itemCode.text = element.itemCode
         cell?.destiny.text = element.destiny
-        return cell!
+        return cell ?? CardCollectionViewCell()
     }
 
     func viewModelBindingCollectionView() {
@@ -183,12 +183,12 @@ class InboxViewController: UIViewController {
                 let cell = self?.returnCardCollectionViewCell(
                     indexPath: indexPath, element: element, decimalPart: decimalPart)
                 cell?.delegate = self
-                return cell!
+                return cell ?? CardCollectionViewCell()
             } else {
                 let cell = self?.returnCardIsolateOrderCollectionViewCell(
                     indexPath: indexPath, element: element, decimalPart: decimalPart)
-                cell!.delegate = self
-                return cell!
+                cell?.delegate = self
+                return cell ?? CardIsolatedOrderCollectionViewCell()
             }
         })
         dataSource
@@ -212,7 +212,7 @@ class InboxViewController: UIViewController {
                     header?.delegate = nil
                     header?.pdfImageView.isHidden = true
                 }
-                return header!
+                return header ?? HeaderCollectionViewCell()
         }
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
