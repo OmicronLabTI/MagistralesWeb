@@ -358,7 +358,7 @@ class InboxViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         // Muestra un mensaje AlertViewController
         inboxViewModel.showAlert.observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] message inƒreload
+            .subscribe(onNext: { [unowned self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
         inboxViewModel.hasConnection.observeOn(MainScheduler.instance)

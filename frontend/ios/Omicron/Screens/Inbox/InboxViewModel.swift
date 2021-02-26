@@ -448,7 +448,8 @@ class InboxViewModel {
                 if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
                     messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
                 } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                    messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                    let errorMessage = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                    messageConcat = "\(messageConcat) \(errorMessage)"
                 }
             }
             self.showAlert.onNext(messageConcat)

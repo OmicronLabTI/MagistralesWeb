@@ -220,7 +220,8 @@ class OrderDetailViewModel {
                     if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
                         messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
                     } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                        let messageError = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                        messageConcat = "\(messageConcat) \(messageError)"
                     }
                 }
                 self.showAlert.onNext(messageConcat)
