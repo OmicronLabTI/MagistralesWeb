@@ -175,10 +175,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// gets the valid batches by item.
         /// </summary>
-        /// <param name="itemCode">the item code.</param>
-        /// <param name="warehouse">the warehouse.</param>
+        /// <param name="components">the components.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse);
+        Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components);
 
         /// <summary>
         /// Gest the batch transaction by order and item code.
@@ -191,7 +190,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gest the batch transaction by order and item code.
         /// </summary>
-        /// <param name="itemCode">the item code.</param>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);
