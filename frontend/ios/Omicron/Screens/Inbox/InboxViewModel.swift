@@ -42,6 +42,7 @@ class InboxViewModel {
     var showSignatureVc = PublishSubject<String>()
     var finishOrders = PublishSubject<Void>()
     var isUserInteractionEnabled = PublishSubject<Bool>()
+    var reloadData = PublishSubject<Void>()
 
     var normalSort = true
     var similaritySort = false
@@ -284,6 +285,7 @@ class InboxViewModel {
         }
         title.onNext(section.statusName)
         showKPIView.onNext(false)
+        reloadData.onNext(())
     }
     func setFilter(orders: [Order]) {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
