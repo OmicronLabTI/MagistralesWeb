@@ -115,10 +115,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-              element.orderType = element.docNum === 76258 ? OrderType.bioElite : element.orderType ;
+              // only test delete for production
+              /*element.orderType = element.docNum === 76258 ? OrderType.bioElite : element.orderType ;
               element.orderType = element.docNum === 76259 ? OrderType.bioEqual : element.orderType ;
               element.orderType = element.docNum === 76260 ? OrderType.magistral : element.orderType ;
-              element.orderType = element.docNum === 76261 ? OrderType.mixto : element.orderType ;
+              element.orderType = element.docNum === 76261 ? OrderType.mixto : element.orderType ;*/
               switch (element.pedidoStatus) {
                   case ConstStatus.abierto:
                       element.class = 'abierto';
