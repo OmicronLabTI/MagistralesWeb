@@ -25,7 +25,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var finishDateDescriptionLabel: UILabel!
     @IBOutlet weak var productDescriptionLabel: UILabel!
     @IBOutlet weak var missingStockImage: UIImageView!
-
+    @IBOutlet weak var itemCode: UILabel!
+    @IBOutlet weak var destiny: UILabel!
+    
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 

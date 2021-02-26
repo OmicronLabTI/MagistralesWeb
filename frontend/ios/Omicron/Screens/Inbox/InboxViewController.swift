@@ -128,6 +128,7 @@ class InboxViewController: UIViewController {
         } else {
             cell?.isSelected = false
         }
+        cell?.itemCode.text = element.itemCode
         return cell!
     }
 
@@ -161,6 +162,8 @@ class InboxViewController: UIViewController {
         } else {
             cell?.isSelected = false
         }
+        cell?.itemCode.text = element.itemCode
+        cell?.destiny.text = element.destiny
         return cell!
     }
 
