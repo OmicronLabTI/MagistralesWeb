@@ -75,4 +75,5 @@ export class SearchUsersData {
     userTypeRSe: string;
     activoSe: string;
     asignableSe: string;
+    classificationQFBSe: string;
 }

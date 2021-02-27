@@ -163,6 +163,9 @@ export class UserListComponent implements OnInit, OnDestroy {
         if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
             this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
         }
+        if (this.searchUsersData.classificationQFBSe && this.searchUsersData.classificationQFBSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}classification=${this.searchUsersData.classificationQFBSe}&`;
+        }
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
         this.offset = CONST_NUMBER.zero;
         this.limit = CONST_NUMBER.ten;
