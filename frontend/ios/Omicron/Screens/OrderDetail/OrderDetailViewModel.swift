@@ -73,17 +73,18 @@ class OrderDetailViewModel {
             if res.response != nil {
                 self.orderDetailData.accept([res.response!])
                 self.tableData.onNext(res.response!.details!)
-                self.auxTabledata = res.response!.details!
+                self.auxTabledata = res.response!.details ?? []
                 self.tempOrderDetailData = res.response!
                 if self.needsRefresh {
                     self.loading.onNext(false)
                     self.needsRefresh.toggle()
                 }
-                self.sumFormula.accept(self.sum(tableDetails: res.response!.details!))
+                self.sumFormula.accept(self.sum(tableDetails: res.response!.details ?? []))
                 var iconName = CommonStrings.empty
                 if res.response?.comments != nil {
-                    iconName = res.response!.comments!.trimmingCharacters(in: .whitespaces).isEmpty ?
-                        ImageButtonNames.message : ImageButtonNames.messsageFill
+                    let comments = res.response!.comments ?? String()
+                    iconName = (comments.trimmingCharacters(in: .whitespaces).isEmpty ?
+                        ImageButtonNames.message : ImageButtonNames.messsageFill)
                 } else {
                     iconName = ImageButtonNames.message
                 }
@@ -115,7 +116,7 @@ class OrderDetailViewModel {
         case StatusNameConstants.penddingStatus:        // Realiza el proceso para cambiar el status a pendiente
             self.changeStatus(actionType: actionType)
         default:
-            print("")
+            break
         }
     }
     func sum(tableDetails: [Detail]) -> Double {
@@ -124,7 +125,7 @@ class OrderDetailViewModel {
             for detail in tableDetails {
                 // swiftlint:disable for_where
                 if detail.unit != CommonStrings.piece {
-                    sum += detail.requiredQuantity!
+                    sum += detail.requiredQuantity ?? 0.0
                 }
             }
             return sum
@@ -134,8 +135,8 @@ class OrderDetailViewModel {
     func changeStatus(actionType: String) {
         self.loading.onNext(true)
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
-        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id)!,
-                                               orderId: (self.tempOrderDetailData?.productionOrderID)!,
+        let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id) ?? String(),
+                                               orderId: (self.tempOrderDetailData?.productionOrderID) ?? 0,
                                                status: status)
         self.networkManager.changeStatusOrder(changeStatusRequest: [changeStatus])
             .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
@@ -152,30 +153,32 @@ class OrderDetailViewModel {
     func deleteItemFromTable(index: Int) {
         self.loading.onNext(true)
         let itemToDelete = auxTabledata[index]
-        let componets = [Component(orderFabID: itemToDelete.orderFabID!, productId: itemToDelete.productID!,
-                                   componentDescription: itemToDelete.detailDescription!,
-                                   baseQuantity: itemToDelete.baseQuantity!,
-                                   requiredQuantity: itemToDelete.requiredQuantity!,
-                                   consumed: itemToDelete.consumed!, available: itemToDelete.available!,
-                                   unit: itemToDelete.unit!, warehouse: itemToDelete.warehouse!,
-                                   pendingQuantity: itemToDelete.pendingQuantity!, stock: itemToDelete.stock!,
-                                   warehouseQuantity: itemToDelete.warehouseQuantity!, action: "delete")]
+        let componets = [Component(
+                            orderFabID: itemToDelete.orderFabID ?? 0, productId: itemToDelete.productID ?? String(),
+                            componentDescription: itemToDelete.detailDescription ?? String(),
+                            baseQuantity: itemToDelete.baseQuantity ?? 0.0,
+                            requiredQuantity: itemToDelete.requiredQuantity ?? 0.0,
+                            consumed: itemToDelete.consumed ?? 0.0, available: itemToDelete.available ?? 0.0,
+                            unit: itemToDelete.unit ?? String(), warehouse: itemToDelete.warehouse ?? String(),
+                            pendingQuantity: itemToDelete.pendingQuantity ?? 0.0,
+                            stock: itemToDelete.stock ?? 0.0,
+                            warehouseQuantity: itemToDelete.warehouseQuantity ?? 0.0, action: Actions.delete.rawValue)]
 
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
-            dateString: (tempOrderDetailData?.dueDate)!, withFormat: "yyyy-MM-dd")
+            dateString: tempOrderDetailData?.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)
         let order = OrderDetailRequest(
-            fabOrderID: (tempOrderDetailData?.productionOrderID)!,
-            plannedQuantity: (tempOrderDetailData?.plannedQuantity)!,
-            fechaFin: fechaFinFormated!, comments: "",
-            warehouse: (tempOrderDetailData?.warehouse!)!, components: componets)
+            fabOrderID: tempOrderDetailData?.productionOrderID ?? 0,
+            plannedQuantity: tempOrderDetailData?.plannedQuantity ?? Decimal(0),
+            fechaFin: fechaFinFormated ?? String(), comments: String(),
+            warehouse: tempOrderDetailData?.warehouse ?? String(), components: componets)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
                 self?.tempOrderDetailData?.details?.remove(at: index)
-                self?.auxTabledata = self!.tempOrderDetailData!.details!
-                self?.tableData.onNext((self?.tempOrderDetailData?.details)!)
-                self?.sumFormula.accept((self?.sum(tableDetails: (self?.tempOrderDetailData?.details)!))!)
+                self?.auxTabledata = self?.tempOrderDetailData?.details ?? []
+                self?.tableData.onNext(self?.tempOrderDetailData?.details ?? [])
+                self?.sumFormula.accept(self?.sum(tableDetails: (self?.tempOrderDetailData?.details ?? [])) ?? 0.0)
             }
             }, onError: {  [weak self] error in
                 self?.loading.onNext(false)
@@ -190,7 +193,7 @@ class OrderDetailViewModel {
     func validSignatures() {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
-            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()!.id!,
+            let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()?.id ?? String(),
                                           fabricationOrderId: [self.orderId],
                                           qfbSignature: self.sqfbSignature,
                                           technicalSignature: self.technicalSignature)
@@ -229,7 +232,7 @@ class OrderDetailViewModel {
 
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.showAlert.onNext("Error")
+                self.showAlert.onNext(Constants.Errors.errorData.rawValue)
 
             }).disposed(by: disposeBag)
     }

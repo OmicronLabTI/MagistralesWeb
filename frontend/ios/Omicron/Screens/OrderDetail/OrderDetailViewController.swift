@@ -79,13 +79,13 @@ class OrderDetailViewController: UIViewController {
         commentsVC?.orderDetail = self.orderDetail
         commentsVC?.originView = ViewControllerIdentifiers.orderDetailViewController
         commentsVC?.modalPresentationStyle = .overCurrentContext
-        self.present(commentsVC!, animated: true, completion: nil)
+        self.present(commentsVC ?? CommentsViewController(), animated: true, completion: nil)
     }
     func goToComponentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let componentsVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
-        let navigationVC = UINavigationController(rootViewController: componentsVC!)
+        let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
     }
@@ -131,7 +131,7 @@ class OrderDetailViewController: UIViewController {
                 signatureVC?.titleView = titleView
                 signatureVC?.originView = ViewControllerIdentifiers.orderDetailViewController
                 signatureVC?.modalPresentationStyle = .overCurrentContext
-                self?.present(signatureVC!, animated: true, completion: nil)
+                self?.present(signatureVC ?? SignaturePadViewController(), animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
     }
     func viewModelBinding1() {
@@ -148,19 +148,20 @@ class OrderDetailViewController: UIViewController {
                 let lotsVC = storyboard.instantiateViewController(
                     identifier: ViewControllerIdentifiers.lotsViewController) as? LotsViewController
                 if self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil {
-                    lotsVC?.orderId = self!.orderId
+                    lotsVC?.orderId = self?.orderId ?? 0
                     if let self = self { lotsVC?.emptyStockProductId = self.emptyStockProductId }
-                    lotsVC?.statusType = self!.statusType
-                    lotsVC?.orderDetail = self!.orderDetail
+                    lotsVC?.statusType = self?.statusType ?? String()
+                    lotsVC?.orderDetail = self?.orderDetail ?? []
                     if let order = self?.orderDetail.first {
                         if order.productDescription != nil && order.code != nil &&
                             order.productionOrderID != nil && order.baseDocument != nil {
-                            lotsVC?.orderNumber =  "\(order.baseDocument!)"
-                            lotsVC?.manufacturingOrder = "\(order.productionOrderID!)"
-                            lotsVC?.codeDescription = "\(order.code!)  \(order.productDescription!)"
+                            lotsVC?.orderNumber =  "\(order.baseDocument ?? 0)"
+                            lotsVC?.manufacturingOrder = "\(order.productionOrderID ?? 0)"
+                            lotsVC?.codeDescription =
+                                "\(order.code ?? String())  \(order.productDescription ?? String())"
                         }
                     }
-                    self?.navigationController?.pushViewController(lotsVC!, animated: true)
+                    self?.navigationController?.pushViewController(lotsVC ?? LotsViewController(), animated: true)
                 }
             }).disposed(by: self.disposeBag)
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
@@ -283,7 +284,7 @@ class OrderDetailViewController: UIViewController {
             cellIdentifier: ViewControllerIdentifiers.detailTableViewCell,
             cellType: DetailTableViewCell.self)) { [weak self] row, data, cell in
                 cell.hashTagLabel.text = "\(row + 1)"
-                cell.codeLabel.text = "\(data.productID!)"
+                cell.codeLabel.text = "\(data.productID ?? String())"
                 cell.descriptionLabel.text = data.detailDescription?.uppercased()
                 cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ?
                     String(format: "%.0f", data.baseQuantity ?? 0.0) :
@@ -291,7 +292,7 @@ class OrderDetailViewController: UIViewController {
                 cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ?
                     String(format: "%.0f", data.requiredQuantity ?? 0.0) :
                     self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
-                cell.unitLabel.text = data.unit!
+                cell.unitLabel.text = data.unit ?? String()
                 cell.werehouseLabel.text = data.warehouse
                 let hasStock = data.stock ?? 0.0 > 0.0
                 cell.setEmptyStock(hasStock)
