@@ -76,7 +76,7 @@ class UtilsManager {
         var messageConcat = String()
         messageConcat += "No es posible Terminar, faltan lotes para: "
         messageConcat += "\n"
-        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+        messageConcat += error.listItems?.joined(separator: "\n") ?? ""
         messageConcat += "\n\n"
         return messageConcat
     }
@@ -84,7 +84,7 @@ class UtilsManager {
         var messageConcat = String()
         messageConcat += "No es posible Terminar, falta existencia para: "
         messageConcat += "\n"
-        messageConcat += error.listItems?.joined(separator: ", ") ?? CommonStrings.empty
+        messageConcat += error.listItems?.joined(separator: "\n") ?? CommonStrings.empty
         return messageConcat
     }
 }
