@@ -14,10 +14,10 @@
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (desde)' : 'Nº de orden de fabricación'"
                                    type="number"
-                                   maxlength="7"
+                                   maxlength="20"
                                    class="height-input"
                                    formControlName="docNum"
-                                   (keydown)="changeDocNumber($event)">
+                                   (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
@@ -30,10 +30,10 @@
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (hasta)' : 'Nº de orden de fabricación'"
                                    type="number"
-                                   maxlength="7"
+                                   maxlength="20"
                                    class="height-input"
-                                   formControlName="docNum"
-                                   (keydown)="changeDocNumber($event)">
+                                   formControlName="docNumUntil"
+                                   (keydown)="changeDocNumber($event, true)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>

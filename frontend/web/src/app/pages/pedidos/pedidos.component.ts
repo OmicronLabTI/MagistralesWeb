@@ -275,6 +275,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   private onSuccessSearchOrderModal(resultSearchOrderModal: ParamsPedidos) {
+      console.log('paramsSearch: ', resultSearchOrderModal)
     this.isDateInit = resultSearchOrderModal.dateType === ConstOrders.defaultDateInit;
     this.pageIndex = 0;
     this.offset = 0;
@@ -283,7 +284,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
-      console.log('fullstringModal', this.fullQueryString)
+      // console.log('fullstringModal', this.fullQueryString)
     this.getPedidos();
   }
 
