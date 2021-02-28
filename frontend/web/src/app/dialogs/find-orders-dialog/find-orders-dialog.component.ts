@@ -27,6 +27,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     isFromSearchOrders = false;
     defaultStartDate: Date;
     defaultEndDate: Date;
+    isWithError = true;
     isLessDocNumUntil = true;
     constructor(private formBuilder: FormBuilder,
                 @Inject(MAT_DIALOG_DATA) public filterData: any,
@@ -151,11 +152,20 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     searchOrders() {
-        console.log('islessSave: ', this.isLessDocNumUntil)
+        if ((this.findOrdersForm.get('docNum').value !== null && this.findOrdersForm.get('docNum').value !== CONST_STRING.empty)) {
+            if (this.isLessDocNumUntil || (
+                !this.findOrdersForm.get('docNumUntil').value || this.findOrdersForm.get('docNumUntil').value === CONST_STRING.empty
+            )) {
+                this.generateDataAndCloseModal();
+            }
+        } else {
+            this.generateDataAndCloseModal();
+        }
+    }
+    generateDataAndCloseModal() {
         this.trimFilterValues();
         this.dialogRef.close({...this.findOrdersForm.value, isFromOrders: this.filterData.filterOrdersData.isFromOrders});
     }
-
     getMaxDate() {
         this.dateFin.setTime(new Date(this.findOrdersForm.get('ffin').value).getTime());
         this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
@@ -182,6 +192,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     getDisableOnlyForDocNum() {
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.controls.docNum.clearValidators();
+        this.findOrdersForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
     }
     resetParamsValue() {
         this.findOrdersForm.get('dateType').setValue(ConstOrders.defaultDateInit);
@@ -249,6 +261,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             this.findOrdersForm.controls.docNum.setValidators(Validators.required);
             this.findOrdersForm.get('docNumUntil').enable({onlySelf: true, emitEvent: false});
             this.findOrdersForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+
         }
         let invalidChars = [ "-", "+", "e", "." ];
         let currentValue = this.findOrdersForm.get('docNum').value;
@@ -263,11 +276,11 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     validateDocNums(docNum: string, docNumUntil: string) {
-        console.log('docNUnm: ', docNum)
         if (!docNum || docNum === CONST_STRING.empty) {
             this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
+            this.isLessDocNumUntil = true;
+        } else {
+            this.isLessDocNumUntil = (Number(docNumUntil) >= Number(docNum));
         }
-        this.isLessDocNumUntil = (Number(docNumUntil) < Number(docNum));
-        console.log('isLessUntil', this.isLessDocNumUntil)
     }
 }
