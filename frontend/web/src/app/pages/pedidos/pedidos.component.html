@@ -16,10 +16,10 @@
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
             <span class="dateType">
-                Número de pedido buscado:
+                Rango de pedidos buscado:
             </span>
             <span class="date-selected">
-             {{ filterDataOrders.docNum}}
+             {{ filterDataOrders.docNum}}-{{filterDataOrders.docNumUntil ? filterDataOrders.docNumUntil : filterDataOrders.docNum}}
             </span>
         </div>
     </div>

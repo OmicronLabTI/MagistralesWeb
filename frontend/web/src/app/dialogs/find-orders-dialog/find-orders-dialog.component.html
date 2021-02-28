@@ -37,7 +37,9 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <span class="material-icons icon-range-info color-omicron" matTooltip="El pedido(hasta) debe ser mayor a pedido(desde)">
+                    <span class="material-icons icon-range-info color-omicron"
+                          matTooltip="{{ isFromSearchOrders ? 'El pedido(hasta) debe ser mayor a pedido(desde)' :
+                          'La orden (hasta) debe ser mayor a orden (desde)'}}">
                        help_outline
                     </span>
 <!--
