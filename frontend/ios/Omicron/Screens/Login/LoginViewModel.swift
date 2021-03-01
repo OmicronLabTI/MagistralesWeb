@@ -16,15 +16,14 @@ class LoginViewModel {
     public let finishedLogin: PublishSubject<Void> = PublishSubject()
     public let loading: PublishSubject<Bool> = PublishSubject()
     public let error: PublishSubject<String> = PublishSubject()
-    var username = BehaviorSubject<String>(value: "")
-    var password = BehaviorSubject<String>(value: "")
+    var username = BehaviorSubject<String>(value: String())
+    var password = BehaviorSubject<String>(value: String())
     var loginDidTap = PublishSubject<Void>()
     let canLogin: Driver<Bool>
-    @Injected var networkManager: NetworkManager
     private let disposeBag = DisposeBag()
-    deinit {
-        print("Se muere LoginViewModel")
-    }
+
+    @Injected var networkManager: NetworkManager
+
     init() {
         let input = Observable.combineLatest(username, password)
         let isValid = input.map({ $0.isEmpty == false && $1.isEmpty == false })
@@ -32,7 +31,9 @@ class LoginViewModel {
         loginDidTap
             .withLatestFrom(input)
             .map({
-                Login(username: $0, password: self.passwordToBase64($1), redirectUri: "", clientId2: "", origin: "app")
+                Login(
+                    username: $0, password: self.passwordToBase64($1),
+                    redirectUri: String(), clientId2: String(), origin: "app")
             })
             .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
@@ -70,6 +71,6 @@ class LoginViewModel {
             print("Encoded: \(base64Encoded)")
             return base64Encoded
         }
-        return ""
+        return String()
     }
 }

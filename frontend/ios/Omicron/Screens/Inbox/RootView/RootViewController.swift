@@ -69,7 +69,7 @@ class RootViewController: UIViewController {
         // Detecta el evento cuando se selecciona un status de la tabla
         viewTable.rx.modelSelected(SectionOrder.self).subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
-            self.inboxViewModel.setSelection(section: data)
+            self.inboxViewModel.setSelection(section: data, removeSelecteds: true)
         }).disposed(by: disposeBag)
         viewTable.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
             guard let self = self else { return }
@@ -92,7 +92,7 @@ class RootViewController: UIViewController {
                 self.viewTable.isUserInteractionEnabled = true
                 let section = self.rootViewModel.sections[self.lastRow.row]
                 self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
-                self.inboxViewModel.setSelection(section: section)
+                self.inboxViewModel.setSelection(section: section, removeSelecteds: true)
                 self.inboxViewModel.hideGroupingButtons.onNext(false)
                 return
             }
@@ -130,22 +130,38 @@ class RootViewController: UIViewController {
                 self?.lottieManager.hideLoading()
             }
         }).disposed(by: self.disposeBag)
+// <<<<<<< Updated upstream
         rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
             AlertManager.shared.showAlert(message: error, view: self)
+// =======
+//         rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] (error, logOut) in
+//             if logOut {
+//                 let alert = UIAlertController(title: error, message: CommonStrings.empty, preferredStyle: .alert)
+//                 let acceptAct = UIAlertAction(title: CommonStrings.accept, style: .default, handler: { [weak self] _ in
+//                     guard let self = self else { return }
+//                     self.rootViewModel.logoutDidTap.onNext(())
+//                 })
+//                 alert.addAction(acceptAct)
+//                 present(alert, animated: true, completion: nil)
+//             } else {
+//                 AlertManager.shared.showAlert(message: error, view: self)
+//             }
+// >>>>>>> Stashed changes
         }).disposed(by: self.disposeBag)
         //Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
             .subscribe(onNext: { [weak self] row in
-            let data = self?.rootViewModel.sections ?? []
+                guard let self = self else { return }
+            let data = self.rootViewModel.sections
             if data.count > 0, let selectedRow = row {
                 let section = data[selectedRow.row]
-                self?.viewTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
-                self?.inboxViewModel.setSelection(section: section)
+                self.viewTable.selectRow(at: selectedRow, animated: false, scrollPosition: .none)
+                self.inboxViewModel.setSelection(section: section, removeSelecteds: self.rootViewModel.removeSelecteds)
             } else if data.count > 0 {
                 let firstRow = IndexPath(row: 0, section: 0)
                 let section = data[firstRow.row]
-                self?.viewTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
-                self?.inboxViewModel.setSelection(section: section)
+                self.viewTable.selectRow(at: firstRow, animated: false, scrollPosition: .none)
+                self.inboxViewModel.setSelection(section: section, removeSelecteds: self.rootViewModel.removeSelecteds)
             }
         }).disposed(by: disposeBag)
         // Muestra u oculta el refreshControl en la tabla

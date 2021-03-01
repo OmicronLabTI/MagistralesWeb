@@ -66,7 +66,7 @@ class OrderDetailTest: XCTestCase {
         let qfbSignature = "lgfklgl"
         let technicalSignature = "dkdfkdfk"
         let finishOrder = FinishOrder(
-            userId: userId, fabricationOrderId: fabricationOrderId,
+            userId: userId, fabricationOrderId: [fabricationOrderId],
             qfbSignature: qfbSignature, technicalSignature: technicalSignature)
         // When
         self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { res in
@@ -84,7 +84,8 @@ class OrderDetailTest: XCTestCase {
                                    unit: "KG", warehouse: "MP", pendingQuantity: 0.012, stock: 13.994999999999999,
                                    warehouseQuantity: 12.67, action: "delete")
         let order = OrderDetailRequest(
-            fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", warehouse: "MP", components: [components])
+            fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "",
+            warehouse: "MP", components: [components])
         // Then
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
             //When
@@ -99,7 +100,8 @@ class OrderDetailTest: XCTestCase {
             requiredQuantity: 0.012, consumed: 0, available: 12.657999999999999, unit: "KG", warehouse: "MP",
             pendingQuantity: 0.012, stock: 13.994999999999999, warehouseQuantity: 12.67, action: "update")
         let order = OrderDetailRequest(
-            fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "", warehouse: "MP", components: [components])
+            fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "",
+            warehouse: "MP", components: [components])
         // Then
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
             //When
