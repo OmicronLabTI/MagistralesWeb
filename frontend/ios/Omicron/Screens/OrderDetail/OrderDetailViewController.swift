@@ -79,6 +79,7 @@ class OrderDetailViewController: UIViewController {
         commentsVC?.orderDetail = self.orderDetail
         commentsVC?.originView = ViewControllerIdentifiers.orderDetailViewController
         commentsVC?.modalPresentationStyle = .overCurrentContext
+        commentsVC?.modalTransitionStyle = .crossDissolve
         self.present(commentsVC ?? CommentsViewController(), animated: true, completion: nil)
     }
     func goToComponentsViewController() {
@@ -131,6 +132,7 @@ class OrderDetailViewController: UIViewController {
                 signatureVC?.titleView = titleView
                 signatureVC?.originView = ViewControllerIdentifiers.orderDetailViewController
                 signatureVC?.modalPresentationStyle = .overCurrentContext
+                signatureVC?.modalTransitionStyle = .crossDissolve
                 self?.present(signatureVC ?? SignaturePadViewController(), animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
     }

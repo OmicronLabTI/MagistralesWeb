@@ -186,6 +186,7 @@ class LotsViewController: UIViewController {
             signatureVC?.titleView = signatureTitleView
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
+            signatureVC?.modalTransitionStyle = .crossDissolve
             self?.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         // Muestra el componente de firma
@@ -196,6 +197,7 @@ class LotsViewController: UIViewController {
             signatureVC?.titleView = titleView
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
+            signatureVC?.modalTransitionStyle = .crossDissolve
             self?.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         // Manda el mensaje para poder finalizar la orden

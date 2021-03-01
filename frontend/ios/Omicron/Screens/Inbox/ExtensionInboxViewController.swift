@@ -18,6 +18,7 @@ extension InboxViewController {
             signatureVC?.titleView = titleView
             signatureVC?.originView = ViewControllerIdentifiers.inboxViewController
             signatureVC?.modalPresentationStyle = .overFullScreen
+            signatureVC?.modalTransitionStyle = .crossDissolve
             self.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: disposeBag)
     }
