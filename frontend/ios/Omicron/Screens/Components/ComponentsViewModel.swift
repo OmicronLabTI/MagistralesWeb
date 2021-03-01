@@ -12,7 +12,7 @@ import Resolver
 
 class ComponentsViewModel {
     var disposeBag = DisposeBag()
-    var searchFilter = BehaviorSubject<String>(value: "")
+    var searchFilter = BehaviorSubject<String>(value: String())
     var searchDidTap = PublishSubject<Void>()
     var removeChip = PublishSubject<String>()
     var dataChips = BehaviorSubject<[String]>(value: [])
@@ -23,9 +23,11 @@ class ComponentsViewModel {
     var saveDidTap = PublishSubject<ComponentFormValues>()
     var saveSuccess = PublishSubject<Void>()
     var bindingData = BehaviorSubject<[ComponentO]>(value: [])
+    
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var networkManager: NetworkManager
+    
     init() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
             .subscribe(onNext: { [weak self] text, chips in
@@ -52,21 +54,21 @@ class ComponentsViewModel {
             guard let comp = data else { return }
             guard let order = self?.inboxViewModel.selectedOrder else { return }
             let component = Component(
-                orderFabID: order.productionOrderId ?? 0, productId: comp.productId ?? "",
-                componentDescription: comp.description ?? "", baseQuantity: values.baseQuantity,
+                orderFabID: order.productionOrderId ?? 0, productId: comp.productId ?? String(),
+                componentDescription: comp.description ?? String(), baseQuantity: values.baseQuantity,
                 requiredQuantity: values.requiredQuantity,
                 consumed: NSDecimalNumber(decimal: comp.consumed ?? 0).doubleValue,
                 available: NSDecimalNumber(decimal: comp.available ?? 0).doubleValue,
-                unit: comp.unit ?? "", warehouse: values.warehouse,
+                unit: comp.unit ?? String(), warehouse: values.warehouse,
                 pendingQuantity: NSDecimalNumber(decimal: comp.pendingQuantity ?? 0).doubleValue,
                 stock: NSDecimalNumber(decimal: comp.stock ?? 0).doubleValue,
-                warehouseQuantity: NSDecimalNumber(decimal: comp.warehouseQuantity ?? 0).doubleValue, action: "insert")
+                warehouseQuantity: NSDecimalNumber(decimal: comp.warehouseQuantity ?? 0).doubleValue, action: Actions.insert.rawValue)
             let orderDetailReq = OrderDetailRequest(
                 fabOrderID: component.orderFabId,
                 plannedQuantity: order.plannedQuantity ?? 0, fechaFin: (order.finishDate != nil ?
                     UtilsManager.shared.formattedDateFromString(
-                        dateString: order.finishDate!, withFormat: "yyyy-MM-dd") : "") ?? "",
-                comments: "",
+                        dateString: order.finishDate ?? String(), withFormat: DateFormat.yyyymmdd) : String()) ?? String(),
+                comments: String(),
                 warehouse: self?.orderDetailViewModel.tempOrderDetailData?.warehouse ?? CommonStrings.empty,
                 components: [component])
             self?.saveComponent(req: orderDetailReq)
