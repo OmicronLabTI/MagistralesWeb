@@ -351,5 +351,66 @@ namespace Omicron.SapAdapter.Test
             Assert.IsNotNull(asesor.OnOrder);
             Assert.IsNotNull(asesor.WhsCode);
         }
+
+        /// <summary>
+        /// test the sales asesor model.
+        /// </summary>
+        [Test]
+        public void SalesAsesorModel()
+        {
+            var asesor = new SalesAsesorModel { Email = "test@test.com", Cliente = "Juan perez", OrderId = 100 };
+            Assert.IsNotNull(asesor.Email);
+            Assert.IsNotNull(asesor.Cliente);
+            Assert.IsNotNull(asesor.OrderId);
+        }
+
+        /// <summary>
+        /// test the packing required model.
+        /// </summary>
+        [Test]
+        public void PackingRequiredModel()
+        {
+            var asesor = new PackingRequiredModel { CodeItem = "123-abc", Description = "this is a description", Quantity = 14, Unit = "pz" };
+            Assert.IsNotNull(asesor.CodeItem);
+            Assert.IsNotNull(asesor.Description);
+            Assert.IsNotNull(asesor.Quantity);
+            Assert.IsNotNull(asesor.Unit);
+        }
+
+        /// <summary>
+        /// test the order reciper model.
+        /// </summary>
+        [Test]
+        public void OrderRecipeModel()
+        {
+            var asesor = new OrderRecipeModel { Order = 123, Recipe = "pz" };
+            Assert.IsNotNull(asesor.Order);
+            Assert.IsNotNull(asesor.Recipe);
+        }
+
+        /// <summary>
+        /// test the order validation response.
+        /// </summary>
+        [Test]
+        public void OrderValidationResponse()
+        {
+            var asesor = new OrderValidationResponse { Type = "pz", ListItems = new List<string>() { "ab", "cd" } };
+            Assert.IsNotNull(asesor.Type);
+            Assert.IsNotNull(asesor.ListItems);
+        }
+
+        /// <summary>
+        /// test the order validation response.
+        /// </summary>
+        [Test]
+        public void SalesPersonModel()
+        {
+            var asesor = new SalesPersonModel { AsesorId = 123, FirstName = "abc", LastName = "sanchez", EmpleadoId = 1, Email = "test@test.com" };
+            Assert.IsNotNull(asesor.AsesorId);
+            Assert.IsNotNull(asesor.FirstName);
+            Assert.IsNotNull(asesor.LastName);
+            Assert.IsNotNull(asesor.EmpleadoId);
+            Assert.IsNotNull(asesor.Email);
+        }
     }
 }
