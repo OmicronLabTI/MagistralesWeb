@@ -52,5 +52,35 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Test for simple get.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SimpleGet()
+        {
+            // arrange
+            var responses = new Dictionary<string, MockResponse>()
+            {
+                {
+                    "qfbOrders/", new MockResponse
+                    {
+                        Json = JsonConvert.SerializeObject(new ResultModel()),
+                        StatusCode = HttpStatusCode.OK,
+                    }
+                },
+            };
+
+            HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
+            clientMock.BaseAddress = new System.Uri("http://test.com/");
+            var pedidoService = new PedidoService(clientMock);
+
+            // act
+            var result = await pedidoService.GetPedidosService("qfbOrders/");
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }
