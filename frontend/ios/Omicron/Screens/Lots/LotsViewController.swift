@@ -426,6 +426,7 @@ class LotsViewController: UIViewController {
         commentsVC?.orderDetail = self.orderDetail
         commentsVC?.originView = ViewControllerIdentifiers.lotsViewController
         commentsVC?.modalPresentationStyle = .overCurrentContext
+        commentsVC?.modalTransitionStyle = .crossDissolve
         self.present(commentsVC!, animated: true, completion: nil)
     }
 
