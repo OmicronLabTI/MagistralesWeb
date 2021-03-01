@@ -55,6 +55,7 @@ export class ParamsPedidos {
     current?: string;
     advance?: string;
     clasification?: string;
+    docNumUntil?: any;
 
 
 }

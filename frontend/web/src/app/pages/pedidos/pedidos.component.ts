@@ -115,11 +115,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-              // only test delete for production
-              /*element.orderType = element.docNum === 76258 ? OrderType.bioElite : element.orderType ;
-              element.orderType = element.docNum === 76259 ? OrderType.bioEqual : element.orderType ;
-              element.orderType = element.docNum === 76260 ? OrderType.magistral : element.orderType ;
-              element.orderType = element.docNum === 76261 ? OrderType.mixto : element.orderType ;*/
               switch (element.pedidoStatus) {
                   case ConstStatus.abierto:
                       element.class = 'abierto';
@@ -283,7 +278,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
-      console.log('fullstringModal', this.fullQueryString)
     this.getPedidos();
   }
 
