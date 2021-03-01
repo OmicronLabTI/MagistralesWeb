@@ -61,6 +61,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetMostCommonComponents()
         {
+            var listToReturn = new List<CompleteDetalleFormulaModel>();
             var redisValue = await this.redisService.GetRedisKey(ServiceConstants.RedisComponents);
             var redisComponents = !string.IsNullOrEmpty(redisValue) ? JsonConvert.DeserializeObject<List<ComponentsRedisModel>>(redisValue) : new List<ComponentsRedisModel>();
 
@@ -71,7 +72,16 @@ namespace Omicron.SapAdapter.Services.Sap
 
             redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
-            var listToReturn = await this.sapDao.GetItemsByContainsItemCode(ids);
+            var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids);
+
+            ids.ForEach(x =>
+            {
+                var component = listComponents.FirstOrDefault(y => y.ProductId.ToLower() == x);
+                component ??= new CompleteDetalleFormulaModel { ProductId = string.Empty };
+                listToReturn.Add(component);
+            });
+
+            listToReturn = listToReturn.Where(x => !string.IsNullOrEmpty(x.ProductId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
     }
