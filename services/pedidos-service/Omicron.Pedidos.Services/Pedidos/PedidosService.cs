@@ -518,7 +518,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
                 listSalesOrder.Add(int.Parse(salesOrder.Salesorderid));
 
-                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado)) && !preProductionOrders.Any())
+                if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado) || x.Status.Equals(ServiceConstants.Entregado)) && !preProductionOrders.Any())
                 {
                     salesOrder.CloseUserId = userId;
                     salesOrder.CloseDate = DateTime.Now.FormatedDate();
