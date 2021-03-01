@@ -20,14 +20,17 @@ class CommentsViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var aceptButton: UIButton!
+
     // MARK: - Variables
     @Injected var commentsViewModel: CommentsViewModel
     @Injected var orderDetailVC: OrderDetailViewModel
     @Injected var lottieManager: LottieManager
     @Injected var lotsViewModel: LotsViewModel
+
     var orderDetail: [OrderDetail] = []
     var disposeBag = DisposeBag()
-    var originView = ""
+    var originView = String()
+
     // MARK: - LifeCycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +38,7 @@ class CommentsViewController: UIViewController {
         self.initComponents()
         self.viewModelBinding()
         self.commentsViewModel.orderDetail = self.orderDetail
-        self.textView.text = self.orderDetail[0].comments != nil ? self.orderDetail[0].comments: ""
+        self.textView.text = self.orderDetail.first?.comments != nil ? self.orderDetail.first?.comments : String()
     }
     // MARK: - Functions
     @IBAction func cancelButtonAction(_ sender: Any) {
@@ -81,7 +84,7 @@ class CommentsViewController: UIViewController {
         aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
         aceptButton.setTitleColor(.white, for: .normal)
         aceptButton.backgroundColor = UIColor.systemGreen
-        textView.text = ""
+        textView.text = String()
         textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 23)
     }
 }

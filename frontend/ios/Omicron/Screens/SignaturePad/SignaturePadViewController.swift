@@ -23,6 +23,7 @@ class SignaturePadViewController: UIViewController {
     @IBOutlet weak var buttonsView: UIView!
     // MARK: - Variables
     @Injected var signaturePadViewModel: SignaturePadViewModel
+    @Injected var inboxViewModel: InboxViewModel
     let diposeBag = DisposeBag()
     var titleView = CommonStrings.empty
     var originView = CommonStrings.empty
@@ -35,6 +36,7 @@ class SignaturePadViewController: UIViewController {
     }
     // MARK: Functions
     @IBAction func cancelActionButton(_ sender: Any) {
+        inboxViewModel.isUserInteractionEnabled.onNext(true)
         self.dismiss(animated: true)
     }
     @IBAction func clearActionButton(_ sender: Any) {

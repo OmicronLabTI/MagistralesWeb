@@ -63,6 +63,7 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
         self.setupKeyboard()
+        splitViewController?.preferredDisplayMode = .primaryHidden
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -78,6 +79,10 @@ class LotsViewController: UIViewController {
                 weakSelf.lineDocTable.delegate?.tableView?(weakSelf.lineDocTable, didSelectRowAt: firstRow)
             }
         }).subscribe().disposed(by: disposeBag)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        splitViewController?.preferredDisplayMode = .primaryHidden
     }
     // MARK: - Functions
     func viewModelBinding() {
@@ -181,6 +186,7 @@ class LotsViewController: UIViewController {
             signatureVC?.titleView = signatureTitleView
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
+            signatureVC?.modalTransitionStyle = .crossDissolve
             self?.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         // Muestra el componente de firma
@@ -191,6 +197,7 @@ class LotsViewController: UIViewController {
             signatureVC?.titleView = titleView
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
+            signatureVC?.modalTransitionStyle = .crossDissolve
             self?.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         // Manda el mensaje para poder finalizar la orden
@@ -198,7 +205,7 @@ class LotsViewController: UIViewController {
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
-                                         handler: { _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
+                                         handler: { [weak self] _ in self?.lotsViewModel.validIfOrderCanBeFinalized()})
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -260,6 +267,19 @@ class LotsViewController: UIViewController {
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
         }.disposed(by: self.disposeBag)
+
+        lotsAvailablesTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.addLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)
+        lotsSelectedTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.removeLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)
+        lotsViewModel.enableAddButton.bind(to: addLotButton.rx.isEnabled).disposed(by: disposeBag)
+        lotsViewModel.enableRemoveButton.bind(to: removeLotButton.rx.isEnabled).disposed(by: disposeBag)
     }
     func modelViewBindingExtension4() {
         // Muestra un AlertMessage
@@ -308,6 +328,8 @@ class LotsViewController: UIViewController {
         self.lineDocTable.tableFooterView = UIView()
         self.lotsAvailablesTable.tableFooterView = UIView()
         self.lotsSelectedTable.tableFooterView = UIView()
+        addLotButton.isEnabled = false
+        removeLotButton.isEnabled = false
         if self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending {
             self.addLotButton.isEnabled = false
             self.removeLotButton.isEnabled = false
@@ -404,6 +426,7 @@ class LotsViewController: UIViewController {
         commentsVC?.orderDetail = self.orderDetail
         commentsVC?.originView = ViewControllerIdentifiers.lotsViewController
         commentsVC?.modalPresentationStyle = .overCurrentContext
+        commentsVC?.modalTransitionStyle = .crossDissolve
         self.present(commentsVC!, animated: true, completion: nil)
     }
 

@@ -1,0 +1,10 @@
+{
+  "code" : 200,
+  "success" : true,
+  "exceptionMessage" : null,
+  "response" : [
+    "http:\/\/172.30.5.49:5002\/Pruebas_ArchivosOmicronTemp\/SaleOrders\/Order76260.pdf"
+  ],
+  "comments" : null,
+  "userError" : "[]"
+}

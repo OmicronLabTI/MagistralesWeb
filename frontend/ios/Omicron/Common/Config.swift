@@ -17,44 +17,17 @@ enum Environment {
 }
 
 struct Config {
-    static let env: Environment = {
-        #if STAGING_DEBUG
-            return .stagingDebug
-        #elseif STAGING_RELEASE
-            return .stagingRelease
-        #elseif APPSTORE
-        return .appstore
-        #elseif DEBUG
-            return .debug
-        #elseif RELEASE
-            return .release
-        #endif
-    }()
-    static let baseUrl: String = {
-        switch env {
-        case .debug,
-             .stagingDebug:
-            return "http://201.163.179.28:8000/api"
-//            return "https://magistralesprod.omicronlab.com.mx/api"
-        case .stagingRelease,
-             .appstore,
-             .release:
-            return "http://201.163.179.28:8000/api"
-//            return "https://magistralesprod.omicronlab.com.mx/api"
-        }
-    }()
-    static let serverOmicron: String = {
-            switch env {
-            case .debug,
-                 .stagingDebug:
-                return "http://172.30.5.49:5100/"
-            case .stagingRelease,
-                 .appstore,
-                 .release:
-                return "http://172.30.5.49:5100/"
-            }
-        }()
+
+    #if DEVELOPMENT
+    static let baseUrl = URLRoot.qaServer
+    #else
+    static let baseUrl = URLRoot.prodServer
+    #endif
+
+    static let serverOmicron = URLRoot.omicronServer
+
     static var isRunningTests: Bool {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
+
 }
