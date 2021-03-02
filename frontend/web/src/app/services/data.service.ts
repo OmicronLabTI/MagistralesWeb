@@ -442,9 +442,6 @@ export class DataService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
-  setOrderIsolated(isolatedOrder: string) {
-    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
-  }
 
   getOrderIsolated() {
     return localStorage.getItem(ConstToken.isolatedOrder);
@@ -504,7 +501,7 @@ export class DataService {
   removeFiltersActive() {
     localStorage.removeItem(ConstToken.filtersActive);
   }
-  /*withoutFiltersOnLocalStorage() {
-    this.router.navigate([RouterPaths.pedido]);
-  }*/
+  getFiltersActivesAsModel(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActives());
+  }
 }

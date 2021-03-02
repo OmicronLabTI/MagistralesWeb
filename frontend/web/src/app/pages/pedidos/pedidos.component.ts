@@ -84,8 +84,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
     if (this.dataService.getFiltersActives()) {
-          this.filterDataOrders = JSON.parse(this.dataService.getFiltersActives());
-          this.onSuccessSearchOrderModal(this.filterDataOrders);
+          this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
     } else {
           this.createInitRage();
     }
