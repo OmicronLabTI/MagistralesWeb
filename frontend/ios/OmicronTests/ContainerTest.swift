@@ -39,4 +39,11 @@ class ContainerTest: XCTestCase {
             .disposed(by: disposeBag!)
     }
 
+    func testGetContainerDataWhenCodeIs500() {
+        containerViewModel?.getContainerData(needsErrorRes: true, statusCode: 500, testdata: Data())
+        containerViewModel?.loading.subscribe(onNext: { res in
+            XCTAssertFalse(res)
+        }).disposed(by: disposeBag!)
+    }
+
 }
