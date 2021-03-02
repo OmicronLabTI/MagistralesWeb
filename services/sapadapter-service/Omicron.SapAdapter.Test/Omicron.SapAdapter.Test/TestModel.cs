@@ -370,11 +370,11 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void PackingRequiredModel()
         {
-            var asesor = new PackingRequiredModel { CodeItem = "123-abc", Description = "this is a description", Quantity = 14, Unit = "pz" };
-            Assert.IsNotNull(asesor.CodeItem);
-            Assert.IsNotNull(asesor.Description);
-            Assert.IsNotNull(asesor.Quantity);
-            Assert.IsNotNull(asesor.Unit);
+            var packing = new PackingRequiredModel { CodeItem = "123-abc", Description = "this is a description", Quantity = 14, Unit = "pz" };
+            Assert.IsNotNull(packing.CodeItem);
+            Assert.IsNotNull(packing.Description);
+            Assert.IsNotNull(packing.Quantity);
+            Assert.IsNotNull(packing.Unit);
         }
 
         /// <summary>
@@ -383,9 +383,9 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void OrderRecipeModel()
         {
-            var asesor = new OrderRecipeModel { Order = 123, Recipe = "pz" };
-            Assert.IsNotNull(asesor.Order);
-            Assert.IsNotNull(asesor.Recipe);
+            var order = new OrderRecipeModel { Order = 123, Recipe = "pz" };
+            Assert.IsNotNull(order.Order);
+            Assert.IsNotNull(order.Recipe);
         }
 
         /// <summary>
@@ -394,9 +394,9 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void OrderValidationResponse()
         {
-            var asesor = new OrderValidationResponse { Type = "pz", ListItems = new List<string>() { "ab", "cd" } };
-            Assert.IsNotNull(asesor.Type);
-            Assert.IsNotNull(asesor.ListItems);
+            var order = new OrderValidationResponse { Type = "pz", ListItems = new List<string>() { "ab", "cd" } };
+            Assert.IsNotNull(order.Type);
+            Assert.IsNotNull(order.ListItems);
         }
 
         /// <summary>
@@ -405,12 +405,23 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void SalesPersonModel()
         {
-            var asesor = new SalesPersonModel { AsesorId = 123, FirstName = "abc", LastName = "sanchez", EmpleadoId = 1, Email = "test@test.com" };
-            Assert.IsNotNull(asesor.AsesorId);
-            Assert.IsNotNull(asesor.FirstName);
-            Assert.IsNotNull(asesor.LastName);
-            Assert.IsNotNull(asesor.EmpleadoId);
-            Assert.IsNotNull(asesor.Email);
+            var salesPerson = new SalesPersonModel { AsesorId = 123, FirstName = "abc", LastName = "sanchez", EmpleadoId = 1, Email = "test@test.com" };
+            Assert.IsNotNull(salesPerson.AsesorId);
+            Assert.IsNotNull(salesPerson.FirstName);
+            Assert.IsNotNull(salesPerson.LastName);
+            Assert.IsNotNull(salesPerson.EmpleadoId);
+            Assert.IsNotNull(salesPerson.Email);
+        }
+
+        /// <summary>
+        /// test the user model.
+        /// </summary>
+        [Test]
+        public void UserModel()
+        {
+            var user = new Users { UserId = 123, UserName = "myname123" };
+            Assert.IsNotNull(user.UserId);
+            Assert.IsNotNull(user.UserName);
         }
     }
 }
