@@ -33,6 +33,7 @@ class OrderDetail {
     var realEndDate, productLabel, container, comments: String?
     var isChecked: Bool?
     var details: [Detail]?
+    init() { }
     init(productionOrderID: Int, code: String, productDescription: String, type: String,
          status: String, plannedQuantity: Decimal, unit: String, warehouse: String,
          number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String,
@@ -99,10 +100,11 @@ class Detail {
     var productID, detailDescription: String?
     var baseQuantity, requiredQuantity, pendingQuantity, stock, warehouseQuantity, consumed, available: Double?
     var unit, warehouse: String?
+    var hasBatches: Bool?
     init(orderFabID: Int, productID: String, detailDescription: String, baseQuantity: Double,
          requiredQuantity: Double, pendingQuantity: Double, stock: Double,
          warehouseQuantity: Double,
-         consumed: Double, available: Double, unit: String, warehouse: String) {
+         consumed: Double, available: Double, unit: String, warehouse: String, hasBatches: Bool) {
         self.orderFabID = orderFabID
         self.productID = productID
         self.detailDescription = detailDescription
@@ -115,6 +117,7 @@ class Detail {
         self.available = available
         self.unit = unit
         self.warehouse = warehouse
+        self.hasBatches = hasBatches
     }
     required init?(map: Map) { }
 }
@@ -132,6 +135,7 @@ extension Detail: Mappable {
         self.pendingQuantity <- map["pendingQuantity"]
         self.stock <- map["stock"]
         self.warehouseQuantity <- map["warehouseQuantity"]
+        self.hasBatches <- map["hasBatches"]
     }
 }
 class OrderDetailRequest: Codable {
@@ -140,7 +144,7 @@ class OrderDetailRequest: Codable {
     let fechaFin, comments, warehouse: String
     let components: [Component]
     init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String,
-         comments: String, warehouse: String ,components: [Component]) {
+         comments: String, warehouse: String, components: [Component]) {
         self.fabOrderID = fabOrderID
         self.plannedQuantity = plannedQuantity
         self.fechaFin = fechaFin
@@ -197,10 +201,10 @@ class ChangeStatusRespose: HttpResponse {
 }
 class FinishOrder: Codable {
     var userId: String?
-    var fabricationOrderId: Int?
+    var fabricationOrderId: [Int]?
     var qfbSignature: String?
     var technicalSignature: String?
-    init(userId: String, fabricationOrderId: Int, qfbSignature: String, technicalSignature: String) {
+    init(userId: String, fabricationOrderId: [Int], qfbSignature: String, technicalSignature: String) {
         self.userId = userId
         self.fabricationOrderId = fabricationOrderId
         self.qfbSignature = qfbSignature

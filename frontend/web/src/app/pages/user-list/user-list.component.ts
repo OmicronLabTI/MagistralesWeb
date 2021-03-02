@@ -52,7 +52,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     getUsers() {
-
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
                 this.lengthPaginator = userRes.comments;
@@ -162,6 +161,9 @@ export class UserListComponent implements OnInit, OnDestroy {
         }
         if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
             this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
+        }
+        if (this.searchUsersData.classificationQFBSe && this.searchUsersData.classificationQFBSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}typeQfb=${this.searchUsersData.classificationQFBSe}&`;
         }
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
         this.offset = CONST_NUMBER.zero;

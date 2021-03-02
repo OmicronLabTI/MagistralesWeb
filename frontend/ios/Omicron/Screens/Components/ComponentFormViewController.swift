@@ -200,7 +200,7 @@ class ComponentFormViewController: FormViewController {
                                                   message: nil, preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
                     let okAction = UIAlertAction(title: CommonStrings.OKConst,
-                                                 style: .default, handler: { _ in self?.saveChanges()})
+                                                 style: .default, handler: { [weak self] _ in self?.saveChanges()})
                     alert.addAction(cancelAction)
                     alert.addAction(okAction)
                     self?.present(alert, animated: true, completion: nil)

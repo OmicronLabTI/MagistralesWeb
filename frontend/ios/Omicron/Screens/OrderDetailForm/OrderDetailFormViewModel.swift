@@ -20,40 +20,39 @@ class  OrderDetailFormViewModel {
     @Injected var networkManager: NetworkManager
     // MARK: - Init
     init() { }
-    deinit {
-        print("Se muere el viewModel")
-    }
+
     // MARK: - Functions
     func editItemTable(index: Int, data: OrderDetail, baseQuantity: Double,
                        requiredQuantity: Double, werehouse: String) {
         self.loading.onNext(true)
-        let componets = [Component(orderFabID: data.details![index].orderFabID!,
-                                   productId: data.details![index].productID!,
-                                   componentDescription: data.details![index].detailDescription!,
+        let componets = [Component(orderFabID: data.details?[index].orderFabID ?? 0,
+                                   productId: data.details?[index].productID ?? CommonStrings.empty,
+                                   componentDescription: data.details?[index].detailDescription ?? CommonStrings.empty,
                                    baseQuantity: baseQuantity, requiredQuantity: requiredQuantity,
-                                   consumed: data.details![index].consumed!,
-                                   available: data.details![index].available!, unit: data.details![index].unit!,
-                                   warehouse: werehouse, pendingQuantity: data.details![index].pendingQuantity!,
-                                   stock: data.details![index].stock!,
-                                   warehouseQuantity: data.details![index].warehouseQuantity!,
-                                   action: "update")]
+                                   consumed: data.details?[index].consumed ?? 0.0,
+                                   available: data.details?[index].available ?? 0,
+                                   unit: data.details?[index].unit ?? CommonStrings.empty,
+                                   warehouse: werehouse, pendingQuantity: data.details?[index].pendingQuantity ?? 0,
+                                   stock: data.details?[index].stock ?? 0,
+                                   warehouseQuantity: data.details?[index].warehouseQuantity ?? 0,
+                                   action: Actions.update.rawValue)]
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
-            dateString: (data.dueDate)!, withFormat: "yyyy-MM-dd")
+            dateString: data.dueDate ?? CommonStrings.empty, withFormat: DateFormat.yyyymmdd
+        )
         let order = OrderDetailRequest(
-            fabOrderID: (data.productionOrderID)!,
+            fabOrderID: data.productionOrderID ?? 0,
             plannedQuantity: data.plannedQuantity ?? 0.0,
-            fechaFin: fechaFinFormated!, comments: "",
-            warehouse: data.warehouse!, components: componets)
+            fechaFin: fechaFinFormated ?? CommonStrings.empty, comments: CommonStrings.empty,
+            warehouse: data.warehouse ?? CommonStrings.empty, components: componets)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
                 self?.loading.onNext(false)
-                self?.showAlert.onNext("Se registraron los cambios correctamente")
-                self?.response.onNext(res.response ?? "")
-                self?.success.onNext(data.details![index].orderFabID!)
-                }, onError: {  [weak self] error in
+                self?.showAlert.onNext(CommonStrings.changesSuccess)
+                self?.response.onNext(res.response ?? CommonStrings.empty)
+                self?.success.onNext(data.details?[index].orderFabID ?? 0)
+                }, onError: {  [weak self] _ in
                     self?.loading.onNext(false)
-                    self?.showAlert.onNext("Hubo un error al editar el elemento,  intente de nuevo")
-                    print(error.localizedDescription)
+                    self?.showAlert.onNext(Constants.Errors.editItemTable.rawValue)
             }).disposed(by: self.disposeBag)
     }
 }

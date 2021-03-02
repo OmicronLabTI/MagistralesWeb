@@ -36,9 +36,7 @@ class LoginViewController: UIViewController {
         initComponents()
         setupKeyboard()
     }
-    deinit {
-        print("Se muere el LoginViewControllert")
-    }
+
     // MARK: - FUNCTIONS
     func viewModelBinding() {
         [
