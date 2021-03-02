@@ -195,6 +195,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetQfbOrdersByStatus(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesPedidos
+                .Setup(m => m.DeleteFiles())
+                .Returns(Task.FromResult(response));
+
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
                 mapper,
@@ -996,6 +1000,21 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateSaleOrderPdf(orderId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test deleteFile.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task DeleteFiles()
+        {
+            // act
+            var response = await this.pedidoFacade.DeleteFiles();
 
             // Assert
             Assert.IsNotNull(response);

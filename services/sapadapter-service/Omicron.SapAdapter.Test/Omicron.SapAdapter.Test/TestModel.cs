@@ -423,5 +423,21 @@ namespace Omicron.SapAdapter.Test
             Assert.IsNotNull(user.UserId);
             Assert.IsNotNull(user.UserName);
         }
+
+        /// <summary>
+        /// test the attachment model.
+        /// </summary>
+        [Test]
+        public void AttachmentModel()
+        {
+            var attachment = new AttachmentModel { AbsEntry = 1, TargetPath = "C:/target/", SourcePath = "C:/folder/", FileExt = "txt", FileName = "users", Line = 1, };
+            Assert.IsNotNull(attachment.AbsEntry);
+            Assert.IsNotNull(attachment.TargetPath);
+            Assert.IsNotNull(attachment.SourcePath);
+            Assert.IsNotNull(attachment.FileName);
+            Assert.IsNotNull(attachment.FileExt);
+            Assert.IsNotNull(attachment.Line);
+            Assert.IsNotNull(attachment.CompletePath);
+        }
     }
 }
