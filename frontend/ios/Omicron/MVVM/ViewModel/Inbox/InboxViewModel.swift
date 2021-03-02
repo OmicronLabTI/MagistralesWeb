@@ -149,7 +149,7 @@ class InboxViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func postOrderPDf(orders: [Int], needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+    func postOrderPDf(orders: [Int], needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         networkManager.postOrdersPDF(orders: orders, needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] response in
             guard let self = self, response.response?.count ?? 0 > 0 else { return }
             self.loading.onNext(false)
@@ -309,7 +309,7 @@ class InboxViewModel {
     }
     // Cambia el estatus de una orden a proceso o pendiente
     func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String,
-                      needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+                      needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
         var status = CommonStrings.empty
         switch typeOfStatus {
@@ -394,7 +394,7 @@ class InboxViewModel {
         }
     }
 
-    func getConnection(needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+    func getConnection(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
 
         self.loading.onNext(true)
         networkManager.getConnect(needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] _ in
@@ -409,7 +409,7 @@ class InboxViewModel {
 
     }
 
-    func callFinishOrderService(needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+    func callFinishOrderService(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         if qfbSignatureIsGet && technicalSignatureIsGet {
             loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
@@ -432,7 +432,7 @@ class InboxViewModel {
         }
     }
 
-    func validOrders(indexPathOfOrdersSelected: [IndexPath]?, needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+    func validOrders(indexPathOfOrdersSelected: [IndexPath]?, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         loading.onNext(true)
         self.indexPathOfOrdersSelected = indexPathOfOrdersSelected
         guard let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }

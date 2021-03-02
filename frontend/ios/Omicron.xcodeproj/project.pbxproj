@@ -131,6 +131,8 @@
 		4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
 		4930B45325E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
+		4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */; };
+		4930D96D25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
@@ -276,6 +278,7 @@
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
 		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
 		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
+		4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinishOrdersErrorResponse.json; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
@@ -786,6 +789,7 @@
 				4951104025E556E2007BE4DF /* ValidateOrders.json */,
 				4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */,
 				49C082C325E5C193000ED4FA /* PostOrderPDF.json */,
+				4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1046,6 +1050,7 @@
 				49C082C525E5C193000ED4FA /* PostOrderPDF.json in Resources */,
 				38554C6E25DF2B70006F476B /* Main.storyboard in Resources */,
 				38554C6F25DF2B70006F476B /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
+				4930D96D25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
 				38554C7025DF2B70006F476B /* assingBatchesResponse.json in Resources */,
 				38554C7125DF2B70006F476B /* refresh_token.json in Resources */,
 				4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */,
@@ -1082,6 +1087,7 @@
 				49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
+				4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
 				4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */,
