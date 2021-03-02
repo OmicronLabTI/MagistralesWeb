@@ -77,7 +77,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String status.
         [Column("finishdate")]
-        public string FinishDate { get; set; }
+        public DateTime? FinishDate { get; set; }
 
         /// <summary>
         /// Gets or sets creation date.
@@ -101,7 +101,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String close date.
         [Column("closedate")]
-        public string CloseDate { get; set; }
+        public DateTime? CloseDate { get; set; }
 
         /// <summary>
         /// Gets or sets close user id.

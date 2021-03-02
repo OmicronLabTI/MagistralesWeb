@@ -47,28 +47,28 @@ namespace Omicron.Pedidos.Test
         {
             return new List<UserOrderModel>
             {
-                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = null, FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 18, Productionorderid = "200", Salesorderid = "200", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 19, Productionorderid = "301", Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 20, Productionorderid = null, Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = null, FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 18, Productionorderid = "200", Salesorderid = "200", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 19, Productionorderid = "301", Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 20, Productionorderid = null, Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
 
                 // Cancelled orders.
-                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "103", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 14, Productionorderid = null, Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
+                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "103", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 14, Productionorderid = null, Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
             };
         }
 

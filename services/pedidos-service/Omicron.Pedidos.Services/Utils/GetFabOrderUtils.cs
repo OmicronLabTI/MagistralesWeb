@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Services.Utils
                     Description = x.ProdName,
                     Quantity = x.Quantity,
                     CreateDate = x.CreatedDate.ToString("dd/MM/yyyy"),
-                    FinishDate = userOrder.FinishDate ?? string.Empty,
+                    FinishDate = userOrder.FinishDate.HasValue ? userOrder.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
                     Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     Unit = x.Unit,
@@ -121,19 +121,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (dataFiltered)
             {
-                var listToReturn = new List<UserOrderModel>();
-                listOrders.Where(y => !string.IsNullOrEmpty(y.FinishDate)).ToList().ForEach(x =>
-                {
-                    var dateArray = x.FinishDate.Split("/");
-                    var date = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
-
-                    if (date >= dateFilter[ServiceConstants.FechaInicio] && date <= dateFilter[ServiceConstants.FechaFin])
-                    {
-                        listToReturn.Add(x);
-                    }
-                });
-
-                return listToReturn;
+                return listOrders.Where(y => y.FinishDate != null && y.FinishDate >= dateFilter[ServiceConstants.FechaInicio] && y.FinishDate <= dateFilter[ServiceConstants.FechaFin]).ToList();
             }
             else
             {
