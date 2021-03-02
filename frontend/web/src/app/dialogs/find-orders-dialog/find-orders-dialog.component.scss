@@ -26,7 +26,13 @@
   height: 20%;
   display: flex;
   flex-direction: row;
-
+}
+.row-form-order-custom {
+  height: 25% !important;
+}
+.border-bottom-custom {
+  border-bottom: #3b3f5c solid 1px !important;
+  padding-bottom: 25px;
 }
 .content-card-container{
   width: 100%;
@@ -42,6 +48,14 @@
   height: 100%;
   padding: 2%;
 }
+.form-field-left-custom {
+  height: 90% !important;
+}
+.form-field-range {
+  width: 50%;
+  height: 100%;
+  padding: 2%;
+}
 .form-field-right{
   width: 65%;
   height: 100%;
@@ -51,6 +65,9 @@
     border-radius: 5px;
     background-color: #fdeced;
   }
+}
+.error-on-range-order {
+  color: #d52334 !important;
 }
 .form-field-right-no-padding {
   width: 65%;
@@ -133,4 +150,7 @@
 }
 .no-padding-custom {
   padding: 0;
+}
+.icon-range-info {
+  margin-top: 4%;
 }

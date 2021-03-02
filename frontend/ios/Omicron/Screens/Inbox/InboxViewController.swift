@@ -27,21 +27,71 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
+    @IBOutlet weak var removeOrdersSelectedView: UIView!
+    @IBOutlet weak var removeOrdersSelectedVerticalSpace: NSLayoutConstraint!
+    @IBOutlet weak var showContainersButtons: UIButton!
     var order = PublishSubject<Int>()
+
     // MARK: - Variables
-    private var bindingCollectionView = true
     @Injected var inboxViewModel: InboxViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+
+    private var bindingCollectionView = true
     let disposeBag = DisposeBag()
     var productID = 0
+    var indexPathsSelected: [IndexPath] = []
+    var lastColor = UIColor.blue
+    var lastIndexPath: IndexPath?
+    var lastRect: CGRect?
+
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = StatusNameConstants.assignedStatus
-        self.collectionView.allowsMultipleSelection = true
+        collectionView.allowsMultipleSelection = true
         viewModelBinding()
-        self.initComponents()
+        initComponents()
+        extensionInitComponents()
+        registerCellsOfCollectionView()
+        finishedButton.isHidden = true
+        pendingButton.isHidden = true
+        navigationItem.rightBarButtonItem = getOmniconLogo()
+        let lpgr = UILongPressGestureRecognizer(target: self,
+                                                action: #selector(InboxViewController.handleLongPress(gesture:)))
+        lpgr.minimumPressDuration = 0.5
+        lpgr.delaysTouchesBegan = true
+        self.collectionView.addGestureRecognizer(lpgr)
+//        let tapGestureRecognizer = UITapGestureRecognizer(
+//            target: self,
+//            action: #selector(InboxViewController.tappedPressed(gesture:))
+//        )
+//        self.view.addGestureRecognizer(tapGestureRecognizer)
+        removeOrdersSelectedView.layer.cornerRadius = removeOrdersSelectedView.frame.width / 2
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
+        self.splitViewController?.presentsWithGesture = false
+        if bindingCollectionView {
+            viewModelBindingCollectionView()
+            bindingCollectionView.toggle()
+        }
+//        guard let lastIndexPath = lastIndexPath else { return }
+//        collectionView.scrollRectToVisible(<#T##rect: CGRect##CGRect#>, animated: <#T##Bool#>)
+//        guard let lastRect = lastRect else { return }
+//        collectionView.scrollRectToVisible(lastRect, animated: true)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        splitViewController?.preferredDisplayMode = .primaryHidden
+    }
+
+    // MARK: - Functions
+    func registerCellsOfCollectionView() {
         collectionView.register(
             UINib(
                 nibName: ViewControllerIdentifiers.cardCollectionViewCell,
@@ -56,22 +106,12 @@ class InboxViewController: UIViewController {
                 bundle: nil),
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier)
-        finishedButton.isHidden = true
-        pendingButton.isHidden = true
-        navigationItem.rightBarButtonItem = getOmniconLogo()
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
-        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
-        self.splitViewController?.presentsWithGesture = false
-        if bindingCollectionView {
-            viewModelBindingCollectionView()
-            bindingCollectionView.toggle()
-        }
-    }
+
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
+
     func returnCardIsolateOrderCollectionViewCell(
         indexPath: IndexPath, element: SectionModel<String, Order>.Item,
         decimalPart: Double?) -> CardIsolatedOrderCollectionViewCell {
@@ -82,14 +122,22 @@ class InboxViewController: UIViewController {
         cell?.order = element
         cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            String(format: DecimalFormat.six.rawValue,
+                   NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
         cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
         cell?.missingStockImage.isHidden = !element.hasMissingStock
-        return cell!
+        if indexPathsSelected.contains(indexPath) {
+            cell?.isSelected = true
+        } else {
+            cell?.isSelected = false
+        }
+        cell?.itemCode.text = element.itemCode
+        return cell ?? CardIsolatedOrderCollectionViewCell()
     }
+
     func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
                                       decimalPart: Double?) -> CardCollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
@@ -100,22 +148,31 @@ class InboxViewController: UIViewController {
         cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
         cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
-        cell?.containerDescriptionLabel.text = element.container ?? CommonStrings.empty
         cell?.tagDescriptionLabel.text = element.tag
+        cell?.containerLabel.text = element.container
         if !element.finishedLabel {
             cell?.tagDescriptionLabel.textColor = .red
         } else {
             cell?.tagDescriptionLabel.textColor = .systemGreen
         }
         cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
-            String(format: "%6f", NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
+            String(format: DecimalFormat.six.rawValue,
+                   NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
         cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
         cell?.missingStockImage.isHidden = !element.hasMissingStock
-        return cell!
+        if indexPathsSelected.contains(indexPath) {
+            cell?.isSelected = true
+        } else {
+            cell?.isSelected = false
+        }
+        cell?.itemCode.text = element.itemCode
+        cell?.destiny.text = element.destiny
+        return cell ?? CardCollectionViewCell()
     }
+
     func viewModelBindingCollectionView() {
         // Pinta las cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(
@@ -126,23 +183,24 @@ class InboxViewController: UIViewController {
                 let cell = self?.returnCardCollectionViewCell(
                     indexPath: indexPath, element: element, decimalPart: decimalPart)
                 cell?.delegate = self
-                return cell!
+                return cell ?? CardCollectionViewCell()
             } else {
                 let cell = self?.returnCardIsolateOrderCollectionViewCell(
                     indexPath: indexPath, element: element, decimalPart: decimalPart)
-                cell!.delegate = self
-                return cell!
+                cell?.delegate = self
+                return cell ?? CardIsolatedOrderCollectionViewCell()
             }
         })
         dataSource
-            .configureSupplementaryView = { (dataSource, collectionView, kind, indexPath) -> UICollectionReusableView in
+            .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath)
+                -> UICollectionReusableView in
                 let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
                     for: indexPath) as? HeaderCollectionViewCell
                 let headerText = dataSource.sectionModels[indexPath.section].identity
                 header?.productID.text = headerText
-                if headerText.contains("Pedido") {
+                if headerText.contains(CommonStrings.orderTitile) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
@@ -154,38 +212,24 @@ class InboxViewController: UIViewController {
                     header?.delegate = nil
                     header?.pdfImageView.isHidden = true
                 }
-                return header!
+                return header ?? HeaderCollectionViewCell()
         }
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
-    // MARK: - Functions
+
     func viewModelBinding() {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             self?.title = title
             guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
             self?.hideButtons(index: statusId)
+            self?.removeOrdersSelectedView.backgroundColor = self?.updateRemoveViewColor(title: title)
         }).disposed(by: disposeBag)
         inboxViewModel.refreshDataWhenChangeProcessIsSucces
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.rootViewModel.getOrders()
         }).disposed(by: self.disposeBag)
-        // Identifica cuando un card ha sido selecionado y se habilita o deshabilita el botón proceso
-        collectionView.rx.itemSelected.observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in
-            if self?.collectionView.indexPathsForSelectedItems?.count ?? 0 > 0 {
-                self?.processButton.isEnabled = true
-                self?.pendingButton.isEnabled = true
-            }
-        }).disposed(by: self.disposeBag)
-        collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] _ in
-            if self?.collectionView.indexPathsForSelectedItems?.count == 0 {
-                self?.processButton.isEnabled = false
-                self?.pendingButton.isEnabled = false
-            }
-        }).disposed(by: disposeBag)
-        // Habilita o deshabilita el botón para cambiar a proceso
         inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
             self?.processButton.isEnabled = isEnable
         }).disposed(by: self.disposeBag)
@@ -205,6 +249,8 @@ class InboxViewController: UIViewController {
         self.modelBindingExtention1()
         self.modelBindingExtension2()
         self.modelBindingExtension3()
+        self.showSignatureVC()
+        isUserInteractionEnabledBinding()
     }
     func modelBindingExtention1() {
         // Habilita o deshabilita el botón de agrupamiento por similaridad
@@ -242,7 +288,7 @@ class InboxViewController: UIViewController {
         inboxViewModel.title
             .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
             let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
-            var message: String = ""
+            var message = String()
             if let orders = data.first {
                 if orders.items.count == 0 && statusId != -1 {
                     message = "No tienes órdenes \(title)"
@@ -259,12 +305,15 @@ class InboxViewController: UIViewController {
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { _ in
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                 self?.view.isUserInteractionEnabled = false
-                self?.inboxViewModel.changeStatus(
-                    indexPath: self?.collectionView.indexPathsForSelectedItems,
-                    typeOfStatus: data.typeOfStatus)
-            })  // Si la respuesta es OK, se mandan los index selecionados para cambiar el status
+                if data.typeOfStatus == StatusNameConstants.finishedStatus {
+                    self?.inboxViewModel.validOrders(indexPathOfOrdersSelected: self?.indexPathsSelected)
+                } else {
+                    self?.inboxViewModel.changeStatus(
+                        indexPath: self?.indexPathsSelected, typeOfStatus: data.typeOfStatus)
+                }
+            })
             alert.addAction(cancelAction)
             alert.addAction(okAction)
             self?.present(alert, animated: true, completion: nil)
@@ -284,7 +333,8 @@ class InboxViewController: UIViewController {
             self?.hideButtons(index: row)
             self?.goToTop()
         }).disposed(by: disposeBag)
-        collectionView.rx.didScroll.subscribe({ _ in
+        collectionView.rx.didScroll.subscribe({ [weak self] _ in
+            guard let self = self else { return }
             self.collectionView.removeMoreIndicator()
         }).disposed(by: disposeBag)
         inboxViewModel.showKPIView.observeOn(MainScheduler.instance)
@@ -295,6 +345,7 @@ class InboxViewController: UIViewController {
             self.cardsView.isHidden = show
         }).disposed(by: disposeBag)
     }
+
     func modelBindingExtension3() {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
@@ -315,10 +366,49 @@ class InboxViewController: UIViewController {
                 guard let self = self else { return }
                 if hasConnection { self.order.onNext(self.productID) }
             }).disposed(by: disposeBag)
+
+        collectionView.rx.itemSelected.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self = self else { return }
+                guard self.indexPathsSelected.count > 0 else {
+                    self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
+                    self.lastIndexPath = indexPath
+                    let orders = self.inboxViewModel.sectionOrders
+                    let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
+                    guard let order = orderOptional else { return }
+                    self.detailTapped(order: order)
+                    return
+                }
+                self.updateCellWithIndexPath(indexPath)
+        }).disposed(by: self.disposeBag)
+        collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] indexPath in
+            guard let self = self else { return }
+            guard self.indexPathsSelected.count > 0 else {
+                self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
+                self.lastIndexPath = indexPath
+                let orders = self.inboxViewModel.sectionOrders
+                let orderOptional = orders[safe: indexPath.section]?.items[safe: indexPath.row]
+                guard let order = orderOptional else { return }
+                self.detailTapped(order: order)
+                return
+            }
+            self.updateCellWithIndexPath(indexPath)
+        }).disposed(by: disposeBag)
+
+        inboxViewModel
+            .reloadData
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self, let lastRect = self.lastRect else { return }
+                self.collectionView.scrollRectToVisible(lastRect, animated: true)
+            })
+            .disposed(by: self.disposeBag)
+
     }
     func initComponents() {
         self.processButton.isEnabled = false
         self.pendingButton.isEnabled = false
+        self.finishedButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(
             button: self.finishedButton,
             title: StatusNameConstants.finishedStatus,
@@ -334,6 +424,8 @@ class InboxViewController: UIViewController {
             title: StatusNameConstants.inProcessStatus,
             color: OmicronColors.processStatus,
             titleColor: OmicronColors.processStatus)
+    }
+    func extensionInitComponents() {
         self.similarityViewButton.setTitle("", for: .normal)
         self.similarityViewButton.setImage(UIImage(systemName: ImageButtonNames.similarityView), for: .normal)
         self.normalViewButton.setTitle("", for: .normal)
@@ -343,10 +435,25 @@ class InboxViewController: UIViewController {
         self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.itemSize = CGSize(width: 365, height: 250)
+        layout.itemSize = CGSize(width: 700, height: 180)
+        layout.minimumLineSpacing = 16
+
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -60
-        print(UIScreen.main.bounds.width)
+        inboxViewModel.resetData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] in
+            guard let self = self else { return }
+            self.indexPathsSelected.removeAll()
+            self.collectionView.reloadData()
+            if self.removeOrdersSelectedVerticalSpace.constant > 0 {
+                UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                    self?.removeOrdersSelectedVerticalSpace.constant = -60
+                    self?.view.layoutIfNeeded()
+                })
+            }
+            self.processButton.isEnabled = false
+            self.pendingButton.isEnabled = false
+            self.finishedButton.isEnabled = false
+        }).disposed(by: disposeBag)
     }
     func chageStatusName(index: Int) {
         let name = self.inboxViewModel.getStatusName(index: index)
@@ -375,31 +482,37 @@ class InboxViewController: UIViewController {
                 processButtonIsHidden: false,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: false)
+            showContainersButtons.isHidden = false
         case 1:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
-                finishedButtonIsHidden: true,
+                finishedButtonIsHidden: false,
                 pendingButtonIsHidden: false)
+            showContainersButtons.isHidden = true
         case 2:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: false,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         case 3:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         case 4:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         default:
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
                 pendingButtonIsHidden: true)
+            showContainersButtons.isHidden = true
         }
     }
     private func changePropertyIsHiddenStatusButtons(
@@ -422,16 +535,106 @@ class InboxViewController: UIViewController {
            }
        }
     }
-}
 
-// MARK: Extencions
-extension InboxViewController: CardCellDelegate {
-    // Chec this
     func detailTapped(order: Order) {
         self.inboxViewModel.selectedOrder = order
         self.view.endEditing(true)
         self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
     }
+
+    @objc func handleLongPress(gesture: UILongPressGestureRecognizer!) {
+
+        if gesture.state != .ended { return }
+
+        let position = gesture.location(in: self.collectionView)
+
+        if let indexPath = self.collectionView.indexPathForItem(at: position) {
+            self.updateCellWithIndexPath(indexPath)
+        }
+    }
+
+    func updateCellWithIndexPath(_ indexPath: IndexPath) {
+
+        if indexPathsSelected.contains(indexPath) {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        } else {
+            collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
+        }
+
+        let indexOptional = indexPathsSelected.firstIndex(of: indexPath)
+        if let index = indexOptional {
+            indexPathsSelected.remove(at: index)
+        } else {
+            indexPathsSelected.append(indexPath)
+        }
+
+        if indexPathsSelected.count > 0 {
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                self?.removeOrdersSelectedVerticalSpace.constant = 48
+                self?.view.layoutIfNeeded()
+            })
+            processButton.isEnabled = true
+            pendingButton.isEnabled = true
+            finishedButton.isEnabled = true
+        } else {
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                self?.removeOrdersSelectedVerticalSpace.constant = -60
+                self?.view.layoutIfNeeded()
+            })
+            processButton.isEnabled = false
+            pendingButton.isEnabled = false
+            finishedButton.isEnabled = false
+        }
+
+    }
+
+    @IBAction func removeSelectedOrdersDidPressed(_ sender: Any) {
+        self.indexPathsSelected.removeAll()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.processButton.isEnabled = false
+            self.pendingButton.isEnabled = false
+            self.finishedButton.isEnabled = false
+        }
+        if self.removeOrdersSelectedVerticalSpace.constant > 0 {
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                self?.removeOrdersSelectedVerticalSpace.constant = -60
+                self?.view.layoutIfNeeded()
+            })
+        }
+    }
+
+    private func updateRemoveViewColor(title: String) -> UIColor {
+        switch title {
+        case StatusNameConstants.assignedStatus:
+            lastColor = OmicronColors.assignedStatus
+            return OmicronColors.assignedStatus
+        case StatusNameConstants.inProcessStatus:
+            lastColor = OmicronColors.processStatus
+            return OmicronColors.processStatus
+        case StatusNameConstants.penddingStatus:
+            lastColor = OmicronColors.pendingStatus
+            return OmicronColors.pendingStatus
+        case StatusNameConstants.finishedStatus:
+            lastColor = OmicronColors.finishedStatus
+            return OmicronColors.finishedStatus
+        case StatusNameConstants.reassignedStatus:
+            lastColor = OmicronColors.reassignedStatus
+            return OmicronColors.reassignedStatus
+        default: return lastColor
+        }
+    }
+
+}
+
+// MARK: Extencions
+extension InboxViewController: CardCellDelegate {
+    // Chec this
+//    func detailTapped(order: Order) {
+//        self.inboxViewModel.selectedOrder = order
+//        self.view.endEditing(true)
+//        self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+//    }
 }
 
 extension UICollectionView {

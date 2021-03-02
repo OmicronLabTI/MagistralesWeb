@@ -36,20 +36,24 @@ class LotsViewModel {
     var qfbSignatureIsGet = false
     var askIfUserWantToFinalizeOrder = PublishSubject<String>()
     var showSignatureViewFromLotsView = PublishSubject<String>()
-    var sqfbSignature = ""
-    var technicalSignature = ""
+    var sqfbSignature = String()
+    var technicalSignature = String()
     var showSignatureView = PublishSubject<String>()
     var updateComments = PublishSubject<OrderDetail>()
     var pendingButtonDidTap = PublishSubject<Void>()
     var askIfUserWantChageOrderToPendigStatus = PublishSubject<String>()
     var changeColorLabels = PublishSubject<Void>()
+    var enableAddButton = PublishSubject<Bool>()
+    var enableRemoveButton = PublishSubject<Bool>()
+
     @Injected var orderDetail: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
+
     init() {
         // Finaliza la orden
         self.finishOrderDidTap.subscribe(onNext: { [weak self] in
-            self?.askIfUserWantToFinalizeOrder.onNext("¿Deseas terminar la orden?")
+            self?.askIfUserWantToFinalizeOrder.onNext(CommonStrings.finishOrderMessage)
         }).disposed(by: self.disposeBag)
         // Pone en pendiente la orden
         self.pendingButtonDidTap.subscribe(onNext: { [weak self] _ in
@@ -70,23 +74,25 @@ class LotsViewModel {
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in
             self?.availableSelected.onNext(nil)
+            self?.enableAddButton.onNext(false)
             guard let product = productSelected else { return }
             guard let available = availableSelected else { return }
             guard let doc = self?.documentLines
                 .first(where: { $0.codigoProducto == product.codigoProducto }) else { return }
-            let quantity = (available.cantidadSeleccionada ?? 0)
-            if quantity == 0 || quantity > (doc.totalNecesario ?? 0) || (available.cantidadDisponible ?? 0) == 0 {
+            let quantity = available.cantidadSeleccionada ?? 0
+            if quantity == 0 || quantity > (doc.totalNecesario ?? 0) || (available.cantidadDisponible ?? 0)
+                == 0 || quantity > (available.cantidadDisponible ?? 0) {
                 return
             }
             if let existing = self?.selectedBatches.first(where: { batch in
                 return batch.itemCode == product.codigoProducto
-                    && batch.batchNumber == available.numeroLote && batch.action != "delete"
+                    && batch.batchNumber == available.numeroLote && batch.action != Actions.delete.rawValue
             }) {
                 if existing.action == nil {
-                    existing.action = "delete"
+                    existing.action = Actions.delete.rawValue
                     self?.selectedBatches.append(BatchSelected(orderId: existing.orderId,
                         assignedQty: (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0),
-                        batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: "insert",
+                        batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: Actions.insert.rawValue,
                         sysNumber: existing.sysNumber, expiredBatch: existing.expiredBatch))
                     self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
                 } else {
@@ -101,13 +107,13 @@ class LotsViewModel {
             } else {
                 self?.selectedBatches.append(BatchSelected(
                     orderId: self?.orderId, assignedQty: quantity, batchNumber: available.numeroLote,
-                    itemCode: product.codigoProducto, action: "insert", sysNumber: available.sysNumber,
+                    itemCode: product.codigoProducto, action: Actions.insert.rawValue, sysNumber: available.sysNumber,
                     expiredBatch: available.expiredBatch))
                 self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
             }
             doc.totalNecesario = (doc.totalNecesario ?? 0) - quantity
             doc.totalSeleccionado = self?.selectedBatches
-                .filter({ product.codigoProducto == $0.itemCode && $0.action != "delete" })
+                .filter({ product.codigoProducto == $0.itemCode && $0.action != Actions.delete.rawValue })
                 .compactMap({ $0.assignedQty }).reduce(0, +)
             doc.lotesDisponibles?.forEach({ lot in
                 if lot.numeroLote == available.numeroLote {
@@ -124,18 +130,20 @@ class LotsViewModel {
     func removeLotAction() {
         let inputsRemove = Observable.combineLatest(productSelected, batchSelected)
         self.removeLotDidTap.withLatestFrom(inputsRemove).subscribe(onNext: { [weak self] document, batch in
+            self?.enableRemoveButton.onNext(false)
             if let existing = self?.selectedBatches.first(where: { batchItem in
                 return batchItem.batchNumber == batch?.numeroLote
             }) {
                 if existing.action != nil {
                     if let index = self?.selectedBatches
-                        .firstIndex(where: { $0.batchNumber == existing.batchNumber && $0.action != "delete" }) {
+                        .firstIndex(
+                            where: { $0.batchNumber == existing.batchNumber && $0.action != Actions.delete.rawValue }) {
                         self?.selectedBatches.remove(at: index)
                         let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
                         self?.dataLotsSelected.onNext(newSelected)
                     }
                 } else {
-                    existing.action = "delete"
+                    existing.action = Actions.delete.rawValue
                     let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
                     if newSelected.count > 0 {
                         self?.dataLotsSelected.onNext(newSelected)
@@ -146,7 +154,7 @@ class LotsViewModel {
                 if let doc = self?.documentLines.first(where: { $0.codigoProducto == document?.codigoProducto }) {
                     doc.totalNecesario = (doc.totalNecesario ?? 0) + (batch?.cantidadSeleccionada ?? 0)
                     doc.totalSeleccionado = self?.selectedBatches
-                        .filter({ doc.codigoProducto == $0.itemCode && $0.action != "delete" })
+                        .filter({ doc.codigoProducto == $0.itemCode && $0.action != Actions.delete.rawValue })
                         .compactMap({ $0.assignedQty }).reduce(0, +)
                     doc.lotesDisponibles?.forEach({ lot in
                         if lot.numeroLote == batch?.numeroLote {
@@ -187,13 +195,13 @@ class LotsViewModel {
                     }
                     self?.dataOfLots.onNext(lotsData)
                 } else {
-                    self?.showMessage.onNext("No hay lotes asignados")
+                    self?.showMessage.onNext(CommonStrings.noBatchesAssigned)
                 }
                 self?.changeColorLabels.onNext(())
             }
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-                self?.showMessage.onNext("Hubo un error al cargar los lotes, por favor de intentarlo de nuevo")
+                self?.showMessage.onNext(Constants.Errors.loadBatches.rawValue)
                 print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
@@ -231,9 +239,15 @@ class LotsViewModel {
                     let batch = BatchSelected(
                         orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada,
                         batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto,
-                        action: "insert", sysNumber: firstAvailable.sysNumber,
+                        action: Actions.insert.rawValue, sysNumber: firstAvailable.sysNumber,
                         expiredBatch: firstAvailable.expiredBatch)
-                    doc.totalNecesario = 0
+                    if let totalNecesario = lot.totalNecesario,
+                       let cantidadSeleccionada = firstAvailable.cantidadSeleccionada {
+                        let result = totalNecesario - cantidadSeleccionada
+                        doc.totalNecesario = result.isSignMinus ? result * -1 : result
+                    } else {
+                        doc.totalNecesario = 0
+                    }
                     guard let firstBatch = doc.lotesDisponibles?.first else { return }
                     doc.totalSeleccionado = firstBatch.cantidadSeleccionada ?? 0
                     self.selectedBatches.append(batch)
@@ -257,7 +271,7 @@ class LotsViewModel {
     func assignLots() {
         let batchesToSend = self.selectedBatches.filter({ $0.action != nil })
         if batchesToSend.count == 0 {
-            self.showMessage.onNext("No se han realizado modificaciones de lotes")
+            self.showMessage.onNext(CommonStrings.noChanges)
             return
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
@@ -269,7 +283,7 @@ class LotsViewModel {
             guard let self = self else { return }
             self.loading.onNext(false)
             if res.response!.isEmpty {
-                self.showMessage.onNext("Proceso realizado correctamente")
+                self.showMessage.onNext(CommonStrings.processSuccess)
                 // actualiza la pantalla
                 self.orderDetail.needsRefresh = true
                 self.getLots()
@@ -279,47 +293,44 @@ class LotsViewModel {
             for batch in res.response! {
                 badBatches += "\n\(batch)"
             }
-            self.showMessage.onNext("Hubo un error al asignar los siguientes lotes\(badBatches)")
+                self.showMessage.onNext("\(Constants.Errors.assignedBatches.rawValue) \(badBatches)")
             }, onError: { [weak self] error in
                 self?.loading.onNext(false)
-                self?.showMessage.onNext("Hubo un error al asignar los lotes, por favor intentar de nuevo")
+                self?.showMessage.onNext(Constants.Errors.assignedBatchesTryAgain.rawValue)
                 print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
     private func getFilteredSelected(itemCode: String?) -> [LotsSelected] {
         return self.selectedBatches
-            .filter({ $0.itemCode == itemCode && $0.action != "delete" })
+            .filter({ $0.itemCode == itemCode && $0.action != Actions.delete.rawValue })
             .map({ $0.toLotsSelected() })
     }
     private func getFilteredSelected(itemCode: String?, batchNumber: String?) -> [LotsSelected] {
         return self.selectedBatches
-            .filter({ $0.itemCode == itemCode && $0.batchNumber == batchNumber && $0.action != "delete" })
+            .filter({ $0.itemCode == itemCode
+                        && $0.batchNumber == batchNumber && $0.action != Actions.delete.rawValue })
             .map({ $0.toLotsSelected() })
     }
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
 
-        networkManager.getValidateOrder(orderId: orderId)
+        networkManager.validateOrders(orderIDs: [orderId])
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 guard response.code == 400, !(response.success ?? false) else {
-                    self.showSignatureView.onNext("Firma del  QFB")
+                    self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
-                var messageConcat = ""
+                var messageConcat = String()
                 for error in errors {
                     if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat += "No es posible Terminar, faltan lotes para: "
-                        messageConcat += "\n"
-                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
-                        messageConcat += "\n\n"
+                        messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
                     } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat += "No es posible Terminar, falta existencia para: "
-                        messageConcat += "\n"
-                        messageConcat += error.listItems?.joined(separator: ", ") ?? ""
+                        let messageError = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
+                        messageConcat = "\(messageConcat) \(messageError)"
                     }
                 }
                 self.showMessage.onNext(messageConcat)
@@ -327,7 +338,7 @@ class LotsViewModel {
 
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.showMessage.onNext("Error")
+                self.showMessage.onNext(Constants.Errors.errorData.rawValue)
 
             }).disposed(by: disposeBag)
     }
@@ -336,7 +347,7 @@ class LotsViewModel {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(
-                userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: self.orderId,
+                userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: [self.orderId],
                 qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
             self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
@@ -344,7 +355,7 @@ class LotsViewModel {
                 self?.rootViewModel.needsRefresh = true
                 }, onError: {[weak self] error in
                     self?.loading.onNext(false)
-                    self?.showMessage.onNext("Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo")
+                    self?.showMessage.onNext(CommonStrings.errorFinishOrder)
                     print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
         }
@@ -361,7 +372,7 @@ class LotsViewModel {
             self?.orderDetail.needsRefresh = true
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
-            self?.showMessage.onNext("Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo")
+            self?.showMessage.onNext(Constants.Errors.loadOrdersDetail.rawValue)
             print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
@@ -383,10 +394,11 @@ class LotsViewModel {
     }
     // MARK: - Function Helpers
     func calculateExpiredBatch(date: String?) -> Bool {
-        let date = date?.replacingOccurrences(of: "\"", with: "", options: String.CompareOptions.literal, range: nil)
+        let date = date?.replacingOccurrences(
+            of: "\"", with: CommonStrings.empty, options: String.CompareOptions.literal, range: nil)
         if let date = date {
             let formatter = DateFormatter()
-            formatter.dateFormat = "dd/MM/yyyy"
+            formatter.dateFormat = DateFormat.ddMMyyyy
             if let dateFormatter = formatter.date(from: date) {
                 let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())
                 let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)

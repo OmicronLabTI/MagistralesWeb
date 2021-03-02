@@ -365,7 +365,7 @@ namespace Omicron.SapAdapter.Services.Sap
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
             var firstChip = chipValues.FirstOrDefault().ToLower();
-            listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(new List<string> { firstChip })).ToList());
+            listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip)).ToList());
             listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
@@ -638,7 +638,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 if (x.WarehouseQuantity <= 0 || x.RequiredQuantity > x.WarehouseQuantity)
                 {
-                    listErrorStock.ListItems.Add($"{x.OrderFabId}-{x.ProductId}");
+                    listErrorStock.ListItems.Add($"{x.OrderFabId} {x.ProductId}");
                 }
             });
 

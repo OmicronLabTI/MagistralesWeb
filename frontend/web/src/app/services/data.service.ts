@@ -375,7 +375,8 @@ export class DataService {
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-      queryString = `?docNum=${resultSearchOrderModal.docNum}`;
+      filterDataOrders.docNumUntil = resultSearchOrderModal.docNumUntil;
+      queryString =  this.getRangeOrders(resultSearchOrderModal.docNum, resultSearchOrderModal.docNumUntil);
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
@@ -412,7 +413,7 @@ export class DataService {
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
       if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
-        queryString = `${queryString}&clasification=${resultSearchOrderModal.clasification}`;
+        queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
         filterDataOrders.clasification = resultSearchOrderModal.clasification;
       }
     }
@@ -481,5 +482,13 @@ export class DataService {
   }
   getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
     return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
+  }
+
+  getRangeOrders(docNum: any, docNumUntil: any) {
+    if (docNum === docNumUntil || docNumUntil === CONST_STRING.empty || !docNumUntil) {
+      return `?docNum=${docNum}-${docNum}`;
+    } else {
+      return `?docNum=${docNum}-${docNumUntil}`;
+    }
   }
 }

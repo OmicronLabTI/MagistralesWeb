@@ -46,6 +46,12 @@ class NetworkManager: SessionProtocol {
     ])) {
         self.provider = provider
     }
+
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub,plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
+//    ])) {
+//        self.provider = provider
+//    }
     // MARK: Functions
     func getTokenRefreshService() -> Single<Response> {
         let data = Renew(refresh_token: Persistence.shared.getLoginData()?.refreshToken ?? "")
@@ -129,6 +135,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<ComponentResponse> = makeRequest(request: req)
         return res
     }
+    // Obtiene el listado de componentes más comunes
+    func getMostCommonComponents() -> Observable<ComponentResponse> {
+        let req: ApiService = ApiService.getMostCommonComponents
+        let res: Observable<ComponentResponse> = makeRequest(request: req)
+        return res
+    }
     // Obtiene la carga de trabajo
     func getWordLoad(data: WorkloadRequest) -> Observable<WorkloadResponse> {
         let req: ApiService = ApiService.getWorkload(data: data)
@@ -137,8 +149,8 @@ class NetworkManager: SessionProtocol {
     }
 
     // Obtiene la carga de trabajo
-    func getValidateOrder(orderId: Int) -> Observable<ValidateOrderModel> {
-        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
+    func validateOrders(orderIDs: [Int]) -> Observable<ValidateOrderModel> {
+        let req: ApiService = ApiService.validateOrders(orderId: orderIDs)
         let res: Observable<ValidateOrderModel> = makeRequest(request: req)
         return res
     }
@@ -154,6 +166,13 @@ class NetworkManager: SessionProtocol {
     func getConnect() -> Observable<ConnectModel> {
         let req: ApiService = ApiService.getConnect
         let res: Observable<ConnectModel> = makeRequest(request: req, needsVPN: true)
+        return res
+    }
+
+    // Obtiene los envases requeridos para los pedidos asignados
+    func getContainer(userId: String) -> Observable<ContainerResponse> {
+        let req: ApiService = ApiService.getContainer(userId: userId)
+        let res: Observable<ContainerResponse> = makeRequest(request: req)
         return res
     }
 

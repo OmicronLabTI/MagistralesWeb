@@ -174,7 +174,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
                     if (lastTransaction == null)
                     {
-                        listToReturn.Add($"{g.Key}-{i.ProductId}");
+                        listToReturn.Add($"{g.Key} {i.ProductId}");
                     }
                     else
                     {
@@ -185,7 +185,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
                         if (totalNecesario > 0)
                         {
-                            listToReturn.Add($"{g.Key}-{i.ProductId}");
+                            listToReturn.Add($"{g.Key} {i.ProductId}");
                         }
                     }
                 });

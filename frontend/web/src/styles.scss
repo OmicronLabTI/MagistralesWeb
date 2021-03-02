@@ -687,7 +687,34 @@ a.breadcrumblink:hover{
   font-weight: 700 !important;
   width: 100px;
 }
-
+.mat-stroked-button.clasification-mn {
+  display: flex;
+  justify-content: center;
+  background-color: #1E65C6;
+  font-weight: 700 !important;
+  width: 100px;
+}
+.mat-stroked-button.clasification-be {
+  display: flex;
+  justify-content: center;
+  background-color: #38A626;
+  font-weight: 700 !important;
+  width: 100px;
+}
+.mat-stroked-button.clasification-mg {
+  display: flex;
+  justify-content: center;
+  background-color: #632289;
+  font-weight: 700 !important;
+  width: 100px;
+}
+.mat-stroked-button.clasification-mx {
+  display: flex;
+  justify-content: center;
+  background-color: #D7349C;
+  font-weight: 700 !important;
+  width: 100px;
+}
 .is-loading {
   width: 100%;
   height: 100%;
@@ -788,7 +815,7 @@ a.breadcrumblink:hover{
   font-size: 40px !important;
 }
 .padding-tp {
-  padding-top: 10px !important;
+  padding-top: 18px !important;
 }
 .border-none{
   border: none;

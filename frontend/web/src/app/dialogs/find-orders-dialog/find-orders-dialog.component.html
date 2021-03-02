@@ -9,23 +9,43 @@
         </mat-card-header>
         <mat-card-content class="content-card-container">
             <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
-                <div class="row-form-order">
-                    <div class="form-field-full">
+                <div class="row-form-order row-form-order-custom border-bottom-custom">
+                    <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (desde)' : 'Orden (desde)'"
                                    type="number"
-                                   maxlength="7"
+                                   maxlength="20"
                                    class="height-input"
                                    formControlName="docNum"
-                                   (keydown)="changeDocNumber($event)">
+                                   (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
-                            <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 7 caracteres
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field-left form-field-left-custom "
+                         [ngClass]="!isLessDocNumUntil ? 'error-on-range-order' : ''">
+                        <mat-form-field class="custom-field-full">
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (hasta)' : 'Orden (hasta)'"
+                                   type="number"
+                                   maxlength="20"
+                                   class="height-input"
+                                   formControlName="docNumUntil"
+                                   (keydown)="changeDocNumber($event, true)">
+                            <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
+                                Pedido es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
                     </div>
+                    <span class="material-icons icon-range-info color-omicron"
+                          matTooltip="{{ isFromSearchOrders ? 'El pedido(hasta) debe ser mayor a pedido(desde)' :
+                          'La orden (hasta) debe ser mayor a orden (desde)'}}">
+                       help_outline
+                    </span>
+<!--
+                        *El pedido(hasta) debe ser mayor a pedido(desde)
+-->
+
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
@@ -174,12 +194,12 @@
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
-                            <mat-label>Clasificación de pedido</mat-label>
+                            <mat-label>Tipo</mat-label>
                             <mat-select formControlName="clasification">
-                                <mat-option value="MN">Bioelite</mat-option>
-                                <mat-option value="BE">Bioequal</mat-option>
-                                <mat-option value="MG">Magistral</mat-option>
-                                <mat-option value="MX">Mixto</mat-option>
+                                <mat-option value="MN">Bioelite(MN)</mat-option>
+                                <mat-option value="BE">Bioequal(BE)</mat-option>
+                                <mat-option value="MG">Magistral(MG)</mat-option>
+                                <mat-option value="MX">Mixto(MX)</mat-option>
                               <!--  <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>-->
                             </mat-select>
                         </mat-form-field>

@@ -3,6 +3,7 @@ import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
 import {
+    ClassCssOrderType,
     ClassNames,
     CONST_NUMBER,
     CONST_STRING,
@@ -12,7 +13,7 @@ import {
     HttpServiceTOCall,
     HttpStatus,
     MessageType,
-    MODAL_NAMES,
+    MODAL_NAMES, OrderType,
     RouterPaths,
     TypeToSeeTap,
 } from '../../constants/const';
@@ -44,7 +45,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   allComplete = false;
   ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
-  displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
+  displayedColumns: string[] = ['seleccion', 'codigo', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -114,36 +115,37 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          switch (element.pedidoStatus) {
-            case ConstStatus.abierto:
-              element.class = 'abierto';
-              break;
-            case ConstStatus.planificado:
-              element.class = 'planificado';
-              break;
-            case ConstStatus.liberado:
-              element.class = 'liberado';
-              break;
-            case ConstStatus.cancelado:
-              element.class = 'cancelado';
-              break;
-            case ConstStatus.enProceso:
-              element.class = 'proceso';
-              break;
-            case ConstStatus.finalizado:
-              element.class = 'finalizado';
-              break;
-            case ConstStatus.terminado:
-              element.class = 'terminado';
-              break;
-              case ConstStatus.entregado:
-                  element.class = 'entregado';
-                  break;
+              switch (element.pedidoStatus) {
+                  case ConstStatus.abierto:
+                      element.class = 'abierto';
+                      break;
+                  case ConstStatus.planificado:
+                      element.class = 'planificado';
+                      break;
+                  case ConstStatus.liberado:
+                      element.class = 'liberado';
+                      break;
+                  case ConstStatus.cancelado:
+                      element.class = 'cancelado';
+                      break;
+                  case ConstStatus.enProceso:
+                      element.class = 'proceso';
+                      break;
+                  case ConstStatus.finalizado:
+                      element.class = 'finalizado';
+                      break;
+                  case ConstStatus.terminado:
+                      element.class = 'terminado';
+                      break;
+                  case ConstStatus.entregado:
+                      element.class = 'entregado';
+                      break;
                   case ConstStatus.rechazado:
-                  element.class = 'rechazado';
-                  break;
-          }
-        });
+                      element.class = 'rechazado';
+                      break;
+              }
+              element.classClasification = this.getClassClasification(element.orderType);
+          });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
         this.isThereOrdersToPlan = false;
@@ -238,8 +240,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToReassign =
         this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
     this.isTherePedidosToViewPdf = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
-
-
 
   }
   getFullQueryString() {
@@ -376,7 +376,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
             .then((result: any) => {
                 if (result.isConfirmed) {
                      this.showCommentsToRefuse();
-                    // this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForClose: true});
                 }
             });
     }
@@ -407,5 +406,18 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 this.ordersToRefuseService(ordersRefuseResult.comments);
             }
         });
+    }
+
+    getClassClasification(orderType: string) {
+        switch (orderType) {
+            case OrderType.bioElite:
+                return ClassCssOrderType.mn;
+            case OrderType.bioEqual:
+                return  ClassCssOrderType.be;
+            case OrderType.magistral:
+                return ClassCssOrderType.mg;
+            case OrderType.mixto:
+                return ClassCssOrderType.mx;
+        }
     }
 }

@@ -55,6 +55,7 @@ export class ParamsPedidos {
     current?: string;
     advance?: string;
     clasification?: string;
+    docNumUntil?: any;
 
 
 }
@@ -85,8 +86,10 @@ export class IPedidoReq {
     hasRecipte?: string;
     qfb?: string;
     class?: string;
+    classClasification?: string;
     labelType: string;
     finishedLabel: number;
+    orderType: string;
 }
 
 export class CancelOrderReq {
