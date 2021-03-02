@@ -68,7 +68,15 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.orderURLPDF.subscribe(onNext: { [weak self] res in
             XCTAssertEqual(res, self?.expectedResult)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.postOrderPDf(orders: [orderID])
+        inboxViewModel?.postOrderPDf(orders: [orderID], needsError: false)
+    }
+    
+    func testPostPDFWhenCodeIs500() {
+        let orderID = 1234
+        inboxViewModel?.showAlert.subscribe(onNext: { res in
+            XCTAssertEqual(res, CommonStrings.errorPDF)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.postOrderPDf(orders: [orderID], needsError: true)
     }
 
     func testCallFinishOrderService() {
@@ -79,13 +87,33 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
             XCTAssertTrue(res)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.callFinishOrderService()
+        inboxViewModel?.callFinishOrderService(needsError: false, statusCode: 200, testData: Data())
+    }
+    
+    func testCallFinishOrderServiceWhenCodeIs500() {
+        inboxViewModel?.qfbSignatureIsGet = true
+        inboxViewModel?.technicalSignatureIsGet = true
+        inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.showAlert.subscribe(onNext: { res in
+            XCTAssertEqual(res, CommonStrings.errorFinishOrders)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.callFinishOrderService(needsError: true, statusCode: 500, testData: Data())
     }
 
     func testValidOrders() {
         let ordersSelelected = IndexPath(row: 0, section: 0)
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
 
-        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
+        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: false)
+    }
+    
+    func testValidOrderWhenCodeIs500() {
+        let ordersSelelected = IndexPath(row: 0, section: 0)
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.showAlert.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: true, statusCode: 500, testData: Data())
     }
 }

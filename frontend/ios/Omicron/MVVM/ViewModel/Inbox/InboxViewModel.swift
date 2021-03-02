@@ -149,8 +149,8 @@ class InboxViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func postOrderPDf(orders: [Int]) {
-        networkManager.postOrdersPDF(orders: orders).subscribe(onNext: { [weak self] response in
+    func postOrderPDf(orders: [Int], needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
+        networkManager.postOrdersPDF(orders: orders, needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] response in
             guard let self = self, response.response?.count ?? 0 > 0 else { return }
             self.loading.onNext(false)
             self.orderURLPDF.onNext(response.response!.first!)
@@ -308,7 +308,8 @@ class InboxViewModel {
         }
     }
     // Cambia el estatus de una orden a proceso o pendiente
-    func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String) {
+    func changeStatus(indexPath: [IndexPath]?, typeOfStatus: String,
+                      needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
         var status = CommonStrings.empty
         switch typeOfStatus {
@@ -329,7 +330,7 @@ class InboxViewModel {
                     orderId: card.productionOrderId ?? 0, status: status)
                 orders.append(order)
             }
-            self.networkManager.changeStatusOrder(changeStatusRequest: orders)
+            self.networkManager.changeStatusOrder(changeStatusRequest: orders, needsError: needsError, statusCode: statusCode, testData: testData)
                 .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
                     self?.processButtonIsEnable.onNext(false)
                     self?.pendingButtonIsEnable.onNext(false)
@@ -393,10 +394,10 @@ class InboxViewModel {
         }
     }
 
-    func getConnection() {
+    func getConnection(needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
 
         self.loading.onNext(true)
-        networkManager.getConnect().subscribe(onNext: { [weak self] _ in
+        networkManager.getConnect(needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.hasConnection.onNext(true)
         }, onError: { [weak self] _ in
@@ -408,7 +409,7 @@ class InboxViewModel {
 
     }
 
-    func callFinishOrderService() {
+    func callFinishOrderService(needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
         if qfbSignatureIsGet && technicalSignatureIsGet {
             loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
@@ -417,7 +418,7 @@ class InboxViewModel {
             let finishOrder = FinishOrder(
                 userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
                 technicalSignature: technicalSignature)
-            networkManager.finishOrder(order: finishOrder)
+            networkManager.finishOrder(order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData)
                 .subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
                     self.loading.onNext(false)
@@ -427,17 +428,16 @@ class InboxViewModel {
                     guard let self = self else { return }
                     self.loading.onNext(false)
                     self.showAlert.onNext(CommonStrings.errorFinishOrders)
-                    fatalError(error.localizedDescription)
                 }).disposed(by: disposeBag)
         }
     }
 
-    func validOrders(indexPathOfOrdersSelected: [IndexPath]?) {
+    func validOrders(indexPathOfOrdersSelected: [IndexPath]?, needsError: Bool = true, statusCode: Int = 500, testData: Data = Data()) {
         loading.onNext(true)
         self.indexPathOfOrdersSelected = indexPathOfOrdersSelected
         guard let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
         let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
-        networkManager.validateOrders(orderIDs: orderIds).subscribe(onNext: { [weak self] response in
+        networkManager.validateOrders(orderIDs: orderIds, needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] response in
             guard let self = self else { return }
             self.loading.onNext(false)
             guard response.code == 400, !(response.success ?? false) else {
