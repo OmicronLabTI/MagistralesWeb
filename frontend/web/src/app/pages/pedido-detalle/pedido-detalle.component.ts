@@ -72,7 +72,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.generateParamsToGetDetail(params.get('id'), params.get('filters'));
+      this.generateParamsToGetDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
     this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
@@ -355,9 +355,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             , error => this.errorService.httpError(error));
   }
 
-  generateParamsToGetDetail(order: string, filters: string) {
-    this.paramsDetailOrder.current = order;
-    this.baseQueryString = filters;
+  generateParamsToGetDetail(order: string) {
+    this.paramsDetailOrder = JSON.parse(this.dataService.getFiltersActives());
+    this.paramsDetailOrder = {...this.paramsDetailOrder, current: order};
+    this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
     this.getDetallePedido();
 
   }

@@ -495,4 +495,16 @@ export class DataService {
       return `?docNum=${docNum}-${docNumUntil}`;
     }
   }
+  setFiltersActives(filters: string) {
+    localStorage.setItem(ConstToken.filtersActive, filters);
+  }
+  getFiltersActives() {
+    return  localStorage.getItem(ConstToken.filtersActive);
+  }
+  removeFiltersActive() {
+    localStorage.removeItem(ConstToken.filtersActive);
+  }
+  /*withoutFiltersOnLocalStorage() {
+    this.router.navigate([RouterPaths.pedido]);
+  }*/
 }

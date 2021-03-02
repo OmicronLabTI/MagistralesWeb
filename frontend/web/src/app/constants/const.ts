@@ -16,7 +16,8 @@ export const CONST_NUMBER = {
     oneThousand: 1000
 };
 export const CONST_STRING = {
-    empty: ''
+    empty: '',
+    zero: '0',
 };
 
 export const CONST_USER_DIALOG = {
@@ -110,6 +111,7 @@ export const ConstToken = {
     userName: 'userName',
     userRole: 'role',
     isolatedOrder: 'istOrder',
+    filtersActive: 'filters-active'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -197,7 +199,8 @@ export const CONST_PRODUCTIVITY = {
 export const RouterPaths = {
   materialRequest: 'materialRequest',
   orderDetail: 'pdetalle',
-  detailFormula: 'ordenfabricacion'
+  detailFormula: 'ordenfabricacion',
+  pedido: 'pedidos'
 };
 export enum TypeProperty {
     code,
