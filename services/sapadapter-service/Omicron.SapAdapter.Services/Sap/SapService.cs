@@ -424,7 +424,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var localLotes = lotes.Where(y => y.ItemCode == x.ProductId && y.Quantity > 0).ToList();
                 var lotesNames = localLotes.Select(x => x.SysNumber).ToList();
-                var localBatches = batches.Where(y => lotesNames.Contains(y.SysNumber)).ToList();
+                var localBatches = batches.Where(y => lotesNames.Contains(y.SysNumber) && y.ItemCode == x.ProductId).ToList();
 
                 double.TryParse(x.PendingQuantity.ToString(), out double totalNecesario);
                 var totalBatches = localBatches.Any() ? localBatches.Sum(y => y.CantidadSeleccionada) : 0;
@@ -837,6 +837,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     CantidadSeleccionada = x.AllocQty,
                     NumeroLote = batch == null ? string.Empty : batch.NumeroLote,
                     SysNumber = x.SysNumber,
+                    ItemCode = batch == null ? string.Empty : batch.ItemCode,
                 });
             });
 
