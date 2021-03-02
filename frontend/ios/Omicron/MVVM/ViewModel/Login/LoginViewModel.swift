@@ -20,6 +20,9 @@ class LoginViewModel {
     var password = BehaviorSubject<String>(value: String())
     var loginDidTap = PublishSubject<Void>()
     let canLogin: Driver<Bool>
+    var statusCode = 500
+    var testData = Data()
+    var isTest = false
     private let disposeBag = DisposeBag()
 
     @Injected var networkManager: NetworkManager
@@ -37,10 +40,10 @@ class LoginViewModel {
             })
             .subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
-                self.networkManager.login(data: data)
+                self.networkManager.login(data: data, needsError: isTest, statusCode: statusCode, testData: testData)
                     .flatMap({ res -> Observable<UserInfoResponse> in
                         Persistence.shared.saveLoginData(data: res)
-                        return self.networkManager.getInfoUser(username: data.user)
+                        return self.networkManager.getInfoUser(username: data.user, isTest: isTest, statusCode: statusCode, testData: testData)
                     }).subscribe(onNext: { [weak self] info  in
                         self?.loading.onNext(false)
                         if let user = info.response {
