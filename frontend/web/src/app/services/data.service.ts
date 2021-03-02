@@ -371,7 +371,6 @@ export class DataService {
     let rangeDate = CONST_STRING.empty;
     const filterDataOrders = new  ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
-
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
@@ -380,13 +379,18 @@ export class DataService {
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
-        rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
-        if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
-          queryString = `?fini=${rangeDate}`;
+        if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
+          rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+          if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+            queryString = `?fini=${rangeDate}`;
+          } else {
+            queryString = `?ffin=${rangeDate}`;
+          }
+          filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = `?ffin=${rangeDate}`;
+          queryString = `?fini=${resultSearchOrderModal.dateFull}`;  // init search
+          filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
-        filterDataOrders.dateFull = rangeDate;
       }
       if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
         queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
