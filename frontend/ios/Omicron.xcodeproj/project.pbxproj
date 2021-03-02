@@ -124,6 +124,7 @@
 		38554C7225DF2B70006F476B /* getLots.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C82849F24F46FA30043ACE8 /* getLots.json */; };
 		388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */; };
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
+		38A4296925EEA1B800309B8F /* ContainerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A4296825EEA1B800309B8F /* ContainerTest.swift */; };
 		49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */; };
 		49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */; };
 		4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
@@ -270,6 +271,7 @@
 		38554C8225DF2BAC006F476B /* Info-QA.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-QA.plist"; sourceTree = "<group>"; };
 		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
+		38A4296825EEA1B800309B8F /* ContainerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTest.swift; sourceTree = "<group>"; };
 		49005EB225DEDB1E00EA4206 /* ExtensionInboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxViewController.swift; sourceTree = "<group>"; };
 		49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest.swift; sourceTree = "<group>"; };
 		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
@@ -750,6 +752,7 @@
 				7C5DFB15251C82740041B2AC /* BatchTest.swift */,
 				7C5DFB19251D50920041B2AC /* OrderDetailFormTest.swift */,
 				49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */,
+				38A4296825EEA1B800309B8F /* ContainerTest.swift */,
 			);
 			path = OmicronTests;
 			sourceTree = "<group>";
@@ -1437,6 +1440,7 @@
 				49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */,
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
 				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,
+				38A4296925EEA1B800309B8F /* ContainerTest.swift in Sources */,
 				1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */,
 				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
