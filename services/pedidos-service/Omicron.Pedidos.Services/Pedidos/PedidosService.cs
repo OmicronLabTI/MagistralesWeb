@@ -311,7 +311,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
                     {
                         userOrder.CloseUserId = orderToFinish.UserId;
-                        userOrder.CloseDate = DateTime.Now.FormatedDate();
+                        userOrder.CloseDate = DateTime.Now;
                         userOrder.Status = ServiceConstants.Finalizado;
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                     }
@@ -323,7 +323,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (resultMessages.Keys.Any(x => x.Equals(0)))
                 {
                     salesOrder.CloseUserId = orderToFinish.UserId;
-                    salesOrder.CloseDate = DateTime.Now.FormatedDate();
+                    salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
@@ -491,7 +491,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (!resultMessages.Keys.Any(x => x.Equals(productionOrderId)))
                 {
                     productionOrder.CloseUserId = orderToFinish.UserId;
-                    productionOrder.CloseDate = DateTime.Now.FormatedDate();
+                    productionOrder.CloseDate = DateTime.Now;
                     productionOrder.Status = ServiceConstants.Finalizado;
 
                     var batch = orderToFinish.Batches != null && orderToFinish.Batches.Any() ? orderToFinish.Batches.FirstOrDefault() : new BatchesConfigurationModel { BatchCode = string.Empty };
@@ -521,7 +521,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (productionOrders.All(x => x.Status.Equals(ServiceConstants.Finalizado) || x.Status.Equals(ServiceConstants.Entregado)) && !preProductionOrders.Any())
                 {
                     salesOrder.CloseUserId = userId;
-                    salesOrder.CloseDate = DateTime.Now.FormatedDate();
+                    salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
@@ -682,7 +682,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             orders.ForEach(o =>
             {
-                o.FinishDate = DateTime.Now.ToString("dd/MM/yyyy");
+                o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
             });
 

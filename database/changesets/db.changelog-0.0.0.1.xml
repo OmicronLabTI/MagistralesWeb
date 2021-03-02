@@ -686,4 +686,14 @@
       </column>
     </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.76">
+      <sql endDelimiter=";">
+          ALTER TABLE usersorders ALTER COLUMN closedate TYPE Date using closedate::date;
+      </sql>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.77">
+      <sql endDelimiter=";">
+          ALTER TABLE usersorders ALTER COLUMN finishdate TYPE Date using finishdate::date;
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
