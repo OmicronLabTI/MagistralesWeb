@@ -77,9 +77,9 @@ class ComponentsViewModel {
             self?.saveComponent(req: orderDetailReq)
         }).subscribe().disposed(by: disposeBag)
     }
-    func saveComponent(req: OrderDetailRequest) {
+    func saveComponent(req: OrderDetailRequest, needsError: Bool = false) {
         loading.onNext(true)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req, needsError: needsError)
             .subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.saveSuccess.onNext(())
@@ -89,13 +89,13 @@ class ComponentsViewModel {
             self?.dataError.onNext(Constants.Errors.errorSave.rawValue)
         }).disposed(by: disposeBag)
     }
-    func getComponents(chips: [String]) {
+    func getComponents(chips: [String], needsError: Bool = false) {
         let request = ComponentRequest(
             offset: Constants.Components.offset.rawValue,
             limit: Constants.Components.limit.rawValue,
             chips: chips)
         loading.onNext(true)
-        self.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
+        self.networkManager.getComponents(data: request, needsError: needsError).subscribe(onNext: { [weak self] res in
             self?.dataResults.onNext(res.response ?? [])
             self?.loading.onNext(false)
         }, onError: { [weak self] _ in
@@ -104,9 +104,9 @@ class ComponentsViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func getMostCommonComponentsService() {
+    func getMostCommonComponentsService(needsError: Bool = false) {
         loading.onNext(true)
-        networkManager.getMostCommonComponents().subscribe(onNext: { [weak self] res in
+        networkManager.getMostCommonComponents(needsError: needsError).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let components = res.response {
