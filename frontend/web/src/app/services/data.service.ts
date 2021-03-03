@@ -371,7 +371,6 @@ export class DataService {
     let rangeDate = CONST_STRING.empty;
     const filterDataOrders = new  ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
-
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
@@ -380,13 +379,18 @@ export class DataService {
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
-        rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
-        if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
-          queryString = `?fini=${rangeDate}`;
+        if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
+          rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+          if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+            queryString = `?fini=${rangeDate}`;
+          } else {
+            queryString = `?ffin=${rangeDate}`;
+          }
+          filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = `?ffin=${rangeDate}`;
+          queryString = `?fini=${resultSearchOrderModal.dateFull}`;  // init search
+          filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
-        filterDataOrders.dateFull = rangeDate;
       }
       if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
         queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
@@ -438,9 +442,6 @@ export class DataService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
-  setOrderIsolated(isolatedOrder: string) {
-    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
-  }
 
   getOrderIsolated() {
     return localStorage.getItem(ConstToken.isolatedOrder);
@@ -476,9 +477,9 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number, filters: string) {
+  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number) {
     this.router.navigate([RouterPaths.detailFormula,
-      ordenFabricacionId, ordersIds, isFromOrders, filters]);
+      ordenFabricacionId, ordersIds, isFromOrders]);
   }
   getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
     return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
@@ -490,5 +491,29 @@ export class DataService {
     } else {
       return `?docNum=${docNum}-${docNumUntil}`;
     }
+  }
+  setFiltersActives(filters: string) {
+    localStorage.setItem(ConstToken.filtersActive, filters);
+  }
+  getFiltersActives() {
+    return  localStorage.getItem(ConstToken.filtersActive);
+  }
+  removeFiltersActive() {
+    localStorage.removeItem(ConstToken.filtersActive);
+  }
+  getFiltersActivesAsModel(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActives());
+  }
+  setFiltersActivesOrders(filters: string) {
+    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  }
+  getFiltersActivesOrders() {
+    return  localStorage.getItem(ConstToken.filtersActiveOrders);
+  }
+  removeFiltersActiveOrders() {
+    localStorage.removeItem(ConstToken.filtersActiveOrders);
+  }
+  getFiltersActivesAsModelOrders(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActivesOrders());
   }
 }

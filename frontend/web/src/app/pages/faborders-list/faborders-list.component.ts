@@ -75,14 +75,18 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private pedidosService: PedidosService
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    this.createInitRageOrders();
   }
 
   ngOnInit() {
     if (this.dataService.getOrderIsolated()) {
       this.filterDataOrders.docNum = this.dataService.getOrderIsolated();
-      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`; // init search if there fabOrderId
+      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`;
       this.dataService.removeOrderIsolated();
+    }
+    if (this.dataService.getFiltersActivesAsModelOrders()) {
+      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModelOrders());
+    } else {
+      this.createInitRageOrders();
     }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.dataSource.paginator = this.paginator;
@@ -96,6 +100,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
+    this.dataService.removeFiltersActiveOrders();
   }
   createInitRageOrders() {
     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
@@ -213,6 +218,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   onSuccessSearchOrdersModal(resultSearchOrdersModal: ParamsPedidos) {
+    this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
     this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
@@ -273,8 +279,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   goToFormulaDetail(fabOrderId: string) {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.changeRouterForFormula(fabOrderId,
-        CONST_STRING.empty,
-        CONST_NUMBER.zero, this.queryString);
+        this.dataSource.data.map(order => order.fabOrderId).toString(),
+        CONST_NUMBER.zero);
   }
 }

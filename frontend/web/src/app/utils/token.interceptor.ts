@@ -10,7 +10,7 @@ import { ErrorHttpInterface } from '../model/http/commons';
 import { SecurityService } from '../services/security.service';
 import { ILoginRes } from '../model/http/security.model';
 
-const DEFAULT_TIMEOUT = 45000;
+const DEFAULT_TIMEOUT = 150000;
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {

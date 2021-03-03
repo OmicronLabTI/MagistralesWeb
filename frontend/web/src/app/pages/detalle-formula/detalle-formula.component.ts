@@ -74,7 +74,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.ordenFabricacionId = params.get('ordenid');
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
       this.detailOrders = params.get('detailsOrders').split(',');
-      this.queryString = params.get('filters');
+      this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
     });
     this.getDetalleFormula();
@@ -116,9 +116,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.isReadyToSave = false;
     this.componentsToDelete = [];
     this.dataService.setIsToSaveAnything(false);
-    if (this.oldDataFormulaDetail.baseDocument === 0) {
-      this.dataService.setOrderIsolated(this.ordenFabricacionId);
-    }
   }
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);

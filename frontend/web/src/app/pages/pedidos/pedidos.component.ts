@@ -77,13 +77,17 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private router: Router,
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
-    this.createInitRage();
 
   }
 
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
+    if (this.dataService.getFiltersActives()) {
+          this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
+    } else {
+          this.createInitRage();
+    }
     this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
         this.getPedidos();
@@ -94,6 +98,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
+    this.dataService.removeFiltersActive();
   }
   createInitRage() {
 
@@ -102,6 +107,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
             error => this.errorService.httpError(error));
   }
   getInitRange(rangeDateResult: string ) {
+      this.filterDataOrders = new ParamsPedidos();
       this.filterDataOrders.isFromOrders = true;
       this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
       this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
@@ -274,6 +280,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.pageIndex = 0;
     this.offset = 0;
     this.limit = 10;
+    this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
@@ -351,7 +358,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   openNewTabByOrder(order: number) {
-      this.router.navigate([RouterPaths.orderDetail, order, this.queryString]);
+      this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+      this.router.navigate([RouterPaths.orderDetail, order]);
   }
     viewPedidosWithPdf() {
         this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))

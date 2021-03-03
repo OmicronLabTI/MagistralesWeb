@@ -5,7 +5,7 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType} from '../../constants/const';
+import {CONST_STRING, ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Messages} from '../../constants/messages';

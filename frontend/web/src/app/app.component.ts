@@ -214,6 +214,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
+    this.dataService.removeFiltersActiveOrders();
+    this.dataService.removeFiltersActive();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
     this.dataService.presentToastCustom(generalMessage.title,

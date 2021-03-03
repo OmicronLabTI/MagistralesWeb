@@ -25,7 +25,8 @@ describe('PedidosComponent', () => {
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
-      'transformDate', 'setRefreshToken',
+      'transformDate', 'setRefreshToken', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
+        'getFiltersActivesAsModel'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getInitRangeDate'

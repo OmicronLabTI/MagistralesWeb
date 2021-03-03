@@ -19,17 +19,17 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'pdetalle/:id/:filters',
+    path: 'pdetalle/:id',
     loadChildren: () => import('./pages/pedido-detalle/pedido-detalle.module').then(m => m.PedidoDetalleModule),
     canActivate: [GuardService]
   },
   {
-    path: 'ordenfabricacion/:ordenid/:detailsOrders/:isFromDetail/:filters',
+    path: 'ordenfabricacion/:ordenid/:detailsOrders/:isFromDetail',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },
   {
-    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock',
+    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },
