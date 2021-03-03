@@ -193,6 +193,13 @@ spec:
           value: Staging
         ports:
         - containerPort: 5102
+        livenessProbe:
+          httpGet:
+            path: /hc
+            port: 5102
+          initialDelaySeconds: 30
+          periodSeconds: 600
+          timeoutSeconds: 40
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -374,7 +374,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 succesfuly.Add(new UserOrderModel
                 {
                     Salesorderid = orderToRejectedId,
-                    Userid = rejectOrders.UserId,
                     Status = ServiceConstants.Rechazado,
                     Comments = rejectOrders.Comments,
                 });

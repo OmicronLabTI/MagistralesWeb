@@ -48,6 +48,12 @@ class ComponetsTest: XCTestCase {
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
     }
+    func testValidResponseWhenCodeIs500() {
+        componentsViewModel?.dataError.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag!)
+        componentsViewModel?.getComponents(chips: ["Base"], needsError: true)
+    }
     func testValidCodeNotNull() {
         componentsViewModel!.dataChips.onNext(["Base"])
         componentsViewModel!.dataChips.subscribe(onNext: { [weak self] chips in
@@ -88,6 +94,15 @@ class ComponetsTest: XCTestCase {
                 }).disposed(by: (self?.disposeBag)!)
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
+    }
+    func testSaveComponentWhenCodeIs500() {
+        let req = OrderDetailRequest(
+            fabOrderID: 213, plannedQuantity: Decimal(0),
+            fechaFin: String(), comments: String(), warehouse: String(), components: [])
+        componentsViewModel?.dataError.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.errorSave.rawValue)
+        }).disposed(by: disposeBag!)
+        componentsViewModel?.saveComponent(req: req, needsError: true)
     }
     func returnOrderDetailRequest(componentO: [ComponentO]?) -> OrderDetailRequest? {
         guard let componentO = componentO else { return nil }
@@ -215,5 +230,12 @@ class ComponetsTest: XCTestCase {
             }
         }).disposed(by: disposeBag!)
         componentsViewModel?.getMostCommonComponentsService()
+    }
+
+    func testGetMostComponetServiceWhenCodeIs500() {
+        componentsViewModel?.dataError.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag!)
+        componentsViewModel?.getMostCommonComponentsService(needsError: true)
     }
 }

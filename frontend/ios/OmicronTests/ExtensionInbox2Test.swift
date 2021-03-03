@@ -211,7 +211,7 @@ class ExtensionInbox2Test: XCTestCase {
         self.inboxViewModel?.processButtonIsEnable.subscribe(onNext: { res in
             XCTAssertFalse(res)
         }).disposed(by: self.disposeBag!)
-        self.inboxViewModel?.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
+        self.inboxViewModel?.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus, needsError: false)
     }
     func testGetStatusNameAssignedStatusName() {
         let index = 0

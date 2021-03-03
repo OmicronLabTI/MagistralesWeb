@@ -161,4 +161,21 @@ class InboxTest: XCTestCase {
         XCTAssertTrue(ordersSorted.count == 0)
         XCTAssertNotNil(orders)
     }
+
+    func testChangeStatusWhenCodeIs500() {
+        let indexPath = IndexPath(row: 0, section: 0)
+        let typeStatus = StatusNameConstants.inProcessStatus
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.showAlert.subscribe(onNext: { res in
+            XCTAssertEqual(res, CommonStrings.errorToChangeStatus)
+        }).disposed(by: disposeBag!)
+        inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus, needsError: true, statusCode: 500, testData: Data())
+    }
+
+    func testGetConectWhenCodeIs500() {
+        inboxViewModel?.hasConnection.subscribe(onNext: { res in
+            XCTAssertFalse(res)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.getConnection(needsError: true, statusCode: 500, testData: Data())
+    }
 }
