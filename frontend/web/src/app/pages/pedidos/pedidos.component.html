@@ -102,7 +102,14 @@
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide">  NOMBRE DEL CLIENTE </th>
                     <td mat-cell matTooltip="{{element.cliente}}"
                     matTooltipPosition="right"
-                    aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide cliente"> {{(element.cliente.length > 25) ? (element.cliente | slice:0:25) + '...' : element.cliente}} </td>
+                    aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell tdphone mobile-hide cliente">
+                        <div *ngIf="element.cliente && element.cliente !== ''">
+                        {{(element.cliente.length > 25) ? (element.cliente | slice:0:25) + '...' : element.cliente}}
+                        </div>
+                        <div *ngIf="!element.cliente || element.cliente === ''">
+                            {{'  '}}{{'  '}}{{'  '}}{{'  '}}
+                        </div>
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="medico">

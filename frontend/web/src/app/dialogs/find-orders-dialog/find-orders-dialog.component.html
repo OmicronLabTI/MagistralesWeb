@@ -104,6 +104,7 @@
                                 <mat-option value="Finalizado">Finalizado</mat-option>
                                 <mat-option value="Entregado">Entregado</mat-option>
                                 <mat-option value="Cancelado">Cancelado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="Rechazado">Rechazado</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
