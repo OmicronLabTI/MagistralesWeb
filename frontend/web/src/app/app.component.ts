@@ -332,7 +332,9 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
-                this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
+                // this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
+                // tslint:disable-next-line:max-line-length
+                this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {
                 this.dataService.presentToastCustom(resultCreateIsolated.userError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
