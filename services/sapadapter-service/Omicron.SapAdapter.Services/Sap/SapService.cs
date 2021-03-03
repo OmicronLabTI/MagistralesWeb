@@ -133,7 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 x.Status = userOrder.Status;
                 x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = userOrder.FinishDate;
+                x.FechaOfFin = userOrder.FinishDate.HasValue ? userOrder.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty;
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
                 x.Comments = pedido == null ? null : pedido.Comments;
@@ -243,8 +243,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var pedido = pedidos.FirstOrDefault(p => p.ProductoId == o.ProductoId);
                 var item = listProducts.FirstOrDefault(i => i.ProductoId == o.ProductoId);
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
-                var comments = userOrder != null ? userOrder.Comments : string.Empty;
-                var realEndDate = userOrder != null ? userOrder.CloseDate : string.Empty;
+                userOrder ??= new UserOrderModel { Comments = string.Empty };
+                var comments = userOrder.Comments;
+                var realEndDate = userOrder.CloseDate.HasValue ? userOrder.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
 
                 var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
                 var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
