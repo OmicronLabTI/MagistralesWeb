@@ -22,6 +22,7 @@ class CommentsViewModel {
     var backToOrderDetail = PublishSubject<Void>()
     var backToLots = PublishSubject<Void>()
     var originView = String()
+    var needsError = false
     @Injected var networkmanager: NetworkManager
     init() {
         self.aceptDidTap.withLatestFrom(textView).subscribe(onNext: { [weak self] data in
@@ -37,7 +38,7 @@ class CommentsViewModel {
                     comments: data, warehouse: self.orderDetail[0].warehouse ?? String(),
                     components: [])
                 self.loading.onNext(true)
-                self.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
+                self.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order,needsError: self.needsError)
                     .observeOn(MainScheduler.instance)
                     .subscribe(onNext: { [weak self] _ in
                         guard let self = self else { return }

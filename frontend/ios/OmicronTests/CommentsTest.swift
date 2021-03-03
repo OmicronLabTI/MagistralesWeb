@@ -82,4 +82,18 @@ class CommentsTest: XCTestCase {
             self?.sut?.aceptDidTap.onNext(())
         }).disposed(by: self.disposeBag!)
     }
+    
+    func testAceptDidTapSuccessFromLotsViewControllerWhenCodeIs500() {
+        // Given
+        sut?.textView.onNext("Texto de Prueba")
+        sut?.needsError = true
+        sut?.originView = ViewControllerIdentifiers.lotsViewController
+        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+            self?.sut?.orderDetail = [res.response!]
+            self?.sut?.showAlert.subscribe(onNext: { res in
+                XCTAssertEqual(res, CommonStrings.errorInComments)
+            }).disposed(by: (self?.disposeBag!)!)
+            self?.sut?.aceptDidTap.onNext(())
+        }).disposed(by: self.disposeBag!)
+    }
 }
