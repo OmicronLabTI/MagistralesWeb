@@ -7,6 +7,7 @@ import {MatInputModule} from '@angular/material/input';
 import {ButtonRefreshComponent} from './button-refresh/button-refresh.component';
 import { ButtonBackComponent } from './button-back/button-back.component';
 import { ButtonNextComponent } from './button-next/button-next.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -16,12 +17,13 @@ import { ButtonNextComponent } from './button-next/button-next.component';
     ButtonBackComponent,
     ButtonNextComponent
   ],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    FormsModule,
-    MatInputModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        FormsModule,
+        MatInputModule,
+        MatTooltipModule
+    ]
 })
 export class ComponentsModule { }
