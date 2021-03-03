@@ -8,12 +8,10 @@
               <div class="breadcrumb" *ngIf ="!isFromDetail" ><a class="breadcrumblink" (click)="goToOrders(['ordenes']) ">Órdenes de fabricación </a>/ Fórmula </div>
           </div>
           <div class="icon-next-container">
-              <mat-icon (click)="changeDetailFormula(0)"  class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle fórmula">undo</mat-icon>
           </div>
       </div>
       <div class="filter-select custom-title-list-container">
           <div class="icon-next-container">
-              <mat-icon (click)="changeDetailFormula(1)" class="color-omicron cursor-pointer width-icon-next-order"  matTooltip="Siguiente detalle fórmula">redo</mat-icon>
           </div>
           <div>
               <div class="docbase"><span *ngIf="oldDataFormulaDetail.baseDocument !== 0"> Número de pedido: </span> <span *ngIf="oldDataFormulaDetail.baseDocument !== 0" class="spandoc">{{oldDataFormulaDetail.baseDocument}}</span></div>
@@ -28,9 +26,12 @@
         <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-omicron'">{{oldDataFormulaDetail.code}}&nbsp;&nbsp;&nbsp;&nbsp;</span> |
          <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'">&nbsp;&nbsp;&nbsp;&nbsp;{{oldDataFormulaDetail.productDescription }}</span>
     </div>
-    <div class="table-toolbar">
-        <div class="refresh-icon-on-toolbar">
-        </div>
+    <div class="table-toolbar table-custom-formula">
+            <div class="refresh-icon-on-toolbar with-buttons-actions-custom">
+                <app-button-back class="margin-top-buttons margin-left-options" matTooltip="Anterior detalle fórmula" (click)="changeDetailFormula(0)"></app-button-back>
+                <app-button-next class="margin-top-buttons" matTooltip="Siguiente detalle fórmula" (click)="changeDetailFormula(1)"></app-button-next>
+            </div>
+
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
                                                             ordenFabricacionId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,

@@ -11,6 +11,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {PedidosService} from '../../services/pedidos.service';
 import {of} from 'rxjs';
 import {DetailOrderMock} from '../../../mocks/detailOrder.Mock';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -32,7 +33,8 @@ describe('PedidoDetalleComponent', () => {
         BrowserAnimationsModule],
       declarations: [ PedidoDetalleComponent ],
       providers: [DatePipe,
-        { provide: PedidosService, useValue: pedidosServiceSpy }]
+        { provide: PedidosService, useValue: pedidosServiceSpy }],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));

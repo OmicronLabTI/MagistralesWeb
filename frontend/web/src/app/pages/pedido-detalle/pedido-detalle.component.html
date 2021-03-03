@@ -7,12 +7,10 @@
             <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / Detalle del pedido</div>
         </div>
           <div class="icon-next-container">
-              <mat-icon (click)="carouselDetail(0)" class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle">undo</mat-icon>
           </div>
           </div>
         <div class="filter-select custom-title-list-container">
             <div class="icon-next-container">
-                <mat-icon (click)="carouselDetail(1)" class="color-omicron cursor-pointer width-icon-next-order"  matTooltip="Siguiente detalle">redo</mat-icon>
             </div>
             <div>
                 <img src="assets/icons/comments.png" class="img-comments" matTooltip="Agregar comentarios"
@@ -29,10 +27,10 @@
 
   
     <div class="table-toolbar">
-        <div class="refresh-icon-on-toolbar" (click)="getDetallePedido()">
-            <span class="material-icons color-omicron cursor-pointer">
-             refresh
-            </span>
+        <div class="refresh-icon-on-toolbar">
+            <app-button-refresh (click)="getDetallePedido()"></app-button-refresh>
+            <app-button-back class="margin-top-buttons margin-left-options" matTooltip="Anterior detalle" (click)="carouselDetail(0)"></app-button-back>
+            <app-button-next class="margin-top-buttons" matTooltip="Siguiente detalle" (click)="carouselDetail(1)"></app-button-next>
         </div>
       <div class="table-toolbar-buttons">
           <button mat-icon-button matTooltip="Ver pedido" class="ico-col-pri generic"
