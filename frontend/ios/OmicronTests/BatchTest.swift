@@ -12,7 +12,7 @@ import Moya
 import Resolver
 
 @testable import OmicronLab
-
+//swiftlint:disable type_body_length
 class BatchesTest: XCTestCase {
     // MARK: - VARIABLES
     var lotsViewModel: LotsViewModel?
@@ -74,7 +74,8 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, "\(Constants.Errors.assignedBatches.rawValue) \(batchStr)")
         }).disposed(by: disposeBag!)
-        lotsViewModel?.sendToServerAssignedLots(lotsToSend: batchesToSend, needsError: true, statusCode: 200, testData: data)
+        lotsViewModel?.sendToServerAssignedLots(
+            lotsToSend: batchesToSend, needsError: true, statusCode: 200, testData: data)
     }
     func testCalculateExpiredBatchShoudBeFalse() {
         // Given
@@ -272,7 +273,7 @@ class BatchesTest: XCTestCase {
         }).disposed(by: disposeBag!)
         lotsViewModel?.changeOrderToPendingStatus(needsError: true, statusCode: 500, testData: Data())
     }
-    
+
     func testGetFilteredSelectedSuccess() {
         let batchSelected = BatchSelected(
             orderId: 1234, assignedQty: Decimal(20), batchNumber: "OMK-01",

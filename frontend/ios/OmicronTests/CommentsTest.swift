@@ -82,7 +82,7 @@ class CommentsTest: XCTestCase {
             self?.sut?.aceptDidTap.onNext(())
         }).disposed(by: self.disposeBag!)
     }
-    
+
     func testAceptDidTapSuccessFromLotsViewControllerWhenCodeIs500() {
         // Given
         sut?.textView.onNext("Texto de Prueba")

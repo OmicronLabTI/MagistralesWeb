@@ -89,7 +89,7 @@ class ExtensionInboxTest3: XCTestCase {
         }).disposed(by: disposeBag!)
         inboxViewModel?.callFinishOrderService(needsError: false, statusCode: 200, testData: Data())
     }
-    
+
     func testCallFinishOrderServiceWhenCodeIs500() {
         inboxViewModel?.qfbSignatureIsGet = true
         inboxViewModel?.technicalSignatureIsGet = true
@@ -107,7 +107,7 @@ class ExtensionInboxTest3: XCTestCase {
 
         inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: false)
     }
-    
+
     func testValidOrderWhenCodeIs400() {
         // swiftlint:disable line_length
         let expectedResult = "No es posible Terminar, faltan lotes para: \n122307 MP-157\n122363 MP-368\n122366 MP-157\n122368 BA-14\n122368 GR-161\n\n No es posible Terminar, falta existencia para: \n122307 EN-089\n122363 MP-368\n122366 MP-157"
@@ -122,7 +122,7 @@ class ExtensionInboxTest3: XCTestCase {
         }
         inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: true, statusCode: 200, testData: data)
     }
-    
+
     func testValidOrderWhenCodeIs500() {
         let ordersSelelected = IndexPath(row: 0, section: 0)
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]

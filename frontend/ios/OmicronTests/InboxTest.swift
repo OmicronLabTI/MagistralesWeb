@@ -171,7 +171,7 @@ class InboxTest: XCTestCase {
         }).disposed(by: disposeBag!)
         inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus, needsError: true, statusCode: 500, testData: Data())
     }
-    
+
     func testGetConectWhenCodeIs500() {
         inboxViewModel?.hasConnection.subscribe(onNext: { res in
             XCTAssertFalse(res)

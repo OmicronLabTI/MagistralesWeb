@@ -17,7 +17,7 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var productDescriptionLabel: UILabel!
     @IBOutlet weak var missingStockImage: UIImageView!
     @IBOutlet weak var itemCode: UILabel!
-    
+
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 

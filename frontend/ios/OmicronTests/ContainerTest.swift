@@ -27,7 +27,7 @@ class ContainerTest: XCTestCase {
         containerViewModel = nil
         disposeBag = nil
     }
-    
+
     func testGetContainerData() {
         containerViewModel!.getContainerData()
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }

@@ -172,7 +172,8 @@ class LotsViewModel {
     }
     func getLots(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
-        self.networkManager.getLots(orderId: orderId, needsError: needsError, statusCode: statusCode,testData: testData)
+        self.networkManager.getLots(
+            orderId: orderId, needsError: needsError, statusCode: statusCode, testData: testData)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
             self?.loading.onNext(false)
             if let lotsData = data.response {
@@ -276,9 +277,13 @@ class LotsViewModel {
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
-    func sendToServerAssignedLots(lotsToSend: [BatchSelected], needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func sendToServerAssignedLots(
+        lotsToSend: [BatchSelected], needsError: Bool = false,
+        statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
-        self.networkManager.assignLots(lotsRequest: lotsToSend, needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.assignLots(
+            lotsRequest: lotsToSend, needsError: needsError,
+            statusCode: statusCode, testData: testData)
             .subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
@@ -315,7 +320,9 @@ class LotsViewModel {
     func validIfOrderCanBeFinalized(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
 
-        networkManager.validateOrders(orderIDs: [orderId], needsError: needsError, statusCode: statusCode, testData: testData)
+        networkManager.validateOrders(
+            orderIDs: [orderId], needsError: needsError, statusCode: statusCode,
+            testData: testData)
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -349,7 +356,9 @@ class LotsViewModel {
             let finishOrder = FinishOrder(
                 userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: [self.orderId],
                 qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
-            self.networkManager.finishOrder(order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData).subscribe(onNext: { [weak self] _ in
+            self.networkManager.finishOrder(
+                order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData)
+                .subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
                 self?.rootViewModel.needsRefresh = true
@@ -363,7 +372,8 @@ class LotsViewModel {
     // Se actualiza order detail para obtener los comentarios
     func updateOrderDetail(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         loading.onNext(true)
-        self.networkManager.getOrdenDetail(orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.getOrdenDetail(
+            orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData)
             .subscribe(onNext: {[weak self] res in
             self?.loading.onNext(false)
             if res.response != nil {
@@ -381,7 +391,9 @@ class LotsViewModel {
         let orderToChageStatus = ChangeStatusRequest(
             userId: Persistence.shared.getUserData()!.id!,
             orderId: self.orderId, status: CommonStrings.pending)
-        self.networkManager.changeStatusOrder(changeStatusRequest: [orderToChageStatus], needsError: needsError, statusCode: statusCode,testData: testData)
+        self.networkManager.changeStatusOrder(
+            changeStatusRequest: [orderToChageStatus], needsError: needsError,
+            statusCode: statusCode, testData: testData)
             .subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.backToInboxView.onNext(())

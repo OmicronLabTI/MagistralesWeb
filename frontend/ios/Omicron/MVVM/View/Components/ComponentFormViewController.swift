@@ -34,7 +34,7 @@ class ComponentFormViewController: FormViewController {
     // swiftlint:disable function_body_length
     // swiftlint:disable:next cyclomatic_complexity
     func buildForm(component: ComponentO, order: Order) {
-        LabelRow.defaultCellUpdate = { cell, row in
+        LabelRow.defaultCellUpdate = { cell, _ in
             cell.contentView.backgroundColor = .red
             cell.textLabel?.textColor = .white
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 9)

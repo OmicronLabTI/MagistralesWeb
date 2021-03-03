@@ -11,7 +11,7 @@ import RxSwift
 import Resolver
 
 @testable import OmicronLab
-
+// swiftlint:disable type_body_length
 class OrderDetailTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
@@ -134,7 +134,7 @@ class OrderDetailTest: XCTestCase {
         orderDetailViewModel?.validIfOrderCanBeFinalized(
             orderId: 12345, needsError: true, statusCode: 500, testData: Data())
     }
-    
+
     func testValidIfOrderCanBeFinalizedSuccessWhenCodeIs400() {
         // swiftlint:disable line_length
         let expectedResult = "No es posible Terminar, faltan lotes para: \n122307 MP-157\n122363 MP-368\n122366 MP-157\n122368 BA-14\n122368 GR-161\n\n No es posible Terminar, falta existencia para: \n122307 EN-089\n122363 MP-368\n122366 MP-157"
@@ -297,7 +297,7 @@ class OrderDetailTest: XCTestCase {
             }).disposed(by: (self?.disposeBag)!)
             self?.orderDetailViewModel?.deleteItemFromTable(index: index, needsError: true)
         }).disposed(by: self.disposeBag!)
-        
+
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.couldNotDeleteItem)
         }).disposed(by: disposeBag!)
@@ -321,7 +321,7 @@ class OrderDetailTest: XCTestCase {
         }).disposed(by: self.disposeBag!)
         self.orderDetailViewModel?.validSignatures(needsError: false, statusCode: 200, testData: Data())
     }
-    
+
     func testValidSignaturesWhenCodeIs500() {
         // Given
         self.orderDetailViewModel?.technicalSignatureIsGet = true
@@ -334,14 +334,14 @@ class OrderDetailTest: XCTestCase {
             XCTAssertFalse(false)
         }).disposed(by: disposeBag!)
     }
-    
+
     func testChangeStatusWhenCodeIs500() {
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorToChangeStatus)
         }).disposed(by: disposeBag!)
         orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus, needsError: true, statusCode: 500, testData: Data())
     }
-    
+
     func testChangeStatusSuccess() {
         networkManager.getOrdenDetail(orderId: 353435).subscribe(onNext: { [weak self] res in
             let orderDetail = res.response

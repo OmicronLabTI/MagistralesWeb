@@ -63,9 +63,12 @@ class OrderDetailViewModel {
     }
 
     // MARK: - Functions
-    func getOrdenDetail(isRefresh: Bool = false, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func getOrdenDetail(
+        isRefresh: Bool = false, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         if needsRefresh { loading.onNext(true) }
-        self.networkManager.getOrdenDetail(orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData).observeOn(MainScheduler.instance)
+        self.networkManager.getOrdenDetail(
+            orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData)
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
             if res.response != nil {
@@ -136,7 +139,9 @@ class OrderDetailViewModel {
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id) ?? String(),
                                                orderId: (self.tempOrderDetailData?.productionOrderID) ?? 0,
                                                status: status)
-        self.networkManager.changeStatusOrder(changeStatusRequest: [changeStatus], needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.changeStatusOrder(
+            changeStatusRequest: [changeStatus], needsError: needsError,
+            statusCode: statusCode, testData: testData)
             .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
             self?.rootViewModel.needsRefresh = true
             self?.loading.onNext(false)
@@ -169,7 +174,9 @@ class OrderDetailViewModel {
             plannedQuantity: tempOrderDetailData?.plannedQuantity ?? Decimal(0),
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: componets)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order, needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(
+            orderDetailRequest: order, needsError: needsError,
+            statusCode: statusCode, testData: testData)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
@@ -195,7 +202,9 @@ class OrderDetailViewModel {
                                           fabricationOrderId: [self.orderId],
                                           qfbSignature: self.sqfbSignature,
                                           technicalSignature: self.technicalSignature)
-            self.networkManager.finishOrder(order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData)
+            self.networkManager.finishOrder(
+                order: finishOrder, needsError: needsError,
+                statusCode: statusCode, testData: testData)
                 .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                 self?.loading.onNext(false)
                 self?.backToInboxView.onNext(())
@@ -205,9 +214,11 @@ class OrderDetailViewModel {
             }).disposed(by: self.disposeBag)
         }
     }
-    func validIfOrderCanBeFinalized(orderId: Int, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func validIfOrderCanBeFinalized(
+        orderId: Int, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
-        networkManager.validateOrders(orderIDs: [orderId], needsError: needsError, statusCode: statusCode, testData: testData)
+        networkManager.validateOrders(
+            orderIDs: [orderId], needsError: needsError, statusCode: statusCode, testData: testData)
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)

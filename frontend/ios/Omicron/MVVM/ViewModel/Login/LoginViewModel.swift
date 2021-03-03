@@ -43,7 +43,8 @@ class LoginViewModel {
                 self.networkManager.login(data: data, needsError: isTest, statusCode: statusCode, testData: testData)
                     .flatMap({ res -> Observable<UserInfoResponse> in
                         Persistence.shared.saveLoginData(data: res)
-                        return self.networkManager.getInfoUser(username: data.user, isTest: isTest, statusCode: statusCode, testData: testData)
+                        return self.networkManager.getInfoUser(
+                            username: data.user, isTest: isTest, statusCode: statusCode, testData: testData)
                     }).subscribe(onNext: { [weak self] info  in
                         self?.loading.onNext(false)
                         if let user = info.response {

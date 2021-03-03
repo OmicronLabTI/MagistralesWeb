@@ -97,7 +97,8 @@ class ComponetsTest: XCTestCase {
     }
     func testSaveComponentWhenCodeIs500() {
         let req = OrderDetailRequest(
-            fabOrderID: 213, plannedQuantity: Decimal(0), fechaFin: String(), comments: String(), warehouse: String(), components: [])
+            fabOrderID: 213, plannedQuantity: Decimal(0),
+            fechaFin: String(), comments: String(), warehouse: String(), components: [])
         componentsViewModel?.dataError.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorSave.rawValue)
         }).disposed(by: disposeBag!)

@@ -38,7 +38,8 @@ class CommentsViewModel {
                     comments: data, warehouse: self.orderDetail[0].warehouse ?? String(),
                     components: [])
                 self.loading.onNext(true)
-                self.networkmanager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order,needsError: self.needsError)
+                self.networkmanager.updateDeleteItemOfTableInOrderDetail(
+                    orderDetailRequest: order, needsError: self.needsError)
                     .observeOn(MainScheduler.instance)
                     .subscribe(onNext: { [weak self] _ in
                         guard let self = self else { return }
