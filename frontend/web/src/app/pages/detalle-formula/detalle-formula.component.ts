@@ -74,7 +74,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.ordenFabricacionId = params.get('ordenid');
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
       this.detailOrders = params.get('detailsOrders').split(',');
-      this.queryString = params.get('filters');
+      this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
     });
     this.getDetalleFormula();

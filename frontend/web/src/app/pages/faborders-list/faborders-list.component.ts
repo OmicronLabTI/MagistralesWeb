@@ -83,8 +83,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`;
       this.dataService.removeOrderIsolated();
     }
-    if (this.dataService.getFiltersActives()) {
-      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModel());
+    if (this.dataService.getFiltersActivesAsModelOrders()) {
+      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModelOrders());
     } else {
       this.createInitRageOrders();
     }
@@ -100,7 +100,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
-    this.dataService.removeFiltersActive();
+    this.dataService.removeFiltersActiveOrders();
   }
   createInitRageOrders() {
     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
@@ -279,9 +279,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   goToFormulaDetail(fabOrderId: string) {
-    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.changeRouterForFormula(fabOrderId,
-        CONST_STRING.empty,
-        CONST_NUMBER.zero, this.queryString);
+        this.dataSource.data.map(order => order.fabOrderId).toString(),
+        CONST_NUMBER.zero);
   }
 }

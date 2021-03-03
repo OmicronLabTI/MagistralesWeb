@@ -385,6 +385,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   goToDetailFormula(ordenFabricacionId: string) {
     this.dataService.changeRouterForFormula(ordenFabricacionId,
         this.dataSource.data.map(detail => detail.ordenFabricacionId).toString(),
-        CONST_NUMBER.one, CONST_STRING.empty);
+        CONST_NUMBER.one);
   }
 }

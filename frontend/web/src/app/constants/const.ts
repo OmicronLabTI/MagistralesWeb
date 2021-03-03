@@ -111,7 +111,8 @@ export const ConstToken = {
     userName: 'userName',
     userRole: 'role',
     isolatedOrder: 'istOrder',
-    filtersActive: 'filters-active'
+    filtersActive: 'filters-active',
+    filtersActiveOrders: 'filters-active-orders'
 };
 export const BOOLEANS = {
     verdadero: true,

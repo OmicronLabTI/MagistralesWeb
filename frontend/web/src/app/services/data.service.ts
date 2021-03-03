@@ -477,9 +477,9 @@ export class DataService {
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number, filters: string) {
+  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number) {
     this.router.navigate([RouterPaths.detailFormula,
-      ordenFabricacionId, ordersIds, isFromOrders, filters]);
+      ordenFabricacionId, ordersIds, isFromOrders]);
   }
   getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
     return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
@@ -503,5 +503,17 @@ export class DataService {
   }
   getFiltersActivesAsModel(): ParamsPedidos {
     return  JSON.parse(this.getFiltersActives());
+  }
+  setFiltersActivesOrders(filters: string) {
+    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  }
+  getFiltersActivesOrders() {
+    return  localStorage.getItem(ConstToken.filtersActiveOrders);
+  }
+  removeFiltersActiveOrders() {
+    localStorage.removeItem(ConstToken.filtersActiveOrders);
+  }
+  getFiltersActivesAsModelOrders(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActivesOrders());
   }
 }

@@ -32,7 +32,8 @@ describe('DetalleFormulaComponent', () => {
       'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
       'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
       'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
-      'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything'
+      'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
+      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders'
     ]);
     dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();

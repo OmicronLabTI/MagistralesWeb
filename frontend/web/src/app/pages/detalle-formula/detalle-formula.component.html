@@ -4,7 +4,8 @@
       <div class="title-list-container custom-title-list-container">
           <div>
               <span>Detalle</span>
-              <div class="breadcrumb"><a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToOrders(['pedidos'])">Pedidos&nbsp;/</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument === 0" (click)="goToOrders(['ordenes'])">Órdenes de fabricación </a> / Fórmula </div>
+              <div class="breadcrumb" *ngIf ="isFromDetail" ><a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToOrders(['pedidos'])">Pedidos&nbsp;/</a> <a class="breadcrumblink" *ngIf="oldDataFormulaDetail.baseDocument !== 0" (click)="goToDetailOrder(['/pdetalle', oldDataFormulaDetail.baseDocument])">Detalle</a>/ Fórmula </div>
+              <div class="breadcrumb" *ngIf ="!isFromDetail" ><a class="breadcrumblink" (click)="goToOrders(['ordenes']) ">Órdenes de fabricación </a>/ Fórmula </div>
           </div>
           <div class="icon-next-container">
               <mat-icon (click)="changeDetailFormula(0)"  class="color-omicron cursor-pointer width-icon-next-order" matTooltip="Anterior detalle fórmula">undo</mat-icon>
@@ -33,7 +34,7 @@
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
                                                             ordenFabricacionId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
-                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0]">
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
             Lotes
             </button>
             <button mat-raised-button class="button-blue" (click)="openCustomList()">
