@@ -692,28 +692,36 @@ a.breadcrumblink:hover{
   justify-content: center;
   background-color: #1E65C6;
   font-weight: 700 !important;
-  width: 100px;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 .mat-stroked-button.clasification-be {
   display: flex;
   justify-content: center;
   background-color: #38A626;
   font-weight: 700 !important;
-  width: 100px;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 .mat-stroked-button.clasification-mg {
   display: flex;
   justify-content: center;
   background-color: #632289;
   font-weight: 700 !important;
-  width: 100px;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 .mat-stroked-button.clasification-mx {
   display: flex;
   justify-content: center;
   background-color: #D7349C;
   font-weight: 700 !important;
-  width: 100px;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 .is-loading {
   width: 100%;
