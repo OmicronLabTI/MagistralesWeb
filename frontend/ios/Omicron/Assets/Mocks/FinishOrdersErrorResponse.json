@@ -1,0 +1,27 @@
+{
+  "code" : 400,
+  "success" : false,
+  "exceptionMessage" : null,
+  "response" : [
+    {
+      "type" : "Batches",
+      "listItems" : [
+        "122307 MP-157",
+        "122363 MP-368",
+        "122366 MP-157",
+        "122368 BA-14",
+        "122368 GR-161"
+      ]
+    },
+    {
+      "type" : "Stock",
+      "listItems" : [
+        "122307 EN-089",
+        "122363 MP-368",
+        "122366 MP-157"
+      ]
+    }
+  ],
+  "comments" : null,
+  "userError" : null
+}
