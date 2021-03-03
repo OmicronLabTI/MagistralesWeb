@@ -38,7 +38,7 @@
                         </mat-form-field>
                     </div>
                     <span class="material-icons icon-range-info color-omicron"
-                          matTooltip="{{ isFromSearchOrders ? 'El pedido(hasta) debe ser mayor a pedido(desde)' :
+                          matTooltip="{{ isFromSearchOrders ? 'El pedido (hasta) debe ser mayor a pedido (desde)' :
                           'La orden (hasta) debe ser mayor a orden (desde)'}}">
                        help_outline
                     </span>
@@ -194,12 +194,12 @@
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
                         <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
-                            <mat-label>Tipo</mat-label>
+                            <mat-label>Clasificación</mat-label>
                             <mat-select formControlName="clasification">
-                                <mat-option value="MN">Bioelite(MN)</mat-option>
-                                <mat-option value="BE">Bioequal(BE)</mat-option>
-                                <mat-option value="MG">Magistral(MG)</mat-option>
-                                <mat-option value="MX">Mixto(MX)</mat-option>
+                                <mat-option value="MN">Bioelite (MN) </mat-option>
+                                <mat-option value="BE">Bioequal (BE)</mat-option>
+                                <mat-option value="MG">Magistral (MG)</mat-option>
+                                <mat-option value="MX">Mixto (MX)</mat-option>
                               <!--  <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>-->
                             </mat-select>
                         </mat-form-field>
