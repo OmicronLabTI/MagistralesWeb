@@ -9,16 +9,20 @@
 namespace Omicron.SapAdapter.Api
 {
     using System;
+    using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
+    using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Prometheus;
@@ -73,6 +77,14 @@ namespace Omicron.SapAdapter.Api
             DependencyInjector.RegisterServices(services);
             DependencyInjector.AddAutoMapper();
             DependencyInjector.AddDbContext(this.Configuration);
+
+            var healthBuilder = services.AddHealthChecks();
+
+            healthBuilder.AddCheck(
+                "HealthDbChecks",
+                new SqlConnectionHealthCheck(this.Configuration.GetConnectionString("DatabaseContext")),
+                HealthStatus.Unhealthy,
+                new string[] { "healthdb" });
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
@@ -157,6 +169,13 @@ namespace Omicron.SapAdapter.Api
             app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
+
+            //// URL For healthcheks http://localhost:5102/healthchecks-ui#/healthchecks.
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            });
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>
