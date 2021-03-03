@@ -137,6 +137,8 @@
 		4951100125E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		49A8A42E25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */; };
+		49A8A42F25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */; };
 		49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */; };
 		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
 		49C082C525E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
@@ -281,6 +283,7 @@
 		4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinishOrdersErrorResponse.json; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
+		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
@@ -790,6 +793,7 @@
 				4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */,
 				49C082C325E5C193000ED4FA /* PostOrderPDF.json */,
 				4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */,
+				49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1042,6 +1046,7 @@
 				4951104225E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				38554C6825DF2B70006F476B /* SF-Pro-Display-Regular.otf in Resources */,
 				38554C6925DF2B70006F476B /* orderDetail.json in Resources */,
+				49A8A42F25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				381B3BDD25E032460077F764 /* container.json in Resources */,
 				38554C6A25DF2B70006F476B /* updateOrDeleteItemOfTable.json in Resources */,
 				38554C6B25DF2B70006F476B /* HeaderCollectionViewCell.xib in Resources */,
@@ -1079,6 +1084,7 @@
 				4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
+				49A8A42E25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				381B3BDC25E032460077F764 /* container.json in Resources */,
 				7C5DFB0E251C43C20041B2AC /* updateOrDeleteItemOfTable.json in Resources */,
 				1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */,

@@ -330,8 +330,8 @@ class OrderDetailTest: XCTestCase {
             XCTAssert(true)
         }).disposed(by: self.disposeBag!)
         self.orderDetailViewModel?.validSignatures(needsError: true, statusCode: 500, testData: Data())
-        orderDetailViewModel?.loading.subscribe(onNext: { res in
-            XCTAssertFalse(res)
+        orderDetailViewModel?.loading.subscribe(onNext: { _ in
+            XCTAssertFalse(false)
         }).disposed(by: disposeBag!)
     }
     
@@ -347,8 +347,8 @@ class OrderDetailTest: XCTestCase {
             let orderDetail = res.response
             self?.orderDetailViewModel?.tempOrderDetailData = orderDetail
             self?.orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus, needsError: false)
-            self?.orderDetailViewModel?.loading.subscribe(onNext: { res in
-                XCTAssertFalse(res)
+            self?.orderDetailViewModel?.loading.subscribe(onNext: { _ in
+                XCTAssertFalse(false)
             }).disposed(by: (self?.disposeBag!)!)
         }).disposed(by: disposeBag!)
     }
