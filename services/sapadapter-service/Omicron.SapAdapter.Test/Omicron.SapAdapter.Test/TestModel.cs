@@ -351,5 +351,93 @@ namespace Omicron.SapAdapter.Test
             Assert.IsNotNull(asesor.OnOrder);
             Assert.IsNotNull(asesor.WhsCode);
         }
+
+        /// <summary>
+        /// test the sales asesor model.
+        /// </summary>
+        [Test]
+        public void SalesAsesorModel()
+        {
+            var asesor = new SalesAsesorModel { Email = "test@test.com", Cliente = "Juan perez", OrderId = 100 };
+            Assert.IsNotNull(asesor.Email);
+            Assert.IsNotNull(asesor.Cliente);
+            Assert.IsNotNull(asesor.OrderId);
+        }
+
+        /// <summary>
+        /// test the packing required model.
+        /// </summary>
+        [Test]
+        public void PackingRequiredModel()
+        {
+            var packing = new PackingRequiredModel { CodeItem = "123-abc", Description = "this is a description", Quantity = 14, Unit = "pz" };
+            Assert.IsNotNull(packing.CodeItem);
+            Assert.IsNotNull(packing.Description);
+            Assert.IsNotNull(packing.Quantity);
+            Assert.IsNotNull(packing.Unit);
+        }
+
+        /// <summary>
+        /// test the order reciper model.
+        /// </summary>
+        [Test]
+        public void OrderRecipeModel()
+        {
+            var order = new OrderRecipeModel { Order = 123, Recipe = "pz" };
+            Assert.IsNotNull(order.Order);
+            Assert.IsNotNull(order.Recipe);
+        }
+
+        /// <summary>
+        /// test the order validation response.
+        /// </summary>
+        [Test]
+        public void OrderValidationResponse()
+        {
+            var order = new OrderValidationResponse { Type = "pz", ListItems = new List<string>() { "ab", "cd" } };
+            Assert.IsNotNull(order.Type);
+            Assert.IsNotNull(order.ListItems);
+        }
+
+        /// <summary>
+        /// test the order validation response.
+        /// </summary>
+        [Test]
+        public void SalesPersonModel()
+        {
+            var salesPerson = new SalesPersonModel { AsesorId = 123, FirstName = "abc", LastName = "sanchez", EmpleadoId = 1, Email = "test@test.com" };
+            Assert.IsNotNull(salesPerson.AsesorId);
+            Assert.IsNotNull(salesPerson.FirstName);
+            Assert.IsNotNull(salesPerson.LastName);
+            Assert.IsNotNull(salesPerson.EmpleadoId);
+            Assert.IsNotNull(salesPerson.Email);
+        }
+
+        /// <summary>
+        /// test the user model.
+        /// </summary>
+        [Test]
+        public void UserModel()
+        {
+            var user = new Users { UserId = 123, UserName = "myname123" };
+            Assert.IsNotNull(user.UserId);
+            Assert.IsNotNull(user.UserName);
+        }
+
+        /// <summary>
+        /// test the attachment model.
+        /// </summary>
+        [Test]
+        public void AttachmentModel()
+        {
+            var attachment = new AttachmentModel { AbsEntry = 1, TargetPath = "C:/target/", SourcePath = "C:/folder/", FileExt = "txt", FileName = "users", Line = 1, };
+            Assert.IsNotNull(attachment.AbsEntry);
+            Assert.IsNotNull(attachment.TargetPath);
+            Assert.IsNotNull(attachment.SourcePath);
+            Assert.IsNotNull(attachment.FileName);
+            Assert.IsNotNull(attachment.FileExt);
+            Assert.IsNotNull(attachment.Line);
+            Assert.IsNotNull(attachment.CompletePath);
+        }
     }
 }
