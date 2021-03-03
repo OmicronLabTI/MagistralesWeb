@@ -127,7 +127,7 @@ class InboxViewController: UIViewController {
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-        cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+        cell?.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
         cell?.missingStockImage.isHidden = !element.hasMissingStock
         if indexPathsSelected.contains(indexPath) {
             cell?.isSelected = true
@@ -161,7 +161,7 @@ class InboxViewController: UIViewController {
             "\(element.plannedQuantity ?? 0.0)"
         cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
         cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-        cell?.productDescriptionLabel.text = element.descriptionProduct ?? CommonStrings.empty
+        cell?.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
         cell?.missingStockImage.isHidden = !element.hasMissingStock
         if indexPathsSelected.contains(indexPath) {
             cell?.isSelected = true
