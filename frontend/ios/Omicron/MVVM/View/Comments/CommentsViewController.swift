@@ -71,20 +71,17 @@ class CommentsViewController: UIViewController {
         }).disposed(by: self.disposeBag)
     }
     func initComponents() {
-        mainView.layer.cornerRadius = 50
-        labelView.backgroundColor = UIColor.init(named: "darkGray")
-        buttonsView.backgroundColor = UIColor.init(named: "darkGray")
+        mainView.layer.cornerRadius = 10
         titleLabel.text = "Comentarios"
-        titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
-        titleLabel.textColor = .white
-        cancelButton.setTitle("Cancelar".uppercased(), for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
-        cancelButton.setTitleColor(.white, for: .normal)
-        aceptButton.setTitle("Aceptar".uppercased(), for: .normal)
-        aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
-        aceptButton.setTitleColor(.white, for: .normal)
-        aceptButton.backgroundColor = UIColor.systemGreen
+        titleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
+        cancelButton.setTitle("Cancelar", for: .normal)
+        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        cancelButton.setTitleColor(.systemRed, for: .normal)
+        aceptButton.setTitle("Aceptar", for: .normal)
+        aceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+//        aceptButton.setTitleColor(.white, for: .normal)
+//        aceptButton.backgroundColor = UIColor.systemGreen
         textView.text = String()
-        textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 23)
+        textView.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 20)
     }
 }

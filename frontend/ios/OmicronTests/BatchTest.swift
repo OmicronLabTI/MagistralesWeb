@@ -32,11 +32,16 @@ class BatchesTest: XCTestCase {
     // MARK: - TEST FUNCTIONS
     func testGetLotsSuccess() {
         // When
+        lotsViewModel?.orderId = 0
+        lotsViewModel?.getLots()
         self.networkManager.getLots(orderId: self.orderId!).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response!.count > 0)
+            self.lotsViewModel?.updateInfoSelectedBatch(lot: (res.response?.first)!)
         }).disposed(by: self.disposeBag!)
+        lotsViewModel?.updateOrderDetail()
+        lotsViewModel?.changeOrderToPendingStatus()
     }
     func testAssingBatches() {
         // Given
@@ -51,6 +56,7 @@ class BatchesTest: XCTestCase {
             // Then
             XCTAssertNotNil(res)
         }).disposed(by: self.disposeBag!)
+        lotsViewModel?.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
     func testCalculateExpiredBatchShoudBeFalse() {
         // Given
@@ -59,6 +65,7 @@ class BatchesTest: XCTestCase {
         let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
         // Then
         XCTAssertTrue(result)
+        lotsViewModel?.validIfOrderCanBeFinalized()
     }
     func testCalculateExpiredBatchShoudBeFalseWithNilValue() {
         // Given
@@ -94,6 +101,7 @@ class BatchesTest: XCTestCase {
             XCTAssertTrue(res == "La orden cambiará a estatus Pendiente, ¿quieres continuar?")
         }).disposed(by: self.disposeBag!)
         self.lotsViewModel!.pendingButtonDidTap.onNext(())
+        lotsViewModel?.assignLots()
     }
     func testPendingOrderDidTapShoulbBeFalse() {
         self.lotsViewModel!.askIfUserWantChageOrderToPendigStatus.subscribe(onNext: { res in
