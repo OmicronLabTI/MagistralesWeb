@@ -7,7 +7,8 @@ import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {DataService} from '../../services/data.service';
 import {
-  CarouselOption, CarouselOptionString,
+  CarouselOption,
+  CarouselOptionString,
   ComponentSearch,
   CONST_DETAIL_FORMULA,
   CONST_NUMBER,
@@ -21,6 +22,7 @@ import {MiListaComponent} from 'src/app/dialogs/mi-lista/mi-lista.component';
 import {ComponentslistComponent} from 'src/app/dialogs/componentslist/componentslist.component';
 import {Components} from 'src/app/model/http/listacomponentes';
 import {ParamsPedidos} from 'src/app/model/http/pedidos';
+
 @Component({
   selector: 'app-detalle-formula',
   templateUrl: './detalle-formula.component.html',
@@ -67,7 +69,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
               private titleService: Title) {
-    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_FORMULA);
   }
 
   ngOnInit() {
@@ -77,6 +78,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.detailOrders = params.get('detailsOrders').split(',');
       this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
+
+      this.dataService.setUrlActive(this.isFromDetail ? HttpServiceTOCall.DETAIL_ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
     });
     this.getDetalleFormula();
     this.subscription.add(this.dataService.getNewFormulaComponent().subscribe( resultNewFormulaComponent => {

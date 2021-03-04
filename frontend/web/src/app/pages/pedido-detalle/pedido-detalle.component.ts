@@ -9,7 +9,7 @@ import {
   ClassNames,
   CONST_NUMBER,
   CONST_STRING,
-  ConstStatus,
+  ConstStatus, ConstToken,
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
@@ -72,7 +72,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.generateParamsToGetDetail(params.get('id'));
+      this.validateToGetCurrentDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
     this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
@@ -243,9 +243,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
 
     materialRequestDetail() {
+        this.dataService.setCurrentDetailOrder(this.paramsDetailOrder.current);
         this.router.navigate([RouterPaths.materialRequest,
           this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
-          CONST_NUMBER.zero]);
+          CONST_NUMBER.one]);
     }
     getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
@@ -386,5 +387,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataService.changeRouterForFormula(ordenFabricacionId,
         this.dataSource.data.map(detail => detail.ordenFabricacionId).toString(),
         CONST_NUMBER.one);
+  }
+
+  validateToGetCurrentDetail(paramsOrder: string) {
+    if (this.dataService.getCurrentDetailOrder()) {
+      this.generateParamsToGetDetail(this.dataService.getCurrentDetailOrder());
+      this.dataService.removeCurrentDetailOrder();
+    } else {
+      this.generateParamsToGetDetail(paramsOrder);
+    }
   }
 }
