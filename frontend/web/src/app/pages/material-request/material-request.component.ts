@@ -7,7 +7,7 @@ import {
   ClassNames,
   ComponentSearch,
   CONST_NUMBER,
-  CONST_STRING, HttpServiceTOCall,
+  CONST_STRING,
   MessageType
 } from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
@@ -59,8 +59,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.isFreeRequest = Number(this.dataToRequest) === CONST_NUMBER.zero;
 
       this.validateRequest();
-      this.dataService.setUrlActive(this.isOrder ? HttpServiceTOCall.ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
-    });
+   });
     this.subscription.add(this.dataService.getNewMaterialComponent().subscribe( resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {...resultNewMaterialComponent,
                                                           id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one}];
@@ -140,7 +139,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     const newComponentsToSend = new RawRequestPost();
     this.setModelData();
     newComponentsToSend.data = this.oldData;
-    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || []; // preguntarle a gus que si es que es libre la solicitud que le mando
+    newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || [];
     newComponentsToSend.userId = this.dataService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe( resultMaterialPost => {
@@ -211,10 +210,10 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         Messages.errorToAssignOrderAutomaticSubtitle ,
         true, false, ClassNames.popupCustom);
   }
-  
   downloadPreview() {
     this.setModelData();
-    this.fileDownloaderServie.downloadFile(this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
+    this.fileDownloaderServie.downloadFile(
+        this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
   }
 
   private setModelData() {
