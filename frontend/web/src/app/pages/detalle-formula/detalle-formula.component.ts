@@ -184,7 +184,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
-
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
                 this.getDetalleFormula();
                 this.createMessageOkHttp();
@@ -335,9 +334,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       if (this.dataSource.data.filter( element => element.productId === component.productId).length > CONST_NUMBER.zero) {
          const elementValue = this.dataSource.data.filter( element => element.productId === component.productId)[0];
          if (component.baseQuantity !== elementValue.baseQuantity || component.description !== elementValue.description) {
-           newDataToUpdate.push({...elementValue, action: CONST_DETAIL_FORMULA.update});
+           newDataToUpdate.push({...elementValue, baseQuantity: component.baseQuantity, action: CONST_DETAIL_FORMULA.update});
          } else {
-           newDataToUpdate.push(elementValue);
+           newDataToUpdate.push({...elementValue, baseQuantity: component.baseQuantity});
          }
       }
     });
