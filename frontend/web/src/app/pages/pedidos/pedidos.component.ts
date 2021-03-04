@@ -313,6 +313,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   requestMaterial() {
+        this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
         this.router.navigate([RouterPaths.materialRequest,
             this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
             CONST_NUMBER.one]);
