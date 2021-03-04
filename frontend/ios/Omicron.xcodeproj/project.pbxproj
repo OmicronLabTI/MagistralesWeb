@@ -143,8 +143,8 @@
 		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
 		49C082C525E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
 		49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */; };
-		49E4D7E325F13EDB00E196F9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49E4D7E225F13EDB00E196F9 /* GoogleService-Info.plist */; };
-		49E4D82F25F147FC00E196F9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49E4D82E25F147FB00E196F9 /* GoogleService-Info.plist */; };
+		49E4D85F25F1542700E196F9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */; };
+		49E4D87025F154E100E196F9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49E4D86A25F154BA00E196F9 /* GoogleService-Info.plist */; };
 		7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A724EF4D300025B17D /* LotsTableViewCell.swift */; };
 		7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017A924EFA8410025B17D /* LotsAvailableTableViewCell.swift */; };
 		7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0017AB24EFA8570025B17D /* LotsSelectedTableViewCell.swift */; };
@@ -289,8 +289,8 @@
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
-		49E4D7E225F13EDB00E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		49E4D82E25F147FB00E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		49E4D86A25F154BA00E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4DCEFD1333E1F7354626C710 /* Pods-Omicron.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.debug.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.debug.xcconfig"; sourceTree = "<group>"; };
 		53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUITests.release.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUITests/Pods-Omicron-OmicronUITests.release.xcconfig"; sourceTree = "<group>"; };
 		66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_OmicronUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -580,6 +580,22 @@
 			path = PDF;
 			sourceTree = "<group>";
 		};
+		49E4D86825F1549500E196F9 /* GoogleServicesQA */ = {
+			isa = PBXGroup;
+			children = (
+				49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */,
+			);
+			path = GoogleServicesQA;
+			sourceTree = "<group>";
+		};
+		49E4D86925F154AF00E196F9 /* GoogleServicesProd */ = {
+			isa = PBXGroup;
+			children = (
+				49E4D86A25F154BA00E196F9 /* GoogleService-Info.plist */,
+			);
+			path = GoogleServicesProd;
+			sourceTree = "<group>";
+		};
 		71F4FDF4DE06818D4C96C7A4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -740,8 +756,8 @@
 				98015CBA24AFBC6D00E7772F /* LaunchScreen.storyboard */,
 				98015CBD24AFBC6D00E7772F /* Info.plist */,
 				38554C8225DF2BAC006F476B /* Info-QA.plist */,
-				49E4D82E25F147FB00E196F9 /* GoogleService-Info.plist */,
-				49E4D7E225F13EDB00E196F9 /* GoogleService-Info.plist */,
+				49E4D86825F1549500E196F9 /* GoogleServicesQA */,
+				49E4D86925F154AF00E196F9 /* GoogleServicesProd */,
 			);
 			path = Omicron;
 			sourceTree = "<group>";
@@ -1064,10 +1080,10 @@
 				38554C6E25DF2B70006F476B /* Main.storyboard in Resources */,
 				38554C6F25DF2B70006F476B /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				4930D96D25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
-				49E4D7E325F13EDB00E196F9 /* GoogleService-Info.plist in Resources */,
 				38554C7025DF2B70006F476B /* assingBatchesResponse.json in Resources */,
 				38554C7125DF2B70006F476B /* refresh_token.json in Resources */,
 				4930B44C25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */,
+				49E4D85F25F1542700E196F9 /* GoogleService-Info.plist in Resources */,
 				38554C7225DF2B70006F476B /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1084,6 +1100,7 @@
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
+				49E4D87025F154E100E196F9 /* GoogleService-Info.plist in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				1EF0321E251931B30040DC65 /* workload.json in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
@@ -1101,7 +1118,6 @@
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
-				49E4D82F25F147FC00E196F9 /* GoogleService-Info.plist in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
