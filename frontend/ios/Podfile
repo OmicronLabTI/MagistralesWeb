@@ -17,6 +17,8 @@ target 'Omicron' do
   pod 'TagListView', '~> 1.0'
   pod 'RxDataSources'
   pod 'Charts'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
   
   target 'Omicron QA' do
     # Comment the next line if you don't want to use dynamic frameworks
@@ -34,6 +36,8 @@ target 'Omicron' do
     pod 'TagListView', '~> 1.0'
     pod 'RxDataSources'
     pod 'Charts'
+    pod 'Firebase/Analytics'
+    pod 'Firebase/Crashlytics'
   end
  
   target 'OmicronTests' do
