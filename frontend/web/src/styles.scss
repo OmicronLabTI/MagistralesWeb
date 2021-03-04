@@ -200,17 +200,22 @@ td{
 }
 
 .table-toolbar .table-toolbar-buttons{
-  width: 94%;
+  width: 92%;
   display: flex;
   justify-content: flex-end;
 }
 .refresh-icon-on-toolbar {
-  width: 6%;
+  width: 8%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-
+.with-buttons-custom {
+  width: 18% !important;
+}
+.with-table-toolbar-custom {
+  width: 82% !important;
+}
 .table-toolbar .table-toolbar-buttons button{
   margin-bottom: 15px;
 }
@@ -372,6 +377,16 @@ th.centered {
 }
 .margin-left-options{
   margin-left: 15px;
+}
+.margin-right-options {
+  margin-right: 29px;
+}
+.margin-left-options2{
+  margin-left: 0px;
+  margin-right: 50px;
+}
+.margin-left-options-buttons{
+  margin-left: 35px;
 }
 .background-color-omicron {
   background-color: #6C90B3!important;

@@ -274,6 +274,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   materialRequestIsolatedOrder() {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
       this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
       , CONST_NUMBER.zero]);
