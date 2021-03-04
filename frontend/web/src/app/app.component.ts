@@ -49,6 +49,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     subscriptionObservables = new Subscription();
     fullName = '';
     role = '';
+    filterDataOrders = new ParamsPedidos();
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
@@ -332,7 +333,9 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
-                // this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
+                this.filterDataOrders = this.dataService.getFiltersActivesAsModelOrders();
+                this.filterDataOrders.isfromCreateOrderIsolate = true;
+                this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
                 // tslint:disable-next-line:max-line-length
                 this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {

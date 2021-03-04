@@ -398,7 +398,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   changeFormulaValidate(optionChangeDetail: number) {
     switch (optionChangeDetail) {
       case CarouselOption.backDetail:
-        console.log(this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate);
         if (this.isFromDetail  || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate ) {
           this.changeFormulaByIndex(CarouselOption.backDetail);
         } else {
