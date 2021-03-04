@@ -232,6 +232,8 @@ export class DataService {
           popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
+          title: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
+          content: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
         }
       }).then((result) => resolve(result));
     });
