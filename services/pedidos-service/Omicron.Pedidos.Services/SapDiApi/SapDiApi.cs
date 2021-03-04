@@ -61,7 +61,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
                 if ((int)response.StatusCode > 200)
                 {
                     this.logger.Information($"Error peticion sapdiapi {jsonString}");
-                    throw new CustomServiceException(jsonString);
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.BadRequest);
                 }
 
                 result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
