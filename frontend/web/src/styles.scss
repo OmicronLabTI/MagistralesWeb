@@ -211,7 +211,10 @@ td{
   justify-content: space-between;
 }
 .with-buttons-custom {
-  width: 10% !important;
+  width: 18% !important;
+}
+.with-table-toolbar-custom {
+  width: 82% !important;
 }
 .table-toolbar .table-toolbar-buttons button{
   margin-bottom: 15px;
@@ -306,6 +309,9 @@ th.centered {
   flex-direction: row-reverse;
 
 }
+.swal2-title2 {
+  font-size: 100% !important;
+}
 .popup-custom {
   width: 70% !important;
 }
@@ -374,6 +380,10 @@ th.centered {
 }
 .margin-right-options {
   margin-right: 29px;
+}
+.margin-left-options2{
+  margin-left: 0px;
+  margin-right: 50px;
 }
 .margin-left-options-buttons{
   margin-left: 35px;
