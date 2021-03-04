@@ -77,6 +77,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.detailOrders = params.get('detailsOrders').split(',');
       this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
+      if (this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+        this.createfilterDataOrdersForOrderIsolated();
+      }
     });
     this.getDetalleFormula();
     this.subscription.add(this.dataService.getNewFormulaComponent().subscribe( resultNewFormulaComponent => {
@@ -395,11 +398,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   changeFormulaValidate(optionChangeDetail: number) {
     switch (optionChangeDetail) {
       case CarouselOption.backDetail:
-        if (this.isFromDetail  || !this.queryString) {
+        console.log(this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate);
+        if (this.isFromDetail  || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate ) {
           this.changeFormulaByIndex(CarouselOption.backDetail);
-          if (!this.queryString) {
-            this.createfilterDataOrdersForOrderIsolated();
-          }
         } else {
           this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
               this.queryString, this.currentOrdenFabricacionId, CarouselOptionString.backDetail
@@ -407,11 +408,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         }
         break;
       case CarouselOption.nextDetail:
-        if (this.isFromDetail  || !this.queryString) {
+        if (this.isFromDetail  || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
           this.changeFormulaByIndex(CarouselOption.nextDetail);
-          if (!this.queryString) {
-            this.createfilterDataOrdersForOrderIsolated();
-          }
         } else {
           this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
               this.queryString, this.currentOrdenFabricacionId, CarouselOptionString.nextDetail
@@ -443,6 +441,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.filterDataOrdersForOrderIsolated.docNum = this.ordenFabricacionId;
     this.filterDataOrdersForOrderIsolated.docNumUntil = this.ordenFabricacionId;
     this.filterDataOrdersForOrderIsolated.isFromOrders = false;
+    this.filterDataOrdersForOrderIsolated.isfromCreateOrderIsolate = true;
     this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrdersForOrderIsolated));
   }
 

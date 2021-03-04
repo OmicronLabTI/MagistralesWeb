@@ -209,6 +209,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   createOrderIsolated() {
+    this.filterDataOrders.isfromCreateOrderIsolate = true;
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
   }
 
