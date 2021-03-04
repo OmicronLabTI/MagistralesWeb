@@ -27,12 +27,13 @@
          <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'">&nbsp;&nbsp;&nbsp;&nbsp;{{oldDataFormulaDetail.productDescription }}</span>
     </div>
     <div class="table-toolbar table-custom-formula">
-            <div class="refresh-icon-on-toolbar">
+            <div class="refresh-icon-on-toolbar with-buttons-custom">
+                <app-button-refresh (click)="getDetalleFormula()"></app-button-refresh>
                 <app-button-back class="margin-top-buttons margin-left-options" matTooltip="Anterior detalle fórmula" (click)="changeDetailFormula(0)"></app-button-back>
-                <app-button-next class="margin-top-buttons margin-right-options" matTooltip="Siguiente detalle fórmula" (click)="changeDetailFormula(1)"></app-button-next>
+                <app-button-next class="margin-top-buttons margin-left-options2" matTooltip="Siguiente detalle fórmula" (click)="changeDetailFormula(1)"></app-button-next>
             </div>
 
-        <div class="table-toolbar-buttons">
+        <div class="table-toolbar-buttons with-table-toolbar-custom">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
                                                             ordenFabricacionId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
                                                             oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
