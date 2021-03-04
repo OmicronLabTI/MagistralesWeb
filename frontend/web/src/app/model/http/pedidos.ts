@@ -49,6 +49,7 @@ export class ParamsPedidos {
     dateFull?: string;
     productCode?: string;
     isFromOrders?: boolean;
+    isfromCreateOrderIsolate?: boolean;
     clientName?: string;
     label?: string;
     finlabel: string;
@@ -56,8 +57,6 @@ export class ParamsPedidos {
     advance?: string;
     clasification?: string;
     docNumUntil?: any;
-
-
 }
 
 export class ProcessOrders {

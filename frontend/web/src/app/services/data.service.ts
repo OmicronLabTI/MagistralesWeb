@@ -232,6 +232,8 @@ export class DataService {
           popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
+          title: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
+          content: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
         }
       }).then((result) => resolve(result));
     });
@@ -366,6 +368,13 @@ export class DataService {
     return isSearchWithFilter;
   }
 
+  getfiniOrffin(resultSearchOrderModal: ParamsPedidos, date: string,  ) {
+    if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+      return `?fini=${date}`;
+    } else {
+      return `?ffin=${date}`;
+    }
+  }
   getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
@@ -381,14 +390,10 @@ export class DataService {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
         if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
           rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
-          if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
-            queryString = `?fini=${rangeDate}`;
-          } else {
-            queryString = `?ffin=${rangeDate}`;
-          }
+          queryString = this.getfiniOrffin(resultSearchOrderModal, rangeDate);
           filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = `?fini=${resultSearchOrderModal.dateFull}`;  // init search
+          queryString = this.getfiniOrffin(resultSearchOrderModal, resultSearchOrderModal.dateFull);
           filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
       }
