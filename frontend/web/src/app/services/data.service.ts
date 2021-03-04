@@ -516,4 +516,13 @@ export class DataService {
   getFiltersActivesAsModelOrders(): ParamsPedidos {
     return  JSON.parse(this.getFiltersActivesOrders());
   }
+  setCurrentDetailOrder(detailOrder: string) {
+    localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
+  }
+  getCurrentDetailOrder() {
+    return localStorage.getItem(ConstToken.detailOrderCurrent);
+  }
+  removeCurrentDetailOrder() {
+    localStorage.removeItem(ConstToken.detailOrderCurrent);
+  }
 }
