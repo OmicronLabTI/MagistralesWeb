@@ -388,9 +388,7 @@
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
 		49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInbox2Test.swift; sourceTree = "<group>"; };
 		49CF662225F2D4AB002CD598 /* OmicronDEV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronDEV.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		49CF662725F2D4AC002CD598 /* Omicron copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Omicron copy2-Info.plist"; path = "/Users/sergio/OmicronProjects/app-ios-formulas/frontend/ios/Omicron copy2-Info.plist"; sourceTree = "<absolute>"; };
 		49CF66A525F2D821002CD598 /* OmicronQA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronQA.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		49CF66A625F2D822002CD598 /* Omicron copy3-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Omicron copy3-Info.plist"; path = "/Users/sergio/OmicronProjects/app-ios-formulas/frontend/ios/Omicron copy3-Info.plist"; sourceTree = "<absolute>"; };
 		49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		49E4D86A25F154BA00E196F9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4AA41FEAFCAD33B72DBDC082 /* Pods_Omicron.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -855,8 +853,6 @@
 				98015CAD24AFBC6C00E7772F /* Products */,
 				71F4FDF4DE06818D4C96C7A4 /* Pods */,
 				FC4BAF8DA54C64F305DE9861 /* Frameworks */,
-				49CF662725F2D4AC002CD598 /* Omicron copy2-Info.plist */,
-				49CF66A625F2D822002CD598 /* Omicron copy3-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};

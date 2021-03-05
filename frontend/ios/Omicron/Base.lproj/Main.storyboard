@@ -290,13 +290,13 @@
                                                         </constraints>
                                                     </stackView>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3T9-Ay-IoM">
-                                                        <rect key="frame" x="594" y="7.5" width="20" height="25"/>
+                                                        <rect key="frame" x="589" y="7.5" width="25" height="25"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="25" id="KbL-20-Vjs"/>
-                                                            <constraint firstAttribute="width" constant="20" id="o0x-kV-M4V"/>
+                                                            <constraint firstAttribute="width" constant="25" id="o0x-kV-M4V"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                        <state key="normal" image="frasco">
+                                                        <state key="normal" image="bottle2">
                                                             <color key="titleColor" red="0.3294117647" green="0.50196078430000002" blue="0.65098039220000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
                                                         <connections>
@@ -2495,8 +2495,8 @@
     <resources>
         <image name="LoginButtonImage" width="91" height="90"/>
         <image name="OmicronLogo" width="844" height="378"/>
+        <image name="bottle2" width="100" height="100"/>
         <image name="cleaning" width="100" height="100"/>
-        <image name="frasco" width="115" height="143"/>
         <image name="imageView:6h6-SY-x1Z:image" width="80" height="80">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05T
