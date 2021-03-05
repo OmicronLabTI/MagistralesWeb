@@ -22,6 +22,8 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Reporting;
+    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// class for test.
@@ -38,6 +40,10 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
+
+        private Mock<IReportingService> reportingService;
+
+        private Mock<IRedisService> redisService;
 
         /// <summary>
         /// The set up.
@@ -81,9 +87,11 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapfileMock = new Mock<ISapFileService>();
             var configMock = new Mock<IConfiguration>();
+            this.reportingService = new Mock<IReportingService>();
+            this.redisService = new Mock<IRedisService>();
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object);
         }
 
         /// <summary>

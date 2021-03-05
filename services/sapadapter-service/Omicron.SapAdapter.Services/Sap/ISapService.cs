@@ -56,6 +56,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        Task<ResultModel> GetAsesorsByOrderId(List<int> salesOrder);
+
+        /// <summary>
         /// Get fabrication orders by criterial.
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
@@ -141,6 +148,21 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> ValidateOrder(int orderId);
+        Task<ResultModel> ValidateOrder(List<int> orderId);
+
+        /// <summary>
+        /// Gets the consecutive or previous.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <param name="kind">the kind to look.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetDetails(Dictionary<string, string> parameters, string kind);
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId);
     }
 }

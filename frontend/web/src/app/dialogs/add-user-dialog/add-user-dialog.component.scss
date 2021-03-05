@@ -1,6 +1,6 @@
 .add-user-container{
   width: 40rem;
-  height: 35rem;
+  height: auto;
 }
 
 .form-add-user{
@@ -11,7 +11,14 @@
   justify-content: center;
 
 }
-
+.row-form-user-status{
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding: 0px;
+}
 
 .row-form-user{
   width: 100%;
@@ -20,6 +27,7 @@
   flex-direction: row;
   justify-content: center;
 }
+
 .form-field{
   width: 50%;
   height: 100%;
@@ -41,14 +49,15 @@
 
 }
 .margin-top-user{
-  margin-top: 5%;
+  margin-top: 2%;
 }
 .magin-top-field{
-  margin-top: 4%;
+  margin-top: 3%;
 }
 .padding-user {
   padding-top: 10px;
 }
 .margin-top-user-custom {
-  margin-top: 8%;
+  margin-top: 1%;
 }
+

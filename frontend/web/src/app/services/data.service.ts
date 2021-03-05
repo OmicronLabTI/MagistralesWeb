@@ -11,7 +11,7 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS,
+  MODAL_FIND_ORDERS, RouterPaths,
   TypeToSeeTap
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
@@ -21,6 +21,7 @@ import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
 import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
 import {CommentsConfig} from '../model/device/incidents.model';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,8 @@ export class DataService {
   private newDataSignature = new Subject<any>();
   private openCommentsDialog = new Subject<CommentsConfig>();
   private newCommentsResult = new Subject<CommentsConfig>();
-  constructor(private datePipe: DatePipe) { }
+  constructor(private datePipe: DatePipe, private router: Router
+  ) { }
 
   setNewCommentsResult(newCommentsConfig: CommentsConfig) {
     this.newCommentsResult.next(newCommentsConfig);
@@ -248,6 +250,8 @@ export class DataService {
           popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
+          title: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
+          content: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
         }
       }).then((result) => resolve(result));
     });
@@ -395,6 +399,13 @@ export class DataService {
     return isSearchWithFilter;
   }
 
+  getfiniOrffin(resultSearchOrderModal: ParamsPedidos, date: string,  ) {
+    if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+      return `?fini=${date}`;
+    } else {
+      return `?ffin=${date}`;
+    }
+  }
   getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
@@ -406,17 +417,19 @@ export class DataService {
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-      queryString = `?docNum=${resultSearchOrderModal.docNum}`;
+      filterDataOrders.docNumUntil = resultSearchOrderModal.docNumUntil;
+      queryString =  this.getRangeOrders(resultSearchOrderModal.docNum, resultSearchOrderModal.docNumUntil);
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
-        rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
-        if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
-          queryString = `?fini=${rangeDate}`;
+        if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
+          rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+          queryString = this.getfiniOrffin(resultSearchOrderModal, rangeDate);
+          filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = `?ffin=${rangeDate}`;
+          queryString = this.getfiniOrffin(resultSearchOrderModal, resultSearchOrderModal.dateFull);
+          filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
-        filterDataOrders.dateFull = rangeDate;
       }
       if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
         queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
@@ -446,6 +459,10 @@ export class DataService {
         queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
         filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
       }
+      if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
+        queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
+        filterDataOrders.clasification = resultSearchOrderModal.clasification;
+      }
     }
 
     return [filterDataOrders, queryString];
@@ -467,9 +484,6 @@ export class DataService {
 
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
-  }
-  setOrderIsolated(isolatedOrder: string) {
-    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
   }
 
   getOrderIsolated() {
@@ -583,4 +597,52 @@ export class DataService {
   }
 
 
+  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number) {
+    this.router.navigate([RouterPaths.detailFormula,
+      ordenFabricacionId, ordersIds, isFromOrders]);
+  }
+  getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
+    return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
+  }
+
+  getRangeOrders(docNum: any, docNumUntil: any) {
+    if (docNum === docNumUntil || docNumUntil === CONST_STRING.empty || !docNumUntil) {
+      return `?docNum=${docNum}-${docNum}`;
+    } else {
+      return `?docNum=${docNum}-${docNumUntil}`;
+    }
+  }
+  setFiltersActives(filters: string) {
+    localStorage.setItem(ConstToken.filtersActive, filters);
+  }
+  getFiltersActives() {
+    return  localStorage.getItem(ConstToken.filtersActive);
+  }
+  removeFiltersActive() {
+    localStorage.removeItem(ConstToken.filtersActive);
+  }
+  getFiltersActivesAsModel(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActives());
+  }
+  setFiltersActivesOrders(filters: string) {
+    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  }
+  getFiltersActivesOrders() {
+    return  localStorage.getItem(ConstToken.filtersActiveOrders);
+  }
+  removeFiltersActiveOrders() {
+    localStorage.removeItem(ConstToken.filtersActiveOrders);
+  }
+  getFiltersActivesAsModelOrders(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActivesOrders());
+  }
+  setCurrentDetailOrder(detailOrder: string) {
+    localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
+  }
+  getCurrentDetailOrder() {
+    return localStorage.getItem(ConstToken.detailOrderCurrent);
+  }
+  removeCurrentDetailOrder() {
+    localStorage.removeItem(ConstToken.detailOrderCurrent);
+  }
 }

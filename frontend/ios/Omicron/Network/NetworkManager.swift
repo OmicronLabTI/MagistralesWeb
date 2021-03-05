@@ -37,12 +37,29 @@ class NetworkManager: SessionProtocol {
             return
         }
     }
+
+    func serverErrorEndpoint(statusCode: Int, data: Data) -> (ApiService) -> Endpoint {
+        let serverErrorEndpointClosure = { (target: ApiService) -> Endpoint in
+            return Endpoint(
+                url: URL(target: target).absoluteString,
+                sampleResponseClosure: { .networkResponse(statusCode, data) },
+                method: target.method, task: target.task, httpHeaderFields: target.headers)
+        }
+        return serverErrorEndpointClosure
+    }
     private lazy var providerChoseed = MoyaProvider<ApiService>()
     private lazy var provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>()
-    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
-        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
-        NetworkLoggerPlugin(
-            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
+//    init(provider: MoyaProvider<ApiService> = MoyaProvider<ApiService>(plugins: [
+//        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken }),
+//        NetworkLoggerPlugin(
+//            configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter), logOptions: .verbose))
+//    ])) {
+//        self.provider = provider
+//    }
+
+    init(provider: MoyaProvider<ApiService> =
+    MoyaProvider<ApiService>(stubClosure: MoyaProvider.immediatelyStub, plugins: [
+        AuthPlugin(tokenClosure: { return Persistence.shared.getLoginData()?.accessToken })
     ])) {
         self.provider = provider
     }
@@ -58,21 +75,28 @@ class NetworkManager: SessionProtocol {
     // Log the user out or do anything related here
     public func didFailedToRefreshToken() { }
     // Realiza el login
-    func login(data: Login) -> Observable<LoginResponse> {
+    func login(data: Login, needsError: Bool = false, statusCode: Int = 500,
+               testData: Data = Data()) -> Observable<LoginResponse> {
         let req: ApiService = ApiService.login(data: data)
-        let res: Observable<LoginResponse> = makeRequest(request: req)
+        let res: Observable<LoginResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError, statusCode: statusCode, testData: testData)
         return res
     }
     // Obtiene la información del usuario logeado
-    func getInfoUser(username: String) -> Observable<UserInfoResponse> {
+    func getInfoUser(username: String, isTest: Bool = false, statusCode: Int = 500,
+                     testData: Data = Data()) -> Observable<UserInfoResponse> {
         let req: ApiService = ApiService.getInfoUser(username: username)
-        let res: Observable<UserInfoResponse> = makeRequest(request: req)
+        let res: Observable<UserInfoResponse> = makeRequest(
+            request: req, needsErrorResponse: isTest, statusCode: statusCode, testData: testData)
         return res
     }
     // Obtiene las órdenes de fabricación en una lista de por status
-    func getStatusList(userId: String) -> Observable<StatusResponse> {
+    func getStatusList(userId: String, needsError: Bool = false, statusCode: Int = 500,
+                       testData: Data = Data()) -> Observable<StatusResponse> {
         let req: ApiService = ApiService.getStatusList(userId: userId)
-        let res: Observable<StatusResponse> = makeRequest(request: req)
+        let res: Observable<StatusResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     func renew(data: Renew) -> Observable<LoginResponse> {
@@ -81,85 +105,145 @@ class NetworkManager: SessionProtocol {
         return res
     }
     // Obtiene el detalle de la fórmula
-    func getOrdenDetail(orderId: Int) -> Observable<OrderDetailResponse> {
+    func getOrdenDetail(orderId: Int, needsError: Bool = false, statusCode: Int = 500,
+                        testData: Data = Data()) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.getOrdenDetail(orderId: orderId)
-        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        let res: Observable<OrderDetailResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Chambia de status una orden de fabricación
-    func changeStatusOrder(changeStatusRequest: [ChangeStatusRequest]) -> Observable<ChangeStatusRespose> {
+    func changeStatusOrder(changeStatusRequest: [ChangeStatusRequest], needsError: Bool = false, statusCode: Int = 500,
+                           testData: Data = Data()) -> Observable<ChangeStatusRespose> {
         let req: ApiService = ApiService.changeStatusOrder(changeStatusRequest: changeStatusRequest)
-        let res: Observable<ChangeStatusRespose> = makeRequest(request: req)
+        let res: Observable<ChangeStatusRespose> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Actualiza, elimina un elemento de la tabla en detalle de la formula
     func updateDeleteItemOfTableInOrderDetail(
-        orderDetailRequest: OrderDetailRequest) -> Observable<DeleteOrUpdateItemOfTableResponse> {
+        orderDetailRequest: OrderDetailRequest, needsError: Bool = false, statusCode: Int = 500,
+        testData: Data = Data()) -> Observable<DeleteOrUpdateItemOfTableResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
-        let res: Observable<DeleteOrUpdateItemOfTableResponse> = makeRequest(request: req)
+        let res: Observable<DeleteOrUpdateItemOfTableResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Obtiene los lotes para un orderId
-    func getLots(orderId: Int) -> Observable<LotsResponse> {
+    func getLots(orderId: Int, needsError: Bool = false, statusCode: Int = 500,
+                 testData: Data = Data()) -> Observable<LotsResponse> {
         let req: ApiService = ApiService.getLots(orderId: orderId)
-        let res: Observable<LotsResponse> = makeRequest(request: req)
+        let res: Observable<LotsResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Finaliza la order de fabricación
-    func finishOrder(order: FinishOrder) -> Observable<FinishOrderResponse> {
+    func finishOrder(order: FinishOrder, needsError: Bool = false, statusCode: Int = 500,
+                     testData: Data = Data()) -> Observable<FinishOrderResponse> {
         let req: ApiService = ApiService.finishOrder(finishOrder: order)
-        let res: Observable<FinishOrderResponse> = makeRequest(request: req)
+        let res: Observable<FinishOrderResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Asigna lotes a una orden de fabricación
-    func assignLots(lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
+    func assignLots(lotsRequest: [BatchSelected], needsError: Bool = false, statusCode: Int = 500,
+                    testData: Data = Data()) -> Observable<AssingbBatchResponse> {
         let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)
-        let res: Observable<AssingbBatchResponse> = makeRequest(request: req)
+        let res: Observable<AssingbBatchResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Se pregunta si una orden  se puede finalizar o no
-    func askIfOrderCanBeFinalized(orderId: Int) -> Observable<OrderDetailResponse> {
+    func askIfOrderCanBeFinalized(orderId: Int, needsError: Bool = false, statusCode: Int = 500,
+                                  testData: Data = Data()) -> Observable<OrderDetailResponse> {
         let req: ApiService = ApiService.askIfOrderCanBeFinalized(orderId: orderId)
-        let res: Observable<OrderDetailResponse> = makeRequest(request: req)
+        let res: Observable<OrderDetailResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Obtiene listado de componentes
-    func getComponents(data: ComponentRequest) -> Observable<ComponentResponse> {
+    func getComponents(data: ComponentRequest, needsError: Bool = false, statusCode: Int = 500,
+                       testData: Data = Data()) -> Observable<ComponentResponse> {
         let req: ApiService = ApiService.getComponents(data: data)
-        let res: Observable<ComponentResponse> = makeRequest(request: req)
+        let res: Observable<ComponentResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+                                                             statusCode: statusCode, testData: testData)
+        return res
+    }
+    // Obtiene el listado de componentes más comunes
+    func getMostCommonComponents(needsError: Bool = false, statusCode: Int = 500,
+                                 testData: Data = Data()) -> Observable<ComponentResponse> {
+        let req: ApiService = ApiService.getMostCommonComponents
+        let res: Observable<ComponentResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
     // Obtiene la carga de trabajo
-    func getWordLoad(data: WorkloadRequest) -> Observable<WorkloadResponse> {
+    func getWordLoad(data: WorkloadRequest, needsError: Bool = false, statusCode: Int = 500,
+                     testData: Data = Data()) -> Observable<WorkloadResponse> {
         let req: ApiService = ApiService.getWorkload(data: data)
-        let res: Observable<WorkloadResponse> = makeRequest(request: req)
+        let res: Observable<WorkloadResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
 
     // Obtiene la carga de trabajo
-    func getValidateOrder(orderId: Int) -> Observable<ValidateOrderModel> {
-        let req: ApiService = ApiService.getValidateOrder(orderId: orderId)
-        let res: Observable<ValidateOrderModel> = makeRequest(request: req)
+    func validateOrders(orderIDs: [Int], needsError: Bool = false, statusCode: Int = 500,
+                        testData: Data = Data()) -> Observable<ValidateOrderModel> {
+        let req: ApiService = ApiService.validateOrders(orderId: orderIDs)
+        let res: Observable<ValidateOrderModel> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
 
     // Obtiene el pdf de el pedido
-    func postOrdersPDF(orders: [Int]) -> Observable<OrderPDF> {
+    func postOrdersPDF(orders: [Int], needsError: Bool = false, statusCode: Int = 500,
+                       testData: Data = Data()) -> Observable<OrderPDF> {
         let req: ApiService = ApiService.postOrdersPDF(orders: orders)
-        let res: Observable<OrderPDF> = makeRequest(request: req)
+        let res: Observable<OrderPDF> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
 
     // Comprueba la coneccion con la VPN
-    func getConnect() -> Observable<ConnectModel> {
+    func getConnect(needsError: Bool = false, statusCode: Int = 500,
+                    testData: Data = Data()) -> Observable<ConnectModel> {
         let req: ApiService = ApiService.getConnect
-        let res: Observable<ConnectModel> = makeRequest(request: req, needsVPN: true)
+        let res: Observable<ConnectModel> = makeRequest(
+            request: req, needsVPN: true, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
         return res
     }
 
-    private func makeRequest<T: BaseMappable>(request: ApiService, needsVPN: Bool = false) -> Observable<T> {
+    // Obtiene los envases requeridos para los pedidos asignados
+    func getContainer(userId: String, needsError: Bool = false, statusCode: Int = 500,
+                      testData: Data = Data()) -> Observable<ContainerResponse> {
+        let req: ApiService = ApiService.getContainer(userId: userId)
+        let res: Observable<ContainerResponse> = makeRequest(
+            request: req, needsErrorResponse: needsError,
+            statusCode: statusCode, testData: testData)
+        return res
+    }
+
+    private func makeRequest<T: BaseMappable>(
+        request: ApiService, needsVPN: Bool = false, needsErrorResponse: Bool = false,
+        statusCode: Int = 500, testData: Data = Data()) -> Observable<T> {
         providerChoseed = provider
         if needsVPN { providerChoseed = MoyaProvider<ApiService>(requestClosure: requestTimeoutClosure) }
+        if needsErrorResponse { providerChoseed = MoyaProvider<ApiService>(endpointClosure: serverErrorEndpoint(
+                statusCode: statusCode, data: testData),
+            stubClosure: MoyaProvider.immediatelyStub) }
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?
                 self?.providerChoseed.rx.request(request).filterSuccessfulStatusAndRedirectCodes() :

@@ -43,5 +43,12 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="sendLocalPackage">the local package.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage);
+
+        /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request);
     }
 }

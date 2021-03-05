@@ -3,9 +3,11 @@ export const Messages = {
   generic: 'No es posible establecer conexión, intenta más tarde',
   connectionRefused: 'Ocurrió un error, no hay conexión con el servidor ',
   credentialsInvalid: 'Credenciales inválidas',
+  redirectionError: 'Ocurrió un error inesperado',
   timeout: 'Ocurrió un error en el servidor, el tiempo de espera se ha agotado',
   deleteUsers: ' ¿Desea eliminar el(los) usuario(s) seleccionado(s) ?',
   processOrders: '¿Deseas cambiar a estatus planificado el(los) pedido(s) seleccionado(s) ?',
+  refuseOrders: '¿Deseas cambiar a estatus rechazado el(los) pedido(s) seleccionado(s) ?',
   processOrdersDetail: '¿Deseas cambiar a estatus planificado los registros seleccionados?',
   placeOrder: '¿Deseas asignar el(los) pedido(s) seleccionado(s) a',
   reassignOrder: '¿Deseas reasignar el(los) pedido(s) seleccionado(s) a',
@@ -15,6 +17,7 @@ export const Messages = {
   deleteComponents: '¿Deseas eliminar el(los) componente(s) seleccionado(s) ?',
   saveFormulaDetail: '¿Deseas guardar los cambios realizados ?',
   leftWithoutSave: 'Existen cambios sin guardar, ¿Deseas salir sin guardar los cambios?',
+  leftWithoutSaveOnCarousel: 'Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?',
   serverError: 'Hubo un error en el servicio intentelo otra vez',
   userExist: 'El usuario ya se encuentra registrado',
   onlyPositiveNumber: 'Ingresar valores mayores a cero',
@@ -57,5 +60,6 @@ export const Messages = {
   removeLabelFinish: '¿Deseas quitar la selección de la etiqueta ',
   deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)',
   errorOnDownloadImage: 'Error al descargar el códoigo QR: ',
-
+  noComponentsToCreateList: 'No existen componentes para crear una lista',
+  removeListComponents: '¿Deseas borrar la lista de componentes llamada '
 };

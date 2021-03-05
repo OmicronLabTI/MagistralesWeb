@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -49,6 +50,8 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<ISapInvoiceService, SapInvoiceService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
+            Services.AddTransient<IRedisService, RedisService>();
+            Services.AddTransient<IComponentsService, ComponentsService>();
             return Services;
         }
 

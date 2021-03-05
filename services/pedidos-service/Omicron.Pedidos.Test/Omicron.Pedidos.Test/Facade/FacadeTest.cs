@@ -159,6 +159,10 @@ namespace Omicron.Pedidos.Test.Facade
                 .Setup(m => m.GetCustomComponentListByProductId(It.IsAny<string>()))
                 .Returns(Task.FromResult(response));
 
+            mockFormulasPedidosServices
+               .Setup(m => m.DeleteCustomComponentList(It.IsAny<Dictionary<string, string>>()))
+               .Returns(Task.FromResult(response));
+
             mockProductivityService
                 .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
@@ -181,6 +185,18 @@ namespace Omicron.Pedidos.Test.Facade
 
             mockServicesPedidos
                 .Setup(m => m.CreateSaleOrderPdf(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.RejectSalesOrders(It.IsAny<RejectOrdersModel>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.GetQfbOrdersByStatus(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            mockServicesPedidos
+                .Setup(m => m.DeleteFiles())
                 .Returns(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
@@ -266,6 +282,29 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.GetFabOrderByUserID(ids);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetQfbOrdersByStatus()
+        {
+            // arrange
+            var status = "Asignado";
+            var iduser = "abc-cde";
+
+            // act
+            var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, iduser);
 
             // Assert
             Assert.IsNotNull(response);
@@ -616,7 +655,7 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             var updateBatches = new FinishOrderDto
             {
-                FabricationOrderId = 200,
+                FabricationOrderId = new List<int> { 200 },
                 TechnicalSignature = "signture",
                 QfbSignature = "asf",
                 UserId = "abc",
@@ -649,6 +688,35 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CloseSalesOrders(salesOrders);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task RejectSalesOrders()
+        {
+            // arrange
+            var salesOrders = new RejectOrdersDto();
+            salesOrders.Comments = "comentarios";
+            salesOrders.UserId = "123-abc";
+            salesOrders.OrdersId = new List<int>
+            {
+                234,
+                235,
+            };
+
+            // act
+            var response = await this.pedidoFacade.RejectSalesOrders(salesOrders);
 
             // Assert
             Assert.IsNotNull(response);
@@ -808,6 +876,24 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task DeleteCustomComponentList()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.pedidoFacade.DeleteCustomComponentList(parameters);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetWorkLoad()
         {
             // arrange
@@ -914,6 +1000,21 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CreateSaleOrderPdf(orderId);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test deleteFile.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task DeleteFiles()
+        {
+            // act
+            var response = await this.pedidoFacade.DeleteFiles();
 
             // Assert
             Assert.IsNotNull(response);

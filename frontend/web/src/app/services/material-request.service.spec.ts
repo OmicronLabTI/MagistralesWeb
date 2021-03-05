@@ -5,10 +5,11 @@ import { DatePipe } from '@angular/common';
 import { MaterialRequestService } from './material-request.service';
 import {Observable} from 'rxjs';
 import {RawRequest} from '../model/http/materialReques';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('MaterialRequestService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe, ConsumeService]
   }));
 

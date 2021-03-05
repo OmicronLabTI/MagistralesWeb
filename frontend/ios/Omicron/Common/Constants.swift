@@ -16,6 +16,13 @@ struct Constants {
         case errorSave = "Lo sentimos, ocurrió un error al guardar la información"
         case serverError = "Lo sentimos, ocurrió un error en el servidor"
         case unauthorized = "Lo sentimos, las credenciales son inválidas"
+        case editItemTable = "Hubo un error al editar el elemento,  intente de nuevo"
+        case validatingNumbers = "No se permite números negativos, caracteres o más de 6 decimas"
+        case emptyField = "El campo no puede ir vacio"
+        case loadBatches = "Hubo un error al cargar los lotes, por favor de intentarlo de nuevo"
+        case assignedBatches = "Hubo un error al asignar los siguientes lotes"
+        case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
+        case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
     }
     enum Tags: Int {
         case loading = 101
@@ -51,6 +58,7 @@ struct ViewControllerIdentifiers {
     static let headerCollectionViewCell = "HeaderCollectionViewCell"
     static let headerReuseIdentifier = "header"
     static let showErrorViewController = "showError"
+    static let mostCommonComponentsTableViewCell = "MostCommonComponentsTableViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
@@ -93,6 +101,7 @@ struct CommonStrings {
     static let addComponentTitle = "Agregar Componentes"
     static let confirmationMessagePendingStatus = "La orden cambiará a estatus Pendiente, ¿quieres continuar?"
     static let confirmationMessageProcessStatus = "La orden cambiará a estatus En proceso ¿quieres continuar?"
+    static let confirmationMessageFinishedStatus = "La orden cambiará a estatus Terminado ¿quieres continuar?"
     static let errorToChangeStatus = "Ocurrió un error al cambiar de estatus la orden, por favor intente de nuevo"
     static let process = "Proceso"
     static let pending = "Pendiente"
@@ -155,11 +164,31 @@ struct CommonStrings {
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
+    static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
+    static let errorFinishOrders = "Ocurrió un error al finalizar las ordenes, por favor intentarlo de nuevo"
+    static let errorPDF = "Por el momento no es posible mostrar el PDF del pedido, intenta más tarde"
+    static let zero = "0"
+    static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
+    static let changesSuccess = "Se registraron los cambios correctamente"
+    static let baseQtyTitle = "Cantidad base: "
+    static let baseQtyField = "baseQuantity"
+    static let reqQtyTitle = "Cantidad requerida: "
+    static let reqQtyField = "requiredQuantity"
+    static let werehouseTitle = "Almacén: "
+    static let werehouseProperty = "werehouse"
+    static let saveChanges = "¿Deseas guardar los cambios ingresados?"
+    static let orderTitile = "Pedido"
+    static let finishOrderMessage = "¿Deseas terminar la orden?"
+    static let noBatchesAssigned = "No hay lotes asignados"
+    static let noChanges = "No se han realizado modificaciones de lotes"
+    static let processSuccess = "Proceso realizado correctamente"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
     static let SFProDisplayRegular = "SFProDisplay-Regular"
     static let SFProDisplayMedium = "SFProDisplay-Medium"
+    static let SFProDisplayLight = "SFProDisplay-Ligth"
+    static let SFProDisplaySemibold = "SFProDisplay-Semibold"
 }
 struct StatusNameConstants {
     static let assignedStatus = "Asignadas"
@@ -213,4 +242,24 @@ struct URLRoot {
     static let qaServer = "http://201.163.179.28:8000/api"
     static let prodServer = "https://magistralesprod.omicronlab.com.mx/api"
     static let omicronServer = "http://172.30.5.49:5100/"
+}
+
+enum Actions: String {
+    case update = "update"
+    case delete = "delete"
+    case insert = "insert"
+}
+
+struct DateFormat {
+    static let yyyymmdd = "yyyy-MM-dd"
+    static let ddMMyyyy = "dd/MM/yyyy"
+}
+
+enum RegularExpresions: String {
+    case onlyNumbers = "^([0-9]+)?(\\.([0-9]{1,6})?)?$"
+}
+
+enum DecimalFormat: String {
+    case zero = "%.0f"
+    case six = "%6f"
 }

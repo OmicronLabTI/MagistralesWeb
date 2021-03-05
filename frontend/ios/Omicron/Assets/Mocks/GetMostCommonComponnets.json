@@ -1,0 +1,39 @@
+{
+  "code": 200,
+  "userError": null,
+  "exceptionMessage": null,
+  "success": true,
+  "response": [
+    {
+      "orderFabId": 0,
+      "productId": "EN-002",
+      "description": "Airless AcrÝlico con Tapa y Base Plateada 30 ml",
+      "baseQuantity": 0,
+      "requiredQuantity": 0,
+      "consumed": 0,
+      "available": 0,
+      "unit": "Pieza",
+      "warehouse": "MN",
+      "pendingQuantity": 0,
+      "stock": 491,
+      "warehouseQuantity": 0,
+      "hasBatches": false
+    },
+    {
+      "orderFabId": 0,
+      "productId": "EN-006",
+      "description": "Airless Pump Star 150 ml Blanco",
+      "baseQuantity": 0,
+      "requiredQuantity": 0,
+      "consumed": 0,
+      "available": 0,
+      "unit": "Pieza",
+      "warehouse": "MN",
+      "pendingQuantity": 0,
+      "stock": 739,
+      "warehouseQuantity": 0,
+      "hasBatches": false
+    }
+  ],
+  "comments": null
+}

@@ -91,7 +91,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Select batch code by item code, warehouse code and sys number.
         /// </summary>
-        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity > 0 AND A.SysNumber = {2}";
+        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity >= 0 AND A.SysNumber = {2}";
 
         /// <summary>
         /// Select assigned batches by log entry.

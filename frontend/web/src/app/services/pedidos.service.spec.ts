@@ -12,11 +12,12 @@ import {
     ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {LabelToFinish} from '../model/http/detallepedidos.model';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('PedidosService', () => {
   beforeEach(() => {
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
+          imports: [HttpClientTestingModule, RouterTestingModule],
           providers: [DatePipe]
         });
       });

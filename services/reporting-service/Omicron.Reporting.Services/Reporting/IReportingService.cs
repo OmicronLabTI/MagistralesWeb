@@ -44,5 +44,12 @@ namespace Omicron.Reporting.Services
         /// <param name="sendLocalPackage">the data.</param>
         /// <returns>the data to rturn.</returns>
         Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage);
+
+        /// <summary>
+        /// Submit email.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request);
     }
 }

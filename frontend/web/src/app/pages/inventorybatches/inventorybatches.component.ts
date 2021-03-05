@@ -60,6 +60,8 @@ export class InventorybatchesComponent implements OnInit {
     'opciones'
   ];
   today = new Date();
+  isFromDetail = false;
+  detailOrders = CONST_STRING.empty;
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
@@ -75,6 +77,8 @@ export class InventorybatchesComponent implements OnInit {
       this.hasMissingStock = Number(params.get('hasMissingStock'))  === CONST_NUMBER.one;
       this.description = params.get('description');
       this.productId = params.get('code');
+      this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
+      this.detailOrders = params.get('detailOrders');
       this.titleService.setTitle('OmicronLab - Lotes ' + this.ordenFabricacionId);
       this.getInventoryBatches();
     });
@@ -82,7 +86,7 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   // tslint:disable-next-line: no-shadowed-variable
-  setSelectedTr(element?: ILotesFormulaReq){
+  setSelectedTr(element?: ILotesFormulaReq) {
     if (element !== undefined) {
       this.dataSelected = element;
       this.indexSelected = this.dataSourceDetails.data.indexOf(element);
@@ -97,8 +101,8 @@ export class InventorybatchesComponent implements OnInit {
     return true;
   }
 
-  getBatchesFromSelected(codigoProducto?){
-    if (codigoProducto !== undefined){
+  getBatchesFromSelected(codigoProducto?) {
+    if (codigoProducto !== undefined) {
       // tslint:disable-next-line: no-shadowed-variable
       const resultData = this.dataSourceDetails.data.filter(element => (element.codigoProducto === codigoProducto));
       this.dataSourceLotes.data = resultData[CONST_NUMBER.zero].lotes;
@@ -115,7 +119,7 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
-  getInventoryBatches(){
+  getInventoryBatches() {
     let resultData: ILotesFormulaReq[];
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
@@ -139,8 +143,8 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   // tslint:disable-next-line: no-shadowed-variable
-  addLotes(element: ILotesReq){
-    if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero){
+  addLotes(element: ILotesReq) {
+    if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero) {
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
         this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
@@ -169,7 +173,7 @@ export class InventorybatchesComponent implements OnInit {
     }
   }
 
-  tableLotesView(){
+  tableLotesView() {
     const dataSourceDetails = this.dataSourceDetails;
     const dataSourceLotesAsignados = this.dataSourceLotesAsignados;
     const indexSelected = this.indexSelected;
@@ -177,8 +181,8 @@ export class InventorybatchesComponent implements OnInit {
     let objetoLoteAsignado: ILotesAsignadosReq;
     const arrayNoRepetir: string[] = [];
     this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(elementA => {
-      if (elementA.action !== CONST_DETAIL_FORMULA.delete){
-        if (!arrayNoRepetir.includes(elementA.numeroLote)){
+      if (elementA.action !== CONST_DETAIL_FORMULA.delete) {
+        if (!arrayNoRepetir.includes(elementA.numeroLote)) {
           arrayNoRepetir.push(elementA.numeroLote);
           // tslint:disable-next-line: no-shadowed-variable
           const arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (
@@ -196,7 +200,7 @@ export class InventorybatchesComponent implements OnInit {
               sysNumber: elementA.sysNumber,
               cantidadSeleccionada: parseFloat(suma.toFixed(6)),
               isValid: elementA.isValid
-            }
+            };
           } else {
             objetoLoteAsignado = {
               numeroLote: elementA.numeroLote,
@@ -206,8 +210,8 @@ export class InventorybatchesComponent implements OnInit {
             };
           }
           arrayObjetos.push(objetoLoteAsignado);
-          if (dataSourceDetails.data[indexSelected].lotesAsignados == null){
-            dataSourceDetails.data[indexSelected].lotesAsignados = []
+          if (dataSourceDetails.data[indexSelected].lotesAsignados == null) {
+            dataSourceDetails.data[indexSelected].lotesAsignados = [];
           }
           dataSourceDetails.data[indexSelected].lotesAsignados = arrayObjetos;
           dataSourceLotesAsignados.data = dataSourceDetails.data[indexSelected].lotesAsignados;
@@ -218,8 +222,8 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   // tslint:disable-next-line: no-shadowed-variable
-  deleteLotes(element?: ILotesAsignadosReq){
-    if (element !== undefined){
+  deleteLotes(element?: ILotesAsignadosReq) {
+    if (element !== undefined) {
       const indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
       if ( indiceBorrar !== -1 ) {
         this.deleteDetails(element);
@@ -231,14 +235,14 @@ export class InventorybatchesComponent implements OnInit {
           item.cantidadDisponible = parseFloat((item.cantidadDisponible + element.cantidadSeleccionada).toFixed(6));
         }
       });
-      this.setTotales(-element.cantidadSeleccionada)
+      this.setTotales(-element.cantidadSeleccionada);
       this.isReadyToSave = true;
     }
     return false;
   }
 
   // tslint:disable-next-line: no-shadowed-variable
-  deleteDetails(element?: ILotesAsignadosReq){
+  deleteDetails(element?: ILotesAsignadosReq) {
     if (element !== undefined) {
       let tomarEnCuenta = false;
       this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
@@ -303,7 +307,7 @@ export class InventorybatchesComponent implements OnInit {
     return true;
   }
 
-  buildObjectToSap(){
+  buildObjectToSap() {
     let objectToSave = this.objectToSave;
     objectToSave = [];
     const ordenFabricacionId = this.ordenFabricacionId;

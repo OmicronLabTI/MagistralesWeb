@@ -109,6 +109,21 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders);
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetQfbOrdersByStatus(string status, string userId);
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</para
@@ -200,6 +215,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productId">The product id.</param>
         /// <returns>Custom lists.</returns>
         Task<ResultDto> GetCustomComponentListByProductId(string productId);
+
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The product id.</param>
+        /// <returns>Custom lists.</returns>
+        Task<ResultDto> DeleteCustomComponentList(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Gets the workload.

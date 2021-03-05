@@ -55,6 +55,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        Task<ResultDto> GetAsesorsByOrderId(List<int> salesOrder);
+
+        /// <summary>
         /// Get fabrication orders by criterial.
         /// </summary>
         /// <param name="salesOrderIds">Sales order ids.</param>
@@ -140,6 +147,27 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="orderId">the order.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> ValidateOrder(int orderId);
+        Task<ResultDto> ValidateOrder(List<int> orderId);
+
+        /// <summary>
+        /// Gets the consecutive or previos from the filter.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <param name="kind">The kind to look.</param>
+        /// <returns>the dict.</returns>
+        Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind);
+
+        /// <summary>
+        /// Gets the most common components.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetMostCommonComponents();
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId);
     }
 }

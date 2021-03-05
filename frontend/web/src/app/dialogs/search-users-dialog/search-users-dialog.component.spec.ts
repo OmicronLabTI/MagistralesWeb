@@ -56,7 +56,8 @@ describe('SearchUsersDialogComponent', () => {
             firstNameSe: 'name',
             lastNameSe: 'last',
             userNameSe: 'user',
-            userTypeRSe: '2'
+            userTypeRSe: '2',
+            classificationQFBSe: 'BE'
           } } ,
         { provide: UsersService, useValue: userServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },

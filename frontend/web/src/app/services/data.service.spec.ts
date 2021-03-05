@@ -10,9 +10,11 @@ import {
 } from '../constants/const';
 import {CommentsConfig} from '../model/device/incidents.model';
 import {ParamsPedidos} from '../model/http/pedidos';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
+    imports: [RouterTestingModule],
     providers: [DatePipe]
   }));
 

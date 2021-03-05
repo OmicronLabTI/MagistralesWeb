@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Serilog;
 
     /// <summary>
@@ -64,7 +65,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        PedidoStatus = order.PedidoStatus,
                                        AtcEntry = order.AtcEntry,
                                        IsChecked = false,
-                                       Detalles = dp
+                                       Detalles = dp,
+                                       OrderType = order.OrderType,
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -92,20 +94,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    PedidoStatus = order.PedidoStatus,
                                    AtcEntry = order.AtcEntry,
                                    IsChecked = false,
-                                   Detalles = dp
+                                   Detalles = dp,
+                                   OrderType = order.OrderType,
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int id)
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end)
         {
             var query = (from order in this.databaseContext.OrderModel
                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                              where order.PedidoId == id && producto.IsMagistral == "Y"
+                              where order.PedidoId >= init && order.PedidoId <= end && producto.IsMagistral == "Y"
                               select new CompleteOrderModel
                               {
                                   DocNum = order.DocNum,
@@ -118,13 +124,36 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   PedidoStatus = order.PedidoStatus,
                                   AtcEntry = order.AtcEntry,
                                   IsChecked = false,
-                                  Detalles = detalle
+                                  Detalles = detalle,
+                                  OrderType = order.OrderType,
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<SalesAsesorModel>> GetAsesorWithEmailByIds(List<int> docsEntry)
+        {
+             var query = (from order in this.databaseContext.OrderModel.Where(x => docsEntry.Contains(x.PedidoId)) 
+                          join salesPerson in this.databaseContext.SalesPersonModel on order.AsesorId equals salesPerson.AsesorId
+                          select new SalesAsesorModel
+                          {                              
+                              Email = string.IsNullOrEmpty(salesPerson.Email) ? string.Empty : salesPerson.Email, 
+                              OrderId = order.PedidoId,
+                              Cliente = order.Cliente
+                          });
+
+            return await this.RetryQuery<SalesAsesorModel>(query);
+        }
+        /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="pedidoId">Pedido id.</param>
+        /// <returns>the details.</returns>
         public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(int pedidoId)
         {
             var query = (from d in this.databaseContext.DetallePedido
@@ -260,6 +289,48 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
         }
 
+        /// <summary>
+        /// gets the realtion between WOR1, OITM ans OITW.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(List<int> orderId)
+        {
+            var query = (from w in this.databaseContext.DetalleFormulaModel.Where(d => orderId.Contains(d.OrderFabId))
+                         join i in this.databaseContext.ItemWarehouseModel on
+                         new
+                         {
+                             w.ItemCode,
+                             Wharehouse = w.Almacen
+                         }
+                         equals
+                         new
+                         {
+                             i.ItemCode,
+                             Wharehouse = i.WhsCode
+                         }
+                         into DetallePedido
+                         from dp in DetallePedido
+                         join p in this.databaseContext.ProductoModel on w.ItemCode equals p.ProductoId
+                         select new CompleteDetalleFormulaModel
+                         {
+                             OrderFabId = w.OrderFabId,
+                             ProductId = w.ItemCode,
+                             Description = p.LargeDescription,
+                             BaseQuantity = w.BaseQuantity,
+                             RequiredQuantity = w.RequiredQty,
+                             Consumed = w.ConsumidoQty,
+                             Available = dp.OnHand - dp.IsCommited + dp.OnOrder,
+                             Unit = w.UnidadCode,
+                             Warehouse = w.Almacen,
+                             PendingQuantity = w.RequiredQty - w.ConsumidoQty,
+                             Stock = p.OnHand,
+                             WarehouseQuantity = dp.OnHand
+                         });
+
+            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
         {
@@ -280,7 +351,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.GetComponentes(products.ToList());
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value)
+        {
+            var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())));
+            return await this.GetComponentes(products.ToList());
+        }
+
+        /// <summary>
+        /// Gets the value for the item code by filters. 
+        /// </summary>
+        /// <param name="value">the value to look.</param>
+        /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
         {
             var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)));
@@ -311,33 +397,69 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the pedidos from the Detalle pedido.
+        /// </summary>
+        /// <param name="orderId">the pedido id.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetComponentByBatches(List<int> orderId)
+        {
+            var query = (from c in this.databaseContext.DetalleFormulaModel.Where(d => orderId.Contains(d.OrderFabId))
+                         join p in this.databaseContext.ProductoModel on c.ItemCode equals p.ProductoId
+                         where p.ManagedBatches == "Y"
+                         select new CompleteDetalleFormulaModel
+                         {
+                             Warehouse = c.Almacen,
+                             PendingQuantity = c.RequiredQty,
+                             ProductId = c.ItemCode,
+                             Description = p.LargeDescription,
+                             OrderFabId = c.OrderFabId,
+                         });
+
+            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
+        }
+
+        /// <summary>
+        /// Gets the item by code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
         public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
         {
             return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode));
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(string itemCode, string warehouse)
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
             var listToReturn = new List<CompleteBatchesJoinModel>();
-            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => x.ItemCode == itemCode && x.WhsCode == warehouse && x.Quantity > 0).ToListAsync()).ToList();
+            var listItems = components.Select(x => x.ProductId).ToList();
+
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            querybatches = querybatches.Where(x => components.Any(y => y.ProductId == x.ItemCode && y.Warehouse == x.WhsCode)).ToList();
 
             var validBatches = querybatches.Select(x => x.SysNumber);
 
-            var batches = (await this.databaseContext.Batches.Where(x => x.ItemCode == itemCode && validBatches.Contains(x.SysNumber)).ToListAsync()).ToList();
+            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            batches = batches.Where(x => validBatches.Contains(x.SysNumber)).ToList();
 
             querybatches.ForEach(x =>
             {
-                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber);
-                batch = batch == null ? new Batches() : batch;
+                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber && x.ItemCode == y.ItemCode);
+                batch ??= new Batches();
                 listToReturn.Add(new CompleteBatchesJoinModel
                 {
-                    CommitQty = x.CommitQty.HasValue ? x.CommitQty.Value : 0,
-                    Quantity = x.Quantity.HasValue ? x.Quantity.Value : 0,
-                    DistNumber = batch.DistNumber == null ? string.Empty : batch.DistNumber,
+                    CommitQty = x.CommitQty ?? 0,
+                    Quantity = x.Quantity ?? 0,
+                    DistNumber = batch.DistNumber ?? string.Empty,
                     SysNumber = x.SysNumber,
                     FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
+                    ItemCode = x.ItemCode,
                 });
             });
 
@@ -351,9 +473,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(int logEntry)
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
-            return await this.RetryQuery<BatchesTransactionQtyModel>(this.databaseContext.BatchesTransactionQtyModel.Where(x => x.LogEntry == logEntry));
+            return await this.RetryQuery<BatchTransacitions>(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)));
+        }
+
+        /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry)
+        {
+            return await this.RetryQuery<BatchesTransactionQtyModel>(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)));
         }
 
         /// <inheritdoc/>

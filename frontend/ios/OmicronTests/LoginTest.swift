@@ -84,4 +84,34 @@ class LoginTest: XCTestCase {
         // Then
         self.loginViewModel?.loginDidTap.onNext(())
     }
+
+    func testDoLoginWhenStatusCodeIs401() {
+        // Given
+        self.loginViewModel?.username.onNext("sflores")
+        self.loginViewModel?.password.onNext("Sergio123")
+        self.loginViewModel?.isTest = true
+        self.loginViewModel?.statusCode = 401
+        self.loginViewModel?.testData = Data()
+        self.loginViewModel?.error.subscribe(onNext: { res in
+            // When
+            XCTAssertEqual(res, Constants.Errors.unauthorized.rawValue)
+        }).disposed(by: self.disposeBag!)
+        // Then
+        self.loginViewModel?.loginDidTap.onNext(())
+    }
+
+    func testDoLoginWhenStatusCodeIs500() {
+        // Given
+        self.loginViewModel?.username.onNext("sflores")
+        self.loginViewModel?.password.onNext("Sergio123")
+        self.loginViewModel?.isTest = true
+        self.loginViewModel?.statusCode = 500
+        self.loginViewModel?.testData = Data()
+        self.loginViewModel?.error.subscribe(onNext: { res in
+            // When
+            XCTAssertEqual(res, Constants.Errors.serverError.rawValue)
+        }).disposed(by: self.disposeBag!)
+        // Then
+        self.loginViewModel?.loginDidTap.onNext(())
+    }
 }

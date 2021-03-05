@@ -153,6 +153,25 @@ namespace Omicron.Warehouses.Test.Services.Request
         /// </summary>
         /// <returns>Nothing.</returns>
         [Test]
+        public async Task CreateRawMaterialRequest_CreateRequestWithProductionOrderIdsNull_SuccessResults()
+        {
+            // arrange
+            var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.ProductionOrderIds = new List<int> { };
+            request.OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(3);
+
+            // act
+            var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
+
+            // assert
+            this.CheckAction(response, true, 1, 0);
+        }
+
+        /// <summary>
+        /// Create new raw material request.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
         public async Task CreateRawMaterialRequest_FailOnSubmit_ReturnUSerError()
         {
             // arrange

@@ -4,10 +4,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { OrdersService } from './orders.service';
 import { DatePipe } from '@angular/common';
 import {Observable} from 'rxjs';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('OrdersService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe]
   }));
 

@@ -55,7 +55,7 @@ namespace Omicron.Pedidos.Api.Controllers
             return this.Ok(response);
         }
 
-        /// <summary>
+        /// <summary>F
         /// planificar by order.
         /// </summary>
         /// <param name="processByOrder">process by order.</param>
@@ -407,6 +407,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Delete custom components list.
+        /// </summary>
+        /// <param name="parameters">The custom list.</param>
+        /// <returns>Custom list.</returns>
+        [Route("/components/custom")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCustomComponentList([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.DeleteCustomComponentList(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Asignacion manual.
         /// </summary>
         /// <param name="parameters">the assign model.</param>
@@ -480,6 +493,33 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> DeleteFiles()
         {
             var response = await this.pedidoFacade.DeleteFiles();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/salesOrder/reject")]
+        [HttpPut]
+        public async Task<IActionResult> RejectSalesOrders(RejectOrdersDto rejectOrders)
+        {
+            var response = await this.pedidoFacade.RejectSalesOrders(rejectOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        [Route("/qfbOrders/{status}/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetQfbOrdersByStatus([FromRoute] string status, [FromRoute] string userId)
+        {
+            var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, userId);
             return this.Ok(response);
         }
 

@@ -17,8 +17,10 @@ export const Endpoints = {
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,
     getDetallePedido: `${environment.baseUrl}/api/sapadapter/detail/`,
+    detailCarousel: `${environment.baseUrl}/api/sapadapter/orders/details`,
     processOrders: `${environment.baseUrl}/api/pedidos/processOrders`,
-    getFormulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
+    formulaDetail: `${environment.baseUrl}/api/sapadapter/formula`,
+    formulaCarousel: `${environment.baseUrl}/api/sapadapter/faborders/details`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
     components: `${environment.baseUrl}/api/sapadapter/componentes`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
@@ -34,7 +36,8 @@ export const Endpoints = {
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
     checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
     getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`,
-    rangeDateInit: `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook`
+    rangeDateInit: `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook`,
+    refuseOrdersService: `${environment.baseUrl}/api/pedidos/salesOrder/reject`,
 },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
@@ -48,7 +51,8 @@ export const Endpoints = {
     viewPdf: `${environment.baseUrl}/api/pedidos/saleorder/pdf`,
     ordersToDelivered: `${environment.baseUrl}/api/pedidos/status/fabOrder`,
     finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`,
-    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral`
+    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral` ,
+    customList: `${environment.baseUrl}/api/pedidos/components/custom`,
   },
   productivity: {
     getProductivity: `${environment.baseUrl}/api/pedidos/qfb/productivity`,

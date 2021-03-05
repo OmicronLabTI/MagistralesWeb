@@ -29,3 +29,8 @@ export class BaseComponent {
     creationUserId?: string;
     creatinDate?: Date;
 }
+
+export class ICustomListDelete {
+    name: string;
+    productId: string;
+}
