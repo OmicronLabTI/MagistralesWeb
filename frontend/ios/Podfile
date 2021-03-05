@@ -17,12 +17,14 @@ target 'Omicron' do
   pod 'TagListView', '~> 1.0'
   pod 'RxDataSources'
   pod 'Charts'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
   
-  target 'Omicron QA' do
+  target 'OmicronQA' do
     # Comment the next line if you don't want to use dynamic frameworks
     use_frameworks!
 
-    # Pods for Omicron QA
+    # Pods for OmicronQA
     pod 'RxSwift'
     pod 'RxCocoa'
     pod 'Moya/RxSwift', '~> 14.0'
@@ -34,7 +36,29 @@ target 'Omicron' do
     pod 'TagListView', '~> 1.0'
     pod 'RxDataSources'
     pod 'Charts'
-  end
+    pod 'Firebase/Analytics'
+    pod 'Firebase/Crashlytics'
+    end
+    
+    target 'OmicronDEV' do
+      # Comment the next line if you don't want to use dynamic frameworks
+      use_frameworks!
+
+      # Pods for OmicronDEV
+      pod 'RxSwift'
+      pod 'RxCocoa'
+      pod 'Moya/RxSwift', '~> 14.0'
+      pod 'ObjectMapper'
+      pod 'lottie-ios'
+      pod 'Eureka'
+      pod 'Resolver'
+      pod 'SignaturePad', '~> 1.0.3'
+      pod 'TagListView', '~> 1.0'
+      pod 'RxDataSources'
+      pod 'Charts'
+      pod 'Firebase/Analytics'
+      pod 'Firebase/Crashlytics'
+      end
  
   target 'OmicronTests' do
     inherit! :search_paths
