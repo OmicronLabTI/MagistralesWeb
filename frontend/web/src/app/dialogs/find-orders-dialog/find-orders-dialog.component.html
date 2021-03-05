@@ -127,7 +127,7 @@
                                    maxlength="10"
                                    class="height-input"
                                    formControlName="orderIncidents"
-                                   (keydown)="changeDocNumber($event)">
+                                   (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="!findOrdersForm?.controls.orderIncidents?.errors?.maxLength">
                                 Solo 7 caracteres
                             </mat-error>
