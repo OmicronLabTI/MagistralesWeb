@@ -19,11 +19,11 @@ enum Environment {
 struct Config {
 
     #if DEBUG
-    static let baseUrl = URLRoot.devServer
+    static let baseUrl = URLRoot.DEBUG
     #elseif QA
-    static let baseUrl = URLRoot.qaServer
+    static let baseUrl = URLRoot.QA
     #elseif RELEASE
-    static let baseUrl = URLRoot.prodServer
+    static let baseUrl = URLRoot.RELEASE
     #endif
 
     static let serverOmicron = URLRoot.omicronServer

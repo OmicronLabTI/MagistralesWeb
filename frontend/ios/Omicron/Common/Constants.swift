@@ -238,9 +238,9 @@ struct Base64 {
 }
 
 struct URLRoot {
-    static let devServer = "http://201.163.179.29:8000/api"
-    static let qaServer = "http://201.163.179.28:8000/api"
-    static let prodServer = "https://magistralesprod.omicronlab.com.mx/api"
+    static let DEBUG = "http://201.163.179.29:8000/api"
+    static let QA = "http://201.163.179.28:8000/api"
+    static let RELEASE = "httbps://magistralesprod.omicronlab.com.mx/api"
     static let omicronServer = "http://172.30.5.49:5100/"
 }
 
