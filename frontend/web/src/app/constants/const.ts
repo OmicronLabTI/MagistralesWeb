@@ -224,7 +224,7 @@ export const RouterPaths = {
     materialRequest: 'materialRequest',
     incidents: 'incidents',
     incidentsList: 'incidentsList',
-    warehousePage: 'warehouse'
+    warehousePage: 'warehouse',
     orderDetail: 'pdetalle',
     detailFormula: 'ordenfabricacion',
     pedido: 'pedidos'

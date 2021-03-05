@@ -375,7 +375,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         });
     }
 
-    onSuccessCommentsResult(commentsResult: CommentsConfig) {
+    onSuccessCommentsResult(commentsResult: CommentsConfig) {// new way to call comments
         this.dialog.open(AddCommentsDialogComponent, {
           panelClass: 'custom-dialog-container',
           data: commentsResult

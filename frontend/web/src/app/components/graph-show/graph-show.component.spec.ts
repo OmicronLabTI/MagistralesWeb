@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GraphShowComponent } from './graph-show.component';
 import {DatePipe} from '@angular/common';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('GraphShowComponent', () => {
   let component: GraphShowComponent;
@@ -10,7 +11,8 @@ describe('GraphShowComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ GraphShowComponent ],
-      providers: [DatePipe]
+      providers: [DatePipe],
+      imports: [RouterTestingModule]
     })
     .compileComponents();
   }));

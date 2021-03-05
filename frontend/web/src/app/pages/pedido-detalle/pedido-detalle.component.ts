@@ -20,7 +20,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, ParamsPedidos, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -65,6 +65,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   ordersReceivedFromRequest: number[] = [];
   paramsDetailOrder = new ParamsPedidos();
   baseQueryString = CONST_STRING.empty;
+  isThereOrdersDetailToDelivered = false;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
@@ -185,6 +186,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
+    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+        FromToFilter.fromDefault);
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
