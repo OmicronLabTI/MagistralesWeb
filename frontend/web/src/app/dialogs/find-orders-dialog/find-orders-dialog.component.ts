@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { PedidosService} from '../../services/pedidos.service';
 import { ErrorService} from '../../services/error.service';
@@ -27,6 +27,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     isFromSearchOrders = false;
     defaultStartDate: Date;
     defaultEndDate: Date;
+    isWithError = true;
+    isLessDocNumUntil = true;
     constructor(private formBuilder: FormBuilder,
                 @Inject(MAT_DIALOG_DATA) public filterData: any,
                 private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
@@ -38,6 +40,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({
             docNum: ['', [Validators.maxLength(50)]],
+            docNumUntil: ['', [Validators.maxLength(50)]],
             dateType: ['', []],
             fini: ['', []],
             ffin: ['', []],
@@ -47,12 +50,15 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             clientName: ['', [Validators.maxLength(80)]],
             label: ['', []],
             finlabel: ['', []],
+            orderIncidents: ['', [Validators.maxLength(10)]],
+            clasification: ['', []],
         });
         this.isToResetData = // add more filter to receive
             this.filterData.filterOrdersData.docNum || this.filterData.filterOrdersData.status || this.filterData.filterOrdersData.qfb
             || this.filterData.filterOrdersData.dateType !== ConstOrders.defaultDateInit || this.filterData.filterOrdersData.productCode
             || this.filterData.filterOrdersData.clientName || this.filterData.filterOrdersData.label
-            || this.filterData.filterOrdersData.finlabel;
+            || this.filterData.filterOrdersData.finlabel || this.filterData.filterOrdersData.orderIncidents
+            || this.filterData.filterOrdersData.finlabel || this.filterData.filterOrdersData.clasification;
     }
 
     async ngOnInit() {
@@ -96,16 +102,28 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             this.filterData.filterOrdersData.label : '');
         this.findOrdersForm.get('finlabel').setValue(this.filterData.filterOrdersData.finlabel ?
             this.filterData.filterOrdersData.finlabel : '');
+        this.findOrdersForm.get('orderIncidents').setValue(this.filterData.filterOrdersData.orderIncidents ?
+            this.filterData.filterOrdersData.orderIncidents : '');
+        this.findOrdersForm.get('clasification').setValue(this.filterData.filterOrdersData.clasification ?
+            this.filterData.filterOrdersData.clasification : '');
+        this.findOrdersForm.get('docNumUntil').setValue(this.filterData.filterOrdersData.docNumUntil ?
+            this.filterData.filterOrdersData.docNumUntil : '');
+
+        if ( !this.filterData.filterOrdersData.docNum) {
+            this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
+        }
 
         if (this.filterData.filterOrdersData.docNum) {
             this.getDisableForDocNum();
-        } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status) {
+        } else if (this.filterData.filterOrdersData.qfb || this.filterData.filterOrdersData.status
+            || this.filterData.filterOrdersData.clasification) {
             this.getDisableOnlyForDocNum();
         }
         this.getMaxDate();
         this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
             if (!this.isBeginInitForm) {
-                if (this.withValue(formData.docNum)) {
+                this.validateDocNums(formData.docNum, formData.docNumUntil);
+                if (this.withValue(formData.docNum) || this.withValue(formData.docNumUntil)) {
                     this.isToResetData = false;
                     this.getDisableForDocNum();
                 } else if (!this.withValue(formData.docNum) &&
@@ -116,6 +134,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                         this.withValue(formData.status) || this.withValue(formData.qfb) ||
                         this.withValue(formData.productCode) || this.withValue(formData.clientName) ||
                         this.withValue(formData.label) || this.withValue(formData.finlabel)
+                        || this.withValue(formData.orderIncidents)
+                        || this.withValue(formData.clasification)
                     )) {
                     this.changeValidatorsForDocNum();
                 } else {
@@ -132,15 +152,24 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&
                 dateToCompare.getFullYear() === baseDate.getFullYear();
     }
-    withValue(value) {
-        return value !== null && value !== undefined && value !== '';
-    }
 
     searchOrders() {
-        this.trimFilterValues();
-        this.dialogRef.close({...this.findOrdersForm.value, isFromOrders: this.filterData.filterOrdersData.isFromOrders});
+        if ((this.findOrdersForm.get('docNum').value !== null && this.findOrdersForm.get('docNum').value !== CONST_STRING.empty)) {
+            if (this.isLessDocNumUntil || (
+                !this.findOrdersForm.get('docNumUntil').value || this.findOrdersForm.get('docNumUntil').value === CONST_STRING.empty
+            )) {
+                this.generateDataAndCloseModal();
+            }
+        } else {
+            this.generateDataAndCloseModal();
+        }
     }
-
+    generateDataAndCloseModal() {
+        this.trimFilterValues();
+        this.dialogRef.close({...this.findOrdersForm.value,
+                             isFromOrders: this.filterData.filterOrdersData.isFromOrders,
+                             isFromIncidents: this.filterData.filterOrdersData.isFromIncidents});
+    }
     getMaxDate() {
         this.dateFin.setTime(new Date(this.findOrdersForm.get('ffin').value).getTime());
         this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
@@ -162,9 +191,14 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').disable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('orderIncidents').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('clasification').disable({onlySelf: true, emitEvent: false});
     }
     getDisableOnlyForDocNum() {
         this.findOrdersForm.get('docNum').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.controls.docNum.clearValidators();
+        this.findOrdersForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
     }
     resetParamsValue() {
         this.findOrdersForm.get('dateType').setValue(ConstOrders.defaultDateInit);
@@ -175,6 +209,10 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').setValue('');
         this.findOrdersForm.get('label').setValue('');
         this.findOrdersForm.get('finlabel').setValue('');
+        this.findOrdersForm.get('orderIncidents').setValue('');
+        this.findOrdersForm.get('clasification').setValue('');
+        this.findOrdersForm.get('docNumUntil').setValue('');
+
     }
     enableAllParamsSearch() {
         this.getDisableForDocNum();
@@ -193,6 +231,9 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('clientName').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('label').enable({onlySelf: true, emitEvent: false});
         this.findOrdersForm.get('finlabel').enable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('orderIncidents').enable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('clasification').enable({onlySelf: true, emitEvent: false});
+        this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
     }
     changeValidatorsForDocNum() {
         this.isToResetData = true;
@@ -209,7 +250,13 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             && this.findOrdersForm.get('productCode').value !== null) || (this.findOrdersForm.get('clientName').value !== CONST_STRING.empty
             && this.findOrdersForm.get('clientName').value !== null) || (this.findOrdersForm.get('label').value !== CONST_STRING.empty
             && this.findOrdersForm.get('label').value !== null) || (this.findOrdersForm.get('finlabel').value !== CONST_STRING.empty
-            && this.findOrdersForm.get('finlabel').value !== null))) {
+            && this.findOrdersForm.get('finlabel').value !== null) ||
+            (this.findOrdersForm.get('orderIncidents').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('orderIncidents').value !== null)  ||
+            (this.findOrdersForm.get('docNumUntil').value !== CONST_STRING.empty
+            && this.findOrdersForm.get('docNumUntil').value !== null)  ||
+            (this.findOrdersForm.get('clasification').value !== CONST_STRING.empty
+                && this.findOrdersForm.get('clasification').value !== null) )) {
             this.searchOrders();
         }
     }
@@ -219,16 +266,36 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.findOrdersForm.get('productCode').setValue((this.findOrdersForm.get('productCode').value || '').trim());
     }
 
-    changeDocNumber(event: KeyboardEvent) {
+    changeDocNumber(event: KeyboardEvent, isDocNUmUntil: boolean) {
+        if (!isDocNUmUntil) {
+            this.findOrdersForm.controls.docNum.setValidators(Validators.required);
+            this.findOrdersForm.get('docNumUntil').enable({onlySelf: true, emitEvent: false});
+            this.findOrdersForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+
+        }
         let invalidChars = [ "-", "+", "e", "." ];
         let currentValue = this.findOrdersForm.get('docNum').value;
         if (invalidChars.includes(event.key) || (event.key == '0' && !this.withValue(currentValue)))
         {
             event.preventDefault();
         }
-        if (this.withValue(currentValue) && `${currentValue}`.length == 7 && !isNaN(event.key as any))
+        if (this.withValue(currentValue) && `${currentValue}`.length === 10 && !isNaN(event.key as any))
         {
             event.preventDefault();
+        }
+
+    }
+
+    withValue(value) {
+        return value !== null && value !== undefined && value !== '';
+    }
+
+    validateDocNums(docNum: string, docNumUntil: string) {
+        if (!docNum || docNum === CONST_STRING.empty) {
+            this.findOrdersForm.get('docNumUntil').disable({onlySelf: true, emitEvent: false});
+            this.isLessDocNumUntil = true;
+        } else {
+            this.isLessDocNumUntil = (Number(docNumUntil) >= Number(docNum));
         }
     }
 }

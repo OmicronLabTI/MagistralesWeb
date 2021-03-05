@@ -27,6 +27,8 @@ namespace Omicron.SapAdapter.Api.Controllers
     {
         private readonly ISapFacade sapFacade;
 
+        private readonly ISapAlmacenFacade sapAlmacenFacade;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -37,9 +39,11 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
-        public SapController(ISapFacade sapFacade, ILogger logger)
+        /// <param name="sapAlmacenFacade">the sap almacen.</param>
+        public SapController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
+            this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));
             this.logger = logger;
         }
 
@@ -278,14 +282,78 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the recipes by all orders id.
         /// </summary>
-        /// <param name="orderId">the order ids.</param>
+        /// <param name="ordersId">the order ids.</param>
         /// <returns>the data.</returns>
-        [Route("/validate/order/{orderId}")]
-        [HttpGet]
-        public async Task<IActionResult> ValidateOrder(int orderId)
+        [Route("/validate/order")]
+        [HttpPost]
+        public async Task<IActionResult> ValidateOrder(List<int> ordersId)
         {
-            var result = await this.sapFacade.ValidateOrder(orderId);
+            var result = await this.sapFacade.ValidateOrder(ordersId);
             return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/common/components")]
+        [HttpGet]
+        public async Task<IActionResult> GetMostCommonComponents()
+        {
+            var result = await this.sapFacade.GetMostCommonComponents();
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/orders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ped");
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        [Route("/orders/packingRequired/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        [Route("/asesors")]
+        [HttpPost]
+        public async Task<IActionResult> GetAsesorsByOrderId([FromBody] List<int> salesOrder)
+        {
+            var result = await this.sapFacade.GetAsesorsByOrderId(salesOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/faborders/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetFabDetails([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetDetails(parameters, "ord");
+            return this.Ok(response);
         }
 
         /// <summary>

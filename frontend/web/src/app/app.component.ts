@@ -33,6 +33,8 @@ import {ErrorHttpInterface} from './model/http/commons';
 import {ComponentSearchComponent} from './dialogs/components-search-dialog/component-search.component';
 import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-orders-dialog.component';
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
+import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
+import {CommentsConfig} from './model/device/incidents.model';
 
 @Component({
   selector: 'app-root',
@@ -44,11 +46,11 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     title = 'omicron';
     now = new Date();
     isLoading: Observable<boolean>;
-    // isLoading = false;
     isLogin = false;
     subscriptionObservables = new Subscription();
     fullName = '';
     role = '';
+    filterDataOrders = new ParamsPedidos();
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
@@ -94,6 +96,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.onSuccessSearchOrders(resultSearchOrdersModal)));
     this.subscriptionObservables.add(this.dataService.getOpenSignatureDialog().subscribe(dataSignature =>
         this.onSuccessOpenSignatureDialog(dataSignature)));
+    this.subscriptionObservables.add(this.dataService.getOpenCommentsDialog().subscribe(commentsResult =>
+       this.onSuccessCommentsResult(commentsResult)));
   }
   endSession() {
       this.logoutSession(true);
@@ -214,6 +218,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
+    this.dataService.removeFiltersActiveOrders();
+    this.dataService.removeFiltersActive();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
     this.dataService.presentToastCustom(generalMessage.title,
@@ -330,7 +336,11 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
-                this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString()]);
+                this.filterDataOrders = this.dataService.getFiltersActivesAsModelOrders();
+                this.filterDataOrders.isfromCreateOrderIsolate = true;
+                this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+                // tslint:disable-next-line:max-line-length
+                this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {
                 this.dataService.presentToastCustom(resultCreateIsolated.userError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
@@ -362,6 +372,17 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             if (result) {
                 this.dataService.setNewDataSignature(result);
             }
+        });
+    }
+
+    onSuccessCommentsResult(commentsResult: CommentsConfig) {// new way to call comments
+        this.dialog.open(AddCommentsDialogComponent, {
+          panelClass: 'custom-dialog-container',
+          data: commentsResult
+        }).afterClosed().subscribe(addCommentsResult => {
+          if ( addCommentsResult) {
+            this.dataService.setNewCommentsResult(addCommentsResult);
+          }
         });
     }
 }

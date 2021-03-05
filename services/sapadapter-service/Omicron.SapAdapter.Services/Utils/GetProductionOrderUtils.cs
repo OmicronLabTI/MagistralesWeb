@@ -14,6 +14,8 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Services.Constants;
     using Serilog;
 
@@ -50,9 +52,12 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                var orders = (await this.sapDao.GetFabOrderById(new List<int> { docNum })).ToList();
-                return await this.CompleteOrder(orders);
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                docNumEnd += 1;
+                var listIds = Enumerable.Range(docNumInit, docNumEnd - docNumInit).ToList();
+                return (await this.sapDao.GetFabOrderById(listIds)).ToList();
             }
 
             var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
@@ -62,7 +67,6 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 this.logger.Information("Busqueda por fecha.");
                 listToReturn.AddRange((await this.sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
-                this.logger.Information("Fin de busqueda por fecha.");
             }
 
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
@@ -119,14 +123,75 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public async Task<List<OrdenFabricacionModel>> CompleteOrder(List<OrdenFabricacionModel> listOrders)
         {
+            var items = (await this.sapDao.GetProductByIds(listOrders.Select(x => x.ProductoId).ToList())).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(listOrders.Select(x => x.OrdenId).ToList())).ToList();
             foreach (var order in listOrders)
             {
-                var item = (await this.sapDao.GetProductById(order.ProductoId)).FirstOrDefault();
+                var item = items.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 order.ProdName = item == null ? order.ProdName : item.LargeDescription;
-                order.HasMissingStock = (await this.sapDao.GetDetalleFormula(order.OrdenId)).Any(y => y.Stock == 0);
+
+                var localDetails = details.Where(x => x.OrderFabId == order.OrdenId).ToList();
+                order.HasMissingStock = localDetails.Any(y => y.Stock == 0);
             }
 
             return listOrders;
+        }
+
+        /// <summary>
+        /// Gets if the batches are complete.
+        /// </summary>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        public async Task<List<string>> GetIncompleteProducts(List<int> ordersId)
+        {
+            var listToReturn = new List<string>();
+            var listTransaction = new List<int>();
+            var componentes = (await this.sapDao.GetComponentByBatches(ordersId)).ToList();
+            var assignedBatches = (await this.sapDao.GetBatchesTransactionByOrderItem(ordersId)).ToList();
+
+            var componentIds = componentes.Select(x => $"{x.OrderFabId}-{x.ProductId}").ToList();
+            assignedBatches.GroupBy(x => new { x.DocNum, x.ItemCode }).ToList().ForEach(x =>
+            {
+                if (componentIds.Contains($"{x.Key.DocNum}-{x.Key.ItemCode}"))
+                {
+                    var lastTransaction = x.Any() ? x.OrderBy(y => y.LogEntry).Last(z => z.DocQuantity > 0) : null;
+
+                    if (lastTransaction != null)
+                    {
+                        listTransaction.Add(lastTransaction.LogEntry);
+                    }
+                }
+            });
+
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listTransaction)).ToList();
+
+            assignedBatches.GroupBy(x => x.DocNum).ToList().ForEach(g =>
+            {
+                componentes.Where(x => x.OrderFabId == g.Key).ToList().ForEach(i =>
+                {
+                    var transactions = g.Where(item => item.ItemCode == i.ProductId).ToList();
+                    var lastTransaction = transactions.Any() ? transactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
+
+                    if (lastTransaction == null)
+                    {
+                        listToReturn.Add($"{g.Key} {i.ProductId}");
+                    }
+                    else
+                    {
+                        var logEntry = lastTransaction.LogEntry;
+                        var batches = batchesQty.Where(b => b.ItemCode == i.ProductId && logEntry == b.LogEntry).ToList();
+                        var cantidadSeleccionada = batches.Sum(b => b.AllocQty);
+                        var totalNecesario = Math.Round(i.PendingQuantity - cantidadSeleccionada, 6);
+
+                        if (totalNecesario > 0)
+                        {
+                            listToReturn.Add($"{g.Key} {i.ProductId}");
+                        }
+                    }
+                });
+            });
+
+            return listToReturn;
         }
     }
 }

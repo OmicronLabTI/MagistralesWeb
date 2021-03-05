@@ -59,6 +59,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// selects the ships code.
+        /// </summary>
+        public const string FindShipCodes = "SELECT TrnspCode ,TrnspName FROM OSHP";
+
+        /// <summary>
         /// selects data from WOR1 by DocEntry.
         /// </summary>
         public const string FindWor1ByDocEntry = "SELECT DocEntry, LineNum, BaseQty, IssuedQty, wareHouse, ItemCode, VisOrder FROM WOR1 WHERE DocEntry = {0}";
@@ -86,7 +91,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Select batch code by item code, warehouse code and sys number.
         /// </summary>
-        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity > 0 AND A.SysNumber = {2}";
+        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity >= 0 AND A.SysNumber = {2}";
 
         /// <summary>
         /// Select assigned batches by log entry.
@@ -112,6 +117,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// deletes the batch.
         /// </summary>
         public const string DeleteBatch = "delete";
+
+        /// <summary>
+        /// Const for he magistral.
+        /// </summary>
+        public const string Magistral = "magistral";
 
         /// <summary>
         /// Fail reason.

@@ -5,6 +5,11 @@ export class IPedidoDetalleLabelReq {
     userId: string;
     designerSignature: any;
 }
+export class IOrdersRefuseReq {
+    comments: string;
+    userId: string;
+    ordersId: number[];
+}
 export class LabelToFinish {
     orderId: number;
     checked: boolean;
@@ -25,11 +30,23 @@ export class IPedidoDetalleReq {
     comments: string;
     label: string;
     finishedLabel: number;
+    pedidoId?: number;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
 }
 export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
+}
+export class IQrByOrdersRes extends BaseResponseHttp {
+    response: string[];
+}
+export class IPedidoRefuseRes extends BaseResponseHttp {
+    response: {
+        failed: ReasonRefuse[]
+    };
+}
+export class ReasonRefuse {
+    reason: string;
 }
 

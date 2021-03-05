@@ -81,6 +81,21 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders);
 
         /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to finish.</param>
+        /// <returns>Order with updated info.</returns>
+        Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders);
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetQfbOrdersByStatus(string status, string userId);
+
+        /// <summary>
         /// Finish fabrication orders.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>

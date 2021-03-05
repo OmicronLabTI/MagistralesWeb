@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Mapping
             if (userOrder != null)
             {
                 self.Status = userOrder.Status;
-                self.RealEndDate = userOrder.CloseDate;
+                self.RealEndDate = userOrder.CloseDate.HasValue ? userOrder.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
                 self.Comments = userOrder.Comments;
             }
         }

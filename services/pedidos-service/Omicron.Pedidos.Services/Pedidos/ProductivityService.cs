@@ -117,7 +117,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var matrixToReturn = new List<List<string>>();
             var listProductivty = new List<ProductiityTotalsModel>();
 
-            matrixToReturn.Add(this.GetMonths(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]));
+            var valuesMonths = this.GetMonths(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]);
+            matrixToReturn.Add(valuesMonths.Item1);
             foreach (var u in users)
             {
                 var ordersSap = new List<FabricacionOrderModel>();
@@ -130,7 +131,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
                 }
 
-                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin]);
+                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin], valuesMonths.Item2);
                 matrixToReturn.Add(tupleResponse.Item1);
                 listProductivty.Add(tupleResponse.Item2);
             }
@@ -144,20 +145,31 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="initDate">the initDate.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        private List<string> GetMonths(DateTime initDate, DateTime endDate)
+        private Tuple<List<string>, List<int>> GetMonths(DateTime initDate, DateTime endDate)
         {
             var listMonths = new List<string>();
+            var listNumMonths = new List<int>();
             listMonths.Add("-");
 
             var culture = new CultureInfo("es-MX");
-            for (var i = initDate.Month; i <= endDate.Month; i++)
+            var currentMonth = culture.DateTimeFormat.GetMonthName(initDate.Month).ToUpper();
+            var index = initDate.Month;
+
+            var finalIndex = endDate.Month == 12 ? 1 : endDate.Month + 1;
+            var finalMonth = culture.DateTimeFormat.GetMonthName(finalIndex).ToUpper();
+
+            while (currentMonth != finalMonth)
             {
-                listMonths.Add(culture.DateTimeFormat.GetMonthName(i).ToUpper());
+                listMonths.Add(culture.DateTimeFormat.GetMonthName(index).ToUpper());
+                listNumMonths.Add(index);
+                index += 1;
+                index = index == 13 ? 1 : index;
+                currentMonth = culture.DateTimeFormat.GetMonthName(index).ToUpper();
             }
 
             listMonths.Add("Total");
 
-            return listMonths;
+            return new Tuple<List<string>, List<int>>(listMonths, listNumMonths);
         }
 
         /// <summary>
@@ -168,18 +180,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="fabOrder">the orders from sap.</param>
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
+        /// <param name="months">The list of months.</param>
         /// <returns>the data.</returns>
-        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, DateTime initDate, DateTime endDate)
+        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, DateTime initDate, DateTime endDate, List<int> months)
         {
             var listToReturn = new List<string>();
             listToReturn.Add($"{user.FirstName} {user.LastName}");
 
             var totalPieces = 0;
-            for (var i = initDate.Month; i <= endDate.Month; i++)
+            foreach (var i in months)
             {
                 decimal total = 0;
                 var monthNumber = i < 10 ? $"0{i}" : i.ToString();
-                var userOrderByMonth = userOrder.Where(x => x.CloseDate.Contains($"/{monthNumber}/")).ToList();
+                var userOrderByMonth = userOrder.Where(x => x.CloseDate.Value.ToString("dd/MM/yyyy").Contains($"/{monthNumber}/")).ToList();
 
                 if (!userOrderByMonth.Any())
                 {
@@ -314,7 +327,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionOrderIdsByStatus = new List<int>();
                 if (status == ServiceConstants.Finalizado)
                 {
-                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Entregado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals("Almacenado")).Select(y => int.Parse(y.Productionorderid)).ToList();
                 }
                 else
                 {

@@ -11,11 +11,13 @@ import {
     IPlaceOrdersAutomaticReq,
     ProcessOrdersDetailReq
 } from '../model/http/pedidos';
+import {LabelToFinish} from '../model/http/detallepedidos.model';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('PedidosService', () => {
   beforeEach(() => {
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
+          imports: [HttpClientTestingModule, RouterTestingModule],
           providers: [DatePipe]
         });
       });
@@ -117,4 +119,33 @@ describe('PedidosService', () => {
       const service: PedidosService = TestBed.get(PedidosService);
       expect(service.createPdfOrders([]) instanceof Observable).toBeTruthy();
   });
+  it('should createPdfOrders', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.qrByEachOrder([123, 2345]) instanceof Observable).toBeTruthy();
+  });
+  it('should getWorkLoad', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getWorLoad('querystring') instanceof Observable).toBeTruthy();
+    });
+  it('should getOrdersPdfsView', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getOrdersPdfViews([123, 123, 1234]) instanceof Observable).toBeTruthy();
+    });
+  it('should putOrdersToDelivered', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.putOrdersToDelivered([]) instanceof Observable).toBeTruthy();
+    });
+  it('should getRecipesByOrder', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getRecipesByOrder(1234) instanceof Observable).toBeTruthy();
+    });
+  it('should savedComments', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.savedComments(1234, 'anyComments') instanceof Observable).toBeTruthy();
+    });
+  it('should finishLabels', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.finishLabels({
+            designerSignature: 'sign', details: [{} as LabelToFinish], userId: ''}) instanceof Observable).toBeTruthy();
+    });
 });

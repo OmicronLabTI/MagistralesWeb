@@ -29,5 +29,26 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request);
+
+        /// <summary>
+        /// Sends the email.
+        /// </summary>
+        /// <param name="request">the request.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SendEmailForeignPackage(SendPackageDto request);
+
+        /// <summary>
+        /// Sends the email for local packages.
+        /// </summary>
+        /// <param name="sendLocalPackage">the local package.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage);
+
+        /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request);
     }
 }

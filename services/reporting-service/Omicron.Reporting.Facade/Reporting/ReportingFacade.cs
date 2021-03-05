@@ -55,5 +55,23 @@ namespace Omicron.Reporting.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailForeignPackage(SendPackageDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailForeignPackage(this.mapper.Map<SendPackageModel>(request)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailLocalPackage(this.mapper.Map<SendLocalPackageModel>(sendLocalPackage)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request)
+        {
+           return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailRejectedOrder(this.mapper.Map<SendRejectedEmailModel>(request)));
+        }
     }
 }

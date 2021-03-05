@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
@@ -135,18 +136,24 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docId);
-                var ordersById = orderModels.FirstOrDefault(x => x.DocNum == docId);
+                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
 
-                if (ordersById == null)
+                int.TryParse(valueSplit[0], out int docNumInit);
+                int.TryParse(valueSplit[1], out int docNumEnd);
+                var ordersById = orderModels.Where(x => x.DocNum >= docNumInit && x.DocNum <= docNumEnd).ToList();
+
+                if (!ordersById.Any())
                 {
                     return new List<CompleteOrderModel>();
                 }
 
-                var user = users.FirstOrDefault(y => y.Id.Equals(ordersById.Qfb));
-                ordersById.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                ordersById.ForEach(x =>
+                {
+                    var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
+                    x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                });
 
-                return new List<CompleteOrderModel> { ordersById };
+                return ordersById;
             }
 
             if (parameters.ContainsKey(ServiceConstants.Status))
@@ -172,6 +179,11 @@ namespace Omicron.SapAdapter.Services.Utils
             if (parameters.ContainsKey(ServiceConstants.FinishedLabel))
             {
                 orderModels = orderModels.Where(x => x.FinishedLabel.ToString() == parameters[ServiceConstants.FinishedLabel]).ToList();
+            }
+
+            if (parameters.ContainsKey(ServiceConstants.OrderType))
+            {
+                orderModels = orderModels.Where(x => x.OrderType == parameters[ServiceConstants.OrderType]).ToList();
             }
 
             orderModels.ForEach(x =>
@@ -203,6 +215,51 @@ namespace Omicron.SapAdapter.Services.Utils
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Prepares the dictionary to a key.
+        /// </summary>
+        /// <param name="dictToTransform">the dict.</param>
+        /// <param name="prefix">the prefix.</param>
+        /// <returns>the data.</returns>
+        public static string PrepareKeyForRedisFromDic(Dictionary<string, string> dictToTransform, string prefix)
+        {
+            var keyToReturn = new StringBuilder();
+            keyToReturn.Append($"{prefix}");
+            foreach (var key in dictToTransform.Keys)
+            {
+                if (!ServiceConstants.KeysToIgnoreRedis.Contains(key))
+                {
+                    keyToReturn.Append($"{key.Trim()}-{dictToTransform[key]}-");
+                }
+            }
+
+            return keyToReturn.ToString();
+        }
+
+        /// <summary>
+        /// Gets the next id to look.
+        /// </summary>
+        /// <param name="dict">the dict.</param>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>the enxt id.</returns>
+        public static int GetKeyToLook(Dictionary<string, string> dict, List<int> listIds)
+        {
+            var current = dict.ContainsKey(ServiceConstants.Current) ? dict[ServiceConstants.Current] : "0";
+            var advance = dict.ContainsKey(ServiceConstants.Advance) ? dict[ServiceConstants.Advance] : "f";
+            int.TryParse(current, out int currentInt);
+            var index = listIds.IndexOf(currentInt);
+
+            if (!listIds.Any())
+            {
+                return 0;
+            }
+
+            index = advance == "f" ? index + 1 : index - 1;
+            index = index == -1 ? listIds.Count - 1 : index;
+            index = index == listIds.Count ? 0 : index;
+            return index;
         }
 
         /// <summary>

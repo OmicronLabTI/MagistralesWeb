@@ -12,6 +12,7 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ComponentslistComponent } from './componentslist.component';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ComponentslistComponent', () => {
   let component: ComponentslistComponent;
@@ -25,7 +26,7 @@ describe('ComponentslistComponent', () => {
         MatDialogModule,
         MatCheckboxModule,
         MatFormFieldModule, MatInputModule,
-        BrowserAnimationsModule],
+        BrowserAnimationsModule, RouterTestingModule],
       declarations: [ ComponentslistComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [

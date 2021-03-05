@@ -35,12 +35,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'pedido',
     'orden',
     'codigoproducto',
     'descripcion',
     'cantidadplanificada',
+    'lote',
     'fechaorden',
     'fechatermino',
     'qfbasignado',
@@ -75,14 +75,18 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private pedidosService: PedidosService
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    this.createInitRageOrders();
   }
 
   ngOnInit() {
     if (this.dataService.getOrderIsolated()) {
       this.filterDataOrders.docNum = this.dataService.getOrderIsolated();
-      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`; // init search if there fabOrderId
+      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`;
       this.dataService.removeOrderIsolated();
+    }
+    if (this.dataService.getFiltersActivesAsModelOrders()) {
+      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModelOrders());
+    } else {
+      this.createInitRageOrders();
     }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.dataSource.paginator = this.paginator;
@@ -96,6 +100,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
+    this.dataService.removeFiltersActiveOrders();
   }
   createInitRageOrders() {
     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
@@ -161,8 +166,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             case ConstStatus.cancelado:
               element.class = 'cancelado';
               break;
-            case ConstStatus.entregado:
-              element.class = 'entregado';
+            case ConstStatus.almacenado:
+              element.class = ConstStatus.almacenado.toLowerCase();
               break;
           }
           element.description = element.description.toUpperCase();
@@ -204,6 +209,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   createOrderIsolated() {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
   }
 
@@ -213,6 +219,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   onSuccessSearchOrdersModal(resultSearchOrdersModal: ParamsPedidos) {
+    this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
     this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
@@ -226,7 +233,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   cancelOrder() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.entregado)).map(order => {
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = Number(order.fabOrderId);
         return cancelOrder;
@@ -266,9 +273,17 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(() => this.getOrdersAction());
   }
 
-    materialRequestIsolatedOrder() {
-     this.router.navigate([RouterPaths.materialRequest,
-                      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
-                      , CONST_NUMBER.zero.toString()]);
-    }
+  materialRequestIsolatedOrder() {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.router.navigate([RouterPaths.materialRequest,
+      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
+      , CONST_NUMBER.zero]);
+  }
+
+  goToFormulaDetail(fabOrderId: string) {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.dataService.changeRouterForFormula(fabOrderId,
+        this.dataSource.data.map(order => order.fabOrderId).toString(),
+        CONST_NUMBER.zero);
+  }
 }

@@ -1,37 +1,63 @@
-<div class="find-orders-container">
+<div class="find-orders-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'find-orders-container-custom' : ''">
     <mat-card class="orders-card">
         <mat-card-header class="card-header-container">
             <mat-card-title>
-                <span *ngIf="isFromSearchOrders">Buscar pedidos</span>
-                <span *ngIf="!isFromSearchOrders">Buscar órdenes de fabricación</span>
+                <span *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents">Buscar pedidos</span>
+                <span *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents">Buscar órdenes de fabricación</span>
+                <span *ngIf="filterData.filterOrdersData.isFromIncidents">Buscar incidencias</span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
-        <mat-card-content class="content-card-container">
+        <mat-card-content class="content-card-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'content-card-container-custom': ''">
             <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
-                <div class="row-form-order">
-                    <div class="form-field-full">
+                <div class="row-form-order row-form-order-custom border-bottom-custom">
+                    <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Ingresar pedido' : 'Nº de orden de fabricación'"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (desde)' : 'Orden (desde)'"
                                    type="number"
-                                   maxlength="7"
+                                   maxlength="20"
                                    class="height-input"
                                    formControlName="docNum"
-                                   (keydown)="changeDocNumber($event)">
+                                   (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
-                            <mat-error *ngIf="!findOrdersForm?.controls.docNum?.errors?.maxLength">
-                                Solo 7 caracteres
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field-left form-field-left-custom "
+                         [ngClass]="!isLessDocNumUntil ? 'error-on-range-order' : ''">
+                        <mat-form-field class="custom-field-full">
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (hasta)' : 'Orden (hasta)'"
+                                   type="number"
+                                   maxlength="20"
+                                   class="height-input"
+                                   formControlName="docNumUntil"
+                                   (keydown)="changeDocNumber($event, true)">
+                            <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
+                                Pedido es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
                     </div>
+                    <span class="material-icons icon-range-info color-omicron"
+                          matTooltip="{{ isFromSearchOrders ? 'El pedido (hasta) debe ser mayor a pedido (desde)' :
+                          'La orden (hasta) debe ser mayor a orden (desde)'}}">
+                       help_outline
+                    </span>
+<!--
+                        *El pedido(hasta) debe ser mayor a pedido(desde)
+-->
+
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
                         <mat-form-field appearance="outline" class="custom-field">
                             <mat-label>Fecha</mat-label>
-                            <mat-select formControlName="dateType" >
+                            <input matInput
+                                   *ngIf="filterData.filterOrdersData.isFromIncidents"
+                                   type="text"
+                                   value="Fecha creación"
+                                    readonly>
+                            <mat-select formControlName="dateType" *ngIf="!filterData.filterOrdersData.isFromIncidents">
                                 <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
                                 <mat-option *ngIf="isFromSearchOrders" value="1">Finalización</mat-option>
                                 <mat-option *ngIf="!isFromSearchOrders" value="0">Orden fabricación</mat-option>
@@ -43,19 +69,16 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <div class="dates-container">
+                        <div class="dates-container" [ngClass]=" findOrdersForm.invalid ? 'error-on-range-date' : ''"
+                             matTooltip="El rango de fechas debe ser menor a 3 meses" [matTooltipDisabled]="!findOrdersForm.invalid">
                             <div class="date-init">
-                                <mat-form-field class="date-picker-custom" appearance="outline">
+                                <mat-form-field class="date-picker-custom" appearance="outline" >
                                     <mat-label>fecha de</mat-label>
                                     <input matInput [matDatepicker]="dp3"
                                            formControlName="fini"
-
                                            [max]="dateFin" readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                                     <mat-datepicker #dp3 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
-                                    <mat-error *ngIf="findOrdersForm?.controls.fini?.errors?.required">
-                                        Fecha de es <strong>requerido</strong>
-                                    </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="date-init">
@@ -65,35 +88,53 @@
                                            [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
                                     <mat-datepicker #dp2 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
-                                    <mat-error *ngIf="findOrdersForm?.controls.ffin?.errors?.required">
-                                        Fecha hasta es <strong>requerido</strong>
-                                    </mat-error>
                                 </mat-form-field>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row-form-order">
-                    <div class="form-field-left margin-top-status">
+                    <div class="form-field-left margin-top-status" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'status-custom-incidents' : ''">
                         <mat-form-field appearance="outline" class="custom-field custom-style-status">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
-                                <mat-option *ngIf="isFromSearchOrders" value="Abierto">Abierto</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Asignado">Asignado</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="En proceso">En proceso</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Pendiente">Pendiente</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders" value="Reasignado">Reasignado</mat-option>
-                                <mat-option value="Planificado">Planificado</mat-option>
-                                <mat-option *ngIf="isFromSearchOrders" value="Liberado">Liberado</mat-option>
-                                <mat-option value="Terminado">Terminado</mat-option>
-                                <mat-option value="Finalizado">Finalizado</mat-option>
-                                <mat-option value="Entregado">Entregado</mat-option>
-                                <mat-option value="Cancelado">Cancelado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Abierto">Abierto</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Asignado">Asignado</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="En proceso">En proceso</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Pendiente">Pendiente</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Reasignado">Reasignado</mat-option>
+                                <mat-option value="Planificado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Planificado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Liberado">Liberado</mat-option>
+                                <mat-option value="Terminado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Terminado</mat-option>
+                                <mat-option value="Finalizado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Finalizado</mat-option>
+                                <mat-option value="Almacenado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Almacenado</mat-option>
+                                <mat-option value="Cancelado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders" value="Rechazado">Rechazado</mat-option>
+
+                                <mat-option value="Abierta" *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
+                                <mat-option value="Atendiendo" *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>
+                                <mat-option value="Cerrada" *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
+                                
+
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-field-right">
-                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
+                    <div class="form-field-right" >
+                        <mat-form-field class="custom-field-full custom-order" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'order-custom-incidents' : ''"
+                                        *ngIf="dataService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
+                            <input matInput placeholder="Número de pedido"
+                                   type="text"
+                                   maxlength="10"
+                                   class="height-input"
+                                   formControlName="orderIncidents"
+                                   (keydown)="changeDocNumber($event, false)">
+                            <mat-error *ngIf="!findOrdersForm?.controls.orderIncidents?.errors?.maxLength">
+                                Solo 7 caracteres
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="custom-field"
+                                        *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Tipo de etiqueta</mat-label>
                             <mat-select formControlName="label" >
                                 <mat-option value="G">Genérica</mat-option>
@@ -104,7 +145,8 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '5' || !isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field-full"
+                                        *ngIf="dataService.getUserRole() === '5' || (!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents )">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
@@ -177,10 +219,17 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <div class="form-field-right">
-                        <mat-error *ngIf="findOrdersForm.invalid" class="font-style-omicron">
-                            El rango de fechas debe ser menor a 3 meses
-                        </mat-error>
+                    <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
+                            <mat-label>Clasificación</mat-label>
+                            <mat-select formControlName="clasification">
+                                <mat-option value="MN">Bioelite (MN) </mat-option>
+                                <mat-option value="BE">Bioequal (BE)</mat-option>
+                                <mat-option value="MG">Magistral (MG)</mat-option>
+                                <mat-option value="MX">Mixto (MX)</mat-option>
+                              <!--  <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>-->
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
             </form>
@@ -189,8 +238,8 @@
             <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parámetros</button>
             <div class="only-margin">
             </div>
-            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal with-button-cancel">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn&#45;&#45;modal with-button-cancel">Cancelar</button>
+            <button mat-button class="btn-add-modal btn&#45;&#45;modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
                 <span>Buscar</span>
             </button>
         </mat-card-actions>

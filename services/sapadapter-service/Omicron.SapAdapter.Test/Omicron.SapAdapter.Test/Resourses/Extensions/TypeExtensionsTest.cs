@@ -8,6 +8,7 @@
 namespace Omicron.SapAdapter.Test.Resourses.Extensions
 {
     using System;
+    using System.Collections.Generic;
     using NUnit.Framework;
     using Omicron.SapAdapter.Resources.Extensions;
 
@@ -34,6 +35,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         /// <param name="type">Type to validate.</param>
         [TestCase(typeof(string))]
         [TestCase(typeof(char))]
+        [TestCase(typeof(List<string>))]
         public void IsNumericType_NotNumeric(Type type)
         {
             Assert.IsFalse(type.IsNumericType());

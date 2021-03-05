@@ -150,5 +150,153 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="customListIds">Te custom list ids.</param>
         /// <returns>Related components.</returns>
         Task<List<ComponentCustomComponentListModel>> GetComponentsByCustomListId(List<int> customListIds);
+
+        /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="userOrderId">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="saleOrder">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteBySaleOrder(List<int> saleOrder);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="delivery">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionRemisionQrModel>> GetQrRemisionRouteByDelivery(List<int> delivery);
+
+        /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the list of invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId);
+
+        /// <summary>
+        /// Inserts the data to the data base.
+        /// </summary>
+        /// <param name="modelsToSave">the models to save.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRouteRemision(List<ProductionRemisionQrModel> modelsToSave);
+
+        /// <summary>
+        /// Gets the qr if exist in table.
+        /// </summary>
+        /// <param name="modelsToSave">the orders ids.</param>
+        /// <returns>the data.</returns>
+        Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave);
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status tu,</param>
+        /// <param name="dateToLook">the min date to look.</param>
+        /// <param name="statusPending">The status for pending.</param>
+        /// <param name="secondStatus">The second status.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus);
+
+        /// <summary>
+        /// Gets the orders for almance.
+        /// </summary>
+        /// <param name="status">The status tu,</param>
+        /// <param name="dateToLook">the min date to look.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook);
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersById(List<int> ordersId);
+
+        /// <summary>
+        /// GEts the orders by id.
+        /// </summary>
+        /// <param name="ordersId">th eorderd id.</param>
+        /// <returns>the orders.</returns>
+        /// <param name="statusForSale">the status for the sale.</param>
+        /// <param name="statusForOrder">the status for the order.</param>
+        Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder);
+
+        /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the list of invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listStatus">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="types">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types);
+
+        /// <summary>
+        /// Get the data by finalized date.
+        /// </summary>
+        /// <param name="init">the date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate);
+
+        /// <summary>
+        /// Looks the orders by delivery id.
+        /// </summary>
+        /// <param name="deliveryIds">the deliveryies.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds);
+        
+        /// Get all custom component lists for product id and name.
+        /// </summary>
+        /// <param name="productId">Te product id.</param>
+        /// <param name="name">Te name.</param>
+        /// <returns>Related lists.</returns>
+        Task<List<CustomComponentListModel>> GetCustomComponentListByProductAndName(string productId, string name);
+
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        Task<bool> DeleteCustomComponentList(CustomComponentListModel customComponentList);
+        
+        /// <summary>
+        /// Delete components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns>
+        Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components);
+        
     }
 }

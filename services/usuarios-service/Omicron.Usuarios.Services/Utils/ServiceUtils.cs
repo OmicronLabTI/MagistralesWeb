@@ -57,6 +57,7 @@ namespace Omicron.Usuarios.Services.Utils
             users = criteria.ContainsKey(ServiceConstants.Role) ? users.Where(x => x.Role.ToString() == criteria[ServiceConstants.Role]).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Assignable) ? users.Where(x => x.Asignable.ToString() == criteria[ServiceConstants.Assignable] && x.Role == ServiceConstants.RoleQfb).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Status) ? users.Where(x => x.Activo.ToString() == criteria[ServiceConstants.Status]).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.TypeQfb) ? users.Where(x => x.Classification == criteria[ServiceConstants.TypeQfb]).ToList() : users;
             return users;
         }
     }

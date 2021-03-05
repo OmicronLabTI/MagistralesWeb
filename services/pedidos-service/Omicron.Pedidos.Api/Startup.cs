@@ -9,20 +9,24 @@
 namespace Omicron.Pedidos.Api
 {
     using System;
+    using System.IO;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.Pedidos.Api.Filters;
     using Omicron.Pedidos.DependencyInjection;
+    using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Reporting;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
@@ -129,7 +133,22 @@ namespace Omicron.Pedidos.Api
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapFileService, SapFileService>();
 
+            services.AddHttpClient("almacenService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["AlmacenUrl"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IAlmacenService, AlmacenService>();
+
+            services.AddHttpClient("reportingService", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["ReportingService"]);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IReportingService, ReportingService>();
+
             this.AddRedis(services, Log.Logger);
+            this.AddCorsSvc(services);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
@@ -167,14 +186,50 @@ namespace Omicron.Pedidos.Api
 
             app.UseResponseCompression();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Images")),
+                RequestPath = "/resources",
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Delivery")),
+                RequestPath = "/resources/delivery",
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Invoice")),
+                RequestPath = "/resources/invoice",
+            });
             app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 

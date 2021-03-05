@@ -79,5 +79,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// Bool is sales order.
         public bool HasMissingStock { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is sales order.
+        public string Batch { get; set; }
     }
 }

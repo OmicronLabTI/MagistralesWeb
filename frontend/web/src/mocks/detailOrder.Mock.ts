@@ -6,6 +6,7 @@ export const DetailOrderMock = {
     response: [
         {
             ordenFabricacionId: 0,
+            pedidoId: 1234,
             codigoProducto: '1071   15 ML',
             descripcionProducto: 'Ascorbico 4%  Glicolico 10%  Hialuronico 3%  Crema',
             descripcionCorta: 'ASCORBICO 4%  GLICOLICO 10%  HIALURONICO',
@@ -38,7 +39,8 @@ export const DetailOrderMock = {
             hasMissingStock: false,
             comments: null,
             label: 'Genérica',
-            finishedLabel: 0
+            finishedLabel: 0,
+            pedidoId: 1234,
         },
         {
             ordenFabricacionId: 89102,
@@ -56,7 +58,8 @@ export const DetailOrderMock = {
             hasMissingStock: false,
             comments: null,
             label: 'Genérica',
-            finishedLabel: 1
+            finishedLabel: 1,
+            pedidoId: 1234,
         },
         {
             ordenFabricacionId: 89103,
@@ -74,7 +77,8 @@ export const DetailOrderMock = {
             hasMissingStock: false,
             comments: null,
             label: 'Genérica',
-            finishedLabel: 1
+            finishedLabel: 1,
+            pedidoId: 1234,
         },
         {
             ordenFabricacionId: 89104,
@@ -92,7 +96,8 @@ export const DetailOrderMock = {
             hasMissingStock: false,
             comments: null,
             label: 'Genérica',
-            finishedLabel: 0
+            finishedLabel: 0,
+            pedidoId: 1234,
         },
         {
             ordenFabricacionId: 89105,
@@ -110,7 +115,8 @@ export const DetailOrderMock = {
             hasMissingStock: false,
             comments: null,
             label: 'Genérica',
-            finishedLabel: 1
+            finishedLabel: 1,
+            pedidoId: 1234,
         }
     ]
 };

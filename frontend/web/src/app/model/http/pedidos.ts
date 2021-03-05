@@ -49,11 +49,16 @@ export class ParamsPedidos {
     dateFull?: string;
     productCode?: string;
     isFromOrders?: boolean;
+    isfromCreateOrderIsolate?: boolean;
     clientName?: string;
     label?: string;
     finlabel: string;
-
-
+    isFromIncidents?: boolean;
+    orderIncidents?: number;
+    current?: string;
+    advance?: string;
+    clasification?: string;
+    docNumUntil?: any;
 }
 
 export class ProcessOrders {
@@ -82,8 +87,10 @@ export class IPedidoReq {
     hasRecipte?: string;
     qfb?: string;
     class?: string;
+    classClasification?: string;
     labelType: string;
     finishedLabel: number;
+    orderType: string;
 }
 
 export class CancelOrderReq {

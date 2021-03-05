@@ -206,12 +206,14 @@ class OrderDetailViewModel {
                 order: finishOrder, needsError: needsError,
                 statusCode: statusCode, testData: testData)
                 .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-                self?.loading.onNext(false)
-                self?.backToInboxView.onNext(())
-            }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                print(error.localizedDescription)
-            }).disposed(by: self.disposeBag)
+                    guard let self = self else { return }
+                    self.loading.onNext(false)
+                    self.backToInboxView.onNext(())
+                    self.rootViewModel.needsRefresh = true
+                }, onError: { [weak self] error in
+                    self?.loading.onNext(false)
+                    print(error.localizedDescription)
+                }).disposed(by: self.disposeBag)
         }
     }
     func validIfOrderCanBeFinalized(

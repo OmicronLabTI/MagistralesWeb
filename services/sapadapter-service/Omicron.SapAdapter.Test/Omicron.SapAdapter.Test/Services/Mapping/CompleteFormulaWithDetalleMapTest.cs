@@ -7,7 +7,6 @@
 // </summary>
 namespace Omicron.SapAdapter.Test.Services.Mapping
 {
-    using System.Collections.Generic;
     using NUnit.Framework;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -72,7 +71,6 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
 
             // Assert
             Assert.AreEqual(objectToMap.Status, baseObject.Status);
-            Assert.AreEqual(objectToMap.CloseDate, baseObject.RealEndDate);
             Assert.AreEqual(objectToMap.Comments, baseObject.Comments);
         }
     }

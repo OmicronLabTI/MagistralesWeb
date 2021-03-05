@@ -4,10 +4,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Observable } from 'rxjs';
 
 import { ProductivityService } from './productivity.service';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ProductivityService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe]
   }));
 

@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -131,6 +132,49 @@ namespace Omicron.Pedidos.Test.Services
             Assert.AreEqual(listsInResponse.Count, 2);
             Assert.AreEqual(listsInResponse[0].Components.Count, 2);
             Assert.AreEqual(listsInResponse[1].Components.Count, 1);
+        }
+
+        /// <summary>
+        /// Delete a custom list.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task DeleteCustomComponentList_DeleteCorrectly_SuccessResults()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Name, "001 PRES 20 ML USER IDENTIFIER I" },
+                { ServiceConstants.ProductId, "001" },
+            };
+
+            // act
+            var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
+
+            // assert
+            Assert.IsTrue(this.CheckAction(response, true, 2, 2));
+        }
+
+        /// <summary>
+        /// Delete a custom list.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task DeleteCustomComponentList_notExist_FailedResults()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Name, "001 PRES 20 ML USER IDENTIFIER IIIIII" },
+                { ServiceConstants.ProductId, "001" },
+            };
+
+            // act
+            var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
+
+            // assert
+            Assert.IsTrue(this.CheckAction(response, false, 3, 4));
+            Assert.Zero(int.Parse(response.Response.ToString()));
         }
 
         /// <summary>

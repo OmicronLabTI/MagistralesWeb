@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Running Kubernetes down'
 				sh 'sudo kubectl config use-context kubernetes-admin@kubernetes'
-                sh 'sudo kubectl delete all --all --grace-period=0 --force'
+                sh 'sudo kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
 				sh 'sudo docker system prune -f'
             }
         }

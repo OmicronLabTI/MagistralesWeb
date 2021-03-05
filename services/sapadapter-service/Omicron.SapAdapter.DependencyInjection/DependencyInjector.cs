@@ -15,7 +15,10 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Facade.Sap;
+    using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -36,11 +39,19 @@ namespace Omicron.SapAdapter.DependencyInjection
         {
             Services = services;
             Services.AddTransient<IUsersService, UsersService>();
+            Services.AddTransient<ICatalogsService, CatalogsService>();
             Services.AddTransient<ISapFacade, SapFacade>();
             Services.AddTransient<ISapService, SapService>();
+            Services.AddTransient<IAlmacenService, AlmacenService>();
             Services.AddTransient<ISapDao, SapDao>();
+            Services.AddTransient<ISapAlmacenFacade, SapAlmacenFacade>();
+            Services.AddTransient<ISapAlmacenService, SapAlmacenService>();
+            Services.AddTransient<ISapAlmacenDeliveryService, SapAlmacenDeliveryService>();
+            Services.AddTransient<ISapInvoiceService, SapInvoiceService>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
+            Services.AddTransient<IRedisService, RedisService>();
+            Services.AddTransient<IComponentsService, ComponentsService>();
             return Services;
         }
 

@@ -9,12 +9,13 @@
 namespace Omicron.SapAdapter.Services.Pedidos
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// clase de pedido Service.
@@ -49,6 +50,56 @@ namespace Omicron.SapAdapter.Services.Pedidos
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Makes a get to sapAdapter.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetUserPedidos(string route)
+        {
+            ResultDto result;
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+                }
+
+                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Makes a get to pedidos service.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetPedidosService(string route)
+        {
+            ResultDto result;
+            var url = this.httpClient.BaseAddress + route;
+
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode >= 300)
+                {
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+                }
+
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
             }
 

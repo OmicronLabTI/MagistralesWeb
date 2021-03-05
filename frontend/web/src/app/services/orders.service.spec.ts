@@ -4,10 +4,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { OrdersService } from './orders.service';
 import { DatePipe } from '@angular/common';
 import {Observable} from 'rxjs';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('OrdersService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe]
   }));
 
@@ -20,7 +21,10 @@ describe('OrdersService', () => {
     const service: OrdersService = TestBed.get(OrdersService);
     expect(service.getCustomList('anyQueryString') instanceof Observable).toBeTruthy();
   });
-
+  it('should getOrders', () => {
+    const service: OrdersService = TestBed.get(OrdersService);
+    expect(service.getOrders('anyQueryString') instanceof Observable).toBeTruthy();
+  });
   it('should saveMyListComponent', () => {
     const service: OrdersService = TestBed.get(OrdersService);
     expect(service.saveMyListComponent({}) instanceof Observable).toBeTruthy();

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
+  Colors, ColorsBarGraph,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
@@ -10,7 +11,7 @@ import {
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS,
+  MODAL_FIND_ORDERS, RouterPaths,
   TypeToSeeTap
 } from '../constants/const';
 import {DatePipe} from '@angular/common';
@@ -18,6 +19,9 @@ import {QfbWithNumber} from '../model/http/users';
 import {GeneralMessage} from '../model/device/general';
 import {CancelOrders, SearchComponentModal} from '../model/device/orders';
 import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
+import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
+import {CommentsConfig} from '../model/device/incidents.model';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +46,23 @@ export class DataService {
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
   private openSignatureDialog = new Subject<any>();
   private newDataSignature = new Subject<any>();
-  constructor(private datePipe: DatePipe) { }
+  private openCommentsDialog = new Subject<CommentsConfig>();
+  private newCommentsResult = new Subject<CommentsConfig>();
+  constructor(private datePipe: DatePipe, private router: Router
+  ) { }
+
+  setNewCommentsResult(newCommentsConfig: CommentsConfig) {
+    this.newCommentsResult.next(newCommentsConfig);
+  }
+  getNewCommentsResult() {
+    return this.newCommentsResult.asObservable();
+  }
+  setOpenCommentsDialog(commentsConfig: CommentsConfig) {
+    this.openCommentsDialog.next(commentsConfig);
+  }
+  getOpenCommentsDialog() {
+    return this.openCommentsDialog.asObservable();
+  }
 
   setNewDataSignature(newSignature: any) {
     this.newDataSignature.next(newSignature);
@@ -230,6 +250,8 @@ export class DataService {
           popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
+          title: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
+          content: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
         }
       }).then((result) => resolve(result));
     });
@@ -248,13 +270,18 @@ export class DataService {
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
-  transformDate(date: Date, isTest: boolean = false) {
-    if (!isTest) {
+  transformDate(date: Date, isSecondFormat: boolean = false) {
+    if (!isSecondFormat) {
       return this.datePipe.transform(date, 'dd/MM/yyyy');
     } else {
       return this.datePipe.transform(date, 'yyyy-MM-dd');
     }
   }
+
+  getDateArray(startDate: Date) {
+     return this.transformDate(startDate).split('/');
+  }
+
   getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
     let errorOrders = '';
     let firstMessage = '';
@@ -280,6 +307,10 @@ export class DataService {
         firstMessage = 'Ya se ha generado una solicitud para la orden ';
         finishMessaje = '\n';
         break;
+      case MessageType.ordersWithoutQr:
+        firstMessage = 'La orden de fabricación ';
+        finishMessaje = 'no cuenta con código qr \n';
+        break;
     }
     if (!isFromCancel) {
       itemsWithError.forEach((order: string) => {
@@ -302,17 +333,17 @@ export class DataService {
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
-                && t.pedidoStatus !== ConstStatus.entregado))).length > 0;
+                && t.pedidoStatus !== ConstStatus.almacenado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
-            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.entregado)).length > 0;
+            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.almacenado)).length > 0;
       case FromToFilter.fromOrderIsolatedReassign:
         return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
             || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
             || t.status === ConstStatus.terminado)).length > 0;
       case FromToFilter.fromOrdersIsolatedCancel:
         return dataToSearch.filter(t => (t.isChecked &&
-            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.entregado))).length > 0;
+            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.almacenado))).length > 0;
       case FromToFilter.fromOrderDetailLabel:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
       default:
@@ -336,25 +367,29 @@ export class DataService {
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = false;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
             || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== '')) {
+            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
+            || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
         (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
             || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === '')) {
+            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
+            || !resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -364,26 +399,37 @@ export class DataService {
     return isSearchWithFilter;
   }
 
+  getfiniOrffin(resultSearchOrderModal: ParamsPedidos, date: string,  ) {
+    if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+      return `?fini=${date}`;
+    } else {
+      return `?ffin=${date}`;
+    }
+  }
   getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
+
     const filterDataOrders = new  ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
+    filterDataOrders.isFromIncidents = resultSearchOrderModal.isFromIncidents;
 
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-      queryString = `?docNum=${resultSearchOrderModal.docNum}`;
+      filterDataOrders.docNumUntil = resultSearchOrderModal.docNumUntil;
+      queryString =  this.getRangeOrders(resultSearchOrderModal.docNum, resultSearchOrderModal.docNumUntil);
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
-        rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
-        if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
-          queryString = `?fini=${rangeDate}`;
+        if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
+          rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+          queryString = this.getfiniOrffin(resultSearchOrderModal, rangeDate);
+          filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = `?ffin=${rangeDate}`;
+          queryString = this.getfiniOrffin(resultSearchOrderModal, resultSearchOrderModal.dateFull);
+          filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
-        filterDataOrders.dateFull = rangeDate;
       }
       if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
         queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
@@ -409,6 +455,14 @@ export class DataService {
         queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
+      if (resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero && resultSearchOrderModal.orderIncidents) {
+        queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
+        filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
+      }
+      if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
+        queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
+        filterDataOrders.clasification = resultSearchOrderModal.clasification;
+      }
     }
 
     return [filterDataOrders, queryString];
@@ -430,9 +484,6 @@ export class DataService {
 
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
-  }
-  setOrderIsolated(isolatedOrder: string) {
-    localStorage.setItem(ConstToken.isolatedOrder, isolatedOrder);
   }
 
   getOrderIsolated() {
@@ -462,11 +513,136 @@ export class DataService {
         return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum);
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId);
+      case FromToFilter.fromDetailOrderQr:
+        return dataToSearch.filter(t => t.isChecked && t.status !== ConstStatus.abierto && t.status !== ConstStatus.cancelado)
+            .map(order => order.ordenFabricacionId);
       case FromToFilter.fromOrdersIsolated:
         return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
     }
   }
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
+      {
+        tooltips: {
+          callbacks: {
+            label: (tooltipItem, data) => {
+              if (Boolean(isPie)) {
+                return `${data.labels[tooltipItem.index]}: ${
+                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
+              } else {
+                return `${data.datasets[0].data[tooltipItem.index]}`;
+              }
+            }
+          }
+        },
+        legend: { display: false },
+        title: {
+          display: true,
+          text: titleForGraph
+        },
+        plugins: {
+          labels: isPie ? [
+            {
+              render: 'label',
+              precision: 2,
+              position: 'outside'
+            }
+          ] : [
+          ]
+        },
+        scales: {
+          yAxes: !isPie ? [{
+            ticks: {
+              beginAtZero: true
+            }
+          }] : []
+        }
+      }
+  )
+  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false) {
+    if (!isOnlyNumberPercent) {
+      return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
+    } else {
+      return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
+    }
+}
+  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[], isBarGraph: boolean) => (
+    {
+      labels: itemsArray.map(item => item.fieldKey),
+      datasets: [{
+        backgroundColor: this.getRandomColorsArray(itemsArray.length, isBarGraph),
+        data: itemsArray.map(item => item.totalCount),
+        borderColor: '#fff',
+        borderWidth: 3,
+        hoverBorderWidth: 10,
+        hoverBorderColor: '#c0c8ce'
+      }]
+    })
+  getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
+    let countIndex = CONST_NUMBER.zero;
+    const range = Colors.length;
+    const colorsArray = isBarGraph ? ColorsBarGraph : Colors;
+
+    let colorsString: string[] = [];
+    for (let i = 0; i < lengthArrayForGraph; i++) {
+      if (range === countIndex) {
+        countIndex = CONST_NUMBER.zero;
+      }
+      colorsString = [...colorsString, colorsArray[countIndex]];
+      countIndex++;
+    }
+    return colorsString;
+  }
+
+
+  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number) {
+    this.router.navigate([RouterPaths.detailFormula,
+      ordenFabricacionId, ordersIds, isFromOrders]);
+  }
+  getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
+    return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
+  }
+
+  getRangeOrders(docNum: any, docNumUntil: any) {
+    if (docNum === docNumUntil || docNumUntil === CONST_STRING.empty || !docNumUntil) {
+      return `?docNum=${docNum}-${docNum}`;
+    } else {
+      return `?docNum=${docNum}-${docNumUntil}`;
+    }
+  }
+  setFiltersActives(filters: string) {
+    localStorage.setItem(ConstToken.filtersActive, filters);
+  }
+  getFiltersActives() {
+    return  localStorage.getItem(ConstToken.filtersActive);
+  }
+  removeFiltersActive() {
+    localStorage.removeItem(ConstToken.filtersActive);
+  }
+  getFiltersActivesAsModel(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActives());
+  }
+  setFiltersActivesOrders(filters: string) {
+    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  }
+  getFiltersActivesOrders() {
+    return  localStorage.getItem(ConstToken.filtersActiveOrders);
+  }
+  removeFiltersActiveOrders() {
+    localStorage.removeItem(ConstToken.filtersActiveOrders);
+  }
+  getFiltersActivesAsModelOrders(): ParamsPedidos {
+    return  JSON.parse(this.getFiltersActivesOrders());
+  }
+  setCurrentDetailOrder(detailOrder: string) {
+    localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
+  }
+  getCurrentDetailOrder() {
+    return localStorage.getItem(ConstToken.detailOrderCurrent);
+  }
+  removeCurrentDetailOrder() {
+    localStorage.removeItem(ConstToken.detailOrderCurrent);
   }
 }

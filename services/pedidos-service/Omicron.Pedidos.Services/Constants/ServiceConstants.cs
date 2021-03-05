@@ -76,9 +76,49 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Reasignado = "Reasignado";
 
         /// <summary>
-        /// status entregado.
+        /// Almacenado status.
+        /// </summary>
+        public const string Almacenado = "Almacenado";
+
+        /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string Empaquetado = "Empaquetado";
+
+        /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string Enviado = "Enviado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Camino = "En Camino";
+
+        /// <summary>
+        /// value for empaquetado.
         /// </summary>
         public const string Entregado = "Entregado";
+
+        /// <summary>
+        /// value for empaquetado.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// status back order.
+        /// </summary>
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
+        /// recibir value.
+        /// </summary>
+        public const string Recibir = "Recibir";
+
+        /// <summary>
+        /// status entregado.
+        /// </summary>
+        public const string Rechazado = "Rechazado";
 
         /// <summary>
         /// orden de venta plan.
@@ -99,6 +139,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// when the order goes to Finished.
         /// </summary>
         public const string OrderFinished = "La orden {0} paso a Finalizado";
+
+        /// <summary>
+        /// when the order not goes to Rejected.
+        /// </summary>
+        public const string OrderNotRejectedBecauseExits = "El pedido {0} ya tiene Órdenes de Fabricación";
 
         /// <summary>
         /// cuando se asigna un pedido.
@@ -181,6 +226,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErroAlAsignar = "Error al asignar";
 
         /// <summary>
+        /// error al asignar.
+        /// </summary>
+        public const string ErrorToRejectedAnOrder = "Hubo un error al enviar emails";
+
+        /// <summary>
         /// error no user available.
         /// </summary>
         public const string ErrorQfbAutomatico = "Todos los QFB han rebasado el número máximo de piezas a elaborar, intenta con la asignación manual";
@@ -209,6 +259,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// gets the formula for each order.
         /// </summary>
         public const string GetFormula = "qfb/formula";
+
+        /// <summary>
+        /// gets the asesors email.
+        /// </summary>
+        public const string GetAsesorsMail = "asesors";
 
         /// <summary>
         /// gets the last isolated production order id.
@@ -266,6 +321,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetRecipes = "recipes/orders";
 
         /// <summary>
+        /// Gets the delivery.
+        /// </summary>
+        public const string GetDelivery = "delivery/orderids";
+
+        /// <summary>
+        /// Gets the line orders from almacen.
+        /// </summary>
+        public const string AlmacenGetOrders = "orders";
+
+        /// <summary>
+        /// Get the line products by invoice id.
+        /// </summary>
+        public const string AlmacenGetOrderByInvoice = "getline/invoiceId";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
@@ -299,6 +369,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// creates the pdfs.
         /// </summary>
         public const string CreateSalePdf = "create/sale/pdf";
+
+        /// <summary>
+        /// send emails to rejected orders.
+        /// </summary>
+        public const string SendEmailToRejectedOrders = "rejection/order/email";
 
         /// <summary>
         /// deletes the files.
@@ -403,7 +478,17 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string Qfb = "qfb";
+
+        /// <summary>
+        /// the sale order id key.
+        /// </summary>
+        public const string SaleOrderId = "saleorderid";
 
         /// <summary>
         /// if needs the large description.
@@ -419,6 +504,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Const for the limit.
         /// </summary>
         public const string Limit = "limit";
+
+        /// <summary>
+        /// delivery contants.
+        /// </summary>
+        public const string Delivery = "delivery";
 
         /// <summary>
         /// the nvo leon state.
@@ -441,6 +531,119 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Personalizado = "Personalizada";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQr = "QrMagistral";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrHeight = "QrMagistralHeight";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrWidth = "QrMagistralWidth";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string MagistralQrMargin = "QrMagistralMargin";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectx = "QrMagistralRectx";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRecty = "QrMagistralRecty";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectWidth = "QrMagistralRectWidth";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectHeight = "QrMagistralRectHeight";
+
+        /// <summary>
+        /// Field for the max day to look.
+        /// </summary>
+        public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
+
+        /// <summary>
+        /// The max days to look.
+        /// </summary>
+        public const string SentMaxDaysToLook = "SentMaxDays";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomTextOrden = "Orden: {0} {1}";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomTextRemision = "Remisión: {0} {1}";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrBottomTextFactura = "Factura: {0} {1}";
+
+        /// <summary>
+        /// const for the cooling.
+        /// </summary>
+        public const string NeedsCooling = "\nRequiere refrigeración";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string Insert = "insert";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponents = "redisComponents";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string Name = "name";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string ProductId = "productId";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusLocal { get; } = new List<string>
+        {
+            Empaquetado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusDelivered { get; } = new List<string>
+        {
+            Enviado,
+            Entregado,
+        };
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -448,7 +651,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// </value>
         public static List<string> StatusAvoidReasignar { get; } = new List<string>
         {
-            "Finalizado",
+            Finalizado,
         };
 
         /// <summary>
@@ -492,7 +695,31 @@ namespace Omicron.Pedidos.Services.Constants
             Terminado,
             Finalizado,
             Reasignado,
-            Entregado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatuPendingAlmacen { get; } = new List<string>
+        {
+            Pendiente,
+            Finalizado,
+            Almacenado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ListComponentsMostAssigned { get; } = new List<string>
+        {
+            "EN",
+            "EM",
         };
     }
 }

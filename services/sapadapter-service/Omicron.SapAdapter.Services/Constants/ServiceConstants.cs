@@ -41,6 +41,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// The type value.
+        /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string Label = "label";
@@ -49,6 +54,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the filter for orders.
         /// </summary>
         public const string FinishedLabel = "finlabel";
+
+        /// <summary>
+        /// The order type dict.
+        /// </summary>
+        public const string OrderType = "ordtype";
 
         /// <summary>
         /// if needs the large description.
@@ -74,6 +84,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the filter for orders.
         /// </summary>
         public const string ItemCode = "code";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Current = "current";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Advance = "advance";
 
         /// <summary>
         /// the abierto status.
@@ -116,6 +136,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Terminado = "Terminado";
 
         /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string Asignado = "Asignado";
+
+        /// <summary>
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
@@ -126,9 +151,64 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUserOrders = "getUserOrder/fabOrder";
 
         /// <summary>
+        /// route to get the user fab order.
+        /// </summary>
+        public const string GetOrdersByStatusAndUserId = "qfbOrders/{0}/{1}";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string GetUsersById = "getUsersById";
+
+        /// <summary>
+        /// url for the ones for almacen.
+        /// </summary>
+        public const string GetUserOrdersAlmancen = "userorders/almacen";
+
+        /// <summary>
+        /// Get the lines products for status almacenado.
+        /// </summary>
+        public const string GetLineProduct = "orders?status=Almacenado";
+
+        /// <summary>
+        /// Get the lines products for status almacenado.
+        /// </summary>
+        public const string GetLineProductPedidos = "almacen/orders";
+
+        /// <summary>
+        /// route for the delivery values.
+        /// </summary>
+        public const string GetLinesForDelivery = "delivery/orders";
+
+        /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderDelivery = "userorders/delivery";
+
+        /// <summary>
+        /// Get the user orders for invoices.
+        /// </summary>
+        public const string GetUserOrderInvoice = "userorders/invoice";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLinesForInvoice = "invoice/orders";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLinesBySaleOrder = "getline/saleorder";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetPackagesByInvoice = "getpackages/invoice";
+
+        /// <summary>
+        /// gets the incidents by sale id.
+        /// </summary>
+        public const string GetIncidents = "incident/saleorder";
 
         /// <summary>
         /// Get users by id.
@@ -169,6 +249,149 @@ namespace Omicron.SapAdapter.Services.Constants
         /// error when batche are missing.
         /// </summary>
         public const string NoNeedRecipe = "3";
+
+        /// <summary>
+        /// Status finalizado.
+        /// </summary>
+        public const string Finalizado = "Finalizado";
+
+        /// <summary>
+        /// status por recibir.
+        /// </summary>
+        public const string PorRecibir = "Por recibir";
+
+        /// <summary>
+        /// status almacenado.
+        /// </summary>
+        public const string Almacenado = "Almacenado";
+
+        /// <summary>
+        /// the empaquetado status.
+        /// </summary>
+        public const string Empaquetado = "Empaquetado";
+
+        /// <summary>
+        /// status not delivered.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// status pendiente.
+        /// </summary>
+        public const string Pendiente = "Pendiente";
+
+        /// <summary>
+        /// status back order.
+        /// </summary>
+        public const string BackOrder = "Back Order";
+
+        /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Recibir = "Recibir";
+
+        /// <summary>
+        /// Magistral.
+        /// </summary>
+        public const string Magistral = "Magistral";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
+        public const string Linea = "de Línea";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
+        public const string Line = "linea";
+
+        /// <summary>
+        /// producto mixto.
+        /// </summary>
+        public const string Mixto = "Mixto";
+
+        /// <summary>
+        /// PT wharegouse.
+        /// </summary>
+        public const string PT = "PT";
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string NuevoLeon = "Nuevo León";
+
+        /// <summary>
+        /// the foreign value.
+        /// </summary>
+        public const string Foraneo = "Foráneo";
+
+        /// <summary>
+        /// the local status.
+        /// </summary>
+        public const string Local = "Local";
+
+        /// <summary>
+        /// foregin package error.
+        /// </summary>
+        public const string ForeingPackage = "El paquete es foráneo y no puede ser entregado por un repartidor local";
+
+        /// <summary>
+        /// the packages is not available.
+        /// </summary>
+        public const string PackageNotAvailable = "El paquete se encuentra";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllTypes = "magistral,mixto,linea";
+
+        /// <summary>
+        /// Get the params.
+        /// </summary>
+        public const string GetParams = "params/contains/field";
+
+        /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string SentMaxDays = "AlmacenMaxDayToLook";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Pedido = "ped";
+
+        /// <summary>
+        /// Orden value.
+        /// </summary>
+        public const string Orden = "ord";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponents = "redisComponents";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForUserOrder { get; } = new List<string>
+        {
+            Magistral.ToLower(),
+            Mixto.ToLower(),
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> TypesForLine { get; } = new List<string>
+        {
+            "linea",
+        };
 
         /// <summary>
         /// Gets the status of the order.
@@ -216,6 +439,21 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { "%C3%9C", "Ü" },
             { "%C3%BC", "ü" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> KeysToIgnoreRedis { get; } = new List<string>
+        {
+            Offset,
+            Limit,
+            Advance,
+            Current,
+            NeedsLargeDsc,
         };
     }
 }

@@ -658,4 +658,42 @@
 		<column name="field" value="MagistralesDaysToLook"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-1.72">
+	<insert tableName="parameters"> 
+		<column name="value" value="sc1@o-lab.mx"/>
+		<column name="type" value="string"/>
+		<column name="field" value="EmailAtencionAClientes"/>
+	</insert>
+  </changeSet>
+  <changeSet author="erosas" id="changelog-1.73">
+      <sql endDelimiter=";">
+          update parameters set value = 'mzuniga@o-lab.mx' where field = 'EmailAtencionAClientes'
+      </sql>
+  </changeSet>
+  <changeSet author="erosas" id="changelog-1.74">
+    <addColumn tableName ="usersorders">
+      <column 
+        name="batchfinalized"
+        type="varchar(50)">
+      </column>
+    </addColumn>  
+  </changeSet>
+  <changeSet author="esanchez" id="changelog-1.75">
+    <addColumn tableName ="user">
+      <column 
+        name="classification"
+        type="varchar(30)">
+      </column>
+    </addColumn>  
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.76">
+      <sql endDelimiter=";">
+          ALTER TABLE usersorders ALTER COLUMN closedate TYPE Date using closedate::date;
+      </sql>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.77">
+      <sql endDelimiter=";">
+          ALTER TABLE usersorders ALTER COLUMN finishdate TYPE Date using finishdate::date;
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
