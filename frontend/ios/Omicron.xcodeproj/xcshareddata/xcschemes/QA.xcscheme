@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "49E4D90125F171CB00E196F9"
-               BuildableName = "OmicronDev.app"
-               BlueprintName = "OmicronDev"
+               BlueprintIdentifier = "49CF663825F2D821002CD598"
+               BuildableName = "OmicronQA.app"
+               BlueprintName = "OmicronQA"
                ReferencedContainer = "container:Omicron.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "QA"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,15 +44,15 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "49E4D90125F171CB00E196F9"
-            BuildableName = "OmicronDev.app"
-            BlueprintName = "OmicronDev"
+            BlueprintIdentifier = "49CF663825F2D821002CD598"
+            BuildableName = "OmicronQA.app"
+            BlueprintName = "OmicronQA"
             ReferencedContainer = "container:Omicron.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "QA"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -61,18 +61,18 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "49E4D90125F171CB00E196F9"
-            BuildableName = "OmicronDev.app"
-            BlueprintName = "OmicronDev"
+            BlueprintIdentifier = "49CF663825F2D821002CD598"
+            BuildableName = "OmicronQA.app"
+            BlueprintName = "OmicronQA"
             ReferencedContainer = "container:Omicron.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "QA">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "QA"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
