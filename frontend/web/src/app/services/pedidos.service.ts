@@ -16,13 +16,13 @@ import {
   IProcessOrdersRes, IRecipesRes, IWorkLoadRes, OrderToDelivered,
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
-import {IPedidoDetalleLabelReq, IPedidoDetalleListRes, IQrByOrdersRes} from '../model/http/detallepedidos.model';
 import {
   IOrdersRefuseReq,
   IPedidoDetalleLabelReq,
   IPedidoDetalleListRes,
-  IPedidoRefuseRes
+  IPedidoRefuseRes, IQrByOrdersRes
 } from '../model/http/detallepedidos.model';
+
 
 @Injectable({
   providedIn: 'root'

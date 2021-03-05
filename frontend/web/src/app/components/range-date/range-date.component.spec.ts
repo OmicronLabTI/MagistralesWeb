@@ -6,6 +6,7 @@ import {MATERIAL_COMPONENTS} from '../../app.material';
 import {FormsModule} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('RangeDateComponent', () => {
   let component: RangeDateComponent;
@@ -15,7 +16,7 @@ describe('RangeDateComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ RangeDateComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MATERIAL_COMPONENTS, FormsModule, BrowserAnimationsModule],
+      imports: [MATERIAL_COMPONENTS, FormsModule, BrowserAnimationsModule, RouterTestingModule],
       providers: [DatePipe]
     })
     .compileComponents();

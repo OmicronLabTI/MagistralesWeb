@@ -5,10 +5,11 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {DatePipe} from '@angular/common';
 import {Observable} from 'rxjs';
 import {ChangeStatusIncidentReq} from '../model/http/incidents.model';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('IncidentsService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe]
   }));
 

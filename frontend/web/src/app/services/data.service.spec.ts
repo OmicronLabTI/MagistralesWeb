@@ -313,12 +313,4 @@ describe('DataService', () => {
     expect(service.getUserRole).toBeTruthy('3');
   });
 
-  it('should getOrderInsolated', () => {
-    const service: DataService = TestBed.get(DataService);
-    service.setOrderIsolated('anyIsolatedOrder');
-    expect(service.getOrderIsolated).toBeTruthy();
-    service.removeOrderIsolated();
-
-  });
-
 });

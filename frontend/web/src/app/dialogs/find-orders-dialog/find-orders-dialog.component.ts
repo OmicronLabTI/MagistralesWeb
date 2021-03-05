@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS, ValidDigits} from '../../constants/const';
+import {CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { PedidosService} from '../../services/pedidos.service';
 import { ErrorService} from '../../services/error.service';
@@ -50,7 +50,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             clientName: ['', [Validators.maxLength(80)]],
             label: ['', []],
             finlabel: ['', []],
-            orderIncidents: ['', [Validators.maxLength(10)]]
+            orderIncidents: ['', [Validators.maxLength(10)]],
             clasification: ['', []],
         });
         this.isToResetData = // add more filter to receive
@@ -252,10 +252,11 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             && this.findOrdersForm.get('label').value !== null) || (this.findOrdersForm.get('finlabel').value !== CONST_STRING.empty
             && this.findOrdersForm.get('finlabel').value !== null) ||
             (this.findOrdersForm.get('orderIncidents').value !== CONST_STRING.empty
-                && this.findOrdersForm.get('orderIncidents').value !== null)))
-            && this.findOrdersForm.get('clasification').value !== null) ||
+            && this.findOrdersForm.get('orderIncidents').value !== null)  ||
             (this.findOrdersForm.get('docNumUntil').value !== CONST_STRING.empty
-            && this.findOrdersForm.get('docNumUntil').value !== null))) {
+            && this.findOrdersForm.get('docNumUntil').value !== null)  ||
+            (this.findOrdersForm.get('clasification').value !== CONST_STRING.empty
+                && this.findOrdersForm.get('clasification').value !== null) )) {
             this.searchOrders();
         }
     }
