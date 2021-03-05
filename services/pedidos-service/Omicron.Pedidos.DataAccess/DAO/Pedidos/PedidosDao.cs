@@ -25,8 +25,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     {
         private readonly IDatabaseContext databaseContext;
 
-        private readonly string CloseDate = "CloseDate";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosDao"/> class.
         /// </summary>
@@ -104,8 +102,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaFin(DateTime fechaInicio, DateTime fechaFin)
         {
-            var orderByFinishDate = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.FinishDate)).ToListAsync();
-            return this.GetDataByDateConvert(orderByFinishDate, fechaInicio, fechaFin, "finishDate");
+            return await this.databaseContext.UserOrderModel.Where(x => x.FinishDate != null && x.FinishDate >= fechaInicio && x.FinishDate <= fechaFin).ToListAsync();
         }
 
         /// <summary>
@@ -116,8 +113,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin)
         {
-            var orderByFinishDate = await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.CloseDate)).ToListAsync();
-            return this.GetDataByDateConvert(orderByFinishDate, fechaInicio, fechaFin, this.CloseDate);
+            return await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= fechaInicio && x.CloseDate <= fechaFin).ToListAsync();            
         }
 
         /// <summary>
@@ -391,30 +387,36 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Gets the fields with the dates.
         /// </summary>
-        /// <param name="userOrders">the user orders.</param>
-        /// <param name="fechaInicio">the init date.</param>
-        /// <param name="fechaFin">the end date.</param>
-        /// <param name="field">the field to look.</param>
-        /// <returns>teh data.</returns>
-        private IEnumerable<UserOrderModel> GetDataByDateConvert(List<UserOrderModel> userOrders, DateTime fechaInicio, DateTime fechaFin, string field)
+        /// <param name="productId">Te product id.</param>
+        /// <param name="name">Te product id.</param>
+        /// <returns>Related lists.</returns>
+        public async Task<List<CustomComponentListModel>> GetCustomComponentListByProductAndName(string productId, string name)
         {
-            var listToReturn = new List<UserOrderModel>();
+            return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId) && x.Name.Equals(name) ).ToListAsync();
+        }
 
-            Parallel.ForEach(userOrders, user =>
-            {
-                var dateArray = field.Equals(this.CloseDate) ? user.CloseDate.Split("/") : user.FinishDate.Split("/");
-                var finishDate = new DateTime(int.Parse(dateArray[2]), int.Parse(dateArray[1]), int.Parse(dateArray[0]));
+        /// <summary>
+        /// Delete components of custom list.
+        /// </summary>
+        /// <param name="components">Components of custom list to insert.</param>
+        /// <returns>Operation result.</returns> 
+        public async Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components)
+        {
+            this.databaseContext.ComponentsCustomComponentLists.RemoveRange(components);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
 
-                if (finishDate >= fechaInicio && finishDate <= fechaFin)
-                {
-                    lock (listToReturn)
-                    {
-                        listToReturn.Add(user);
-                    }
-                }
-            });
-
-            return listToReturn;
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="customComponentList">Custom list to insert.</param>
+        /// <returns>Operation result</returns>
+        public async Task<bool> DeleteCustomComponentList(CustomComponentListModel customComponentList)
+        {
+            this.databaseContext.CustomComponentLists.Remove(customComponentList);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
     }
 }

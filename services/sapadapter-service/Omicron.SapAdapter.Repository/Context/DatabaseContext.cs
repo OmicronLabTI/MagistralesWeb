@@ -32,7 +32,20 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<AsesorModel> AsesorModel { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets or sets salesPersonModel.
+        /// </summary>
+        /// <value>
+        /// Object salesPersonModel.
+        /// </value>
+        public virtual DbSet<SalesPersonModel> SalesPersonModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderModel.
+        /// </summary>
+        /// <value>
+        /// Object UserModel OrderModel.
+        /// </value>
         public virtual DbSet<DetallePedidoModel> DetallePedido { get; set; }
 
         /// <inheritdoc/>

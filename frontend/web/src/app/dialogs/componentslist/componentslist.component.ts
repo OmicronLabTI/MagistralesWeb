@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, AfterViewInit } from '@angular/core';
 
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { BaseComponent } from 'src/app/model/http/listacomponentes';
@@ -6,6 +6,7 @@ import { DataService } from 'src/app/services/data.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
 import { MatTableDataSource} from '@angular/material';
+import {ErrorService} from '../../services/error.service';
 
 @Component({
   selector: 'app-componentslist',
@@ -13,14 +14,15 @@ import { MatTableDataSource} from '@angular/material';
   styleUrls: ['./componentslist.component.scss']
 })
 export class ComponentslistComponent implements AfterViewInit {
-  displayedColumns: string[] = ['nombre'];
+  displayedColumns: string[] = ['nombre', 'actions'];
   dataSource = new MatTableDataSource<BaseComponent>();
 
   constructor(
     private dialogRef: MatDialogRef<ComponentslistComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
-    private orderService: OrdersService
+    private orderService: OrdersService,
+    private errorService: ErrorService
   ) { }
 
   ngAfterViewInit() {
@@ -39,6 +41,16 @@ export class ComponentslistComponent implements AfterViewInit {
         this.dialogRef.close({componentes: element.components});
       }
     });
+  }
+  removeCustomList(element: BaseComponent) {
+    this.dataService.presentToastCustom(`${Messages.removeListComponents} ${element.name.toUpperCase()}?`,
+        'question', '', true, true).then( (res: any) => {
+      if (res.isConfirmed) {
+        this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( () => {
+          this.dataService.setMessageGeneralCallHttp({isButtonAccept: false, icon: 'success', title: Messages.success});
+          this.getCustomList();
+        }, error =>  this.errorService.httpError(error));
+      }});
   }
 
 }

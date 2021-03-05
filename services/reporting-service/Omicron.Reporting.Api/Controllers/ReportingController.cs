@@ -89,6 +89,19 @@ namespace Omicron.Reporting.Api.Controllers
         }
 
         /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/rejection/order/email")]
+        [HttpPost]
+        public async Task<IActionResult> SendEmailRejectedOrder(SendRejectedEmailDto request)
+        {
+           var response = await this.reportingFacade.SendEmailRejectedOrder(request);
+           return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>

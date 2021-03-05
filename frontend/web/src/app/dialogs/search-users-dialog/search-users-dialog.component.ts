@@ -27,7 +27,8 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
       lastNameSe: ['', [ Validators.maxLength(50)]],
       userTypeRSe: ['', []],
       activoSe: ['', []],
-      asignableSe: ['', []]
+      asignableSe: ['', []],
+      classificationQFBSe: ['', []]
     });
   }
 
@@ -42,7 +43,8 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
                            this.searchUserForm.get('lastNameSe').value !== CONST_STRING.empty ||
                            this.searchUserForm.get('userTypeRSe').value !== CONST_STRING.empty ||
                            this.searchUserForm.get('activoSe').value !== CONST_STRING.empty ||
-                           this.searchUserForm.get('asignableSe').value !== CONST_STRING.empty;
+                           this.searchUserForm.get('asignableSe').value !== CONST_STRING.empty ||
+                           this.searchUserForm.get('classificationQFBSe').value !== CONST_STRING.empty;
     }));
     this.usersService.getRoles().subscribe(rolesRes => {
       this.userRoles = rolesRes.response;
@@ -63,6 +65,9 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
                                                     this.searchData.activoSe : CONST_STRING.empty);
     this.searchUserForm.get('asignableSe').setValue(this.searchData.asignableSe && this.searchData.asignableSe !== '' ?
                                                      this.searchData.asignableSe : CONST_STRING.empty);
+    // tslint:disable-next-line:max-line-length
+    this.searchUserForm.get('classificationQFBSe').setValue(this.searchData.classificationQFBSe && this.searchData.classificationQFBSe !== '' ?
+                                                     this.searchData.classificationQFBSe : CONST_STRING.empty);
   }
 
 
@@ -77,6 +82,7 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
     this.searchUserForm.get('userTypeRSe').setValue('');
     this.searchUserForm.get('activoSe').setValue('');
     this.searchUserForm.get('asignableSe').setValue('');
+    this.searchUserForm.get('classificationQFBSe').setValue('');
     this.isCorrectData = true;
   }
   keyDownUsers(event: KeyboardEvent) {
@@ -86,7 +92,9 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
         && this.searchUserForm.get('lastNameSe').value !== null) || (this.searchUserForm.get('userTypeRSe').value !== CONST_STRING.empty
         && this.searchUserForm.get('userTypeRSe').value !== null) || (this.searchUserForm.get('activoSe').value !== CONST_STRING.empty
         && this.searchUserForm.get('activoSe').value !== null) || (this.searchUserForm.get('asignableSe').value !== CONST_STRING.empty
-        && this.searchUserForm.get('asignableSe').value !== null) )) {
+        && this.searchUserForm.get('asignableSe').value !== null) ||
+        (this.searchUserForm.get('classificationQFBSe').value !== CONST_STRING.empty
+        && this.searchUserForm.get('classificationQFBSe').value !== null) )) {
       this.searchUser();
     }
   }

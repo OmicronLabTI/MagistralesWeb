@@ -22,6 +22,8 @@ namespace Omicron.SapFile.Services.SapFile
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using iTextSharp.text;
+    using iTextSharp.text.pdf;
 
     /// <summary>
     /// Class to create pdfs.
@@ -291,7 +293,19 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 filePaths.Add(this.CreateFabOrderReportWithSignatures(x, false));
             });
-            filePaths.AddRange(recipeRoute);
+
+            recipeRoute.ForEach(recipe =>
+            {
+                if (!recipe.Contains(".pdf"))
+                {
+                    filePaths.Add(this.CreatePdfFromAnImage(recipe));
+                }
+                else
+                {
+                    filePaths.Add(recipe);
+                }
+            });
+
             filePaths = filePaths.Where(x => File.Exists(x)).ToList();
 
             PdfFileHelper.MergePdfFiles(filePaths, mergedFilePath);
@@ -328,6 +342,38 @@ namespace Omicron.SapFile.Services.SapFile
             ServiceUtils.CopyFile(src, finalPath);
             ServiceUtils.DeleteFile(src);
             return finalPath;
+        }
+
+        /// <summary>
+        /// Create a new pdf file from an image.
+        /// </summary>
+        /// <param name="imageUrl">Source file path.</param>
+        /// <returns>Final file path.</returns>
+        private string CreatePdfFromAnImage(string imageUrl)
+        {
+            Document doc = new Document(PageSize.A4, 10f, 10f, 30f, 0f);
+            var imageName = Path.GetFileNameWithoutExtension(imageUrl);
+            var pathPdf = Path.Combine(TemporalDirectoryPath, $"{imageName}.pdf");
+            PdfWriter writer = PdfWriter.GetInstance(doc, new FileStream(pathPdf, FileMode.Create));
+            doc.Open();
+            try
+            {
+                Image image = Image.GetInstance(imageUrl);
+                image.ScaleToFit(560, 560);
+                image.Alignment = Element.ALIGN_CENTER;
+                doc.Add(image);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                doc.Close();
+                writer.Close();
+            }
+
+            return pathPdf;
         }
     }
 }

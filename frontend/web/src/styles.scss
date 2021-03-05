@@ -213,14 +213,22 @@ td{
 }
 
 .table-toolbar .table-toolbar-buttons{
-  width: 90%;
+  width: 92%;
   display: flex;
   justify-content: flex-end;
 }
 .refresh-icon-on-toolbar {
-  width: 10%;
+  width: 8%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
-
+.with-buttons-custom {
+  width: 18% !important;
+}
+.with-table-toolbar-custom {
+  width: 82% !important;
+}
 .table-toolbar .table-toolbar-buttons button{
   margin-bottom: 15px;
 }
@@ -340,6 +348,9 @@ th.centered {
   flex-direction: row-reverse;
 
 }
+.swal2-title2 {
+  font-size: 100% !important;
+}
 .popup-custom {
   width: 70% !important;
 }
@@ -405,6 +416,16 @@ th.centered {
 }
 .margin-left-options{
   margin-left: 15px;
+}
+.margin-right-options {
+  margin-right: 29px;
+}
+.margin-left-options2{
+  margin-left: 0px;
+  margin-right: 15px;
+}
+.margin-left-options-buttons{
+  margin-left: 35px;
 }
 .background-color-omicron {
   background-color: #6C90B3!important;
@@ -711,6 +732,13 @@ a.breadcrumblink:hover{
   font-weight: 700 !important;
   width: 100px;
 }
+.mat-stroked-button.rechazado {
+  display: flex;
+  justify-content: center;
+  background-color: #B54252;
+  font-weight: 700 !important;
+  width: 100px;
+}
 
 .mat-stroked-button.close-sap {
   display: flex;
@@ -719,7 +747,42 @@ a.breadcrumblink:hover{
   font-weight: 700 !important;
   width: 100px;
 }
-
+.mat-stroked-button.clasification-mn {
+  display: flex;
+  justify-content: center;
+  background-color: #1E65C6;
+  font-weight: 700 !important;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.mat-stroked-button.clasification-be {
+  display: flex;
+  justify-content: center;
+  background-color: #38A626;
+  font-weight: 700 !important;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.mat-stroked-button.clasification-mg {
+  display: flex;
+  justify-content: center;
+  background-color: #632289;
+  font-weight: 700 !important;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.mat-stroked-button.clasification-mx {
+  display: flex;
+  justify-content: center;
+  background-color: #D7349C;
+  font-weight: 700 !important;
+  width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
 .is-loading {
   width: 100%;
   height: 100%;
@@ -851,3 +914,44 @@ a.breadcrumblink:hover{
   color: white;
 
 }
+.custom-title-list-container {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+}
+.icon-next-container {
+  padding: 20px;
+}
+.width-icon-next-order {
+  font-size: 40px !important;
+}
+.padding-tp {
+  padding-top: 18px !important;
+}
+.border-none{
+  border: none;
+}
+.height-next-back {
+  font-size: 37px;
+}
+.height-refresh {
+  font-size: 42px;
+}
+.margin-top-buttons {
+  margin-top: 2% !important;
+}
+// .mat-form-field-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
+
+// }
+// ::ng-deep.mat-form-field-underline {
+//   /*change color of underline*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// ::ng-deep.mat-form-field-ripple {
+//   /*change color of underline when focused*/
+//   background-color: rgba(108, 144, 179, 1) !important;
+// }
+// .mat-input-underline {
+//   caret-color: rgba(108, 144, 179, 1) !important;
+// }

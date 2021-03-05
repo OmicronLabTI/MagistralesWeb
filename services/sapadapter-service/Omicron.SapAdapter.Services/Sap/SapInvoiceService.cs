@@ -590,9 +590,13 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var batchTransacion = await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, delivery);
             var lastBatch = batchTransacion == null || !batchTransacion.Any() ? 0 : batchTransacion.Last().LogEntry;
-            var batchTrans = (await this.sapDao.GetBatchTransationsQtyByLogEntry(lastBatch)).ToList();
+            var batchTrans = (await this.sapDao.GetBatchTransationsQtyByLogEntry(new List<int> { lastBatch })).ToList();
+            var listComponents = new List<CompleteDetalleFormulaModel>
+            {
+                new CompleteDetalleFormulaModel { ProductId = itemCode, Warehouse = warehouse },
+            };
 
-            var validBatches = (await this.sapDao.GetValidBatches(itemCode, warehouse)).ToList();
+            var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
 
             var listToReturn = new List<string>();
             validBatches.Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>

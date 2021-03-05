@@ -78,7 +78,7 @@ namespace Omicron.Reporting.Services
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
 
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
@@ -104,6 +104,43 @@ namespace Omicron.Reporting.Services
                 smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
+        /// Submit raw material request..
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request)
+        {
+            var customerServiceEmail = ServiceConstants.CustomerServiceEmail;
+            var listToLook = new List<string> { customerServiceEmail };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(customerServiceEmail)).Value;
+            List<ResultModel> resultados = new List<ResultModel> { };
+            var rejectedOrderList = this.GetGroupsOfList(request.RejectedOrder, 3);
+
+            foreach (var orderList in rejectedOrderList)
+            {
+                await Task.WhenAll(orderList.Select(async x =>
+                {
+                    var destinyEmail = x.DestinyEmail != string.Empty ? x.DestinyEmail : configCustomerServiceEmail;
+                    var text = this.GetBodyForRejectedEmail(x);
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                    smtpConfig,
+                    destinyEmail,
+                    text.Item1,
+                    text.Item2,
+                    configCustomerServiceEmail);
+                    resultados.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Response = resultados };
         }
 
         /// <summary>
@@ -136,15 +173,51 @@ namespace Omicron.Reporting.Services
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
             var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBase, greetingError, payment, ServiceConstants.RefundPolicy);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
+        }
+
+        /// <summary>
+        /// Gets a list divided in sublists.
+        /// </summary>
+        /// <typeparam name="Tsource">the original list.</typeparam>
+        /// <param name="listToSplit">the original list to split.</param>
+        /// <param name="maxCount">the max count per group.</param>
+        /// <returns>the list of list.</returns>
+        private List<List<Tsource>> GetGroupsOfList<Tsource>(List<Tsource> listToSplit, int maxCount)
+        {
+            var listToReturn = new List<List<Tsource>>();
+            var offset = 0;
+            while (offset < listToSplit.Count)
+            {
+                var sublist = new List<Tsource>();
+                sublist.AddRange(listToSplit.Skip(offset).Take(maxCount).ToList());
+                listToReturn.Add(sublist);
+                offset += maxCount;
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="order">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForRejectedEmail(RejectedOrdersModel order)
+        {
+            var subject = string.Format(ServiceConstants.InRejectedEmailSubject, order.SalesOrders, order.CustomerName);
+            var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
+            var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
+            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            return new Tuple<string, string>(subject, body);
         }
 
         /// <summary>

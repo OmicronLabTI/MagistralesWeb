@@ -6,19 +6,27 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import { GraphShowComponent } from './graph-show/graph-show.component';
+import {ButtonRefreshComponent} from './button-refresh/button-refresh.component';
+import { ButtonBackComponent } from './button-back/button-back.component';
+import { ButtonNextComponent } from './button-next/button-next.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
-  declarations: [RangeDateComponent, GraphShowComponent],
+  declarations: [RangeDateComponent, GraphShowComponent, ButtonRefreshComponent, ButtonBackComponent, ButtonNextComponent],
     exports: [
         RangeDateComponent,
-        GraphShowComponent
+        GraphShowComponent,
+        ButtonRefreshComponent,
+        ButtonBackComponent,
+        ButtonNextComponent
     ],
     imports: [
         CommonModule,
         MatFormFieldModule,
         MatDatepickerModule,
         FormsModule,
-        MatInputModule
+        MatInputModule,
+        MatTooltipModule
     ]
 })
 export class ComponentsModule { }

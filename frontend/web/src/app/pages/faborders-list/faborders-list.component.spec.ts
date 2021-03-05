@@ -27,7 +27,8 @@ describe('FabordersListComponent', () => {
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
       'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
         'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
-        'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter'
+        'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
+      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'

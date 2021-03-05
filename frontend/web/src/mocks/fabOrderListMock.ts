@@ -17,7 +17,8 @@ export const FabOrderListMock = {
             status: 'Abierto',
             unit: 'Pieza',
             hasMissingStock: true,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000001'
         },
         {
             docNum: 0,
@@ -31,7 +32,8 @@ export const FabOrderListMock = {
             status: 'Planificado',
             unit: 'Kilogramo',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000002'
         },
         {
             docNum: 0,
@@ -45,7 +47,8 @@ export const FabOrderListMock = {
             status: 'Asignado',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000003'
         },
         {
             docNum: 0,
@@ -59,7 +62,8 @@ export const FabOrderListMock = {
             status: 'Pendiente',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000004'
         },
         {
             docNum: 0,
@@ -73,7 +77,8 @@ export const FabOrderListMock = {
             status: 'Terminado',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000005'
         },
         {
             docNum: 0,
@@ -87,7 +92,8 @@ export const FabOrderListMock = {
             status: 'En Proceso',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000006'
         },
         {
             docNum: 0,
@@ -101,7 +107,8 @@ export const FabOrderListMock = {
             status: 'Reasignado',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000007'
         },
         {
             docNum: 0,
@@ -115,7 +122,8 @@ export const FabOrderListMock = {
             status: 'Finalizado',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000008'
         },
         {
             docNum: 0,
@@ -129,7 +137,8 @@ export const FabOrderListMock = {
             status: 'Cancelado',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-000009'
         },
         {
             docNum: 0,
@@ -143,7 +152,8 @@ export const FabOrderListMock = {
             status: 'Abierto',
             unit: 'Pieza',
             hasMissingStock: false,
-            quantityFinish: 12
+            quantityFinish: 12,
+            batch: 'L-0000010'
         }
     ]
-}
+};

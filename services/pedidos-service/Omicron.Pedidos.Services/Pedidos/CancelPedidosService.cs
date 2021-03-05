@@ -486,7 +486,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Sales order.</returns>
         private async Task<FabricacionOrderModel> GetFabricationOrderFromSap(int productionOrderId)
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string> { { "docNum", productionOrderId.ToString() } };
+            Dictionary<string, string> parameters = new Dictionary<string, string> { { "docNum", $"{productionOrderId.ToString()}-{productionOrderId.ToString()}" } };
             var payload = new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() };
 
             var orders = await this.sapAdapter.PostSapAdapter(payload, ServiceConstants.GetFabOrdersByFilter);

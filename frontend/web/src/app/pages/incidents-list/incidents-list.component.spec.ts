@@ -11,6 +11,7 @@ import {of} from 'rxjs';
 import {IncidentListMock} from '../../../mocks/incidentsListMock';
 import {ConstStatus} from '../../constants/const';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
@@ -28,7 +29,8 @@ describe('IncidentsListComponent', () => {
       providers: [DatePipe,
         { provide: IncidentsService, useValue: incidentsServiceSpy }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [ PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule, BrowserAnimationsModule]
+      imports: [ PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
+        BrowserAnimationsModule, RouterTestingModule]
     })
     .compileComponents();
   }));

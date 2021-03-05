@@ -1,12 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatTableDataSource} from '@angular/material';
+import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq} from '../../model/http/detalleformula';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
 import {DataService} from '../../services/data.service';
 import {
+  CarouselOption,
+  CarouselOptionString,
   ComponentSearch,
   CONST_DETAIL_FORMULA,
   CONST_NUMBER,
@@ -14,11 +16,12 @@ import {
   HttpServiceTOCall
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
-import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
-import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componentslist.component';
-import { Components } from 'src/app/model/http/listacomponentes';
+import {MiListaComponent} from 'src/app/dialogs/mi-lista/mi-lista.component';
+import {ComponentslistComponent} from 'src/app/dialogs/componentslist/componentslist.component';
+import {Components} from 'src/app/model/http/listacomponentes';
+import {ParamsPedidos} from 'src/app/model/http/pedidos';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -57,17 +60,29 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   isSaveToMyList = false;
   isPlannedQuantityError = false;
+  detailOrders: string[] = [];
+  isFromDetail = false;
+  queryString = CONST_STRING.empty;
+  currentOrdenFabricacionId = CONST_STRING.empty;
+  filterDataOrdersForOrderIsolated = new ParamsPedidos();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               private dataService: DataService,
               private titleService: Title) {
-    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_FORMULA);
   }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.ordenFabricacionId = params.get('ordenid');
+      this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
+      this.detailOrders = params.get('detailsOrders').split(',');
+      this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
+      if (this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+        this.createfilterDataOrdersForOrderIsolated();
+      }
+
+      this.dataService.setUrlActive(this.isFromDetail ? HttpServiceTOCall.DETAIL_ORDERS : HttpServiceTOCall.ORDERS_ISOLATED);
     });
     this.getDetalleFormula();
     this.subscription.add(this.dataService.getNewFormulaComponent().subscribe( resultNewFormulaComponent => {
@@ -81,34 +96,34 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   getDetalleFormula() {
     this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
-      (formulaRes) => {
-        this.oldDataFormulaDetail = formulaRes.response;
-        this.plannedQuantity = formulaRes.response.plannedQuantity;
-        this.warehouse = formulaRes.response.warehouse;
-        this.comments = formulaRes.response.comments || '';
-        const endDate = this.oldDataFormulaDetail.dueDate.split('/');
-        this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
-        this.dataSource.data = this.oldDataFormulaDetail.details;
-        this.dataSource.data.forEach(detail => {
-          detail.description = detail.description.toUpperCase();
-          detail.isChecked = false;
-          const warehouseSplit = detail.warehouseQuantity.toString().split('.');
-          detail.stock = detail.stock || CONST_NUMBER.zero;
-          const stockSplit = detail.stock.toString().split('.');
-          detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
-              `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
-          detail.stock = stockSplit.length === 1 ? stockSplit[0] :
-              `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
-        });
-        this.isReadyToSave = false;
-        this.componentsToDelete = [];
-        this.dataService.setIsToSaveAnything(false);
-        if (this.oldDataFormulaDetail.baseDocument === 0) {
-          this.dataService.setOrderIsolated(this.ordenFabricacionId);
-        }
+      ({response}) => {
+        this.onSuccessDetailFormula(response);
       }, error => this.errorService.httpError(error));
   }
-
+  onSuccessDetailFormula(response: IFormulaReq) {
+    this.currentOrdenFabricacionId = response.productionOrderId;
+    this.oldDataFormulaDetail = response;
+    this.plannedQuantity = response.plannedQuantity;
+    this.warehouse = response.warehouse;
+    this.comments = response.comments || '';
+    const endDate = this.oldDataFormulaDetail.dueDate.split('/');
+    this.endDateGeneral = new Date(`${endDate[1]}/${endDate[0]}/${endDate[2]}`);
+    this.dataSource.data = this.oldDataFormulaDetail.details;
+    this.dataSource.data.forEach(detail => {
+      detail.description = detail.description.toUpperCase();
+      detail.isChecked = false;
+      const warehouseSplit = detail.warehouseQuantity.toString().split('.');
+      detail.stock = detail.stock || CONST_NUMBER.zero;
+      const stockSplit = detail.stock.toString().split('.');
+      detail.warehouseQuantity = warehouseSplit.length === 1 ? warehouseSplit[0] :
+          `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
+      detail.stock = stockSplit.length === 1 ? stockSplit[0] :
+          `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
+    });
+    this.isReadyToSave = false;
+    this.componentsToDelete = [];
+    this.dataService.setIsToSaveAnything(false);
+  }
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.checkISComponentsToDelete();
@@ -284,16 +299,20 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openMiListaDialog() {
-     this.dialog.open(MiListaComponent, {
-      panelClass: 'custom-dialog-container',
-      data: {
+    if (this.dataSource.data.length > CONST_NUMBER.zero) {
+      this.dialog.open(MiListaComponent, {
+        panelClass: 'custom-dialog-container',
+        data: {
           data: this.dataSource.data,
           code: this.oldDataFormulaDetail.code,
           description: this.oldDataFormulaDetail.productDescription
-      }
-    }).afterClosed().subscribe((result) => {
-      this.isSaveToMyList = !result;
-    });
+        }
+      }).afterClosed().subscribe((result) => {
+        this.isSaveToMyList = !result;
+      });
+    } else {
+      this.dataService.presentToastCustom(Messages.noComponentsToCreateList, 'info', CONST_STRING.empty, true, false );
+    }
   }
 
   getIsElementsToSave() {
@@ -318,12 +337,13 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       if (this.dataSource.data.filter( element => element.productId === component.productId).length > CONST_NUMBER.zero) {
          const elementValue = this.dataSource.data.filter( element => element.productId === component.productId)[0];
          if (component.baseQuantity !== elementValue.baseQuantity || component.description !== elementValue.description) {
-           newDataToUpdate.push({...elementValue, action: CONST_DETAIL_FORMULA.update});
+           newDataToUpdate.push({...elementValue, baseQuantity: component.baseQuantity, action: CONST_DETAIL_FORMULA.update});
          } else {
-           newDataToUpdate.push(elementValue);
+           newDataToUpdate.push({...elementValue, baseQuantity: component.baseQuantity});
          }
       }
     });
+
     newDataToUpdate.forEach( component => {
       components.splice(components.findIndex( componentI => componentI.productId === component.productId)
           , CONST_NUMBER.one);
@@ -335,7 +355,6 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       component =>
         (component.isInDb === undefined)
     ));
-
     const newData: IFormulaDetalleReq[] = [];
     // tslint:disable-next-line: radix
     const orderFabricacionId = parseInt(this.ordenFabricacionId);
@@ -364,6 +383,74 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.getIsReadyTOSave();
     this.checkISComponentsToDelete();
     this.getIsElementsToSave();
+  }
+
+  changeDetailFormula(optionChangeDetail: number) {
+    if (this.dataService.getIsToSaveAnything()) {
+      this.dataService.presentToastCustom(Messages.leftWithoutSaveOnCarousel, 'question', '', true, true)
+          .then((savedResult: any) => {
+            if (savedResult.isConfirmed) {
+              this.changeFormulaValidate(optionChangeDetail);
+            }
+          });
+    } else {
+      this.changeFormulaValidate(optionChangeDetail);
+    }
+  }
+  changeFormulaValidate(optionChangeDetail: number) {
+    switch (optionChangeDetail) {
+      case CarouselOption.backDetail:
+        if (this.isFromDetail  || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate ) {
+          this.changeFormulaByIndex(CarouselOption.backDetail);
+        } else {
+          this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
+              this.queryString, this.currentOrdenFabricacionId, CarouselOptionString.backDetail
+          ));
+        }
+        break;
+      case CarouselOption.nextDetail:
+        if (this.isFromDetail  || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+          this.changeFormulaByIndex(CarouselOption.nextDetail);
+        } else {
+          this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
+              this.queryString, this.currentOrdenFabricacionId, CarouselOptionString.nextDetail
+          ));
+        }
+        break;
+    }
+  }
+  changeFormulaByIndex(backDetail: CarouselOption) {
+      let currentIndex = this.detailOrders.findIndex( order => order === this.ordenFabricacionId);
+      if (backDetail === CarouselOption.backDetail) {
+          if (currentIndex === CONST_NUMBER.zero) {
+            currentIndex = this.detailOrders.length - CONST_NUMBER.one;
+          } else {
+            currentIndex = currentIndex - CONST_NUMBER.one;
+          }
+      } else {
+        if (currentIndex  === this.detailOrders.length - CONST_NUMBER.one) {
+          currentIndex = CONST_NUMBER.zero;
+        } else {
+          currentIndex = currentIndex + CONST_NUMBER.one;
+        }
+      }
+      this.ordenFabricacionId = this.detailOrders[currentIndex];
+      this.getDetalleFormula();
+  }
+
+  createfilterDataOrdersForOrderIsolated() {
+    this.filterDataOrdersForOrderIsolated.docNum = this.ordenFabricacionId;
+    this.filterDataOrdersForOrderIsolated.docNumUntil = this.ordenFabricacionId;
+    this.filterDataOrdersForOrderIsolated.isFromOrders = false;
+    this.filterDataOrdersForOrderIsolated.isfromCreateOrderIsolate = true;
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrdersForOrderIsolated));
+  }
+
+  changeFormulaByFIltersService(fullStringForCarousel: string) {
+    this.pedidosService.getFormulaCarousel(fullStringForCarousel).subscribe(
+        ({response}) => this.onSuccessDetailFormula(response)
+        , error => this.errorService.httpError(error)
+    ) ;
   }
 }
 

@@ -107,5 +107,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("deleted")]
         public bool Deleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets the QFB classification.
+        /// </summary>
+        /// <value>
+        /// String classification.
+        /// </value>
+        [Column("classification")]
+        public string Classification { get; set; }
     }
 }

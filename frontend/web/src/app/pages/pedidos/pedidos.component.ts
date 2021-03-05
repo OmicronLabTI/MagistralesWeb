@@ -3,6 +3,7 @@ import {MatTableDataSource} from '@angular/material';
 import {PedidosService} from '../../services/pedidos.service';
 import {DataService} from '../../services/data.service';
 import {
+    ClassCssOrderType,
     ClassNames,
     CONST_NUMBER,
     CONST_STRING,
@@ -12,14 +13,14 @@ import {
     HttpServiceTOCall,
     HttpStatus,
     MessageType,
-    MODAL_NAMES,
+    MODAL_NAMES, OrderType,
     RouterPaths,
     TypeToSeeTap,
 } from '../../constants/const';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {
-    CancelOrderReq, Catalogs,
+    CancelOrderReq,
     ICreatePdfOrdersRes,
     IPedidoReq,
     IRecipesRes,
@@ -32,6 +33,8 @@ import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Router} from '@angular/router';
+import {IOrdersRefuseReq, ReasonRefuse} from '../../model/http/detallepedidos.model';
+import {OrdersRefuseComponent} from '../../dialogs/orders-refuse/orders-refuse.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -42,7 +45,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   allComplete = false;
   ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
-  displayedColumns: string[] = ['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
+  displayedColumns: string[] = ['seleccion', 'codigo', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -71,16 +74,20 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private dialog: MatDialog,
     private titleService: Title,
-    private router: Router
+    private router: Router,
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
-    this.createInitRage();
 
   }
 
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
+    if (this.dataService.getFiltersActives()) {
+          this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
+    } else {
+          this.createInitRage();
+    }
     this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
         this.getPedidos();
@@ -91,6 +98,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
+    this.dataService.removeFiltersActive();
   }
   createInitRage() {
 
@@ -99,6 +107,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
             error => this.errorService.httpError(error));
   }
   getInitRange(rangeDateResult: string ) {
+      this.filterDataOrders = new ParamsPedidos();
       this.filterDataOrders.isFromOrders = true;
       this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
       this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
@@ -112,33 +121,40 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-          switch (element.pedidoStatus) {
-            case ConstStatus.abierto:
-              element.class = 'abierto';
-              break;
-            case ConstStatus.planificado:
-              element.class = 'planificado';
-              break;
-            case ConstStatus.liberado:
-              element.class = 'liberado';
-              break;
-            case ConstStatus.cancelado:
-              element.class = 'cancelado';
-              break;
-            case ConstStatus.enProceso:
-              element.class = 'proceso';
-              break;
-            case ConstStatus.finalizado:
-              element.class = 'finalizado';
-              break;
-            case ConstStatus.terminado:
-              element.class = 'terminado';
-              break;
-              case ConstStatus.almacenado:
+              switch (element.pedidoStatus) {
+                  case ConstStatus.abierto:
+                      element.class = 'abierto';
+                      break;
+                  case ConstStatus.planificado:
+                      element.class = 'planificado';
+                      break;
+                  case ConstStatus.liberado:
+                      element.class = 'liberado';
+                      break;
+                  case ConstStatus.cancelado:
+                      element.class = 'cancelado';
+                      break;
+                  case ConstStatus.enProceso:
+                      element.class = 'proceso';
+                      break;
+                  case ConstStatus.finalizado:
+                      element.class = 'finalizado';
+                      break;
+                  case ConstStatus.terminado:
+                      element.class = 'terminado';
+                      break;
+                  case ConstStatus.entregado:
+                      element.class = 'entregado';
+                      break;
+                  case ConstStatus.rechazado:
+                      element.class = 'rechazado';
+                      break;
+				  case ConstStatus.almacenado:
                   element.class = ConstStatus.almacenado.toLowerCase();
                   break;
-          }
-        });
+              }
+              element.classClasification = this.getClassClasification(element.orderType);
+          });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
         this.isThereOrdersToPlan = false;
@@ -179,8 +195,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
     .then((result: any) => {
       if (result.isConfirmed) {
-        this.ordersToProcess.listIds = this.dataSource.data.filter(t =>
-            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
+        this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
         this.ordersToProcess.user = this.dataService.getUserId();
         this.pedidosService.processOrders(this.ordersToProcess).subscribe(
           resProcessOrder => {
@@ -190,8 +205,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               this.dataService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
-              this.getPedidos();
-              this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+              this.showMessagesAndRefresh();
             }
             this.dataService.setIsLoading(false);
           },
@@ -201,6 +215,10 @@ export class PedidosComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+  showMessagesAndRefresh() {
+      this.getPedidos();
+      this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
   }
   changeDataEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -231,8 +249,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isThereOrdersToReassign =
         this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
     this.isTherePedidosToViewPdf = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
-
-
 
   }
   getFullQueryString() {
@@ -267,6 +283,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.pageIndex = 0;
     this.offset = 0;
     this.limit = 10;
+    this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
     this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
@@ -299,10 +316,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   requestMaterial() {
-    this.router.navigate([RouterPaths.materialRequest,
-      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString(),
-      CONST_NUMBER.one]);
-  }
+        this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+        this.router.navigate([RouterPaths.materialRequest,
+            this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
+            CONST_NUMBER.one]);
+    }
 
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
@@ -343,8 +361,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
     });
   }
 
-  openNewTabByOrder(param: (string | any)[]) {
-        this.dataService.openNewTapByUrl(`./${param[0]}/${param[1]}`, TypeToSeeTap.system);
+  openNewTabByOrder(order: number) {
+      this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+      this.router.navigate([RouterPaths.orderDetail, order]);
   }
     viewPedidosWithPdf() {
         this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))
@@ -357,5 +376,60 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 });
                 }
                 , error => this.errorService.httpError(error));
+    }
+    getOrdersOnlyOpen() {
+        return this.dataSource.data.filter(t =>
+            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
+    }
+
+    ordersToRefuse() {
+
+        this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
+            .then((result: any) => {
+                if (result.isConfirmed) {
+                     this.showCommentsToRefuse();
+                }
+            });
+    }
+    ordersToRefuseService(comments: string) {
+        const ordersToRefuseReq = new IOrdersRefuseReq();
+        ordersToRefuseReq.comments = comments;
+        ordersToRefuseReq.userId = this.dataService.getUserId();
+        ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
+
+        this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
+            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
+    }
+    successRefuseResult(failed: ReasonRefuse[]) {
+        if (failed.length === CONST_NUMBER.zero) {
+            this.showMessagesAndRefresh();
+            return;
+        }
+        this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
+                , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
+        this.getPedidos();
+    }
+
+    showCommentsToRefuse() {
+        this.dialog.open(OrdersRefuseComponent, {
+            panelClass: 'custom-dialog-container',
+        }).afterClosed().subscribe(ordersRefuseResult => {
+            if (ordersRefuseResult.isOk) {
+                this.ordersToRefuseService(ordersRefuseResult.comments);
+            }
+        });
+    }
+
+    getClassClasification(orderType: string) {
+        switch (orderType) {
+            case OrderType.bioElite:
+                return ClassCssOrderType.mn;
+            case OrderType.bioEqual:
+                return  ClassCssOrderType.be;
+            case OrderType.magistral:
+                return ClassCssOrderType.mg;
+            case OrderType.mixto:
+                return ClassCssOrderType.mx;
+        }
     }
 }

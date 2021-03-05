@@ -139,7 +139,32 @@ namespace Omicron.Pedidos.Facade.Pedidos
             return this.mapper.Map<ResultDto>(await this.pedidoService.CloseSalesOrders(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="rejectOrders">Orders to reject.</param>
+        /// <returns>Order with updated info.</returns>
+        public async Task<ResultDto> RejectSalesOrders(RejectOrdersDto rejectOrders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.RejectSalesOrders(this.mapper.Map<RejectOrdersModel>(rejectOrders)));
+        }
+
+        /// <summary>
+        /// reject order (status to reject).
+        /// </summary>
+        /// <param name="status">status.</param>}
+        /// <param name="userId">userId.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetQfbOrdersByStatus(string status, string userId)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetQfbOrdersByStatus(status, userId));
+        }
+
+        /// <summary>
+        /// Cancel fabrication orders.
+        /// </summary>
+        /// <param name="cancelOrders">Orders to cancel.</para
+        /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultDto> CancelFabOrder(List<OrderIdDto> cancelOrders)
         {
             return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelFabricationOrders(this.mapper.Map<List<OrderIdModel>>(cancelOrders)));
@@ -217,7 +242,21 @@ namespace Omicron.Pedidos.Facade.Pedidos
             return this.mapper.Map<ResultDto>(await this.formulaPedidosService.GetCustomComponentListByProductId(productId));
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The user id.</param>
+        /// <returns>New custom list.</returns>
+        public async Task<ResultDto> DeleteCustomComponentList(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.formulaPedidosService.DeleteCustomComponentList(parameters));
+        }
+
+        /// <summary>
+        /// Gets the workload.
+        /// </summary>
+        /// <param name="parameters">the filters.</param>
+        /// <returns>the data.</returns>
         public async Task<ResultDto> GetWorkLoad(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.productivityService.GetWorkLoad(parameters));

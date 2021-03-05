@@ -17,7 +17,8 @@ export const CONST_NUMBER = {
     oneThousand: 999
 };
 export const CONST_STRING = {
-    empty: ''
+    empty: '',
+    zero: '0',
 };
 
 export const CONST_USER_DIALOG = {
@@ -89,11 +90,14 @@ export const ConstStatus = {
     asignado: 'Asignado',
     terminado: 'Terminado',
     reasingado: 'Reasignado',
+    entregado: 'Entregado',
     almacenado: 'Almacenado',
+    rechazado: 'Rechazado'
 };
 export const HttpStatus = {
     ok: 200,
     created: 201,
+    redirection: 300,
     badRequest: 400,
     unauthorized: 401,
     forbidden: 403,
@@ -111,6 +115,9 @@ export const ConstToken = {
     userName: 'userName',
     userRole: 'role',
     isolatedOrder: 'istOrder',
+    filtersActive: 'filters-active',
+    filtersActiveOrders: 'filters-active-orders',
+    detailOrderCurrent: 'detail-current'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -217,7 +224,10 @@ export const RouterPaths = {
     materialRequest: 'materialRequest',
     incidents: 'incidents',
     incidentsList: 'incidentsList',
-    warehousePage: 'warehouse'
+    warehousePage: 'warehouse',
+    orderDetail: 'pdetalle',
+    detailFormula: 'ordenfabricacion',
+    pedido: 'pedidos'
 };
 export enum TypeProperty {
     code,
@@ -237,7 +247,14 @@ export enum TypeToSeeTap {
     receipt,
     system
 }
-
+export enum CarouselOption {
+    backDetail,
+    nextDetail
+}
+export const CarouselOptionString = {
+    backDetail: 'b',
+    nextDetail: 'f'
+};
 export const RolesType = {
     logistic: '3',
     admin: '1',
@@ -278,3 +295,15 @@ export const ClassButton = {
     attendingIncident: 'attending-incident'
 };
 export const ValidDigits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace'];
+export const OrderType = {
+    bioElite: 'MN',
+    bioEqual: 'BE',
+    magistral: 'MG',
+    mixto: 'MX',
+};
+export const ClassCssOrderType = {
+    mn: 'clasification-mn',
+    be: 'clasification-be',
+    mg: 'clasification-mg',
+    mx: 'clasification-mx'
+};

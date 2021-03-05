@@ -9,10 +9,21 @@
                 <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8' : ''">
                     <ng-container matColumnDef="nombre">
                         <th mat-header-cell *matHeaderCellDef class="mobile-hide"> NOMBRE DE LA LISTA </th>
-                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion"> {{element.name | uppercase}} </td>
+                        <td mat-cell *matCellDef="let element;"
+                            class="color-text-intables tdcell tdemail mobile-hide descripcion"
+                            (click)="selectComponent(element)">
+                            {{element.name | uppercase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> ACCIONES </th>
+                        <td mat-cell *matCellDef="let element;" class="color-text-intables tdcell tdemail mobile-hide descripcion text-center">
+                             <span class="material-icons" (click)="removeCustomList(element)">
+                               delete
+                             </span>
+                        </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" (click)="selectComponent(row)"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" ></tr>
                 </table>
                 <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
                     <span>No hay resultados</span>

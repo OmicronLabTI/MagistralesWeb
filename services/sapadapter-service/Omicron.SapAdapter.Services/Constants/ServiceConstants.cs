@@ -56,6 +56,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string FinishedLabel = "finlabel";
 
         /// <summary>
+        /// The order type dict.
+        /// </summary>
+        public const string OrderType = "ordtype";
+
+        /// <summary>
         /// if needs the large description.
         /// </summary>
         public const string NeedsLargeDsc = "Ldsc";
@@ -79,6 +84,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the filter for orders.
         /// </summary>
         public const string ItemCode = "code";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Current = "current";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Advance = "advance";
 
         /// <summary>
         /// the abierto status.
@@ -121,6 +136,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Terminado = "Terminado";
 
         /// <summary>
+        /// en proceso to show.
+        /// </summary>
+        public const string Asignado = "Asignado";
+
+        /// <summary>
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
@@ -129,6 +149,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// route to get the user fab order.
         /// </summary>
         public const string GetUserOrders = "getUserOrder/fabOrder";
+
+        /// <summary>
+        /// route to get the user fab order.
+        /// </summary>
+        public const string GetOrdersByStatusAndUserId = "qfbOrders/{0}/{1}";
 
         /// <summary>
         /// Get users by id.
@@ -331,6 +356,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string SentMaxDays = "AlmacenMaxDayToLook";
 
         /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Pedido = "ped";
+
+        /// <summary>
+        /// Orden value.
+        /// </summary>
+        public const string Orden = "ord";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponents = "redisComponents";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -399,6 +439,21 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { "%C3%9C", "Ü" },
             { "%C3%BC", "ü" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> KeysToIgnoreRedis { get; } = new List<string>
+        {
+            Offset,
+            Limit,
+            Advance,
+            Current,
+            NeedsLargeDsc,
         };
     }
 }

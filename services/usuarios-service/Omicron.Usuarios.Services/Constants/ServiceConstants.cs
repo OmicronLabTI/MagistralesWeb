@@ -106,6 +106,11 @@ namespace Omicron.Usuarios.Services.Constants
         public const string Qfb = "qfb";
 
         /// <summary>
+        /// the qfb classification.
+        /// </summary>
+        public const string TypeQfb = "typeQfb";
+
+        /// <summary>
         /// Gets list of thw status for the orders.
         /// </summary>
         /// <value>

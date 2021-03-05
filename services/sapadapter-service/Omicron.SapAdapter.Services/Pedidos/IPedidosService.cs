@@ -31,5 +31,12 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// <param name="route">the route to send.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserPedidos(string route);
+
+        /// <summary>
+        /// Makes a get to pedidos.
+        /// </summary>
+        /// <param name="route">the route to send.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetPedidosService(string route);
     }
 }

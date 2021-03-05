@@ -400,6 +400,28 @@ namespace Omicron.Pedidos.Services.Utils
         /// <summary>
         /// check if the folder exist and created is if not.
         /// </summary>
+        /// <param name="salesOrderId">Sales order id.</param>
+        /// <param name="sapAdapter">The sap adapter.</param>
+        /// <returns>Sales order.</returns>
+        public static async Task<List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
+        {
+            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
+            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var tupleToREturn = new List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>();
+
+            sapOrders.ForEach(x =>
+            {
+                var preProductionOrders = x.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
+                var productionOrders = x.Detalle.Where(x => !string.IsNullOrEmpty(x.Status)).ToList();
+                tupleToREturn.Add(new Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>(x, preProductionOrders, productionOrders));
+            });
+
+            return tupleToREturn;
+        }
+
+        /// <summary>
+        /// check if the folder exist and created is if not.
+        /// </summary>
         /// <param name="route">the route.</param>
         public static void VerifyIfFolderExist(string route)
         {

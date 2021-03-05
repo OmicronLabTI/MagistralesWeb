@@ -68,7 +68,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}</body></html>";
+        public const string SendEmailHtmlBaseAlmacen = @"<html><body>{0}{1}{2}</body></html>";
 
         /// <summary>
         /// Body of email.
@@ -77,6 +77,21 @@ namespace Omicron.Reporting.Services.Constants
 
         /// <summary>
         /// Body of email.
+        /// </summary>
+        public const string CustomerServiceEmail = "EmailAtencionAClientes";
+
+        /// <summary>
+        /// The local.
+        /// </summary>
+        public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentRejectedOrder = " <p> Buen día, es un gusto saludarle <br/><br/> Hemos detectado que la orden de venta <b>{0}</b> correspondiente al cliente <b>{1}</b> incumple con los requisitos obligatorios para poder comenzar su elaboración. <br/><br/>  </p>";
+
+        /// <summary>
+        /// Sent local package.
         /// </summary>
         public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> fue enviado por medio de la empresa de paquetería bajo la guía <b>{1}</b> a la dirección que tenemos registrada bajo su nombre.</p><p>{2}<br/>{3}</p>";
 
@@ -99,6 +114,26 @@ namespace Omicron.Reporting.Services.Constants
         /// refund policy.
         /// </summary>
         public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u></li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentComentRejectedOrder = " <p> <b>Observaciones:</b> <br/><br/> <b>{0}</b> <br/><br/> </p>";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailRejectedOrderClosing = " Quedamos atentos a sus comentarios. <br/> Departamento Magistrales";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailFarewall = "<p> Le pedimos de la manera más atenta tomar la acción correspondiente.<br/> Agradecemos de antemano su seguimiento, y pedimos una disculpa por los inconvenientes ocasionados.</p>";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}{3}</body></html>";
 
         /// <summary>
         /// Gets the status of the order.

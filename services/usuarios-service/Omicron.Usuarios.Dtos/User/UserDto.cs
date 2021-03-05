@@ -84,5 +84,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// String Activo.
         /// </value>
         public int Asignable { get; set; }
+
+        /// <summary>
+        /// Gets or sets the QFB classification.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public string Classification { get; set; }
     }
 }

@@ -104,6 +104,25 @@ export class ConsumeService {
     });
   }
 
+  httpDelete<T>(url: string) {
+    /*    let objHeaders = new HttpHeaders();
+      if (headers) {
+         Object.keys(headers).forEach((key) => {
+           objHeaders = objHeaders.append(key, headers[key]);
+         });
+       }*/
+
+    this.dataService.setIsLoading(true);
+    return new Observable<T>(observer => {
+      this.http.delete<any>(url)
+          .subscribe(response => {
+            this.successObserver(observer, response);
+          }, err => {
+            this.onErrorObserver(observer, err);
+          });
+    });
+  }
+
   private successObserver(observer: any, response: any) {
     observer.next(response);
     observer.complete();

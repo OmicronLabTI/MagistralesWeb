@@ -24,12 +24,12 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'ordenfabricacion/:ordenid',
+    path: 'ordenfabricacion/:ordenid/:detailsOrders/:isFromDetail',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },
   {
-    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock',
+    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },

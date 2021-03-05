@@ -43,9 +43,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 100, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1 },
+                new OrderModel { PedidoId = 100, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN" },
                 new OrderModel { PedidoId = 101, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O" },
-                new OrderModel { PedidoId = 102, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2 },
+                new OrderModel { PedidoId = 102, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN" },
 
                 // For Almacen
                 new OrderModel { PedidoId = 75000, Cliente = "cliente", DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", },
@@ -205,6 +205,7 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchTransacitions>
             {
                 new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 1, DocNum = 100, DocQuantity = 10 },
+                new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 4, DocNum = 200, DocQuantity = 10 },
 
                 // almacen
                 new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10 },
@@ -221,6 +222,7 @@ namespace Omicron.SapAdapter.Test
             return new List<BatchesTransactionQtyModel>
             {
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 1, ItemCode = "Abc Aspirina", SysNumber = 1 },
+                new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 4, ItemCode = "Abc Aspirina", SysNumber = 1 },
 
                 // almacen
                 new BatchesTransactionQtyModel { AllocQty = 1, LogEntry = 2, ItemCode = "Linea1", SysNumber = 1 },
@@ -332,7 +334,7 @@ namespace Omicron.SapAdapter.Test
         {
             var listUsers = new List<UserOrderModel>
             {
-                new UserOrderModel { Id = 1, Productionorderid = "12", Salesorderid = "12", Status = "Abierto", Userid = "123", CloseDate = "20/01/2020", Comments = "comments", FinishDate = "20/01/2020" },
+                new UserOrderModel { Id = 1, Productionorderid = "12", Salesorderid = "12", Status = "Abierto", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
             };
 
             return new ResultDto
@@ -575,6 +577,28 @@ namespace Omicron.SapAdapter.Test
                 Code = 200,
                 Comments = null,
                 Response = JsonConvert.SerializeObject(dataToSend),
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultDtoGetPedidosService()
+        {
+            var users = new List<int>
+            {
+                123,
+                234,
+            };
+
+            return new ResultDto
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
             };
         }
     }

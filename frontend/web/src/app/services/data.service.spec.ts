@@ -10,9 +10,11 @@ import {
 } from '../constants/const';
 import {CommentsConfig} from '../model/device/incidents.model';
 import {ParamsPedidos} from '../model/http/pedidos';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
+    imports: [RouterTestingModule],
     providers: [DatePipe]
   }));
 
@@ -309,14 +311,6 @@ describe('DataService', () => {
     const service: DataService = TestBed.get(DataService);
     service.setUserRole(3);
     expect(service.getUserRole).toBeTruthy('3');
-  });
-
-  it('should getOrderInsolated', () => {
-    const service: DataService = TestBed.get(DataService);
-    service.setOrderIsolated('anyIsolatedOrder');
-    expect(service.getOrderIsolated).toBeTruthy();
-    service.removeOrderIsolated();
-
   });
 
 });
