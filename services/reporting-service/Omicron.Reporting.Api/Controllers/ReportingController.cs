@@ -87,7 +87,7 @@ namespace Omicron.Reporting.Api.Controllers
             var response = await this.reportingFacade.SendEmailLocalPackage(request);
             return this.Ok(response);
         }
-        
+
         /// <summary>
         /// Send mail for every rejected order.
         /// </summary>

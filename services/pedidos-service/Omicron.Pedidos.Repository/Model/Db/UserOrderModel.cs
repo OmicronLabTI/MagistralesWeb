@@ -229,7 +229,7 @@ namespace Omicron.Pedidos.Entities.Model
         [Column("invoicetype")]
         public string InvoiceType { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// Gets or sets close user id.
         /// </summary>
         /// <value>

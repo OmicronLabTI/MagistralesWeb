@@ -78,7 +78,7 @@ namespace Omicron.Reporting.Services
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
 
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
@@ -104,47 +104,6 @@ namespace Omicron.Reporting.Services
                 smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
-        }
-
-        /// <summary>
-        /// Gets the smtp config.
-        /// </summary>
-        /// <param name="parameters">the parameters.</param>
-        /// <returns>the data.</returns>
-        private SmtpConfigModel GetSmtpConfig(List<ParametersModel> parameters)
-        {
-            return new SmtpConfigModel
-            {
-                SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
-                SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
-                SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
-                SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
-                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
-            };
-        }
-
-        /// <summary>
-        /// Gets the text for the subjkect.
-        /// </summary>
-        /// <param name="package">the data.</param>
-        /// <returns>the text.</returns>
-        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
-        {
-            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
-
-            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
-            {
-                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, payment, ServiceConstants.RefundPolicy);
-                return new Tuple<string, string>(subject, body);
-            }
-
-            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBase, greetingError, payment, ServiceConstants.RefundPolicy);
-
-            return new Tuple<string, string>(subjectError, bodyError);
         }
 
         /// <summary>
@@ -185,6 +144,47 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
+        /// Gets the smtp config.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private SmtpConfigModel GetSmtpConfig(List<ParametersModel> parameters)
+        {
+            return new SmtpConfigModel
+            {
+                SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
+                SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
+                SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
+                SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
+                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+            };
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="package">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        {
+            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
+            {
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
+
+            return new Tuple<string, string>(subjectError, bodyError);
+        }
+
+        /// <summary>
         /// Gets a list divided in sublists.
         /// </summary>
         /// <typeparam name="Tsource">the original list.</typeparam>
@@ -218,23 +218,6 @@ namespace Omicron.Reporting.Services
             var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
             var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
             return new Tuple<string, string>(subject, body);
-        }
-
-        /// <summary>
-        /// Gets the smtp config.
-        /// </summary>
-        /// <param name="parameters">the parameters.</param>
-        /// <returns>the data.</returns>
-        private SmtpConfigModel GetSmtpConfig(List<ParametersModel> parameters)
-        {
-            return new SmtpConfigModel
-                {
-                    SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
-                    SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
-                    SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
-                    SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
-                    EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
-                };
         }
 
         /// <summary>

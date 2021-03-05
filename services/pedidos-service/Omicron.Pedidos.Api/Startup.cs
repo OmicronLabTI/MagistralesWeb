@@ -139,7 +139,7 @@ namespace Omicron.Pedidos.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IAlmacenService, AlmacenService>();
-            
+
             services.AddHttpClient("reportingService", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["ReportingService"]);

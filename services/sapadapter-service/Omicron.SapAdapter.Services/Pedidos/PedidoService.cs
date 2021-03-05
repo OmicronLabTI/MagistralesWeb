@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    throw new CustomServiceException(jsonString, , System.Net.HttpStatusCode.NotFound);
+                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
                 }
 
                 result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());

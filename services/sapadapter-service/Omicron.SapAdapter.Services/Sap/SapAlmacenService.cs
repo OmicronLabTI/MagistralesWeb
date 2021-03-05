@@ -106,7 +106,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
             }
 
-            var validBatches = (await this.sapDao.GetValidBatches(itemCode.ProductoId, ServiceConstants.PT)).ToList();
+            var listComponents = new List<CompleteDetalleFormulaModel>
+            {
+                new CompleteDetalleFormulaModel { ProductId = itemCode.ProductoId, Warehouse = ServiceConstants.PT },
+            };
+
+            var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
             var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
 
             validBatches.ForEach(b =>

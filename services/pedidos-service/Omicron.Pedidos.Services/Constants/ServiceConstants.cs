@@ -114,8 +114,8 @@ namespace Omicron.Pedidos.Services.Constants
         /// recibir value.
         /// </summary>
         public const string Recibir = "Recibir";
-		
-		/// <summary>
+
+        /// <summary>
         /// status entregado.
         /// </summary>
         public const string Rechazado = "Rechazado";

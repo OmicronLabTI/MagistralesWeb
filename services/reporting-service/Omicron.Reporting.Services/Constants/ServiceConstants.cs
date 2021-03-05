@@ -68,7 +68,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}</body></html>";
+        public const string SendEmailHtmlBaseAlmacen = @"<html><body>{0}{1}{2}</body></html>";
 
         /// <summary>
         /// Body of email.
