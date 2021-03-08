@@ -87,7 +87,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var dates = ServiceUtils.GetDateFilter(parameters);
             var finalizedOrders = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
-            finalizedOrders = finalizedOrders.Where(x => x.IsProductionOrder).ToList();
+            finalizedOrders = finalizedOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).ToList();
             var ordersIds = finalizedOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
 
             var sapResponse = await this.sapAdapter.PostSapAdapter(ordersIds, ServiceConstants.GetUsersByOrdersById);
@@ -98,7 +98,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
             userOrders = userOrders.Where(x => !ServiceConstants.StatusIgnoreWorkLoad.Contains(x.Status)).ToList();
             userOrders.AddRange(finalizedOrders);
-            userOrders = userOrders.DistinctBy(x => x.Id).ToList();
+            userOrders = userOrders.Where(y => !y.IsIsolatedProductionOrder).DistinctBy(x => x.Id).ToList();
 
             var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders, specificUser);
             return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
@@ -328,7 +328,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, WorkLoadModel workLoadModel)
         {
-            var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.StatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
+            var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.AllStatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
             var productionOrderIds = productionOrders.Select(y => int.Parse(y.Productionorderid)).ToList();
             var salesOrderIds = productionOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(x => x.Salesorderid).Select(y => int.Parse(y.Salesorderid)).ToList();
 
