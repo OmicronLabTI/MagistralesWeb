@@ -73,15 +73,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaFin(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids)
         {
-            var query = (from order in this.databaseContext.OrderModel
+            var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
                                join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                                into DetalleOrden
                                from dp in DetalleOrden.DefaultIfEmpty()
                                join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                               where order.FechaFin >= initDate && order.FechaFin <= endDate && producto.IsMagistral == "Y"
+                               where producto.IsMagistral == "Y"
                                select new CompleteOrderModel
                                {
                                    DocNum = order.DocNum,

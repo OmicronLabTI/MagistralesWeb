@@ -25,21 +25,17 @@ namespace Omicron.Pedidos.Api.Controllers
     {
         private readonly IPedidoFacade pedidoFacade;
 
-        private readonly IQrFacade qrsFacade;
-
-        private readonly IPedidosAlmacenFacade pedidosAlmacenFacade;
+        private readonly IBusquedaPedidoFacade busquedaPedidoFacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosController"/> class.
         /// </summary>
         /// <param name="pedidoFacade">the pedido facade.</param>
-        /// <param name="qrsFacade">The qr Facade.</param>
-        /// <param name="pedidosAlmacen">The pedidos almacen facade.</param>
-        public PedidosController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
+        /// <param name="busquedaPedidoFacade">the busqueda facade.</param>
+        public PedidosController(IPedidoFacade pedidoFacade, IBusquedaPedidoFacade busquedaPedidoFacade)
         {
             this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
-            this.qrsFacade = qrsFacade ?? throw new ArgumentException(nameof(qrsFacade));
-            this.pedidosAlmacenFacade = pedidosAlmacen ?? throw new ArgumentNullException(nameof(pedidosAlmacen));
+            this.busquedaPedidoFacade = busquedaPedidoFacade ?? throw new ArgumentNullException(nameof(busquedaPedidoFacade));
         }
 
         /// <summary>
@@ -520,6 +516,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetQfbOrdersByStatus([FromRoute] string status, [FromRoute] string userId)
         {
             var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, userId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/userorders")]
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.busquedaPedidoFacade.GetOrders(parameters);
             return this.Ok(response);
         }
 

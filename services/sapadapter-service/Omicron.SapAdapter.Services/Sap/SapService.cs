@@ -82,10 +82,25 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-            var orders = await this.GetSapDbOrders(parameters, dateFilter);
 
-            var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
+            var userOrders = new List<UserOrderModel>();
+
+            if (parameters.ContainsKey(ServiceConstants.FechaFin))
+            {
+                var route = $"{ServiceConstants.GetOrderByQuery}?ffin={parameters[ServiceConstants.FechaFin]}";
+                var ordersResult = await this.pedidosService.GetPedidosService(route);
+                userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(ordersResult.Response.ToString());
+            }
+
+            var saleIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).Select(y => int.Parse(y.Salesorderid)).Distinct().ToList();
+            var orders = await this.GetSapDbOrders(parameters, dateFilter, saleIds);
+
+            if (!parameters.ContainsKey(ServiceConstants.FechaFin))
+            {
+                var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
+                userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
+            }
+
             var listUsers = await this.GetUsers(userOrders);
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
@@ -707,8 +722,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
         /// <param name="dateFilter">the date filter.</param>
+        /// <param name="salesIdsToLook">the sales to look.</param>
         /// <returns>teh orders.</returns>
-        private async Task<List<CompleteOrderModel>> GetSapDbOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter)
+        private async Task<List<CompleteOrderModel>> GetSapDbOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, List<int> salesIdsToLook)
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
@@ -725,7 +741,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
             else
             {
-                return (await this.sapDao.GetAllOrdersByFechaFin(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+                return (await this.sapDao.GetAllOrdersByIds(salesIdsToLook)).ToList();
             }
         }
 
