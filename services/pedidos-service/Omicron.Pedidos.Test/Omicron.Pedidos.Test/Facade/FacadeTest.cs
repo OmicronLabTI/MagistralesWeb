@@ -882,20 +882,5 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
-
-        /// <summary>
-        /// test deleteFile.
-        /// </summary>
-        /// <returns>test.</returns>
-        [Test]
-        public async Task GetOrders()
-        {
-            // act
-            var response = await this.pedidoFacade.GetOrders(new Dictionary<string, string>());
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-        }
     }
 }
