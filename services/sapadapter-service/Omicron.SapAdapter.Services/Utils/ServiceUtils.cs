@@ -169,7 +169,8 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Cliente))
             {
-                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Cliente) && x.Cliente.ToLower().Contains(parameters[ServiceConstants.Cliente].ToLower())).ToList();
+                List<string> clientNames = parameters[ServiceConstants.Cliente].Split(",").ToList();
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Cliente) && clientNames.All(name => x.Cliente.ToLower().Contains(name.ToLower()))).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Label))
