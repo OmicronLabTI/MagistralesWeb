@@ -370,6 +370,11 @@ namespace Omicron.Pedidos.Services.Utils
                 return GetDictDates(filter[ServiceConstants.FechaFin]);
             }
 
+            if (filter.ContainsKey(ServiceConstants.FechaInicio))
+            {
+                return GetDictDates(filter[ServiceConstants.FechaInicio]);
+            }
+
             return new Dictionary<string, DateTime>();
         }
 

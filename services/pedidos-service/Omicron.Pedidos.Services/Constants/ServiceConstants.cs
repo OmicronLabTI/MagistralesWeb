@@ -721,5 +721,19 @@ namespace Omicron.Pedidos.Services.Constants
             "EN",
             "EM",
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusIgnoreWorkLoad { get; } = new List<string>
+        {
+            Cancelled,
+            Finalizado,
+            Entregado,
+            Almacenado,
+        };
     }
 }

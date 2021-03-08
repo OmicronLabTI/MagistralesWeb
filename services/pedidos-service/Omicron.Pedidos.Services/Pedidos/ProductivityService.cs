@@ -85,10 +85,20 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.Remove(ServiceConstants.Qfb);
             }
 
-            var sapOrders = await this.GetSapFabOrders(parameters);
+            var dates = ServiceUtils.GetDateFilter(parameters);
+            var finalizedOrders = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
+            finalizedOrders = finalizedOrders.Where(x => x.IsProductionOrder).ToList();
+            var ordersIds = finalizedOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
+
+            var sapResponse = await this.sapAdapter.PostSapAdapter(ordersIds, ServiceConstants.GetUsersByOrdersById);
+            var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+            sapOrders.AddRange(await this.GetSapFabOrders(parameters));
+
             var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
-            userOrders = userOrders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
+            userOrders = userOrders.Where(x => !ServiceConstants.StatusIgnoreWorkLoad.Contains(x.Status)).ToList();
+            userOrders.AddRange(finalizedOrders);
+            userOrders = userOrders.DistinctBy(x => x.Id).ToList();
 
             var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders, specificUser);
             return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
