@@ -651,7 +651,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <color key="backgroundColor" red="0.81960784310000001" green="0.81960784310000001" blue="0.81960784310000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <constraints>
                                             <constraint firstItem="f2j-6O-JRY" firstAttribute="leading" secondItem="UuB-th-ORX" secondAttribute="leading" id="2tV-X9-mDN"/>
                                             <constraint firstItem="f2j-6O-JRY" firstAttribute="top" secondItem="UuB-th-ORX" secondAttribute="top" id="7so-qz-pB2"/>
@@ -673,24 +673,37 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tK3-8f-v8X">
                                         <rect key="frame" x="0.0" y="302" width="600" height="48"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Khc-Q6-JwP">
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="Khc-Q6-JwP">
                                                 <rect key="frame" x="0.0" y="0.0" width="600" height="48"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YlQ-ci-vzg">
-                                                        <rect key="frame" x="0.0" y="0.0" width="300" height="48"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="299.5" height="48"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="299.5" id="lbd-Qm-6uk"/>
+                                                        </constraints>
                                                         <state key="normal" title="Button"/>
                                                         <connections>
                                                             <action selector="cancelActionButton:" destination="Dis-5c-558" eventType="touchUpInside" id="nxG-dv-AAu"/>
                                                         </connections>
                                                     </button>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xsf-MY-DV3">
+                                                        <rect key="frame" x="300" y="0.0" width="0.5" height="48"/>
+                                                        <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="0.5" id="vGm-k4-yox"/>
+                                                        </constraints>
+                                                    </view>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AUr-65-vV8">
-                                                        <rect key="frame" x="300" y="0.0" width="300" height="48"/>
+                                                        <rect key="frame" x="300.5" y="0.0" width="299.5" height="48"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="299.5" id="YyO-vr-g8L"/>
+                                                        </constraints>
                                                         <state key="normal" title="Button"/>
                                                     </button>
                                                 </subviews>
                                             </stackView>
                                         </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <color key="backgroundColor" red="0.81960784310000001" green="0.81960784310000001" blue="0.81960784310000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="Khc-Q6-JwP" secondAttribute="trailing" id="3TH-gt-VRe"/>
                                             <constraint firstItem="Khc-Q6-JwP" firstAttribute="top" secondItem="tK3-8f-v8X" secondAttribute="top" id="FUJ-Dj-3zY"/>
