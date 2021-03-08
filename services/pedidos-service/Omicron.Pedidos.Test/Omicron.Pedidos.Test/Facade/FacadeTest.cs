@@ -16,7 +16,6 @@ namespace Omicron.Pedidos.Test.Facade
     using NUnit.Framework;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Mapping;
@@ -55,149 +54,12 @@ namespace Omicron.Pedidos.Test.Facade
             var mockFormulasPedidosServices = new Mock<IFormulaPedidosService>();
             var mockProcess = new Mock<IProcessOrdersService>();
 
-            mockProcess
-                .Setup(m => m.ProcessOrders(It.IsAny<ProcessOrderModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetUserOrderBySalesOrder(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetUserOrderByFabOrder(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetFabOrderByUserId(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetUserOrdersByUserId(It.IsAny<List<string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateComponents(It.IsAny<UpdateFormulaModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateStatusOrder(It.IsAny<List<UpdateStatusOrderModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.ConnectDiApi())
-                .Returns(Task.FromResult(response));
-
-            mockCancelPedidosServices
-                .Setup(m => m.CancelSalesOrder(It.IsAny<List<OrderIdModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockCancelPedidosServices
-                .Setup(m => m.CancelFabricationOrders(It.IsAny<List<OrderIdModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockProcess
-                .Setup(m => m.ProcessByOrder(It.IsAny<ProcessByOrderModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                            .Setup(m => m.UpdateBatches(It.IsAny<List<AssignBatchModel>>()))
-                            .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateOrderSignature(It.IsAny<SignatureType>(), It.IsAny<UpdateOrderSignatureModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetOrderSignatures(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.FinishOrder(It.IsAny<FinishOrderModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateFabOrderComments(It.IsAny<List<UpdateOrderCommentsModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.CloseSalesOrders(It.IsAny<List<OrderIdModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.CloseFabOrders(It.IsAny<List<CloseProductionOrderModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.CreateIsolatedProductionOrder(It.IsAny<CreateIsolatedFabOrderModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetFabOrders(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockerAssignPedidosService
-                .Setup(m => m.ReassignOrder(It.IsAny<ManualAssignModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockerAssignPedidosService
-                .Setup(m => m.AssignOrder(It.IsAny<ManualAssignModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockerAssignPedidosService
-                .Setup(m => m.AutomaticAssign(It.IsAny<AutomaticAssingModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockProductivityService
-                .Setup(m => m.GetProductivityData(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockFormulasPedidosServices
-                .Setup(m => m.CreateCustomComponentList(It.IsAny<string>(), It.IsAny<CustomComponentListModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockFormulasPedidosServices
-                .Setup(m => m.GetCustomComponentListByProductId(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockFormulasPedidosServices
-               .Setup(m => m.DeleteCustomComponentList(It.IsAny<Dictionary<string, string>>()))
-               .Returns(Task.FromResult(response));
-
-            mockProductivityService
-                .Setup(m => m.GetWorkLoad(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.CompletedBatches(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.PrintOrders(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateSaleOrders(It.IsAny<UpdateOrderCommentsModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.UpdateDesignerLabel(It.IsAny<UpdateDesignerLabelModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.CreateSaleOrderPdf(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.RejectSalesOrders(It.IsAny<RejectOrdersModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.GetQfbOrdersByStatus(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockServicesPedidos
-                .Setup(m => m.DeleteFiles())
-                .Returns(Task.FromResult(response));
+            mockProcess.SetReturnsDefault(Task.FromResult(response));
+            mockerAssignPedidosService.SetReturnsDefault(Task.FromResult(response));
+            mockProductivityService.SetReturnsDefault(Task.FromResult(response));
+            mockServicesPedidos.SetReturnsDefault(Task.FromResult(response));
+            mockCancelPedidosServices.SetReturnsDefault(Task.FromResult(response));
+            mockFormulasPedidosServices.SetReturnsDefault(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
