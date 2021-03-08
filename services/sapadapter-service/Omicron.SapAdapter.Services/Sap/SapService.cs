@@ -109,11 +109,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
-
+            /*
             var key = ServiceUtils.PrepareKeyForRedisFromDic(parameters, ServiceConstants.Pedido);
             var ids = JsonConvert.SerializeObject(orders.Select(x => x.DocNum).OrderBy(x => x).ToList());
             await this.redisService.WriteToRedis(key, ids, new TimeSpan(24, 0, 0));
-
+            */
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
