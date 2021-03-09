@@ -149,9 +149,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
                   case ConstStatus.rechazado:
                       element.class = 'rechazado';
                       break;
-				  case ConstStatus.almacenado:
-                  element.class = ConstStatus.almacenado.toLowerCase();
-                  break;
+                  case ConstStatus.almacenado:
+                      element.class = ConstStatus.almacenado.toLowerCase();
+                      break;
               }
               element.classClasification = this.getClassClasification(element.orderType);
           });
@@ -391,14 +391,24 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 }
             });
     }
+
+    showCommentsToRefuse() {
+        this.dialog.open(OrdersRefuseComponent, {
+            panelClass: 'custom-dialog-container',
+        }).afterClosed().subscribe(ordersRefuseResult => {
+            if (ordersRefuseResult.isOk) {
+                this.ordersToRefuseService(ordersRefuseResult.comments);
+            }
+        });
+    }
     ordersToRefuseService(comments: string) {
         const ordersToRefuseReq = new IOrdersRefuseReq();
         ordersToRefuseReq.comments = comments;
         ordersToRefuseReq.userId = this.dataService.getUserId();
         ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
-
-        this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
-            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
+        console.log('modelToSend: ', ordersToRefuseReq)
+        /*this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
+            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));*/
     }
     successRefuseResult(failed: ReasonRefuse[]) {
         if (failed.length === CONST_NUMBER.zero) {
@@ -410,15 +420,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.getPedidos();
     }
 
-    showCommentsToRefuse() {
-        this.dialog.open(OrdersRefuseComponent, {
-            panelClass: 'custom-dialog-container',
-        }).afterClosed().subscribe(ordersRefuseResult => {
-            if (ordersRefuseResult.isOk) {
-                this.ordersToRefuseService(ordersRefuseResult.comments);
-            }
-        });
-    }
 
     getClassClasification(orderType: string) {
         switch (orderType) {
