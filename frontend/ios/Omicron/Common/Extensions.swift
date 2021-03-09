@@ -45,7 +45,7 @@ extension Array {
 }
 
 extension Date {
-    static func getRangeOfDateByWeek(dayOfWeek: Int) -> (String, String)? {
+    static func getRangeOfDateByWeek(dayOfWeek: Int) -> String? {
             var startDate = String()
             var endDate = String()
             switch dayOfWeek {
@@ -58,7 +58,7 @@ extension Date {
                     dateString: "\(Date.today())",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
                     outputFormat: "dd/MM/yyyy") ?? String()
-                return (startDate, endDate)
+                return "\(startDate)-\(endDate)"
             case 2...7: // Lunes a Sábado
                 startDate = UtilsManager.shared.formattedDateFromString(
                     dateString: "\(Date.today().previous(.monday))",
@@ -68,7 +68,7 @@ extension Date {
                     dateString: "\(Date.today().next(.sunday))",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
                     outputFormat: "dd/MM/yyyy") ?? String()
-                return (startDate, endDate)
+                return "\(startDate)-\(endDate)"
             default:
                 return nil
             }
