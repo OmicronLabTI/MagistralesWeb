@@ -13,115 +13,80 @@ import RxSwift
 
 class ChartViewController: UIViewController {
 
-    @IBOutlet weak var chartView: PieChartView!
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var possibleAssingLabel: UILabel!
+    @IBOutlet weak var typeOfDateLabel: UILabel!
 
     @Injected var chartViewModel: ChartViewModel
 
     var disposeBag: DisposeBag = DisposeBag()
-    var entries: [PieChartDataEntry] = []
-    var colors: [UIColor] = []
-    var workload: Workload?
+    let flowLayout = SnapFlowLayout()
+    var lastIndexPath: IndexPath?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Carga de trabajo"
         viewModelBingind()
-        setupChart()
+        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        collectionView.setCollectionViewLayout(flowLayout, animated: false)
+        collectionView.contentInsetAdjustmentBehavior = .always
     }
 
     func viewModelBingind() {
 
-        chartViewModel.getWorkload()
+        chartViewModel
+            .start
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] firstTime in
+                guard let self = self else { return }
+                if firstTime {
+                    self.possibleAssingLabel.text = String(self.chartViewModel.capacity[safe: 0] ?? 0)
+                    self.typeOfDateLabel.text = self.getTitle(0)
+                } else {
+                    guard let lastIndexPath = self.lastIndexPath else { return }
+                    self.collectionView.scrollToItem(at: lastIndexPath, at: .centeredHorizontally, animated: true)
+                }
+            })
+            .disposed(by: disposeBag)
 
-        chartViewModel.workloadData.bind(onNext: { [weak self] data in
-            guard let self = self else { return }
-            self.setDataToChart(data.first)
-        }).disposed(by: disposeBag)
+        chartViewModel.getWorkloads()
 
-    }
+        collectionView
+            .rx
+            .didScroll
+            .subscribe { [weak self] _ in
+                guard let self = self else { return }
+                var visibleRect = CGRect()
 
-    // swiftlint:disable:next cyclomatic_complexity
-    private func setDataToChart(_ workload: Workload?) {
-        guard let workload = workload else { return }
-        self.workload = workload
-        entries = []
-        colors = []
-        for index in 0...5 {
-            switch index {
-            case 0: guard workload.assigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.assigned ?? 0),
-                        label: StatusNameConstants.assignedStatus))
-                colors.append(OmicronColors.assignedStatus)
-            case 1: guard workload.processed ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.processed ?? 0),
-                        label: StatusNameConstants.inProcessStatus))
-                colors.append(OmicronColors.processStatus)
-            case 2: guard workload.pending ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.pending ?? 0),
-                        label: StatusNameConstants.penddingStatus))
-                colors.append(OmicronColors.pendingStatus)
-            case 3: guard workload.finished ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.finished ?? 0),
-                        label: StatusNameConstants.finishedStatus))
-                colors.append(OmicronColors.finishedStatus)
-            case 4: guard workload.reassigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.reassigned ?? 0),
-                        label: StatusNameConstants.reassignedStatus))
-                colors.append(OmicronColors.reassignedStatus)
-            case 5: guard workload.finalized ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.finalized ?? 0),
-                    label: StatusNameConstants.finalizedStatus))
-                colors.append(UIColor.init(named: "finalized") ?? .black)
-            default: break
+                visibleRect.origin = self.collectionView.contentOffset
+                visibleRect.size = self.collectionView.bounds.size
+
+                let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+
+                guard let indexPath = self.collectionView.indexPathForItem(at: visiblePoint) else { return }
+                self.possibleAssingLabel.text = String(self.chartViewModel.capacity[safe: indexPath.row] ?? 0)
+                self.typeOfDateLabel.text = self.getTitle(indexPath.row)
+                self.lastIndexPath = indexPath
             }
+            .disposed(by: disposeBag)
+
+        chartViewModel
+            .workloadData
+            .bind(to: collectionView.rx.items(
+                    cellIdentifier: "chart",
+                    cellType: ChartCollectionViewCell.self)) { _, data, cell in
+                cell.setData(data: data)
+            }
+            .disposed(by: disposeBag)
+
+    }
+
+    private func getTitle(_ index: Int) -> String {
+        switch index {
+        case 0: return "Día"
+        case 1: return "Semana"
+        case 2: return "Mes"
+        default: return ""
         }
-        setDataToChart2()
-    }
-
-    private func setDataToChart2() {
-        let set = PieChartDataSet(entries: entries, label: "")
-        set.colors = colors
-        set.sliceSpace = 2
-
-        let data = PieChartData(dataSet: set)
-        data.setValueFont(.systemFont(ofSize: 30, weight: .bold))
-        data.setValueTextColor(.white)
-
-        let pFormatter = NumberFormatter()
-        pFormatter.numberStyle = .decimal
-        data.setValueFormatter(DefaultValueFormatter(formatter: pFormatter))
-
-        chartView.data = data
-
-        let requests = "\(workload!.totalOrders ?? 0) Pedidos"
-        let orders = "\(workload!.totalFabOrders ?? 0) Órdenes"
-        let pieces = "\(workload!.totalPieces ?? 0 ) Piezas"
-
-        let extraData = requests + "\n" + orders + "\n" + pieces
-        let myAttrString = NSAttributedString(
-              string: extraData,
-              attributes: [NSAttributedString.Key.foregroundColor: OmicronColors.blue,
-                           NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 25)])
-
-        chartView.centerAttributedText = myAttrString
-
-        let totalPossibleAssing = pFormatter.string(from: NSNumber(value: workload!.totalPossibleAssign ?? 0))
-        possibleAssingLabel.text = totalPossibleAssing
-    }
-
-    private func setupChart() {
-
-        chartView.animate(xAxisDuration: 1.4, easingOption: .easeOutBack)
-        chartView.transparentCircleRadiusPercent = 0.61
-        chartView.drawCenterTextEnabled = true
-
     }
 
 }

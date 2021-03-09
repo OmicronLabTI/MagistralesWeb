@@ -90,7 +90,7 @@ class RootViewModel {
         needsRefresh = true
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
-            chartViewModel.getWorkload()
+            chartViewModel.getWorkloads()
             removeSelecteds = needsRefresh
             self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }

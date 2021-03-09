@@ -35,6 +35,12 @@ extension Date {
         components.month = 1
         return Calendar(identifier: .gregorian).date(byAdding: components, to: startOfMonth)!
     }
+
+    var todayInZero: Date {
+        let date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+        return date
+    }
+
 }
 
 // MARK: - Array
