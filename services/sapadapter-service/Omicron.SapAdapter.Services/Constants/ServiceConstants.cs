@@ -211,6 +211,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetIncidents = "incident/saleorder";
 
         /// <summary>
+        /// route to look for user orders.
+        /// </summary>
+        public const string GetOrderByQuery = "userorders";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";

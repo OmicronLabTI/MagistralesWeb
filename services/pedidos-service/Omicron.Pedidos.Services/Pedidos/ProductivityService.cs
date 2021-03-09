@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
             users = users.Where(x => x.Activo == 1).ToList();
 
-            var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
+            var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).Where(x => !x.IsIsolatedProductionOrder).ToList();
 
             var tupleRespond = await this.GetMatrix(dates, users, userOrdersByDate);
             var matrix = this.OrderMatrix(tupleRespond.Item1, tupleRespond.Item2);
@@ -85,10 +85,20 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.Remove(ServiceConstants.Qfb);
             }
 
-            var sapOrders = await this.GetSapFabOrders(parameters);
+            var dates = ServiceUtils.GetDateFilter(parameters);
+            var finalizedOrders = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
+            finalizedOrders = finalizedOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).ToList();
+            var ordersIds = finalizedOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
+
+            var sapResponse = await this.sapAdapter.PostSapAdapter(ordersIds, ServiceConstants.GetUsersByOrdersById);
+            var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+            sapOrders.AddRange(await this.GetSapFabOrders(parameters));
+
             var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
-            userOrders = userOrders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
+            userOrders = userOrders.Where(x => !ServiceConstants.StatusIgnoreWorkLoad.Contains(x.Status)).ToList();
+            userOrders.AddRange(finalizedOrders);
+            userOrders = userOrders.Where(y => !y.IsIsolatedProductionOrder).DistinctBy(x => x.Id).ToList();
 
             var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders, specificUser);
             return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
@@ -122,7 +132,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var u in users)
             {
                 var ordersSap = new List<FabricacionOrderModel>();
-                var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id)).ToList();
+                var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id) && !o.IsIsolatedProductionOrder).ToList();
                 var ordersId = orderByUser.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
 
                 if (ordersId.Any())
@@ -318,7 +328,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, WorkLoadModel workLoadModel)
         {
-            var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.StatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
+            var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.AllStatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
             var productionOrderIds = productionOrders.Select(y => int.Parse(y.Productionorderid)).ToList();
             var salesOrderIds = productionOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(x => x.Salesorderid).Select(y => int.Parse(y.Salesorderid)).ToList();
 
@@ -327,7 +337,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionOrderIdsByStatus = new List<int>();
                 if (status == ServiceConstants.Finalizado)
                 {
-                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals("Almacenado")).Select(y => int.Parse(y.Productionorderid)).ToList();
+                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Almacenado) || x.Status.Equals(ServiceConstants.Entregado)).Select(y => int.Parse(y.Productionorderid)).ToList();
                 }
                 else
                 {

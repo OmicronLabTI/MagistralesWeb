@@ -132,6 +132,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
                 x.FinishedLabel = order == null ? 0 : order.FinishedLabel;
                 x.Detalles = null;
+                x.FechaFin = order != null && order.CloseDate.HasValue ? order.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
@@ -168,7 +169,8 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Cliente))
             {
-                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Cliente) && x.Cliente.ToLower().Contains(parameters[ServiceConstants.Cliente].ToLower())).ToList();
+                List<string> clientNames = parameters[ServiceConstants.Cliente].Split(",").ToList();
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Cliente) && clientNames.All(name => x.Cliente.ToLower().Contains(name.ToLower()))).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Label))

@@ -10,17 +10,19 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {ConstOrders} from '../../constants/const';
 import {UsersService} from '../../services/users.service';
 import {PedidosService} from '../../services/pedidos.service';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {UserListMock} from '../../../mocks/userListMock';
 import {RolesMock} from '../../../mocks/rolesMock';
 import {QfbWithNumberMock} from '../../../mocks/qfbWithNumberMock';
 import {RouterTestingModule} from '@angular/router/testing';
+import {ErrorService} from '../../services/error.service';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
   let fixture: ComponentFixture<FindOrdersDialogComponent>;
   let userServiceSpy;
   let ordersServiceSpy;
+  let errorServiceSpy;
   const filterData = {
     modalType: ConstOrders.modalOrders,
     filterOrdersData: {
@@ -28,6 +30,25 @@ describe('FindOrdersDialogComponent', () => {
     docNum: 11248
     }
   };
+  const QfbSelectSpy = [
+    {
+      qfbId: '937b5cc5-78ef-49fb-9a6d-ebdd80f05873',
+      qfbName: 'Vicente' + ' ' + 'Cantu'
+    },
+    {
+      qfbId: '19340ad7-03e0-460e-b359-9180a70bf623',
+      qfbName: 'test' + ' ' + 'test'
+    },
+    {
+      qfbId: '66824b10-de9b-46e6-ab25-b43fe44e11d0',
+      qfbName: 'Sutano' + ' ' + 'López Peréz'
+    },
+    {
+      qfbId: 'f202e592-c0ca-4f3a-8922-0800bbe759ff',
+      qfbName: 'QFBinactivo' + ' ' + 'QFBinactivo'
+    }
+
+  ];
   beforeEach(async(() => {
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getUsers', 'getRoles'
@@ -44,6 +65,9 @@ describe('FindOrdersDialogComponent', () => {
     ordersServiceSpy.getQfbs.and.callFake(() => {
       return of(QfbWithNumberMock);
     });
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
+    ]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -58,8 +82,9 @@ describe('FindOrdersDialogComponent', () => {
         DatePipe,
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: filterData},
-        /*{ provide: PedidosService, useValue: ordersServiceSpy },
-        { provide: UsersService, useValue: userServiceSpy },*/
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: PedidosService, useValue: ordersServiceSpy },
+        { provide: UsersService, useValue: userServiceSpy },
           DatePipe
       ]
     })
@@ -81,7 +106,6 @@ describe('FindOrdersDialogComponent', () => {
   });
   it('should call ngOnInit()', () => {
      component.ngOnInit();
-     // expect(userServiceSpy.getRoles).toEqual(RolesMock.response);
      expect(component.findOrdersForm.get('docNum').value).toEqual('');
      expect(component.findOrdersForm.get('fini').value).toBeDefined();
      expect(component.findOrdersForm.get('ffin').value).toBeDefined();
@@ -95,14 +119,6 @@ describe('FindOrdersDialogComponent', () => {
      expect(component.findOrdersForm.get('clasification').value).toEqual('');
      expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
   });
-  /* it('should ', () => {
-    component.filterData.filterOrdersData.docNum = true;
-    component.ngOnInit();
-    component.getDisableForDocNum();
-    expect(component.isToResetData).toBeTruthy();
-    expect(component.isBeginInitForm).toBeTruthy();
-  }); */
-
   it(' should reset params value', () => {
     component.resetParamsValue();
     expect(component.findOrdersForm.get('docNum').value).toEqual('');
@@ -120,9 +136,6 @@ describe('FindOrdersDialogComponent', () => {
 
   it('should reset Search Params', () => {
     component.resetSearchParams();
-    // expect(component.getDisableForDocNum).toHaveBeenCalled();
-    // expect(component.getDisableOnlyForDocNum).toHaveBeenCalled();
-    // expect(component.enableAllParamsSearch).toHaveBeenCalled();
     expect(component.isToResetData).toBeTruthy();
     expect(component.isBeginInitForm).toBeTruthy();
     expect(component.findOrdersForm.get('docNum').value).toEqual('');

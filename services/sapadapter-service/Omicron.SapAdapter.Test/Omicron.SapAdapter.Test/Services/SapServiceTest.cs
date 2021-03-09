@@ -131,7 +131,7 @@ namespace Omicron.SapAdapter.Test.Services
         public async Task GetOrdersFechaFin()
         {
             // arrange
-            var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dates = new DateTime(2020, 1, 20).ToString("dd/MM/yyyy");
             var dicParams = new Dictionary<string, string>
             {
                 { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
@@ -139,8 +139,40 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Qfb, "abc" },
             };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+
+            mockPedidoService
+                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockPedidoService
+                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
+
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            mockRedis
+                .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+
             // act
-            var result = await this.sapService.GetOrders(dicParams);
+            var result = await localSap.GetOrders(dicParams);
 
             Assert.IsNotNull(result);
         }
@@ -177,9 +209,10 @@ namespace Omicron.SapAdapter.Test.Services
         {
             // arrange
             var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FechaFin, string.Format("{0}-{1}", dates, dates) },
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
                 { ServiceConstants.Status, "O" },
                 { ServiceConstants.Qfb, "abc" },
                 { ServiceConstants.Cliente, "cliente" },
