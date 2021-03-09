@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var users = await this.GetUsersByRole(ServiceConstants.QfbRoleId);
             users = users.Where(x => x.Activo == 1).ToList();
 
-            var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
+            var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).Where(x => !x.IsIsolatedProductionOrder).ToList();
 
             var tupleRespond = await this.GetMatrix(dates, users, userOrdersByDate);
             var matrix = this.OrderMatrix(tupleRespond.Item1, tupleRespond.Item2);
@@ -132,7 +132,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var u in users)
             {
                 var ordersSap = new List<FabricacionOrderModel>();
-                var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id)).ToList();
+                var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id) && !o.IsIsolatedProductionOrder).ToList();
                 var ordersId = orderByUser.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
 
                 if (ordersId.Any())
