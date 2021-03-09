@@ -703,6 +703,24 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// the status.
         /// </value>
+        public static List<string> AllStatusWorkload { get; } = new List<string>
+        {
+            Asignado,
+            Proceso,
+            Pendiente,
+            Terminado,
+            Finalizado,
+            Entregado,
+            Almacenado,
+            Reasignado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
         public static List<string> StatuPendingAlmacen { get; } = new List<string>
         {
             Pendiente,
@@ -720,6 +738,20 @@ namespace Omicron.Pedidos.Services.Constants
         {
             "EN",
             "EM",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusIgnoreWorkLoad { get; } = new List<string>
+        {
+            Cancelled,
+            Finalizado,
+            Entregado,
+            Almacenado,
         };
     }
 }
