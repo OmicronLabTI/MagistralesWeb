@@ -444,7 +444,7 @@ export class DataService {
         filterDataOrders.productCode = resultSearchOrderModal.productCode;
       }
       if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
-        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName}`;
+        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName.replace(/\s+/g, ',')}`;
         filterDataOrders.clientName = resultSearchOrderModal.clientName;
       }
       if (resultSearchOrderModal.label !== '' && resultSearchOrderModal.label) {

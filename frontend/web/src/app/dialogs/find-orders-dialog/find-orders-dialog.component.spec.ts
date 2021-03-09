@@ -21,6 +21,13 @@ describe('FindOrdersDialogComponent', () => {
   let fixture: ComponentFixture<FindOrdersDialogComponent>;
   let userServiceSpy;
   let ordersServiceSpy;
+  const filterData = {
+    modalType: ConstOrders.modalOrders,
+    filterOrdersData: {
+    dateFull: '01/01/2020-02/02/2020',
+    docNum: 11248
+    }
+  };
   beforeEach(async(() => {
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getUsers', 'getRoles'
@@ -50,8 +57,7 @@ describe('FindOrdersDialogComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {
-            modalType: ConstOrders.modalOrders, filterOrdersData: {dateFull: '01/01/2020-02/02/2020'}} },
+        { provide: MAT_DIALOG_DATA, useValue: filterData},
         /*{ provide: PedidosService, useValue: ordersServiceSpy },
         { provide: UsersService, useValue: userServiceSpy },*/
           DatePipe
@@ -68,13 +74,14 @@ describe('FindOrdersDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-   //  expect(component.isFromSearchOrders).toBeTruthy();
+    // expect(component.isFromSearchOrders).toBeTruthy();
     expect(component.fullDate.length).toEqual(2);
     expect(component.findOrdersForm).toBeDefined();
     expect(component.isToResetData).toBeTruthy();
   });
   it('should call ngOnInit()', () => {
      component.ngOnInit();
+     // expect(userServiceSpy.getRoles).toEqual(RolesMock.response);
      expect(component.findOrdersForm.get('docNum').value).toEqual('');
      expect(component.findOrdersForm.get('fini').value).toBeDefined();
      expect(component.findOrdersForm.get('ffin').value).toBeDefined();
@@ -82,7 +89,58 @@ describe('FindOrdersDialogComponent', () => {
      expect(component.findOrdersForm.get('status').value).toEqual('');
      expect(component.findOrdersForm.get('productCode').value).toEqual('');
      expect(component.findOrdersForm.get('clientName').value).toEqual('');
+     expect(component.findOrdersForm.get('label').value).toEqual('');
+     expect(component.findOrdersForm.get('finlabel').value).toEqual('');
+     expect(component.findOrdersForm.get('orderIncidents').value).toEqual('');
+     expect(component.findOrdersForm.get('clasification').value).toEqual('');
+     expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+  });
+  /* it('should ', () => {
+    component.filterData.filterOrdersData.docNum = true;
+    component.ngOnInit();
+    component.getDisableForDocNum();
+    expect(component.isToResetData).toBeTruthy();
+    expect(component.isBeginInitForm).toBeTruthy();
+  }); */
 
+  it(' should reset params value', () => {
+    component.resetParamsValue();
+    expect(component.findOrdersForm.get('docNum').value).toEqual('');
+    expect(component.findOrdersForm.get('dateType').value).toEqual(ConstOrders.defaultDateInit);
+    expect(component.findOrdersForm.get('status').value).toEqual('');
+    expect(component.findOrdersForm.get('qfb').value).toEqual('');
+    expect(component.findOrdersForm.get('productCode').value).toEqual('');
+    expect(component.findOrdersForm.get('clientName').value).toEqual('');
+    expect(component.findOrdersForm.get('label').value).toEqual('');
+    expect(component.findOrdersForm.get('finlabel').value).toEqual('');
+    expect(component.findOrdersForm.get('orderIncidents').value).toEqual('');
+    expect(component.findOrdersForm.get('clasification').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+  });
 
+  it('should reset Search Params', () => {
+    component.resetSearchParams();
+    // expect(component.getDisableForDocNum).toHaveBeenCalled();
+    // expect(component.getDisableOnlyForDocNum).toHaveBeenCalled();
+    // expect(component.enableAllParamsSearch).toHaveBeenCalled();
+    expect(component.isToResetData).toBeTruthy();
+    expect(component.isBeginInitForm).toBeTruthy();
+    expect(component.findOrdersForm.get('docNum').value).toEqual('');
+    expect(component.findOrdersForm.get('dateType').value).toEqual(ConstOrders.defaultDateInit);
+    expect(component.findOrdersForm.get('status').value).toEqual('');
+    expect(component.findOrdersForm.get('qfb').value).toEqual('');
+    expect(component.findOrdersForm.get('productCode').value).toEqual('');
+    expect(component.findOrdersForm.get('clientName').value).toEqual('');
+    expect(component.findOrdersForm.get('label').value).toEqual('');
+    expect(component.findOrdersForm.get('finlabel').value).toEqual('');
+    expect(component.findOrdersForm.get('orderIncidents').value).toEqual('');
+    expect(component.findOrdersForm.get('clasification').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+  });
+
+  it('should change Validators For DocNum', () => {
+    component.changeValidatorsForDocNum();
+    expect(component.isToResetData).toBeTruthy();
+    expect(component.isBeginInitForm).toBeTruthy();
   });
 });
