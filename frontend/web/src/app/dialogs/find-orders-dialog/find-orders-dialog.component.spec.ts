@@ -156,4 +156,12 @@ describe('FindOrdersDialogComponent', () => {
     expect(component.isToResetData).toBeTruthy();
     expect(component.isBeginInitForm).toBeTruthy();
   });
+
+  it('should trim Filter Values', () => {
+    component.findOrdersForm.get('clientName').setValue('Cliente Nombre ');
+    component.findOrdersForm.get('productCode').setValue('');
+    component.trimFilterValues();
+    expect(component.findOrdersForm.get('clientName').value).toEqual('Cliente Nombre');
+    expect(component.findOrdersForm.get('productCode').value).toEqual('');
+  });
 });
