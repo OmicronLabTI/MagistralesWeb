@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
@@ -74,10 +75,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel)
         {
-            var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente, ServiceConstants.Cancelled };
-            var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
+            var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente, ServiceConstants.Cancelled, ServiceConstants.Entregado, ServiceConstants.Almacenado };
+            var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetail);
+            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
 
+            var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
+            users = sapOrderTypes.Contains(ServiceConstants.Mix) ? users : users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
             userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
 
@@ -86,14 +91,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, System.Net.HttpStatusCode.BadRequest);
             }
 
-            var pedidosId = assignModel.DocEntry.Select(x => x).ToList();
-            var pedidosString = assignModel.DocEntry.Select(x => x.ToString()).ToList();
-            var orders = await this.sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetOrderWithDetail);
-            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-
             var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders);
 
-            var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersSap);
+            var ordersToUpdate = ordersSap.Where(x => !userSaleOrder.Item2.Contains(x.Order.DocNum)).ToList();
+            var pedidosString = ordersToUpdate.Select(x => x.Order.DocNum.ToString()).ToList();
+
+            var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersToUpdate);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
@@ -108,22 +111,29 @@ namespace Omicron.Pedidos.Services.Pedidos
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
 
-                if (userSaleOrder.ContainsKey(saleOrderInt))
+                if (userSaleOrder.Item1.ContainsKey(saleOrderInt))
                 {
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = asignable ? ServiceConstants.Asignado : x.Status;
                     x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
-                    x.Userid = userSaleOrder[saleOrderInt];
+                    x.Userid = userSaleOrder.Item1[saleOrderInt];
 
                     var orderId = string.IsNullOrEmpty(x.Productionorderid) ? saleOrderInt : productionId;
                     var ordenType = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.OrdenVenta : ServiceConstants.OrdenFab;
-                    var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder[saleOrderInt]);
+                    var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder.Item1[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder.Item1[saleOrderInt]);
                     listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, new List<int> { orderId }, textAction, ordenType));
                 }
             });
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+
+            if (userSaleOrder.Item2.Any())
+            {
+                var errorParcial = new StringBuilder();
+                userSaleOrder.Item2.ForEach(x => errorParcial.Append($"{x}, "));
+                throw new CustomServiceException(string.Format(ServiceConstants.ErrirQfbAutomaticoParcial, errorParcial.ToString()), System.Net.HttpStatusCode.BadRequest);
+            }
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }

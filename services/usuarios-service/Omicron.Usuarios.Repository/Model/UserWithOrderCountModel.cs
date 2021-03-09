@@ -60,5 +60,13 @@ namespace Omicron.Usuarios.Entities.Model
         /// Username.
         /// </value>
         public int Asignable { get; set; }
+
+        /// <summary>
+        /// Gets or sets Username.
+        /// </summary>
+        /// <value>
+        /// Username.
+        /// </value>
+        public string Clasification { get; set; }
     }
 }

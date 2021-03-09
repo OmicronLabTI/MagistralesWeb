@@ -8,8 +8,10 @@
 
 namespace Omicron.Pedidos.Services.Utils
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -154,21 +156,29 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="orderDetail">the order with details.</param>
         /// <param name="userOrders">The user orders.</param>
         /// <returns>the data to return.</returns>
-        public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
+        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
         {
             var dictUserPedido = new Dictionary<int, string>();
+            var listOrdersWithNoUser = new List<int>();
 
             foreach (var p in orderDetail)
             {
-                users = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
-
-                if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
+                if (p.Order.OrderType != ServiceConstants.Mix && !users.Any(x => x.User.Classification == p.Order.OrderType))
                 {
-                    dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
+                    listOrdersWithNoUser.Add(p.Order.DocNum);
                     continue;
                 }
 
-                dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, users, p.Order.DocNum, users.FirstOrDefault().User.Id, userOrders);
+                var localUsers = p.Order.OrderType == ServiceConstants.Mix ? users : users.Where(x => x.User.Classification == p.Order.OrderType).ToList();
+                localUsers = localUsers.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
+
+                if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
+                {
+                    dictUserPedido.Add(p.Order.DocNum, localUsers.FirstOrDefault().User.Id);
+                    continue;
+                }
+
+                dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, localUsers, p.Order.DocNum, localUsers.FirstOrDefault().User.Id, userOrders);
 
                 users.ForEach(x =>
                 {
@@ -176,7 +186,7 @@ namespace Omicron.Pedidos.Services.Utils
                 });
             }
 
-            return dictUserPedido;
+            return new Tuple<Dictionary<int, string>, List<int>>(dictUserPedido, listOrdersWithNoUser);
         }
 
         /// <summary>
