@@ -333,7 +333,7 @@ export class DataService {
       case FromToFilter.fromOrdersCancel:
         return dataToSearch.filter(t => (t.isChecked &&
             (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
-                && t.pedidoStatus !== ConstStatus.almacenado))).length > 0;
+                && t.pedidoStatus !== ConstStatus.almacenado && t.pedidoStatus !== ConstStatus.rechazado))).length > 0;
       case FromToFilter.fromDetailOrder:
         return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
             && t.status !== ConstStatus.abierto && t.status !== ConstStatus.almacenado)).length > 0;
