@@ -53,21 +53,21 @@ extension Date {
                 startDate = UtilsManager.shared.formattedDateFromString(
                     dateString: "\(Date.today().previous(.monday))",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
-                    outputFormat: "dd-MM-yyyy") ?? String()
+                    outputFormat: "dd/MM/yyyy") ?? String()
                 endDate = UtilsManager.shared.formattedDateFromString(
                     dateString: "\(Date.today())",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
-                    outputFormat: "dd-MM-yyyy") ?? String()
+                    outputFormat: "dd/MM/yyyy") ?? String()
                 return (startDate, endDate)
             case 2...7: // Lunes a Sábado
                 startDate = UtilsManager.shared.formattedDateFromString(
                     dateString: "\(Date.today().previous(.monday))",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
-                    outputFormat: "dd-MM-yyyy") ?? String()
+                    outputFormat: "dd/MM/yyyy") ?? String()
                 endDate = UtilsManager.shared.formattedDateFromString(
                     dateString: "\(Date.today().next(.sunday))",
                     inputFormat: "yyyy-MM-dd HH:mm:ss Z",
-                    outputFormat: "dd-MM-yyyy") ?? String()
+                    outputFormat: "dd/MM/yyyy") ?? String()
                 return (startDate, endDate)
             default:
                 return nil
@@ -79,7 +79,7 @@ extension Date {
         dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         let dateGet = dateFormatterGet.date(from: today)!
         let formatter  = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.dateFormat = "yyyy/MM/dd"
         let todayDate = formatter.date(from: formatter.string(from: dateGet))!
         let myCalendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)!
         let myComponents = myCalendar.components(.weekday, from: todayDate)
