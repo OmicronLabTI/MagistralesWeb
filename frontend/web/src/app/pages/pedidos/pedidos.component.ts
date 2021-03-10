@@ -34,7 +34,7 @@ import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Router} from '@angular/router';
 import {IOrdersRefuseReq, ReasonRefuse} from '../../model/http/detallepedidos.model';
-import {OrdersRefuseComponent} from '../../dialogs/orders-refuse/orders-refuse.component';
+import {CommentsConfig} from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -98,6 +98,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
+    this.subscriptionCallHttp.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+        this.successNewComments(newCommentsResult)));
     this.dataService.removeFiltersActive();
   }
   createInitRage() {
@@ -393,22 +395,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
     }
 
     showCommentsToRefuse() {
-        this.dialog.open(OrdersRefuseComponent, {
-            panelClass: 'custom-dialog-container',
-        }).afterClosed().subscribe(ordersRefuseResult => {
-            if (ordersRefuseResult.isOk) {
-                this.ordersToRefuseService(ordersRefuseResult.comments);
-            }
-        });
+        this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForRefuseOrders: true});
     }
-    ordersToRefuseService(comments: string) {
+    successNewComments(newCommentsResult: CommentsConfig) {
         const ordersToRefuseReq = new IOrdersRefuseReq();
-        ordersToRefuseReq.comments = comments;
+        ordersToRefuseReq.comments = newCommentsResult.comments;
         ordersToRefuseReq.userId = this.dataService.getUserId();
         ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
-        console.log('modelToSend: ', ordersToRefuseReq)
-        /*this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
-            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));*/
+        this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
+            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
     }
     successRefuseResult(failed: ReasonRefuse[]) {
         if (failed.length === CONST_NUMBER.zero) {
@@ -433,4 +428,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 return ClassCssOrderType.mx;
         }
     }
+
+
 }
