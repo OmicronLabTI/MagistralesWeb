@@ -25,22 +25,23 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
   constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsConfig: any) {
     this.comments = this.commentsConfig.comments || CONST_STRING.empty;
     this.arrayComments = this.comments.trim().split('&').filter( comment => comment !== CONST_STRING.empty);
-
   }
 
   ngOnInit() {
-    if (this.commentsConfig.isForClose) {
+    if (this.commentsConfig.isForClose || this.commentsConfig.isForRefuseOrders) {
       this.maxLengthComments = String(CONST_NUMBER.threeHundred - (this.comments.trim().length + CONST_NUMBER.one));
     } else {
       this.maxLengthComments = String(CONST_NUMBER.oneThousand - (this.comments.trim().length + CONST_NUMBER.one));
     }
   }
   saveComments() {
-    if (this.commentsConfig.isReadOnly || this.commentsConfig.isForClose ) {
+    if (this.commentsConfig.isReadOnly || this.commentsConfig.isForClose || this.commentsConfig.isForRefuseOrders ) {
       this.dialogRef.close({
         isReadOnly: this.commentsConfig.isReadOnly,
         isForClose: this.commentsConfig.isForClose,
-        comments: CONST_STRING.empty});
+        isForRefuseOrders: this.commentsConfig.isForRefuseOrders,
+        comments: this.commentsConfig.isForRefuseOrders ? this.newComments.trim() : CONST_STRING.empty});
+      return;
     }
 
     if (this.getIsCorrectData()) {

@@ -34,7 +34,7 @@ import {Title} from '@angular/platform-browser';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Router} from '@angular/router';
 import {IOrdersRefuseReq, ReasonRefuse} from '../../model/http/detallepedidos.model';
-import {OrdersRefuseComponent} from '../../dialogs/orders-refuse/orders-refuse.component';
+import {CommentsConfig} from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -98,6 +98,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
+    this.subscriptionCallHttp.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+        this.successNewComments(newCommentsResult)));
     this.dataService.removeFiltersActive();
   }
   createInitRage() {
@@ -149,9 +151,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
                   case ConstStatus.rechazado:
                       element.class = 'rechazado';
                       break;
-				  case ConstStatus.almacenado:
-                  element.class = ConstStatus.almacenado.toLowerCase();
-                  break;
+                  case ConstStatus.almacenado:
+                      element.class = ConstStatus.almacenado.toLowerCase();
+                      break;
               }
               element.classClasification = this.getClassClasification(element.orderType);
           });
@@ -391,12 +393,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 }
             });
     }
-    ordersToRefuseService(comments: string) {
+
+    showCommentsToRefuse() {
+        this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForRefuseOrders: true});
+    }
+    successNewComments(newCommentsResult: CommentsConfig) {
         const ordersToRefuseReq = new IOrdersRefuseReq();
-        ordersToRefuseReq.comments = comments;
+        ordersToRefuseReq.comments = newCommentsResult.comments;
         ordersToRefuseReq.userId = this.dataService.getUserId();
         ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
-
         this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
             this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
     }
@@ -410,15 +415,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.getPedidos();
     }
 
-    showCommentsToRefuse() {
-        this.dialog.open(OrdersRefuseComponent, {
-            panelClass: 'custom-dialog-container',
-        }).afterClosed().subscribe(ordersRefuseResult => {
-            if (ordersRefuseResult.isOk) {
-                this.ordersToRefuseService(ordersRefuseResult.comments);
-            }
-        });
-    }
 
     getClassClasification(orderType: string) {
         switch (orderType) {
@@ -432,4 +428,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 return ClassCssOrderType.mx;
         }
     }
+
+
 }

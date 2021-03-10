@@ -174,7 +174,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
               }, (error: ErrorHttpInterface) => {
                   if (error.status === HttpStatus.badRequest) {
-                      this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'error', isButtonAccept: true});
+                      this.onSuccessGeneralMessage({title: String(error.error), icon: 'error', isButtonAccept: true});
                   } else {
                       this.errorService.httpError(error);
                   }
