@@ -16,7 +16,7 @@ class SnapFlowLayout: UICollectionViewFlowLayout {
 
         scrollDirection = .horizontal
         minimumLineSpacing = 50
-        itemSize = CGSize(width: 700, height: 720)
+        itemSize = CGSize(width: 680, height: 680)
     }
 
     required init?(coder aDecoder: NSCoder) {

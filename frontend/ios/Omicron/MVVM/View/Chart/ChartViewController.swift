@@ -16,12 +16,16 @@ class ChartViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var possibleAssingLabel: UILabel!
     @IBOutlet weak var typeOfDateLabel: UILabel!
+    @IBOutlet weak var daysLabel: UILabel!
+    @IBOutlet weak var leftButton: UIButton!
+    @IBOutlet weak var rightButton: UIButton!
 
     @Injected var chartViewModel: ChartViewModel
 
     var disposeBag: DisposeBag = DisposeBag()
     let flowLayout = SnapFlowLayout()
     var lastIndexPath: IndexPath?
+    var currentIndexPath = IndexPath(item: 0, section: 0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,8 +43,9 @@ class ChartViewController: UIViewController {
             .subscribe(onNext: { [weak self] firstTime in
                 guard let self = self else { return }
                 if firstTime {
-                    self.possibleAssingLabel.text = String(self.chartViewModel.capacity[safe: 0] ?? 0)
+                    self.possibleAssingLabel.text = self.chartViewModel.capacity[safe: 0] ?? "0"
                     self.typeOfDateLabel.text = self.getTitle(0)
+                    self.daysLabel.text = self.chartViewModel.daysRange[0]
                 } else {
                     guard let lastIndexPath = self.lastIndexPath else { return }
                     self.collectionView.scrollToItem(at: lastIndexPath, at: .centeredHorizontally, animated: true)
@@ -63,8 +68,9 @@ class ChartViewController: UIViewController {
                 let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
 
                 guard let indexPath = self.collectionView.indexPathForItem(at: visiblePoint) else { return }
-                self.possibleAssingLabel.text = String(self.chartViewModel.capacity[safe: indexPath.row] ?? 0)
+                self.possibleAssingLabel.text = self.chartViewModel.capacity[safe: indexPath.row] ?? "0"
                 self.typeOfDateLabel.text = self.getTitle(indexPath.row)
+                self.daysLabel.text = self.chartViewModel.daysRange[indexPath.row]
                 self.lastIndexPath = indexPath
             }
             .disposed(by: disposeBag)
@@ -78,6 +84,34 @@ class ChartViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
+    }
+
+    @IBAction func leftButtonDidPressed(_ sender: Any) {
+        if currentIndexPath.item > 0 {
+            currentIndexPath = IndexPath(item: currentIndexPath.item - 1, section: 0)
+            collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
+            guard currentIndexPath.item == 0 else {
+                leftButton.isEnabled = true
+                rightButton.isEnabled = true
+                return
+            }
+            rightButton.isEnabled = true
+            leftButton.isEnabled = false
+        }
+    }
+
+    @IBAction func rightButtonDidPressed(_ sender: Any) {
+        if currentIndexPath.item < 2 {
+            currentIndexPath = IndexPath(item: currentIndexPath.item + 1, section: 0)
+            collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
+            guard currentIndexPath.item == 2 else {
+                rightButton.isEnabled = true
+                leftButton.isEnabled = true
+                return
+            }
+            leftButton.isEnabled = true
+            rightButton.isEnabled = false
+        }
     }
 
     private func getTitle(_ index: Int) -> String {
