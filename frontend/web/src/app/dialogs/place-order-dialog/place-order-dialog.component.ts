@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PedidosService} from '../../services/pedidos.service';
 import {ErrorService} from '../../services/error.service';
-import {QfbWithNumber} from '../../model/http/users';
+import {QfbClassification, QfbWithNumber} from '../../model/http/users';
 import {DataService} from '../../services/data.service';
 import {CONST_NUMBER, CONST_STRING, MODAL_NAMES} from '../../constants/const';
 
@@ -15,11 +15,17 @@ export class PlaceOrderDialogComponent implements OnInit {
     isPlaceManual = false;
     idQfbSelected = '';
     qfbs: QfbWithNumber[] =  [];
+    currentQfbType = CONST_STRING.empty;
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public placeData: any, private dataService: DataService) {
-        if (this.placeData.placeOrdersData) { /// receive current clasificationQfb
+        if (this.placeData.placeOrdersData) {
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
+        }
+        if (this.placeData.placeOrdersData.qfbClassification) {
+            this.changeTypeQfb(this.placeData.placeOrdersData.qfbClassification);
+        } else {
+            this.changeTypeQfb(QfbClassification.mg);
         }
         this.isPlaceManual = this.idQfbSelected !== CONST_STRING.empty;
   }
@@ -50,7 +56,7 @@ export class PlaceOrderDialogComponent implements OnInit {
    this.dataService.setQbfToPlace({userId, userName,
       modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list,
        assignType: MODAL_NAMES.assignManual, isFromOrderIsolated: this.placeData.placeOrdersData.isFromOrderIsolated,
-       isFromReassign: this.placeData.placeOrdersData.isFromReassign}); /// add new clasificationQfb
+       isFromReassign: this.placeData.placeOrdersData.isFromReassign, qfbClassification: this.currentQfbType});
    this.dialogRef.close();
   }
 
@@ -61,5 +67,18 @@ export class PlaceOrderDialogComponent implements OnInit {
           assignType: MODAL_NAMES.assignAutomatic
       });
       this.dialogRef.close();
+  }
+  changeTypeQfb(qfbClassification: string) {
+      switch (qfbClassification) {
+          case QfbClassification.mg:
+              this.currentQfbType = QfbClassification.mg;
+              break;
+          case QfbClassification.mn:
+              this.currentQfbType = QfbClassification.mn;
+              break;
+          case QfbClassification.be:
+              this.currentQfbType = QfbClassification.be;
+              break;
+      }
   }
 }

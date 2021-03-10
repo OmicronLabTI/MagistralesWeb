@@ -23,6 +23,11 @@
   width: 100%;
   height: 100%;
 }
+.classification-filter-qfb {
+  width: 70% !important;
+  display: flex;
+  flex-direction: row;
+}
 .options-footer{
   width: 100%;
   height: 11%;
@@ -34,6 +39,7 @@
   width: 100%;
   height: 15%;
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding: 2%;
 }
@@ -55,6 +61,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.with-qfb-classification {
+  width: 3rem !important;
+  height: 2rem !important;
 }
 .margin-right-button{
   margin-right: 15px ;

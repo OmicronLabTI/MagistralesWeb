@@ -66,8 +66,13 @@ export  class QfbWithNumber {
     isFromOrderIsolated?: boolean;
     isFromReassign?: boolean;
     asignable?: number;
-    qfbClasification?: string;
+    qfbClassification?: string;
 }
+export const QfbClassification = {
+    mg: 'mg',
+    mn: 'mn',
+    be: 'be'
+};
 
 export class SearchUsersData {
     userNameSe: string;
