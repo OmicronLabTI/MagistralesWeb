@@ -63,7 +63,8 @@ describe('PlaceOrderDialogComponent', () => {
         component.placeOrder('anyUserId', 'anyUserName');
         expect(dataServiceSpy.setQbfToPlace).toHaveBeenCalledWith({userId: 'anyUserId', userName: 'anyUserName',
             modalType: 'placeOrder', list: [], assignType: MODAL_NAMES.assignManual,
-            isFromOrderIsolated: undefined, isFromReassign: undefined});
+            isFromOrderIsolated: undefined, isFromReassign: undefined, clasification: 'mg'});
+
     });
   it('should call placeOrderAutomatic()', () => {
         component.placeOrderAutomatic();
