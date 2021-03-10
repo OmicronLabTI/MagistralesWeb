@@ -66,6 +66,7 @@ export  class QfbWithNumber {
     isFromOrderIsolated?: boolean;
     isFromReassign?: boolean;
     asignable?: number;
+    qfbClasification?: string;
 }
 
 export class SearchUsersData {

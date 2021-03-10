@@ -18,7 +18,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public placeData: any, private dataService: DataService) {
-        if (this.placeData.placeOrdersData) {
+        if (this.placeData.placeOrdersData) { /// receive current clasificationQfb
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
         }
         this.isPlaceManual = this.idQfbSelected !== CONST_STRING.empty;
@@ -36,11 +36,10 @@ export class PlaceOrderDialogComponent implements OnInit {
         });
 
         this.qfbs = newResponse;
-    })
-        .catch(error => {
+    }).catch(error => {
             this.errorService.httpError(error);
             this.dialogRef.close();
-        });
+    });
   }
 
   changePlaceManual() {
@@ -51,7 +50,7 @@ export class PlaceOrderDialogComponent implements OnInit {
    this.dataService.setQbfToPlace({userId, userName,
       modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list,
        assignType: MODAL_NAMES.assignManual, isFromOrderIsolated: this.placeData.placeOrdersData.isFromOrderIsolated,
-       isFromReassign: this.placeData.placeOrdersData.isFromReassign});
+       isFromReassign: this.placeData.placeOrdersData.isFromReassign}); /// add new clasificationQfb
    this.dialogRef.close();
   }
 
