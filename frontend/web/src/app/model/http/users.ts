@@ -66,7 +66,7 @@ export  class QfbWithNumber {
     isFromOrderIsolated?: boolean;
     isFromReassign?: boolean;
     asignable?: number;
-    qfbClassification?: string;
+    clasification?: string;
 }
 export const QfbClassification = {
     mg: 'mg',

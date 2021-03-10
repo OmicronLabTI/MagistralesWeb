@@ -15,6 +15,7 @@ export class PlaceOrderDialogComponent implements OnInit {
     isPlaceManual = false;
     idQfbSelected = '';
     qfbs: QfbWithNumber[] =  [];
+    currentQfbs: QfbWithNumber[] =  [];
     currentQfbType = CONST_STRING.empty;
   constructor(private dialogRef: MatDialogRef<PlaceOrderDialogComponent>,
               private ordersServices: PedidosService, private errorService: ErrorService,
@@ -23,9 +24,9 @@ export class PlaceOrderDialogComponent implements OnInit {
           this.idQfbSelected = this.placeData.placeOrdersData.userId ? this.placeData.placeOrdersData.userId : '';
         }
         if (this.placeData.placeOrdersData.qfbClassification) {
-            this.changeTypeQfb(this.placeData.placeOrdersData.qfbClassification);
+            this.changeTypeQfb(this.placeData.placeOrdersData.qfbClassification, true);
         } else {
-            this.changeTypeQfb(QfbClassification.mg);
+            this.changeTypeQfb(QfbClassification.mg, true);
         }
         this.isPlaceManual = this.idQfbSelected !== CONST_STRING.empty;
   }
@@ -39,9 +40,10 @@ export class PlaceOrderDialogComponent implements OnInit {
             qfbNew.countTotalOrders = new Intl.NumberFormat().format(Number(qfbNew.countTotalOrders));
             qfbNew.countTotalFabOrders = new Intl.NumberFormat().format(Number(qfbNew.countTotalFabOrders));
             qfbNew.countTotalPieces = new Intl.NumberFormat().format(Number(qfbNew.countTotalPieces));
+            qfbNew.clasification = qfbNew.clasification || CONST_STRING.empty;
         });
-
         this.qfbs = newResponse;
+        this.changeCurrentQfbs();
     }).catch(error => {
             this.errorService.httpError(error);
             this.dialogRef.close();
@@ -56,7 +58,7 @@ export class PlaceOrderDialogComponent implements OnInit {
    this.dataService.setQbfToPlace({userId, userName,
       modalType: this.placeData.placeOrdersData.modalType, list: this.placeData.placeOrdersData.list,
        assignType: MODAL_NAMES.assignManual, isFromOrderIsolated: this.placeData.placeOrdersData.isFromOrderIsolated,
-       isFromReassign: this.placeData.placeOrdersData.isFromReassign, qfbClassification: this.currentQfbType});
+       isFromReassign: this.placeData.placeOrdersData.isFromReassign, clasification: this.currentQfbType});
    this.dialogRef.close();
   }
 
@@ -68,7 +70,7 @@ export class PlaceOrderDialogComponent implements OnInit {
       });
       this.dialogRef.close();
   }
-  changeTypeQfb(qfbClassification: string) {
+  changeTypeQfb(qfbClassification: string, isFromInit: boolean = false) {
       switch (qfbClassification) {
           case QfbClassification.mg:
               this.currentQfbType = QfbClassification.mg;
@@ -80,5 +82,11 @@ export class PlaceOrderDialogComponent implements OnInit {
               this.currentQfbType = QfbClassification.be;
               break;
       }
+      if (!isFromInit) {
+          this.changeCurrentQfbs();
+      }
+  }
+  changeCurrentQfbs() {
+      this.currentQfbs = this.qfbs.filter(qfb => qfb.clasification.toLowerCase() === this.currentQfbType.toLowerCase());
   }
 }
