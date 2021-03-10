@@ -27,6 +27,9 @@ class RootViewModel {
     var searchFilter = PublishSubject<String>()
     var needsRefresh = true
     var removeSelecteds = false
+    var refreshSearch = PublishSubject<String>()
+    var searchStore = String()
+    var needSearch = false
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     init() {
@@ -40,10 +43,13 @@ class RootViewModel {
             }
         }).disposed(by: self.disposeBag)
         self.searchFilter.subscribe(onNext: { [weak self] text in
+            self?.searchStore = text
             if text.count == 0 {
+                self?.needSearch = false
                 self?.dataFilter.onNext(nil)
                 return
             }
+            self?.needSearch = true
             let orders = self?.sections.map({ $0.orders }).reduce([], +)
             let filter = orders?.filter({ order in
                 guard let orderId = order.productionOrderId else { return false }
@@ -112,6 +118,9 @@ class RootViewModel {
                 }
                 if isUpdate {
                     self.showRefreshControl.onNext(())
+                }
+                if self.needSearch {
+                    self.refreshSearch.onNext(self.searchStore)
                 }
                 }, onError: { [weak self] err in
                     guard let self = self else { return }

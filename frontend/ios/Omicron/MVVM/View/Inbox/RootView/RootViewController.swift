@@ -164,6 +164,11 @@ class RootViewController: UIViewController {
         rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
+        rootViewModel.refreshSearch.subscribe(onNext: { [weak self] itemToSearch in
+            guard let self = self else { return }
+            self.searchOrdesSearchBar.text = itemToSearch
+            self.rootViewModel.searchFilter.onNext(itemToSearch)
+        }).disposed(by: disposeBag)
     }
     func initComponents() {
         self.viewTable.tableFooterView = UIView()

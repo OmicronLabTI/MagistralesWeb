@@ -44,6 +44,7 @@ class OrderDetailViewController: UIViewController {
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var lottieManager: LottieManager
+
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
     var statusType = String()
