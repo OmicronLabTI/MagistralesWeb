@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Test.Services
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
@@ -159,7 +160,7 @@ namespace Omicron.Pedidos.Test.Services
         {
             var assign = new AutomaticAssingModel
             {
-                DocEntry = new List<int> { 100 },
+                DocEntry = new List<int> { 100, 101 },
                 UserLogistic = "abc",
             };
 
@@ -181,10 +182,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
 
             // act
-            var response = await pedidoServiceLocal.AutomaticAssign(assign);
-
-            // assert
-            Assert.IsNotNull(response);
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign));
         }
 
         /// <summary>

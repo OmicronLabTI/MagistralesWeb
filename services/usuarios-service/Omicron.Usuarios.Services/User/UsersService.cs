@@ -235,6 +235,7 @@ namespace Omicron.Usuarios.Services.User
                         CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
                         CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
                         Asignable = x.Asignable,
+                        Clasification = x.Classification,
                     });
                 }
             }));
