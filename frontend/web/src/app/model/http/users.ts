@@ -30,6 +30,7 @@ export class IUserReq {
     userTypeR?: string;
     isChecked?: boolean = false;
     classification?: string;
+    fullClasification?: string;
 }
 export class UserRes {
     activo: number;
