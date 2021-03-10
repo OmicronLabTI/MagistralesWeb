@@ -344,7 +344,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
                 }
 
-                var total = (int)sapOrders.Where(x => productionOrderIdsByStatus.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
+                var total = (int)sapOrders.Where(x => productionOrderIdsByStatus.Any(y => y == x.OrdenId)).DistinctBy(x => x.OrdenId).Sum(y => y.Quantity);
 
                 switch (status)
                 {
