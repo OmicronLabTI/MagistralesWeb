@@ -19,12 +19,12 @@
         </mat-card-header>
         <mat-card-content class="content-card-container-custom">
         <div class="options-content">
-            <div class="classification-filter-qfb" *ngIf="isPlaceManual">
-                <button mat-button [ngClass]="currentQfbType !== 'mg' ? 'disable-button' : ''" class="with-qfb-classification background-color-mg margin-right-button"
+            <div class="classification-filter-qfb">
+                <button mat-button *ngIf="isPlaceManual" [ngClass]="currentQfbType !== 'mg' ? 'disable-button' : ''" class="with-qfb-classification background-color-mg margin-right-button"
                          (click)="changeTypeQfb('mg')" >MG</button>
-                <button mat-button class="with-qfb-classification background-color-mn margin-right-button"
+                <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-mn margin-right-button"
                         [ngClass]="currentQfbType !== 'mn' ? 'disable-button' : ''" (click)="changeTypeQfb('mn')" >MN</button>
-                <button mat-button class="with-qfb-classification background-color-be "
+                <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-be "
                         [ngClass]="currentQfbType !== 'be' ? 'disable-button' : ''"  (click)="changeTypeQfb('be')" >BE</button>
             </div>
             <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button" (click)="changePlaceManual()" >Manual</button>
@@ -52,7 +52,7 @@
                       </div>
                   </mat-card>
               </div>
-              <div class="qfb-with-orders border-custom-qfb" *ngFor="let qfb of qfbs">
+              <div class="qfb-with-orders border-custom-qfb" *ngFor="let qfb of currentQfbs">
                   <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom" (click)="placeOrder(qfb.userId, qfb.userName)">
                       <div class="qfb-name">
                           <span class="margin-left-options">
