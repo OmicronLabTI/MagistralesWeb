@@ -62,13 +62,13 @@ export class UserListComponent implements OnInit, OnDestroy {
                     if (user.classification) {
                         switch (user.classification) {
                             case 'MN':
-                                user.fullClasification = 'Bioelite';
+                                user.fullClasification = 'Bioelite (MN)';
                                 break;
                             case 'BE':
-                                user.fullClasification = 'Bioequal';
+                                user.fullClasification = 'Bioequal (BE)';
                                 break;
                             case 'MG':
-                                user.fullClasification = 'Magistral ';
+                                user.fullClasification = 'Magistral (MG)';
                                 break;
                         }
                     }
