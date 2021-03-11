@@ -266,6 +266,7 @@ namespace Omicron.SapAdapter.Test
                 new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1000, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
                 new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1001, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
                 new OrdenFabricacionModel { ProductoId = "Magistral2", OrdenId = 1002, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Linea1", OrdenId = 1003, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75001, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
             };
         }
 
@@ -399,7 +400,7 @@ namespace Omicron.SapAdapter.Test
         {
             var listProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado" },
+                new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Recibir" },
             };
 
             return new ResultDto
