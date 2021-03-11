@@ -469,6 +469,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var orderStatus = ServiceConstants.PorRecibir;
                 var hasDelivery = false;
+                var deliveryId = 0;
                 var batches = new List<string>();
 
                 if (item.IsMagistral.Equals("Y"))
@@ -477,6 +478,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
                     orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
                     hasDelivery = userFabOrder.DeliveryId != 0;
+                    deliveryId = userFabOrder.DeliveryId;
                 }
                 else
                 {
@@ -484,6 +486,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
                     orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
+                    deliveryId = userFabLineOrder.DeliveryId;
 
                     var batchObject = !string.IsNullOrEmpty(userFabLineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(userFabLineOrder.BatchName) : new List<AlmacenBatchModel>();
                     batchObject.ForEach(y =>
@@ -519,6 +522,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                     HasDelivery = hasDelivery,
+                    DeliveryId = deliveryId,
                 };
 
                 listToReturn.Add(productModel);
