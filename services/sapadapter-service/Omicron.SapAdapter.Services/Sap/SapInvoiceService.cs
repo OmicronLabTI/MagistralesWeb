@@ -203,6 +203,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
 
+            var dictParams = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(dataToLook.Chip))
+            {
+                dictParams.Add(ServiceConstants.Chips, dataToLook.Chip);
+            }
+
+            invoiceHeader = this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
             dataToLook.InvoiceDocNums.ForEach(y =>
