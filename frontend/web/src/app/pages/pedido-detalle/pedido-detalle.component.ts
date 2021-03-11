@@ -20,7 +20,7 @@ import {
 } from '../../constants/const';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
-import {CancelOrderReq, ParamsPedidos, ProcessOrdersDetailReq} from '../../model/http/pedidos';
+import {CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq} from '../../model/http/pedidos';
 import {Messages} from '../../constants/messages';
 import {ErrorService} from '../../services/error.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -123,6 +123,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         case ConstStatus.enProceso.toUpperCase():
           element.class = 'proceso';
           break;
+        case ConstStatus.entregado.toUpperCase():
         case ConstStatus.finalizado.toUpperCase():
           element.class = 'finalizado';
           break;
@@ -131,9 +132,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           break;
         case ConstStatus.reasingado.toUpperCase():
           element.class = 'reasignado';
-          break;
-        case ConstStatus.entregado.toUpperCase():
-          element.class = 'entregado';
           break;
         case ConstStatus.rechazado.toUpperCase():
           element.class = 'rechazado';
@@ -416,6 +414,25 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     } else {
       this.generateParamsToGetDetail(paramsOrder);
     }
+  }
+
+  ordersToDelivered() {
+    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            this.pedidosService.putOrdersToDelivered(
+                this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+                    .map(order => {
+                      const orderToDelivered = new OrderToDelivered();
+                      orderToDelivered.orderId = order.ordenFabricacionId;
+                      orderToDelivered.status = ConstStatus.entregado;
+                      return orderToDelivered;
+                    })).subscribe(() => {
+                  this.reloadOrderDetail();
+                }
+                , error => this.errorService.httpError((error)));
+          }});
+
   }
 }
 
