@@ -277,7 +277,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate != null && x.FinalizedDate >= dateToLook).ToListAsync();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= dateToLook).ToListAsync();
 
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
             var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
