@@ -90,13 +90,9 @@ class ChartViewController: UIViewController {
         if currentIndexPath.item > 0 {
             currentIndexPath = IndexPath(item: currentIndexPath.item - 1, section: 0)
             collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
-            guard currentIndexPath.item == 0 else {
-                leftButton.isEnabled = true
-                rightButton.isEnabled = true
-                return
-            }
-            rightButton.isEnabled = true
-            leftButton.isEnabled = false
+        } else {
+            currentIndexPath = IndexPath(item: 2, section: 0)
+            collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
         }
     }
 
@@ -104,13 +100,9 @@ class ChartViewController: UIViewController {
         if currentIndexPath.item < 2 {
             currentIndexPath = IndexPath(item: currentIndexPath.item + 1, section: 0)
             collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
-            guard currentIndexPath.item == 2 else {
-                rightButton.isEnabled = true
-                leftButton.isEnabled = true
-                return
-            }
-            leftButton.isEnabled = true
-            rightButton.isEnabled = false
+        } else {
+            currentIndexPath = IndexPath(item: 0, section: 0)
+            collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: true)
         }
     }
 
