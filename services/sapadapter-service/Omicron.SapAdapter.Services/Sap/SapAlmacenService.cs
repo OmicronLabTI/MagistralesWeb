@@ -61,8 +61,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
-            var totalFilter = sapOrders.Item1.Select(x => x.DocNum).Distinct().ToList().Count;
-            var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, sapOrders.Item1, lineProducts.Item1, parameters);
+            var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, parameters);
+            var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
+            var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{totalFilter}");
         }
@@ -280,6 +281,49 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the sap orders by status.
+        /// </summary>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="userModels">the models.</param>
+        /// <param name="lineProducts">the user orders.</param>
+        /// <param name="parameters">the params.</param>
+        /// <returns>the produtcs.</returns>
+        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByStatus(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userModels, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters)
+        {
+            var listToReturn = new List<CompleteAlmacenOrderModel>();
+            if (!parameters.ContainsKey(ServiceConstants.Status))
+            {
+                return sapOrders;
+            }
+
+            if (parameters[ServiceConstants.Status] == ServiceConstants.Recibir)
+            {
+                var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
+
+                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).Select(y => y.SaleOrderId));
+                idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
+                listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
+            }
+
+            if (parameters[ServiceConstants.Status] == ServiceConstants.Pendiente)
+            {
+                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).Select(y => int.Parse(y.Salesorderid)).ToList();
+                listToReturn.AddRange(sapOrders.Where(x => idsPendiente.Contains(x.DocNum)));
+            }
+
+            if (parameters[ServiceConstants.Status] == ServiceConstants.BackOrder)
+            {
+                var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
+                listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
+            }
+
+            listToReturn = listToReturn.DistinctBy(x => x.DocNum).ToList();
+            return listToReturn;
+        }
+
+        /// <summary>
         /// Gets the data structure.
         /// </summary>
         /// <param name="userOrders">The user orders.</param>
@@ -442,8 +486,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
 
-                    var lineOrder = userFabLineOrder ??= new LineProductsModel();
-                    var batchObject = !string.IsNullOrEmpty(lineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineOrder.BatchName) : new List<AlmacenBatchModel>();
+                    var batchObject = !string.IsNullOrEmpty(userFabLineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(userFabLineOrder.BatchName) : new List<AlmacenBatchModel>();
                     batchObject.ForEach(y =>
                     {
                         var batch = batchesDataBase.FirstOrDefault(z => z.DistNumber == y.BatchNumber && z.ItemCode == item.ProductoId);
