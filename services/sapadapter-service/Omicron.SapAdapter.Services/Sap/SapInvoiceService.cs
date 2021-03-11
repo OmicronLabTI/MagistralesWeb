@@ -61,8 +61,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
+            invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
-
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
 
             var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
@@ -203,6 +203,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
 
+            var dictParams = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(dataToLook.Chip))
+            {
+                dictParams.Add(ServiceConstants.Chips, dataToLook.Chip);
+            }
+
+            invoiceHeader = this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
             dataToLook.InvoiceDocNums.ForEach(y =>
@@ -382,6 +389,36 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(limit, out int limitNumber);
 
             return invoiceHeadersIds.Skip(offsetNumber).Take(limitNumber).ToList();
+        }
+
+        /// <summary>
+        /// gets the invoices by criteria.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <param name="deliveryDetails">the deliverys.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private List<InvoiceHeaderModel> GetInvoiceHeaderByParameters(List<InvoiceHeaderModel> invoices, List<DeliveryDetailModel> deliveryDetails, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                return invoices;
+            }
+
+            if (parameters[ServiceConstants.Chips].Contains(ServiceConstants.RemisionChip))
+            {
+                int.TryParse(parameters[ServiceConstants.Chips].Replace(ServiceConstants.RemisionChip, string.Empty), out int remision);
+                var details = deliveryDetails.Where(x => x.DeliveryId == remision && x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList();
+                return invoices.Where(x => details.Contains(x.InvoiceId)).ToList();
+            }
+
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int invoice))
+            {
+                return invoices.Where(x => x.DocNum == invoice).ToList();
+            }
+
+            var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return invoices.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
         }
 
         private InvoiceOrderModel GetInvoiceToReturn(RetrieveInvoiceModel retrieveModel)
