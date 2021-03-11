@@ -115,57 +115,6 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
-        /// <param name="status">The status.</param>
-        /// <returns>the data.</returns>
-        [Test]
-        [TestCase("Recibir")]
-        [TestCase("Pendiente")]
-        [TestCase("Back Order")]
-        public async Task GetOrdersStatus(string status)
-        {
-            // arrange
-            var parameters = new List<ParametersModel>
-            {
-                new ParametersModel { Value = "10" },
-            };
-
-            var parametersResponse = this.GetResultModel(parameters);
-
-            var mockPedidos = new Mock<IPedidosService>();
-            mockPedidos
-                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
-
-            var mockAlmacen = new Mock<IAlmacenService>();
-            mockAlmacen
-                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
-                .Returns(Task.FromResult(this.GetLineProducts()))
-                .Returns(Task.FromResult(this.GetIncidents()));
-
-            var mockCatalogos = new Mock<ICatalogsService>();
-            mockCatalogos
-                .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(parametersResponse));
-
-            var dictionary = new Dictionary<string, string>
-            {
-                { ServiceConstants.Offset, "0" },
-                { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Status,  status },
-            };
-
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
-
-            // act
-            var response = await localService.GetOrders(dictionary);
-
-            // assert
-            Assert.IsNotNull(response);
-        }
-
-        /// <summary>
-        /// Test the method to get the orders for almacen.
-        /// </summary>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetMagistralScannedData()
