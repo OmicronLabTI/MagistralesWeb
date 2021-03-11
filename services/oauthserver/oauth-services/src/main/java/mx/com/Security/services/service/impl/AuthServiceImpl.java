@@ -51,6 +51,10 @@ public class AuthServiceImpl implements IAuthService {
         needsThrowError = needsThrowError ? true : isAbleToAppAlmacen && !origin.toLowerCase().equals("appalmacen");
         needsThrowError = needsThrowError ? true : isAbleToWebDelivery && !origin.toLowerCase().equals("webdelivery");
 
+        if(securityDO.getRole() == 5 && (origin.toLowerCase().equals("web") || origin.toLowerCase().equals("appalmacen"))){
+            needsThrowError = false;
+        }
+
         if(needsThrowError){
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
