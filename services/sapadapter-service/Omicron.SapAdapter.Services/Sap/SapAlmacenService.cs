@@ -57,11 +57,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
             var types = typesString.Split(",").ToList();
 
+            var listStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status] : ServiceConstants.AllStatus;
+            var status = listStatus.Split(",").ToList();
+
             var userResponse = await this.GetUserOrdersToLook();
             var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
-            var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, parameters);
+            var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters);
 
@@ -288,15 +291,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineProducts">the user orders.</param>
         /// <param name="parameters">the params.</param>
         /// <returns>the produtcs.</returns>
-        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByStatus(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userModels, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters)
+        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByStatus(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userModels, List<LineProductsModel> lineProducts, List<string> parameters)
         {
             var listToReturn = new List<CompleteAlmacenOrderModel>();
-            if (!parameters.ContainsKey(ServiceConstants.Status))
-            {
-                return sapOrders;
-            }
 
-            if (parameters[ServiceConstants.Status] == ServiceConstants.Recibir)
+            if (parameters.Contains(ServiceConstants.Recibir))
             {
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
@@ -307,13 +306,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
             }
 
-            if (parameters[ServiceConstants.Status] == ServiceConstants.Pendiente)
+            if (parameters.Contains(ServiceConstants.Pendiente))
             {
                 var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).Select(y => int.Parse(y.Salesorderid)).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => idsPendiente.Contains(x.DocNum)));
             }
 
-            if (parameters[ServiceConstants.Status] == ServiceConstants.BackOrder)
+            if (parameters.Contains(ServiceConstants.BackOrder))
             {
                 var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));

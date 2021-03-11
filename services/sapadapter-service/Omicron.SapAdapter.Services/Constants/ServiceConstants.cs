@@ -351,6 +351,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AllTypes = "magistral,mixto,linea";
 
         /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllStatus = "Recibir,Pendiente,Back Order";
+
+        /// <summary>
         /// Get the params.
         /// </summary>
         public const string GetParams = "params/contains/field";
