@@ -405,6 +405,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
+                    InvoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 };
 
                 var saleModel = new SalesModel
