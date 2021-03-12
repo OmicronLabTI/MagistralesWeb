@@ -58,6 +58,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
             this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
+            this.context.SalesPersonModel.AddRange(this.GetSalesPerson());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -263,6 +264,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 2,
                 3,
+                4,
             };
 
             var dataTollok = new InvoicePackageSapLookModel
