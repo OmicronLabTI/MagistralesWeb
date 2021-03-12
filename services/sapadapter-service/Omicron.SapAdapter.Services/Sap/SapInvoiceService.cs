@@ -405,16 +405,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 return invoices;
             }
 
-            if (parameters[ServiceConstants.Chips].Contains(ServiceConstants.RemisionChip))
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int invoice))
             {
                 int.TryParse(parameters[ServiceConstants.Chips].Replace(ServiceConstants.RemisionChip, string.Empty), out int remision);
                 var details = deliveryDetails.Where(x => x.DeliveryId == remision && x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList();
-                return invoices.Where(x => details.Contains(x.InvoiceId)).ToList();
-            }
-
-            if (int.TryParse(parameters[ServiceConstants.Chips], out int invoice))
-            {
-                return invoices.Where(x => x.DocNum == invoice).ToList();
+                var invoiceById = invoices.Where(x => details.Contains(x.InvoiceId)).ToList();
+                invoiceById.AddRange(invoices.Where(x => x.DocNum == invoice));
+                return invoiceById.DistinctBy(x => x.InvoiceId).ToList();
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();

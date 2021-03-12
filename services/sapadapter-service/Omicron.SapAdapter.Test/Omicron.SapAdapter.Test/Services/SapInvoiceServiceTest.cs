@@ -110,7 +110,6 @@ namespace Omicron.SapAdapter.Test.Services
         /// <returns>the data.</returns>
         [Test]
         [TestCase("1")]
-        [TestCase("rem-1")]
         [TestCase("aaa")]
         public async Task GetInvoice(string chip)
         {
