@@ -305,6 +305,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = listBatches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
+                    DeliveryId = order.DeliveryId,
                 };
 
                 listToReturn.Add(productModel);
