@@ -127,7 +127,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string SalesPrsonEmail { get; set; }
 
         /// <summary>
-        /// Gets or sets a value person name.
+        /// Gets or sets a value person names.
         /// </summary>
         /// <value>
         /// Bool is production order.
