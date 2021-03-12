@@ -60,5 +60,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("DocStatus")]
         public string DeliveryStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("Address")]
+        public string Address { get; set; }
     }
 }
