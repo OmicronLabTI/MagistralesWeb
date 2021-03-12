@@ -94,14 +94,19 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            var destinityEmail = destinityEmailList.FirstOrDefault();
+            var copyEmails = string.Empty;
+            destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
+            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
             var text = this.GetBodyForLocal(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                sendLocalPackage.DestinyEmail,
+                destinityEmail,
                 text.Item1,
                 text.Item2,
-                sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery);
+                copyEmails);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
