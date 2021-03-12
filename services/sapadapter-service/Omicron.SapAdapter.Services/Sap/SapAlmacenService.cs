@@ -65,6 +65,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
+            orders = this.GetSapLinesToLookByPedidoDoctor(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters);
 
@@ -320,6 +321,28 @@ namespace Omicron.SapAdapter.Services.Sap
 
             listToReturn = listToReturn.DistinctBy(x => x.DocNum).ToList();
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the order by the chips criteria.
+        /// </summary>
+        /// <param name="sapOrders">the orders.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByPedidoDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                return sapOrders;
+            }
+
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
+            }
+
+            var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
