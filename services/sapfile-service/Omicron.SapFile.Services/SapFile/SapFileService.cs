@@ -12,6 +12,7 @@ namespace Omicron.SapFile.Services.SapFile
     using CrystalDecisions.Shared;
     using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Log;
+    using Omicron.SapFile.Services.Constants;
     using Omicron.SapFile.Services.FileHelpers;
     using Omicron.SapFile.Services.ReportBuilder;
     using Omicron.SapFile.Services.Utils;
@@ -139,6 +140,36 @@ namespace Omicron.SapFile.Services.SapFile
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreatePdfByType(string type, List<int> invoiceId)
+        {
+            var dictResult = new Dictionary<string, string>();
+            invoiceId.ForEach(o =>
+            {
+                try
+                {
+                   if (type == ServiceConstants.Invoice)
+                    {
+                        var routePDf = this.CreateInvoiceReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
+                        dictResult.Add($"{o}", $"Ok-{routePDf}");
+                    }
+                   
+                   if (type == ServiceConstants.Delivery)
+                    {
+                        var routePDf = this.CreateDeliveryReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
+                        dictResult.Add($"{o}", $"Ok-{routePDf}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this._loggerProxy.Error(ex.Message, ex);
+                    dictResult.Add($"Error-{o}", "ErrorCreatePdf");
+                }
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
         /// <summary>
         /// Deetes the files.
         /// </summary>
@@ -189,6 +220,59 @@ namespace Omicron.SapFile.Services.SapFile
             report.SetParameterValue("ObjectId@", 17);
 
             var name = $"Order{orderId}.pdf";
+            var route = fileRoute;
+            var completeRoute = @route + name;
+            this.CreatePdf(report, completeRoute);
+            return completeRoute;
+        }
+
+        /// <summary>
+        /// Creates the report for an order.
+        /// </summary>
+        /// <param name="invoiceId">the order id.</param>
+        /// <returns>the name and route of the file.</returns>
+        private string CreateInvoiceReport(int invoiceId, string fileRoute)
+        {
+            var report = new ReportDocument();
+            var localRoute = ConfigurationManager.AppSettings["FacturaRtp"];
+
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var root = Directory.GetCurrentDirectory();
+            root += localRoute;
+
+            report.Load(root);
+            report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
+
+            report.SetParameterValue("DocKey@", invoiceId);
+
+            var name = $"Factura{invoiceId}.pdf";
+            var route = fileRoute;
+            var completeRoute = @route + name;
+            this.CreatePdf(report, completeRoute);
+            return completeRoute;
+        }
+
+        /// <summary>
+        /// Creates the report for an order.
+        /// </summary>
+        /// <param name="deliveryId">the order id.</param>
+        /// <returns>the name and route of the file.</returns>
+        private string CreateDeliveryReport(int deliveryId, string fileRoute)
+        {
+            var report = new ReportDocument();
+            var localRoute = ConfigurationManager.AppSettings["DeliveryRtp"];
+
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var root = Directory.GetCurrentDirectory();
+            root += localRoute;
+
+            report.Load(root);
+            report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
+
+            report.SetParameterValue("DocKey@", deliveryId);
+            report.SetParameterValue("ObjectId@", 15);
+
+            var name = $"Delivery{deliveryId}.pdf";
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
