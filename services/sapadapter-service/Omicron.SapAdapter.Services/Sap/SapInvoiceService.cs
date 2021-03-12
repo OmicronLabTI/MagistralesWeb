@@ -459,6 +459,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = invoice.Cliente,
                     Doctor = doctor,
                     Invoice = invoice.DocNum,
+                    DocEntry = invoice.InvoiceId,
                     InvoiceDocDate = invoice.FechaInicio,
                     ProductType = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                     TotalDeliveries = 0,

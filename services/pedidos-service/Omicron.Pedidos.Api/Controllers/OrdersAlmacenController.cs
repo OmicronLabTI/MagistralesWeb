@@ -181,5 +181,19 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.GetAlmacenGraphData(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <param name="ordersId">the orders.</param>
+        /// <returns>the data.</returns>
+        [Route("/{type}/pdf")]
+        [HttpPost]
+        public async Task<IActionResult> CreateinvoicePdf(string type, List<int> ordersId)
+        {
+            var response = await this.pedidosAlmacenFacade.CreatePdf(type, ordersId);
+            return this.Ok(response);
+        }
     }
 }
