@@ -203,6 +203,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
 
+                header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
+                var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = d,
@@ -226,6 +229,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
+                    InvoiceType = invoiceType,
                 };
 
                 var saleModel = new SalesModel
