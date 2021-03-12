@@ -104,12 +104,35 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public short TransportCode { get; set; }
 
         /// <summary>
+        /// Gets or sets SalesPrsonId.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("SlpCode")]
+        public int SalesPrsonId { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
         /// Bool is production order.
         [NotMapped]
         public string ClientEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value sales person email.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public string SalesPrsonEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value person name.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public string SalesPrsonName { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gets.

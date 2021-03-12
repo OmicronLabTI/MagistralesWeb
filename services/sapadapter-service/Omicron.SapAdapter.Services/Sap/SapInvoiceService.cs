@@ -225,12 +225,15 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
             var clients = (await this.sapDao.GetClientsById(invoiceHeaderOrdered.Select(x => x.CardCode).ToList())).ToList();
-
+            var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
                 var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
                 client ??= new ClientCatalogModel();
+
+                var salePerson = salesPerson.FirstOrDefault(y => y.AsesorId == x.SalesPrsonId);
+                salePerson ??= new SalesPersonModel();
 
                 var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
                 company ??= new Repartidores { TrnspName = string.Empty };
@@ -241,6 +244,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
+                salePerson ??= new SalesPersonModel();
+                x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
+                x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
