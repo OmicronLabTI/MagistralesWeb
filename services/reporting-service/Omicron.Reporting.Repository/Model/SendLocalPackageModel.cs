@@ -58,5 +58,21 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string SalesOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Email.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string SalesPersonEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string SalesPrsonName { get; set; }
     }
 }

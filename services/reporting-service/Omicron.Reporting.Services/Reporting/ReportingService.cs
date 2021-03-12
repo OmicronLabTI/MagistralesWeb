@@ -101,7 +101,7 @@ namespace Omicron.Reporting.Services
                 sendLocalPackage.DestinyEmail,
                 text.Item1,
                 text.Item2,
-                smtpConfig.EmailCCDelivery);
+                sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
