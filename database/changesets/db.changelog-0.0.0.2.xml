@@ -268,4 +268,11 @@
 		<column name="field" value="tdvEmail"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-2.34">
+	<insert tableName="parameters">
+		<column name="value" value="atencion@o.lab.mx"/>
+		<column name="type" value="string"/>
+		<column name="field" value="EmailAtencionCCDelivery"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

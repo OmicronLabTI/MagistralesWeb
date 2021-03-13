@@ -51,6 +51,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string InWayEmailSubject = "Su pedido {0} de OmicronLab está en camino";
 
         /// <summary>
+        /// The local.
+        /// </summary>
+        public const string DeliveryEmailSubject = "Su pedido {0} se entrego con éxito";
+
+        /// <summary>
         /// not delivered.
         /// </summary>
         public const string PackageNotDelivered = "Su pedido {0} de OmicronLab no pudo ser entregado";
@@ -101,6 +106,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> ya está planificado para ser entregado en la dirección que tenemos registrada bajo su nombre.</p>";
 
         /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentLocalPackageDelivery = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> fue entregado con éxito.</p>";
+
+        /// <summary>
         /// not delivered body.
         /// </summary>
         public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega de su pedido <b>{0}</b> no pudo ser realizada. Le pedimos por favor que para programar una nueva visita se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
@@ -134,6 +144,11 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}{3}</body></html>";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Entregado = "Entregado";
 
         /// <summary>
         /// Gets the status of the order.

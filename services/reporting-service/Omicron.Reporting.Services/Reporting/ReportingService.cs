@@ -98,12 +98,13 @@ namespace Omicron.Reporting.Services
             var destinityEmail = destinityEmailList.FirstOrDefault();
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
-            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
+            var emailCC = sendLocalPackage.Status == ServiceConstants.Entregado ? smtpConfig.EmailAtencionCCDelivery : smtpConfig.EmailCCDelivery;
+            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{emailCC};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
             var text = this.GetBodyForLocal(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                destinityEmail,
+                string.IsNullOrEmpty(destinityEmail) ? emailCC : destinityEmail,
                 text.Item1,
                 text.Item2,
                 copyEmails);
@@ -174,10 +175,18 @@ namespace Omicron.Reporting.Services
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
 
-            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            if (package.Status == ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, package.SalesOrders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.SalesOrders);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }

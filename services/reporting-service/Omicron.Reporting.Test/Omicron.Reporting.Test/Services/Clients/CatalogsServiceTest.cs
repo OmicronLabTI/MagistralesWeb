@@ -112,6 +112,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
                 new ParametersModel { Field = "SmtpServer", Value = "server", },
                 new ParametersModel { Field = "SmtpPort", Value = "1", },
                 new ParametersModel { Field = "EmailCCDelivery", Value = "asdf" },
+                new ParametersModel { Field = "EmailAtencionCCDelivery", Value = "mail" },
             };
 
             return result;
