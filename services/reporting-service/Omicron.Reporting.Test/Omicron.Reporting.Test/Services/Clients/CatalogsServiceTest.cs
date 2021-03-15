@@ -63,7 +63,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetParams(new List<string> { "p1", "p2" }).Result;
 
             // Assert
-            Assert.AreEqual(8, result.Count);
+            Assert.AreEqual(9, result.Count);
         }
 
         /// <summary>
