@@ -296,8 +296,9 @@ namespace Omicron.SapAdapter.Test
                 new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico" },
 
                 // for packages
-                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico" },
-                new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C1", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico" },
+                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },
+                new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C1", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 2 },
+                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 4, FechaInicio = DateTime.Now, InvoiceId = 4, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 3 },
             };
         }
 
@@ -326,6 +327,20 @@ namespace Omicron.SapAdapter.Test
             return new List<ClientCatalogModel>
             {
                 new ClientCatalogModel { ClientId = "C1", Email = "email" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<SalesPersonModel> GetSalesPerson()
+        {
+            return new List<SalesPersonModel>
+            {
+                new SalesPersonModel { AsesorId = 1, EmpleadoId = 1, FirstName = "juanito", LastName = "apellido", Email = "email@email" },
+                new SalesPersonModel { AsesorId = 2, EmpleadoId = 2, FirstName = "maria", LastName = "apellido", Email = "email@email" },
+                new SalesPersonModel { AsesorId = 3, EmpleadoId = 3, FirstName = null, LastName = "apellido", Email = null },
             };
         }
 
