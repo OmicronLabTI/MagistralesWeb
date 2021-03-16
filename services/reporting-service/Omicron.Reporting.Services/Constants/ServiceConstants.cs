@@ -103,6 +103,11 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
+        public const string SentCancelDelivery = "<p>Estimado Asesor.<br/><br/>Le informamos que sus pedido <b>{0}</b> han sido cancelados por la remision.</p>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
         public const string SentRejectedOrder = " <p> Buen día, es un gusto saludarle <br/><br/> Hemos detectado que la orden de venta <b>{0}</b> correspondiente al cliente <b>{1}</b> incumple con los requisitos obligatorios para poder comenzar su elaboración. <br/><br/>  </p>";
 
         /// <summary>
