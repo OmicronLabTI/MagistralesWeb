@@ -57,6 +57,10 @@ namespace Omicron.Reporting.Test.Facade.Request
                 .Setup(m => m.SendEmailLocalPackage(It.IsAny<SendLocalPackageModel>()))
                 .Returns(Task.FromResult(resultModel));
 
+            mockReportingService
+                .Setup(m => m.SendEmailCancelDeliveryOrders(It.IsAny<SendCancelDeliveryModel>()))
+                .Returns(Task.FromResult(resultModel));
+
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
 
@@ -151,6 +155,24 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             // arrange
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailCancelDeliveryOrders()
+        {
+            // arrange
+            var requests = new SendCancelDeliveryDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
         }
     }
 }
