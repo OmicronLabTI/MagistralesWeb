@@ -86,9 +86,19 @@ namespace Omicron.Reporting.Services.Constants
         public const string CustomerServiceEmail = "EmailAtencionAClientes";
 
         /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string LogisticEmailCc2Field = "EmailLogisticaCc2";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
+
+        /// <summary>
+        /// The local.
+        /// </summary>
+        public const string InCancelDeliveryEmailSubject = "Su remisión {0} ha sido cancelada";
 
         /// <summary>
         /// Sent local package.

@@ -102,6 +102,19 @@ namespace Omicron.Reporting.Api.Controllers
         }
 
         /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/cancel/delivery/email")]
+        [HttpPost]
+        public async Task<IActionResult> SendEmailCancelDeliveryOrders(SendCancelDeliveryDto request)
+        {
+            var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(request);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>

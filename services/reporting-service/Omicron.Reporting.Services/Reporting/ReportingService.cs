@@ -149,6 +149,32 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> SendEmailCancelDeliveryOrders(SendCancelDeliveryModel request)
+        {
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
+
+            var text = this.GetBodyForCancelDeliveryEmail(request);
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                customerServiceEmail,
+                text.Item1,
+                text.Item2,
+                logisticEmail);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
         /// Gets the smtp config.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
@@ -230,6 +256,19 @@ namespace Omicron.Reporting.Services
             var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
             var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
             var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="order">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel order)
+        {
+            var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, order.DeliveryId);
+            var greeting = string.Format("su remision contiene estos pedidos {0}", order.SalesOrders);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
             return new Tuple<string, string>(subject, body);
         }
 
