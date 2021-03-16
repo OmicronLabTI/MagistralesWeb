@@ -98,13 +98,12 @@ namespace Omicron.Reporting.Services
             var destinityEmail = destinityEmailList.FirstOrDefault();
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
-            var emailCC = sendLocalPackage.Status == ServiceConstants.Entregado ? smtpConfig.EmailAtencionCCDelivery : smtpConfig.EmailCCDelivery;
-            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{emailCC};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
+            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
             var text = this.GetBodyForLocal(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                string.IsNullOrEmpty(destinityEmail) ? emailCC : destinityEmail,
+                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
                 copyEmails);

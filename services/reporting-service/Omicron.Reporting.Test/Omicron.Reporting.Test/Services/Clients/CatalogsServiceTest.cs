@@ -63,7 +63,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetParams(new List<string> { "p1", "p2" }).Result;
 
             // Assert
-            Assert.AreEqual(9, result.Count);
+            Assert.AreEqual(8, result.Count);
         }
 
         /// <summary>
@@ -112,7 +112,6 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
                 new ParametersModel { Field = "SmtpServer", Value = "server", },
                 new ParametersModel { Field = "SmtpPort", Value = "1", },
                 new ParametersModel { Field = "EmailCCDelivery", Value = "asdf" },
-                new ParametersModel { Field = "EmailAtencionCCDelivery", Value = "mail" },
             };
 
             return result;

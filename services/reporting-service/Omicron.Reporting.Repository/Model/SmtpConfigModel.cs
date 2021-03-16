@@ -42,11 +42,5 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The default password.</value>
         public string EmailCCDelivery { get; set; }
-
-        /// <summary>
-        /// Gets or sets default EmailAtencionCCDelivery.
-        /// </summary>
-        /// <value>The default EmailAtencionCCDelivery.</value>
-        public string EmailAtencionCCDelivery { get; set; }
     }
 }
