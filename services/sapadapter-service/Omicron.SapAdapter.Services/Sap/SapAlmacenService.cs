@@ -65,6 +65,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
+            orders = this.GetSapLinesToLookByPedidoDoctor(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = await this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters);
 
@@ -323,6 +324,28 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the order by the chips criteria.
+        /// </summary>
+        /// <param name="sapOrders">the orders.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByPedidoDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                return sapOrders;
+            }
+
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
+            }
+
+            var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+        }
+
+        /// <summary>
         /// Gets the data structure.
         /// </summary>
         /// <param name="userOrders">The user orders.</param>
@@ -383,6 +406,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
                 listToReturn.TotalItems += productList.Count;
 
+                order.Address = string.IsNullOrEmpty(order.Address) ? string.Empty : order.Address;
+                var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = so,
@@ -405,6 +431,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
+                    InvoiceType = invoiceType,
                 };
 
                 var saleModel = new SalesModel
@@ -469,6 +496,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var orderStatus = ServiceConstants.PorRecibir;
                 var hasDelivery = false;
+                var deliveryId = 0;
                 var batches = new List<string>();
 
                 if (item.IsMagistral.Equals("Y"))
@@ -477,6 +505,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
                     orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
                     hasDelivery = userFabOrder.DeliveryId != 0;
+                    deliveryId = userFabOrder.DeliveryId;
                 }
                 else
                 {
@@ -484,6 +513,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
                     orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
+                    deliveryId = userFabLineOrder.DeliveryId;
 
                     var batchObject = !string.IsNullOrEmpty(userFabLineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(userFabLineOrder.BatchName) : new List<AlmacenBatchModel>();
                     batchObject.ForEach(y =>
@@ -519,6 +549,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                     HasDelivery = hasDelivery,
+                    DeliveryId = deliveryId,
                 };
 
                 listToReturn.Add(productModel);

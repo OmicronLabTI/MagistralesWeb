@@ -106,6 +106,43 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("1")]
+        [TestCase("aaa")]
+        public async Task GetInvoice(string chip)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { "chips", chip },
+            };
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetInvoice(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetInvoiceProducts()
@@ -212,11 +249,13 @@ namespace Omicron.SapAdapter.Test.Services
         /// Test the method to get the orders for almacen.
         /// </summary>
         /// <param name="type">the code to look.</param>
+        /// <param name="chip">the chip.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("foraneo")]
-        [TestCase("local")]
-        public async Task GetInvoiceHeaders(string type)
+        [TestCase("foraneo", "")]
+        [TestCase("local", "")]
+        [TestCase("local", "1")]
+        public async Task GetInvoiceHeaders(string type, string chip)
         {
             // arrange
             var listUserOrder = new List<int>
@@ -231,6 +270,7 @@ namespace Omicron.SapAdapter.Test.Services
                 Limit = 10,
                 Offset = 0,
                 Type = type,
+                Chip = chip,
             };
 
             // act

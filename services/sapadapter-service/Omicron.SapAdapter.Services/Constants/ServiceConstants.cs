@@ -381,6 +381,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string RedisComponents = "redisComponents";
 
         /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RemisionChip = "rem-";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

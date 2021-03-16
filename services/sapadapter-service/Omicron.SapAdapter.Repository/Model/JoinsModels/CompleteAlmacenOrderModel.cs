@@ -43,5 +43,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public DetallePedidoModel Detalles { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string Address { get; set; }
     }
 }

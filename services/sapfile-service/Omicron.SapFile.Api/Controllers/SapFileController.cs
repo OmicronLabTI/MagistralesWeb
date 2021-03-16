@@ -59,6 +59,20 @@ namespace Omicron.SapFile.Api.Controllers
         }
 
         /// <summary>
+        /// Method to create the sale order pdf.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="ordersId">the order ids.</param>
+        /// <returns>the data.</returns>
+        [HttpPost]
+        [Route("create/{type}/pdfs")]
+        public async Task<IHttpActionResult> CreateInvoicePdf(string type, List<int> ordersId)
+        {
+            var response = await this.sapFacade.CreatePdfByType(type, ordersId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Deletes the files.
         /// </summary>
         /// <returns>the data.</returns>

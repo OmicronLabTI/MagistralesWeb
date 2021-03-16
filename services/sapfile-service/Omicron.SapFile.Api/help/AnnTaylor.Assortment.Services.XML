@@ -185,6 +185,14 @@
             <param name="ordersId">the order ids.</param>
             <returns>the data.</returns>
         </member>
+        <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.CreateInvoicePdf(System.String,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Method to create the sale order pdf.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="ordersId">the order ids.</param>
+            <returns>the data.</returns>
+        </member>
         <member name="M:Omicron.SapFile.Api.Controllers.SapFileController.DeleteFiles">
             <summary>
             Deletes the files.

@@ -376,6 +376,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string CreateSalePdf = "create/sale/pdf";
 
         /// <summary>
+        /// invoice pdf.
+        /// </summary>
+        public const string CreatePdfByType = "create/{0}/pdfs";
+
+        /// <summary>
         /// send emails to rejected orders.
         /// </summary>
         public const string SendEmailToRejectedOrders = "rejection/order/email";
