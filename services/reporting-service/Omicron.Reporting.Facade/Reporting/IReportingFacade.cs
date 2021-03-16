@@ -7,6 +7,7 @@
 // </summary>
 namespace Omicron.Reporting.Facade.Request
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Reporting.Dtos.Model;
 
@@ -56,6 +57,6 @@ namespace Omicron.Reporting.Facade.Request
         /// </summary>
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultDto> SendEmailCancelDeliveryOrders(SendCancelDeliveryDto request);
+        Task<ResultDto> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryDto> request);
     }
 }

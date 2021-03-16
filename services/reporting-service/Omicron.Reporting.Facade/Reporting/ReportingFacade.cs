@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Facade.Request
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Reporting.Dtos.Model;
@@ -75,9 +76,9 @@ namespace Omicron.Reporting.Facade.Request
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> SendEmailCancelDeliveryOrders(SendCancelDeliveryDto request)
+        public async Task<ResultDto> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryDto> request)
         {
-            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailCancelDeliveryOrders(this.mapper.Map<SendCancelDeliveryModel>(request)));
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailCancelDeliveryOrders(this.mapper.Map<List<SendCancelDeliveryModel>>(request)));
         }
     }
 }

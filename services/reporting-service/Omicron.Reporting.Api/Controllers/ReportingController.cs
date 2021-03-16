@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Api.Controllers
 {
     using System.Threading.Tasks;
+    using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using Omicron.Reporting.Dtos.Model;
@@ -108,7 +109,7 @@ namespace Omicron.Reporting.Api.Controllers
         /// <returns>Operation result.</returns>
         [Route("/cancel/delivery/email")]
         [HttpPost]
-        public async Task<IActionResult> SendEmailCancelDeliveryOrders(SendCancelDeliveryDto request)
+        public async Task<IActionResult> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryDto> request)
         {
             var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(request);
             return this.Ok(response);
