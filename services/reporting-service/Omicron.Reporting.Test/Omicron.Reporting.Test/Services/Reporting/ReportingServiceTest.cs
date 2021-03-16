@@ -71,15 +71,22 @@ namespace Omicron.Reporting.Test.Services.Request
         /// <summary>
         /// gets the orders test.
         /// </summary>
+        /// <param name="status">The status.</param>
+        /// <param name="reasonNotDelivered"> reason why not was delivered.</param>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task SendEmailLocalPackage()
+        [TestCase("En Camino", null)]
+        [TestCase("No Entregado", "domicilio no encontrado")]
+        [TestCase("Entregado", null)]
+        public async Task SendEmailLocalPackage(string status, string reasonNotDelivered)
         {
             // arrange
             var request = new SendLocalPackageModel
             {
                 DestinyEmail = "email",
                 PackageId = 1,
+                Status = status,
+                ReasonNotDelivered = reasonNotDelivered,
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
