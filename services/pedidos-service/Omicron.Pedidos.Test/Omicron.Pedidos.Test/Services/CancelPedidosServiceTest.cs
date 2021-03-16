@@ -484,6 +484,26 @@ namespace Omicron.Pedidos.Test.Services
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
+        /// <summary>
+        /// test the cancel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CancelDelivery()
+        {
+            // arrange
+            this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
+            var orderToUpdate = new List<int> { 100 };
+
+            // act
+            var response = await this.cancelPedidosService.CancelDelivery(orderToUpdate);
+
+            // assert
+            Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
+        }
+
         private static DbContextOptions<DatabaseContext> CreateNewContextOptions()
         {
             // Create a fresh service provider, and therefore a fresh.

@@ -77,5 +77,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="invoiceIds">the invoices.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CreatePdf(string type, List<int> invoiceIds);
+
+        /// <summary>
+        /// The cancels the delivery.
+        /// </summary>
+        /// <param name="deliveryIds">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelDelivery(List<int> deliveryIds);
     }
 }

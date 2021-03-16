@@ -208,5 +208,23 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CancelDelivery()
+        {
+            // arrange
+            var type = new List<int>();
+
+            // act
+            var response = await this.almacenFacade.CancelDelivery(type);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
     }
 }

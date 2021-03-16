@@ -195,5 +195,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.CreatePdf(type, ordersId);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="deliveryId">the orders.</param>
+        /// <returns>the data.</returns>
+        [Route("/cancel/delivery")]
+        [HttpPost]
+        public async Task<IActionResult> CancelDelivery(List<int> deliveryId)
+        {
+            var response = await this.pedidosAlmacenFacade.CancelDelivery(deliveryId);
+            return this.Ok(response);
+        }
     }
 }

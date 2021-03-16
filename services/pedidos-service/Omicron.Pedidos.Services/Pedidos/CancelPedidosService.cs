@@ -112,6 +112,44 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, results.DistinctResults(), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelDelivery(List<int> deliveryIds)
+        {
+            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
+            var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
+            var listToUpdate = new List<UserOrderModel>();
+            var listSaleOrder = new List<UserOrderModel>();
+
+            userOrdersGroups.ForEach(x =>
+            {
+                var deliveries = x.Where(y => y.IsProductionOrder).Select(y => y.DeliveryId).ToList();
+                var status = deliveries.Distinct().Count() == 1 ? ServiceConstants.Finalizado : ServiceConstants.BackOrder;
+                status = deliveries.Any(y => y == 0) ? ServiceConstants.Liberado : status;
+
+                x.ToList().ForEach(y =>
+                {
+                    listSaleOrder.Add(new UserOrderModel { Salesorderid = y.Salesorderid, DeliveryId = y.DeliveryId });
+                    y.StatusAlmacen = null;
+                    y.UserCheckIn = null;
+                    y.DateTimeCheckIn = null;
+                    y.RemisionQr = null;
+                    y.DeliveryId = 0;
+                    y.Status = ServiceConstants.Finalizado;
+
+                    if (y.IsSalesOrder)
+                    {
+                        y.Status = status;
+                    }
+
+                    listToUpdate.Add(y);
+                });
+            });
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+            return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listSaleOrder), null, null);
+        }
+
         /// <summary>
         /// Cancel existing PO in the local data base.
         /// </summary>
