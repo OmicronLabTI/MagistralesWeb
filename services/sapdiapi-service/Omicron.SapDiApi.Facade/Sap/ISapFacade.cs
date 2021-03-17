@@ -84,6 +84,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateTracking(SendPackageDto sendPackage);
 
         /// <summary>
+        /// Cancel a Delivery.
+        /// </summary>
+        /// <param name="deliveries">the delivery ids.</param>
+        /// <returns>the cancellation.</returns>
+        Task<ResultDto> CancelDelivery(List<int> deliveries);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

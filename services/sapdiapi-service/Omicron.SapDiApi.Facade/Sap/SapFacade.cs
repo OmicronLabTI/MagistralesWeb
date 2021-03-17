@@ -22,14 +22,19 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly ISapDiApiService sapDiApiService;
 
+        private readonly ICancelService cancelService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
         /// <param name="mapper"></param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService)
+        /// <param name="sapDiApiService">the sap di api.</param>
+        /// <param name="cancelService">cancel service.</param>
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
+            this.cancelService = cancelService;
         }
 
         /// <summary>
@@ -130,6 +135,12 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> UpdateTracking(SendPackageDto sendPackage)
         {
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateTracking(this.mapper.Map<SendPackageModel>(sendPackage)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CancelDelivery(List<int> deliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelService.CancelDelivery(deliveries));
         }
     }
 }

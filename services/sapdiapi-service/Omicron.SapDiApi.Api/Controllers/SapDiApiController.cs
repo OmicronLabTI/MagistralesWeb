@@ -164,6 +164,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="deliveries">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("cancel/delivery")]
+        public async Task<IHttpActionResult> CancelDelivery([FromBody] List<int> deliveries)
+        {
+            var result = await this.sapFacade.CancelDelivery(deliveries);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

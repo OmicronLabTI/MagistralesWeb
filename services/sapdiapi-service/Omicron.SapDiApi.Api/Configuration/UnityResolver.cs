@@ -66,6 +66,7 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterType<ISapFacade, SapFacade>();
             container.RegisterType<ISapDiApiService, SapDiApiService>();
             container.RegisterType<ILoggerProxy, LoggerProxy>();
+            container.RegisterType<ICancelService, CancelService>();
 
             if (container == null)
             {

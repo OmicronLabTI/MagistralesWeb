@@ -227,6 +227,27 @@
             <param name="createDelivery">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDeliveryPartial(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateTracking(Omicron.SapDiApi.Dtos.Models.SendPackageDto)">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="updateTracking">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CancelDelivery(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="deliveries">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.
