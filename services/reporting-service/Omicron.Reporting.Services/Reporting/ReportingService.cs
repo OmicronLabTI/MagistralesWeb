@@ -211,25 +211,25 @@ namespace Omicron.Reporting.Services
         private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
-
+            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ');
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
-                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             if (package.Status == ServiceConstants.Entregado)
             {
-                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, package.SalesOrders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.SalesOrders);
+                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
-            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders);
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
