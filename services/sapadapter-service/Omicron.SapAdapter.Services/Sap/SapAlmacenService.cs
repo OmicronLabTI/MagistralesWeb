@@ -301,7 +301,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
 
-                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado).Select(y => int.Parse(y.Salesorderid)).ToList();
+                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado && string.IsNullOrEmpty(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).Select(y => y.SaleOrderId));
                 idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
                 listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
@@ -373,7 +373,7 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var so in salesIds)
             {
                 var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
-                var orders = sapOrdersToProcess.Where(x => x.DocNum == so).ToList();
+                var orders = sapOrdersToProcess.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
