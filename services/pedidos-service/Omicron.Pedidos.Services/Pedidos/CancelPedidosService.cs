@@ -115,35 +115,53 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CancelDelivery(string type, List<int> deliveryIds)
         {
-            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
-            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
-            var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
             var listToUpdate = new List<UserOrderModel>();
             var listSaleOrder = new List<UserOrderModel>();
+            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
 
+            foreach (var order in modelByDelivery)
+            {
+                if (order.IsSalesOrder)
+                {
+                    continue;
+                }
+
+                listSaleOrder.Add(new UserOrderModel { Salesorderid = order.Salesorderid, DeliveryId = order.DeliveryId });
+                order.StatusAlmacen = null;
+                order.UserCheckIn = null;
+                order.DateTimeCheckIn = null;
+                order.RemisionQr = null;
+                order.DeliveryId = 0;
+                order.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
+                listToUpdate.Add(order);
+            }
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+            var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
+            listToUpdate = new List<UserOrderModel>();
             userOrdersGroups.ForEach(x =>
             {
-                var deliveries = x.Where(y => y.IsProductionOrder).Select(y => y.DeliveryId).ToList();
-                var status = deliveries.Distinct().Count() == 1 ? ServiceConstants.Finalizado : ServiceConstants.BackOrder;
-                status = deliveries.Any(y => y == 0) ? ServiceConstants.Liberado : status;
+                var areAnyAlmacenado = x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
+                var areAnyPending = x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+                var areAnyFinalized = x.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Finalizado);
+                var areAllCancelled = x.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
 
-                x.ToList().ForEach(y =>
+                foreach (var y in x)
                 {
-                    listSaleOrder.Add(new UserOrderModel { Salesorderid = y.Salesorderid, DeliveryId = y.DeliveryId });
-                    y.StatusAlmacen = null;
-                    y.UserCheckIn = null;
-                    y.DateTimeCheckIn = null;
-                    y.RemisionQr = null;
-                    y.DeliveryId = 0;
-                    y.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
-
-                    if (y.IsSalesOrder)
+                    if (y.IsProductionOrder)
                     {
-                        y.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : status;
+                        continue;
                     }
 
+                    y.DeliveryId = 0;
+                    y.StatusAlmacen = areAnyAlmacenado ? ServiceConstants.BackOrder : null;
+                    y.StatusAlmacen = areAnyAlmacenado && !areAnyPending && !areAnyFinalized ? ServiceConstants.Almacenado : y.StatusAlmacen;
+                    y.Status = areAllCancelled ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
+                    y.Status = areAnyPending ? ServiceConstants.Liberado : y.Status;
+                    y.Status = y.StatusAlmacen == ServiceConstants.Almacenado ? ServiceConstants.Almacenado : y.Status;
                     listToUpdate.Add(y);
-                });
+                }
             });
 
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
