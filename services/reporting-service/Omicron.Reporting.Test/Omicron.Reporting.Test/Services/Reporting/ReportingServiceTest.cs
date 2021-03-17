@@ -87,6 +87,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 PackageId = 1,
                 Status = status,
                 ReasonNotDelivered = reasonNotDelivered,
+                SalesOrders = "100",
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
