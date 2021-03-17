@@ -28,6 +28,7 @@ namespace Omicron.Reporting.Test.Entities
             new FileResultModel(),
             new RawMaterialRequestModel(),
             new RawMaterialRequestDetailModel(),
+            new SendCancelDeliveryModel(),
         };
 
         /// <summary>

@@ -86,9 +86,24 @@ namespace Omicron.Reporting.Services.Constants
         public const string CustomerServiceEmail = "EmailAtencionAClientes";
 
         /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string LogisticEmailCc2Field = "EmailLogisticaCc2";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
+
+        /// <summary>
+        /// The local.
+        /// </summary>
+        public const string InCancelDeliveryEmailSubject = "La Entrega {0} fue cancelada.";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentCancelDelivery = "<p>Estimado Colaborador.<br/><br/>Le informamos que la entrega <b>{0}</b> la cual contiene el(los) pedido(s) <b>{1}</b> fue cancelada por almacén.</p>";
 
         /// <summary>
         /// Sent local package.
@@ -140,6 +155,17 @@ namespace Omicron.Reporting.Services.Constants
         /// </summary>
         public const string EmailFarewall = "<p> Le pedimos de la manera más atenta tomar la acción correspondiente.<br/> Agradecemos de antemano su seguimiento, y pedimos una disculpa por los inconvenientes ocasionados.</p>";
 
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailFarewallCancelDelivery = "<p>Agradecemos así mismo que nos puedan apoyar con la cancelación del(los) pedido(s) para concluir con el proceso.</p>";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailCancelDeliveryClosing = "<center>Agradecemos de antemano su atención.</center><center>ALMANCEN PT</center><center>OmicronLab SA de CV</center>";
+
+        /// <summary>
         /// <summary>
         /// Body of email.
         /// </summary>
