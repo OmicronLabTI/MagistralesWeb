@@ -82,5 +82,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("U_ENVASE")]
         public string Container { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("LineStatus")]
+        public string LineStatus { get; set; }
     }
 }

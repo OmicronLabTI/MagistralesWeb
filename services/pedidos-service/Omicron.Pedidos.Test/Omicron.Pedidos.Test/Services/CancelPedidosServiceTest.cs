@@ -72,6 +72,14 @@ namespace Omicron.Pedidos.Test.Services
                 new UserOrderModel { Id = 61, Productionorderid = null, Salesorderid = "10061", Status = "Proceso", Userid = "abcd" },
                 new UserOrderModel { Id = 62, Productionorderid = "1062", Salesorderid = "10061", Status = "Finalizado", Userid = "abcd" },
                 new UserOrderModel { Id = 63, Productionorderid = "1063", Salesorderid = "10061", Status = "Proceso", Userid = "abcd" },
+
+                // CancelDelivery
+                new UserOrderModel { Id = 64, Productionorderid = null, Salesorderid = "100061", Status = "Proceso", Userid = "abcd", DeliveryId = 100 },
+                new UserOrderModel { Id = 65, Productionorderid = "10062", Salesorderid = "100061", Status = "Finalizado", Userid = "abcd", DeliveryId = 100 },
+                new UserOrderModel { Id = 66, Productionorderid = "10063", Salesorderid = "100061", Status = "Proceso", Userid = "abcd", DeliveryId = 100 },
+                new UserOrderModel { Id = 67, Productionorderid = null, Salesorderid = "100062", Status = "Proceso", Userid = "abcd", DeliveryId = 101 },
+                new UserOrderModel { Id = 68, Productionorderid = "10062", Salesorderid = "100062", Status = "Finalizado", Userid = "abcd", DeliveryId = 101 },
+                new UserOrderModel { Id = 69, Productionorderid = "10063", Salesorderid = "100062", Status = "Proceso", Userid = "abcd", DeliveryId = 102 },
             };
         }
 
@@ -482,6 +490,24 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
             this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
+        }
+
+        /// <summary>
+        /// test the cancel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CancelDelivery()
+        {
+            // arrange
+            this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
+            var orderToUpdate = new List<int> { 100, 101 };
+
+            // act
+            var response = await this.cancelPedidosService.CancelDelivery(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
         }
 
         private static DbContextOptions<DatabaseContext> CreateNewContextOptions()

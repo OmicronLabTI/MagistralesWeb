@@ -81,6 +81,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<SalesAsesorModel>> GetAsesorWithEmailByIds(List<int> docsEntry);
 
         /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIdsFromTheAsesor(List<int> salesPrsonId);
+
+        /// <summary>
         /// gets the fabrication orders by sales order id.
         /// </summary>
         /// <param name="salesOrderIds">the sales order ids.</param>        
