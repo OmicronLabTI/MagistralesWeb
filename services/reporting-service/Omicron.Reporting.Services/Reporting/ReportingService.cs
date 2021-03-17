@@ -149,6 +149,44 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
+        {
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
+            var copyEmails = $"{customerServiceEmail};{logisticEmail}";
+            List<ResultModel> results = new List<ResultModel> { };
+            var deliveryLists = this.GetGroupsOfList(request, 3);
+
+            foreach (var deliverySubList in deliveryLists)
+            {
+                await Task.WhenAll(deliverySubList.Select(async delivery =>
+                {
+                    var text = this.GetBodyForCancelDeliveryEmail(delivery);
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                        smtpConfig,
+                        string.IsNullOrEmpty(delivery.AsesorEmail) ? customerServiceEmail : delivery.AsesorEmail,
+                        text.Item1,
+                        text.Item2,
+                        copyEmails);
+                    results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = results };
+        }
+
+        /// <summary>
         /// Gets the smtp config.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
@@ -230,6 +268,19 @@ namespace Omicron.Reporting.Services
             var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
             var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
             var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="delivery">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
+        {
+            var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
+            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, delivery.SalesOrders);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
             return new Tuple<string, string>(subject, body);
         }
 
