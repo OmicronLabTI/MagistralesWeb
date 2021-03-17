@@ -113,7 +113,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CancelDelivery(List<int> deliveryIds)
+        public async Task<ResultModel> CancelDelivery(string type, List<int> deliveryIds)
         {
             var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
             var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
@@ -135,11 +135,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                     y.DateTimeCheckIn = null;
                     y.RemisionQr = null;
                     y.DeliveryId = 0;
-                    y.Status = ServiceConstants.Finalizado;
+                    y.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
 
                     if (y.IsSalesOrder)
                     {
-                        y.Status = status;
+                        y.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : status;
                     }
 
                     listToUpdate.Add(y);

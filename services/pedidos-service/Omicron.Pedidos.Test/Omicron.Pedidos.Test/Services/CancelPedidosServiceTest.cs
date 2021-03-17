@@ -495,16 +495,21 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// test the cancel.
         /// </summary>
+        /// <param name="type">the type.</param>
+        /// <param name="id">uid to cancel.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task CancelDelivery()
+        [TestCase("total", 100)]
+        [TestCase("partial", 101)]
+        public async Task CancelDelivery(string type, int id)
         {
             // arrange
             this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
-            var orderToUpdate = new List<int> { 100, 101 };
+            var orderToUpdate = new List<int>();
+            orderToUpdate.Add(id);
 
             // act
-            var response = await this.cancelPedidosService.CancelDelivery(orderToUpdate);
+            var response = await this.cancelPedidosService.CancelDelivery(type, orderToUpdate);
 
             // assert
             Assert.IsNotNull(response);
