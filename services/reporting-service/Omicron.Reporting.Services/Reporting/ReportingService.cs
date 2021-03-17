@@ -279,8 +279,8 @@ namespace Omicron.Reporting.Services
         private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
         {
             var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
-            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.SalesOrders);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, delivery.SalesOrders);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
             return new Tuple<string, string>(subject, body);
         }
 
