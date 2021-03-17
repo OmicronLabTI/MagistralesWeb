@@ -211,7 +211,9 @@ namespace Omicron.Reporting.Services
         private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+            package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ');
+
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
