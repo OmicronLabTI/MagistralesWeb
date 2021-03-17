@@ -173,10 +173,20 @@ namespace Omicron.Reporting.Test.Services.Request
         public async Task SendEmailCancelDeliveryOrders()
         {
             // arrange
-            var request = new SendCancelDeliveryModel
+            var request = new List<SendCancelDeliveryModel>()
             {
-                DeliveryId = 1,
-                SalesOrders = "1478",
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 1,
+                    SalesOrders = "1478",
+                    AsesorEmail = "email@email.com",
+                },
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 2,
+                    SalesOrders = "1479",
+                    AsesorEmail = string.Empty,
+                },
             };
 
             var listParams = new List<ParametersModel>
