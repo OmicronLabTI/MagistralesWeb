@@ -319,7 +319,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
             }
 
-            listToReturn = listToReturn.DistinctBy(x => x.DocNum).ToList();
             return listToReturn;
         }
 

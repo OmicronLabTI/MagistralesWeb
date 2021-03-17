@@ -53,7 +53,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// The local.
         /// </summary>
-        public const string DeliveryEmailSubject = "Su pedido {0} se entrego con éxito";
+        public const string DeliveryEmailSubject = "Su pedido {0} se entregó con éxito";
 
         /// <summary>
         /// not delivered.
