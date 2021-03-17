@@ -48,9 +48,13 @@ namespace Omicron.Pedidos.Test.Facade
             var mockServiceAlmacen = new Mock<IPedidosAlmacenService>();
             mockServiceAlmacen.SetReturnsDefault(Task.FromResult(response));
 
+            var mockCancel = new Mock<ICancelPedidosService>();
+            mockCancel.SetReturnsDefault(Task.FromResult(response));
+
             this.almacenFacade = new PedidosAlmacenFacade(
                 mockServiceAlmacen.Object,
-                mapper);
+                mapper,
+                mockCancel.Object);
         }
 
         /// <summary>

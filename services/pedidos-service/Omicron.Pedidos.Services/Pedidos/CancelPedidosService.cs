@@ -147,7 +147,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
-            return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listSaleOrder), null, null);
+            listSaleOrder = listSaleOrder.DistinctBy(x => x.DeliveryId).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
         }
 
         /// <summary>
