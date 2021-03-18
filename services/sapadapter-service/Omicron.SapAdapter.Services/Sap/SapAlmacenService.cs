@@ -301,7 +301,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
 
-                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado && string.IsNullOrEmpty(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).Select(y => y.SaleOrderId));
                 idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
                 listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
@@ -309,7 +309,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.Contains(ServiceConstants.Pendiente))
             {
-                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && string.IsNullOrEmpty(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => idsPendiente.Contains(x.DocNum)));
             }
 

@@ -487,5 +487,17 @@ namespace Omicron.SapAdapter.Services.Constants
             Almacenado,
             Cancelado,
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnorePorRecibir { get; } = new List<string>
+        {
+            Almacenado,
+            BackOrder,
+        };
     }
 }
