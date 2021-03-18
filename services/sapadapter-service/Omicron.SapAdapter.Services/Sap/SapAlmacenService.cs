@@ -309,7 +309,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.Contains(ServiceConstants.Pendiente))
             {
-                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).Select(y => int.Parse(y.Salesorderid)).ToList();
+                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && string.IsNullOrEmpty(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => idsPendiente.Contains(x.DocNum)));
             }
 
