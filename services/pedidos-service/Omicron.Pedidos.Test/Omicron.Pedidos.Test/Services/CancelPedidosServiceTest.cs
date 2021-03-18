@@ -505,8 +505,8 @@ namespace Omicron.Pedidos.Test.Services
         {
             // arrange
             this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
-            var orderToUpdate = new List<int>();
-            orderToUpdate.Add(id);
+            var orderToUpdate = new List<CancelDeliveryPedidoModel>();
+            orderToUpdate.Add(new CancelDeliveryPedidoModel { DeliveryId = id });
 
             // act
             var response = await this.cancelPedidosService.CancelDelivery(type, orderToUpdate);

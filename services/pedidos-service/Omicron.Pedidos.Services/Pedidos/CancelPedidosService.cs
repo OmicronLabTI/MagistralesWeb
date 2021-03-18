@@ -113,12 +113,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CancelDelivery(string type, List<int> deliveryIds)
+        public async Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryPedidoModel> deliveryIds)
         {
             var listToUpdate = new List<UserOrderModel>();
             var listSaleOrder = new List<UserOrderModel>();
-            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
-            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
+            var deliverties = deliveryIds.Select(x => x.DeliveryId).Distinct().ToList();
+            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliverties)).ToList();
 
             foreach (var order in modelByDelivery)
             {
@@ -138,6 +138,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
+
+            var missingIds = deliveryIds.Where(x => x.SaleOrderId != 0 && !listSaleOrder.Any(y => y.Salesorderid == x.SaleOrderId.ToString())).Select(z => z.SaleOrderId.ToString()).ToList();
+            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
+            listSales.AddRange(missingIds);
             var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
             listToUpdate = new List<UserOrderModel>();
             userOrdersGroups.ForEach(x =>

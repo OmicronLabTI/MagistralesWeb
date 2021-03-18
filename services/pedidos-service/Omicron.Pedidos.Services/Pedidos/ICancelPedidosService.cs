@@ -37,6 +37,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="type">The type.</param>
         /// <param name="deliveryIds">the delivery.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> CancelDelivery(string type, List<int> deliveryIds);
+        Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryPedidoModel> deliveryIds);
     }
 }
