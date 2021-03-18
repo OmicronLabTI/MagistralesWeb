@@ -199,13 +199,14 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Creates the pdf for the sale order.
         /// </summary>
+        /// <param name="type">The type.</param>
         /// <param name="deliveryId">the orders.</param>
         /// <returns>the data.</returns>
-        [Route("/cancel/delivery")]
+        [Route("/cancel/{type}/delivery")]
         [HttpPost]
-        public async Task<IActionResult> CancelDelivery(List<int> deliveryId)
+        public async Task<IActionResult> CancelDelivery(string type, List<int> deliveryId)
         {
-            var response = await this.pedidosAlmacenFacade.CancelDelivery(deliveryId);
+            var response = await this.pedidosAlmacenFacade.CancelDelivery(type, deliveryId);
             return this.Ok(response);
         }
     }

@@ -224,7 +224,7 @@ namespace Omicron.Pedidos.Test.Facade
             var type = new List<int>();
 
             // act
-            var response = await this.almacenFacade.CancelDelivery(type);
+            var response = await this.almacenFacade.CancelDelivery(string.Empty, type);
 
             // Assert
             Assert.IsNotNull(response);

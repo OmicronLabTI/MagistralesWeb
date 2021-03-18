@@ -636,6 +636,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Mix = "MX";
 
         /// <summary>
+        /// for total cancelation.
+        /// </summary>
+        public const string Total = "total";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
