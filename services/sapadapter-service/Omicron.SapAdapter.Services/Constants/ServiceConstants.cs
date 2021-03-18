@@ -296,6 +296,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Recibir = "Recibir";
 
         /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Cancelado = "Cancelado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -469,6 +474,18 @@ namespace Omicron.SapAdapter.Services.Constants
             Advance,
             Current,
             NeedsLargeDsc,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnoreLineProducts { get; } = new List<string>
+        {
+            Almacenado,
+            Cancelado,
         };
     }
 }
