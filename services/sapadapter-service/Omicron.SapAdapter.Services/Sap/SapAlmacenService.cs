@@ -196,6 +196,14 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, parties, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveries(List<int> deliveryIds)
+        {
+            var deliveries = await this.sapDao.GetDeliveryByDocEntry(deliveryIds);
+            var allDeliveries = await this.sapDao.GetDeliveryBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
+            return ServiceUtils.CreateResult(true, 200, null, allDeliveries, null, null);
+        }
+
         /// <summary>
         /// Gets the orders that are finalized and all the productin orders.
         /// </summary>

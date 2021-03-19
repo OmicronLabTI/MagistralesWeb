@@ -64,5 +64,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> GetDeliveryParties();
+
+        /// <summary>
+        /// Gets the delivery ids.
+        /// </summary>
+        /// <param name="deliveryIds">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetDeliveries(List<int> deliveryIds);
     }
 }
