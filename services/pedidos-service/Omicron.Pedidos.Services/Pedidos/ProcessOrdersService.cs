@@ -67,6 +67,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
 
+            /** add logs**/
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(pedidosId.User, "name", listToInsert));
+            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(pedidosId.User, "name", listToUpdate));
+
             await this.pedidosDao.InsertUserOrder(listToInsert);
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
@@ -97,6 +102,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             if (saleOrder == null)
             {
@@ -108,6 +114,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 insertUserOrdersale = true;
             }
 
+            var previousStatus = saleOrder.Status;
             saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
 
             if (insertUserOrdersale)
@@ -117,6 +124,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             else
             {
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+                if (previousStatus != saleOrder.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  new List<UserOrderModel> { saleOrder }));
+                }
             }
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -125,6 +136,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(dataToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  dataToInsert));
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
