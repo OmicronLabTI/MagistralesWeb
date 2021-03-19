@@ -93,5 +93,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetDeliveryParties();
+
+        /// <summary>
+        /// looks the delivery.
+        /// </summary>
+        /// <param name="deliveryIds">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDeliveries(List<int> deliveryIds);
     }
 }
