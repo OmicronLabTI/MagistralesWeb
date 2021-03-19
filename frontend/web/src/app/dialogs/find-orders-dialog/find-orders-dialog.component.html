@@ -10,7 +10,7 @@
         </mat-card-header>
         <mat-card-content class="content-card-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'content-card-container-custom': ''">
             <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
-                <div class="row-form-order row-form-order-custom border-bottom-custom">
+                <div class="row-form-order row-form-order-custom border-bottom-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents">
                     <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (desde)' : 'Orden (desde)'"
@@ -43,10 +43,6 @@
                           'La orden (hasta) debe ser mayor a orden (desde)'}}">
                        help_outline
                     </span>
-<!--
-                        *El pedido(hasta) debe ser mayor a pedido(desde)
--->
-
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">

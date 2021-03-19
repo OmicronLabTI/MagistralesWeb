@@ -113,11 +113,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryPedidoModel> deliveryIds)
+        public async Task<ResultModel> CancelDelivery(string type, CancelDeliveryPedidoCompleteModel deliveryIds)
         {
             var listToUpdate = new List<UserOrderModel>();
             var listSaleOrder = new List<UserOrderModel>();
-            var deliverties = deliveryIds.Where(y => y.NeedsCancel).Select(x => x.DeliveryId).ToList();
+            var deliverties = deliveryIds.CancelDelivery.Where(y => y.NeedsCancel).Select(x => x.DeliveryId).ToList();
             var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliverties)).ToList();
 
             foreach (var order in modelByDelivery)
@@ -139,15 +139,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
 
-            var missingIds = deliveryIds.Where(x => x.NeedsCancel && !listSaleOrder.Any(y => y.Salesorderid == x.SaleOrderId.ToString())).Select(z => z.SaleOrderId.ToString()).ToList();
+            var missingIds = deliveryIds.CancelDelivery.Where(x => x.NeedsCancel && !listSaleOrder.Any(y => y.Salesorderid == x.SaleOrderId.ToString())).Select(z => z.SaleOrderId.ToString()).ToList();
             var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
             listSales.AddRange(missingIds);
             var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
             listToUpdate = new List<UserOrderModel>();
             userOrdersGroups.ForEach(x =>
             {
-                var orderByKey = deliveryIds.Where(y => y.SaleOrderId.ToString() == x.Key).ToList();
-                var status = this.CalculateStatusCancel(x.ToList(), orderByKey, type);
+                var orderByKey = deliveryIds.CancelDelivery.Where(y => y.SaleOrderId.ToString() == x.Key).ToList();
+                var lineByKey = deliveryIds.DetallePedido.Where(y => y.PedidoId.Value.ToString() == x.Key).ToList();
+                var status = this.CalculateStatusCancel(x.ToList(), orderByKey, type, lineByKey);
 
                 foreach (var y in x)
                 {
@@ -168,38 +169,36 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
         }
 
-        private Tuple<string, string> CalculateStatusCancel(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries, string type)
+        private Tuple<string, string> CalculateStatusCancel(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries, string type, List<DetallePedidoModel> detalles)
         {
-            var areAnyAlmacenado = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
-            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
-            var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
-            var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
-            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
-
             if (type == ServiceConstants.Total)
             {
-                return this.GetstatusForTotal(areAnyPending, areAllCancelled, areAnyDeliveyAlive);
+                return this.GetstatusForTotal(userOrders, detalles, cancelDeliveries);
             }
 
-            return this.GetstatusForPartial(areAnyPending, areAnyDeliveyAlive, areAllFinalized, areAnyAlmacenado);
+            return this.GetstatusForPartial(userOrders, detalles, cancelDeliveries);
         }
 
         /// <summary>
         /// Calculate status.
         /// </summary>
-        /// <param name="areAnyPending">are pending.</param>
-        /// <param name="areAllCancelled">are ancelled.</param>
-        /// <param name="areAnyDeliveyAlive">ar alive.</param>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="details">The details.</param>
         /// <returns>the data.</returns>
-        private Tuple<string, string> GetstatusForTotal(bool areAnyPending, bool areAllCancelled, bool areAnyDeliveyAlive)
+        private Tuple<string, string> GetstatusForTotal(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
         {
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+            var areActiveLine = !details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
+
             var statusAlmacen = string.Empty;
             var status = string.Empty;
 
             if (areAllCancelled && !areAnyDeliveyAlive)
             {
                 statusAlmacen = null;
-                status = ServiceConstants.Cancelled;
+                status = areActiveLine ? ServiceConstants.Finalizado : ServiceConstants.Cancelled;
             }
 
             if (areAllCancelled && areAnyDeliveyAlive)
@@ -210,8 +209,18 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (!areAllCancelled && areAnyDeliveyAlive)
             {
-                statusAlmacen = ServiceConstants.BackOrder;
-                status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+                var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
+                var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
+                if (totalOpenDeliveries == totalLocalAlmacenadas)
+                {
+                    statusAlmacen = ServiceConstants.Almacenado;
+                    status = ServiceConstants.Almacenado;
+                }
+                else
+                {
+                    statusAlmacen = ServiceConstants.BackOrder;
+                    status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+                }
             }
 
             if (!areAllCancelled && !areAnyDeliveyAlive)
@@ -226,13 +235,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Calculate status.
         /// </summary>
-        /// <param name="areAnyPending">the pending.</param>
-        /// <param name="areAnyDeliveyAlive">the alive.</param>
-        /// <param name="areAllFinalized">the finalized.</param>
-        /// <param name="areAnyAlmacenado">the almacenado.</param>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="details">The details.</param>
         /// <returns>the data.</returns>
-        private Tuple<string, string> GetstatusForPartial(bool areAnyPending, bool areAnyDeliveyAlive, bool areAllFinalized, bool areAnyAlmacenado)
+        private Tuple<string, string> GetstatusForPartial(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
         {
+            var areAnyAlmacenado = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+
             if (areAnyPending && areAnyDeliveyAlive)
             {
                 return new Tuple<string, string>(ServiceConstants.Liberado, ServiceConstants.BackOrder);

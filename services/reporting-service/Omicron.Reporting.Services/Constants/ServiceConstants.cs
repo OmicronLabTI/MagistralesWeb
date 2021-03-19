@@ -163,7 +163,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// refund policy.
         /// </summary>
-        public const string EmailCancelDeliveryClosing = "<center>Agradecemos de antemano su atención.</center><center>ALMANCEN PT</center><center>OmicronLab SA de CV</center>";
+        public const string EmailCancelDeliveryClosing = "<center>Agradecemos de antemano su atención.</center><center>ALMACÉN PT</center><center>OmicronLab SA de CV</center>";
 
         /// <summary>
         /// <summary>
