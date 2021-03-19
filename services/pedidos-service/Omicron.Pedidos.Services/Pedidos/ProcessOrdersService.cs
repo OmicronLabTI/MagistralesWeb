@@ -124,6 +124,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             else
             {
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+                /* logs */
                 if (previousStatus != saleOrder.Status)
                 {
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  new List<UserOrderModel> { saleOrder }));
@@ -136,6 +137,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(dataToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            /* logs */
             listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  dataToInsert));
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;

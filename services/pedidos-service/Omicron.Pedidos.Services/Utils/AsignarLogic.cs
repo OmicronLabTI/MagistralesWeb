@@ -61,6 +61,10 @@ namespace Omicron.Pedidos.Services.Utils
             await pedidosDao.UpdateUserOrders(userOrders);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
 
+            /** add logs**/
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", userOrders));
+
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
