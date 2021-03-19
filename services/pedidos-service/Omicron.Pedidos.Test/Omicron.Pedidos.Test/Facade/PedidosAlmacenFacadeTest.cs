@@ -221,7 +221,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CancelDelivery()
         {
             // arrange
-            var type = new List<CancelDeliveryPedidoDto>();
+            var type = new CancelDeliveryPedidoCompleteDto();
 
             // act
             var response = await this.almacenFacade.CancelDelivery(string.Empty, type);
