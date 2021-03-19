@@ -189,5 +189,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.GetDeliveryParties();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the delivery and invoice id by sale order..
+        /// </summary>
+        /// <param name="saleids">The sales id separated by commas.</param>
+        /// <returns>the data.</returns>
+        [Route("/getdeliveries")]
+        [HttpPost]
+        public async Task<IActionResult> GetDeliveries(List<int> saleids)
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveries(saleids);
+            return this.Ok(response);
+        }
     }
 }

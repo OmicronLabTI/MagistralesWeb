@@ -50,69 +50,9 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockDelivery = new Mock<ISapAlmacenDeliveryService>();
             var mockInvoice = new Mock<ISapInvoiceService>();
 
-            mockService
-                .Setup(m => m.GetOrders(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.GetMagistralScannedData(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.GetLineScannedData(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.GetCompleteDetail(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.GetDeliveryBySaleOrderId(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.AlmacenGraphCount(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockDelivery
-                .Setup(m => m.GetDelivery(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetInvoice(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetInvoiceProducts(It.IsAny<int>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetDeliveryScannedData(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetMagistralProductInvoice(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetLineProductInvoice(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetInvoiceHeader(It.IsAny<InvoicePackageSapLookModel>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetInvoiceData(It.IsAny<string>()))
-                .Returns(Task.FromResult(response));
-
-            mockInvoice
-                .Setup(m => m.GetSapIds(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.GetDeliveryParties())
-                .Returns(Task.FromResult(response));
+            mockService.SetReturnsDefault(Task.FromResult(response));
+            mockDelivery.SetReturnsDefault(Task.FromResult(response));
+            mockInvoice.SetReturnsDefault(Task.FromResult(response));
 
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
         }
@@ -328,6 +268,18 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetDeliveryParties()
         {
             var response = await this.almacenFacade.GetDeliveryParties();
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveries()
+        {
+            var response = await this.almacenFacade.GetDeliveries(new List<int>());
 
             Assert.IsNotNull(response);
         }

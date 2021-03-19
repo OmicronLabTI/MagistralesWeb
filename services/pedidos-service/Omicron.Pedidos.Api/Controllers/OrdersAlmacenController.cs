@@ -204,7 +204,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/cancel/{type}/delivery")]
         [HttpPost]
-        public async Task<IActionResult> CancelDelivery(string type, List<int> deliveryId)
+        public async Task<IActionResult> CancelDelivery(string type, List<CancelDeliveryPedidoDto> deliveryId)
         {
             var response = await this.pedidosAlmacenFacade.CancelDelivery(type, deliveryId);
             return this.Ok(response);

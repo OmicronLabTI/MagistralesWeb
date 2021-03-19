@@ -282,5 +282,22 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveries()
+        {
+            // arrange
+            var ids = new List<int> { 100 };
+
+            // act
+            var response = await this.sapService.GetDeliveries(ids);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

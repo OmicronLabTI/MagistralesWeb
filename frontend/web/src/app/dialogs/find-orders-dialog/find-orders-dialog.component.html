@@ -69,7 +69,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <div class="dates-container" [ngClass]=" findOrdersForm.invalid ? 'error-on-range-date' : ''"
+                        <div class="dates-container" [ngClass]=" findOrdersForm.invalid && findOrdersForm.get('docNum').value !== null ? 'error-on-range-date' : ''"
                              matTooltip="El rango de fechas debe ser menor a 3 meses" [matTooltipDisabled]="!findOrdersForm.invalid">
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="outline" >
@@ -110,6 +110,8 @@
                                 <mat-option value="Almacenado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Almacenado</mat-option>
                                 <mat-option value="Cancelado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
                                 <mat-option *ngIf="isFromSearchOrders" value="Rechazado">Rechazado</mat-option>
+                                <mat-option value="Entregado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Entregado</mat-option>
+
 
                                 <mat-option value="Abierta" *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
                                 <mat-option value="Atendiendo" *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>

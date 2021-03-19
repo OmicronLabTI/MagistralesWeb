@@ -95,9 +95,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> CancelDelivery(string type, List<int> deliveryIds)
+        public async Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryPedidoDto> deliveryIds)
         {
-            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelDelivery(type, deliveryIds));
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelDelivery(type, this.mapper.Map<List<CancelDeliveryPedidoModel>>(deliveryIds)));
         }
     }
 }
