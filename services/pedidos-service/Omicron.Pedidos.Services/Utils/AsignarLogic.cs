@@ -35,6 +35,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
         {
+            var listOrderLogToInsert = new List<SalesLogs>();
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
             var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
@@ -50,8 +51,14 @@ namespace Omicron.Pedidos.Services.Utils
 
             userOrders.ForEach(x =>
             {
+                var previousStatus = x.Status;
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
+                /** add logs**/
+                if (previousStatus != x.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", new List<UserOrderModel> { x }));
+                }
             });
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -60,10 +67,6 @@ namespace Omicron.Pedidos.Services.Utils
 
             await pedidosDao.UpdateUserOrders(userOrders);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
-
-            /** add logs**/
-            var listOrderLogToInsert = new List<SalesLogs>();
-            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", userOrders));
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -80,7 +83,7 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             assignModel.DocEntry.ForEach(x =>
             {
                 listToUpdate.Add(new UpdateFabOrderModel
@@ -104,7 +107,9 @@ namespace Omicron.Pedidos.Services.Utils
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado);
+            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic);
+            userOrdersByProd = getUpdateUserOrderModel.Item1;
+            listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
@@ -201,11 +206,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="sapOrders">The sapOrders.</param>
         /// <param name="user">the user to update.</param>
         /// <param name="statusOrder">Status for the order fab.</param>
+        /// <param name="userLogistic">user modificate.</param>
         /// <returns>the data.</returns>
-        public static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder)
+        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic)
         {
             var listToUpdate = new List<UserOrderModel>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             listFromSales
                 .GroupBy(x => x.Salesorderid)
                 .ToList()
@@ -218,9 +224,24 @@ namespace Omicron.Pedidos.Services.Utils
 
                     currentOrdersBySale.ForEach(o =>
                     {
+                        var previousStatus = o.Status;
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
+                        if (previousStatus != o.Status)
+                        {
+                            listOrderLogToInsert.Add(new SalesLogs
+                            {
+                                SalesOrderId = o.Salesorderid,
+                                ProductionOrderId = o.Productionorderid,
+                                StatusSalesOrder = string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
+                                StatusProductionOrder = !string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
+                                DataCheckin = DateTime.Now,
+                                UserId = userLogistic,
+                                NameUser = "name",
+                                IsProductionOrder = !string.IsNullOrEmpty(o.Productionorderid),
+                            });
+                        }
                     });
 
                     if (!string.IsNullOrEmpty(y.Key))
@@ -229,10 +250,23 @@ namespace Omicron.Pedidos.Services.Utils
                         pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
                         pedido.Userid = user;
                         listToUpdate.Add(pedido);
+                        if (!missing)
+                        {
+                            listOrderLogToInsert.Add(new SalesLogs
+                            {
+                                SalesOrderId = pedido.Salesorderid,
+                                ProductionOrderId = pedido.Productionorderid,
+                                StatusSalesOrder = string.IsNullOrEmpty(pedido.Productionorderid) ? pedido.Status : null,
+                                StatusProductionOrder = null,
+                                DataCheckin = DateTime.Now,
+                                UserId = userLogistic,
+                                NameUser = "name",
+                                IsProductionOrder = !string.IsNullOrEmpty(pedido.Productionorderid),
+                            });
+                        }
                     }
                 });
-
-            return listToUpdate;
+            return new Tuple<List<UserOrderModel>, List<SalesLogs>>(listToUpdate, listOrderLogToInsert);
         }
 
         /// <summary>

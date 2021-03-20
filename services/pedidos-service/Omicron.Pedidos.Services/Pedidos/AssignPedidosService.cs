@@ -199,8 +199,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado);
-
+            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic).Item1;
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
 
