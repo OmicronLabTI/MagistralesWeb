@@ -201,7 +201,16 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var deliveries = await this.sapDao.GetDeliveryByDocEntry(deliveryIds);
             var allDeliveries = await this.sapDao.GetDeliveryBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
-            return ServiceUtils.CreateResult(true, 200, null, allDeliveries, null, null);
+            var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Select(x => x.BaseEntry).ToList())).ToList();
+            var lineItems = await this.sapDao.GetAllLineProducts();
+
+            detailsSale.ForEach(x =>
+            {
+                x.Label = lineItems.Any(y => y.ProductoId == x.ProductoId).ToString();
+            });
+
+            var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
+            return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
         /// <summary>
@@ -396,9 +405,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
 
+                var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems, batches);
+
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
                 salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir ? userOrder.StatusAlmacen : salesStatusMagistral;
                 salesStatusMagistral = salesStatusMagistral == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : salesStatusMagistral;
+                salesStatusMagistral = salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente) ? ServiceConstants.Pendiente : salesStatusMagistral;
 
                 var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
 
@@ -406,8 +418,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var client = order == null ? string.Empty : order.Cliente;
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
-
-                var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems, batches);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
@@ -511,6 +521,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(orderId));
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
                     orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
+                    orderStatus = orderStatus == ServiceConstants.PorRecibir && userFabOrder.FinishedLabel == 0 ? ServiceConstants.Pendiente : orderStatus;
+                    orderStatus = userFabOrder.Status == ServiceConstants.Cancelado ? ServiceConstants.Cancelado : orderStatus;
                     hasDelivery = userFabOrder.DeliveryId != 0;
                     deliveryId = userFabOrder.DeliveryId;
                 }
@@ -519,6 +531,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(item.ProductoId));
                     userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
                     orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+                    orderStatus = userFabLineOrder.StatusAlmacen == ServiceConstants.Cancelado ? ServiceConstants.Cancelado : orderStatus;
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
                     deliveryId = userFabLineOrder.DeliveryId;
 

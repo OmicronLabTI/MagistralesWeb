@@ -540,8 +540,14 @@ namespace Omicron.Pedidos.Test.Services
                 new CancelDeliveryPedidoModel { DeliveryId = 74577, SaleOrderId = 84371, NeedsCancel = true, Status = "C" },
             };
 
+            var model = new CancelDeliveryPedidoCompleteModel
+            {
+                CancelDelivery = orderToUpdate,
+                DetallePedido = new List<DetallePedidoModel>(),
+            };
+
             // act
-            var response = await this.cancelPedidosService.CancelDelivery(type, orderToUpdate);
+            var response = await this.cancelPedidosService.CancelDelivery(type, model);
 
             // assert
             Assert.IsNotNull(response);
@@ -571,8 +577,14 @@ namespace Omicron.Pedidos.Test.Services
                 new CancelDeliveryPedidoModel { DeliveryId = 74586, SaleOrderId = 84377, NeedsCancel = false, Status = "O" },
             };
 
+            var model = new CancelDeliveryPedidoCompleteModel
+            {
+                CancelDelivery = orderToUpdate,
+                DetallePedido = new List<DetallePedidoModel>(),
+            };
+
             // act
-            var response = await this.cancelPedidosService.CancelDelivery(type, orderToUpdate);
+            var response = await this.cancelPedidosService.CancelDelivery(type, model);
 
             // assert
             Assert.IsNotNull(response);

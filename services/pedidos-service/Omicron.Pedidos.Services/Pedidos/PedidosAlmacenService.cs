@@ -65,6 +65,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Comments,
                 x.DeliveryId,
                 x.StatusAlmacen,
+                x.FinishedLabel,
             }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);
@@ -114,6 +115,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listToAdd.AddRange(products);
                 }
             });
+
+            var saleOrder = (await this.pedidosDao.GetUserOrderBySaleOrder(listToAdd.Select(x => x.Salesorderid).ToList())).ToList();
+            listToAdd.AddRange(saleOrder.Where(x => x.IsSalesOrder));
 
             var orderToReturn = listToAdd
                 .Select(x => new

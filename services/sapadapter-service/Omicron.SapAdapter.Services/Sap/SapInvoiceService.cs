@@ -61,9 +61,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
+            var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
-            var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
 
             var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
             deliveryIds.AddRange(lineProducts.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId));
