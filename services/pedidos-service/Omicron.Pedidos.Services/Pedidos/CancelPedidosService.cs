@@ -112,6 +112,172 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, results.DistinctResults(), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelDelivery(string type, CancelDeliveryPedidoCompleteModel deliveryIds)
+        {
+            var listToUpdate = new List<UserOrderModel>();
+            var listSaleOrder = new List<UserOrderModel>();
+            var deliverties = deliveryIds.CancelDelivery.Where(y => y.NeedsCancel).Select(x => x.DeliveryId).ToList();
+            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliverties)).ToList();
+
+            foreach (var order in modelByDelivery)
+            {
+                if (order.IsSalesOrder)
+                {
+                    continue;
+                }
+
+                listSaleOrder.Add(new UserOrderModel { Salesorderid = order.Salesorderid, DeliveryId = order.DeliveryId });
+                order.StatusAlmacen = null;
+                order.UserCheckIn = null;
+                order.DateTimeCheckIn = null;
+                order.RemisionQr = null;
+                order.DeliveryId = 0;
+                order.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
+                listToUpdate.Add(order);
+            }
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+
+            var missingIds = deliveryIds.CancelDelivery.Where(x => x.NeedsCancel && !listSaleOrder.Any(y => y.Salesorderid == x.SaleOrderId.ToString())).Select(z => z.SaleOrderId.ToString()).ToList();
+            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
+            listSales.AddRange(missingIds);
+            var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
+            listToUpdate = new List<UserOrderModel>();
+            userOrdersGroups.ForEach(x =>
+            {
+                var orderByKey = deliveryIds.CancelDelivery.Where(y => y.SaleOrderId.ToString() == x.Key).ToList();
+                var lineByKey = deliveryIds.DetallePedido.Where(y => y.PedidoId.Value.ToString() == x.Key).ToList();
+                var status = this.CalculateStatusCancel(x.ToList(), orderByKey, type, lineByKey);
+
+                foreach (var y in x)
+                {
+                    if (y.IsProductionOrder)
+                    {
+                        continue;
+                    }
+
+                    y.DeliveryId = 0;
+                    y.Status = status.Item1;
+                    y.StatusAlmacen = status.Item2;
+                    listToUpdate.Add(y);
+                }
+            });
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+            listSaleOrder = listSaleOrder.DistinctBy(x => x.DeliveryId).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
+        }
+
+        private Tuple<string, string> CalculateStatusCancel(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries, string type, List<DetallePedidoModel> detalles)
+        {
+            if (type == ServiceConstants.Total)
+            {
+                return this.GetstatusForTotal(userOrders, detalles, cancelDeliveries);
+            }
+
+            return this.GetstatusForPartial(userOrders, detalles, cancelDeliveries);
+        }
+
+        /// <summary>
+        /// Calculate status.
+        /// </summary>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="details">The details.</param>
+        /// <returns>the data.</returns>
+        private Tuple<string, string> GetstatusForTotal(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
+        {
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+            var areActiveLine = !details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
+
+            var statusAlmacen = string.Empty;
+            var status = string.Empty;
+
+            if (areAllCancelled && !areAnyDeliveyAlive)
+            {
+                statusAlmacen = null;
+                status = areActiveLine ? ServiceConstants.Finalizado : ServiceConstants.Cancelled;
+            }
+
+            if (areAllCancelled && areAnyDeliveyAlive)
+            {
+                statusAlmacen = ServiceConstants.Almacenado;
+                status = ServiceConstants.Almacenado;
+            }
+
+            if (!areAllCancelled && areAnyDeliveyAlive)
+            {
+                var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
+                var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
+                if (totalOpenDeliveries == totalLocalAlmacenadas)
+                {
+                    statusAlmacen = ServiceConstants.Almacenado;
+                    status = ServiceConstants.Almacenado;
+                }
+                else
+                {
+                    statusAlmacen = ServiceConstants.BackOrder;
+                    status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+                }
+            }
+
+            if (!areAllCancelled && !areAnyDeliveyAlive)
+            {
+                statusAlmacen = null;
+                status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+            }
+
+            return new Tuple<string, string>(status, statusAlmacen);
+        }
+
+        /// <summary>
+        /// Calculate status.
+        /// </summary>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="details">The details.</param>
+        /// <returns>the data.</returns>
+        private Tuple<string, string> GetstatusForPartial(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
+        {
+            var areAnyAlmacenado = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+
+            if (areAnyPending && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Liberado, ServiceConstants.BackOrder);
+            }
+
+            if (!areAnyDeliveyAlive && areAnyPending)
+            {
+                return new Tuple<string, string>(ServiceConstants.Liberado, null);
+            }
+
+            if (areAllFinalized && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
+            }
+
+            if (!areAnyDeliveyAlive && areAllFinalized)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+            }
+
+            if (!areAnyDeliveyAlive && !areAllFinalized && areAnyAlmacenado)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+            }
+
+            if (areAnyAlmacenado && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
+            }
+
+            return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+        }
+
         /// <summary>
         /// Cancel existing PO in the local data base.
         /// </summary>

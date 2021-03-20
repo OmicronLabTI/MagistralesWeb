@@ -51,6 +51,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string InWayEmailSubject = "Su pedido {0} de OmicronLab está en camino";
 
         /// <summary>
+        /// The local.
+        /// </summary>
+        public const string DeliveryEmailSubject = "Su pedido {0} se entregó con éxito";
+
+        /// <summary>
         /// not delivered.
         /// </summary>
         public const string PackageNotDelivered = "Su pedido {0} de OmicronLab no pudo ser entregado";
@@ -81,9 +86,24 @@ namespace Omicron.Reporting.Services.Constants
         public const string CustomerServiceEmail = "EmailAtencionAClientes";
 
         /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string LogisticEmailCc2Field = "EmailLogisticaCc2";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
+
+        /// <summary>
+        /// The local.
+        /// </summary>
+        public const string InCancelDeliveryEmailSubject = "La Entrega {0} fue cancelada.";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentCancelDelivery = "<p>Estimado Colaborador.<br/><br/>Le informamos que la entrega <b>{0}</b> la cual contiene el(los) pedido(s) <b>{1}</b> fue cancelada por almacén.</p>";
 
         /// <summary>
         /// Sent local package.
@@ -99,6 +119,11 @@ namespace Omicron.Reporting.Services.Constants
         /// Sent local package.
         /// </summary>
         public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> ya está planificado para ser entregado en la dirección que tenemos registrada bajo su nombre.</p>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentLocalPackageDelivery = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> fue entregado con éxito.</p>";
 
         /// <summary>
         /// not delivered body.
@@ -131,9 +156,25 @@ namespace Omicron.Reporting.Services.Constants
         public const string EmailFarewall = "<p> Le pedimos de la manera más atenta tomar la acción correspondiente.<br/> Agradecemos de antemano su seguimiento, y pedimos una disculpa por los inconvenientes ocasionados.</p>";
 
         /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailFarewallCancelDelivery = "<p>Agradecemos así mismo que nos puedan apoyar con la cancelación del(los) pedido(s) para concluir con el proceso.</p>";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string EmailCancelDeliveryClosing = "<center>Agradecemos de antemano su atención.</center><center>ALMACÉN PT</center><center>OmicronLab SA de CV</center>";
+
+        /// <summary>
+        /// <summary>
         /// Body of email.
         /// </summary>
         public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}{3}</body></html>";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Entregado = "Entregado";
 
         /// <summary>
         /// Gets the status of the order.

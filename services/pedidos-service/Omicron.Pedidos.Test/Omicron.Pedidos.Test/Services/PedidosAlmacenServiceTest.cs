@@ -12,12 +12,16 @@ namespace Omicron.Pedidos.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Moq;
+    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.SapFile;
 
     /// <summary>
     /// class for the test.
@@ -26,6 +30,8 @@ namespace Omicron.Pedidos.Test.Services
     public class PedidosAlmacenServiceTest : BaseTest
     {
         private IPedidosAlmacenService pedidosAlmacen;
+
+        private Mock<IConfiguration> configuration;
 
         private IPedidosDao pedidosDao;
 
@@ -47,8 +53,13 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
+            var mockSapFile = new Mock<ISapFileService>();
+
+            this.configuration = new Mock<IConfiguration>();
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == "OmicronFilesAddress")]).Returns("http://localhost:5002/");
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosAlmacen = new PedidosAlmacenService(this.pedidosDao);
+            this.pedidosAlmacen = new PedidosAlmacenService(this.pedidosDao, mockSapFile.Object, this.configuration.Object);
         }
 
         /// <summary>
@@ -189,6 +200,42 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await this.pedidosAlmacen.GetUserOrderByDeliveryOrder(listIds);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateinvoicePdf()
+        {
+            var details = new List<int> { 100 };
+            var type = "invoice";
+
+            var dictResponse = new Dictionary<string, string>
+            {
+                { "100", "Ok-C:\\algo" },
+            };
+
+            var response = new ResultModel
+            {
+                Code = 200,
+                Success = true,
+                Response = JsonConvert.SerializeObject(dictResponse),
+            };
+
+            var mockSapFile = new Mock<ISapFileService>();
+            mockSapFile
+                .Setup(m => m.PostSimple(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(response));
+
+            var pedidoServiceLocal = new PedidosAlmacenService(this.pedidosDao, mockSapFile.Object, this.configuration.Object);
+
+            // act
+            var result = await pedidoServiceLocal.CreatePdf(type, details);
 
             // assert
             Assert.IsNotNull(result);

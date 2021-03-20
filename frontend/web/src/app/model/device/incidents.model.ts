@@ -18,5 +18,6 @@ export class CommentsConfig {
     comments: string;
     isReadOnly?: boolean;
     isForClose?: boolean;
+    isForRefuseOrders?: boolean;
 }
 

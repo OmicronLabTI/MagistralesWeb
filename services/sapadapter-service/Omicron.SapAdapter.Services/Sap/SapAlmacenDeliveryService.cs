@@ -131,13 +131,37 @@ namespace Omicron.SapAdapter.Services.Sap
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
             }
 
-            deliveryToReturn = deliveryToReturn.OrderBy(x => x.DeliveryId).ToList();
-            var filterCount = deliveryToReturn.DistinctBy(x => x.DeliveryId).ToList().Count;
-
-            deliveryToReturn = this.GetOrdersToLook(deliveryToReturn, parameters);
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+            deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
+            deliveryHeaders = deliveryHeaders.OrderBy(x => x.DocNum).ToList();
+            var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
+
+            deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
+            deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>(deliveryToReturn, deliveryHeaders, filterCount);
+        }
+
+        /// <summary>
+        /// Gets the order by the chips criteria.
+        /// </summary>
+        /// <param name="sapOrders">the orders.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private List<DeliverModel> GetSapDeliveriesToLookByPedidoDoctor(List<DeliverModel> sapOrders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                return sapOrders;
+            }
+
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
+            }
+
+            var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
@@ -146,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="deliveries">All deliveries.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<DeliveryDetailModel> GetOrdersToLook(List<DeliveryDetailModel> deliveries, Dictionary<string, string> parameters)
+        private List<DeliverModel> GetOrdersToLook(List<DeliverModel> deliveries, Dictionary<string, string> parameters)
         {
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
@@ -154,10 +178,10 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var pedidosId = deliveries.Select(x => x.DeliveryId).Distinct().ToList();
+            var pedidosId = deliveries.Select(x => x.DocNum).Distinct().ToList();
             pedidosId = pedidosId.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            return deliveries.Where(x => pedidosId.Contains(x.DeliveryId)).ToList();
+            return deliveries.Where(x => pedidosId.Contains(x.DocNum)).ToList();
         }
 
         /// <summary>
@@ -203,6 +227,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
 
+                header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
+                var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = d,
@@ -226,6 +253,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
+                    InvoiceType = invoiceType,
                 };
 
                 var saleModel = new SalesModel
@@ -301,6 +329,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = listBatches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
+                    DeliveryId = order.DeliveryId,
                 };
 
                 listToReturn.Add(productModel);

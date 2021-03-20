@@ -115,6 +115,56 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("75000")]
+        [TestCase("aa")]
+        public async Task GetOrders(string chip)
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            var parametersResponse = this.GetResultModel(parameters);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProducts()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { "chips", chip },
+            };
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
+
+            // act
+            var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetMagistralScannedData()
@@ -228,6 +278,23 @@ namespace Omicron.SapAdapter.Test.Services
         {
             // act
             var response = await this.sapService.GetDeliveryParties();
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveries()
+        {
+            // arrange
+            var ids = new List<int> { 100 };
+
+            // act
+            var response = await this.sapService.GetDeliveries(ids);
 
             // assert
             Assert.IsNotNull(response);

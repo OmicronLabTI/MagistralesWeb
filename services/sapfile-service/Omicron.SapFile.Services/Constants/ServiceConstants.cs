@@ -37,5 +37,15 @@ namespace Omicron.SapFile.Services.Constants
         /// Text for production order reference.
         /// </summary>
         public const string PersonalizedSignature = "personalizada";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string Invoice = "invoice";
+
+        /// <summary>
+        /// Text for production order reference.
+        /// </summary>
+        public const string Delivery = "delivery";
     }
 }

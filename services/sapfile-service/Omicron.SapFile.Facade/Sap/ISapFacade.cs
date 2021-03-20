@@ -29,6 +29,14 @@ namespace Omicron.SapFile.Facade.Sap
         Task<ResultDto> CreateSaleOrderPdf(List<int> ordersId);
 
         /// <summary>
+        /// Creates the invoice reports.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="invoiceIds">the invoice.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreatePdfByType(string type, List<int> invoiceIds);
+
+        /// <summary>
         /// Deletes the files.
         /// </summary>
         /// <returns>the data.</returns>

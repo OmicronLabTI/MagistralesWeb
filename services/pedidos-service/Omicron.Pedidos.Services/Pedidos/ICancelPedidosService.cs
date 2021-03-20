@@ -30,5 +30,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="ordersToCancel">Orders to cancel.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultModel> CancelFabricationOrders(List<OrderIdModel> ordersToCancel);
+
+        /// <summary>
+        /// Cancels the delivery.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="deliveryIds">the delivery.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CancelDelivery(string type, CancelDeliveryPedidoCompleteModel deliveryIds);
     }
 }

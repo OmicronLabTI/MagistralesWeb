@@ -66,6 +66,9 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<UpdateDesignerLabelDto, UpdateDesignerLabelModel>();
             this.CreateMap<UpdateDesignerLabelDetailDto, UpdateDesignerLabelDetailModel>();
             this.CreateMap<UserOrderDto, UserOrderModel>();
+            this.CreateMap<CancelDeliveryPedidoDto, CancelDeliveryPedidoModel>();
+            this.CreateMap<DetallePedidoDto, DetallePedidoModel>();
+            this.CreateMap<CancelDeliveryPedidoCompleteDto, CancelDeliveryPedidoCompleteModel>();
         }
     }
 }

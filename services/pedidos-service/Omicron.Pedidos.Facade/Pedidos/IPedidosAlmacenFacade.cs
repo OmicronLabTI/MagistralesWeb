@@ -69,5 +69,21 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="deliveryIds">the delivery ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrderByDeliveryOrder(List<int> deliveryIds);
+
+        /// <summary>
+        /// Gets the invoices pdf.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <param name="invoiceIds">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreatePdf(string type, List<int> invoiceIds);
+
+        /// <summary>
+        /// The cancels the delivery.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="deliveryIds">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelDelivery(string type, CancelDeliveryPedidoCompleteDto deliveryIds);
     }
 }

@@ -10,7 +10,9 @@
 .custom-comments-container {
   height: 20rem;
 }
-
+.only-add-comments {
+  height: 100% !important;
+}
 .text-area-add-comments {
   text-align: left;
   border: #6C90B3 .5px solid;

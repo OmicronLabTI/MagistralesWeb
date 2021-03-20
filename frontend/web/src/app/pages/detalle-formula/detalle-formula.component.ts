@@ -183,6 +183,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                       component.action === CONST_DETAIL_FORMULA.insert);
               componentsToDeleteFull.push(...this.componentsToDelete);
               componentsToDeleteFull.forEach( component => {
+                component.stock = component.stock || CONST_NUMBER.zero;
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
               });
@@ -214,6 +215,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
               const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
                   (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
               componentsToDeleteOnSave.forEach( component => {
+                component.stock = component.stock || CONST_NUMBER.zero;
                 component.action = CONST_DETAIL_FORMULA.delete;
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));

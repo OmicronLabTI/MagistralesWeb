@@ -14,8 +14,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using AutoMapper;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
-    using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Pedidos;
 
     /// <summary>
@@ -27,14 +25,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IPedidosAlmacenService almacenService;
 
+        private readonly ICancelPedidosService cancelPedidosService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosAlmacenFacade"/> class.
         /// </summary>
         /// <param name="almacenService">the pedido service.</param>
         /// <param name="mapper">the mapper.</param>
-        public PedidosAlmacenFacade(IPedidosAlmacenService almacenService, IMapper mapper)
+        /// <param name="cancelPedidosService">the cancel service.</param>
+        public PedidosAlmacenFacade(IPedidosAlmacenService almacenService, IMapper mapper, ICancelPedidosService cancelPedidosService)
         {
             this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
+            this.cancelPedidosService = cancelPedidosService ?? throw new ArgumentNullException(nameof(cancelPedidosService));
             this.mapper = mapper;
         }
 
@@ -84,6 +86,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrderByDeliveryOrder(List<int> deliveryIds)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrderByDeliveryOrder(deliveryIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreatePdf(string type, List<int> invoiceIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.CreatePdf(type, invoiceIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CancelDelivery(string type, CancelDeliveryPedidoCompleteDto deliveryIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelDelivery(type, this.mapper.Map<CancelDeliveryPedidoCompleteModel>(deliveryIds)));
         }
     }
 }

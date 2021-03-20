@@ -174,8 +174,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
               }, (error: ErrorHttpInterface) => {
                   if (error.status === HttpStatus.badRequest) {
-                      this.onSuccessGeneralMessage({title: Messages.errorToAssignOrderAutomatic, icon: 'error', isButtonAccept: true});
-                  } else {
+                    this.createDialogHttpOhAboutTypePlace(qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated, String(error.error) );
+                    } else {
                       this.errorService.httpError(error);
                   }
               });
@@ -188,14 +188,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
       this.createPlaceOrderDialog(qfbToPlace);
     }
   }
-  createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean) {
+  createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean, error = CONST_STRING.empty) {
     if (isFromOrderIsolated) {
         this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
         this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
     } else {
         if (modalType === MODAL_NAMES.placeOrders) {
             this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
-            this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
+            this.onSuccessGeneralMessage({title: error === CONST_STRING.empty ? Messages.success : error,
+                isButtonAccept: error === CONST_STRING.empty ? false : true,
+                icon: error === CONST_STRING.empty ? 'success' : 'error' });
         } else {
             this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
             this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});

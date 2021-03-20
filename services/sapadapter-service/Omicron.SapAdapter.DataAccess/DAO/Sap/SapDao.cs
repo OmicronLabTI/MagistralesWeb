@@ -149,6 +149,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 
             return await this.RetryQuery<SalesAsesorModel>(query);
         }
+
+        /// <summary>
+        /// gets the asesors by salesOrderId.
+        /// </summary>
+        /// <param name="docsEntry">the list of salesOrderId.</param>        
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIdsFromTheAsesor(List<int> salesPrsonId)
+        {
+            return await this.RetryQuery<SalesPersonModel>(this.databaseContext.SalesPersonModel.Where(x => salesPrsonId.Contains(x.AsesorId)));
+    
+        }
+
         /// <summary>
         /// gets the details.
         /// </summary>
@@ -545,6 +557,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Medico = order.Medico,                             
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
+                             Address = order.Address,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);

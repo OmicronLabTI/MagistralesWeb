@@ -25,6 +25,7 @@ namespace Omicron.Reporting.Test.Dto
             new FileResultDto(),
             new RawMaterialRequestDto(),
             new RawMaterialRequestDetailDto(),
+            new SendCancelDeliveryDto(),
         };
 
         /// <summary>

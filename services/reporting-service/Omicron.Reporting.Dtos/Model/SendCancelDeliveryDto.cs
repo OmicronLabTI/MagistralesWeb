@@ -1,0 +1,36 @@
+﻿// <summary>
+// <copyright file="SendCancelDeliveryDto.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.Reporting.Dtos.Model
+{
+    /// <summary>
+    /// Class for the delivery dto.
+    /// </summary>
+    public class SendCancelDeliveryDto
+    {
+        /// <summary>
+        /// Gets or sets DeliveryId.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public int DeliveryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets SalesOrders.
+        /// </summary>
+        /// <value>The code.</value>
+        public string SalesOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets Asesor Email.
+        /// </summary>
+        /// <value>The code.</value>
+        public string AsesorEmail { get; set; }
+    }
+}

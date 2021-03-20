@@ -296,6 +296,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Recibir = "Recibir";
 
         /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Cancelado = "Cancelado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -351,6 +356,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AllTypes = "magistral,mixto,linea";
 
         /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllStatus = "Recibir,Pendiente,Back Order";
+
+        /// <summary>
         /// Get the params.
         /// </summary>
         public const string GetParams = "params/contains/field";
@@ -374,6 +384,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the insert value.
         /// </summary>
         public const string RedisComponents = "redisComponents";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RemisionChip = "rem-";
 
         /// <summary>
         /// Gets the status of the order.
@@ -459,6 +474,30 @@ namespace Omicron.SapAdapter.Services.Constants
             Advance,
             Current,
             NeedsLargeDsc,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnoreLineProducts { get; } = new List<string>
+        {
+            Almacenado,
+            Cancelado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnorePorRecibir { get; } = new List<string>
+        {
+            Almacenado,
+            BackOrder,
         };
     }
 }

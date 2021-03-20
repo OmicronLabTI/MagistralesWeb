@@ -11,11 +11,14 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
@@ -25,13 +28,21 @@ namespace Omicron.Pedidos.Services.Pedidos
     {
         private readonly IPedidosDao pedidosDao;
 
+        private readonly ISapFileService sapFileService;
+
+        private readonly IConfiguration configuration;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosAlmacenService"/> class.
         /// </summary>
         /// <param name="pedidosDao">pedidos dao.</param>
-        public PedidosAlmacenService(IPedidosDao pedidosDao)
+        /// <param name="sapFileService">The sap file.</param>
+        /// <param name="configuration">The configuration.</param>
+        public PedidosAlmacenService(IPedidosDao pedidosDao, ISapFileService sapFileService, IConfiguration configuration)
         {
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
+            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <inheritdoc/>
@@ -54,6 +65,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Comments,
                 x.DeliveryId,
                 x.StatusAlmacen,
+                x.FinishedLabel,
             }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);
@@ -103,6 +115,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listToAdd.AddRange(products);
                 }
             });
+
+            var saleOrder = (await this.pedidosDao.GetUserOrderBySaleOrder(listToAdd.Select(x => x.Salesorderid).ToList())).ToList();
+            listToAdd.AddRange(saleOrder.Where(x => x.IsSalesOrder));
 
             var orderToReturn = listToAdd
                 .Select(x => new
@@ -228,6 +243,34 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var deliveries = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, deliveries, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreatePdf(string type, List<int> invoiceIds)
+        {
+            var listRoutes = new List<string>();
+            var route = string.Format(ServiceConstants.CreatePdfByType, type);
+            var responseFile = await this.sapFileService.PostSimple(invoiceIds, route);
+
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseFile.Response.ToString());
+            ServiceUtils.GetValuesContains(dictResult, ServiceConstants.Ok)
+            .ForEach(x =>
+            {
+                var targetPath = dictResult[x].Replace("Ok-", string.Empty);
+                var baseRoute = this.configuration["OmicronFilesAddress"];
+
+                var pathArray = targetPath.Split(@"\").Where(x => x.ToUpper() != "C:").ToList();
+                var completePath = new StringBuilder();
+                completePath.Append(baseRoute);
+                pathArray.ForEach(x => completePath.Append($"{x}/"));
+                var path = completePath.ToString().Remove(completePath.ToString().Length - 1);
+                listRoutes.Add(path);
+            });
+
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+
+            return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listErrorId), listRoutes, null);
         }
 
         /// <summary>

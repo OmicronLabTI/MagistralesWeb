@@ -51,6 +51,12 @@ namespace Omicron.SapFile.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.sapFileService.CreateSaleOrderPdf(ordersId));
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreatePdfByType(string type, List<int> invoiceIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapFileService.CreatePdfByType(type, invoiceIds));
+        }
+
         /// <summary>
         /// Deletes the files.
         /// </summary>

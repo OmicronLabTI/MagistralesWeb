@@ -34,6 +34,8 @@ namespace Omicron.Reporting.Services.Mapping
             this.CreateMap<SendLocalPackageDto, SendLocalPackageModel>();
             this.CreateMap<RejectedOrdersDto, RejectedOrdersModel>();
             this.CreateMap<SendRejectedEmailDto, SendRejectedEmailModel>();
+            this.CreateMap<SendCancelDeliveryDto, SendCancelDeliveryModel>();
+            this.CreateMap<SendCancelDeliveryModel, SendCancelDeliveryDto>();
         }
     }
 }

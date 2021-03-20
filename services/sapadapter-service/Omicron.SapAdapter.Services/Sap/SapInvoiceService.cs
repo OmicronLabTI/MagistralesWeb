@@ -61,9 +61,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
-
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
+            invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
 
             var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
             deliveryIds.AddRange(lineProducts.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId));
@@ -203,6 +203,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
 
+            var dictParams = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(dataToLook.Chip))
+            {
+                dictParams.Add(ServiceConstants.Chips, dataToLook.Chip);
+            }
+
+            invoiceHeader = this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
             dataToLook.InvoiceDocNums.ForEach(y =>
@@ -225,12 +232,15 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
             var clients = (await this.sapDao.GetClientsById(invoiceHeaderOrdered.Select(x => x.CardCode).ToList())).ToList();
-
+            var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
                 var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
                 client ??= new ClientCatalogModel();
+
+                var salePerson = salesPerson.FirstOrDefault(y => y.AsesorId == x.SalesPrsonId);
+                salePerson ??= new SalesPersonModel();
 
                 var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
                 company ??= new Repartidores { TrnspName = string.Empty };
@@ -241,6 +251,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
+                salePerson ??= new SalesPersonModel();
+                x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
+                x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
@@ -384,6 +397,33 @@ namespace Omicron.SapAdapter.Services.Sap
             return invoiceHeadersIds.Skip(offsetNumber).Take(limitNumber).ToList();
         }
 
+        /// <summary>
+        /// gets the invoices by criteria.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <param name="deliveryDetails">the deliverys.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private List<InvoiceHeaderModel> GetInvoiceHeaderByParameters(List<InvoiceHeaderModel> invoices, List<DeliveryDetailModel> deliveryDetails, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                return invoices;
+            }
+
+            if (int.TryParse(parameters[ServiceConstants.Chips], out int invoice))
+            {
+                int.TryParse(parameters[ServiceConstants.Chips].Replace(ServiceConstants.RemisionChip, string.Empty), out int remision);
+                var details = deliveryDetails.Where(x => x.DeliveryId == remision && x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList();
+                var invoiceById = invoices.Where(x => details.Contains(x.InvoiceId)).ToList();
+                invoiceById.AddRange(invoices.Where(x => x.DocNum == invoice));
+                return invoiceById.DistinctBy(x => x.InvoiceId).ToList();
+            }
+
+            var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return invoices.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+        }
+
         private InvoiceOrderModel GetInvoiceToReturn(RetrieveInvoiceModel retrieveModel)
         {
             var listToReturn = new InvoiceOrderModel
@@ -422,6 +462,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = invoice.Cliente,
                     Doctor = doctor,
                     Invoice = invoice.DocNum,
+                    DocEntry = invoice.InvoiceId,
                     InvoiceDocDate = invoice.FechaInicio,
                     ProductType = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                     TotalDeliveries = 0,

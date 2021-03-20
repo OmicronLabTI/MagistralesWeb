@@ -50,6 +50,11 @@
                   </g>
               </svg>
           </button>
+          <button [disabled]="!isThereOrdersDetailToDelivered"
+                  mat-raised-button [ngClass]="isThereOrdersDetailToDelivered ? 'button-blue' : 'disable-button'"
+                  (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
+              Entregado
+          </button>
           <button  [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
                    [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
                    *ngIf="dataService.getUserRole() === '4'"

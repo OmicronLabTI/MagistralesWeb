@@ -94,14 +94,19 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
             var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            var destinityEmail = destinityEmailList.FirstOrDefault();
+            var copyEmails = string.Empty;
+            destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
+            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
             var text = this.GetBodyForLocal(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                sendLocalPackage.DestinyEmail,
+                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
-                smtpConfig.EmailCCDelivery);
+                copyEmails);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
@@ -144,6 +149,44 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
+        {
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
+            var copyEmails = $"{customerServiceEmail};{logisticEmail}";
+            List<ResultModel> results = new List<ResultModel> { };
+            var deliveryLists = this.GetGroupsOfList(request, 3);
+
+            foreach (var deliverySubList in deliveryLists)
+            {
+                await Task.WhenAll(deliverySubList.Select(async delivery =>
+                {
+                    var text = this.GetBodyForCancelDeliveryEmail(delivery);
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                        smtpConfig,
+                        string.IsNullOrEmpty(delivery.AsesorEmail) ? customerServiceEmail : delivery.AsesorEmail,
+                        text.Item1,
+                        text.Item2,
+                        copyEmails);
+                    results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = results };
+        }
+
+        /// <summary>
         /// Gets the smtp config.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
@@ -168,17 +211,27 @@ namespace Omicron.Reporting.Services
         private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+            package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
+            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ');
 
-            if (string.IsNullOrEmpty(package.ReasonNotDelivered))
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
-                var subject = string.Format(ServiceConstants.InWayEmailSubject, package.SalesOrders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.SalesOrders);
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
-            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, package.SalesOrders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.SalesOrders);
+            if (package.Status == ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders);
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
@@ -217,6 +270,19 @@ namespace Omicron.Reporting.Services
             var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
             var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
             var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="delivery">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
+        {
+            var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
+            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, delivery.SalesOrders);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
             return new Tuple<string, string>(subject, body);
         }
 

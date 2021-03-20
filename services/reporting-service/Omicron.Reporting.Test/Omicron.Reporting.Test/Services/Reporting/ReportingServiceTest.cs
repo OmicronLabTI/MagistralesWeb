@@ -71,15 +71,23 @@ namespace Omicron.Reporting.Test.Services.Request
         /// <summary>
         /// gets the orders test.
         /// </summary>
+        /// <param name="status">The status.</param>
+        /// <param name="reasonNotDelivered"> reason why not was delivered.</param>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task SendEmailLocalPackage()
+        [TestCase("En Camino", null)]
+        [TestCase("No Entregado", "domicilio no encontrado")]
+        [TestCase("Entregado", null)]
+        public async Task SendEmailLocalPackage(string status, string reasonNotDelivered)
         {
             // arrange
             var request = new SendLocalPackageModel
             {
                 DestinyEmail = "email",
                 PackageId = 1,
+                Status = status,
+                ReasonNotDelivered = reasonNotDelivered,
+                SalesOrders = "100",
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -155,6 +163,63 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the delivery cancel test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task SendEmailCancelDeliveryOrders()
+        {
+            // arrange
+            var request = new List<SendCancelDeliveryModel>()
+            {
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 1,
+                    SalesOrders = "1478",
+                    AsesorEmail = "email@email.com",
+                },
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 2,
+                    SalesOrders = "1479",
+                    AsesorEmail = string.Empty,
+                },
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = string.Empty },
+                new ParametersModel { Field = "SmtpPort", Value = "0" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = string.Empty },
+                new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
+                new ParametersModel { Field = "EmailAtencionAClientes", Value = string.Empty },
+                new ParametersModel { Field = "EmailLogisticaCc2", Value = string.Empty },
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            mockCatalog
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
+
+            mockCatalog
+                .Setup(m => m.GetSmtpConfig())
+                .Returns(Task.FromResult(new SmtpConfigModel()));
+
+            var mockEmail = new Mock<IOmicronMailClient>();
+            mockEmail
+                .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
+                .Returns(Task.FromResult(true));
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = await service.SendEmailCancelDeliveryOrders(request);
+
             Assert.IsNotNull(result);
         }
     }

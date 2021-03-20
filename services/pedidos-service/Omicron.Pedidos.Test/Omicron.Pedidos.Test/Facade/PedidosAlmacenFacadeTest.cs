@@ -46,42 +46,15 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             var mockServiceAlmacen = new Mock<IPedidosAlmacenService>();
+            mockServiceAlmacen.SetReturnsDefault(Task.FromResult(response));
 
-            mockServiceAlmacen
-                .Setup(m => m.GetOrdersForAlmacen())
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.UpdateUserOrders(It.IsAny<List<UserOrderModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.GetOrdersForDelivery())
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.GetOrdersForInvoice())
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.GetOrdersForPackages(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.UpdateSentOrders(It.IsAny<List<UserOrderModel>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.GetAlmacenGraphData(It.IsAny<Dictionary<string, string>>()))
-                .Returns(Task.FromResult(response));
-
-            mockServiceAlmacen
-                .Setup(m => m.GetUserOrderByDeliveryOrder(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
+            var mockCancel = new Mock<ICancelPedidosService>();
+            mockCancel.SetReturnsDefault(Task.FromResult(response));
 
             this.almacenFacade = new PedidosAlmacenFacade(
                 mockServiceAlmacen.Object,
-                mapper);
+                mapper,
+                mockCancel.Object);
         }
 
         /// <summary>
@@ -216,6 +189,42 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.almacenFacade.GetUserOrderByDeliveryOrder(type);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CreateinvoicePdf()
+        {
+            // arrange
+            var type = new List<int>();
+
+            // act
+            var response = await this.almacenFacade.CreatePdf(string.Empty, type);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CancelDelivery()
+        {
+            // arrange
+            var type = new CancelDeliveryPedidoCompleteDto();
+
+            // act
+            var response = await this.almacenFacade.CancelDelivery(string.Empty, type);
 
             // Assert
             Assert.IsNotNull(response);
