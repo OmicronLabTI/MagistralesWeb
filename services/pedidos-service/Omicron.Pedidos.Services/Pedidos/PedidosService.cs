@@ -332,6 +332,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
             var succesfuly = new List<UserOrderModel>();
             var failed = new List<object>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderId in failedOrders)
             {
@@ -344,12 +345,15 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var orderToRejectedId in succesfulyOrdersId)
             {
-                succesfuly.Add(new UserOrderModel
+                var userOrder = new UserOrderModel
                 {
                     Salesorderid = orderToRejectedId,
                     Status = ServiceConstants.Rechazado,
                     Comments = rejectOrders.Comments,
-                });
+                };
+                succesfuly.Add(userOrder);
+                /* logs */
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(rejectOrders.UserId, "name", new List<UserOrderModel> { userOrder }));
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
