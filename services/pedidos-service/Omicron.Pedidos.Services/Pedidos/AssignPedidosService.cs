@@ -106,6 +106,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosString)).ToList();
 
             var listOrderToInsert = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             userOrdersToUpdate.ForEach(x =>
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
@@ -113,6 +114,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (userSaleOrder.Item1.ContainsKey(saleOrderInt))
                 {
+                    var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = asignable ? ServiceConstants.Asignado : x.Status;
                     x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
