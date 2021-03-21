@@ -63,6 +63,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
+            var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
 
             var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
@@ -84,6 +85,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
+            dataToReturn.TotalInvioces = totalByFilters;
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{remisionTotal}-{granTotal}");
         }
 
