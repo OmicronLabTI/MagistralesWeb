@@ -213,6 +213,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var successfuly = new List<object>();
             var failed = new List<object>();
             var listToGenPdf = new List<int>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -270,11 +271,16 @@ namespace Omicron.Pedidos.Services.Pedidos
                     int prodOrderId = int.Parse(userOrder.Productionorderid);
                     if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
                     {
+                        var previousStatusUserOrder = userOrder.Status;
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now;
                         userOrder.Status = ServiceConstants.Finalizado;
                         userOrder.FinalizedDate = DateTime.Now;
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
+                        if (previousStatusUserOrder != userOrder.Status)
+                        {
+                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, "name", new List<UserOrderModel> { userOrder }));
+                        }
                     }
                 }
 
@@ -283,12 +289,17 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Update sales order status
                 if (resultMessages.Keys.Any(x => x.Equals(0)))
                 {
+                    var previousStatusSalesOrder = salesOrder.Status;
                     salesOrder.CloseUserId = orderToFinish.UserId;
                     salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
                     salesOrder.FinalizedDate = DateTime.Now;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
+                    if (previousStatusSalesOrder != salesOrder.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, "name", new List<UserOrderModel> { salesOrder }));
+                    }
 
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                     successfuly.Add(orderToFinish);
