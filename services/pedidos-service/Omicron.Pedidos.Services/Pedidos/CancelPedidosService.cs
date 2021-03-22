@@ -447,6 +447,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
                 await this.pedidosDao.InsertOrderLog(logs);
+                await this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return results;
@@ -582,6 +583,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(updatedOrders);
             await this.pedidosDao.InsertOrderLog(logs);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return (updatedOrders, results);
         }
