@@ -190,7 +190,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
             var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
             var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
-            var areActiveLine = !details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
+            var areActiveLine = details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
 
             var statusAlmacen = string.Empty;
             var status = string.Empty;
