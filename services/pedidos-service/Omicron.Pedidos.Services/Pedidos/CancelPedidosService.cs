@@ -288,6 +288,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<(List<UserOrderModel>, SuccessFailResults<OrderIdModel>)> CancelExistingProductionOrders(List<OrderIdModel> requestInfo, List<UserOrderModel> ordersToCancel, SuccessFailResults<OrderIdModel> results)
         {
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var order in ordersToCancel)
             {
@@ -310,9 +311,16 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Process to cancel on local db
                 if (await this.CancelProductionOrderInSap(order.Productionorderid))
                 {
+                    var previosStatus = order.Status;
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(newOrderInfo);
                     logs.Add(this.BuildCancellationLog(newOrderInfo.UserId, order.Productionorderid, ServiceConstants.OrdenFab));
+                    if (previosStatus != order.Status)
+                    {
+                        /* logs */
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, "name", new List<UserOrderModel> { order }));
+                    }
+
                     continue;
                 }
 
@@ -334,6 +342,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task CancelSalesOrderWithAllProductionOrderCancelled(string userId, List<UserOrderModel> cancelledProductionOrders, ISapAdapter sapAdapter)
         {
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             var salesOrdersToUpdate = new List<UserOrderModel>();
             var salesOrderIds = cancelledProductionOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).Select(x => x.Salesorderid);
             var saleOrdersFinalized = new List<int>();
@@ -345,6 +354,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var sapMissingOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, sapAdapter);
                 var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
 
+                var previousStatus = salesOrder.Status;
                 salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders);
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
@@ -357,6 +367,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (salesOrder.Equals(ServiceConstants.Cancelled))
                 {
                     logs.Add(this.BuildCancellationLog(userId, salesOrderId, ServiceConstants.OrdenVenta));
+                }
+
+                if (previousStatus != salesOrder.Status)
+                {
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, "name", new List<UserOrderModel> { salesOrder }));
                 }
             }
 
@@ -445,6 +461,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var newUserOrders = new List<UserOrderModel>();
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             var validationResults = await this.IsValidCancelSapProductionOrder(missingOrder, sapProductionOrder, results);
             if (!validationResults.Item1)
@@ -460,6 +477,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newUserOrder.Salesorderid = sapProductionOrder.PedidoId == null ? string.Empty : sapProductionOrder.PedidoId.ToString();
 
                 newUserOrders.Add(newUserOrder);
+                /* logs */
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, "name", new List<UserOrderModel> { newUserOrder }));
                 logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenFab));
 
                 results.AddSuccesResult(missingOrder);
