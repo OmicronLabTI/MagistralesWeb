@@ -79,6 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.InsertUserOrder(listToInsert);
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
