@@ -400,7 +400,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var sapOrder = await this.GetSalesOrdersFromSap(missingOrder.OrderId);
             var logs = new List<OrderLogModel>();
-
             if (sapOrder != null)
             {
                 var validationResults = this.IsValidCancelSapSalesOrder(missingOrder, sapOrder, results);
@@ -412,7 +411,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 sapOrder.Detalle.ForEach(async (x) => await this.CancelProductionOrderInSap(x.OrdenFabricacionId.ToString()));
 
                 var newUserOrders = sapOrder.ToUserOrderModels();
-                newUserOrders.ForEach(x => x.Status = ServiceConstants.Cancelled);
+                var listOrderLogToInsert = new List<SalesLogs>();
+
+                // newUserOrders.ForEach(x => x.Status = ServiceConstants.Cancelled);
+                foreach (var userOrders in newUserOrders)
+                {
+                    userOrders.Status = ServiceConstants.Cancelled;
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, "name", new List<UserOrderModel> { userOrders }));
+                }
 
                 newUserOrders.ForEach(x => logs.Add(this.BuildCancellationLog(missingOrder.UserId, x.Productionorderid, ServiceConstants.OrdenFab)));
                 logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenVenta));
@@ -518,7 +524,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var logs = new List<OrderLogModel>();
             var updatedOrders = new List<UserOrderModel>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             foreach (var order in relatedUserOrders)
             {
                 var cancelledOnSap = true;
@@ -534,10 +540,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (cancelledOnSap)
                 {
+                    var previousStatus = order.Status;
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(orderToCancel);
                     updatedOrders.Add(order);
                     logs.Add(this.BuildCancellationLog(orderToCancel.UserId, orderId, docType));
+                    if (previousStatus != order.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, "name", new List<UserOrderModel> { order }));
+                    }
+
                     continue;
                 }
 

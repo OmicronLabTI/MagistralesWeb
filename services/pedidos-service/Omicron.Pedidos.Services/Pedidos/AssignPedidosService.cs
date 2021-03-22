@@ -164,11 +164,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(x =>
             {
+                var previousStatus = x.Status;
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Reasignado;
                 x.Userid = assign.UserId;
+                /** add logs**/
+                if (previousStatus != x.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, "name", new List<UserOrderModel> { x }));
+                }
             });
 
             var listOrderFabId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
@@ -199,7 +205,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic).Item1;
+            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic);
+            var ordersToUpdate = getUpdateUserOrderModel.Item1;
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert = getUpdateUserOrderModel.Item2;
+
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
 

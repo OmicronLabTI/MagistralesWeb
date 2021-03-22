@@ -79,35 +79,6 @@ namespace Omicron.Pedidos.Services.Utils
         /// Creates the order logs mode.
         /// </summary>
         /// <param name="user">the user.</param>
-        /// <param name="pedidosId">pedidos seleccionados.</param>
-        /// <param name="status">the description.</param>
-        /// <param name="isProductionOrder">The type.</param>
-        /// <returns>the list to insert.</returns>
-        public static List<SalesLogs> CreateSalesLog(string user, List<int> pedidosId, string status, bool isProductionOrder)
-        {
-            var listToReturn = new List<SalesLogs>();
-
-            pedidosId.ForEach(x =>
-            {
-                listToReturn.Add(new SalesLogs
-                {
-                    SalesOrderId = !isProductionOrder ? x.ToString() : null,
-                    ProductionOrderId = isProductionOrder ? x.ToString() : null,
-                    StatusSalesOrder = !isProductionOrder ? status : null,
-                    StatusProductionOrder = isProductionOrder ? status : null,
-                    DataCheckin = DateTime.Now,
-                    UserId = user,
-                    IsProductionOrder = isProductionOrder,
-                });
-            });
-
-            return listToReturn;
-        }
-
-        /// <summary>
-        /// Creates the order logs mode.
-        /// </summary>
-        /// <param name="user">the user.</param>
         /// <param name="nameUser">add name user.</param>
         /// <param name="saleslogs">add sales logs.</param>
         /// <returns> the list to insert.</returns>

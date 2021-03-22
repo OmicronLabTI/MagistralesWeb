@@ -35,7 +35,6 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
         {
-            var listOrderLogToInsert = new List<SalesLogs>();
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
             var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
@@ -48,7 +47,7 @@ namespace Omicron.Pedidos.Services.Utils
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {
                 var previousStatus = x.Status;

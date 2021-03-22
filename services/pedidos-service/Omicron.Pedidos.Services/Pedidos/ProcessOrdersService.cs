@@ -99,10 +99,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
             var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId);
             var dataToInsert = createUserModelOrders.Item1;
+            /* logs */
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
-            var listOrderLogToInsert = new List<SalesLogs>();
 
             if (saleOrder == null)
             {
@@ -124,11 +126,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             else
             {
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
-                /* logs */
-                if (previousStatus != saleOrder.Status)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  new List<UserOrderModel> { saleOrder }));
-                }
+            }
+
+            /* logs */
+            if (previousStatus != saleOrder.Status)
+            {
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name", new List<UserOrderModel> { saleOrder }));
             }
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -137,8 +140,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(dataToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-            /* logs */
-            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name",  dataToInsert));
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
