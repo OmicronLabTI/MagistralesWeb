@@ -128,21 +128,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             var listOrderLogs = new List<OrderLogModel>();
 
             ordersList.ForEach(x =>
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
+                var previousStatus = x.Status;
                 x.Status = order.Status ?? x.Status;
                 x.Userid = order.UserId ?? x.Userid;
+                if (previousStatus != x.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, "name", new List<UserOrderModel> { x }));
+                }
+
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
-
             if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
             {
                 var saleOrderId = ordersList.FirstOrDefault().Salesorderid;
@@ -150,6 +155,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
                 var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
                 saleOrder.Status = allDelivered ? ServiceConstants.Entregado : saleOrder.Status;
+                var userId = ordersList.FirstOrDefault().Userid;
+                if (allDelivered)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, "name", new List<UserOrderModel> { saleOrder }));
+                }
+
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
