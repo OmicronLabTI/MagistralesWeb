@@ -655,11 +655,17 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
             await this.pedidosDao.SaveOrderSignatures(listToUpdate);
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(o =>
             {
+                var previousStatus = o.Status;
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
+                /** add logs**/
+                if (previousStatus != o.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
+                }
             });
 
             var listorderToUpdate = new List<UserOrderModel>(orders);
@@ -678,7 +684,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var orderBySale = allOrders.Where(x => x.Salesorderid == sale.Salesorderid).ToList();
                     var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
                     var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Item1.Order.DocNum == int.Parse(sale.Salesorderid));
+                    var previousStatus = sale.Status;
                     sale.Status = areInvalidOrders || tupleValues.Item2.Any() ? sale.Status : ServiceConstants.Terminado;
+                    /** add logs**/
+                    if (previousStatus != sale.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { sale }));
+                    }
+
                     listorderToUpdate.Add(sale);
                 });
             }
