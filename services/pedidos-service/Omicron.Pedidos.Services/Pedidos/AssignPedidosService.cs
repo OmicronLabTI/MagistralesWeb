@@ -138,6 +138,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (userSaleOrder.Item2.Any())
             {

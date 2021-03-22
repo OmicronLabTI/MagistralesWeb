@@ -169,6 +169,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
 
@@ -325,6 +327,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertOrderLog(logs);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -343,8 +346,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Order with updated info.</returns>
         public async Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders)
         {
-            await this.kafkaConnector.PushMessage(rejectOrders);
-
             var ordersId = rejectOrders.OrdersId.Select(x => x.ToString()).ToList();
             var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
             var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
@@ -375,6 +376,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
@@ -532,6 +534,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
             await this.pedidosDao.InsertOrderLog(logs);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
