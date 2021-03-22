@@ -140,7 +140,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Userid = order.UserId ?? x.Userid;
                 if (previousStatus != x.Status)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, "name", new List<UserOrderModel> { x }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
                 }
 
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
@@ -158,7 +158,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var userId = ordersList.FirstOrDefault().Userid;
                 if (allDelivered)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, "name", new List<UserOrderModel> { saleOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { saleOrder }));
                 }
 
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
@@ -290,7 +290,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                         if (previousStatusUserOrder != userOrder.Status)
                         {
-                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, "name", new List<UserOrderModel> { userOrder }));
+                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                         }
                     }
                 }
@@ -309,7 +309,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
                     if (previousStatusSalesOrder != salesOrder.Status)
                     {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, "name", new List<UserOrderModel> { salesOrder }));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { salesOrder }));
                     }
 
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
@@ -364,7 +364,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 };
                 succesfuly.Add(userOrder);
                 /* logs */
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(rejectOrders.UserId, "name", new List<UserOrderModel> { userOrder }));
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(rejectOrders.UserId, new List<UserOrderModel> { userOrder }));
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
@@ -487,7 +487,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     productionOrder.BatchFinalized = batch.BatchCode;
 
                     /* logs */
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, "name", new List<UserOrderModel> { productionOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { productionOrder }));
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
                     successfuly.Add(orderIdModel);
@@ -516,7 +516,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     salesOrder.Status = ServiceConstants.Finalizado;
                     salesOrder.FinalizedDate = DateTime.Now;
                     /* logs */
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, "name", new List<UserOrderModel> { salesOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
                     logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                 }
@@ -719,7 +719,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
                 /** add logs**/
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, "name", new List<UserOrderModel> { newProductionOrder }));
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 await this.pedidosDao.InsertOrderLog(logs);
             }

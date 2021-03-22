@@ -28,9 +28,6 @@
 	  <column name="UserId" type="VARCHAR(50)">
 		<constraints nullable="true"/>
 	  </column>
-	  <column name="NameUser" type="VARCHAR(50)">
-        <constraints nullable="false" primaryKey="false" unique="false"/>
-      </column>	
 	  <column name="IsProductionOrder" type="BOOLEAN">
         <constraints nullable="false" primaryKey="false" unique="false"/>
       </column>

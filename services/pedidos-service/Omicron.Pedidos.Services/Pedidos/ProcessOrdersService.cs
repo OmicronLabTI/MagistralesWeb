@@ -131,7 +131,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             /* logs */
             if (previousStatus != saleOrder.Status)
             {
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, "name", new List<UserOrderModel> { saleOrder }));
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, new List<UserOrderModel> { saleOrder }));
             }
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -251,7 +251,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listToReturn.Add(userOrder);
                 if (previousStatus != ServiceConstants.Planificado)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, "name", new List<UserOrderModel> { userOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
                 }
             });
             return new Tuple<List<UserOrderModel>, List<SalesLogs>>(listToReturn, listOrderLogToInsert);
@@ -325,7 +325,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (previousStatus != saleOrder.Status)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, "name", new List<UserOrderModel> { saleOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { saleOrder }));
                 }
             });
 

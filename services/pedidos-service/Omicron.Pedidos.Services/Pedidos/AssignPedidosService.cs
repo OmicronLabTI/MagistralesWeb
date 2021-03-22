@@ -126,7 +126,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, new List<int> { orderId }, textAction, ordenType));
                     if (previousStatus != x.Status)
                     {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", new List<UserOrderModel> { x }));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                     }
                 }
             });
@@ -179,7 +179,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 /** add logs**/
                 if (previousStatus != x.Status)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, "name", new List<UserOrderModel> { x }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
                 }
             });
 

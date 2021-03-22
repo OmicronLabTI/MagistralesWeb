@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Services.Utils
                 /** add logs**/
                 if (previousStatus != x.Status)
                 {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", new List<UserOrderModel> { x }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                 }
             });
 
@@ -237,7 +237,6 @@ namespace Omicron.Pedidos.Services.Utils
                                 StatusProductionOrder = !string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
                                 DataCheckin = DateTime.Now,
                                 UserId = userLogistic,
-                                NameUser = "name",
                                 IsProductionOrder = !string.IsNullOrEmpty(o.Productionorderid),
                             });
                         }
@@ -259,7 +258,6 @@ namespace Omicron.Pedidos.Services.Utils
                                 StatusProductionOrder = null,
                                 DataCheckin = DateTime.Now,
                                 UserId = userLogistic,
-                                NameUser = "name",
                                 IsProductionOrder = !string.IsNullOrEmpty(pedido.Productionorderid),
                             });
                         }

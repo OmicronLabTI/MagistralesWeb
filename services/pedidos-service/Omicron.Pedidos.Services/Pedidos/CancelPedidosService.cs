@@ -318,7 +318,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     if (previosStatus != order.Status)
                     {
                         /* logs */
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, "name", new List<UserOrderModel> { order }));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, new List<UserOrderModel> { order }));
                     }
 
                     continue;
@@ -372,7 +372,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (previousStatus != salesOrder.Status)
                 {
                     /* logs */
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, "name", new List<UserOrderModel> { salesOrder }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
                 }
             }
 
@@ -433,7 +433,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 foreach (var userOrders in newUserOrders)
                 {
                     userOrders.Status = ServiceConstants.Cancelled;
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, "name", new List<UserOrderModel> { userOrders }));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { userOrders }));
                 }
 
                 newUserOrders.ForEach(x => logs.Add(this.BuildCancellationLog(missingOrder.UserId, x.Productionorderid, ServiceConstants.OrdenFab)));
@@ -478,7 +478,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 newUserOrders.Add(newUserOrder);
                 /* logs */
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, "name", new List<UserOrderModel> { newUserOrder }));
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { newUserOrder }));
                 logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenFab));
 
                 results.AddSuccesResult(missingOrder);
@@ -566,7 +566,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     logs.Add(this.BuildCancellationLog(orderToCancel.UserId, orderId, docType));
                     if (previousStatus != order.Status)
                     {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, "name", new List<UserOrderModel> { order }));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, new List<UserOrderModel> { order }));
                     }
 
                     continue;

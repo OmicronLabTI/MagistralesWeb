@@ -74,14 +74,6 @@ namespace Omicron.Pedidos.Entities.Model
         public string UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets DataCheckin.
-        /// </summary>
-        /// <value>
-        /// dataTime DataCheckin.
-        /// </value>
-        public string NameUser { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether gets or sets DataCheckin.
         /// </summary>
         /// <value>

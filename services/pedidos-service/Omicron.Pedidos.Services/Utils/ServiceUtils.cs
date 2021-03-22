@@ -79,10 +79,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// Creates the order logs mode.
         /// </summary>
         /// <param name="user">the user.</param>
-        /// <param name="nameUser">add name user.</param>
         /// <param name="saleslogs">add sales logs.</param>
         /// <returns> the list to insert.</returns>
-        public static List<SalesLogs> AddSalesLog(string user, string nameUser, List<UserOrderModel> saleslogs)
+        public static List<SalesLogs> AddSalesLog(string user, List<UserOrderModel> saleslogs)
         {
             var listToReturn = new List<SalesLogs>();
 
@@ -96,7 +95,6 @@ namespace Omicron.Pedidos.Services.Utils
                     StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : null,
                     DataCheckin = DateTime.Now,
                     UserId = user,
-                    NameUser = nameUser,
                     IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),
                 });
             });
