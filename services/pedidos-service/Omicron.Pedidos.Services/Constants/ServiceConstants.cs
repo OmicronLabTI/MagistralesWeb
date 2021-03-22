@@ -685,6 +685,8 @@ namespace Omicron.Pedidos.Services.Constants
             Terminado,
             Finalizado,
             Cancelled,
+            Entregado,
+            Almacenado,
         };
 
         /// <summary>
