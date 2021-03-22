@@ -24,6 +24,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Broker;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -61,6 +62,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IBusquedaPedidoFacade, BusquedaPedidoFacade>();
             Services.AddTransient<IBusquedaPedidoService, BusquedaPedidoService>();
             Services.AddTransient<IRedisService, RedisService>();
+            Services.AddTransient<IKafkaConnector, KafkaConnector>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;
         }
