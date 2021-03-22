@@ -146,6 +146,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(dataToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
@@ -245,7 +246,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             dataToCreate.ForEach(x =>
             {
                 var saleOrder = salesOrders.FirstOrDefault(y => y.Order != null && y.Order.DocNum == x.PedidoId);
-                var previousStatus = x.Status;
 
                 var userOrder = new UserOrderModel
                 {
@@ -255,10 +255,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
                 };
                 listToReturn.Add(userOrder);
-                if (previousStatus != ServiceConstants.Planificado)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
-                }
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
             });
             return new Tuple<List<UserOrderModel>, List<SalesLogs>>(listToReturn, listOrderLogToInsert);
         }

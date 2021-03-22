@@ -169,6 +169,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
 
@@ -532,6 +534,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
             await this.pedidosDao.InsertOrderLog(logs);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
