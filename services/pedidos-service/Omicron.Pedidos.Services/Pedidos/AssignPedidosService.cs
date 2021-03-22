@@ -106,6 +106,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosString)).ToList();
 
             var listOrderToInsert = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             userOrdersToUpdate.ForEach(x =>
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
@@ -113,6 +114,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (userSaleOrder.Item1.ContainsKey(saleOrderInt))
                 {
+                    var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = asignable ? ServiceConstants.Asignado : x.Status;
                     x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
@@ -122,6 +124,10 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var ordenType = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.OrdenVenta : ServiceConstants.OrdenFab;
                     var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder.Item1[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder.Item1[saleOrderInt]);
                     listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, new List<int> { orderId }, textAction, ordenType));
+                    if (previousStatus != x.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, "name", new List<UserOrderModel> { x }));
+                    }
                 }
             });
 
