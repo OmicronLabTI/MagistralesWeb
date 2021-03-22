@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -32,8 +33,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">The sap di api.</param>
+        /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the result.</returns>
-        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
+        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
         {
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
@@ -77,8 +79,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosDao">the pedido dao.</param>
         /// <param name="sapDiApi">the di api.</param>
         /// <param name="sapAdapter">Sap adapter.</param>
+        /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter)
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();

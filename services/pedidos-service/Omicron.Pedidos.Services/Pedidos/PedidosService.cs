@@ -20,6 +20,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
@@ -50,6 +51,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IRedisService redis;
 
+        private readonly IKafkaConnector kafkaConnector;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -61,7 +64,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="configuration">The configuration.</param>
         /// <param name="reporting"> The reporting service. </param>
         /// <param name="redisService">The redis Service.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService)
+        /// <param name="kafkaConnector">The kafka conector.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
@@ -71,6 +75,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
             this.redis = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
         }
 
         /// <inheritdoc/>
@@ -338,6 +343,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Order with updated info.</returns>
         public async Task<ResultModel> RejectSalesOrders(RejectOrdersModel rejectOrders)
         {
+            await this.kafkaConnector.PushMessage(rejectOrders);
+
             var ordersId = rejectOrders.OrdersId.Select(x => x.ToString()).ToList();
             var failedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(ordersId)).Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
             var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
