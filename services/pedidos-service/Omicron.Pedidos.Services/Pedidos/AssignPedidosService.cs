@@ -184,10 +184,20 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(x =>
             {
+                var previousStatus = x.Status;
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Reasignado;
                 x.Userid = assign.UserId;
-                /** add logs**/
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
+                if (previousStatus != x.Status && x.IsSalesOrder)
+                {
+                    /** add logs**/
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
+                }
+
+                if (!x.IsSalesOrder)
+                {
+                    /** add logs**/
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
+                }
             });
 
             var listOrderFabId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
