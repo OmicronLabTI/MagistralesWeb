@@ -160,13 +160,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             case ConstStatus.reasingado:
               element.class = 'reasignado';
               break;
-            case ConstStatus.entregado:
             case ConstStatus.finalizado:
               element.class = 'finalizado';
               break;
             case ConstStatus.cancelado:
               element.class = 'cancelado';
               break;
+            case ConstStatus.entregado:
             case ConstStatus.almacenado:
               element.class = ConstStatus.almacenado.toLowerCase();
               break;

@@ -123,7 +123,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         case ConstStatus.enProceso.toUpperCase():
           element.class = 'proceso';
           break;
-        case ConstStatus.entregado.toUpperCase():
         case ConstStatus.finalizado.toUpperCase():
           element.class = 'finalizado';
           break;
@@ -136,9 +135,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         case ConstStatus.rechazado.toUpperCase():
           element.class = 'rechazado';
           break;
-            case ConstStatus.almacenado.toUpperCase():
-              element.class = ConstStatus.almacenado.toLowerCase();
-              break;
+        case ConstStatus.entregado.toUpperCase():
+        case ConstStatus.almacenado.toUpperCase():
+          element.class = ConstStatus.almacenado.toLowerCase();
+          break;
       }
       element.descripcionProducto = element.descripcionProducto.toUpperCase();
     });
