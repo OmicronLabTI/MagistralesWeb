@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -39,6 +40,8 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<ISapAdapter> mockSapAdapter;
 
         private Mock<ISapDiApi> mockDiApiService;
+
+        private Mock<IKafkaConnector> kafkaConnector;
 
         private DatabaseContext context;
 
@@ -118,6 +121,11 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderModel.AddRange(this.GetUserOrderModelsForCancellationTests());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
+
+            this.kafkaConnector = new Mock<IKafkaConnector>();
+            this.kafkaConnector
+                .Setup(m => m.PushMessage(It.IsAny<object>()))
+                .Returns(Task.FromResult(true));
         }
 
         /// <summary>
@@ -161,7 +169,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUserService = new Mock<IUsersService>();
             var mockSapFile = new Mock<ISapFileService>();
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, this.mockDiApiService.Object, mockSapFile.Object, mockUserService.Object);
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, this.mockDiApiService.Object, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object);
         }
 
         /// <summary>

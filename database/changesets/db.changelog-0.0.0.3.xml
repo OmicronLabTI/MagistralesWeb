@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
+  <changeSet author="erosas" id="changelog-3.1">
+    <createTable tableName="SalesLogs">
+      <column name="Id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+	  
+	  <column name="SalesOrderId" type="INT">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="ProductionOrderId" type="INT">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+      <column name="StatusSalesOrder" type="VARCHAR(20)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	
+	  <column name="StatusProductionOrder" type="VARCHAR(20)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	
+      <column name="DataCheckin" type="TIMESTAMP">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="UserId" type="VARCHAR(50)">
+		<constraints nullable="true"/>
+	  </column>
+	  <column name="IsProductionOrder" type="BOOLEAN">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog> 

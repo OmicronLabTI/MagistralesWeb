@@ -76,6 +76,33 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Creates the order logs mode.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <param name="saleslogs">add sales logs.</param>
+        /// <returns> the list to insert.</returns>
+        public static List<SalesLogs> AddSalesLog(string user, List<UserOrderModel> saleslogs)
+        {
+            var listToReturn = new List<SalesLogs>();
+
+            saleslogs.ForEach(x =>
+            {
+                listToReturn.Add(new SalesLogs
+                {
+                    SalesOrderId = int.TryParse(x.Salesorderid, out int saleOrderInt) ? saleOrderInt : 0,
+                    ProductionOrderId = int.TryParse(x.Productionorderid, out int productOrderInt) ? productOrderInt : 0,
+                    StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
+                    StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
+                    DataCheckin = DateTime.Now,
+                    UserId = user,
+                    IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// Gets the list of keys by a value.
         /// </summary>
         /// <param name="dictResult">the dict.</param>

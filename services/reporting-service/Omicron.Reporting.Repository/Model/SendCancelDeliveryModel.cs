@@ -26,11 +26,5 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string SalesOrders { get; set; }
-
-        /// <summary>
-        /// Gets or sets Asesor Email.
-        /// </summary>
-        /// <value>The code.</value>
-        public string AsesorEmail { get; set; }
     }
 }
