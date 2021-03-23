@@ -162,7 +162,6 @@ namespace Omicron.Reporting.Services
             var smtpConfig = this.GetSmtpConfig(config);
             var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
             var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
-            var copyEmails = $"{customerServiceEmail};{logisticEmail}";
             List<ResultModel> results = new List<ResultModel> { };
             var deliveryLists = this.GetGroupsOfList(request, 3);
 
@@ -173,10 +172,10 @@ namespace Omicron.Reporting.Services
                     var text = this.GetBodyForCancelDeliveryEmail(delivery);
                     var mailStatus = await this.omicronMailClient.SendMail(
                         smtpConfig,
-                        string.IsNullOrEmpty(delivery.AsesorEmail) ? customerServiceEmail : delivery.AsesorEmail,
+                        logisticEmail,
                         text.Item1,
                         text.Item2,
-                        copyEmails);
+                        customerServiceEmail);
                     results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
                 }));
 
