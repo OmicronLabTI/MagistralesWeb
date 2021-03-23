@@ -51,14 +51,10 @@ namespace Omicron.Pedidos.Services.Utils
             var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {
-                var previousStatus = x.Status;
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
                 /** add logs**/
-                if (previousStatus != x.Status)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
-                }
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -227,23 +223,19 @@ namespace Omicron.Pedidos.Services.Utils
 
                     currentOrdersBySale.ForEach(o =>
                     {
-                        var previousStatus = o.Status;
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
-                        if (previousStatus != o.Status)
+                        listOrderLogToInsert.Add(new SalesLogs
                         {
-                            listOrderLogToInsert.Add(new SalesLogs
-                            {
-                                SalesOrderId = o.Salesorderid,
-                                ProductionOrderId = o.Productionorderid,
-                                StatusSalesOrder = string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
-                                StatusProductionOrder = !string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
-                                DataCheckin = DateTime.Now,
-                                UserId = userLogistic,
-                                IsProductionOrder = !string.IsNullOrEmpty(o.Productionorderid),
-                            });
-                        }
+                            SalesOrderId = o.Salesorderid,
+                            ProductionOrderId = o.Productionorderid,
+                            StatusSalesOrder = string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
+                            StatusProductionOrder = !string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
+                            DataCheckin = DateTime.Now,
+                            UserId = userLogistic,
+                            IsProductionOrder = !string.IsNullOrEmpty(o.Productionorderid),
+                        });
                     });
 
                     if (!string.IsNullOrEmpty(y.Key))

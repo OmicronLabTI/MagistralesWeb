@@ -672,10 +672,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
                 /** add logs**/
-                if (previousStatus != o.Status)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
-                }
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
             var listorderToUpdate = new List<UserOrderModel>(orders);
