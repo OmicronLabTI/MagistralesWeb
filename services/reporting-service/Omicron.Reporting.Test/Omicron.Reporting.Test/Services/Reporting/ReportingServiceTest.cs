@@ -180,13 +180,11 @@ namespace Omicron.Reporting.Test.Services.Request
                 {
                     DeliveryId = 1,
                     SalesOrders = "1478",
-                    AsesorEmail = "email@email.com",
                 },
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 2,
                     SalesOrders = "1479",
-                    AsesorEmail = string.Empty,
                 },
             };
 
