@@ -196,11 +196,13 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
-            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var listErrorsToReturn = new List<string>();
-            listErrorId.ForEach(x =>
+            listWithError.ForEach(x =>
             {
-                listErrorsToReturn.Add(x.Split("-")[0]);
+                var dictValue = dictResult[x].Split("-").ToList();
+                var key = x.Split("-");
+
+                listErrorsToReturn.Add($"{key[0]}-{key[1]}: {dictValue.LastOrDefault()}");
             });
 
             return new Dictionary<string, List<string>>
