@@ -317,6 +317,27 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task UpdateUserOrderStatusEntregadoAndAddCompletSalesLogs()
+        {
+            // arrange
+            var components = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 501, Status = "Entregado" },
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 502, Status = "Entregado" },
+            };
+
+            // act
+            var response = await this.pedidosService.UpdateStatusOrder(components);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task ConnectDiApi()
         {
             // act
