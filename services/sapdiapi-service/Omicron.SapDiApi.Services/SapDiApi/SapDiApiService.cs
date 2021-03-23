@@ -80,6 +80,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if(inserted != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
+                        errMsg = errMsg.Replace("-", string.Empty);
                         dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
                         _loggerProxy.Info($"The next order was tried to be created: {errorCode} - {errMsg} - {pedido.Order.PedidoId}");
                     }
