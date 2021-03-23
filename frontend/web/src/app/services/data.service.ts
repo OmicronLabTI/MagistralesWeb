@@ -288,12 +288,12 @@ export class DataService {
     let finishMessaje = '';
     switch (messageType) {
       case MessageType.processOrder:
-        firstMessage = 'El producto ';
-        finishMessaje = 'no pudo ser Planificado \n';
+        firstMessage = '';
+        finishMessaje = '\n';
         break;
       case MessageType.processDetailOrder:
-        firstMessage = 'La orden de fabricación ';
-        finishMessaje = 'no pudo ser Planificado \n';
+        firstMessage = '';
+        finishMessaje = '\n';
         break;
       case MessageType.placeOrder:
         firstMessage = 'La orden de fabricación ';
