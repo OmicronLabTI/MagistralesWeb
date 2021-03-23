@@ -31,7 +31,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String SalesOrderId.
         /// </value>
-        public string SalesOrderId { get; set; }
+        public int SalesOrderId { get; set; }
 
         /// <summary>
         /// Gets or sets ProductionOrderId.
@@ -39,7 +39,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String ProductionOrderId.
         /// </value>
-        public string ProductionOrderId { get; set; }
+        public int ProductionOrderId { get; set; }
 
         /// <summary>
         /// Gets or sets StatusSalesOrder.

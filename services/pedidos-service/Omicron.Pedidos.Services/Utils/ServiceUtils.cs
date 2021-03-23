@@ -89,10 +89,10 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 listToReturn.Add(new SalesLogs
                 {
-                    SalesOrderId = x.Salesorderid,
-                    ProductionOrderId = x.Productionorderid,
-                    StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : null,
-                    StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : null,
+                    SalesOrderId = int.TryParse(x.Salesorderid, out int saleOrderInt) ? saleOrderInt : 0,
+                    ProductionOrderId = int.TryParse(x.Productionorderid, out int productOrderInt) ? productOrderInt : 0,
+                    StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
+                    StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
                     DataCheckin = DateTime.Now,
                     UserId = user,
                     IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),

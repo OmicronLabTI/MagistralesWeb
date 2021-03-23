@@ -97,7 +97,6 @@ namespace Omicron.Pedidos.Services.Utils
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-
             var userOrdersByProd = (await pedidosDao.GetUserOrderByProducionOrder(listProdOrders)).ToList();
             var listSales = userOrdersByProd.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
@@ -226,16 +225,8 @@ namespace Omicron.Pedidos.Services.Utils
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
-                        listOrderLogToInsert.Add(new SalesLogs
-                        {
-                            SalesOrderId = o.Salesorderid,
-                            ProductionOrderId = o.Productionorderid,
-                            StatusSalesOrder = string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
-                            StatusProductionOrder = !string.IsNullOrEmpty(o.Productionorderid) ? o.Status : null,
-                            DataCheckin = DateTime.Now,
-                            UserId = userLogistic,
-                            IsProductionOrder = !string.IsNullOrEmpty(o.Productionorderid),
-                        });
+                        /** add logs**/
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));
                     });
 
                     if (!string.IsNullOrEmpty(y.Key))
@@ -246,16 +237,8 @@ namespace Omicron.Pedidos.Services.Utils
                         listToUpdate.Add(pedido);
                         if (!missing)
                         {
-                            listOrderLogToInsert.Add(new SalesLogs
-                            {
-                                SalesOrderId = pedido.Salesorderid,
-                                ProductionOrderId = pedido.Productionorderid,
-                                StatusSalesOrder = string.IsNullOrEmpty(pedido.Productionorderid) ? pedido.Status : null,
-                                StatusProductionOrder = null,
-                                DataCheckin = DateTime.Now,
-                                UserId = userLogistic,
-                                IsProductionOrder = !string.IsNullOrEmpty(pedido.Productionorderid),
-                            });
+                            /** add logs**/
+                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { pedido }));
                         }
                     }
                 });
