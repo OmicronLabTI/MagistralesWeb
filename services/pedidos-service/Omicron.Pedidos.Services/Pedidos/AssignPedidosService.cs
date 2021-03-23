@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -36,6 +37,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IUsersService userService;
 
+        private readonly IKafkaConnector kafkaConnector;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AssignPedidosService"/> class.
         /// </summary>
@@ -43,12 +46,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
-        public AssignPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService)
+        /// <param name="kafkaConnector">The kafka conector.</param>
+        public AssignPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, IKafkaConnector kafkaConnector)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
         }
 
         /// <summary>
@@ -60,11 +65,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi);
+                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
             }
             else
             {
-                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi, this.sapAdapter);
+                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi, this.sapAdapter, this.kafkaConnector);
             }
         }
 
@@ -106,6 +111,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosString)).ToList();
 
             var listOrderToInsert = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             userOrdersToUpdate.ForEach(x =>
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
@@ -113,6 +119,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (userSaleOrder.Item1.ContainsKey(saleOrderInt))
                 {
+                    var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = asignable ? ServiceConstants.Asignado : x.Status;
                     x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
@@ -122,11 +129,21 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var ordenType = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.OrdenVenta : ServiceConstants.OrdenFab;
                     var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder.Item1[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder.Item1[saleOrderInt]);
                     listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, new List<int> { orderId }, textAction, ordenType));
+                    if (previousStatus != x.Status && x.IsSalesOrder)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
+                    }
+
+                    if (!x.IsSalesOrder)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
+                    }
                 }
             });
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (userSaleOrder.Item2.Any())
             {
@@ -164,11 +181,23 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(x =>
             {
+                var previousStatus = x.Status;
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Reasignado;
                 x.Userid = assign.UserId;
+                if (previousStatus != x.Status && x.IsSalesOrder)
+                {
+                    /** add logs**/
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
+                }
+
+                if (!x.IsSalesOrder)
+                {
+                    /** add logs**/
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
+                }
             });
 
             var listOrderFabId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
@@ -179,7 +208,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(orders);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
@@ -199,14 +228,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var ordersToUpdate = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado);
+            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic);
+            var ordersToUpdate = getUpdateUserOrderModel.Item1;
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
 
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
     }

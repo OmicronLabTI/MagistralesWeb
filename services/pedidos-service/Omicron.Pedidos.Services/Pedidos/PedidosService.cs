@@ -20,6 +20,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
@@ -50,6 +51,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IRedisService redis;
 
+        private readonly IKafkaConnector kafkaConnector;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -61,7 +64,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="configuration">The configuration.</param>
         /// <param name="reporting"> The reporting service. </param>
         /// <param name="redisService">The redis Service.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService)
+        /// <param name="kafkaConnector">The kafka conector.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
@@ -71,6 +75,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
             this.redis = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
         }
 
         /// <inheritdoc/>
@@ -128,7 +133,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             var listOrderLogs = new List<OrderLogModel>();
 
             ordersList.ForEach(x =>
@@ -137,12 +142,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 order = order ?? new UpdateStatusOrderModel();
                 x.Status = order.Status ?? x.Status;
                 x.Userid = order.UserId ?? x.Userid;
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
             await this.pedidosDao.InsertOrderLog(listOrderLogs);
-
             if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
             {
                 var saleOrderId = ordersList.FirstOrDefault().Salesorderid;
@@ -150,8 +155,16 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
                 var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
                 saleOrder.Status = allDelivered ? ServiceConstants.Entregado : saleOrder.Status;
+                var userId = ordersList.FirstOrDefault().Userid;
+                if (allDelivered)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { saleOrder }));
+                }
+
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
+
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
@@ -213,6 +226,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var successfuly = new List<object>();
             var failed = new List<object>();
             var listToGenPdf = new List<int>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -275,6 +289,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.Status = ServiceConstants.Finalizado;
                         userOrder.FinalizedDate = DateTime.Now;
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                     }
                 }
 
@@ -283,12 +298,17 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Update sales order status
                 if (resultMessages.Keys.Any(x => x.Equals(0)))
                 {
+                    var previousStatusSalesOrder = salesOrder.Status;
                     salesOrder.CloseUserId = orderToFinish.UserId;
                     salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
                     salesOrder.FinalizedDate = DateTime.Now;
 
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
+                    if (previousStatusSalesOrder != salesOrder.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { salesOrder }));
+                    }
 
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                     successfuly.Add(orderToFinish);
@@ -298,6 +318,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertOrderLog(logs);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -321,6 +342,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
             var succesfuly = new List<UserOrderModel>();
             var failed = new List<object>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderId in failedOrders)
             {
@@ -333,15 +355,19 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var orderToRejectedId in succesfulyOrdersId)
             {
-                succesfuly.Add(new UserOrderModel
+                var userOrder = new UserOrderModel
                 {
                     Salesorderid = orderToRejectedId,
                     Status = ServiceConstants.Rechazado,
                     Comments = rejectOrders.Comments,
-                });
+                };
+                succesfuly.Add(userOrder);
+                /* logs */
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(rejectOrders.UserId, new List<UserOrderModel> { userOrder }));
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
@@ -395,6 +421,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var affectedSalesOrderIds = new List<KeyValuePair<string, string>>();
             var listIsolated = new List<int>();
             var listSalesOrder = new List<int>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderToFinish in finishOrders)
             {
@@ -459,6 +486,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var batch = orderToFinish.Batches != null && orderToFinish.Batches.Any() ? orderToFinish.Batches.FirstOrDefault() : new BatchesConfigurationModel { BatchCode = string.Empty };
                     productionOrder.BatchFinalized = batch.BatchCode;
 
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { productionOrder }));
                     logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
                     successfuly.Add(orderIdModel);
@@ -486,7 +515,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
                     salesOrder.FinalizedDate = DateTime.Now;
-
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
                     logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                 }
@@ -495,6 +525,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
             await this.pedidosDao.InsertOrderLog(logs);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -625,11 +656,14 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
             await this.pedidosDao.SaveOrderSignatures(listToUpdate);
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(o =>
             {
+                var previousStatus = o.Status;
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
+                /** add logs**/
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
             var listorderToUpdate = new List<UserOrderModel>(orders);
@@ -648,12 +682,20 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var orderBySale = allOrders.Where(x => x.Salesorderid == sale.Salesorderid).ToList();
                     var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
                     var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Item1.Order.DocNum == int.Parse(sale.Salesorderid));
+                    var previousStatus = sale.Status;
                     sale.Status = areInvalidOrders || tupleValues.Item2.Any() ? sale.Status : ServiceConstants.Terminado;
+                    /** add logs**/
+                    if (previousStatus != sale.Status)
+                    {
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { sale }));
+                    }
+
                     listorderToUpdate.Add(sale);
                 });
             }
 
             await this.pedidosDao.UpdateUserOrders(listorderToUpdate);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
@@ -661,6 +703,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             var payload = new { isolatedFabOrder.ProductCode };
             var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
 
@@ -687,9 +730,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newProductionOrder.Status = ServiceConstants.Planificado;
 
                 logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
-
+                /** add logs**/
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 await this.pedidosDao.InsertOrderLog(logs);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);

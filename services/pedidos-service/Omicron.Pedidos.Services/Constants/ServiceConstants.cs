@@ -641,6 +641,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Total = "total";
 
         /// <summary>
+        /// for total cancelation.
+        /// </summary>
+        public const bool IsProductionOrder = true;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
