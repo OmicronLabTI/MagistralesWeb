@@ -218,9 +218,9 @@ describe('DataService', () => {
   });
   it('should getMessageTitle', () => {
     const service: DataService = TestBed.get(DataService);
-    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual('El producto  1234 no pudo ser Planificado \n');
+    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual(' 1234 \n');
     expect(service.getMessageTitle(['1234'], MessageType.processDetailOrder))
-        .toEqual('La orden de fabricación  1234 no pudo ser Planificado \n');
+        .toEqual(' 1234 \n');
     expect(service.getMessageTitle(['1234'], MessageType.placeOrder))
         .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
     expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
