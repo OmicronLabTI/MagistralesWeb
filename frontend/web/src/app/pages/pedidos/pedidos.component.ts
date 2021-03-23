@@ -139,7 +139,6 @@ export class PedidosComponent implements OnInit, OnDestroy {
                   case ConstStatus.enProceso:
                       element.class = 'proceso';
                       break;
-                  case ConstStatus.entregado:
                   case ConstStatus.finalizado:
                       element.class = 'finalizado';
                       break;
@@ -149,6 +148,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
                   case ConstStatus.rechazado:
                       element.class = 'rechazado';
                       break;
+                  case ConstStatus.entregado:
                   case ConstStatus.almacenado:
                       element.class = ConstStatus.almacenado.toLowerCase();
                       break;
