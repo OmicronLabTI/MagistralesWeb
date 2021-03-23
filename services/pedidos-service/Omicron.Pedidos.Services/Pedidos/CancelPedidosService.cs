@@ -564,15 +564,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (cancelledOnSap)
                 {
-                    var previousStatus = order.Status;
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(orderToCancel);
                     updatedOrders.Add(order);
                     logs.Add(this.BuildCancellationLog(orderToCancel.UserId, orderId, docType));
-                    if (previousStatus != order.Status)
-                    {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, new List<UserOrderModel> { order }));
-                    }
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, new List<UserOrderModel> { order }));
 
                     continue;
                 }

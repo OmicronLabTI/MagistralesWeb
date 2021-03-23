@@ -140,14 +140,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
-                var previousStatus = x.Status;
                 x.Status = order.Status ?? x.Status;
                 x.Userid = order.UserId ?? x.Userid;
-                if (previousStatus != x.Status)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
-                }
-
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
                 listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
@@ -668,10 +663,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
                 /** add logs**/
-                if (previousStatus != o.Status)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
-                }
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
             var listorderToUpdate = new List<UserOrderModel>(orders);
