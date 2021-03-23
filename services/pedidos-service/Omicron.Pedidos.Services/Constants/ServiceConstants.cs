@@ -690,6 +690,21 @@ namespace Omicron.Pedidos.Services.Constants
             Terminado,
             Finalizado,
             Cancelled,
+            Entregado,
+            Almacenado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValidStatusFinalizar { get; } = new List<string>
+        {
+            Finalizado,
+            Entregado,
+            Almacenado,
         };
 
         /// <summary>
