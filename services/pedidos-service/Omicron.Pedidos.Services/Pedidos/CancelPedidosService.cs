@@ -316,15 +316,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Process to cancel on local db
                 if (await this.CancelProductionOrderInSap(order.Productionorderid))
                 {
-                    var previosStatus = order.Status;
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(newOrderInfo);
                     logs.Add(this.BuildCancellationLog(newOrderInfo.UserId, order.Productionorderid, ServiceConstants.OrdenFab));
-                    if (previosStatus != order.Status)
-                    {
-                        /* logs */
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, new List<UserOrderModel> { order }));
-                    }
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, new List<UserOrderModel> { order }));
 
                     continue;
                 }
