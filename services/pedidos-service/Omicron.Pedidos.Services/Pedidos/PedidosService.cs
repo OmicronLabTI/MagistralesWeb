@@ -289,16 +289,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                     int prodOrderId = int.Parse(userOrder.Productionorderid);
                     if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
                     {
-                        var previousStatusUserOrder = userOrder.Status;
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now;
                         userOrder.Status = ServiceConstants.Finalizado;
                         userOrder.FinalizedDate = DateTime.Now;
                         logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
-                        if (previousStatusUserOrder != userOrder.Status)
-                        {
-                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
-                        }
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                     }
                 }
 
