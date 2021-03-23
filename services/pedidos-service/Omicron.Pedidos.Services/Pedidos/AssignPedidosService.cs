@@ -134,7 +134,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                     }
 
-                    if (x.IsProductionOrder || x.IsIsolatedProductionOrder)
+                    if (!x.IsSalesOrder)
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                     }
