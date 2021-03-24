@@ -381,3 +381,28 @@ spec:
   selector:
     app: redisdata
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafkaconsumer-deployment
+  labels:
+    app: kafkaconsumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafkaconsumer
+  template:
+    metadata:
+      labels:
+        app: kafkaconsumer
+    spec:
+      containers:
+      - name: kafkaconsumer
+        image: omicron-kafkaconsumer-repository
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
