@@ -63,7 +63,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await pedidosDao.UpdateUserOrders(userOrders);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
-            await kafkaConnector.PushMessage(listOrderLogToInsert);
+            kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -114,7 +114,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
-            await kafkaConnector.PushMessage(listOrderLogToInsert);
+            kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }

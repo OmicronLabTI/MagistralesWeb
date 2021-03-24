@@ -164,7 +164,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
@@ -318,7 +318,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertOrderLog(logs);
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -367,7 +367,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
@@ -525,7 +525,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
             await this.pedidosDao.InsertOrderLog(logs);
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -695,7 +695,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(listorderToUpdate);
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
@@ -734,7 +734,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 await this.pedidosDao.InsertOrderLog(logs);
-                await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);
