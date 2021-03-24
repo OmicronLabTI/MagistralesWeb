@@ -331,7 +331,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             // Update in local data base
             await this.pedidosDao.UpdateUserOrders(ordersToCancel);
             await this.pedidosDao.InsertOrderLog(logs);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return (ordersToCancel, results);
         }
 
@@ -380,7 +380,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(logs);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (saleOrdersFinalized.Any())
             {
@@ -445,7 +445,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
                 await this.pedidosDao.InsertOrderLog(logs);
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                await this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return results;
@@ -488,7 +488,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
                 await this.pedidosDao.InsertOrderLog(logs);
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                await this.kafkaConnector.PushMessage(listOrderLogToInsert);
                 return results;
             }
 
@@ -578,7 +578,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(updatedOrders);
             await this.pedidosDao.InsertOrderLog(logs);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return (updatedOrders, results);
         }
