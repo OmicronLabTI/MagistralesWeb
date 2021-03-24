@@ -411,8 +411,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zookeeper-deployment
-  labels:
-    app: zookeeper
 spec:
   replicas: 1
   selector:
@@ -424,46 +422,67 @@ spec:
         app: zookeeper
     spec:
       containers:
-      - name: zookeeper
+      - name: zoo1
         image: bitnami/zookeeper:latest
         ports:
         - containerPort: 2181
         env:
-        - name: ALLOW_ANONYMOUS_LOGIN
-          value: yes
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zoo1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper-svc
+  name: zoo1
   labels:
     app: zookeeper
 spec:
-  type: LoadBalancer
   ports:
-  - port: 2181
-    targetPort: 2181
+  - name: client
+    port: 2181
     protocol: TCP
-  externalIPs:
-    - 192.168.0.101
+  - name: follower
+    port: 2888
+    protocol: TCP
+  - name: leader
+    port: 3888
+    protocol: TCP
   selector:
     app: zookeeper
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: kafka-deployment
+  name: kafka-service
   labels:
-    app: kafka
+    name: kafka
 spec:
-  replicas: 1
+  ports:
+  - port: 9092
+    name: kafka-port
+    protocol: TCP
+  selector:
+    app: kafka
+    id: "0"
+  type: LoadBalancer
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kafka-broker0
+spec:
+  replicas: 2
   selector:
     matchLabels:
-      app: kafka
+        app: kafka
+        id: "0"
   template:
     metadata:
       labels:
         app: kafka
+        id: "0"
     spec:
       containers:
       - name: kafka
@@ -471,30 +490,9 @@ spec:
         ports:
         - containerPort: 9092
         env:
-        - name: KAFKA_BROKER_ID
-          value: 1
-        - name: KAFKA_LISTENERS
-          value: PLAINTEXT://:9092
-        - name: KAFKA_ADVERTISED_LISTENERS
-          value: PLAINTEXT://127.0.0.1:9092
+        - name: KAFKA_ADVERTISED_PORT
+          value: "30718"
         - name: KAFKA_ZOOKEEPER_CONNECT
-          value: 2181
-        - name: ALLOW_PLAINTEXT_LISTENER
-          value: yes
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kafka-svc
-  labels:
-    app: kafka
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 9092
-    targetPort: 9092
-    protocol: TCP
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: kafka
+          value: zoo1:2181
+        - name: KAFKA_BROKER_ID
+          value: "0"
