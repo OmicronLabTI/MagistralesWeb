@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -149,5 +150,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Bool is production order.
         [NotMapped]
         public string SaleOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public List<int> DeliveryIds { get; set; }
     }
 }

@@ -253,9 +253,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
-                salePerson ??= new SalesPersonModel();
                 x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
                 x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
+                x.DeliveryIds = saleOrders.Select(y => y.DeliveryId).ToList();
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
