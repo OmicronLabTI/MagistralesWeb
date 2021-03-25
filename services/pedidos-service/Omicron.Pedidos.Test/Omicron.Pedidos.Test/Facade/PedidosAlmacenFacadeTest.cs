@@ -242,7 +242,7 @@ namespace Omicron.Pedidos.Test.Facade
             var type = new List<int>();
 
             // act
-            var response = await this.almacenFacade.CleanInvoices();
+            var response = await this.almacenFacade.CleanInvoices(type);
 
             // Assert
             Assert.IsNotNull(response);

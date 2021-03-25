@@ -107,6 +107,10 @@ namespace Omicron.Pedidos.Test.Services
                 new UserOrderModel { Id = 89, Productionorderid = null, Salesorderid = "84377", Status = "Almacenado", StatusAlmacen = "Almacenado" },
                 new UserOrderModel { Id = 90, Productionorderid = "122715", Salesorderid = "84377", Status = "Almacenado", StatusAlmacen = "Almacenado", DeliveryId = 74585 },
                 new UserOrderModel { Id = 91, Productionorderid = "122716", Salesorderid = "84377", Status = "Almacenado", StatusAlmacen = "Almacenado", DeliveryId = 0 },
+
+                // clean Delivery
+                new UserOrderModel { Id = 92, Productionorderid = "122715", Salesorderid = "84377", Status = "Almacenado", StatusAlmacen = "Almacenado", InvoiceId = 100 },
+                new UserOrderModel { Id = 93, Productionorderid = "122716", Salesorderid = "84377", Status = "Almacenado", StatusAlmacen = "Almacenado", InvoiceId = 100 },
             };
         }
 
@@ -607,7 +611,7 @@ namespace Omicron.Pedidos.Test.Services
         {
             // arrange
             this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
-            var orderToUpdate = new List<int>();
+            var orderToUpdate = new List<int> { 100 };
 
             // act
             var response = await this.cancelPedidosService.CleanInvoices(orderToUpdate);
