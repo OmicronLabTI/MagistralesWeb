@@ -217,23 +217,19 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == saleOrder.ToString());
                 var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
                 var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
-
-                var order = (await this.sapDao.GetOrdersById(saleOrder)).FirstOrDefault();
-                order ??= new OrderModel();
-
                 var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
-
+                var order = (await this.sapDao.GetOrdersById(saleOrder)).FirstOrDefault();
+                order ??= new OrderModel();
                 var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale, incidents, productItems);
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
-                if (order.OrderType == ServiceConstants.OrderTypeMQ)
+                /* if (order.OrderType == ServiceConstants.OrderTypeMQ)
                 {
                     productType = ServiceConstants.Maquila;
-                }
-
+                }*/
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
@@ -246,6 +242,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
+                    TypeOrder = order.OrderType,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -261,6 +258,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
                     InvoiceType = invoiceType,
+                    TypeOrder = order.OrderType,
                 };
 
                 var saleModel = new SalesModel
