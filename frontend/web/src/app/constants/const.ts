@@ -300,10 +300,12 @@ export const OrderType = {
     bioEqual: 'BE',
     magistral: 'MG',
     mixto: 'MX',
+    maquila: 'MQ',
 };
 export const ClassCssOrderType = {
     mn: 'clasification-mn',
     be: 'clasification-be',
     mg: 'clasification-mg',
-    mx: 'clasification-mx'
+    mx: 'clasification-mx',
+    mq: 'clasification-mq',
 };
