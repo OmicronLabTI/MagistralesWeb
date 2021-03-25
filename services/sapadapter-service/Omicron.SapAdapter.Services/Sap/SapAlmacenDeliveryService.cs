@@ -218,6 +218,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
                 var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
 
+                var order = (await this.sapDao.GetOrdersById(saleOrder)).FirstOrDefault();
+                order ??= new OrderModel();
+
                 var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
@@ -226,6 +229,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
+                if (order.OrderType == ServiceConstants.OrderTypeMQ)
+                {
+                    productType = ServiceConstants.Maquila;
+                }
 
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
