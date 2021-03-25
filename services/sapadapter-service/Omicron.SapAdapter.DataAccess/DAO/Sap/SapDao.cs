@@ -692,6 +692,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date)
+        {
+            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.UpdateDate == date));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

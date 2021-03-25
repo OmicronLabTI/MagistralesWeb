@@ -100,5 +100,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="deliveryIds">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetDeliveries(List<int> deliveryIds);
+
+        /// <summary>
+        /// Gets the cancelled iinvoices.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetCancelledInvoices();
     }
 }

@@ -253,7 +253,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
-                salePerson ??= new SalesPersonModel();
                 x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
                 x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
             });
@@ -319,6 +318,15 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetCancelledInvoices()
+        {
+            var dateToLook = DateTime.Today;
+            var invoices = (await this.sapDao.GetInvoiceByUpdateDate(dateToLook)).ToList();
+            invoices = invoices.Where(x => x.Canceled == "Y").ToList();
+            return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
         }
 
         /// <summary>

@@ -174,6 +174,32 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CleanInvoices(List<int> invoices)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrdersByInvoiceId(invoices)).ToList();
+            userOrders.AddRange(await this.pedidosDao.GetUserOrderBySaleOrder(userOrders.Select(x => x.Salesorderid).ToList()));
+
+            foreach (var order in userOrders)
+            {
+                if (order.IsProductionOrder && !invoices.Contains(order.InvoiceId))
+                {
+                    continue;
+                }
+
+                order.InvoiceId = 0;
+                order.InvoiceQr = null;
+                order.InvoiceStoreDate = null;
+                order.InvoiceType = null;
+                order.StatusInvoice = null;
+                order.UserInvoiceStored = null;
+                order.StatusAlmacen = ServiceConstants.Almacenado;
+            }
+
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
         private Tuple<string, string> CalculateStatusCancel(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries, string type, List<DetallePedidoModel> detalles)
         {
             if (type == ServiceConstants.Total)
