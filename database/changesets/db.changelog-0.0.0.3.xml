@@ -33,11 +33,4 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet author="erosas" id="changelog-3.2">
-	<insert tableName="parameters"> 
-		<column name="value" value="yolanda@o-lab.mx"/>
-		<column name="type" value="string"/>
-		<column name="field" value="EmailLogisticaCc3"/>
-	</insert>
-  </changeSet>
 </databaseChangeLog> 
