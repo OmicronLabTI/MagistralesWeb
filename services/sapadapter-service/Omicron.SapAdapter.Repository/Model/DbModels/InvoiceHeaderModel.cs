@@ -117,7 +117,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("U_TipoPedido")]
         public string TypeOrder { get; set; }
-        
+
         /// <summary>
         /// Gets or sets SalesPrsonId.
         /// </summary>
