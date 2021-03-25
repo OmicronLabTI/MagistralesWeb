@@ -99,5 +99,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelDelivery(type, this.mapper.Map<CancelDeliveryPedidoCompleteModel>(deliveryIds)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CleanInvoices(List<int> invoiceIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CleanInvoices(invoiceIds));
+        }
     }
 }

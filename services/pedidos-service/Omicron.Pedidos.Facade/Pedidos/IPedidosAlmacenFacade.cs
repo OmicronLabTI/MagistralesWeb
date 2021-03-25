@@ -85,5 +85,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="deliveryIds">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CancelDelivery(string type, CancelDeliveryPedidoCompleteDto deliveryIds);
+
+        /// <summary>
+        /// Cleans the invoices.
+        /// </summary>
+        /// <param name="invoiceIds">the invoice ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CleanInvoices(List<int> invoiceIds);
     }
 }

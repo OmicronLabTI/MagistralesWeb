@@ -112,6 +112,20 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public int SalesPrsonId { get; set; }
 
         /// <summary>
+        /// Gets or sets SalesPrsonId.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("UpdateDate")]
+        public DateTime UpdateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("CANCELED")]
+        public string Canceled { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
@@ -150,13 +164,5 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Bool is production order.
         [NotMapped]
         public string SaleOrder { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets.
-        /// </summary>
-        /// <value>
-        /// Bool is production order.
-        [NotMapped]
-        public List<int> DeliveryIds { get; set; }
     }
 }

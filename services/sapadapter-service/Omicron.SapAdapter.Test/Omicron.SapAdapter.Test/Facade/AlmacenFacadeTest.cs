@@ -283,5 +283,17 @@ namespace Omicron.SapAdapter.Test.Facade
 
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetCancelledInvoices()
+        {
+            var response = await this.almacenFacade.GetCancelledInvoices();
+
+            Assert.IsNotNull(response);
+        }
     }
 }

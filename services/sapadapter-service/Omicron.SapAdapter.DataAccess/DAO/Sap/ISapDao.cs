@@ -384,5 +384,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="productsIds">the products.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds);
+
+        /// <summary>
+        /// Get the invoices by update date.
+        /// </summary>
+        /// <param name="date">the date to look.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date);
     }
 }

@@ -598,6 +598,24 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
         }
 
+        /// <summary>
+        /// test the cancel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CleanInvoices()
+        {
+            // arrange
+            this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
+            var orderToUpdate = new List<int>();
+
+            // act
+            var response = await this.cancelPedidosService.CleanInvoices(orderToUpdate);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
         private static DbContextOptions<DatabaseContext> CreateNewContextOptions()
         {
             // Create a fresh service provider, and therefore a fresh.
