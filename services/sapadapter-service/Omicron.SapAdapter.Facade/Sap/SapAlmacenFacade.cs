@@ -151,5 +151,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetDeliveries(deliveryIds));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetCancelledInvoices()
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetCancelledInvoices());
+        }
     }
 }

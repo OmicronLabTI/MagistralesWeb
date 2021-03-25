@@ -202,5 +202,17 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.GetDeliveries(saleids);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/cancelled/invoices")]
+        [HttpGet]
+        public async Task<IActionResult> GetCancelledInvoices()
+        {
+            var response = await this.sapAlmacenFacade.GetCancelledInvoices();
+            return this.Ok(response);
+        }
     }
 }

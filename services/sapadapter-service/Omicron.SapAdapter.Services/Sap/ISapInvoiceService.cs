@@ -73,5 +73,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="salesIds">the sales id separated by coma.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetSapIds(List<int> salesIds);
+
+        /// <summary>
+        /// Gets the cancelled invoices.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetCancelledInvoices();
     }
 }

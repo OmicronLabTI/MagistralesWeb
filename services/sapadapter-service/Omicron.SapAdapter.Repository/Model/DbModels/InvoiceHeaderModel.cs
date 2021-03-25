@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Model.DbModels
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -109,6 +110,20 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("SlpCode")]
         public int SalesPrsonId { get; set; }
+
+        /// <summary>
+        /// Gets or sets SalesPrsonId.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("UpdateDate")]
+        public DateTime UpdateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("CANCELED")]
+        public string Canceled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gets.

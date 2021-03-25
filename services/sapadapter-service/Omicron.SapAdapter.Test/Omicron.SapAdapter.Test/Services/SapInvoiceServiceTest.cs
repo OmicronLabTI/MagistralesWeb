@@ -326,5 +326,19 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetCancelledInvoices()
+        {
+            // act
+            var response = await this.sapInvoiceService.GetCancelledInvoices();
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }
