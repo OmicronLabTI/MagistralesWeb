@@ -424,6 +424,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 return ClassCssOrderType.mg;
             case OrderType.mixto:
                 return ClassCssOrderType.mx;
+            case OrderType.maquila:
+                return ClassCssOrderType.mq;
         }
     }
 
