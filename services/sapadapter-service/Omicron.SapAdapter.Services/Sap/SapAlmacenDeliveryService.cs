@@ -132,6 +132,20 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+
+            if (types.Contains(ServiceConstants.Maquila.ToLower()))
+            {
+                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
+                var listMaquila = deliveryHeadersMaquila.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+                deliveryHeaders.AddRange(listMaquila);
+                deliveryHeaders = deliveryHeaders.DistinctBy(x => x.DocNum).ToList();
+                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => listMaquila.Select(l => l.DocNum).ToList().Contains(x.DeliveryId)));
+            }
+            else
+            {
+                deliveryHeaders = deliveryHeaders.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
+            }
+
             deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderBy(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
@@ -239,6 +253,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
+                    TypeOrder = header.TypeOrder, // order.OrderType,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -254,6 +269,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
                     InvoiceType = invoiceType,
+                    TypeOrder = header.TypeOrder, // order.OrderType,
                 };
 
                 var saleModel = new SalesModel

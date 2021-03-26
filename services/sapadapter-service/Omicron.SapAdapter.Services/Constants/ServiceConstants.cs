@@ -326,6 +326,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string PT = "PT";
 
         /// <summary>
+        /// PT wharegouse.
+        /// </summary>
+        public const string OrderTypeMQ = "MQ";
+
+        /// <summary>
+        /// PT wharegouse.
+        /// </summary>
+        public const string Maquila = "Maquila";
+
+        /// <summary>
         /// the nvo leon state.
         /// </summary>
         public const string NuevoLeon = "Nuevo León";
@@ -353,7 +363,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea";
+        public const string AllTypes = "magistral,mixto,linea,maquila";
 
         /// <summary>
         /// all types.
