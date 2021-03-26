@@ -220,7 +220,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
-                var order = orderList.Where(x => x.PedidoId == saleOrder).FirstOrDefault();
+
+                var order = orderList.FirstOrDefault(x => x.PedidoId == saleOrder);
                 order ??= new OrderModel();
                 var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale, incidents, productItems);
                 var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;

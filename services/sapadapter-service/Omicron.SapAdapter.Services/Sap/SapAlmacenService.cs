@@ -404,8 +404,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = orders.Count;
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
-
-                var orderType = orderList.Where(x => x.PedidoId == order.DocNum).FirstOrDefault();
+                var orderType = orderList.FirstOrDefault(x => x.PedidoId == order.DocNum);
                 orderType ??= new OrderModel();
                 var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems, batches);
 
