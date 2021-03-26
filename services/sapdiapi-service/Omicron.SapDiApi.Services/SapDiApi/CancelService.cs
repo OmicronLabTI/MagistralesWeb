@@ -61,14 +61,14 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     company.GetLastError(out int errCode, out string errMsg);
                     if (cancellation != 0)
                     {
-                        _loggerProxy.Info($"The delivery {deliveryIds[i]} was triend to be CANCELLED. {errCode} - {errMsg}");
-                        dictionaryResult.Add($"{deliveryIds[i]}-Error", $"Error- {errMsg}");
+                        _loggerProxy.Info($"The delivery {deliveryIds[i].Delivery} was triend to be CANCELLED. {errCode} - {errMsg}");
+                        dictionaryResult.Add($"{deliveryIds[i].Delivery}-Error", $"Error- {errMsg}");
                         continue;
                     }
                     else
                     {
-                        _loggerProxy.Info($"The saleORder {deliveryIds[i]} was Cancelled {errCode} - {errMsg}");
-                        dictionaryResult.Add($"{deliveryIds[i]}-Ok", "Ok");
+                        _loggerProxy.Info($"The saleORder {deliveryIds[i].Delivery} was Cancelled {errCode} - {errMsg}");
+                        dictionaryResult.Add($"{deliveryIds[i].Delivery}-Ok", "Ok");
                     }
 
                     if (type == ServiceConstants.Total)
@@ -81,7 +81,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             catch(Exception ex)
             {
                 _loggerProxy.Info($"There was an error while cancelling {JsonConvert.SerializeObject(deliveryIds)}. {ex.Message}-{ex.StackTrace}");
-                dictionaryResult.Add($"{deliveryIds.FirstOrDefault()}-Ok", "Ok");
+                dictionaryResult.Add($"General-Error", $"Error- {ex.Message}");
             }
             
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
