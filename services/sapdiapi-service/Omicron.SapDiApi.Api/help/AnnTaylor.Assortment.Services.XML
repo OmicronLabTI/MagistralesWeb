@@ -241,10 +241,11 @@
             <param name="updateTracking">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CancelDelivery(System.Collections.Generic.List{System.Int32})">
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CancelDelivery(System.String,System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CancelDeliveryDto})">
             <summary>
             Create new isolated production order.
             </summary>
+            /// <param name="type">the type.</param>
             <param name="deliveries">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>

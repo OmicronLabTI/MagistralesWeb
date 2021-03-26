@@ -8,6 +8,8 @@
 
 namespace Omicron.SapDiApi.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the service constants.
     /// </summary>
@@ -182,5 +184,24 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Get available product quantity in warehouse.
         /// </summary>
         public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string Total = "total";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictWhs { get; } = new Dictionary<string, string>
+        {
+            { "MN", "MN" },
+            { "MG", "MG" },
+            { "BE", "BE" },
+            { "MX", "MG" },
+        };
     }
 }
