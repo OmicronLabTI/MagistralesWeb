@@ -226,7 +226,7 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
-                var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
+                var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
                 var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == saleOrder.ToString());
                 var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
