@@ -51,6 +51,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 75000, Cliente = "cliente", DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
                 new OrderModel { PedidoId = 75001, Cliente = "cliente", DocNum = 75001, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León" },
                 new OrderModel { PedidoId = 75002, Cliente = "cliente", DocNum = 75002, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null },
+                new OrderModel { PedidoId = 85000, Cliente = "cliente", DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
             };
         }
 
@@ -84,6 +85,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "Magistral2", DetalleId = 1, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral3", DetalleId = 2, PedidoId = 75000, ProductoId = "Magistral2", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75001, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Magistral4", DetalleId = 0, PedidoId = 85000, ProductoId = "Magistral4", Container = "NA", Quantity = 10 },
 
                 // for graphs
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75002, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
