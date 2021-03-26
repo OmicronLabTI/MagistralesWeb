@@ -91,6 +91,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string LogisticEmailCc2Field = "EmailLogisticaCc2";
 
         /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string LogisticEmailCc3Field = "EmailLogisticaCc3";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
