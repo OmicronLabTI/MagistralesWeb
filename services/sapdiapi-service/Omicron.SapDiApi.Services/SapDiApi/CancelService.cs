@@ -39,7 +39,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CancelDelivery(List<int> deliveryIds)
+        public async Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryModel> deliveryIds)
         {
             _loggerProxy.Debug($"Deliveries to cancel: {JsonConvert.SerializeObject(deliveryIds)}.");
             var dictionaryResult = new Dictionary<string, string>();
@@ -49,7 +49,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 for (var i = 0; i < deliveryIds.Count; i++)
                 {
-                    if (!delivery.GetByKey(deliveryIds[i]))
+                    if (!delivery.GetByKey(deliveryIds[i].Delivery))
                     {
                         dictionaryResult.Add($"{deliveryIds[i]}-Error", ServiceConstants.OrderNotFound);
                         return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
@@ -59,17 +59,23 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     cancelDoc.DocDate = DateTime.Now;
                     var cancellation = cancelDoc.Add();
                     company.GetLastError(out int errCode, out string errMsg);
-
                     if (cancellation != 0)
                     {
                         _loggerProxy.Info($"The delivery {deliveryIds[i]} was triend to be CANCELLED. {errCode} - {errMsg}");
                         dictionaryResult.Add($"{deliveryIds[i]}-Error", $"Error- {errMsg}");
+                        continue;
                     }
                     else
                     {
                         _loggerProxy.Info($"The saleORder {deliveryIds[i]} was Cancelled {errCode} - {errMsg}");
                         dictionaryResult.Add($"{deliveryIds[i]}-Ok", "Ok");
                     }
+
+                    if (type == ServiceConstants.Total)
+                    {
+                        dictionaryResult = CreateTransfer(deliveryIds[i], dictionaryResult, delivery);
+                    }
+                    
                 }
             }
             catch(Exception ex)
@@ -79,6 +85,44 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
             
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
+        private Dictionary<string, string> CreateTransfer(CancelDeliveryModel deliveryIds, Dictionary<string, string> dictionaryResult, Documents delivery)
+        {
+            var deliveryType = delivery.UserFields.Fields.Item("U_TipoPedido").Value;
+            var finalWhs = ServiceConstants.DictWhs.ContainsKey(deliveryType) ? ServiceConstants.DictWhs[deliveryType] : "MG";
+
+            var transfer = (StockTransfer)company.GetBusinessObject(BoObjectTypes.oStockTransfer);
+            transfer.DocDate = DateTime.Today;
+            transfer.FromWarehouse = "PT";
+            transfer.ToWarehouse = finalWhs;
+            transfer.JournalMemo = $"Traspaso por Cancelación: {deliveryIds.SaleOrderId}";
+
+            for (var i = 0; i < deliveryIds.MagistralProducts.Count; i++)
+            {
+                transfer.Lines.SetCurrentLine(i);
+                transfer.Lines.ItemCode = deliveryIds.MagistralProducts[i].ItemCode;
+                transfer.Lines.FromWarehouseCode = "PT";
+                transfer.Lines.WarehouseCode = finalWhs;
+                transfer.Lines.Quantity = deliveryIds.MagistralProducts[i].Pieces;
+                transfer.Lines.Add();
+            }
+
+            var transferResult = transfer.Add();
+            company.GetLastError(out int errCode, out string errMsg);
+
+            if (transferResult != 0)
+            {
+                _loggerProxy.Info($"The transfer for delivery: {deliveryIds.Delivery} was tried to be made. {errCode} - {errMsg}");
+                dictionaryResult.Add($"{deliveryIds.Delivery}-Transfer-Error", $"Error- {errMsg}");
+            }
+            else
+            {
+                _loggerProxy.Info($"The transfer for delivery: {deliveryIds.Delivery} was done. {errCode} - {errMsg}");
+                dictionaryResult.Add($"{deliveryIds.Delivery}-Transfer-Ok", "Ok");
+            }
+
+            return dictionaryResult;
         }
     }
 }

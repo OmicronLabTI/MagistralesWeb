@@ -17,6 +17,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     /// </summary>
     public interface ICancelService
     {
-        Task<ResultModel> CancelDelivery(List<int> deliveryIds);
+        /// <summary>
+        /// Cancels the delivery.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <param name="deliveryIds">the ids.</param>
+        /// <returns>the dat.</returns>
+        Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryModel> deliveryIds);
     }
 }

@@ -87,8 +87,9 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// Cancel a Delivery.
         /// </summary>
         /// <param name="deliveries">the delivery ids.</param>
+        /// <param name="type">the type.</param>
         /// <returns>the cancellation.</returns>
-        Task<ResultDto> CancelDelivery(List<int> deliveries);
+        Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveries);
 
         /// <summary>
         /// connecto to sap.

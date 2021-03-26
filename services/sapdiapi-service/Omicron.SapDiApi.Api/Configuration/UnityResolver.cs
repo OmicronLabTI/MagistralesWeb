@@ -60,6 +60,8 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<CreateDeliveryDto, CreateDeliveryModel>();
                 cfg.CreateMap<AlmacenBatchDto, AlmacenBatchesModel>();
                 cfg.CreateMap<SendPackageDto, SendPackageModel>();
+                cfg.CreateMap<ProductDeliveryDto, ProductDeliveryModel>();
+                cfg.CreateMap<CancelDeliveryDto, CancelDeliveryModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 

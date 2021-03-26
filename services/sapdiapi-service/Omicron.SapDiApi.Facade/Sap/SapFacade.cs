@@ -138,9 +138,9 @@ namespace Omicron.SapDiApi.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> CancelDelivery(List<int> deliveries)
+        public async Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveries)
         {
-            return this.mapper.Map<ResultDto>(await this.cancelService.CancelDelivery(deliveries));
+            return this.mapper.Map<ResultDto>(await this.cancelService.CancelDelivery(type, this.mapper.Map<List< CancelDeliveryModel>>(deliveries)));
         }
     }
 }
