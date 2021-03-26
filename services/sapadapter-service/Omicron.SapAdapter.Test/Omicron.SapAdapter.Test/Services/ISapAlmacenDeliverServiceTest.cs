@@ -106,6 +106,44 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryWithoutMaquila()
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
+            };
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+
+            // act
+            var response = await service.GetDelivery(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
         /// <param name="chip">the chip.</param>
         /// <returns>the data.</returns>
         [Test]

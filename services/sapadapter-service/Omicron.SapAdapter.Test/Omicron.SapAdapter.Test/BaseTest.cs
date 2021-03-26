@@ -48,7 +48,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 102, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN" },
 
                 // For Almacen
-                new OrderModel { PedidoId = 75000, Cliente = "cliente", DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX" },
+                new OrderModel { PedidoId = 75000, Cliente = "cliente", DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
                 new OrderModel { PedidoId = 75001, Cliente = "cliente", DocNum = 75001, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León" },
                 new OrderModel { PedidoId = 75002, Cliente = "cliente", DocNum = 75002, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null },
             };
@@ -182,6 +182,7 @@ namespace Omicron.SapAdapter.Test
                 new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = null },
                 new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
                 new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
+                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
             };
         }
 

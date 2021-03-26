@@ -298,6 +298,26 @@ namespace Omicron.SapAdapter.Services.Sap
                 listHeaderToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
             }
 
+            if (types.Contains(ServiceConstants.Maquila.ToLower()))
+            {
+                var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+                var orderListToAdd = new List<CompleteAlmacenOrderModel>();
+                foreach (var order in ordersMaquila)
+                {
+                    var orderExists = listHeaderToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
+                    if (orderExists == null)
+                    {
+                        orderListToAdd.Add(order);
+                    }
+                }
+
+                listHeaderToReturn.AddRange(orderListToAdd);
+            }
+            else
+            {
+                listHeaderToReturn = listHeaderToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
+            }
+
             return new Tuple<List<CompleteAlmacenOrderModel>, int>(listHeaderToReturn, granTotal);
         }
 

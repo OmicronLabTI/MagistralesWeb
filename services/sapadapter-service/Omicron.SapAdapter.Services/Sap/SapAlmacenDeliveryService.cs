@@ -132,6 +132,20 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+
+            if (types.Contains(ServiceConstants.Maquila.ToLower()))
+            {
+                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
+                var listMaquila = deliveryHeadersMaquila.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+                deliveryHeaders.AddRange(listMaquila);
+                deliveryHeaders = deliveryHeaders.DistinctBy(x => x.DocNum).ToList();
+                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => listMaquila.Select(l => l.DocNum).ToList().Contains(x.DeliveryId)));
+            }
+            else
+            {
+                deliveryHeaders = deliveryHeaders.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
+            }
+
             deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderBy(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
@@ -211,7 +225,7 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
-                var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
+                var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
                 var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == saleOrder.ToString());
                 var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
