@@ -424,7 +424,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = orders.Count;
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
-
                 var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems, batches);
 
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
@@ -454,6 +453,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = salesStatus,
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
+                    TypeOrder = order.TypeOrder,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -469,6 +469,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                     InvoiceType = invoiceType,
+                    TypeOrder = order.TypeOrder,
                 };
 
                 var saleModel = new SalesModel

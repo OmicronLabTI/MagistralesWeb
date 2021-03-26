@@ -58,7 +58,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public bool HasInvoice { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
+        /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         public string TypeOrder { get; set; }
