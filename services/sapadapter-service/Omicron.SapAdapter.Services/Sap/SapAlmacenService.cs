@@ -266,6 +266,18 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
+            var ordersSapMaquila = (await this.sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+            foreach (var order in ordersSapMaquila)
+            {
+                var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
+                if (orderSapExists == null)
+                {
+                    sapOrders.Add(order);
+                }
+            }
+
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
