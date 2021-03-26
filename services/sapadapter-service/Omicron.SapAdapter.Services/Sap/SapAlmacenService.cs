@@ -386,7 +386,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
 
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineProducts.Select(x => x.ItemCode).ToList())).ToList();
-
+            var orderList = (await this.sapDao.GetOrdersById(salesIds)).ToList();
             foreach (var so in salesIds)
             {
                 var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
@@ -405,9 +405,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order == null ? string.Empty : order.Medico;
 
-                var orderType = (await this.sapDao.GetOrdersById(order.DocNum)).FirstOrDefault();
+                var orderType = orderList.Where(x => x.PedidoId == order.DocNum).FirstOrDefault();
                 orderType ??= new OrderModel();
-
                 var productList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, incidents, productItems, batches);
 
                 var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
