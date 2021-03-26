@@ -304,7 +304,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orderListToAdd = new List<CompleteAlmacenOrderModel>();
                 foreach (var order in ordersMaquila)
                 {
-                    var orderExists = listHeaderToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.PedidoId == order.Detalles.PedidoId);
+                    var orderExists = listHeaderToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
                     if (orderExists == null)
                     {
                         orderListToAdd.Add(order);
