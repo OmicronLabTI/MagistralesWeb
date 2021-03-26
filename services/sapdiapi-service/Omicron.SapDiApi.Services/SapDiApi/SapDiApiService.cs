@@ -530,7 +530,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var saleOrderId = createDelivery.First().SaleOrderId;
             try
             {
-                var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);                
+                var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
                 var saleOrderFound = saleOrder.GetByKey(saleOrderId);
 
                 if (!saleOrderFound)
