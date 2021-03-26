@@ -211,6 +211,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetIncidents = "incident/saleorder";
 
         /// <summary>
+        /// gets the ids for lookup.
+        /// </summary>
+        public const string AdvanceLookId = "advance/id/look";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";

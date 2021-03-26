@@ -106,5 +106,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetCancelledInvoices();
+
+        /// <summary>
+        /// Get the advance lookup.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AdvanceLookUp(Dictionary<string, string> parameters);
     }
 }

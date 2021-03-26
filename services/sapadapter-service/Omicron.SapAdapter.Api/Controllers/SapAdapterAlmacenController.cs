@@ -214,5 +214,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.GetCancelledInvoices();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/advance/lookup")]
+        [HttpGet]
+        public async Task<IActionResult> AdvanceLookUp([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.AdvanceLookUp();
+            return this.Ok(response);
+        }
     }
 }

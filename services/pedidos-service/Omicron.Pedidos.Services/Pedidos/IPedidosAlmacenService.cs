@@ -77,5 +77,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="invoiceIds">the invoiced ids.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreatePdf(string type, List<int> invoiceIds);
+
+        /// <summary>
+        /// Looks by docnums.
+        /// </summary>
+        /// <param name="docNum">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> AdvanceLook(List<int> docNum);
     }
 }
