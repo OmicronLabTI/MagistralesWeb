@@ -326,16 +326,6 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string PT = "PT";
 
         /// <summary>
-        /// PT wharegouse.
-        /// </summary>
-        public const string OrderTypeMQ = "MQ";
-
-        /// <summary>
-        /// PT wharegouse.
-        /// </summary>
-        public const string Maquila = "Maquila";
-
-        /// <summary>
         /// the nvo leon state.
         /// </summary>
         public const string NuevoLeon = "Nuevo León";
