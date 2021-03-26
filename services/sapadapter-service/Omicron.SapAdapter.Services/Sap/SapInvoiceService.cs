@@ -462,6 +462,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Deliveries = 0,
                     Products = totalProducts,
                     InvoiceDocDate = invoice.FechaInicio,
+                    TypeOrder = invoice.TypeOrder,
                 };
 
                 var destiny = invoice.Address.Split(",");
@@ -478,6 +479,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalDeliveries = 0,
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,
+                    TypeOrder = invoice.TypeOrder,
                 };
 
                 var invoiceModelToAdd = new InvoicesModel

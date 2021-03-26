@@ -115,6 +115,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Gets or sets SalesPrsonId.
         /// </summary>
         /// <value>The code.</value>
+        [Column("U_TipoPedido")]
+        public string TypeOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets SalesPrsonId.
+        /// </summary>
+        /// <value>The code.</value>
         [Column("UpdateDate")]
         public DateTime UpdateDate { get; set; }
 

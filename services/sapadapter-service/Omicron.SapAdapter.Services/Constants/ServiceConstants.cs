@@ -391,6 +391,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string RemisionChip = "rem-";
 
         /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string OrderTypeMQ = "MQ";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string Maquila = "Maquila";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -558,6 +558,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
                              Address = order.Address,
+                             TypeOrder = order.OrderType,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
