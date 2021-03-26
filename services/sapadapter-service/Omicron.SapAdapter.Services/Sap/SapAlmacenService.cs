@@ -469,7 +469,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                     InvoiceType = invoiceType,
-                    TypeOrder = order.TypeOrder,
                 };
 
                 var saleModel = new SalesModel

@@ -253,7 +253,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
-                    TypeOrder = header.TypeOrder, // order.OrderType,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -269,7 +268,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
                     InvoiceType = invoiceType,
-                    TypeOrder = header.TypeOrder, // order.OrderType,
                 };
 
                 var saleModel = new SalesModel
