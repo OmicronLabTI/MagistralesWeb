@@ -57,9 +57,15 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 return await this.GetElementsById(parameters[ServiceConstants.DocNum]);
             }
+
+            return new ResultModel();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the cards for look up by id.
+        /// </summary>
+        /// <param name="docNum">the docnum.</param>
+        /// <returns>the data.</returns>
         private async Task<ResultModel> GetElementsById(string docNum)
         {
             int.TryParse(docNum, out int intDocNum);
@@ -67,7 +73,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
+            var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
+            /*
+             Generar tarjetas
+             */
+            return new ResultModel();
         }
     }
 }

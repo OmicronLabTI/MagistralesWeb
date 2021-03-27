@@ -224,7 +224,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> AdvanceLookUp([FromQuery] Dictionary<string, string> parameters)
         {
-            var response = await this.sapAlmacenFacade.AdvanceLookUp();
+            var response = await this.sapAlmacenFacade.AdvanceLookUp(parameters);
             return this.Ok(response);
         }
     }
