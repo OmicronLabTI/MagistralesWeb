@@ -480,6 +480,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,
                     TypeOrder = invoice.TypeOrder,
+                    CodeClient = invoice.CardCode,
                 };
 
                 var invoiceModelToAdd = new InvoicesModel

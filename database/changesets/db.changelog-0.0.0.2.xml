@@ -275,4 +275,20 @@
 		<column name="field" value="EmailLogisticaCc3"/>
 	</insert>
   </changeSet>
+  <changeSet author="erosas" id="changelog-2.35">
+    <createTable tableName="ExclusivePartners">
+      <column name="Id" type="INT" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+	  <column name="CodeSN" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="Name" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="Type" type="VARCHAR(50)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog> 
