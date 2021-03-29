@@ -111,5 +111,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public int DeliveryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type order.
+        /// </summary>
+        /// <value>
+        /// String type order.
+        public string TypeOrder { get; set; }
     }
 }
