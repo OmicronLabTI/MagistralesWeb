@@ -105,7 +105,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
             var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId);
             var dataToInsert = createUserModelOrders.Item1;
-            /* logs */
+
+            // logs
             var listOrderLogToInsert = new List<SalesLogs>();
             listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
 
@@ -124,6 +125,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var previousStatus = saleOrder.Status;
             saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
+            saleOrder.TypeOrder = orders.Order.OrderType;
 
             if (insertUserOrdersale)
             {
@@ -134,7 +136,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
-            /* logs */
+            // logs
             if (previousStatus != saleOrder.Status)
             {
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, new List<UserOrderModel> { saleOrder }));
@@ -255,6 +257,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Salesorderid = x.PedidoId.ToString(),
                     Status = ServiceConstants.Planificado,
                     MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
+                    TypeOrder = saleOrder.Order.OrderType,
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
@@ -318,6 +321,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var haveErrors = errors.Any(x => codes.Contains(x));
 
                 saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
+                saleOrder.TypeOrder = order.Order.OrderType;
 
                 if (insertUserOrdersale)
                 {
