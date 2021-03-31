@@ -8,6 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// class for the advance look up cards.
     /// </summary>
@@ -17,6 +19,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public AlmacenSalesHeaderModel CardOrder { get; set; }
+        public List<AlmacenSalesHeaderModel> CardOrder { get; set; }
     }
 }

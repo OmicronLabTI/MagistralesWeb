@@ -95,7 +95,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var receptionOrders = this.GetIsReceptionOrders(userOrders, lineProducts);
             if (receptionOrders.Item1 != null || receptionOrders.Item2 != null)
             {
-                cardToReturns.CardOrder = await this.GenerateCardForReceptionOrders(userOrders, lineProducts, receptionOrders.Item1, receptionOrders.Item2);
+                cardToReturns.CardOrder.Add(await this.GenerateCardForReceptionOrders(userOrders, lineProducts, receptionOrders.Item1, receptionOrders.Item2));
             }
 
             var deliveryOrders = this.GetIsReceptionDelivery(userOrders, lineProducts);
