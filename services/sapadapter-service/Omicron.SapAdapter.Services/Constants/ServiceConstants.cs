@@ -266,6 +266,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Finalizado = "Finalizado";
 
         /// <summary>
+        /// Status finalizado.
+        /// </summary>
+        public const string Liberado = "Liberado";
+
+        /// <summary>
         /// status por recibir.
         /// </summary>
         public const string PorRecibir = "Por recibir";
@@ -513,6 +518,30 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             Almacenado,
             BackOrder,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusReceptionOrders { get; } = new List<string>
+        {
+            Finalizado,
+            Liberado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusAlmacenReceptionOrders { get; } = new List<string>
+        {
+            BackOrder,
+            Recibir,
         };
     }
 }

@@ -90,38 +90,69 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
-            var type = string.Empty;
-            var listStatus = new List<string> { "Finalizado", "Liberado" };
-            var listStatusAlmacen = new List<string> { "Back Order", "Recibir" };
-            var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && listStatus.Contains(x.Status) && (listStatusAlmacen.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)) && string.IsNullOrEmpty(x.StatusInvoice));
             var cardToReturns = new CardsAdvancedLook();
 
-            if (userOrder != null)
+            var receptionOrders = this.GetIsReceptionOrders(userOrders, lineProducts);
+            if (receptionOrders.Item1 != null || receptionOrders.Item2 != null)
             {
-                var saporders = (await this.sapDao.GetAllOrdersForAlmacenById(int.Parse(userOrder.Salesorderid))).ToList();
-                var order = saporders.FirstOrDefault();
-
-                var status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
-                var productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
-                var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
-
-                var saleHeader = new AlmacenSalesHeaderModel
-                {
-                    Client = order.Cliente,
-                    DocNum = order.DocNum,
-                    Doctor = order.Medico,
-                    InitDate = order.FechaInicio,
-                    Status = status,
-                    TotalItems = saporders.Count,
-                    TotalPieces = saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
-                    TypeSaleOrder = $"Pedido {productType}",
-                    InvoiceType = invoiceType,
-                };
-
-                cardToReturns.CardOrder = saleHeader;
+                cardToReturns.CardOrder = await this.GenerateCardForReceptionOrders(userOrders, lineProducts, receptionOrders.Item1, receptionOrders.Item2);
             }
 
             return cardToReturns;
+        }
+
+        private Tuple<UserOrderModel, LineProductsModel> GetIsReceptionOrders(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)) && string.IsNullOrEmpty(x.StatusInvoice));
+            var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Recibir);
+
+            return new Tuple<UserOrderModel, LineProductsModel>(userOrder, lineProductOrder);
+        }
+
+        private async Task<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, UserOrderModel userOrderHeader, LineProductsModel lineProductHeader)
+        {
+            var order = new CompleteAlmacenOrderModel();
+            var status = string.Empty;
+            var totalItems = 0;
+            var totalPieces = 0;
+            var productType = string.Empty;
+            var invoiceType = string.Empty;
+            var saporders = new List<CompleteAlmacenOrderModel>();
+
+            if (userOrderHeader != null)
+            {
+                saporders = (await this.sapDao.GetAllOrdersForAlmacenById(int.Parse(userOrderHeader.Salesorderid))).ToList();
+                order = saporders.FirstOrDefault();
+                status = userOrderHeader.Status == ServiceConstants.Finalizado && userOrderHeader.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
+                productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrderHeader.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+            }
+            else
+            {
+                saporders = (await this.sapDao.GetAllOrdersForAlmacenById(lineProductHeader.SaleOrderId)).ToList();
+                order = saporders.FirstOrDefault();
+                /*Pending*/
+                status = lineProductHeader.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : ServiceConstants.BackOrder;
+                productType = ServiceConstants.Line;
+            }
+
+            invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+            totalItems = saporders.Count;
+            totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
+
+            var saleHeader = new AlmacenSalesHeaderModel
+            {
+                Client = order.Cliente,
+                DocNum = order.DocNum,
+                Doctor = order.Medico,
+                InitDate = order.FechaInicio,
+                Status = status,
+                TotalItems = totalItems,
+                TotalPieces = totalPieces,
+                TypeSaleOrder = $"Pedido {productType}",
+                InvoiceType = invoiceType,
+            };
+
+            return saleHeader;
         }
 
         private UserOrderModel GetCardsInOrders()
