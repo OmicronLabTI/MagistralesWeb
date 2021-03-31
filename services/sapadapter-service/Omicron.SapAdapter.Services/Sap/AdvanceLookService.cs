@@ -98,6 +98,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 cardToReturns.CardOrder = await this.GenerateCardForReceptionOrders(userOrders, lineProducts, receptionOrders.Item1, receptionOrders.Item2);
             }
 
+            var deliveryOrders = this.GetIsReceptionDelivery(userOrders, lineProducts);
+            if (deliveryOrders.Item1 || deliveryOrders.Item2)
+            {
+                cardToReturns.CardOrder = await this.GenerateCardForReceptionDelivery(userOrders, lineProducts, deliveryOrders.Item1, deliveryOrders.Item2);
+            }
+
             return cardToReturns;
         }
 
@@ -155,9 +161,19 @@ namespace Omicron.SapAdapter.Services.Sap
             return saleHeader;
         }
 
-        private UserOrderModel GetCardsInOrders()
+        private Tuple<bool, bool> GetIsReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
-            return new UserOrderModel();
+            var userOrder = userOrders.Count() > 0 ? userOrders.All(x => !string.IsNullOrEmpty(x.Productionorderid) && (x.StatusAlmacen == ServiceConstants.Almacenado)) : false;
+            var lineProductOrder = lineProducts.Count > 0 ? lineProducts.All(x => !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado) : false;
+
+            return new Tuple<bool, bool>(userOrder, lineProductOrder);
+        }
+
+        private async Task<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, bool userOrder, bool lineProduct)
+        {
+            var saleHeader = new AlmacenSalesHeaderModel();
+
+            return saleHeader;
         }
     }
 }
