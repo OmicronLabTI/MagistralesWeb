@@ -166,7 +166,6 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> AdvanceLookUp(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.advanceLookService.AdvanceLookUp(parameters));
-
         }
     }
 }

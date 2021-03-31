@@ -79,7 +79,54 @@ namespace Omicron.SapAdapter.Services.Sap
             /*
              Generar tarjetas
              */
-            return new ResultModel();
+            var response = await this.GetStatusToSearch(userOrders, almacenData.LineProducts);
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <summary>
+        /// Gets the cards for look up by id.
+        /// </summary>
+        /// <param name="userOrders">the user orders list.</param>
+        /// <returns>the data.</returns>
+        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            var type = string.Empty;
+            var listStatus = new List<string> { "Finalizado", "Liberado" };
+            var listStatusAlmacen = new List<string> { "Back Order", "Recibir" };
+            var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && listStatus.Contains(x.Status) && (listStatusAlmacen.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)) && string.IsNullOrEmpty(x.StatusInvoice));
+            var cardToReturns = new CardsAdvancedLook();
+
+            if (userOrder != null)
+            {
+                var saporders = (await this.sapDao.GetAllOrdersForAlmacenById(int.Parse(userOrder.Salesorderid))).ToList();
+                var order = saporders.FirstOrDefault();
+
+                var status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
+                var productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+
+                var saleHeader = new AlmacenSalesHeaderModel
+                {
+                    Client = order.Cliente,
+                    DocNum = order.DocNum,
+                    Doctor = order.Medico,
+                    InitDate = order.FechaInicio,
+                    Status = status,
+                    TotalItems = saporders.Count,
+                    TotalPieces = saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                    TypeSaleOrder = $"Pedido {productType}",
+                    InvoiceType = invoiceType,
+                };
+
+                cardToReturns.CardOrder = saleHeader;
+            }
+
+            return cardToReturns;
+        }
+
+        private UserOrderModel GetCardsInOrders()
+        {
+            return new UserOrderModel();
         }
     }
 }

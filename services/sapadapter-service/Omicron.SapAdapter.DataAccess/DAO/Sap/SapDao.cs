@@ -581,6 +581,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Detalles = x,
                     FechaInicio = order.FechaInicio,
                     Medico = order.Medico,
+                    Address = order.Address,
                 };
 
                 listToReturn.Add(model);
