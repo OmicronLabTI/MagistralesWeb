@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryOrders = this.GetIsReceptionDelivery(userOrders, lineProducts);
             if (deliveryOrders.Item1 || deliveryOrders.Item2)
             {
-                cardToReturns.CardOrder = await this.GenerateCardForReceptionDelivery(userOrders, lineProducts, deliveryOrders.Item1, deliveryOrders.Item2);
+                cardToReturns.CardDelivery.Add(await this.GenerateCardForReceptionDelivery(userOrders, lineProducts, deliveryOrders.Item1, deliveryOrders.Item2));
             }
 
             return cardToReturns;
