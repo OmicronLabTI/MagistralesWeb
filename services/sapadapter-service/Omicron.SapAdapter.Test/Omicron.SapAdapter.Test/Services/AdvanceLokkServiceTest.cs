@@ -39,6 +39,8 @@ namespace Omicron.SapAdapter.Test.Services
 
         private ISapDao sapDao;
 
+        private ISapService sapService;
+
         private DatabaseContext context;
 
         /// <summary>
