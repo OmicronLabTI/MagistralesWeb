@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.Test.Services
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(databaseName: "TemporalAdvancedLook")
                 .Options;
 
             this.context = new DatabaseContext(options);
