@@ -119,7 +119,8 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public string StatusInvoice { get; set; }
-        
+
+        /// <summary>
         /// Gets or sets the type order.
         /// </summary>
         /// <value>
