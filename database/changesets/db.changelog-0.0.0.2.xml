@@ -275,4 +275,13 @@
 		<column name="field" value="EmailLogisticaCc3"/>
 	</insert>
   </changeSet>
+  <changeSet author="esanchez" id="changelog-2.35">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="typeorder"
+			type="varchar(20)"
+			>
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

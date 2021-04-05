@@ -66,6 +66,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.DeliveryId,
                 x.StatusAlmacen,
                 x.FinishedLabel,
+                x.TypeOrder,
             }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);

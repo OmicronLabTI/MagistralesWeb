@@ -266,6 +266,13 @@ namespace Omicron.SapAdapter.Test.Services
                 4,
             };
 
+            var exclusivePartnersIds = new List<string>
+            {
+                "C1",
+                "C2",
+                "C3",
+            };
+
             var dataTollok = new InvoicePackageSapLookModel
             {
                 InvoiceDocNums = listUserOrder,
@@ -273,6 +280,7 @@ namespace Omicron.SapAdapter.Test.Services
                 Offset = 0,
                 Type = type,
                 Chip = chip,
+                ExclusivePartnersIds = exclusivePartnersIds,
             };
 
             // act

@@ -44,5 +44,11 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string Chip { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<string> ExclusivePartnersIds { get; set; }
     }
 }

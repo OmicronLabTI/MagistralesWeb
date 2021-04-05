@@ -203,7 +203,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
-            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon)).ToList();
+            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList();
 
             var dictParams = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(dataToLook.Chip))
@@ -480,6 +480,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,
                     TypeOrder = invoice.TypeOrder,
+                    CodeClient = invoice.CardCode,
                 };
 
                 var invoiceModelToAdd = new InvoicesModel

@@ -228,7 +228,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
 
-            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, listIds, dateToLook);
+            var userOrdersToLook = userOrders.Where(x => x.CloseDate >= dateToLook && x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
+            var userOrdersMaquila = userOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ && x.Status == ServiceConstants.Finalizado && x.FinishedLabel == 1).ToList();
+            userOrdersToLook.AddRange(userOrdersMaquila);
+            var idsToLook = userOrdersToLook.Select(x => int.Parse(x.Salesorderid)).ToList();
+            listIds = listIds.Where(x => !idsToLook.Contains(x)).ToList();
+
+            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrdersToLook, listIds, dateToLook);
         }
 
         /// <summary>
@@ -265,6 +271,18 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+
+            var ordersSapMaquila = (await this.sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+            foreach (var order in ordersSapMaquila)
+            {
+                var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
+                if (orderSapExists == null)
+                {
+                    sapOrders.Add(order);
+                }
+            }
 
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
