@@ -98,6 +98,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var cardToReturns = new CardsAdvancedLook();
             cardToReturns.CardOrder = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
+            cardToReturns.CardInvoice = new List<InvoiceSaleHeaderModel>();
 
             foreach (var id in userOrdersId)
             {
@@ -114,6 +115,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 if (deliveryOrders.Item1 || deliveryOrders.Item2)
                 {
                     cardToReturns.CardDelivery.AddRange(await this.GenerateCardForReceptionDelivery(userOrders, lineProducts, deliveryOrders.Item1, deliveryOrders.Item2));
+                }
+
+                var invoiceOrder = this.GetIsPackageInvoice(orders, lineProducts);
+                if (invoiceOrder.Item1 || invoiceOrder.Item2)
+                {
+                    cardToReturns.CardInvoice.AddRange(await this.GenerateCardForPackageInvoice(userOrders, lineProducts));
                 }
             }
 
@@ -251,6 +258,49 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return listToReturn;
+        }
+
+        private Tuple<bool, bool> GetIsPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusInvoice == ServiceConstants.Almacenado || x.StatusInvoice == ServiceConstants.Empaquetado);
+            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusInvoice == ServiceConstants.Almacenado || x.StatusInvoice == ServiceConstants.Empaquetado);
+
+            return new Tuple<bool, bool>(userOrder, lineProductOrder);
+        }
+
+        private async Task<List<InvoiceSaleHeaderModel>> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            var saleHeader = new List<InvoiceSaleHeaderModel>();
+
+            var deliverysId = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
+            deliverysId.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct());
+            deliverysId = deliverysId.Where(x => x != 0).Distinct().ToList();
+
+            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(deliverysId)).ToList();
+            var invoicesId = deliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
+
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+
+            // consulta de remiisones a almacen
+            var deliverysListStatus = null;
+
+            foreach (var invoice in invoiceHeaders)
+            {
+                var invoiceDetailsItem = invoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
+                var deliveryDetailsItem = deliveryDetails.Where(x => x.InvoiceId.HasValue && x.InvoiceId.Value == invoice.InvoiceId).ToList();
+
+                var salesId = deliveryDetails.Select(x => x.BaseEntry).ToList();
+                var userOrdersItems = userOrders.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
+                var lineProductsItems = lineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
+
+                deliveryDetailsItem.DistinctBy(x => x.DeliveryId).ToList()
+                   .ForEach(y =>
+                   {
+                   });
+            }
+
+            return saleHeader;
         }
     }
 }
