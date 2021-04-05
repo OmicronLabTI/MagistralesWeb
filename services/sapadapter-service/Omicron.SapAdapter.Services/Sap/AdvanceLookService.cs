@@ -167,6 +167,7 @@ namespace Omicron.SapAdapter.Services.Sap
             tupleIds.ForEach(order =>
             {
                 var carPedido = this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails)
+                var cardRemision = 
             });
 
             foreach (var id in userOrdersId)
@@ -256,8 +257,37 @@ namespace Omicron.SapAdapter.Services.Sap
             return saleHeader;
         }
 
+        private AlmacenSalesHeaderModel GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            if (tuple.Item2 != ServiceConstants.Delivery)
+            {
+                return null;
+            }
+                var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
+            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
+
+            return new Tuple<bool, bool>(userOrder, lineProductOrder);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private Tuple<bool, bool> GetIsReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
+            if ()
             var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
             var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
 
