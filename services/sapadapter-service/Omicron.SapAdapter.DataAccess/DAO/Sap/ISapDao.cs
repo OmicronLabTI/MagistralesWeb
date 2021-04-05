@@ -398,5 +398,21 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="date">the date to look.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date);
+
+        /// <summary>
+        /// Gets the deliveries by date.
+        /// </summary>
+        /// <param name="initDate">the init date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliverModel>> GetDeliveryByDocDate(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Gets the deliveries by date.
+        /// </summary>
+        /// <param name="initDate">the init date.</param>
+        /// <param name="endDate">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDate(DateTime initDate, DateTime endDate);
     }
 }

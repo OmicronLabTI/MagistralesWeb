@@ -96,6 +96,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Advance = "advance";
 
         /// <summary>
+        /// the doctor filter.
+        /// </summary>
+        public const string Doctor = "doctor";
+
+        /// <summary>
         /// the abierto status.
         /// </summary>
         public const string Abierto = "Abierto";
@@ -389,6 +394,21 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Orden value.
         /// </summary>
         public const string Orden = "ord";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Delivery = "delivery";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Invoice = "invoice";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string SaleOrder = "pedido";
 
         /// <summary>
         /// the insert value.
