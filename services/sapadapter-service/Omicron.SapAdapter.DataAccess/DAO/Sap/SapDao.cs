@@ -722,6 +722,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.UpdateDate == date));
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliverModel>> GetDeliveryByDocDate(DateTime initDate, DateTime endDate)
+        {
+            return await this.RetryQuery<DeliverModel>(this.databaseContext.DeliverModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDate(DateTime initDate, DateTime endDate)
+        {
+            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

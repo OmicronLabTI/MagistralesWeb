@@ -21,6 +21,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
@@ -38,8 +39,6 @@ namespace Omicron.SapAdapter.Test.Services
         private IAdvanceLookService advanceLookService;
 
         private ISapDao sapDao;
-
-        private ISapService sapService;
 
         private DatabaseContext context;
 
@@ -61,22 +60,12 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.Users.AddRange(this.GetSapUsers());
             this.context.DetalleFormulaModel.AddRange(this.GetDetalleFormula());
-            this.context.ItemWarehouseModel.AddRange(this.GetItemWareHouse());
-            this.context.Batches.AddRange(this.GetBatches());
-            this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
-            this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
-            this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
-            this.context.AttachmentModel.AddRange(this.GetAttachmentModel());
+            this.context.DeliverModel.AddRange(this.DeliveryModel());
+            this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
-            var mockUserService = new Mock<IUsersService>();
-            var mockConfiguration = new Mock<IConfiguration>();
-            var mockRedis = new Mock<IRedisService>();
-
-            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
-            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
-            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+            var mockAlmacen = new Mock<IAlmacenService>();
 
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
@@ -86,21 +75,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetPedidosService(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
 
-            mockUserService
-                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
-
             var mockLog = new Mock<ILogger>();
 
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
-            mockRedis
-                .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
-
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
         }
 
         /// <summary>
@@ -108,7 +89,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task GetOrdersFechaIni()
+        public async Task GetPedidosByDoctor()
         {
             // arrange
             var dates = DateTime.Now.ToString("dd/MM/yyyy");
@@ -116,10 +97,39 @@ namespace Omicron.SapAdapter.Test.Services
             var dicParams = new Dictionary<string, string>
             {
                 { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Doctor, "doctor" },
+                { ServiceConstants.Type, ServiceConstants.SaleOrder },
             };
 
             // act
-            var result = await this.sapService.GetOrders(dicParams);
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase(ServiceConstants.SaleOrder)]
+        [TestCase(ServiceConstants.Delivery)]
+        [TestCase(ServiceConstants.Invoice)]
+        public async Task GetCardsByDoctor(string type)
+        {
+            // arrange
+            var dates = DateTime.Now.ToString("dd/MM/yyyy");
+            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Doctor, "Medico" },
+                { ServiceConstants.Type, type },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
 
             Assert.IsNotNull(result);
         }

@@ -59,7 +59,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return await this.GetElementsById(parameters[ServiceConstants.DocNum]);
             }
 
-            return new ResultModel();
+            return await this.GetElementsByDoctor(parameters);
         }
 
         /// <summary>
@@ -81,6 +81,23 @@ namespace Omicron.SapAdapter.Services.Sap
              Generar tarjetas
              */
 
+            var response = await this.GetStatusToSearch(userOrders, almacenData.LineProducts);
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <summary>
+        /// Gets the cards for look up by id.
+        /// </summary>
+        /// <param name="parameters">the docnum.</param>
+        /// <returns>the data.</returns>
+        private async Task<ResultModel> GetElementsByDoctor(Dictionary<string, string> parameters)
+        {
+            var listDocs = await this.GetIdsToLookByDoctor(parameters);
+            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
+            var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
             var response = await this.GetStatusToSearch(userOrders, almacenData.LineProducts);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
@@ -258,6 +275,38 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the ids to look by doctor.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private async Task<List<int>> GetIdsToLookByDoctor(Dictionary<string, string> parameters)
+        {
+            var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
+            var dictDates = ServiceUtils.GetDateFilter(parameters);
+            var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.SaleOrder;
+
+            switch (type)
+            {
+                case ServiceConstants.SaleOrder:
+                    var orders = (await this.sapDao.GetAllOrdersByFechaIni(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    orders = orders.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    return orders.Select(x => x.DocNum).Distinct().ToList();
+
+                case ServiceConstants.Delivery:
+                    var deliveries = (await this.sapDao.GetDeliveryByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    return deliveries.Select(x => x.DocNum).Distinct().ToList();
+
+                case ServiceConstants.Invoice:
+                    var invoices = (await this.sapDao.GetInvoiceHeadersByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    return invoices.Select(x => x.DocNum).Distinct().ToList();
+            }
+
+            return new List<int>();
         }
 
         private Tuple<bool, bool> GetIsPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
