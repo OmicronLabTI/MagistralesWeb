@@ -94,5 +94,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Datetime userid.
         /// </value>
         public string StatusInvoice { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int InvoiceId { get; set; }
     }
 }
