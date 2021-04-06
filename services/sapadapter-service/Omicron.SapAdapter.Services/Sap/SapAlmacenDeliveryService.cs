@@ -222,6 +222,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var productsIds = details.Where(x => listIds.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
+            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(details.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
+
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
@@ -240,6 +242,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
+                var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
+                deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
+                var invoice = invoices.FirstOrDefault(x => x.InvoiceId == deliveryWithInvoice.InvoiceId.Value);
+                var hasInvoice = invoice != null && invoice.InvoiceStatus != "C";
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = d,
@@ -248,7 +254,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = ServiceConstants.Almacenado,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
-                    HasInvoice = deliveryDetail.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0),
+                    HasInvoice = hasInvoice,
                     TypeOrder = header.TypeOrder,
                 };
 

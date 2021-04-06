@@ -50,6 +50,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var response = await this.GetParametersDateToLook(ServiceConstants.AlmacenMaxDayToLook);
             var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, response.Item1, ServiceConstants.StatuPendingAlmacen, ServiceConstants.Almacenado);
+            orders = orders.DistinctBy(x => x.Id).ToList();
             var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, response.Item1);
 
             var odersToLook = orders.Select(x => x.Salesorderid).Distinct().ToList();
