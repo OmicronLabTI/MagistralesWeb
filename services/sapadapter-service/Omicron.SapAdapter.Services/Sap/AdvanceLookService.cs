@@ -115,7 +115,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var cardToReturns = new CardsAdvancedLook();
             cardToReturns.CardOrder = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
-            cardToReturns.CardInvoice = new List<InvoiceSaleHeaderModel>();
+            cardToReturns.CardInvoice = new List<InvoiceHeaderAdvancedLookUp>();
 
             foreach (var id in userOrdersId)
             {
@@ -311,28 +311,35 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private Tuple<bool, bool> GetIsPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
-            var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusInvoice == ServiceConstants.Almacenado || x.StatusInvoice == ServiceConstants.Empaquetado);
-            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusInvoice == ServiceConstants.Almacenado || x.StatusInvoice == ServiceConstants.Empaquetado);
+            var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => (x.StatusAlmacen == ServiceConstants.Almacenado || x.StatusAlmacen == ServiceConstants.Empaquetado) && x.InvoiceId != 0);
+            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => (x.StatusAlmacen == ServiceConstants.Almacenado || x.StatusAlmacen == ServiceConstants.Empaquetado) && x.InvoiceId != 0);
 
             return new Tuple<bool, bool>(userOrder, lineProductOrder);
         }
 
-        private async Task<List<InvoiceSaleHeaderModel>> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private async Task<List<InvoiceHeaderAdvancedLookUp>> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
-            var saleHeader = new List<InvoiceSaleHeaderModel>();
+            var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
             var deliverysId = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
             deliverysId.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct());
             deliverysId = deliverysId.Where(x => x != 0).Distinct().ToList();
 
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(deliverysId)).ToList();
-            var invoicesId = deliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
+            var invoicesIdSap = deliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList();
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdSap)).ToList();
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesIdSap)).ToList();
 
             // consulta de remiisones a almacen
-            var deliverysListStatus = null;
+            var invoicesId = userOrders.Select(x => x.InvoiceId).Distinct().ToList();
+            invoicesId.AddRange(lineProducts.Select(x => x.InvoiceId).Distinct());
+            invoicesId = invoicesId.Where(x => x != 0).Distinct().ToList();
+            var deliverysListStatusResponse = await this.pedidosService.GetUserPedidos(invoicesId, ServiceConstants.AdvanceLookId);
+            var deliverysListStatus = JsonConvert.DeserializeObject<List<UserOrderModel>>(deliverysListStatusResponse.Response.ToString());
+
+            var almacenListStatusResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, invoicesId);
+            var almacendeliverysListStatus = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenListStatusResponse.Response.ToString());
 
             foreach (var invoice in invoiceHeaders)
             {
@@ -343,13 +350,55 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrdersItems = userOrders.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
                 var lineProductsItems = lineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
 
-                deliveryDetailsItem.DistinctBy(x => x.DeliveryId).ToList()
-                   .ForEach(y =>
+                var deliverys = this.GetDeliveryModel(deliveryDetailsItem, invoiceDetailsItem, userOrdersItems, lineProductsItems);
+                var totalProducts = invoiceDetailsItem.Count;
+
+                deliverys.ForEach(y =>
                    {
+                       var invoiceHeader = new InvoiceHeaderAdvancedLookUp
+                       {
+                           Address = invoice.Address.Replace("\r", string.Empty),
+                           Client = invoice.Cliente,
+                           Doctor = invoice.Medico ?? string.Empty,
+                           Invoice = invoice.DocNum,
+                           DocEntry = invoice.InvoiceId,
+                           InvoiceDocDate = invoice.FechaInicio,
+                           ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                           TotalDeliveries = deliverys.Count,
+                           TotalProducts = totalProducts,
+                           TypeOrder = invoice.TypeOrder,
+                           DeliverId = y.DeliveryId,
+                           SalesOrder = y.SaleOrder,
+                       };
+                       invoicesHeaders.Add(invoiceHeader);
                    });
             }
 
-            return saleHeader;
+            return invoicesHeaders;
+        }
+
+        private List<InvoiceDeliveryModel> GetDeliveryModel(List<DeliveryDetailModel> delivery, List<InvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
+        {
+            var listToReturn = new List<InvoiceDeliveryModel>();
+            delivery.DistinctBy(x => x.DeliveryId).ToList()
+                .ForEach(y =>
+                {
+                    var userOrderStatus = userOrderModels.Where(z => z.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(z.Productionorderid)).Select(y => y.StatusAlmacen).ToList();
+                    userOrderStatus.AddRange(lineProducts.Where(x => x.DeliveryId == y.DeliveryId && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.StatusAlmacen));
+
+                    var deliveryModel = new InvoiceDeliveryModel
+                    {
+                        DeliveryId = y.DeliveryId,
+                        DeliveryDocDate = y.DocDate,
+                        SaleOrder = y.BaseEntry,
+                        Status = userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
+                        TotalItems = invoiceDetails.Where(a => a.BaseEntry.HasValue).Count(z => z.BaseEntry == y.DeliveryId),
+                    };
+
+                    listToReturn.Add(deliveryModel);
+                });
+
+            return listToReturn;
         }
     }
 }
