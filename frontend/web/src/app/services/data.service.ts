@@ -4,7 +4,7 @@ import Swal, {SweetAlertIcon} from 'sweetalert2';
 import {
   Colors, ColorsBarGraph,
   CONST_NUMBER,
-  CONST_STRING,
+  CONST_STRING, CONST_USER_DIALOG,
   ConstOrders,
   ConstStatus,
   ConstToken,
@@ -648,5 +648,8 @@ export class DataService {
   }
   removeCurrentDetailOrder() {
     localStorage.removeItem(ConstToken.detailOrderCurrent);
+  }
+  inputNumbersOnly(event): boolean {
+    return CONST_USER_DIALOG.patternOnlyNumbers.test(event.key);
   }
 }

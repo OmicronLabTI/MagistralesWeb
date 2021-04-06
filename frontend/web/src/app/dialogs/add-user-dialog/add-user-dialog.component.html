@@ -76,7 +76,7 @@
                                    placeholder="Piezas máximas"
                                    class="height-input"
                                    type="text" pattern="[0-9]*" maxlength="5"
-                                   (keypress)="numericOnly($event)"
+                                   (keypress)="dataService.inputNumbersOnly($event)"
                                    />
 
                             <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
