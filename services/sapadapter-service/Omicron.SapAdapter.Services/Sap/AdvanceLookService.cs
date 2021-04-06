@@ -320,26 +320,21 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<InvoiceHeaderAdvancedLookUp>> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
-
-            var deliverysId = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
-            deliverysId.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct());
-            deliverysId = deliverysId.Where(x => x != 0).Distinct().ToList();
-
-            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(deliverysId)).ToList();
-            var invoicesIdSap = deliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
-
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdSap)).ToList();
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesIdSap)).ToList();
-
-            // consulta de remiisones a almacen
             var invoicesId = userOrders.Select(x => x.InvoiceId).Distinct().ToList();
             invoicesId.AddRange(lineProducts.Select(x => x.InvoiceId).Distinct());
             invoicesId = invoicesId.Where(x => x != 0).Distinct().ToList();
-            var deliverysListStatusResponse = await this.pedidosService.GetUserPedidos(invoicesId, ServiceConstants.AdvanceLookId);
-            var deliverysListStatus = JsonConvert.DeserializeObject<List<UserOrderModel>>(deliverysListStatusResponse.Response.ToString());
 
-            var almacenListStatusResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, invoicesId);
-            var almacendeliverysListStatus = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenListStatusResponse.Response.ToString());
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeadersByDocNum(invoicesId)).ToList();
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
+
+            var deliverysIds = invoiceDetails.Where(x => x.BaseEntry.HasValue).Select(y => y.BaseEntry.Value).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(deliverysIds)).ToList();
+
+            // consulta de remiisones a almacen
+            var userOrderStatusResponse = await this.pedidosService.GetUserPedidos(deliverysIds, ServiceConstants.AdvanceLookId);
+            var userOrderStatus = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderStatusResponse.Response.ToString());
+            var lineProductsStatusResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, deliverysIds);
+            var lineProductsStatus = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(lineProductsStatusResponse.Response.ToString());
 
             foreach (var invoice in invoiceHeaders)
             {
@@ -347,13 +342,14 @@ namespace Omicron.SapAdapter.Services.Sap
                 var deliveryDetailsItem = deliveryDetails.Where(x => x.InvoiceId.HasValue && x.InvoiceId.Value == invoice.InvoiceId).ToList();
 
                 var salesId = deliveryDetails.Select(x => x.BaseEntry).ToList();
-                var userOrdersItems = userOrders.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
-                var lineProductsItems = lineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
+                var userOrdersItems = userOrderStatus.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
+                var lineProductsItems = lineProductsStatus.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
 
                 var deliverys = this.GetDeliveryModel(deliveryDetailsItem, invoiceDetailsItem, userOrdersItems, lineProductsItems);
                 var totalProducts = invoiceDetailsItem.Count;
+                var idsearc = userOrders.Select(x => int.Parse(x.Salesorderid)).ToList();
 
-                deliverys.ForEach(y =>
+                deliverys.Where(x => idsearc.Contains(x.SaleOrder)).ToList().ForEach(y =>
                    {
                        var invoiceHeader = new InvoiceHeaderAdvancedLookUp
                        {
@@ -369,6 +365,7 @@ namespace Omicron.SapAdapter.Services.Sap
                            TypeOrder = invoice.TypeOrder,
                            DeliverId = y.DeliveryId,
                            SalesOrder = y.SaleOrder,
+                           StatusDelivery = y.Status,
                        };
                        invoicesHeaders.Add(invoiceHeader);
                    });
