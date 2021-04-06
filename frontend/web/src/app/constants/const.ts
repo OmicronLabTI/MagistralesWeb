@@ -20,11 +20,15 @@ export const CONST_STRING = {
     empty: '',
     zero: '0',
 };
-
+export const CONST_CONTAINER = {
+    en: 'EN',
+    em: 'EM'
+};
 export const CONST_USER_DIALOG = {
     defaultQfb: 'QFB',
     defaultNumberOfPieces: '200',
-    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/
+    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/,
+    patternOnlyNumbers: /^[0-9]$/
 };
 
 export const MODAL_NAMES =  {
