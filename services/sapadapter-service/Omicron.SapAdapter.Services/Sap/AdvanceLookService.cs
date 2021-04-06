@@ -159,7 +159,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.DocNum).ToList())).ToList();
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntry(sapDelivery.Select(x => x.DocNum).ToList()));
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
-
+            var lineProducts = (await this.sapDao.GetAllLineProducts()).ToList();
             var cardToReturns = new CardsAdvancedLook();
             cardToReturns.CardOrder = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
@@ -217,7 +217,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 status = userOrder.Status != ServiceConstants.Finalizado && ServiceConstants.Status != ServiceConstants.Almacenado ? ServiceConstants.Pendiente : status;
                 productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
-                porRecibirDate = userOrder.CloseDate.HasValue ? userOrder.CloseDate.Value : porRecibirDate;
+                porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 hasCandidate = true;
             }
 
@@ -257,87 +257,58 @@ namespace Omicron.SapAdapter.Services.Sap
             return saleHeader;
         }
 
-        private AlmacenSalesHeaderModel GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts)
         {
             if (tuple.Item2 != ServiceConstants.Delivery)
             {
-                return null;
+                return new List<AlmacenSalesHeaderModel>();
             }
-                var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
-            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
 
-            return new Tuple<bool, bool>(userOrder, lineProductOrder);
+            if (tuple.Item2 == ServiceConstants.SaleOrder)
+            {
+                var deliveryIdsBySale = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).Select(x => x.DeliveryId).ToList();
+                deliveryIdsBySale.AddRange(lineProducts.Where(x => x.SaleOrderId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.DeliveryId));
+
+                var dateTimes = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).Select(x => x.).ToList();
+                return this.GenerateCardForReceptionDelivery(deliveryIdsBySale, deliveryDetailModels, deliveryHeaders, lineSapProducts);
+            }
+
+            if (tuple.Item2 == ServiceConstants.Delivery)
+            {
+                var delivryIds = userOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid)).Select(y => y.DeliveryId).ToList();
+                delivryIds.AddRange(lineProducts.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode)).Select(y => y.DeliveryId));
+                return this.GenerateCardForReceptionDelivery(delivryIds, deliveryDetailModels, deliveryHeaders, lineSapProducts);
+            }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private Tuple<bool, bool> GetIsReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
-        {
-            if ()
-            var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
-            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
-
-            return new Tuple<bool, bool>(userOrder, lineProductOrder);
-        }
-
-        private async Task<List<AlmacenSalesHeaderModel>> GenerateCardForReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, bool userOrder, bool lineProduct)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(List<int> possibleDeliveries, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, DateTime initDate, string status)
         {
             var saleHeader = new List<AlmacenSalesHeaderModel>();
-            var saleHeaderItem = new AlmacenSalesHeaderModel();
 
-            var deliverysId = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
-            deliverysId.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct());
-            deliverysId = deliverysId.Where(x => x != 0).Distinct().ToList();
-
-            var deliveryDetailDb = (await this.sapDao.GetDeliveryByDocEntry(deliverysId)).ToList();
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
-            var listIdsDelivery = deliveryDetailDb.Select(x => x.DeliveryId).Distinct().ToList();
-
-            var productsIds = deliveryDetailDb.Where(x => listIdsDelivery.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
-            var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
-
-            foreach (var d in listIdsDelivery)
+            foreach (var delivery in possibleDeliveries)
             {
-                var header = deliveryHeaders.FirstOrDefault(x => x.DocNum == d);
-                var deliveryDetail = deliveryDetailDb.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
+                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
+                {
+                    continue;
+                }
+
+                var header = deliveryHeaders.FirstOrDefault(x => x.DocNum == delivery);
+                header ??= new DeliverModel();
+                var deliveryDetail = deliveryDetailModels.Where(x => x.DeliveryId == delivery).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
-                var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
-                var productType = string.Empty;
+                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts.Select(x => x.ProductoId).ToList());
 
-                var hasInvoice = deliveryDetailDb.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0);
-
-                var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
-                var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
-
-                var productList = this.GenerateListProductType(deliveryDetail, productItems);
-                productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
-
-                saleHeaderItem = new AlmacenSalesHeaderModel
+                var saleHeaderItem = new AlmacenSalesHeaderModel
                 {
                     Client = header.Cliente,
                     DocNum = saleOrder,
                     Doctor = header.Medico,
-                    InitDate = header.FechaInicio,
-                    Status = ServiceConstants.Almacenado,
-                    Remision = d,
+                    InitDate = initDate,
+                    Status = status,
+                    Remision = delivery,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     TypeSaleOrder = $"Pedido {productType}",
@@ -349,21 +320,19 @@ namespace Omicron.SapAdapter.Services.Sap
             return saleHeader;
         }
 
-        private List<ProductListModel> GenerateListProductType(List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> products)
+        private string GenerateListProductTypeDelivery(List<DeliveryDetailModel> deliveryDetails, List<string> lineProducts)
         {
-            var listToReturn = new List<ProductListModel>();
-            foreach (var order in deliveryDetails)
+            if (deliveryDetails.All(x => lineProducts.Contains(x.ProductoId)))
             {
-                var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
-                item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productModel = new ProductListModel
-                {
-                    IsMagistral = item.IsMagistral.Equals("Y"),
-                };
-                listToReturn.Add(productModel);
+                return ServiceConstants.Linea;
             }
 
-            return listToReturn;
+            if (!deliveryDetails.All(x => lineProducts.Contains(x.ProductoId)) && deliveryDetails.Any(x => lineProducts.Contains(x.ProductoId)))
+            {
+                return ServiceConstants.Mixto;
+            }
+
+            return ServiceConstants.Magistral;
         }
 
         /// <summary>
