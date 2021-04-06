@@ -349,26 +349,28 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalProducts = invoiceDetailsItem.Count;
                 var idsearc = userOrders.Select(x => int.Parse(x.Salesorderid)).ToList();
 
-                deliverys.Where(x => idsearc.Contains(x.SaleOrder)).ToList().ForEach(y =>
-                   {
-                       var invoiceHeader = new InvoiceHeaderAdvancedLookUp
-                       {
-                           Address = invoice.Address.Replace("\r", string.Empty),
-                           Client = invoice.Cliente,
-                           Doctor = invoice.Medico ?? string.Empty,
-                           Invoice = invoice.DocNum,
-                           DocEntry = invoice.InvoiceId,
-                           InvoiceDocDate = invoice.FechaInicio,
-                           ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                           TotalDeliveries = deliverys.Count,
-                           TotalProducts = totalProducts,
-                           TypeOrder = invoice.TypeOrder,
-                           DeliverId = y.DeliveryId,
-                           SalesOrder = y.SaleOrder,
-                           StatusDelivery = y.Status,
-                       };
-                       invoicesHeaders.Add(invoiceHeader);
-                   });
+                if (!deliverys.All(x => x.Status == ServiceConstants.Empaquetado))
+                {
+                    deliverys.Where(x => idsearc.Contains(x.SaleOrder)).ToList().ForEach(y =>
+                    {
+                        var invoiceHeader = new InvoiceHeaderAdvancedLookUp
+                        {
+                            Address = invoice.Address.Replace("\r", string.Empty),
+                            Client = invoice.Cliente,
+                            Doctor = invoice.Medico ?? string.Empty,
+                            Invoice = invoice.DocNum,
+                            DocEntry = invoice.InvoiceId,
+                            InvoiceDocDate = invoice.FechaInicio,
+                            ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                            TotalDeliveries = deliverys.Count,
+                            TotalProducts = totalProducts,
+                            DeliverId = y.DeliveryId,
+                            SalesOrder = y.SaleOrder,
+                            StatusDelivery = y.Status,
+                        };
+                        invoicesHeaders.Add(invoiceHeader);
+                    });
+                }
             }
 
             return invoicesHeaders;
