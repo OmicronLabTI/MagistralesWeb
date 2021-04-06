@@ -108,5 +108,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The IsChecked.</value>
         public string OrderType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string Address { get; set; }
     }
 }

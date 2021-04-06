@@ -10,8 +10,7 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
     using System;
 
-    /// <summary>
-    /// Class OrderLog Model.
+    /// <summary>/// Class OrderLog Model.
     /// </summary>
     public class UserOrderModel
     {
@@ -127,5 +126,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// String type order.
         /// </value>
         public string TypeOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type order.
+        /// </summary>
+        /// <value>
+        /// String type order.
+        public DateTime? DateTimeCheckIn { get; set; }
     }
 }

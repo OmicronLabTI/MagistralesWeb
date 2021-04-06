@@ -17,14 +17,11 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
-    using Serilog;
 
     /// <summary>
     /// class for advance looks.
@@ -77,11 +74,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
-            /*
-             Generar tarjetas
-             */
-
-            var response = await this.GetStatusToSearch(userOrders, almacenData.LineProducts);
+            var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
@@ -98,83 +92,135 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
-            var response = await this.GetStatusToSearch(userOrders, almacenData.LineProducts);
+
+            var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
         /// <summary>
-        /// Gets the cards for look up by id.
+        /// Gets what is the identity of the id.
         /// </summary>
-        /// <param name="userOrders">the user orders list.</param>
-        /// <returns>the data.</returns>
-        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="adnvaceLookUp">the almacen data.</param>
+        /// <param name="idsToFind">the id to find.</param>
+        /// <returns>the tuple.</returns>
+        private List<Tuple<int, string>> KindLookUp(List<UserOrderModel> userOrders, AdnvaceLookUpModel adnvaceLookUp, List<int> idsToFind)
         {
-            var userOrdersId = userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
-            userOrdersId.AddRange(lineProducts.Select(x => x.SaleOrderId).Distinct());
-            userOrdersId = userOrdersId.Distinct().ToList();
+            var tupleIds = new List<Tuple<int, string>>();
+
+            idsToFind.ForEach(id =>
+            {
+                var match = false;
+
+                if (userOrders.Any(x => x.Salesorderid == id.ToString()) || adnvaceLookUp.LineProducts.Any(x => x.SaleOrderId == id))
+                {
+                    tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.SaleOrder));
+                    match = true;
+                }
+
+                if (userOrders.Any(x => x.DeliveryId == id) || adnvaceLookUp.LineProducts.Any(x => x.DeliveryId == id))
+                {
+                    tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.Delivery));
+                    match = true;
+                }
+
+                if (userOrders.Any(x => x.InvoiceId == id) || adnvaceLookUp.LineProducts.Any(x => x.InvoiceId == id))
+                {
+                    tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.Invoice));
+                    match = true;
+                }
+
+                if (adnvaceLookUp.CancelationModel != null && adnvaceLookUp.CancelationModel.Any(x => x.CancelledId == id))
+                {
+                    var cancelled = adnvaceLookUp.CancelationModel.FirstOrDefault(x => x.CancelledId == id);
+                    var type = cancelled.TypeCancellation.ToLower() == ServiceConstants.Invoice ? ServiceConstants.Invoice : ServiceConstants.Delivery;
+                    tupleIds.Add(new Tuple<int, string>(id, type));
+                    match = true;
+                }
+
+                if (!match)
+                {
+                    tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.SaleOrder));
+                }
+            });
+
+            return tupleIds;
+        }
+
+        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
+        {
+            var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder).Select(y => y.Item1).ToList())).ToList();
+            var sapDeliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
+            var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNum(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
+
+            var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNum(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice).Select(y => y.Item1).ToList())).ToList();
+            var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.DocNum).ToList())).ToList();
+            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntry(sapDelivery.Select(x => x.DocNum).ToList()));
+            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
+            var lineProducts = (await this.sapDao.GetAllLineProducts()).ToList();
             var cardToReturns = new CardsAdvancedLook();
             cardToReturns.CardOrder = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
-            cardToReturns.CardInvoice = new List<InvoiceHeaderAdvancedLookUp>();
 
-            foreach (var id in userOrdersId)
+            tupleIds.ForEach(order =>
             {
-                var orders = userOrders.Where(x => int.Parse(x.Salesorderid) == id).ToList();
-                var linesProducts = lineProducts.Where(x => x.SaleOrderId == id).ToList();
-
-                var receptionOrders = this.GetIsReceptionOrders(orders, linesProducts);
-                if (receptionOrders.Item1 != null || receptionOrders.Item2 != null)
-                {
-                    cardToReturns.CardOrder.Add(await this.GenerateCardForReceptionOrders(linesProducts, receptionOrders.Item1, receptionOrders.Item2));
-                }
-
-                var deliveryOrders = this.GetIsReceptionDelivery(orders, linesProducts);
-                if (deliveryOrders.Item1 || deliveryOrders.Item2)
-                {
-                    cardToReturns.CardDelivery.AddRange(await this.GenerateCardForReceptionDelivery(userOrders, lineProducts, deliveryOrders.Item1, deliveryOrders.Item2));
-                }
-
-                var invoiceOrder = this.GetIsPackageInvoice(orders, lineProducts);
-                if (invoiceOrder.Item1 || invoiceOrder.Item2)
-                {
-                    cardToReturns.CardInvoice.AddRange(await this.GenerateCardForPackageInvoice(userOrders, lineProducts));
-                }
-            }
+                cardToReturns.CardOrder.Add(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
+                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel));
+            });
 
             return cardToReturns;
         }
 
-        private Tuple<UserOrderModel, LineProductsModel> GetIsReceptionOrders(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private AlmacenSalesHeaderModel GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails)
         {
-           var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)) && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId == 0);
-           var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Recibir && x.DeliveryId == 0);
-           return new Tuple<UserOrderModel, LineProductsModel>(userOrder, lineProductOrder);
+            if (tuple.Item2 != ServiceConstants.SaleOrder)
+            {
+                return null;
+            }
+
+            var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
+            var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
+            return this.GenerateCardForReceptionOrders(tuple, lineProducts, orderDetail, deliveryDetails, userOrder, lineProductOrder);
         }
 
-        private async Task<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(List<LineProductsModel> lineProducts, UserOrderModel userOrderHeader, LineProductsModel lineProductHeader)
+        private AlmacenSalesHeaderModel GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder)
         {
-            var order = new CompleteAlmacenOrderModel();
+            var order = new CompleteOrderModel();
             var status = string.Empty;
             var totalItems = 0;
             var totalPieces = 0;
             var productType = string.Empty;
             var invoiceType = string.Empty;
-            var saporders = new List<CompleteAlmacenOrderModel>();
-
-            if (userOrderHeader != null)
+            var saporders = new List<CompleteOrderModel>();
+            var porRecibirDate = DateTime.Now;
+            var hasCandidate = false;
+            if (userOrder != null)
             {
-                saporders = (await this.sapDao.GetAllOrdersForAlmacenById(int.Parse(userOrderHeader.Salesorderid))).ToList();
+                saporders = orderDetail.Where(x => x.DocNum.ToString() == userOrder.Salesorderid).ToList();
                 order = saporders.FirstOrDefault();
-                status = userOrderHeader.Status == ServiceConstants.Finalizado && userOrderHeader.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
-                productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrderHeader.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
+                status = userOrder.Status != ServiceConstants.Finalizado && ServiceConstants.Status != ServiceConstants.Almacenado ? ServiceConstants.Pendiente : status;
+                productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
+                hasCandidate = true;
             }
-            else
+
+            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.DeliveryId == tuple.Item1))))
             {
-                saporders = (await this.sapDao.GetAllOrdersForAlmacenById(lineProductHeader.SaleOrderId)).ToList();
+                saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
-                /*Pending*/
-                status = lineProductHeader.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : ServiceConstants.BackOrder;
+                status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
+                status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
                 productType = ServiceConstants.Line;
+                porRecibirDate = DateTime.Parse(order.FechaInicio);
+                hasCandidate = true;
+            }
+
+            if (!hasCandidate)
+            {
+                return null;
             }
 
             invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
@@ -183,72 +229,90 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
-                Client = order.Cliente,
                 DocNum = order.DocNum,
-                Doctor = order.Medico,
-                InitDate = order.FechaInicio,
                 Status = status,
-                TotalItems = totalItems,
-                TotalPieces = totalPieces,
                 TypeSaleOrder = $"Pedido {productType}",
+                Doctor = order.Medico,
                 InvoiceType = invoiceType,
+                TotalItems = totalItems,
+                InitDate = porRecibirDate,
+                Client = order.Cliente,
+                TotalPieces = totalPieces,
             };
 
             return saleHeader;
         }
 
-        private Tuple<bool, bool> GetIsReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<CancellationResourceModel> cancellations)
         {
-            var userOrder = userOrders.Any() && userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
-            var lineProductOrder = lineProducts.Any() && lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Almacenado && string.IsNullOrEmpty(x.StatusInvoice) && x.DeliveryId != 0);
+            if (tuple.Item2 == ServiceConstants.Invoice)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
 
-            return new Tuple<bool, bool>(userOrder, lineProductOrder);
+            if (tuple.Item2 == ServiceConstants.SaleOrder)
+            {
+                var userOrdersFromSale = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
+                var lineProductsFromSale = lineProducts.Where(x => x.SaleOrderId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
+                var deliveryIdsBySale = userOrdersFromSale.Select(x => x.DeliveryId).ToList();
+                deliveryIdsBySale.AddRange(lineProductsFromSale.Select(y => y.DeliveryId));
+                return this.GenerateCardForReceptionDelivery(deliveryIdsBySale, deliveryDetailModels, deliveryHeaders, lineSapProducts, userOrdersFromSale, lineProductsFromSale);
+            }
+
+            var isCancelled = cancellations.Any(x => x.CancelledId == tuple.Item1);
+            if (tuple.Item2 == ServiceConstants.Delivery && !isCancelled)
+            {
+                var userOrdersFromDelivery = userOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
+                var lineProductsFromDelivery = lineProducts.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
+                var delivryIds = new List<int> { tuple.Item1 };
+                return this.GenerateCardForReceptionDelivery(delivryIds, deliveryDetailModels, deliveryHeaders, lineSapProducts, userOrdersFromDelivery, lineProductsFromDelivery);
+            }
+
+            if (tuple.Item2 == ServiceConstants.Delivery && isCancelled)
+            {
+                var delivryIds = new List<int> { tuple.Item1 };
+                var cancelation = cancellations.FirstOrDefault(x => x.CancelledId == tuple.Item1);
+                cancelation ??= new CancellationResourceModel();
+                var cancelledOrder = new List<UserOrderModel> { new UserOrderModel { DeliveryId = tuple.Item1, DateTimeCheckIn = cancelation.CancelDate, StatusAlmacen = ServiceConstants.Cancelado } };
+                return this.GenerateCardForReceptionDelivery(delivryIds, deliveryDetailModels, deliveryHeaders, lineSapProducts, cancelledOrder, new List<LineProductsModel>());
+            }
+
+            return new List<AlmacenSalesHeaderModel>();
         }
 
-        private async Task<List<AlmacenSalesHeaderModel>> GenerateCardForReceptionDelivery(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, bool userOrder, bool lineProduct)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(List<int> possibleDeliveries, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             var saleHeader = new List<AlmacenSalesHeaderModel>();
-            var saleHeaderItem = new AlmacenSalesHeaderModel();
 
-            var deliverysId = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
-            deliverysId.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct());
-            deliverysId = deliverysId.Where(x => x != 0).Distinct().ToList();
-
-            var deliveryDetailDb = (await this.sapDao.GetDeliveryByDocEntry(deliverysId)).ToList();
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
-            var listIdsDelivery = deliveryDetailDb.Select(x => x.DeliveryId).Distinct().ToList();
-
-            var productsIds = deliveryDetailDb.Where(x => listIdsDelivery.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
-            var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
-
-            foreach (var d in listIdsDelivery)
+            foreach (var delivery in possibleDeliveries)
             {
-                var header = deliveryHeaders.FirstOrDefault(x => x.DocNum == d);
-                var deliveryDetail = deliveryDetailDb.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
+                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
+                {
+                    continue;
+                }
+
+                var header = deliveryHeaders.FirstOrDefault(x => x.DocNum == delivery);
+                header ??= new DeliverModel();
+                var deliveryDetail = deliveryDetailModels.Where(x => x.DeliveryId == delivery).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
-                var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
-                var productType = string.Empty;
+                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts.Select(x => x.ProductoId).ToList());
 
-                var hasInvoice = deliveryDetailDb.Any(d => d.InvoiceId.HasValue && d.InvoiceId.Value != 0);
+                var userOrderByDelivery = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
+                var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.DeliveryId == delivery);
+                var initDate = userOrderByDelivery != null ? userOrderByDelivery.DateTimeCheckIn : lineProductByDelivery.DateCheckIn;
+                var status = userOrderByDelivery != null ? userOrderByDelivery.StatusAlmacen : lineProductByDelivery.StatusAlmacen;
 
-                var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
-                var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
-
-                var productList = this.GenerateListProductType(deliveryDetail, productItems);
-                productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
-
-                saleHeaderItem = new AlmacenSalesHeaderModel
+                var saleHeaderItem = new AlmacenSalesHeaderModel
                 {
                     Client = header.Cliente,
                     DocNum = saleOrder,
                     Doctor = header.Medico,
-                    InitDate = header.FechaInicio,
-                    Status = ServiceConstants.Almacenado,
-                    Remision = d,
+                    InitDate = initDate.Value,
+                    Status = status,
+                    Remision = delivery,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     TypeSaleOrder = $"Pedido {productType}",
@@ -260,21 +324,19 @@ namespace Omicron.SapAdapter.Services.Sap
             return saleHeader;
         }
 
-        private List<ProductListModel> GenerateListProductType(List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> products)
+        private string GenerateListProductTypeDelivery(List<DeliveryDetailModel> deliveryDetails, List<string> lineProducts)
         {
-            var listToReturn = new List<ProductListModel>();
-            foreach (var order in deliveryDetails)
+            if (deliveryDetails.All(x => lineProducts.Contains(x.ProductoId)))
             {
-                var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
-                item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productModel = new ProductListModel
-                {
-                    IsMagistral = item.IsMagistral.Equals("Y"),
-                };
-                listToReturn.Add(productModel);
+                return ServiceConstants.Linea;
             }
 
-            return listToReturn;
+            if (!deliveryDetails.All(x => lineProducts.Contains(x.ProductoId)) && deliveryDetails.Any(x => lineProducts.Contains(x.ProductoId)))
+            {
+                return ServiceConstants.Mixto;
+            }
+
+            return ServiceConstants.Magistral;
         }
 
         /// <summary>
