@@ -266,9 +266,11 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
+            var orderToAppear = userOrdersTuple.Item1.Select(x => x.Salesorderid).ToList();
             var ordersSapMaquila = (await this.sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
             ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
-            ordersSapMaquila = ordersSapMaquila.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => orderToAppear.Contains(x.DocNum.ToString())).ToList();
+
             foreach (var order in ordersSapMaquila)
             {
                 var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
