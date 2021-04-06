@@ -131,7 +131,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     match = true;
                 }
 
-                if (adnvaceLookUp.CancelationModel.Any(x => x.CancelledId == id))
+                if (adnvaceLookUp.CancelationModel != null && adnvaceLookUp.CancelationModel.Any(x => x.CancelledId == id))
                 {
                     var cancelled = adnvaceLookUp.CancelationModel.FirstOrDefault(x => x.CancelledId == id);
                     var type = cancelled.TypeCancellation.ToLower() == ServiceConstants.Invoice ? ServiceConstants.Invoice : ServiceConstants.Delivery;
@@ -166,8 +166,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             tupleIds.ForEach(order =>
             {
-                var carPedido = this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails);
-                var cardRemision = this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel);
+                cardToReturns.CardOrder.Add(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
+                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel));
             });
 
             return cardToReturns;
@@ -207,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 hasCandidate = true;
             }
 
-            if (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.DeliveryId == tuple.Item1)))
+            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.DeliveryId == tuple.Item1))))
             {
                 saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
@@ -245,7 +245,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<CancellationResourceModel> cancellations)
         {
-            if (tuple.Item2 != ServiceConstants.Delivery)
+            if (tuple.Item2 == ServiceConstants.Invoice)
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
