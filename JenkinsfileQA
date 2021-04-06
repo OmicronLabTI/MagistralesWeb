@@ -120,8 +120,7 @@ pipeline {
                     }
                 }
             }
-        }
-		/*
+        }/*
         stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
@@ -205,8 +204,7 @@ pipeline {
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
                 }
             }
-        }
-		*/
+        }*/
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
