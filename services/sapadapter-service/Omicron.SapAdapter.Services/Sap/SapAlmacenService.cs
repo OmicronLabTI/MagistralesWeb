@@ -507,7 +507,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<CompleteAlmacenOrderModel> GetOrdersToProcess(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            sapOrders = sapOrders.OrderBy(x => x.DocNum).ToList();
+            sapOrders = sapOrders.OrderByDescending(x => x.DocNum).ToList();
             var pedidosId = sapOrders.Select(x => x.DocNum).Distinct().ToList();
 
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";

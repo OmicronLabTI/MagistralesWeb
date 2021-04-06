@@ -147,7 +147,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
-            deliveryHeaders = deliveryHeaders.OrderBy(x => x.DocNum).ToList();
+            deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
             deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);

@@ -397,7 +397,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the ids to look.</returns>
         private List<int> GetInvoicesToLook(Dictionary<string, string> parameters, List<InvoiceHeaderModel> invoiceHeaders)
         {
-            var invoiceHeadersIds = invoiceHeaders.OrderBy(x => x.InvoiceId).Select(y => y.InvoiceId).ToList();
+            var invoiceHeadersIds = invoiceHeaders.OrderByDescending(x => x.InvoiceId).Select(y => y.InvoiceId).ToList();
             var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
             var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
 
