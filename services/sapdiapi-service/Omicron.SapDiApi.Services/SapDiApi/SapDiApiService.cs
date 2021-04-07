@@ -453,13 +453,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     _loggerProxy.Error(ex.Message, ex);
                     results.Add(productionOrderId, ex.Message);
-                    continue;
                 }
                 catch (Exception ex)
                 {
                     _loggerProxy.Error(ex.StackTrace, ex);
                     results.Add(productionOrderId, ServiceConstants.FailReasonUnexpectedError);
-                    continue;
                 }
             }
 

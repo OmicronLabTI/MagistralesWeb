@@ -73,6 +73,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
+            invoiceHeaders = invoiceHeaders.OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
 
             var retrieveMode = new RetrieveInvoiceModel
