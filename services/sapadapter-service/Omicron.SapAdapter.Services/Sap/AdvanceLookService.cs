@@ -196,7 +196,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 cardToReturns.CardOrder.Add(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, sapDeliveryDetails, almacenData.CancelationModel, sapInvoicesHeaders, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder));
-                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder, users, almacenData.PackageModels));
+
+                // cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder, users, almacenData.PackageModels));
             });
 
             return cardToReturns;
@@ -225,6 +226,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var saporders = new List<CompleteOrderModel>();
             var porRecibirDate = DateTime.Now;
             var hasCandidate = false;
+            var initDate = DateTime.Now;
+
             if (userOrder != null)
             {
                 saporders = orderDetail.Where(x => x.DocNum.ToString() == userOrder.Salesorderid).ToList();
@@ -243,7 +246,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
                 productType = ServiceConstants.Linea;
-                porRecibirDate = order.FechaInicio != null ? DateTime.Parse(order.FechaInicio) : porRecibirDate;
+                porRecibirDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : porRecibirDate;
                 hasCandidate = true;
             }
 
@@ -255,6 +258,7 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
+            initDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : initDate;
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
@@ -264,7 +268,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = order.Medico,
                 InvoiceType = invoiceType,
                 TotalItems = totalItems,
-                InitDate = DateTime.Parse(order.FechaInicio),
+                InitDate = initDate,
                 Client = order.Cliente,
                 TotalPieces = totalPieces,
                 DataCheckin = porRecibirDate,
