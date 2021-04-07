@@ -98,5 +98,17 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsLookUpInvoices { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DeliveredBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ReasonNotDelivered { get; set; }
     }
 }

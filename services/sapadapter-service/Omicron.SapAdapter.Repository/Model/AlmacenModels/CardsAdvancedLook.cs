@@ -32,5 +32,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<InvoiceHeaderAdvancedLookUp> CardInvoice { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<InvoiceHeaderAdvancedLookUp> CardDistribution { get; set; }
     }
 }
