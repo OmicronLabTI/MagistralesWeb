@@ -222,7 +222,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
                 productType = ServiceConstants.Line;
-                porRecibirDate = DateTime.Parse(order.FechaInicio);
+                porRecibirDate = order.FechaInicio != null ? DateTime.Parse(order.FechaInicio) : porRecibirDate;
                 hasCandidate = true;
             }
 
@@ -267,7 +267,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return this.GenerateCardForReceptionDelivery(deliveryIdsBySale, deliveryDetailModels, deliveryHeaders, lineSapProducts, userOrdersFromSale, lineProductsFromSale);
             }
 
-            var isCancelled = cancellations.Any(x => x.CancelledId == tuple.Item1);
+            var isCancelled = cancellations != null && cancellations.Any(x => x.CancelledId == tuple.Item1);
             if (tuple.Item2 == ServiceConstants.Delivery && !isCancelled)
             {
                 var userOrdersFromDelivery = userOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
@@ -390,10 +390,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(deliveryIdsBySale, userOrder, lineProductOrder, deliveryDetailModels, deliveryHeaders, invoiceHeaders, invoiceDetails, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
-            var isCancelled = cancellations.Any(x => x.CancelledId == tuple.Item1);
+            var isCancelled = cancellations != null && cancellations.Any(x => x.CancelledId == tuple.Item1);
             if (tuple.Item2 == ServiceConstants.Delivery && !isCancelled)
             {
-                return new List<InvoiceHeaderAdvancedLookUp>();
+                var userOrdersFromDelivery = userOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
+                var lineProductsFromDelivery = lineProducts.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
+                var delivryIds = new List<int> { tuple.Item1 };
+                return this.GenerateCardForPackageInvoiceTheSalesOrder(delivryIds, userOrdersFromDelivery, lineProductsFromDelivery, deliveryDetailModels, deliveryHeaders, invoiceHeaders, invoiceDetails, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
             if (tuple.Item2 == ServiceConstants.Invoice && isCancelled)
@@ -403,6 +406,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (tuple.Item2 == ServiceConstants.Invoice)
             {
+                var invoiceIds = new List<int> { tuple.Item1 };
+                var userOrdersFromDelivery = userOrders.Where(x => x.InvoiceId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                var lineProductsFromDelivery = lineProducts.Where(x => x.InvoiceId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode)).ToList();
+                return this.GenerateCardForPackageInvoice(userOrdersFromDelivery, lineProductsFromDelivery, invoiceHeaders, invoiceDetailsToLook, deliverysToLookSaleOrder);
                 return new List<InvoiceHeaderAdvancedLookUp>();
             }
 
@@ -448,6 +455,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             SalesOrder = deliveryHeader.SaleOrder,
                             StatusDelivery = deliveryHeader.Status,
                             DataCheckin = initDate,
+                            IsLookUpInvoices = false,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -457,59 +465,45 @@ namespace Omicron.SapAdapter.Services.Sap
             return invoicesHeaders;
         }
 
-        private async Task<List<InvoiceHeaderAdvancedLookUp>> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
-            var invoicesId = userOrders.Select(x => x.InvoiceId).Distinct().ToList();
-            invoicesId.AddRange(lineProducts.Select(x => x.InvoiceId).Distinct());
-            invoicesId = invoicesId.Where(x => x != 0).Distinct().ToList();
+            var delivryIds = deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList();
 
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeadersByDocNum(invoicesId)).ToList();
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
-
-            var deliverysIds = invoiceDetails.Where(x => x.BaseEntry.HasValue).Select(y => y.BaseEntry.Value).ToList();
-            var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(deliverysIds)).ToList();
-
-            // consulta de remiisones a almacen
-            var userOrderStatusResponse = await this.pedidosService.GetUserPedidos(deliverysIds, ServiceConstants.AdvanceLookId);
-            var userOrderStatus = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderStatusResponse.Response.ToString());
-            var lineProductsStatusResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, deliverysIds);
-            var lineProductsStatus = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(lineProductsStatusResponse.Response.ToString());
-
-            foreach (var invoice in invoiceHeaders)
+            if (deliverysToLookSaleOrder.Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
             {
-                var invoiceDetailsItem = invoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
-                var deliveryDetailsItem = deliveryDetails.Where(x => x.InvoiceId.HasValue && x.InvoiceId.Value == invoice.InvoiceId).ToList();
+                var invoiceHeader = invoiceHeaders.FirstOrDefault();
+                var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
+                var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
 
-                var salesId = deliveryDetails.Select(x => x.BaseEntry).ToList();
-                var userOrdersItems = userOrderStatus.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
-                var lineProductsItems = lineProductsStatus.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
+                var deliverys = this.GetDeliveryModel(deliveryDetails, invoiceDetail, userOrders, lineProducts);
+                var totalProducts = invoiceDetail.Count;
 
-                var deliverys = this.GetDeliveryModel(deliveryDetailsItem, invoiceDetailsItem, userOrdersItems, lineProductsItems);
-                var totalProducts = invoiceDetailsItem.Count;
-                var idsearc = userOrders.Select(x => int.Parse(x.Salesorderid)).ToList();
+                var userOrderByDate = userOrders.FirstOrDefault(x => x.InvoiceId == invoiceHeader.DocNum);
+                var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.InvoiceId == invoiceHeader.DocNum);
+                var initDate = userOrderByDate != null ? userOrderByDate.DateTimeCheckIn : lineProductByDelivery.DateCheckIn;
+
+                var status = ServiceConstants.Almacenado;
 
                 if (!deliverys.All(x => x.Status == ServiceConstants.Empaquetado))
                 {
-                    deliverys.Where(x => idsearc.Contains(x.SaleOrder)).ToList().ForEach(y =>
+                    var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                     {
-                        var invoiceHeader = new InvoiceHeaderAdvancedLookUp
-                        {
-                            Address = invoice.Address.Replace("\r", string.Empty),
-                            Client = invoice.Cliente,
-                            Doctor = invoice.Medico ?? string.Empty,
-                            Invoice = invoice.DocNum,
-                            DocEntry = invoice.InvoiceId,
-                            InvoiceDocDate = invoice.FechaInicio,
-                            ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                            TotalDeliveries = deliverys.Count,
-                            TotalProducts = totalProducts,
-                            DeliverId = y.DeliveryId,
-                            SalesOrder = y.SaleOrder,
-                            StatusDelivery = y.Status,
-                        };
-                        invoicesHeaders.Add(invoiceHeader);
-                    });
+                        Address = invoiceHeader.Address.Replace("\r", string.Empty),
+                        Client = invoiceHeader.Cliente,
+                        Doctor = invoiceHeader.Medico ?? string.Empty,
+                        Invoice = invoiceHeader.DocNum,
+                        DocEntry = invoiceHeader.InvoiceId,
+                        InvoiceDocDate = invoiceHeader.FechaInicio,
+                        ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                        TotalDeliveries = deliverys.Count,
+                        TotalProducts = totalProducts,
+                        StatusDelivery = status,
+                        DataCheckin = initDate,
+                        SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
+                        IsLookUpInvoices = true,
+                    };
+                    invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
             }
 
