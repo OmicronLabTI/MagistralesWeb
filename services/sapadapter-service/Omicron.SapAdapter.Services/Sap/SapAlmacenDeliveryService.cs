@@ -147,11 +147,12 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
-            deliveryHeaders = deliveryHeaders.OrderBy(x => x.DocNum).ToList();
+            deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
             deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
             deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
+            deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>(deliveryToReturn, deliveryHeaders, filterCount);
         }
