@@ -169,15 +169,18 @@ namespace Omicron.SapAdapter.Services.Sap
             cardToReturns.CardOrder = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardInvoice = new List<InvoiceHeaderAdvancedLookUp>();
+            cardToReturns.CardDistribution = new List<InvoiceHeaderAdvancedLookUp>();
 
             var listInvoicedId = sapDeliveryDetails.Select(x => x.InvoiceId.Value).ToList();
             var invoiceHeadersToLook = (await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId)).ToList();
             var invoiceDetailsToLook = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
             var deliverysToLookSaleOrder = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetailsToLook.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList())).ToList();
 
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList(), ServiceConstants.AdvanceLookId);
+            var listIds = deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList();
+            listIds.AddRange(invoiceHeadersToLook.Select(x => x.DocNum));
+            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listIds, ServiceConstants.AdvanceLookId);
             var userOrdersForDelivery = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList());
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listIds);
             var almacenDataForDelivery = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             // Change
@@ -194,7 +197,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 cardToReturns.CardOrder.Add(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
-                cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, sapDeliveryDetails, almacenData.CancelationModel, sapInvoicesHeaders, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder));
+                ////cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, sapDeliveryDetails, almacenData.CancelationModel, sapInvoicesHeaders, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder, users, almacenData.PackageModels));
             });
 
@@ -651,14 +654,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private InvoiceHeaderAdvancedLookUp GenerateCardForDistribution(int invoiceId, UserOrderModel userOrder, List<InvoiceHeaderModel> invoiceHeader, List<InvoiceDetailModel> invoiceDetails, List<DeliveryDetailModel> deliveryDetails, List<PackageModel> packages, List<UserModel> users, bool isFromInvoice)
         {
-            var invoice = invoiceHeader.FirstOrDefault(x => x.InvoiceId == invoiceId);
+            var invoice = invoiceHeader.FirstOrDefault(x => x.DocNum == invoiceId);
             invoice ??= new InvoiceHeaderModel();
 
-            var localInvoiceDetails = invoiceDetails.Where(x => x.InvoiceId == invoiceId).ToList();
+            var localInvoiceDetails = invoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
             var totalDeliveries = localInvoiceDetails.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
             var totalSales = deliveryDetails.Select(x => x.BaseEntry).Distinct().ToList();
             var package = packages.FirstOrDefault(x => x.InvoiceId == invoiceId);
-            package ??= new PackageModel { AssignedUser = string.Empty };
+            package ??= new PackageModel { AssignedUser = string.Empty, Status = userOrder.StatusInvoice };
             var deliveredBy = users.FirstOrDefault(x => x.Id == package.AssignedUser);
 
             var card = new InvoiceHeaderAdvancedLookUp
