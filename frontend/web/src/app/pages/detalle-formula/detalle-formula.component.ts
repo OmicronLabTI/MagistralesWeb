@@ -9,7 +9,7 @@ import {DataService} from '../../services/data.service';
 import {
   CarouselOption,
   CarouselOptionString,
-  ComponentSearch,
+  ComponentSearch, CONST_CONTAINER,
   CONST_DETAIL_FORMULA,
   CONST_NUMBER,
   CONST_STRING,
@@ -67,7 +67,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   filterDataOrdersForOrderIsolated = new ParamsPedidos();
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
-              private dataService: DataService,
+              public dataService: DataService,
               private titleService: Title) {
   }
 
@@ -87,6 +87,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.getDetalleFormula();
     this.subscription.add(this.dataService.getNewFormulaComponent().subscribe( resultNewFormulaComponent => {
       resultNewFormulaComponent.action = CONST_DETAIL_FORMULA.insert;
+      resultNewFormulaComponent.isContainer = this.validateIsContainer(resultNewFormulaComponent.productId);
       this.oldDataFormulaDetail.details.push(resultNewFormulaComponent);
       this.dataSource.data = this.oldDataFormulaDetail.details;
       this.getIsReadyTOSave();
@@ -119,10 +120,15 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           `${new Intl.NumberFormat().format(Number(warehouseSplit[0]))}.${warehouseSplit[1]}`;
       detail.stock = stockSplit.length === 1 ? stockSplit[0] :
           `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
+      detail.isContainer = this.validateIsContainer(detail.productId);
     });
     this.isReadyToSave = false;
     this.componentsToDelete = [];
     this.dataService.setIsToSaveAnything(false);
+  }
+  validateIsContainer(productId: string) {
+    const productIdType = productId.split('-')[0];
+    return productIdType === CONST_CONTAINER.en || productIdType === CONST_CONTAINER.em;
   }
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
@@ -186,6 +192,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
                 component.stock = component.stock || CONST_NUMBER.zero;
                 component.stock = Number(component.stock.toString().replace(',', ''));
                 component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
+                component.baseQuantity = Number(component.baseQuantity);
+                component.requiredQuantity = Number(component.requiredQuantity);
               });
               detailComponentsTOSave.components =  componentsToDeleteFull;
               this.pedidosService.updateFormula(detailComponentsTOSave).subscribe( () => {
@@ -351,6 +359,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           , CONST_NUMBER.one);
       this.dataSource.data.splice(this.dataSource.data.findIndex( element => element.productId === component.productId)
           , CONST_NUMBER.one );
+      component.isContainer = this.validateIsContainer(component.productId);
     });
 
     this.componentsToDelete.push(...this.dataSource.data.filter(
@@ -376,7 +385,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         stock: 0,
         warehouseQuantity: 10,
         action: CONST_DETAIL_FORMULA.insert,
-        isInDb: false
+        isInDb: false,
+        isContainer: this.validateIsContainer(element.productId)
       });
     });
     this.dataSource.data = [].concat(newData, newDataToUpdate);

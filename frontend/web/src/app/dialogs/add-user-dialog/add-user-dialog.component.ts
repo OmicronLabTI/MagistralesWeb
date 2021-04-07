@@ -30,7 +30,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
               private usersService: UsersService, private errorService: ErrorService,
-              private dataService: DataService,
+              public dataService: DataService,
               private dialogRef: MatDialogRef<AddUserDialogComponent>) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
@@ -143,10 +143,6 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     } else {
       this.errorService.httpError(error);
     }
-  }
-  numericOnly(event): boolean {
-    const pattern = /^[0-9]$/;
-    return pattern.test(event.key);
   }
 
   getOnlyNumbers(pieces: string) {
