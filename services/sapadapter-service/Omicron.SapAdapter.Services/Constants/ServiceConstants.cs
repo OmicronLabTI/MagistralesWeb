@@ -146,6 +146,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Asignado = "Asignado";
 
         /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Camino = "En Camino";
+
+        /// <summary>
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
@@ -294,6 +299,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// status not delivered.
         /// </summary>
         public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Entregado = "Entregado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Enviado = "Enviado";
 
         /// <summary>
         /// status pendiente.

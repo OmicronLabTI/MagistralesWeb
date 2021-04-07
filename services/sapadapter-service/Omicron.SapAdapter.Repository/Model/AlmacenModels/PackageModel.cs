@@ -62,5 +62,21 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Datetime userid.
         /// </value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public string ReasonNotDelivered { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public string NotDeliveredFlag { get; set; }
     }
 }
