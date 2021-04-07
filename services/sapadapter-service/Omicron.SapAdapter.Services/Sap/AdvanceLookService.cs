@@ -171,14 +171,26 @@ namespace Omicron.SapAdapter.Services.Sap
             cardToReturns.CardDelivery = new List<AlmacenSalesHeaderModel>();
             cardToReturns.CardInvoice = new List<InvoiceHeaderAdvancedLookUp>();
 
+            var temporalsapDeliveryDetails = new List<DeliveryDetailModel>();
+            var temporalsapInvoicesDeatils = new List<InvoiceDetailModel>();
             var listInvoicedId = sapDeliveryDetails.Select(x => x.InvoiceId.Value).ToList();
-            var invoiceHeadersToLook = (await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId)).ToList();
-            var invoiceDetailsToLook = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
-            var deliverysToLookSaleOrder = (await this.sapDao.GetDeliveryByDocEntry(invoiceDetailsToLook.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList())).ToList();
+            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId));
+            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
+            sapInvoicesDeatils.GroupBy(x => x.BaseEntry).ToList().ForEach(x =>
+            {
+                temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+            });
+            sapInvoicesDeatils = temporalsapInvoicesDeatils;
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
+            sapDeliveryDetails.GroupBy(x => x.DeliveryId).ToList().ForEach(x =>
+            {
+                temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+            });
+            sapDeliveryDetails = temporalsapDeliveryDetails;
 
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList(), ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.GetUserPedidos(sapDeliveryDetails.Select(x => x.DeliveryId).ToList(), ServiceConstants.AdvanceLookId);
             var userOrdersForDelivery = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, deliverysToLookSaleOrder.Select(x => x.DeliveryId).ToList());
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, sapDeliveryDetails.Select(x => x.DeliveryId).ToList());
             var almacenDataForDelivery = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             // Change
@@ -195,9 +207,8 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 cardToReturns.CardOrder.Add(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
-                cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, sapDeliveryDetails, almacenData.CancelationModel, sapInvoicesHeaders, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder));
-
-                // cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder, users, almacenData.PackageModels));
+                cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, sapDeliveryDetails, almacenData.CancelationModel, sapInvoicesHeaders, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails));
+                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder, users, almacenData.PackageModels));
             });
 
             return cardToReturns;
