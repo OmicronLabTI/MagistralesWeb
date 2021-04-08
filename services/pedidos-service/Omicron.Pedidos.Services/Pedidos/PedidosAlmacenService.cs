@@ -275,6 +275,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, JsonConvert.SerializeObject(listErrorId), listRoutes, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> AdvanceLook(List<int> docNum)
+        {
+            var listString = docNum.Select(x => x.ToString()).ToList();
+
+            var userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listString)).ToList();
+            userOrders.AddRange(await this.pedidosDao.GetUserOrderByDeliveryId(docNum));
+            userOrders.AddRange(await this.pedidosDao.GetUserOrdersByInvoiceId(docNum));
+
+            return ServiceUtils.CreateResult(true, 200, null, userOrders, null);
+        }
+
         /// <summary>
         /// Gets the data by the field, used for datetimes.
         /// </summary>

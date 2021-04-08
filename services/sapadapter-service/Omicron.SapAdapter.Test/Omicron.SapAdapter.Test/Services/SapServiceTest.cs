@@ -28,7 +28,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
-    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// class for the test.

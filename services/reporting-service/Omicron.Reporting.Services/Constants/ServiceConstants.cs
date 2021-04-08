@@ -113,17 +113,17 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentRejectedOrder = " <p> Buen día, es un gusto saludarle <br/><br/> Hemos detectado que la orden de venta <b>{0}</b> correspondiente al cliente <b>{1}</b> incumple con los requisitos obligatorios para poder comenzar su elaboración. <br/><br/>  </p>";
+        public const string SentRejectedOrder = " <p> Buen día, es un gusto saludarle <br/><br/> Hemos detectado que la orden de venta <b>{0}</b> correspondiente al cliente <b>{1}</b> incumple con los requisitos obligatorios para poder comenzar su elaboración.<br/><br/></p>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> fue enviado por medio de la empresa de paquetería bajo la guía <b>{1}</b> a la dirección que tenemos registrada bajo su nombre.</p><p>{2}<br/>{3}</p>";
+        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}</p>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> ya está planificado para ser entregado en la dirección que tenemos registrada bajo su nombre.</p>";
+        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que su pedido <b>{0}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre.</p>";
 
         /// <summary>
         /// Sent local package.
@@ -133,7 +133,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega de su pedido <b>{0}</b> no pudo ser realizada. Le pedimos por favor que para programar una nueva visita se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
+        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega de su pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedidos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
 
         /// <summary>
         /// Body of email.

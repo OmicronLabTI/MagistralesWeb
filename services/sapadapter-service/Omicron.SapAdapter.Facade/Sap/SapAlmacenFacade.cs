@@ -30,6 +30,8 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly ISapInvoiceService sapInvoiceService;
 
+        private readonly IAdvanceLookService advanceLookService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenFacade"/> class.
         /// </summary>
@@ -37,12 +39,14 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="sapAlmacenService">the sap almacen service.</param>
         /// <param name="sapAlmacenDelivery">The sap almacen delivery.</param>
         /// <param name="sapInvoiceService">The sap invoice service.</param>
-        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService)
+        /// <param name="advanceLookService">the advance service.</param>
+        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService, IAdvanceLookService advanceLookService)
         {
             this.mapper = mapper;
             this.almacenService = sapAlmacenService ?? throw new ArgumentNullException(nameof(sapAlmacenService));
             this.sapAlmacenDeliveryService = sapAlmacenDelivery ?? throw new ArgumentNullException(nameof(sapAlmacenDelivery));
             this.sapInvoiceService = sapInvoiceService ?? throw new ArgumentException(nameof(sapInvoiceService));
+            this.advanceLookService = advanceLookService ?? throw new ArgumentNullException(nameof(advanceLookService));
         }
 
         /// <summary>
@@ -156,6 +160,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetCancelledInvoices()
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetCancelledInvoices());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> AdvanceLookUp(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.advanceLookService.AdvanceLookUp(parameters));
         }
     }
 }

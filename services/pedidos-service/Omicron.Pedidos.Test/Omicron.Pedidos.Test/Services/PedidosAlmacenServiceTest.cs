@@ -240,5 +240,24 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task AdvanceLook()
+        {
+            var details = new List<int> { 100 };
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidoServiceLocal = new PedidosAlmacenService(this.pedidosDao, mockSapFile.Object, this.configuration.Object);
+
+            // act
+            var result = await pedidoServiceLocal.AdvanceLook(details);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
     }
 }

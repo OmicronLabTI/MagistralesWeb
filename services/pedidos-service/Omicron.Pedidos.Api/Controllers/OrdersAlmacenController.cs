@@ -222,5 +222,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.CleanInvoices(invoiceId);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="docNums">the invoice id.</param>
+        /// <returns>the data.</returns>
+        [Route("/advance/id/look")]
+        [HttpPost]
+        public async Task<IActionResult> AdvanceLook(List<int> docNums)
+        {
+            var response = await this.pedidosAlmacenFacade.AdvanceLook(docNums);
+            return this.Ok(response);
+        }
     }
 }
