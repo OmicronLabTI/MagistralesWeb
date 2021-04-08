@@ -415,7 +415,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 case ServiceConstants.SaleOrder:
                     var orders = (await this.sapDao.GetAllOrdersByFechaIni(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    orders = orders.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    orders = orders.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y))).ToList();
                     return orders.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Delivery:
