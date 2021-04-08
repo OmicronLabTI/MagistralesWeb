@@ -88,9 +88,11 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <param name="docNum">the docNum.</param>
         /// <returns>the orders.</returns>
-        /// [TestCase("0")]
         [Test]
+        [TestCase("0")]
         [TestCase("84434")]
+        [TestCase("74709")]
+        [TestCase("115010")]
         public async Task GetCardsByOrder(string docNum)
         {
             // arrange
