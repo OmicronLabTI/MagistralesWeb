@@ -133,7 +133,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedidos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
+        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
 
         /// <summary>
         /// Body of email.
