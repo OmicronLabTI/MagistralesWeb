@@ -92,5 +92,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="invoiceIds">the invoice ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CleanInvoices(List<int> invoiceIds);
+
+        /// <summary>
+        /// Looks for the data in invoices, delivery and sale.
+        /// </summary>
+        /// <param name="docNums">the docunms.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> AdvanceLook(List<int> docNums);
     }
 }

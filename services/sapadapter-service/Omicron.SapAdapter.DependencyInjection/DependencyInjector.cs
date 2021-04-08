@@ -52,6 +52,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IGetProductionOrderUtils, GetProductionOrderUtils>();
             Services.AddTransient<IRedisService, RedisService>();
             Services.AddTransient<IComponentsService, ComponentsService>();
+            Services.AddTransient<IAdvanceLookService, AdvanceLookService>();
             return Services;
         }
 

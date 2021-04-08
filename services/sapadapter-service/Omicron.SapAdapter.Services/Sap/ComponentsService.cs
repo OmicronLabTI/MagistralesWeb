@@ -11,23 +11,14 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
-    using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Mapping;
-    using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 

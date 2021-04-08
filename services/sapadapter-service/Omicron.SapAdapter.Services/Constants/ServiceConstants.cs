@@ -96,6 +96,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Advance = "advance";
 
         /// <summary>
+        /// the doctor filter.
+        /// </summary>
+        public const string Doctor = "doctor";
+
+        /// <summary>
         /// the abierto status.
         /// </summary>
         public const string Abierto = "Abierto";
@@ -139,6 +144,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// en proceso to show.
         /// </summary>
         public const string Asignado = "Asignado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Camino = "En Camino";
 
         /// <summary>
         /// route to get the users sales orders.
@@ -211,6 +221,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetIncidents = "incident/saleorder";
 
         /// <summary>
+        /// gets the ids for lookup.
+        /// </summary>
+        public const string AdvanceLookId = "advance/id/look";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";
@@ -261,6 +276,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Finalizado = "Finalizado";
 
         /// <summary>
+        /// Status finalizado.
+        /// </summary>
+        public const string Liberado = "Liberado";
+
+        /// <summary>
         /// status por recibir.
         /// </summary>
         public const string PorRecibir = "Por recibir";
@@ -279,6 +299,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// status not delivered.
         /// </summary>
         public const string NoEntregado = "No Entregado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Entregado = "Entregado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Enviado = "Enviado";
 
         /// <summary>
         /// status pendiente.
@@ -381,6 +411,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Orden = "ord";
 
         /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Delivery = "delivery";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string Invoice = "invoice";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
+        public const string SaleOrder = "pedido";
+
+        /// <summary>
         /// the insert value.
         /// </summary>
         public const string RedisComponents = "redisComponents";
@@ -399,6 +444,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the insert value.
         /// </summary>
         public const string Maquila = "Maquila";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string DontExistsTable = "DontExistsTable";
 
         /// <summary>
         /// Gets the status of the order.
@@ -508,6 +558,30 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             Almacenado,
             BackOrder,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusReceptionOrders { get; } = new List<string>
+        {
+            Finalizado,
+            Liberado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusAlmacenReceptionOrders { get; } = new List<string>
+        {
+            BackOrder,
+            Recibir,
         };
     }
 }

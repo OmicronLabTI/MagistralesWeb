@@ -49,12 +49,14 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockService = new Mock<ISapAlmacenService>();
             var mockDelivery = new Mock<ISapAlmacenDeliveryService>();
             var mockInvoice = new Mock<ISapInvoiceService>();
+            var mockAdvance = new Mock<IAdvanceLookService>();
 
             mockService.SetReturnsDefault(Task.FromResult(response));
             mockDelivery.SetReturnsDefault(Task.FromResult(response));
             mockInvoice.SetReturnsDefault(Task.FromResult(response));
+            mockAdvance.SetReturnsDefault(Task.FromResult(response));
 
-            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object);
+            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object);
         }
 
         /// <summary>
@@ -290,6 +292,18 @@ namespace Omicron.SapAdapter.Test.Facade
         /// <returns>the data.</returns>
         [Test]
         public async Task GetCancelledInvoices()
+        {
+            var response = await this.almacenFacade.GetCancelledInvoices();
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task AdvanceLookUp()
         {
             var response = await this.almacenFacade.GetCancelledInvoices();
 
