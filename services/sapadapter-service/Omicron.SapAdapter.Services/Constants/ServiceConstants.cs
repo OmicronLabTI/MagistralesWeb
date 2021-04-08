@@ -226,6 +226,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AdvanceLookId = "advance/id/look";
 
         /// <summary>
+        /// the special clients.
+        /// </summary>
+        public const string SpecialClients = "special/clients";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";
