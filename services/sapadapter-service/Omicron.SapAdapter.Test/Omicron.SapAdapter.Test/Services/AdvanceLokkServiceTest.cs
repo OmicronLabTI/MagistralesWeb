@@ -34,7 +34,7 @@ namespace Omicron.SapAdapter.Test.Services
     /// Class UsersServiceTest.
     /// </summary>
     [TestFixture]
-    public class AdvanceLokkServiceTest : BaseTest
+    public class AdvanceLokkServiceTest : BaseTestAdvancedLookUp
     {
         private IAdvanceLookService advanceLookService;
 
@@ -53,15 +53,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.AsesorModel.Add(this.GetAsesorModel());
-            this.context.DetallePedido.AddRange(this.GetDetallePedido());
-            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.OrderModel.AddRange(this.GetOrderModel());
-            this.context.ProductoModel.AddRange(this.GetProductoModel());
-            this.context.Users.AddRange(this.GetSapUsers());
-            this.context.DetalleFormulaModel.AddRange(this.GetDetalleFormula());
+            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.DeliveryDetailModel.AddRange(this.GetDeliveryDetail());
             this.context.DeliverModel.AddRange(this.DeliveryModel());
             this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
+            this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
+            this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.Repartidores.AddRange(this.GetRepartidores());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -71,9 +70,9 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
-            mockPedidoService
-                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(this.GetResultGetAdvancedModelAlmacen()));
 
             var mockLog = new Mock<ILogger>();
 
@@ -82,6 +81,28 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
             this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNum">the docNum.</param>
+        /// <returns>the orders.</returns>
+        /// [TestCase("0")]
+        [Test]
+        [TestCase("84434")]
+        public async Task GetCardsByOrder(string docNum)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNum },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
         }
 
         /*
