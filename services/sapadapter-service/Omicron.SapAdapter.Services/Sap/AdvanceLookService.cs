@@ -420,12 +420,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 case ServiceConstants.Delivery:
                     var deliveries = (await this.sapDao.GetDeliveryByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y))).ToList();
                     return deliveries.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Invoice:
                     var invoices = (await this.sapDao.GetInvoiceHeadersByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y))).ToList();
                     return invoices.Select(x => x.DocNum).Distinct().ToList();
             }
 
