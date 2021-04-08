@@ -84,6 +84,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
         }
 
+        /*
         /// <summary>
         /// gets the orders test.
         /// </summary>
@@ -133,5 +134,6 @@ namespace Omicron.SapAdapter.Test.Services
 
             Assert.IsNotNull(result);
         }
+        */
     }
 }
