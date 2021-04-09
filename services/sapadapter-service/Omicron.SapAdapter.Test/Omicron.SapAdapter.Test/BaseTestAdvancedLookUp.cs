@@ -68,11 +68,20 @@ namespace Omicron.SapAdapter.Test
                 new LineProductsModel { Id = 4139, SaleOrderId = 84434, StatusAlmacen = "Empaquetado", StatusInvoice = null, ItemCode = "REVE 14", InvoiceStoreDate = new DateTime(2021, 03, 30), InvoiceId = 115010, DeliveryId = 74709, DateCheckIn = new DateTime(2021, 03, 24) },
                 new LineProductsModel { Id = 4140, SaleOrderId = 84434, StatusAlmacen = "Almacenado", StatusInvoice = null, ItemCode = "REVE 22", InvoiceStoreDate = null, InvoiceId = 0, DeliveryId = 74710, DateCheckIn = new DateTime(2021, 03, 24) },
                 new LineProductsModel { Id = 4139, SaleOrderId = 84434, StatusAlmacen = "Empaquetado", StatusInvoice = null, ItemCode = "REVE 14", InvoiceStoreDate = new DateTime(2021, 03, 30), InvoiceId = 115010, DeliveryId = 74709, DateCheckIn = new DateTime(2021, 03, 24) },
+
+                new LineProductsModel { Id = 4171, SaleOrderId = 84474, StatusAlmacen = "Almacenado", StatusInvoice = null, ItemCode = "REVE 14", InvoiceStoreDate = null, InvoiceId = 0, DeliveryId = 74752, DateCheckIn = new DateTime(2021, 04, 06) },
+                new LineProductsModel { Id = 4172, SaleOrderId = 84474, StatusAlmacen = "Almacenado", StatusInvoice = null, ItemCode = null, InvoiceStoreDate = null, InvoiceId = 0, DeliveryId = 74752, DateCheckIn = new DateTime(2021, 04, 06) },
             };
 
-            var packageModels = new List<PackageModel>();
+            var packageModels = new List<PackageModel>()
+            {
+                new PackageModel { AssignedDate = new DateTime(2021, 12, 02), AssignedUser = "1", Comments = "Usuario 1", DeliveredDate = new DateTime(2021, 12, 02), InWayDate = new DateTime(2021, 12, 02), InvoiceId = 115024, Status = "Entregado" },
+            };
 
-            var cancelationModel = new List<CancellationResourceModel>();
+            var cancelationModel = new List<CancellationResourceModel>()
+            {
+                new CancellationResourceModel { Id = 4, CancelDate = new DateTime(2021, 04, 06), CancelledId = 115025, TypeCancellation = "invoice" },
+            };
 
             var adnvaceLookUpModel = new AdnvaceLookUpModel
             {
@@ -100,12 +109,47 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84434, Cliente = "Cliente A", DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico A", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX" },
-                new OrderModel { PedidoId = 85000, Cliente = "cliente", DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
+                new OrderModel { PedidoId = 84434, Cliente = "Cliente A", DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico B", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 85000, Cliente = "cliente", DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico B", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84458, Cliente = "Cliente A", DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE" },
+                new OrderModel { PedidoId = 84458, Cliente = "Cliente A", DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84473, Cliente = "Cliente A", DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", PedidoStatus = "C", Address = "Puebla", OrderType = "BE" },
+                new OrderModel { PedidoId = 84473, Cliente = "Cliente A", DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public AsesorModel GetAsesorModel()
+        {
+            return new AsesorModel
+            {
+                AsesorId = 125,
+                AsesorName = "Gustavo",
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUsers()
+        {
+            var listUsers = new List<UserModel>
+            {
+                new UserModel { Id = "1", Activo = 1, FirstName = "juanito", Asignable = 2, Piezas = 5, Role = 5 },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(listUsers),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
             };
         }
 
@@ -145,6 +189,7 @@ namespace Omicron.SapAdapter.Test
                 new DeliveryDetailModel { BaseEntry = 84458, DeliveryId = 74728, Description = "Dsc", DocDate = new DateTime(2021, 04, 05), ProductoId = "567   60 ML", Quantity = 1, InvoiceId = null },
 
                 new DeliveryDetailModel { BaseEntry = 84473, DeliveryId = 74751, Description = "Dsc", DocDate = new DateTime(2021, 03, 06), ProductoId = "567   60 ML", Quantity = 1, InvoiceId = 38521 },
+                new DeliveryDetailModel { BaseEntry = 84474, DeliveryId = 74752, Description = "Dsc", DocDate = new DateTime(2021, 04, 06), ProductoId = "REVE 14", Quantity = 1, InvoiceId = 38524, LineStatus = "C" },
             };
         }
 
@@ -157,7 +202,7 @@ namespace Omicron.SapAdapter.Test
             return new List<DeliverModel>
             {
                 new DeliverModel { Cliente = "Cliente A", DeliveryStatus = "C", DocNum = 74709, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", PedidoId = 74709, Address = "MONTERREY,Nuevo León" },
-                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico B", PedidoId = 74710, Address = "MONTERREY ,Nuevo León" },
+                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", PedidoId = 74710, Address = "MONTERREY ,Nuevo León" },
                 new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", PedidoId = 74728, Address = "Guadalajara" },
 
                 new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", PedidoId = 74751, Address = "Puebla" },
@@ -174,9 +219,10 @@ namespace Omicron.SapAdapter.Test
             {
                 new InvoiceHeaderModel { Address = "Queretaro, Mexico,", Cliente = "cliente A", CardCode = "C1", DocNum = 111827, FechaInicio = new DateTime(2020, 10, 29), InvoiceId = 35147, InvoiceStatus = "C", Medico = "Medico A", SalesPrsonId = 40, Canceled = "N" },
                 new InvoiceHeaderModel { Address = "MONTERREY ,\rNuevo León, Mexico", Cliente = "cliente B", CardCode = "C8", DocNum = 115009, FechaInicio = new DateTime(2021, 03, 24), InvoiceId = 38506, InvoiceStatus = "O", Medico = "Medico B", SalesPrsonId = 16, Canceled = "N" },
-                new InvoiceHeaderModel { Address = "MONTERREY ,\rNuevo León, Mexico", Cliente = "cliente C", CardCode = "C1", DocNum = 115010, FechaInicio = new DateTime(2021, 03, 24), InvoiceId = 38507, InvoiceStatus = "O", Medico = "Medico C", SalesPrsonId = 16, Canceled = "N" },
+                new InvoiceHeaderModel { Address = "MONTERREY ,\rNuevo León, Mexico", Cliente = "cliente C", CardCode = "C1", DocNum = 115010, FechaInicio = new DateTime(2021, 03, 24), InvoiceId = 38507, InvoiceStatus = "O", Medico = "Medico B", SalesPrsonId = 16, Canceled = "N" },
 
                 new InvoiceHeaderModel { Address = "Puebla", Cliente = "cliente A", CardCode = "C1", DocNum = 115024, FechaInicio = new DateTime(2021, 04, 06), InvoiceId = 38521, InvoiceStatus = "O", Medico = "Medico A", SalesPrsonId = 12, Canceled = "N" },
+                new InvoiceHeaderModel { Address = "TECAMACHALCO Puebla", Cliente = "cliente F", CardCode = "C03911", DocNum = 115025, FechaInicio = new DateTime(2021, 04, 06), InvoiceId = 38522, InvoiceStatus = "C", Medico = "Medico A", Canceled = "Y" },
             };
         }
 
@@ -204,6 +250,7 @@ namespace Omicron.SapAdapter.Test
                 new InvoiceDetailModel { BaseEntry = 74709, Container = "con", Description = "desc", DocDate = new DateTime(2021, 03, 24), InvoiceId = 38507, LineNum = 12, ProductoId = "REVE 14", Quantity = 10 },
 
                 new InvoiceDetailModel { BaseEntry = 74751, Container = "con", Description = "desc", DocDate = new DateTime(2021, 04, 06), InvoiceId = 38521, LineNum = 0, ProductoId = "567   60 ML", Quantity = 1 },
+                new InvoiceDetailModel { BaseEntry = 74752, Container = "con", Description = "desc", DocDate = new DateTime(2021, 04, 06), InvoiceId = 38522, LineNum = 0, ProductoId = "REVE 14", Quantity = 1 },
             };
         }
 

@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -57,10 +58,12 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.Repartidores.AddRange(this.GetRepartidores());
-
+            this.context.AsesorModel.AddRange(this.GetAsesorModel());
             this.context.SaveChanges();
+
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacen = new Mock<IAlmacenService>();
+            var userMock = new Mock<IUsersService>();
 
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
@@ -70,8 +73,11 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(this.GetResultGetAdvancedModelAlmacen()));
 
+            userMock
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsers()));
+
             var mockLog = new Mock<ILogger>();
-            var userMock = new Mock<IUsersService>();
 
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
@@ -94,6 +100,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// [TestCase("84473")]
         /// [TestCase("74751")]
         /// [TestCase("115024")]
+        /// [TestCase("115025")]
         [Test]
         [TestCase("0")]
         [TestCase("84434")]
@@ -104,6 +111,7 @@ namespace Omicron.SapAdapter.Test.Services
         [TestCase("84473")]
         [TestCase("74751")]
         [TestCase("115024")]
+        [TestCase("115025")]
         public async Task GetCardsByOrder(string docNum)
         {
             // arrange
@@ -118,48 +126,25 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(result);
         }
 
-        /*
-        /// <summary>
-        /// gets the orders test.
-        /// </summary>
-        /// <returns>the orders.</returns>
-        [Test]
-        public async Task GetPedidosByDoctor()
-        {
-            // arrange
-            var dates = DateTime.Now.ToString("dd/MM/yyyy");
-            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
-            var dicParams = new Dictionary<string, string>
-            {
-                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
-                { ServiceConstants.Doctor, "doctor" },
-                { ServiceConstants.Type, ServiceConstants.SaleOrder },
-            };
-
-            // act
-            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
-            Assert.IsNotNull(result);
-        }
-
         /// <summary>
         /// gets the orders test.
         /// </summary>
         /// <param name="type">the type.</param>
+        /// <param name="medico">the doctor.</param>
         /// <returns>the orders.</returns>
         [Test]
-        [TestCase(ServiceConstants.SaleOrder)]
-        [TestCase(ServiceConstants.Delivery)]
-        [TestCase(ServiceConstants.Invoice)]
-        public async Task GetCardsByDoctor(string type)
+        [TestCase(ServiceConstants.SaleOrder, "Medico,A")]
+        [TestCase(ServiceConstants.Delivery, "Medico,B")]
+        [TestCase(ServiceConstants.Invoice, "Medico,B")]
+        public async Task GetCardsByDoctor(string type, string medico)
         {
             // arrange
-            var dates = DateTime.Now.ToString("dd/MM/yyyy");
-            var dateFinal = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy");
+            var dates = new DateTime(2021, 03, 06);
+            var dateFinal = new DateTime(2021, 04, 08);
             var dicParams = new Dictionary<string, string>
             {
-                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
-                { ServiceConstants.Doctor, "Medico" },
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates.ToString("dd/MM/yyyy"), dateFinal.ToString("dd/MM/yyyy")) },
+                { ServiceConstants.Doctor, medico },
                 { ServiceConstants.Type, type },
             };
 
@@ -168,6 +153,5 @@ namespace Omicron.SapAdapter.Test.Services
 
             Assert.IsNotNull(result);
         }
-        */
     }
 }
