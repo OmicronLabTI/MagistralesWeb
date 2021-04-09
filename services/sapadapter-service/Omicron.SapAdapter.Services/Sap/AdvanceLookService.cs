@@ -224,7 +224,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             tupleIds.ForEach(order =>
             {
-                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
+                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, almacenData.CancelationModel, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails, almacenData.PackageModels, deliveryCompanies, users));
@@ -233,9 +233,11 @@ namespace Omicron.SapAdapter.Services.Sap
             return cardToReturns;
         }
 
-        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> productModel)
         {
-            var isLineSale = tuple.Item2 == ServiceConstants.DontExistsTable && orderDetail.Any(x => x.DocNum == tuple.Item1);
+            var listItemCode = productModel.Select(x => x.ProductoId).ToList();
+            var orderbyDocNum = orderDetail.Where(x => x.DocNum == tuple.Item1 && x.PedidoStatus == "O" && x.Detalles != null).ToList();
+            var isLineSale = tuple.Item2 == ServiceConstants.DontExistsTable && orderbyDocNum.Any() && orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId));
             if (tuple.Item2 != ServiceConstants.SaleOrder && !isLineSale)
             {
                 return new List<AlmacenSalesHeaderModel>();
