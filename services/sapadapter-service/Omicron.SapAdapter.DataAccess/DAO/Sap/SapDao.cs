@@ -717,9 +717,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date)
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.UpdateDate == date));
+            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date));
         }
 
         /// <inheritdoc/>

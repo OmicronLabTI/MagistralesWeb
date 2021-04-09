@@ -77,7 +77,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the cancelled invoices.
         /// </summary>
+        /// <param name="days">the days.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetCancelledInvoices();
+        Task<ResultModel> GetCancelledInvoices(int days);
     }
 }

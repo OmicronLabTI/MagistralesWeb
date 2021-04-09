@@ -293,7 +293,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetCancelledInvoices()
         {
-            var response = await this.almacenFacade.GetCancelledInvoices();
+            var days = 10;
+            var response = await this.almacenFacade.GetCancelledInvoices(days);
 
             Assert.IsNotNull(response);
         }
@@ -305,7 +306,7 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task AdvanceLookUp()
         {
-            var response = await this.almacenFacade.GetCancelledInvoices();
+            var response = await this.almacenFacade.AdvanceLookUp(new Dictionary<string, string>());
 
             Assert.IsNotNull(response);
         }

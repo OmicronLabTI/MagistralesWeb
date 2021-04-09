@@ -349,8 +349,10 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         public async Task GetCancelledInvoices()
         {
+            var days = 30;
+
             // act
-            var response = await this.sapInvoiceService.GetCancelledInvoices();
+            var response = await this.sapInvoiceService.GetCancelledInvoices(days);
 
             // assert
             Assert.IsNotNull(response);
