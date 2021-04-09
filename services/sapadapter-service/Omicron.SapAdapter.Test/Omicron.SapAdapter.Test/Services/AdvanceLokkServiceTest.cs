@@ -200,5 +200,33 @@ namespace Omicron.SapAdapter.Test.Services
 
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="type">the type.</param>
+        /// <param name="medico">the doctor.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase(ServiceConstants.SaleOrder, "Doc,ff")]
+        [TestCase(ServiceConstants.Delivery, "Doc,BB")]
+        [TestCase(ServiceConstants.Invoice, "Doc,rr")]
+        public async Task GetCardsByWhenDontExistsDoctor(string type, string medico)
+        {
+            // arrange
+            var dates = new DateTime(2021, 03, 06);
+            var dateFinal = new DateTime(2021, 04, 08);
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates.ToString("dd/MM/yyyy"), dateFinal.ToString("dd/MM/yyyy")) },
+                { ServiceConstants.Doctor, medico },
+                { ServiceConstants.Type, type },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
+        }
     }
 }
