@@ -52,6 +52,8 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
+            userOrders = userOrders.Where(x => string.IsNullOrEmpty(x.StatusInvoice)).ToList();
+            lineProducts = lineProducts.Where(x => string.IsNullOrEmpty(x.StatusInvoice)).ToList();
 
             var listIds = userOrders.Select(y => y.DeliveryId).ToList();
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
@@ -271,6 +273,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
             var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
 
+            var clientesResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.SpecialClients);
+            var clients = JsonConvert.DeserializeObject<List<ExclusivePartnersModel>>(clientesResponse.Response.ToString());
+
             var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
             var model = new InvoiceDeliverModel
@@ -283,7 +288,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Status = status,
             };
 
-            var comments = model.Address.Contains(ServiceConstants.NuevoLeon) ? string.Empty : ServiceConstants.ForeingPackage;
+            var comments = model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode) ? string.Empty : ServiceConstants.ForeingPackage;
             comments = !status.Equals(ServiceConstants.Empaquetado) && !status.Equals(ServiceConstants.NoEntregado) ? $"{ServiceConstants.PackageNotAvailable} {status}" : comments;
 
             return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
