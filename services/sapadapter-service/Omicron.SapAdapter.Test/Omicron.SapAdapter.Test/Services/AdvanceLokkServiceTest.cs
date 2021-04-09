@@ -8,13 +8,10 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Moq;
-    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -24,7 +21,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -88,11 +84,25 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <param name="docNum">the docNum.</param>
         /// <returns>the orders.</returns>
+        /// [TestCase("0")]
+        /// [TestCase("84434")]
+        /// [TestCase("74709")]
+        /// [TestCase("115010")]
+        /// [TestCase("84458")]
+        /// [TestCase("74728")]
+        /// [TestCase("84473")]
+        /// [TestCase("74751")]
+        /// [TestCase("115024")]
         [Test]
         [TestCase("0")]
         [TestCase("84434")]
         [TestCase("74709")]
         [TestCase("115010")]
+        [TestCase("84458")]
+        [TestCase("74728")]
+        [TestCase("84473")]
+        [TestCase("74751")]
+        [TestCase("115024")]
         public async Task GetCardsByOrder(string docNum)
         {
             // arrange
