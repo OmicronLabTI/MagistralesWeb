@@ -10,21 +10,20 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
+    using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -104,34 +103,29 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.IsEmpty(cards.CardInvoice);
+            Assert.IsEmpty(cards.CardDelivery);
+            Assert.IsEmpty(cards.CardDistribution);
+            Assert.IsEmpty(cards.CardOrder);
         }
 
         /// <summary>
         /// gets the orders test.
         /// </summary>
         /// <param name="docNum">the docNum.</param>
+        /// <param name="orders">the total orders.</param>
+        /// <param name="deliverys">the total deliverys.</param>
+        /// <param name="invoices">the total invoices.</param>
+        /// <param name="distribution">the total distribuitions.</param>
         /// <returns>the orders.</returns>
-        /// [TestCase("0")]
-        /// [TestCase("145")]
-        /// [TestCase("84434")]
-        /// [TestCase("74709")]
-        /// [TestCase("115010")]
-        /// [TestCase("84458")]
-        /// [TestCase("74728")]
-        /// [TestCase("84473")]
-        /// [TestCase("74751")]
-        /// [TestCase("115024")]
-        /// [TestCase("115025")]
-        /// [TestCase("114966")]
-        /// [TestCase("84508")]
         [Test]
-        [TestCase("84434")]
-        [TestCase("84458")]
-        [TestCase("84473")]
-        [TestCase("84508")]
-        public async Task GetCardsByOrder(string docNum)
+        [TestCase("84434", 1, 0, 2, 0)]
+        [TestCase("84458", 1, 1, 0, 0)]
+        [TestCase("84473", 1, 0, 0, 1)]
+        [TestCase("84508", 1, 0, 0, 0)]
+        public async Task GetCardsByOrder(string docNum, int orders, int deliverys, int invoices, int distribution)
         {
             // arrange
             var dicParams = new Dictionary<string, string>
@@ -141,8 +135,12 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.AreEqual(cards.CardInvoice.Count, invoices);
+            Assert.AreEqual(cards.CardDelivery.Count, deliverys);
+            Assert.AreEqual(cards.CardDistribution.Count, distribution);
+            Assert.AreEqual(cards.CardOrder.Count, orders);
         }
 
         /// <summary>
@@ -185,8 +183,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.IsNotEmpty(cards.CardDelivery);
         }
 
         /// <summary>
@@ -196,7 +195,6 @@ namespace Omicron.SapAdapter.Test.Services
         /// <returns>the orders.</returns>
         [Test]
         [TestCase("115010")]
-        [TestCase("115024")]
         [TestCase("114966")]
         public async Task GetCardsByInvoice(string docNum)
         {
@@ -208,8 +206,31 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.IsNotEmpty(cards.CardInvoice);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNum">the docNum.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("115024")]
+        public async Task GetCardsByPackage(string docNum)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNum },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+            var cards = (CardsAdvancedLook)result.Response;
+            Assert.IsNotNull(result);
+            Assert.IsNotEmpty(cards.CardDistribution);
         }
 
         /// <summary>
@@ -229,8 +250,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.IsNotEmpty(cards.CardInvoice);
         }
 
         /// <summary>
@@ -285,8 +307,12 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
-
+            var cards = (CardsAdvancedLook)result.Response;
             Assert.IsNotNull(result);
+            Assert.IsEmpty(cards.CardInvoice);
+            Assert.IsEmpty(cards.CardDelivery);
+            Assert.IsEmpty(cards.CardDistribution);
+            Assert.IsEmpty(cards.CardOrder);
         }
     }
 }
