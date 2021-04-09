@@ -83,6 +83,7 @@ namespace Omicron.SapAdapter.Test
             var cancelationModel = new List<CancellationResourceModel>()
             {
                 new CancellationResourceModel { Id = 4, CancelDate = new DateTime(2021, 04, 06), CancelledId = 115025, TypeCancellation = "invoice" },
+                new CancellationResourceModel { Id = 7, CancelDate = new DateTime(2021, 04, 08), CancelledId = 74746, TypeCancellation = "delivery" },
             };
 
             var adnvaceLookUpModel = new AdnvaceLookUpModel
@@ -196,6 +197,8 @@ namespace Omicron.SapAdapter.Test
                 new DeliveryDetailModel { BaseEntry = 84474, DeliveryId = 74752, Description = "Dsc", DocDate = new DateTime(2021, 04, 06), ProductoId = "REVE 14", Quantity = 1, InvoiceId = 38524, LineStatus = "C" },
                 new DeliveryDetailModel { BaseEntry = 84144, DeliveryId = 74473, Description = "Dsc", DocDate = new DateTime(2021, 02, 08), ProductoId = "567   120 ML", Quantity = 3, InvoiceId = 38463, LineStatus = "C", LineNum = 1 },
                 new DeliveryDetailModel { BaseEntry = 84144, DeliveryId = 74473, Description = "Dsc", DocDate = new DateTime(2021, 02, 08), ProductoId = "149   60 ML", Quantity = 4, InvoiceId = 38463, LineStatus = "C" },
+
+                new DeliveryDetailModel { BaseEntry = 84469, DeliveryId = 74746, Description = "Dsc", DocDate = new DateTime(2021, 04, 06), ProductoId = "567   30 ML", Quantity = 1, InvoiceId = null },
             };
         }
 
@@ -212,6 +215,8 @@ namespace Omicron.SapAdapter.Test
                 new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", PedidoId = 74728, Address = "Guadalajara" },
 
                 new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", PedidoId = 74751, Address = "Puebla" },
+
+                new DeliverModel { Cliente = "Cliente F", DeliveryStatus = "O", DocNum = 74746, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", PedidoId = 74746, Address = "Guadalajara" },
             };
         }
 

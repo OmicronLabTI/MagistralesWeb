@@ -134,6 +134,7 @@ namespace Omicron.SapAdapter.Test.Services
         [TestCase("74709")]
         [TestCase("74728")]
         [TestCase("74751")]
+        [TestCase("74746")]
         public async Task GetCardsByDelivery(string docNum)
         {
             // arrange
