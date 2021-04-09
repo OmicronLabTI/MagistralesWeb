@@ -91,6 +91,28 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <param name="docNum">the docNum.</param>
         /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("0")]
+        [TestCase("145")]
+        public async Task GetCardsWhenDontExistsDocNum(string docNum)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNum },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNum">the docNum.</param>
+        /// <returns>the orders.</returns>
         /// [TestCase("0")]
         /// [TestCase("145")]
         /// [TestCase("84434")]
@@ -105,8 +127,6 @@ namespace Omicron.SapAdapter.Test.Services
         /// [TestCase("114966")]
         /// [TestCase("84508")]
         [Test]
-        [TestCase("0")]
-        [TestCase("145")]
         [TestCase("84434")]
         [TestCase("84458")]
         [TestCase("84473")]
