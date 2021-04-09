@@ -397,7 +397,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="date">the date to look.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date);
 
         /// <summary>
         /// Gets the deliveries by date.

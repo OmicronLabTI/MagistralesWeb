@@ -206,12 +206,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <param name="days">the days.</param>
         /// <returns>the data.</returns>
-        [Route("/cancelled/invoices")]
+        [Route("/cancelled/invoices/{days}")]
         [HttpGet]
-        public async Task<IActionResult> GetCancelledInvoices()
+        public async Task<IActionResult> GetCancelledInvoices(int days)
         {
-            var response = await this.sapAlmacenFacade.GetCancelledInvoices();
+            var response = await this.sapAlmacenFacade.GetCancelledInvoices(days);
             return this.Ok(response);
         }
 
