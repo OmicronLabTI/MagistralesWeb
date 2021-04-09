@@ -76,12 +76,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
 
             var mockLog = new Mock<ILogger>();
+            var userMock = new Mock<IUsersService>();
 
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object);
         }
 
         /*
