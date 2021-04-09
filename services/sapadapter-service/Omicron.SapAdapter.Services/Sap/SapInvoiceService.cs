@@ -327,10 +327,10 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetCancelledInvoices()
+        public async Task<ResultModel> GetCancelledInvoices(int days)
         {
-            var dateToLook = DateTime.Today;
-            var invoices = (await this.sapDao.GetInvoiceByUpdateDate(dateToLook)).ToList();
+            var dateToLook = DateTime.Today.AddDays(-days);
+            var invoices = (await this.sapDao.GetInvoiceByDocDate(dateToLook)).ToList();
             invoices = invoices.Where(x => x.Canceled == "Y").ToList();
             return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
         }
