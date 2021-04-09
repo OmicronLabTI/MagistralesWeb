@@ -376,7 +376,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             workLoadModel.TotalFabOrders = productionOrderIds.Count;
             workLoadModel.TotalOrders = salesOrderIds.Count;
-            workLoadModel.TotalPieces = (int)sapOrders.Where(x => productionOrderIds.Any(y => y == x.OrdenId)).Sum(y => y.Quantity);
+            workLoadModel.TotalPieces = (int)sapOrders.Where(x => productionOrderIds.Any(y => y == x.OrdenId)).DistinctBy(x => x.OrdenId).Sum(y => y.Quantity);
             return workLoadModel;
         }
 
