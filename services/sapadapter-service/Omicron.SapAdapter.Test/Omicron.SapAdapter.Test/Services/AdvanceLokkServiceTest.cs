@@ -134,8 +134,28 @@ namespace Omicron.SapAdapter.Test.Services
         [TestCase("74709")]
         [TestCase("74728")]
         [TestCase("74751")]
-        [TestCase("74746")]
         public async Task GetCardsByDelivery(string docNum)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNum },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNum">the docNum.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("74746")]
+        public async Task GetCardsByDeliveryCancelled(string docNum)
         {
             // arrange
             var dicParams = new Dictionary<string, string>
@@ -157,9 +177,29 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         [TestCase("115010")]
         [TestCase("115024")]
-        [TestCase("115025")]
         [TestCase("114966")]
         public async Task GetCardsByInvoice(string docNum)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNum },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNum">the docNum.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("115025")]
+        public async Task GetCardsByInvoiceCancelled(string docNum)
         {
             // arrange
             var dicParams = new Dictionary<string, string>
