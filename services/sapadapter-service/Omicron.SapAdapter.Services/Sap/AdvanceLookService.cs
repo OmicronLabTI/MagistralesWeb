@@ -245,11 +245,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
-            var card = this.GenerateCardForReceptionOrders(tuple, lineProducts, orderDetail, deliveryDetails, userOrder, lineProductOrder);
+            var card = this.GenerateCardForReceptionOrders(tuple, lineProducts, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel);
             return new List<AlmacenSalesHeaderModel> { card };
         }
 
-        private AlmacenSalesHeaderModel GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder)
+        private AlmacenSalesHeaderModel GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel)
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
@@ -268,7 +268,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 status = userOrder.Status != ServiceConstants.Finalizado && ServiceConstants.Status != ServiceConstants.Almacenado ? ServiceConstants.Pendiente : status;
-                productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                productType = saporders.Any(x => x.Detalles != null && productModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 hasCandidate = true;
             }
