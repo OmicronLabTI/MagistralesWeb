@@ -200,15 +200,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var listInvoicedId = sapDeliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).ToList();
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId));
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
-            sapInvoicesDeatils.GroupBy(x => x.BaseEntry).ToList().ForEach(x =>
+
+            sapInvoicesDeatils.GroupBy(x => new { x.BaseEntry, x.InvoiceId }).ToList().ForEach(x =>
             {
-                temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+                temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapInvoicesDeatils = temporalsapInvoicesDeatils;
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
             sapDeliveryDetails.GroupBy(x => x.DeliveryId).ToList().ForEach(x =>
             {
-                temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+                temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapDeliveryDetails = temporalsapDeliveryDetails;
 
