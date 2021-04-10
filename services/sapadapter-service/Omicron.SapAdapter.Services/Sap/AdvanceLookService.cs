@@ -514,10 +514,15 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var delivery in listDeliveryId.Distinct())
             {
-                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
+                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0) && invoiceHeadersToLook.Any(x => x.Canceled != "Y"))
                 {
                     var invoiceId = deliveryDetailModels.FirstOrDefault(x => x.DeliveryId == delivery);
-                    var invoiceHeader = invoiceHeadersToLook.FirstOrDefault(x => x.InvoiceId == invoiceId.InvoiceId);
+                    var invoiceHeader = invoiceHeadersToLook.FirstOrDefault(x => x.Canceled != "Y" && x.InvoiceId == invoiceId.InvoiceId);
+                    if (invoiceHeader == null)
+                    {
+                        continue;
+                    }
+
                     var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
                     var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
 
