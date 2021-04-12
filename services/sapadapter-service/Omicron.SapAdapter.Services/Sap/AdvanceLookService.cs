@@ -253,10 +253,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
-            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel);
+            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel, userOrders, lineProducts);
         }
 
-        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
@@ -271,6 +271,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (userOrder != null)
             {
+                userOrders = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString()).ToList();
                 saporders = orderDetail.Where(x => x.DocNum.ToString() == userOrder.Salesorderid).ToList();
                 order = saporders.FirstOrDefault();
                 status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
@@ -278,10 +279,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 productType = saporders.Any(x => x.Detalles != null && productModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 hasCandidate = true;
+                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
             }
 
             if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.BaseEntry == tuple.Item1))))
             {
+                lineProducts = lineProducts.Where(x => x.SaleOrderId == tuple.Item1).ToList();
                 saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
@@ -316,6 +319,27 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
+        }
+
+        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder)
+        {
+            var hasCandidate = true;
+            if (statusOrder == ServiceConstants.Finalizado)
+            {
+                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado) && x.FinishedLabel == 1);
+                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => x.Status == ServiceConstants.Almacenado && x.FinishedLabel == 1) ? false : hasCandidate;
+                return hasCandidate;
+            }
+
+            if (statusOrder == ServiceConstants.Liberado)
+            {
+                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente) && x.FinishedLabel == 1);
+                var allAreToReceive = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => x.Status == ServiceConstants.Pendiente && x.FinishedLabel == 1);
+                hasCandidate = allAreToReceive ? false : hasCandidate;
+                return hasCandidate;
+            }
+
+            return hasCandidate;
         }
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<CancellationResourceModel> cancellations, List<InvoiceHeaderModel> invoiceHeaders)
