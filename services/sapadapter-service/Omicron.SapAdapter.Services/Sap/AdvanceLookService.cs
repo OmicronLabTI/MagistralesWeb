@@ -514,7 +514,14 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
-            var invoiceHeader = invoiceHeaders.FirstOrDefault();
+            var invoiceHeader = invoiceHeaders.FirstOrDefault(x => x.DocNum == canceled.CancelledId);
+
+            if (invoiceHeader == null)
+            {
+                return invoicesHeaders;
+            }
+
+            invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
             var totalProducts = invoiceDetail.Count;
 
