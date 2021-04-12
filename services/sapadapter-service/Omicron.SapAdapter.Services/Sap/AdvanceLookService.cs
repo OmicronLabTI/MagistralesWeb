@@ -232,7 +232,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             tupleIds.ForEach(order =>
             {
-                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts));
+                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts, sapDelivery));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, almacenData.CancelationModel, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails, almacenData.PackageModels, deliveryCompanies, users));
@@ -241,7 +241,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return cardToReturns;
         }
 
-        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> productModel)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> productModel, List<DeliverModel> deliveryHeader)
         {
             var listItemCode = productModel.Select(x => x.ProductoId).ToList();
             var orderbyDocNum = orderDetail.Where(x => x.DocNum == tuple.Item1 && x.PedidoStatus == "O" && x.Detalles != null).ToList();
@@ -253,10 +253,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
-            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel);
+            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel, deliveryHeader);
         }
 
-        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel, List<DeliverModel> deliveryHeader)
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
@@ -280,7 +280,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 hasCandidate = true;
             }
 
-            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.LineStatus == "O" && x.BaseEntry == tuple.Item1))))
+            var hasDeliveries = deliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
+            var hasActiveDeliveries = hasDeliveries.Any() && deliveryHeader.Where(x => hasDeliveries.Contains(x.DocNum)).Any(y => y.Canceled != "Y");
+
+            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !hasActiveDeliveries)))
             {
                 saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
