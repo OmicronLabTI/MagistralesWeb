@@ -123,7 +123,7 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         [TestCase("84434", 1, 0, 2, 0)]
         [TestCase("84458", 1, 1, 0, 0)]
-        [TestCase("84473", 1, 0, 0, 1)]
+        [TestCase("84473", 0, 0, 0, 1)]
         [TestCase("84508", 1, 0, 0, 0)]
         public async Task GetCardsByOrder(string docNum, int orders, int deliverys, int invoices, int distribution)
         {
