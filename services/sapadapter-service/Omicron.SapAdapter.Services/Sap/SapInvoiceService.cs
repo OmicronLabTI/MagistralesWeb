@@ -66,12 +66,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoicesId)).ToList();
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
-            var deliveryIds = userOrders.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId).Distinct().ToList();
-            deliveryIds.AddRange(lineProducts.Where(x => x.DeliveryId != 0).Select(y => y.DeliveryId));
-            deliveryIds = deliveryIds.Distinct().ToList();
-            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && deliveryIds.Contains(y.BaseEntry.Value)).Select(x => x.BaseEntry.Value).Distinct().Count();
+            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
