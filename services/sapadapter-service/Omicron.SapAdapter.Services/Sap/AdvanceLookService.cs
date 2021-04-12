@@ -253,10 +253,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
-            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel, userOrders, lineProducts);
+            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel, userOrders);
         }
 
-        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel, List<UserOrderModel> userOrders)
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
@@ -284,7 +284,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.BaseEntry == tuple.Item1))))
             {
-                lineProducts = lineProducts.Where(x => x.SaleOrderId == tuple.Item1).ToList();
                 saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
