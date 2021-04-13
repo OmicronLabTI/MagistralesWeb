@@ -166,7 +166,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (!match)
                 {
-                    // tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.SaleOrder));
                     tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.DontExistsTable));
                 }
             });
@@ -496,6 +495,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (tuple.Item2 == ServiceConstants.Invoice && !isCancelled)
             {
                 var invoice = invoiceHeadersToLook.FirstOrDefault(x => x.DocNum == tuple.Item1);
+                invoice ??= new InvoiceHeaderModel();
                 return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
@@ -509,6 +509,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if ((tuple.Item2 == ServiceConstants.DontExistsTable) && (userOrders.Any() || lineProducts.Any()) && !isCancelled)
             {
                 var invoice = invoiceHeadersToLook.FirstOrDefault(x => x.DocNum == tuple.Item1);
+                invoice ??= new InvoiceHeaderModel();
                 return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
