@@ -607,5 +607,17 @@ namespace Omicron.SapAdapter.Services.Constants
             Planificado,
             Terminado,
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusForBackOrder { get; } = new List<string>
+        {
+            Liberado,
+            Finalizado,
+        };
     }
 }
