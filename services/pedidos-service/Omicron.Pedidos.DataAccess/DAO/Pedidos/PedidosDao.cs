@@ -292,7 +292,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
             {
-                var orders = y.Where(z => z.IsProductionOrder).ToList();
+                var orders = y.Where(z => z.IsProductionOrder && z.Status != "Cancelado").ToList();
                 if (y.Any(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus) && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(y);
