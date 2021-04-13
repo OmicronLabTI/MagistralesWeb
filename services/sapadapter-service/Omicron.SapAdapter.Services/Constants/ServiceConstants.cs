@@ -336,6 +336,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Cancelado = "Cancelado";
 
         /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Planificado = "Planificado";
+
+        /// <summary>
         /// Magistral.
         /// </summary>
         public const string Magistral = "Magistral";
@@ -587,6 +592,20 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             BackOrder,
             Recibir,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnoreUserOrderAdvancedLook { get; } = new List<string>
+        {
+            Cancelado,
+            Abierto,
+            Planificado,
+            Terminado,
         };
     }
 }
