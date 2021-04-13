@@ -255,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var existanceLin = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1);
             existanceLin ??= new LineProductsModel { StatusAlmacen = string.Empty };
 
-            if (existanceMag.Status == ServiceConstants.Cancelado || existanceLin.StatusAlmacen == ServiceConstants.Cancelado)
+            if (ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status) || existanceLin.StatusAlmacen == ServiceConstants.Cancelado)
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
