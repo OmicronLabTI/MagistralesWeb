@@ -344,9 +344,10 @@ namespace Omicron.SapAdapter.Services.Sap
             if (statusOrder == ServiceConstants.Liberado)
             {
                 var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
-                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente) && x.FinishedLabel == 1);
-                var allAreToReceive = localOrders.All(x => x.Status == ServiceConstants.Pendiente && x.FinishedLabel == 1);
-                hasCandidate = allAreToReceive ? false : hasCandidate;
+                var orderWithStatusAndLabel = localOrders.Where(x => x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado).All(y => y.FinishedLabel == 1);
+                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente)) && orderWithStatusAndLabel;
+                var areAllPending = localOrders.All(x => x.Status == ServiceConstants.Pendiente);
+                hasCandidate = areAllPending ? false : hasCandidate;
                 return hasCandidate;
             }
 
