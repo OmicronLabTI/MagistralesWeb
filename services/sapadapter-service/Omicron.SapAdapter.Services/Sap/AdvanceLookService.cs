@@ -287,7 +287,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = userOrder.Status != ServiceConstants.Finalizado && ServiceConstants.Status != ServiceConstants.Almacenado ? ServiceConstants.Pendiente : status;
                 productType = saporders.Any(x => x.Detalles != null && productModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
-                hasCandidate = true;
                 hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
             }
 
@@ -334,7 +333,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder)
         {
-            var hasCandidate = true;
+            var hasCandidate = false;
             if (statusOrder == ServiceConstants.Finalizado)
             {
                 hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado) && x.FinishedLabel == 1);
@@ -344,8 +343,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (statusOrder == ServiceConstants.Liberado)
             {
-                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente) && x.FinishedLabel == 1);
-                var allAreToReceive = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(x => x.Status == ServiceConstants.Pendiente && x.FinishedLabel == 1);
+                var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente) && x.FinishedLabel == 1);
+                var allAreToReceive = localOrders.All(x => x.Status == ServiceConstants.Pendiente && x.FinishedLabel == 1);
                 hasCandidate = allAreToReceive ? false : hasCandidate;
                 return hasCandidate;
             }
