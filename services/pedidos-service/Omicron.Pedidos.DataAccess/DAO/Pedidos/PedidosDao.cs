@@ -280,7 +280,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             var orders = await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= dateToLook).ToListAsync();
 
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
-            var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
+            var orderstoReturn = await this.databaseContext.UserOrderModel.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToListAsync();
 
             var maquilaOrders = await this.databaseContext.UserOrderModel.Where(x => x.TypeOrder == "MQ").ToListAsync();
             var maquilaFinalizaed = maquilaOrders.Where(x => x.IsSalesOrder && x.Status == status && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
