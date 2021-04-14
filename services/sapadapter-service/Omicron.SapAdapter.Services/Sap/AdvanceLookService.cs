@@ -229,6 +229,22 @@ namespace Omicron.SapAdapter.Services.Sap
             var userResponse = await this.usersService.GetUsersById(almacenData.PackageModels.Select(x => x.AssignedUser).ToList(), ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
 
+            var objectCardOrder = new ParamentsCards
+            {
+                UserOrders = userOrders,
+                LineProducts = almacenData.LineProducts,
+                OrderDetail = sapSaleOrder,
+                DeliveryDetails = sapDeliveryDetails,
+                ProductModel = lineProducts,
+                DeliveryHeader = sapDelivery,
+                Cancellations = almacenData.CancelationModel,
+                InvoiceHeaders = sapInvoicesHeaders,
+                InvoiceDetailsToLook = sapInvoicesDeatils,
+                Packages = almacenData.PackageModels,
+                Repatridores = deliveryCompanies,
+                Users = users,
+            };
+
             tupleIds.ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts, sapDelivery));
