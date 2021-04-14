@@ -71,7 +71,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         dictionaryResult.Add($"{deliveryIds[i].Delivery}-Ok", "Ok");
                     }
 
-                    if (type == ServiceConstants.Total)
+                    if (type == ServiceConstants.Total && deliveryIds[i].MagistralProducts.Any())
                     {
                         dictionaryResult = CreateTransfer(deliveryIds[i], dictionaryResult, delivery);
                     }

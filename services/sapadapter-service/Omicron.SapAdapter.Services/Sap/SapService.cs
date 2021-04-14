@@ -255,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     details = details.OrderBy(x => x.Description).ToList();
                 }
 
-                var pedido = pedidos.FirstOrDefault(p => p.ProductoId == o.ProductoId);
+                var pedido = pedidos.FirstOrDefault(p => p.PedidoId == o.PedidoId && p.ProductoId == o.ProductoId);
                 var item = listProducts.FirstOrDefault(i => i.ProductoId == o.ProductoId);
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 userOrder ??= new UserOrderModel { Comments = string.Empty };

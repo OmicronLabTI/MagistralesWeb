@@ -35,17 +35,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IAlmacenService almacenService;
 
+        private readonly IUsersService usersService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AdvanceLookService"/> class.
         /// </summary>
         /// <param name="sapDao">the sap dao.</param>
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
-        public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService)
+        /// <param name="usersService">The user servie.</param>
+        public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, IUsersService usersService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
+            this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
         }
 
         /// <inheritdoc/>
@@ -100,6 +104,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<ResultModel> GetElementsByDoctor(Dictionary<string, string> parameters)
         {
+            var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
             var listDocs = await this.GetIdsToLookByDoctor(parameters);
             var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
@@ -109,6 +114,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
             var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList);
+
+            response.CardOrder = response.CardOrder.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
+            response.CardDelivery = response.CardDelivery.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
+            response.CardInvoice = response.CardInvoice.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
+            response.CardDistribution = response.CardDistribution.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
+
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
@@ -155,7 +166,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (!match)
                 {
-                    // tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.SaleOrder));
                     tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.DontExistsTable));
                 }
             });
@@ -165,7 +175,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
         {
-            var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder).Select(y => y.Item1).ToList())).ToList();
+            var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
             var sapDeliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
             var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNum(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
@@ -189,15 +199,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var listInvoicedId = sapDeliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).ToList();
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId));
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
-            sapInvoicesDeatils.GroupBy(x => x.BaseEntry).ToList().ForEach(x =>
+
+            sapInvoicesDeatils.GroupBy(x => new { x.BaseEntry, x.InvoiceId }).ToList().ForEach(x =>
             {
-                temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+                temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapInvoicesDeatils = temporalsapInvoicesDeatils;
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
             sapDeliveryDetails.GroupBy(x => x.DeliveryId).ToList().ForEach(x =>
             {
-                temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId).ToList());
+                temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapDeliveryDetails = temporalsapDeliveryDetails;
 
@@ -215,31 +226,46 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(sapInvoicesHeaders.Select(x => x.TransportCode).ToList())).ToList();
 
+            var userResponse = await this.usersService.GetUsersById(almacenData.PackageModels.Select(x => x.AssignedUser).ToList(), ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+
             tupleIds.ForEach(order =>
             {
-                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails));
+                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts, sapDelivery));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, almacenData.CancelationModel, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails));
-                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails, almacenData.PackageModels, deliveryCompanies));
+                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails, almacenData.PackageModels, deliveryCompanies, users));
             });
 
             return cardToReturns;
         }
 
-        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, List<ProductoModel> productModel, List<DeliverModel> deliveryHeader)
         {
-            if (tuple.Item2 != ServiceConstants.SaleOrder)
+            var listItemCode = productModel.Select(x => x.ProductoId).ToList();
+            var orderbyDocNum = orderDetail.Where(x => x.DocNum == tuple.Item1 && x.PedidoStatus == "O" && x.Detalles != null).ToList();
+            var isLineSale = tuple.Item2 == ServiceConstants.DontExistsTable && orderbyDocNum.Any() && orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId));
+            if (tuple.Item2 != ServiceConstants.SaleOrder && !isLineSale)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
+
+            var existanceMag = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString());
+            existanceMag ??= new UserOrderModel { Status = string.Empty };
+            var existanceLin = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1);
+            existanceLin ??= new LineProductsModel { StatusAlmacen = string.Empty };
+
+            if (ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status) || existanceLin.StatusAlmacen == ServiceConstants.Cancelado)
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
 
             var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = lineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
-            var card = this.GenerateCardForReceptionOrders(tuple, lineProducts, orderDetail, deliveryDetails, userOrder, lineProductOrder);
-            return new List<AlmacenSalesHeaderModel> { card };
+            return this.GenerateCardForReceptionOrders(tuple, orderDetail, deliveryDetails, userOrder, lineProductOrder, productModel, deliveryHeader, userOrders);
         }
 
-        private AlmacenSalesHeaderModel GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<LineProductsModel> lineProducts, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, List<CompleteOrderModel> orderDetail, List<DeliveryDetailModel> deliveryDetails, UserOrderModel userOrder, LineProductsModel lineProductOrder, List<ProductoModel> productModel, List<DeliverModel> deliveryHeader, List<UserOrderModel> userOrders)
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
@@ -254,16 +280,20 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (userOrder != null)
             {
+                userOrders = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString()).ToList();
                 saporders = orderDetail.Where(x => x.DocNum.ToString() == userOrder.Salesorderid).ToList();
                 order = saporders.FirstOrDefault();
-                status = userOrder.Status == ServiceConstants.Finalizado && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
-                status = userOrder.Status != ServiceConstants.Finalizado && ServiceConstants.Status != ServiceConstants.Almacenado ? ServiceConstants.Pendiente : status;
-                productType = lineProducts.Any(x => x.SaleOrderId == int.Parse(userOrder.Salesorderid)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                status = ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
+                status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
+                productType = saporders.Any(x => x.Detalles != null && productModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
-                hasCandidate = true;
+                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
             }
 
-            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !deliveryDetails.Any(x => x.BaseEntry == tuple.Item1))))
+            var hasDeliveries = deliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
+            var hasActiveDeliveries = hasDeliveries.Any() && deliveryHeader.Where(x => hasDeliveries.Contains(x.DocNum)).Any(y => y.Canceled != "Y");
+
+            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !hasActiveDeliveries)))
             {
                 saporders = orderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
@@ -276,7 +306,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (!hasCandidate)
             {
-                return null;
+                return new List<AlmacenSalesHeaderModel>();
             }
 
             invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
@@ -298,7 +328,31 @@ namespace Omicron.SapAdapter.Services.Sap
                 DataCheckin = porRecibirDate,
             };
 
-            return saleHeader;
+            return new List<AlmacenSalesHeaderModel> { saleHeader };
+        }
+
+        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder)
+        {
+            var hasCandidate = false;
+            if (statusOrder == ServiceConstants.Finalizado)
+            {
+                var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado) && x.FinishedLabel == 1) && !localOrders.All(x => x.Status == ServiceConstants.Almacenado && x.FinishedLabel == 1);
+                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(y => y.Status == ServiceConstants.Cancelado) ? true : hasCandidate;
+                return hasCandidate;
+            }
+
+            if (statusOrder == ServiceConstants.Liberado)
+            {
+                var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+                var orderWithStatusAndLabel = localOrders.Where(x => x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado).All(y => y.FinishedLabel == 1);
+                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Pendiente)) && orderWithStatusAndLabel;
+                var areAllPending = localOrders.All(x => x.Status == ServiceConstants.Pendiente);
+                hasCandidate = areAllPending ? false : hasCandidate;
+                return hasCandidate;
+            }
+
+            return hasCandidate;
         }
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<CancellationResourceModel> cancellations, List<InvoiceHeaderModel> invoiceHeaders)
@@ -414,18 +468,18 @@ namespace Omicron.SapAdapter.Services.Sap
             switch (type)
             {
                 case ServiceConstants.SaleOrder:
-                    var orders = (await this.sapDao.GetAllOrdersByFechaIni(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    orders = orders.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    var orders = (await this.sapDao.GetOrderModelByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    orders = orders.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return orders.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Delivery:
                     var deliveries = (await this.sapDao.GetDeliveryByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return deliveries.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Invoice:
                     var invoices = (await this.sapDao.GetInvoiceHeadersByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.Contains(y))).ToList();
+                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return invoices.Select(x => x.DocNum).Distinct().ToList();
             }
 
@@ -452,7 +506,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (tuple.Item2 == ServiceConstants.Invoice && !isCancelled)
             {
-                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder);
+                var invoice = invoiceHeadersToLook.FirstOrDefault(x => x.DocNum == tuple.Item1);
+                invoice ??= new InvoiceHeaderModel();
+                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
             if (tuple.Item2 == ServiceConstants.Invoice && isCancelled)
@@ -464,7 +520,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if ((tuple.Item2 == ServiceConstants.DontExistsTable) && (userOrders.Any() || lineProducts.Any()) && !isCancelled)
             {
-                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, deliverysToLookSaleOrder);
+                var invoice = invoiceHeadersToLook.FirstOrDefault(x => x.DocNum == tuple.Item1);
+                invoice ??= new InvoiceHeaderModel();
+                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, invoiceDetailsToLook, deliverysToLookSaleOrder);
             }
 
             return new List<InvoiceHeaderAdvancedLookUp>();
@@ -474,7 +532,14 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
-            var invoiceHeader = invoiceHeaders.FirstOrDefault();
+            var invoiceHeader = invoiceHeaders.FirstOrDefault(x => x.DocNum == canceled.CancelledId);
+
+            if (invoiceHeader == null)
+            {
+                return invoicesHeaders;
+            }
+
+            invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
             var totalProducts = invoiceDetail.Count;
 
@@ -504,10 +569,15 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var delivery in listDeliveryId.Distinct())
             {
-                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
+                if (deliveryDetailModels.Where(x => x.DeliveryId == delivery).Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0) && invoiceHeadersToLook.Any(x => x.Canceled != "Y"))
                 {
                     var invoiceId = deliveryDetailModels.FirstOrDefault(x => x.DeliveryId == delivery);
-                    var invoiceHeader = invoiceHeadersToLook.FirstOrDefault(x => x.InvoiceId == invoiceId.InvoiceId);
+                    var invoiceHeader = invoiceHeadersToLook.FirstOrDefault(x => x.Canceled != "Y" && x.InvoiceId == invoiceId.InvoiceId);
+                    if (invoiceHeader == null)
+                    {
+                        continue;
+                    }
+
                     var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
                     var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
 
@@ -546,22 +616,21 @@ namespace Omicron.SapAdapter.Services.Sap
             return invoicesHeaders;
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder)
+        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, InvoiceHeaderModel invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
             if (deliverysToLookSaleOrder.Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
             {
-                var invoiceHeader = invoiceHeaders.FirstOrDefault();
-                var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
-                var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
+                var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
+                var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
 
                 var deliverys = this.GetDeliveryModel(deliveryDetails, invoiceDetail, userOrders, lineProducts);
                 var totalProducts = invoiceDetail.Count;
 
-                var userOrderByDate = userOrders.FirstOrDefault(x => x.InvoiceId == invoiceHeader.DocNum);
+                var userOrderByDate = userOrders.FirstOrDefault(x => x.InvoiceId == invoiceHeaders.DocNum);
                 userOrderByDate = userOrderByDate != null ? userOrderByDate : userOrders.FirstOrDefault();
-                var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.InvoiceId == invoiceHeader.DocNum);
+                var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.InvoiceId == invoiceHeaders.DocNum);
                 lineProductByDelivery = lineProductByDelivery != null ? lineProductByDelivery : lineProducts.FirstOrDefault();
                 var initDate = userOrderByDate != null ? userOrderByDate.DateTimeCheckIn.Value : lineProductByDelivery.DateCheckIn.Value;
 
@@ -569,13 +638,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                     {
-                        Address = invoiceHeader.Address.Replace("\r", string.Empty),
-                        Client = invoiceHeader.Cliente,
-                        Doctor = invoiceHeader.Medico ?? string.Empty,
-                        Invoice = invoiceHeader.DocNum,
-                        DocEntry = invoiceHeader.InvoiceId,
-                        InvoiceDocDate = invoiceHeader.FechaInicio,
-                        ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                        Address = invoiceHeaders.Address.Replace("\r", string.Empty),
+                        Client = invoiceHeaders.Cliente,
+                        Doctor = invoiceHeaders.Medico ?? string.Empty,
+                        Invoice = invoiceHeaders.DocNum,
+                        DocEntry = invoiceHeaders.InvoiceId,
+                        InvoiceDocDate = invoiceHeaders.FechaInicio,
+                        ProductType = invoiceHeaders.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                         TotalDeliveries = deliverys.Count,
                         TotalProducts = totalProducts,
                         StatusDelivery = ServiceConstants.Almacenado,
@@ -614,27 +683,27 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetIsPackageDistribution(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliveryDetails, List<PackageModel> packages, List<Repartidores> repatridores)
+        private List<InvoiceHeaderAdvancedLookUp> GetIsPackageDistribution(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliveryDetails, List<PackageModel> packages, List<Repartidores> repatridores, List<UserModel> users)
         {
             if (tuple.Item2 == ServiceConstants.SaleOrder)
             {
-                return this.GetDistributionCardFromSale(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, repatridores);
+                return this.GetDistributionCardFromSale(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, repatridores, users);
             }
 
             if (tuple.Item2 == ServiceConstants.Delivery)
             {
-                return this.GetDistributionCardFromDelivery(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, repatridores);
+                return this.GetDistributionCardFromDelivery(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, repatridores, users);
             }
 
             if (tuple.Item2 == ServiceConstants.Invoice)
             {
-                return this.GetDistributionCardFromInvoice(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, deliveryDetails, repatridores);
+                return this.GetDistributionCardFromInvoice(tuple, userOrders, lineProducts, invoiceHeadersToLook, invoiceDetailsToLook, packages, deliveryDetails, repatridores, users);
             }
 
             return new List<InvoiceHeaderAdvancedLookUp>();
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromSale(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<Repartidores> repatridores)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromSale(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<Repartidores> repatridores, List<UserModel> users)
         {
             var invoiceFromSaleMag = userOrders.FirstOrDefault(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.InvoiceId != 0);
             var invoicefromSaleLine = lineProducts.FirstOrDefault(x => x.SaleOrderId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.InvoiceId != 0);
@@ -657,11 +726,12 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString() }));
-            var card = this.GenerateCardForDistribution(invoice, userOrder.FirstOrDefault(), invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores);
+            var invoiceByOrder = userOrder.FirstOrDefault(x => x.Salesorderid == tuple.Item1.ToString());
+            var card = this.GenerateCardForDistribution(invoice, invoiceByOrder, invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores, users);
             return new List<InvoiceHeaderAdvancedLookUp> { card };
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<Repartidores> repatridores)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<Repartidores> repatridores, List<UserModel> users)
         {
             var invoiceFromSaleMag = userOrders.FirstOrDefault(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.InvoiceId != 0);
             var invoicefromSaleLine = lineProducts.FirstOrDefault(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.InvoiceId != 0);
@@ -684,11 +754,13 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString() }));
-            var card = this.GenerateCardForDistribution(invoice, userOrder.FirstOrDefault(), invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores);
+            var deliveryByTuple = userOrder.FirstOrDefault(x => x.DeliveryId == tuple.Item1);
+            deliveryByTuple ??= userOrder.FirstOrDefault();
+            var card = this.GenerateCardForDistribution(invoice, deliveryByTuple, invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores, users);
             return new List<InvoiceHeaderAdvancedLookUp> { card };
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromInvoice(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<DeliveryDetailModel> deliveryDdetails, List<Repartidores> repatridores)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromInvoice(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeadersToLook, List<InvoiceDetailModel> invoiceDetailsToLook, List<PackageModel> packages, List<DeliveryDetailModel> deliveryDdetails, List<Repartidores> repatridores, List<UserModel> users)
         {
             var userOrder = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.InvoiceId == tuple.Item1).ToList();
             var lineProductOrder = lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode) && x.InvoiceId == tuple.Item1).ToList();
@@ -702,18 +774,17 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString() }));
-            var deliveries = deliveryDdetails.Where(x => x.BaseEntry == tuple.Item1).ToList();
-            var card = this.GenerateCardForDistribution(tuple.Item1, userOrder.FirstOrDefault(), invoiceHeadersToLook, invoiceDetailsToLook, deliveries, packages, true, repatridores);
+            var card = this.GenerateCardForDistribution(tuple.Item1, userOrder.FirstOrDefault(), invoiceHeadersToLook, invoiceDetailsToLook, deliveryDdetails, packages, true, repatridores, users);
             return new List<InvoiceHeaderAdvancedLookUp> { card };
         }
 
-        private InvoiceHeaderAdvancedLookUp GenerateCardForDistribution(int invoiceId, UserOrderModel userOrder, List<InvoiceHeaderModel> invoiceHeader, List<InvoiceDetailModel> invoiceDetails, List<DeliveryDetailModel> deliveryDetails, List<PackageModel> packages, bool isFromInvoice, List<Repartidores> repatridores)
+        private InvoiceHeaderAdvancedLookUp GenerateCardForDistribution(int invoiceId, UserOrderModel userOrder, List<InvoiceHeaderModel> invoiceHeader, List<InvoiceDetailModel> invoiceDetails, List<DeliveryDetailModel> deliveryDetails, List<PackageModel> packages, bool isFromInvoice, List<Repartidores> repatridores, List<UserModel> users)
         {
             var invoice = invoiceHeader.FirstOrDefault(x => x.DocNum == invoiceId);
             invoice ??= new InvoiceHeaderModel();
 
             var localInvoiceDetails = invoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
-            var totalSales = deliveryDetails.Select(x => x.BaseEntry).Distinct().ToList();
+            var totalSales = deliveryDetails.Where(y => y.InvoiceId.HasValue && y.InvoiceId == invoice.InvoiceId).Select(x => x.BaseEntry).Distinct().ToList();
             var package = packages.FirstOrDefault(x => x.InvoiceId == invoiceId);
             package ??= new PackageModel { AssignedUser = string.Empty, Status = userOrder.StatusInvoice };
 
@@ -725,19 +796,20 @@ namespace Omicron.SapAdapter.Services.Sap
                 DeliverId = !isFromInvoice ? userOrder.DeliveryId : 0,
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
-                Address = invoice.Address,
+                Address = invoice.Address.Replace("\r", string.Empty),
                 ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
                 InvoiceDocDate = userOrder.InvoiceStoreDate.Value,
                 Client = invoice.Cliente,
                 TotalProducts = localInvoiceDetails.Count,
-                DeliveredBy = package != null ? package.Comments : string.Empty,
+                DeliveredBy = this.GetDeliveredBy(userOrder.StatusInvoice, package, users),
                 ReasonNotDelivered = package != null && package.Status == ServiceConstants.NoEntregado ? package.ReasonNotDelivered : string.Empty,
                 DataCheckin = this.CalculateDistributioDate(userOrder.StatusInvoice, package, userOrder),
                 IsLookUpInvoices = isFromInvoice,
                 TrakingNumber = invoice.TrackingNumber,
                 DeliveryCompany = company == null ? string.Empty : company.TrnspName,
+                CodeClient = invoice.CardCode,
             };
 
             return card;
@@ -768,6 +840,22 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 default:
                     return order.InvoiceStoreDate.Value;
+            }
+        }
+
+        private string GetDeliveredBy(string status, PackageModel package, List<UserModel> users)
+        {
+            switch (status)
+            {
+                case ServiceConstants.Asignado:
+                    var user = users.FirstOrDefault(x => x.Id == package.AssignedUser);
+                    return user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+
+                case ServiceConstants.Entregado:
+                    return package == null ? string.Empty : package.Comments;
+
+                default:
+                    return string.Empty;
             }
         }
     }

@@ -422,7 +422,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var productionOrderId = productionOrderConfig.OrderId;
                 try
                 {
-                    company.StartTransaction();
                     var orderReference = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
 
                     if (!orderReference.GetByKey(productionOrderConfig.OrderId))
@@ -454,18 +453,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     _loggerProxy.Error(ex.Message, ex);
                     results.Add(productionOrderId, ex.Message);
-                    company.EndTransaction(BoWfTransOpt.wf_RollBack);
-                    continue;
                 }
                 catch (Exception ex)
                 {
                     _loggerProxy.Error(ex.StackTrace, ex);
                     results.Add(productionOrderId, ServiceConstants.FailReasonUnexpectedError);
-                    company.EndTransaction(BoWfTransOpt.wf_RollBack);
-                    continue;
                 }
-
-                company.EndTransaction(BoWfTransOpt.wf_Commit);
             }
 
             if (!results.Any())

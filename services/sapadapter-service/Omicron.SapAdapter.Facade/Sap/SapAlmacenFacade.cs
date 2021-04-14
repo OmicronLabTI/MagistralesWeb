@@ -157,9 +157,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetCancelledInvoices()
+        public async Task<ResultDto> GetCancelledInvoices(int days)
         {
-            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetCancelledInvoices());
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetCancelledInvoices(days));
         }
 
         /// <inheritdoc/>

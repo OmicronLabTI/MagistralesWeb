@@ -717,9 +717,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date)
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.UpdateDate == date));
+            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date));
         }
 
         /// <inheritdoc/>
@@ -740,6 +740,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => x.BaseEntry != null && baseEntry.Contains(x.BaseEntry.Value)));
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIds(List<int> ids)
         {
             var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
@@ -761,6 +762,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<OrderModel>> GetOrderModelByDocDate(DateTime initDate, DateTime endDate)
+        {
+            return await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
         }
 
         /// <summary>

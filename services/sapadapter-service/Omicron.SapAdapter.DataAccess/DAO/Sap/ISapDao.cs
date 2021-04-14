@@ -397,7 +397,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="date">the date to look.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByUpdateDate(DateTime date);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date);
 
         /// <summary>
         /// Gets the deliveries by date.
@@ -427,5 +427,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>get the orders.</returns>
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIds(List<int> ids);
+
+        /// <summary>
+        /// Gets the order by init date.
+        /// </summary>
+        Task<IEnumerable<OrderModel>> GetOrderModelByDocDate(DateTime initDate, DateTime endDate);
     }
 }

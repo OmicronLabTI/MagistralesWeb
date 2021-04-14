@@ -226,6 +226,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AdvanceLookId = "advance/id/look";
 
         /// <summary>
+        /// the special clients.
+        /// </summary>
+        public const string SpecialClients = "special/clients";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";
@@ -329,6 +334,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Status recibir.
         /// </summary>
         public const string Cancelado = "Cancelado";
+
+        /// <summary>
+        /// Status recibir.
+        /// </summary>
+        public const string Planificado = "Planificado";
 
         /// <summary>
         /// Magistral.
@@ -582,6 +592,32 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             BackOrder,
             Recibir,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnoreUserOrderAdvancedLook { get; } = new List<string>
+        {
+            Cancelado,
+            Abierto,
+            Planificado,
+            Terminado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusForBackOrder { get; } = new List<string>
+        {
+            Liberado,
+            Finalizado,
         };
     }
 }

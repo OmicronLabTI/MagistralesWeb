@@ -104,8 +104,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Gets the cancelled iinvoices.
         /// </summary>
+        /// <param name="days">The days.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetCancelledInvoices();
+        Task<ResultDto> GetCancelledInvoices(int days);
 
         /// <summary>
         /// Get the advance lookup.

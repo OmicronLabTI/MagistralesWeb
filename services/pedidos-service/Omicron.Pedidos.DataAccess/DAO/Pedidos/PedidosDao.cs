@@ -277,10 +277,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null).ToListAsync();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= dateToLook).ToListAsync();
 
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
-            var orderstoReturn = orders.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToList();
+            var orderstoReturn = await this.databaseContext.UserOrderModel.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToListAsync();
+
+            var maquilaOrders = await this.databaseContext.UserOrderModel.Where(x => x.TypeOrder == "MQ").ToListAsync();
+            var maquilaFinalizaed = maquilaOrders.Where(x => x.IsSalesOrder && x.Status == status && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
+            orderstoReturn.AddRange(maquilaOrders.Where(x => maquilaFinalizaed.Contains(x.Salesorderid)));
 
             var possiblePending = orders.Where(x => x.IsProductionOrder && (x.Status.Equals(status) || x.Status.Equals(secondStatus)) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
             var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
@@ -288,19 +292,24 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             pendingOrders.GroupBy(x => x.Salesorderid).ToList().ForEach(y =>
             {
-                var orders = y.Where(z => z.IsProductionOrder).ToList();
-                if (y.Any(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus) && z.FinishedLabel == 1) && orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                var orders = y.Where(z => z.IsProductionOrder && z.Status != "Cancelado").ToList();
+                var productionStatus = y.Where(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus)).ToList();
+                if (productionStatus.Any() && 
+                    productionStatus.All(z => z.FinishedLabel == 1) && 
+                    orders.All(z => statusPending.Contains(z.Status) && 
+                    !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(y);
                 }
             });
+            
             return orderstoReturn;
         }
 
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate == null).ToListAsync();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate == null || x.FinalizedDate >= dateToLook).ToListAsync();
             return orders.Where(x => x.IsSalesOrder && (x.Status != status || x.FinishedLabel != 1)).ToList();
         }
 

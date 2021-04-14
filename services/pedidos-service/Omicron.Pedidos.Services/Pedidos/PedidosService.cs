@@ -839,7 +839,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             orders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { saleOrderId })).ToList();
 
             var saleOrder = orders.FirstOrDefault(x => x.IsSalesOrder);
-            var allChecked = orders.Where(x => x.IsProductionOrder).All(y => y.FinishedLabel == 1);
+            var allChecked = orders.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.FinishedLabel == 1);
             saleOrder.FinishedLabel = allChecked ? 1 : 0;
             saleOrder.FinalizedDate = allChecked ? DateTime.Now : saleOrder.FinalizedDate;
 
