@@ -248,7 +248,7 @@ namespace Omicron.SapAdapter.Services.Sap
             tupleIds.ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, userOrders, almacenData.LineProducts, sapSaleOrder, sapDeliveryDetails, lineProducts, sapDelivery));
-                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, userOrders, almacenData.LineProducts, sapDeliveryDetails, sapDelivery, lineProducts, almacenData.CancelationModel, sapInvoicesHeaders));
+                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, userOrdersForDelivery, almacenDataForDelivery.LineProducts, almacenData.CancelationModel, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, userOrders, almacenData.LineProducts, sapInvoicesHeaders, sapInvoicesDeatils, sapDeliveryDetails, almacenData.PackageModels, deliveryCompanies, users));
             });
@@ -371,7 +371,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return hasCandidate;
         }
 
-        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<CancellationResourceModel> cancellations, List<InvoiceHeaderModel> invoiceHeaders)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, ParamentsCards paramsCard)
         {
             if (tuple.Item2 == ServiceConstants.Invoice)
             {
@@ -380,37 +380,77 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (tuple.Item2 == ServiceConstants.SaleOrder)
             {
-                var userOrdersFromSale = userOrders.Where(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
-                var lineProductsFromSale = lineProducts.Where(x => x.SaleOrderId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
+                var userOrdersFromSale = paramsCard.UserOrders.Where(x => x.Salesorderid == tuple.Item1.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
+                var lineProductsFromSale = paramsCard.LineProducts.Where(x => x.SaleOrderId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
                 var deliveryIdsBySale = userOrdersFromSale.Select(x => x.DeliveryId).ToList();
                 deliveryIdsBySale.AddRange(lineProductsFromSale.Select(y => y.DeliveryId));
-                return this.GenerateCardForReceptionDelivery(deliveryIdsBySale, deliveryDetailModels, deliveryHeaders, lineSapProducts, userOrdersFromSale, lineProductsFromSale, invoiceHeaders);
+
+                var paramsCardDelivery = new ParametersCardDelivery()
+                {
+                    PossibleDeliveries = deliveryIdsBySale,
+                    DeliveryDetailModels = paramsCard.DeliveryDetails,
+                    DeliveryHeaders = paramsCard.DeliveryHeader,
+                    LineSapProducts = paramsCard.ProductModel,
+                    UserOrders = userOrdersFromSale,
+                    LineProducts = lineProductsFromSale,
+                    InvoiceHeaders = paramsCard.InvoiceHeaders,
+                };
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
 
-            var isCancelled = cancellations != null && cancellations.Any(x => x.CancelledId == tuple.Item1);
+            var isCancelled = paramsCard.Cancellations != null && paramsCard.Cancellations.Any(x => x.CancelledId == tuple.Item1);
             if (tuple.Item2 == ServiceConstants.Delivery && !isCancelled)
             {
-                var userOrdersFromDelivery = userOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
-                var lineProductsFromDelivery = lineProducts.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
+                var userOrdersFromDelivery = paramsCard.UserOrders.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.Productionorderid) && x.DeliveryId != 0).ToList();
+                var lineProductsFromDelivery = paramsCard.LineProducts.Where(x => x.DeliveryId == tuple.Item1 && !string.IsNullOrEmpty(x.ItemCode) && x.DeliveryId != 0).ToList();
                 var delivryIds = new List<int> { tuple.Item1 };
-                return this.GenerateCardForReceptionDelivery(delivryIds, deliveryDetailModels, deliveryHeaders, lineSapProducts, userOrdersFromDelivery, lineProductsFromDelivery, invoiceHeaders);
+
+                var paramsCardDelivery = new ParametersCardDelivery()
+                {
+                    PossibleDeliveries = delivryIds,
+                    DeliveryDetailModels = paramsCard.DeliveryDetails,
+                    DeliveryHeaders = paramsCard.DeliveryHeader,
+                    LineSapProducts = paramsCard.ProductModel,
+                    UserOrders = userOrdersFromDelivery,
+                    LineProducts = lineProductsFromDelivery,
+                    InvoiceHeaders = paramsCard.InvoiceHeaders,
+                };
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
 
             if (tuple.Item2 == ServiceConstants.Delivery && isCancelled)
             {
                 var delivryIds = new List<int> { tuple.Item1 };
-                var cancelation = cancellations.FirstOrDefault(x => x.CancelledId == tuple.Item1);
+                var cancelation = paramsCard.Cancellations.FirstOrDefault(x => x.CancelledId == tuple.Item1);
                 cancelation ??= new CancellationResourceModel();
                 var cancelledOrder = new List<UserOrderModel> { new UserOrderModel { DeliveryId = tuple.Item1, DateTimeCheckIn = cancelation.CancelDate, StatusAlmacen = ServiceConstants.Cancelado } };
-                return this.GenerateCardForReceptionDelivery(delivryIds, deliveryDetailModels, deliveryHeaders, lineSapProducts, cancelledOrder, new List<LineProductsModel>(), new List<InvoiceHeaderModel>());
+
+                var paramsCardDelivery = new ParametersCardDelivery()
+                {
+                    PossibleDeliveries = delivryIds,
+                    DeliveryDetailModels = paramsCard.DeliveryDetails,
+                    DeliveryHeaders = paramsCard.DeliveryHeader,
+                    LineSapProducts = paramsCard.ProductModel,
+                    UserOrders = cancelledOrder,
+                    LineProducts = new List<LineProductsModel>(),
+                    InvoiceHeaders = new List<InvoiceHeaderModel>(),
+                };
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
 
             return new List<AlmacenSalesHeaderModel>();
         }
 
-        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(List<int> possibleDeliveries, List<DeliveryDetailModel> deliveryDetailModels, List<DeliverModel> deliveryHeaders, List<ProductoModel> lineSapProducts, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<InvoiceHeaderModel> invoiceHeaders)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(ParametersCardDelivery paramsCardDelivery)
         {
             var saleHeader = new List<AlmacenSalesHeaderModel>();
+            var possibleDeliveries = paramsCardDelivery.PossibleDeliveries;
+            var deliveryDetailModels = paramsCardDelivery.DeliveryDetailModels;
+            var invoiceHeaders = paramsCardDelivery.InvoiceHeaders;
+            var deliveryHeaders = paramsCardDelivery.DeliveryHeaders;
+            var userOrders = paramsCardDelivery.UserOrders;
+            var lineProducts = paramsCardDelivery.LineProducts;
+            var lineSapProducts = paramsCardDelivery.LineSapProducts;
 
             foreach (var delivery in possibleDeliveries.Distinct())
             {
