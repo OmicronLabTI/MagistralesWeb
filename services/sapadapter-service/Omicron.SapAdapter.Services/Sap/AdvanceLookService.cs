@@ -754,7 +754,9 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString() }));
-            var card = this.GenerateCardForDistribution(invoice, userOrder.FirstOrDefault(), invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores, users);
+            var deliveryByTuple = userOrder.FirstOrDefault(x => x.DeliveryId == tuple.Item1);
+            deliveryByTuple ??= userOrder.FirstOrDefault();
+            var card = this.GenerateCardForDistribution(invoice, deliveryByTuple, invoiceHeadersToLook, invoiceDetailsToLook, new List<DeliveryDetailModel>(), packages, false, repatridores, users);
             return new List<InvoiceHeaderAdvancedLookUp> { card };
         }
 
