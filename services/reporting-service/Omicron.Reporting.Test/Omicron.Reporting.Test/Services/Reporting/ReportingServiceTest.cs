@@ -93,7 +93,7 @@ namespace Omicron.Reporting.Test.Services.Request
             var mockCatalog = new Mock<ICatalogsService>();
             mockCatalog
                 .Setup(m => m.GetSmtpConfig())
-                .Returns(Task.FromResult(new SmtpConfigModel()));
+                .Returns(Task.FromResult(this.GetSMTPConfig()));
 
             var mockEmail = new Mock<IOmicronMailClient>();
             mockEmail
@@ -226,7 +226,7 @@ namespace Omicron.Reporting.Test.Services.Request
         /// gets the delivery cancel test.
         /// </summary>
         [Test]
-        public void CreateRawMaterialRequestPdf()
+        public void CreateRawMaterialRequestPdfWithSignature()
         {
             // arrange
             var rawMaterial = new List<RawMaterialRequestDetailModel>()
@@ -261,6 +261,48 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the delivery cancel test.
+        /// </summary>
+        [Test]
+        public void CreateRawMaterialRequestPdfWithoutSignature()
+        {
+            // arrange
+            var rawMaterial = new List<RawMaterialRequestDetailModel>()
+            {
+                new RawMaterialRequestDetailModel()
+                {
+                    Id = 1,
+                    Description = "description",
+                    ProductId = "reve 14",
+                    RequestId = 1,
+                    Unit = "ambar",
+                    RequestQuantity = 5,
+                },
+            };
+            var request = new RawMaterialRequestModel()
+            {
+                Id = 1,
+                CreationDate = "01/04/2020",
+                CreationUserId = "123",
+                Observations = "ninguno",
+                SigningUserId = "123",
+                SigningUserName = "username",
+                ProductionOrderIds = new List<int>() { 1, 2, 3 },
+                OrderedProducts = rawMaterial,
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            var mockEmail = new Mock<IOmicronMailClient>();
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = service.CreateRawMaterialRequestPdf(request, false);
 
             Assert.IsNotNull(result);
         }
