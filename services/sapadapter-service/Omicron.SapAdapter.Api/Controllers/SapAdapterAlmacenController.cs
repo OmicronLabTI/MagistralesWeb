@@ -228,5 +228,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.AdvanceLookUp(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders/doctor")]
+        [HttpGet]
+        public async Task<IActionResult> SearchAlmacenOrdersByDoctor([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersByDoctor(parameters);
+            return this.Ok(response);
+        }
     }
 }

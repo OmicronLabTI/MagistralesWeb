@@ -114,5 +114,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> AdvanceLookUp(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Get the Almacen Orders By Doctor.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters);
     }
 }
