@@ -221,5 +221,101 @@ namespace Omicron.Reporting.Test.Services.Request
 
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// gets the delivery cancel test.
+        /// </summary>
+        [Test]
+        public void CreateRawMaterialRequestPdf()
+        {
+            // arrange
+            var rawMaterial = new List<RawMaterialRequestDetailModel>()
+            {
+                new RawMaterialRequestDetailModel()
+                {
+                    Id = 1,
+                    Description = "description",
+                    ProductId = "reve 14",
+                    RequestId = 1,
+                    Unit = "ambar",
+                    RequestQuantity = 5,
+                },
+            };
+            var request = new RawMaterialRequestModel()
+            {
+                Id = 1,
+                CreationDate = "01/04/2020",
+                CreationUserId = "123",
+                Observations = "ninguno",
+                SigningUserId = "123",
+                SigningUserName = "username",
+                ProductionOrderIds = new List<int>() { 1, 2, 3 },
+                OrderedProducts = rawMaterial,
+                Signature = this.GetSignatureExample(),
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            var mockEmail = new Mock<IOmicronMailClient>();
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = service.CreateRawMaterialRequestPdf(request, true);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the delivery cancel test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task SubmitRawMaterialRequestPdf()
+        {
+            // arrange
+            var rawMaterial = new List<RawMaterialRequestDetailModel>()
+            {
+                new RawMaterialRequestDetailModel()
+                {
+                    Id = 1,
+                    Description = "description",
+                    ProductId = "reve 14",
+                    RequestId = 1,
+                    Unit = "ambar",
+                    RequestQuantity = 5,
+                },
+            };
+            var request = new RawMaterialRequestModel()
+            {
+                Id = 1,
+                CreationDate = "01/04/2020",
+                CreationUserId = "123",
+                Observations = "ninguno",
+                SigningUserId = "123",
+                SigningUserName = "username",
+                ProductionOrderIds = new List<int>() { 1, 2, 3 },
+                OrderedProducts = rawMaterial,
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            mockCatalog
+                .Setup(m => m.GetSmtpConfig())
+                .Returns(Task.FromResult(this.GetSMTPConfig()));
+            mockCatalog
+                .Setup(m => m.GetRawMaterialEmailConfig())
+                .Returns(Task.FromResult(this.GetRawMaterialEmailConfigModel()));
+
+            var mockEmail = new Mock<IOmicronMailClient>();
+            mockEmail
+                .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
+                .Returns(Task.FromResult(true));
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = await service.SubmitRawMaterialRequestPdf(request);
+
+            Assert.IsNotNull(result);
+        }
     }
 }
