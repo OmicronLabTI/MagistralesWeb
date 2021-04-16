@@ -96,7 +96,9 @@ export const ConstStatus = {
     reasingado: 'Reasignado',
     entregado: 'Entregado',
     almacenado: 'Almacenado',
-    rechazado: 'Rechazado'
+    rechazado: 'Rechazado',
+    initial: 'C',
+    canceled: 'Y'
 };
 export const HttpStatus = {
     ok: 200,
