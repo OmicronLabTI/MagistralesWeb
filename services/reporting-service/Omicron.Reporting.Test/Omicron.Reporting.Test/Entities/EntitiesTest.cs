@@ -29,6 +29,10 @@ namespace Omicron.Reporting.Test.Entities
             new RawMaterialRequestModel(),
             new RawMaterialRequestDetailModel(),
             new SendCancelDeliveryModel(),
+            new RejectedOrdersModel(),
+            new SendLocalPackageModel(),
+            new SendPackageModel(),
+            new SendRejectedEmailModel(),
         };
 
         /// <summary>
