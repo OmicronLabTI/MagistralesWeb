@@ -229,10 +229,12 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
-                var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
-                var userOrder = userOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == saleOrder.ToString());
-                var userOrdersBySale = userOrders.Where(x => x.Salesorderid == saleOrder.ToString()).ToList();
-                var lineProductsBySale = lineProducts.Where(x => x.SaleOrderId == saleOrder).ToList();
+                var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
+                var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();
+
+                var userOrderByDel = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid) && saleOrdersString.Contains(x.Salesorderid)).ToList();
+                var userOrdersBySale = userOrders.Where(x => saleOrdersString.Contains(x.Salesorderid)).ToList();
+                var lineProductsBySale = lineProducts.Where(x => saleOrders.Contains(x.SaleOrderId)).ToList();
                 var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
@@ -262,8 +264,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleHeader = new AlmacenSalesHeaderModel
                 {
                     Client = header == null ? string.Empty : header.Cliente,
-                    DocNum = saleOrder,
-                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    DocNum = saleOrders.Count > 1 ? saleOrders.Count : saleOrders.FirstOrDefault(),
+                    Comments = userOrderByDel == null ? string.Empty : "Hola",
                     Doctor = doctor,
                     InitDate = header == null ? DateTime.Now : header.FechaInicio,
                     Status = ServiceConstants.Almacenado,
@@ -349,6 +351,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = listBatches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                     DeliveryId = order.DeliveryId,
+                    SaleOrderId = order.BaseEntry,
                 };
 
                 listToReturn.Add(productModel);
