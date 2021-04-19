@@ -318,7 +318,7 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetProductsDelivery()
         {
-            var response = await this.almacenFacade.GetProductsDelivery(0);
+            var response = await this.almacenFacade.GetProductsDelivery(string.Empty);
 
             Assert.IsNotNull(response);
         }

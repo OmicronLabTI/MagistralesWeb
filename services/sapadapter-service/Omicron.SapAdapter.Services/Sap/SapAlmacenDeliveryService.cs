@@ -251,6 +251,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 header ??= new DeliverModel { Medico = string.Empty, FechaInicio = DateTime.Now, Cliente = string.Empty, Address = string.Empty };
+                header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
                 var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();

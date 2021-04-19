@@ -188,8 +188,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="chip">the chip.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("1")]
-        [TestCase("aa")]
+        [TestCase("75001-46037")]
         public async Task GetProductsDelivery(string chip)
         {
             // arrange
@@ -207,17 +206,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
-            var dictionary = new Dictionary<string, string>
-            {
-                { ServiceConstants.Offset, "0" },
-                { ServiceConstants.Limit, "10" },
-                { "chips", chip },
-            };
-
             var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act
-            var response = await service.GetProductsDelivery(dictionary);
+            var response = await service.GetProductsDelivery(chip);
 
             // assert
             Assert.IsNotNull(response);
