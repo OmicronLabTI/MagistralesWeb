@@ -161,6 +161,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<AlmacenOrdersByDoctorModel> GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
+            var listOrders = new List<OrderListByDoctorModel>();
             sapOrders = sapOrders.OrderByDescending(x => x.DocNum).ToList();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().ToList();
             var listToReturn = new AlmacenOrdersByDoctorModel
@@ -194,23 +195,39 @@ namespace Omicron.SapAdapter.Services.Sap
                 var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
                 var client = order == null ? string.Empty : order.Cliente;
 
-                var saleHeader = new AlmacenSalesHeaderModel
+                var sale = new AlmacenSalesByDoctorModel
                 {
-                    Client = client,
-                    DocNum = so,
                     Doctor = doctor,
+                    Address = order.Address,
+                    TotalOrders = 0,
+                    TotalItems = totalItems,
+                };
+                var saleHeader = new AlmacenSalesByDoctorHeaderModel
+                {
+                    Doctor = doctor,
+                    Address = order.Address,
+                    TotalOrders = 0,
+                    TotalPieces = totalpieces,
+                };
+
+                var saleItem = new OrderListByDoctorModel
+                {
+                    DocNum = so,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
                     Status = ServiceConstants.PorRecibir,
-                    TotalItems = totalItems,
+                    TotalOrders = 0,
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = invoiceType,
-                    TypeOrder = order.TypeOrder,
+                    Comments = string.Empty,
                 };
+                listOrders.Add(saleItem);
 
                 var saleModel = new SalesByDoctorModel
                 {
-                    AlmacenHeader = saleHeader,
+                    AlmacenSalesByDoctor = sale,
+                    AlmacenHeaderByDoctor = saleHeader,
+                    Items = listOrders,
                 };
 
                 listToReturn.SalesOrders.Add(saleModel);

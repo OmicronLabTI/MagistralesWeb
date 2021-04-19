@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="SalesByDoctorModel.cs" company="Axity">
+// <copyright file="AlmacenSalesByDoctorModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -12,26 +12,32 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     using System.Text;
 
     /// <summary>
-    /// class for sap ids relation.
+    /// The class for almacen batch.
     /// </summary>
-    public class SalesByDoctorModel
+    public class AlmacenSalesByDoctorModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public AlmacenSalesByDoctorModel AlmacenSalesByDoctor { get; set; }
+        public string Doctor { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public AlmacenSalesByDoctorHeaderModel AlmacenHeaderByDoctor { get; set; }
+        public string Address { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<OrderListByDoctorModel> Items { get; set; }
+        public int TotalOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int TotalItems { get; set; }
     }
 }
