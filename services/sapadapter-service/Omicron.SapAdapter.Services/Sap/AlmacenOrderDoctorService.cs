@@ -53,11 +53,13 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
         {
             var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
+            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var types = typesString.Split(",").ToList();
 
             var userOrdersTuple = await this.GetUserOrders();
             var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProductsTuple = await this.GetLineProducts(ids);
-            var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple);
+            var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
             var ordersByFilter = this.FilterByStatusAndDoctor(doctorValue, sapOrders.Item1, userOrdersTuple, lineProductsTuple);
             var listaToReturn = await this.GetCardOrdersToReturn(ordersByFilter, userOrdersTuple.Item1, lineProductsTuple.Item1);
 
@@ -98,7 +100,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the sap orders.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
         {
             var idsToIgnore = userOrdersTuple.Item2;
             idsToIgnore.AddRange(lineProductTuple.Item2);
@@ -130,6 +132,8 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
             var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
 
+            sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, orderHeaders, lineProducts);
+
             return new Tuple<List<CompleteAlmacenOrderModel>, int>(sapOrders, granTotal);
         }
 
@@ -151,8 +155,18 @@ namespace Omicron.SapAdapter.Services.Sap
             idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
             listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
 
-            listToReturn = listToReturn.Where(x => doctor.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
             return listToReturn;
+        }
+
+        private List<CompleteAlmacenOrderModel> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Doctor))
+            {
+                return sapOrders;
+            }
+
+            var doctorName = parameters[ServiceConstants.Chips].Split(",").ToList();
+            return sapOrders.Where(x => doctorName.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
