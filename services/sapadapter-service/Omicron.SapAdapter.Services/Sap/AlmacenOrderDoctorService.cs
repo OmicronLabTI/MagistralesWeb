@@ -335,9 +335,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var fabOrder = detailsList.FirstOrDefault(x => x.CodigoProducto.Equals(order.Detalles.ProductoId));
                 var orderId = fabOrder == null ? string.Empty : fabOrder.OrdenFabricacionId.ToString();
 
-                var itemcode = !string.IsNullOrEmpty(orderId) ? $"{item.ProductoId} - {orderId}" : item.ProductoId;
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
-
                 var orderStatus = ServiceConstants.PorRecibir;
 
                 if (item.IsMagistral.Equals("Y"))
@@ -358,11 +355,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var productModel = new ProductListModel
                 {
-                    ItemCode = itemcode,
-                    ProductType = $"Producto {productType}",
-                    Pieces = order.Detalles.Quantity,
+                    ItemCode = item.ProductoId,
                     Status = orderStatus,
-                    IsMagistral = item.IsMagistral.Equals("Y"),
                 };
 
                 listToReturn.Add(productModel);
