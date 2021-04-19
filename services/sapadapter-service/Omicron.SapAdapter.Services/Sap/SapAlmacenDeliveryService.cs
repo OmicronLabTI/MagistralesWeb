@@ -224,36 +224,32 @@ namespace Omicron.SapAdapter.Services.Sap
             var productsIds = details.Where(x => listIds.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
             var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(details.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
+            var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
 
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
+                header ??= new DeliverModel { Medico = string.Empty, FechaInicio = DateTime.Now, Cliente = string.Empty, Address = string.Empty };
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
                 var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
                 var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();
-
-                var userOrderByDel = userOrders.Where(x => string.IsNullOrEmpty(x.Productionorderid) && saleOrdersString.Contains(x.Salesorderid)).ToList();
-                var userOrdersBySale = userOrders.Where(x => saleOrdersString.Contains(x.Salesorderid)).ToList();
-                var lineProductsBySale = lineProducts.Where(x => saleOrders.Contains(x.SaleOrderId)).ToList();
-                var doctor = header == null ? string.Empty : header.Medico;
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
-                var productList = await this.GetProductListModel(deliveryDetail, userOrdersBySale, lineProductsBySale, incidents, productItems);
-                var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
 
-                header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
-                var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+                var ordersByDelivery = saleOrdersByDeliveries.Where(x => deliveryDetail.Any(y => y.BaseEntry == x.DocNum)).ToList();
+                var userOrdersBySale = userOrders.Where(x => saleOrdersString.Contains(x.Salesorderid)).ToList();
+                var salesCards = this.CreateSaleCard(ordersByDelivery, deliveryDetail, userOrdersBySale, productItems);
 
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
                 var invoice = invoices.FirstOrDefault(x => x.InvoiceId == deliveryWithInvoice.InvoiceId.Value);
                 var hasInvoice = invoice != null && invoice.InvoiceStatus != "C";
+
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = d,
-                    Doctor = doctor,
-                    InitDate = header == null ? DateTime.Now : header.FechaInicio,
+                    Doctor = header.Medico,
+                    InitDate = header.FechaInicio,
                     Status = ServiceConstants.Almacenado,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
@@ -263,17 +259,15 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var saleHeader = new AlmacenSalesHeaderModel
                 {
-                    Client = header == null ? string.Empty : header.Cliente,
-                    DocNum = saleOrders.Count > 1 ? saleOrders.Count : saleOrders.FirstOrDefault(),
-                    Comments = userOrderByDel == null ? string.Empty : "Hola",
-                    Doctor = doctor,
-                    InitDate = header == null ? DateTime.Now : header.FechaInicio,
+                    Client = header.Cliente,
+                    DocNum = saleOrders.Count,
+                    Doctor = header.Medico,
+                    InitDate = header.FechaInicio,
                     Status = ServiceConstants.Almacenado,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
-                    TypeSaleOrder = $"Pedido {productType}",
                     Remision = d,
-                    InvoiceType = invoiceType,
+                    InvoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                     TypeOrder = header.TypeOrder,
                 };
 
@@ -281,12 +275,46 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     AlmacenHeader = saleHeader,
                     AlmacenSales = salesOrderModel,
-                    Items = productList,
+                    SalesOrders = salesCards,
                 };
 
-                listToReturn.TotalItems += productList.Count;
+                listToReturn.TotalItems += salesCards.Sum(y => y.Products);
                 listToReturn.SalesOrders.Add(saleModel);
             }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the sale cads.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <param name="details">the delivery details.</param>
+        /// <param name="userOrders">the user orders.</param>
+        /// <param name="products">the products.</param>
+        /// <returns>the list to retur.</returns>
+        private List<SaleOrderByDeliveryModel> CreateSaleCard(List<OrderModel> orders, List<DeliveryDetailModel> details, List<UserOrderModel> userOrders, List<ProductoModel> products)
+        {
+            var listToReturn = new List<SaleOrderByDeliveryModel>();
+
+            orders.ForEach(x =>
+            {
+                var userOrder = userOrders.FirstOrDefault(y => y.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(y.Productionorderid));
+                var localDetails = details.Where(y => y.BaseEntry == x.DocNum).ToList();
+                var productsBySale = products.Where(y => localDetails.Any(z => z.ProductoId == y.ProductoId)).ToList();
+                var productType = productsBySale.All(y => y.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
+                productType = productsBySale.All(y => y.IsMagistral != "Y") ? ServiceConstants.Linea : productType;
+                listToReturn.Add(new SaleOrderByDeliveryModel
+                {
+                    DocNum = x.DocNum,
+                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    FechaInicio = x.FechaInicio,
+                    Pieces = localDetails.Sum(y => (int)y.Quantity),
+                    Products = localDetails.Count,
+                    Status = ServiceConstants.Almacenado,
+                    SaleOrderType = $"Pedido {productType}",
+                });
+            });
 
             return listToReturn;
         }
