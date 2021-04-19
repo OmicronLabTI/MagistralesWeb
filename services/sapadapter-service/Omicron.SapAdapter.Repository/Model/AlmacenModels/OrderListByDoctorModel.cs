@@ -20,7 +20,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string ItemCode { get; set; }
+        public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -56,7 +56,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalOrders { get; set; }
+        public int TotalItems { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
