@@ -67,6 +67,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        IsChecked = false,
                                        Detalles = dp,
                                        OrderType = order.OrderType,
+                                       Canceled = order.Canceled,
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -96,6 +97,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    IsChecked = false,
                                    Detalles = dp,
                                    OrderType = order.OrderType,
+                                   Canceled = order.Canceled,
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -126,6 +128,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   IsChecked = false,
                                   Detalles = detalle,
                                   OrderType = order.OrderType,
+                                  Canceled = order.Canceled,
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
