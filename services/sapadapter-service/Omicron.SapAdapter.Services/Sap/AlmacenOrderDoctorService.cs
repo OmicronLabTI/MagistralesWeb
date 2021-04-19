@@ -78,7 +78,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
             var saleDetails = (await this.sapDao.GetAllDetails(saleorderid)).ToList();
             var listDetails = new List<AlmacenDetailsOrder>();
-
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { saleorderid });
+            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
             foreach (var detail in details)
             {
                 var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
@@ -88,6 +89,16 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenFabricacionId.ToString();
                 var itemcode = !string.IsNullOrEmpty(orderId) ? $"{item.ProductoId} - {orderId}" : item.ProductoId;
 
+                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
+                incidentdb ??= new IncidentsModel();
+
+                var localIncident = new IncidentInfoModel
+                {
+                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Comments = incidentdb.Comments,
+                    Incidence = incidentdb.Incidence,
+                    Status = incidentdb.Status,
+                };
                 var detailItem = new AlmacenDetailsOrder
                 {
                     ItemCode = itemcode,
@@ -96,6 +107,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Pieces = detail.Quantity,
                     Container = detail.Container,
                     Status = ServiceConstants.PorRecibir,
+                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
                 listDetails.Add(detailItem);
             }
