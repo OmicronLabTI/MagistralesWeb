@@ -68,6 +68,38 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{totalFilter}");
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrderdetail(int saleorderid)
+        {
+            var details = await this.sapDao.GetPedidoById(saleorderid);
+            var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
+            var saleDetails = (await this.sapDao.GetAllDetails(saleorderid)).ToList();
+            var listDetails = new List<AlmacenDetailsOrder>();
+
+            foreach (var detail in details)
+            {
+                var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
+                item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
+                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
+                var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenFabricacionId.ToString();
+                var itemcode = !string.IsNullOrEmpty(orderId) ? $"{item.ProductoId} - {orderId}" : item.ProductoId;
+
+                var detailItem = new AlmacenDetailsOrder
+                {
+                    ItemCode = itemcode,
+                    Description = item.LargeDescription.ToUpper(),
+                    ProductType = $"Producto {productType}",
+                    Pieces = detail.Quantity,
+                    Container = detail.Container,
+                    Status = ServiceConstants.PorRecibir,
+                };
+                listDetails.Add(detailItem);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, listDetails, null, null);
+        }
+
         private async Task<Tuple<List<UserOrderModel>, List<int>, DateTime>> GetUserOrders()
         {
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);

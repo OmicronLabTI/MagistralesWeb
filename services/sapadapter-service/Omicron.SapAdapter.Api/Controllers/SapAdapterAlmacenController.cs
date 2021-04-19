@@ -241,5 +241,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.SearchAlmacenOrdersByDoctor(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="saleorderid">The type of scanned item.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/Orderdetail/{saleorderid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrderdetail(int saleorderid)
+        {
+            var response = await this.sapAlmacenFacade.GetOrderdetail(saleorderid);
+            return this.Ok(response);
+        }
     }
 }
