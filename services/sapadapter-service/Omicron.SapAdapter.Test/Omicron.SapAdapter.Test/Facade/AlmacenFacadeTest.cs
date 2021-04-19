@@ -310,5 +310,17 @@ namespace Omicron.SapAdapter.Test.Facade
 
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetProductsDelivery()
+        {
+            var response = await this.almacenFacade.GetProductsDelivery(string.Empty);
+
+            Assert.IsNotNull(response);
+        }
     }
 }

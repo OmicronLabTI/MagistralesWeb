@@ -116,6 +116,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <param name="saleId">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/{saleId}/products")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsDelivery(string saleId)
+        {
+            var response = await this.sapAlmacenFacade.GetProductsDelivery(saleId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
         [Route("/invoice/orders")]

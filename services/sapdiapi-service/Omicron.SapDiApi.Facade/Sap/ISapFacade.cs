@@ -92,6 +92,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveries);
 
         /// <summary>
+        /// Creates a delivery with multiple sales.
+        /// </summary>
+        /// <param name="createDeliveries">the sales for 1 delivery.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryDto> createDeliveries);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

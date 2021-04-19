@@ -23,5 +23,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="parameters">the parameters to look.</param>
         /// <returns>The data.</returns>
         Task<ResultModel> GetDelivery(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the products by sales.
+        /// </summary>
+        /// <param name="saleId">the sale ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetProductsDelivery(string saleId);
     }
 }
