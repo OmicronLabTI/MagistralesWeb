@@ -26,6 +26,10 @@ namespace Omicron.Reporting.Test.Dto
             new RawMaterialRequestDto(),
             new RawMaterialRequestDetailDto(),
             new SendCancelDeliveryDto(),
+            new SendLocalPackageDto(),
+            new SendPackageDto(),
+            new SendRejectedEmailDto(),
+            new RejectedOrdersDto(),
         };
 
         /// <summary>

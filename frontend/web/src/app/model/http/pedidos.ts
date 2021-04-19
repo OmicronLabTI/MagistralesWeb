@@ -91,6 +91,7 @@ export class IPedidoReq {
     labelType: string;
     finishedLabel: number;
     orderType: string;
+    canceled?: string;
 }
 
 export class CancelOrderReq {

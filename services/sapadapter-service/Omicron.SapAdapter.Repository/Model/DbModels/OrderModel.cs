@@ -102,5 +102,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("Address")]
         public string Address { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("CANCELED")]
+        public string Canceled { get; set; }
     }
 }
