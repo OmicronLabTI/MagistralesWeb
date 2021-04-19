@@ -80,7 +80,9 @@
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SapDiApi\CancelService.cs" />
+    <Compile Include="SapDiApi\CreateDeliveryService.cs" />
     <Compile Include="SapDiApi\ICancelService.cs" />
+    <Compile Include="SapDiApi\ICreateDeliveryService.cs" />
     <Compile Include="SapDiApi\ISapDiApiService.cs" />
     <Compile Include="SapDiApi\SapDiApiService.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />

@@ -24,17 +24,21 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly ICancelService cancelService;
 
+        private readonly ICreateDeliveryService createDeliveryService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
         /// <param name="mapper"></param>
         /// <param name="sapDiApiService">the sap di api.</param>
         /// <param name="cancelService">cancel service.</param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService)
+        /// <param name="createDeliveryService">the create delivery service.</param>
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
             this.cancelService = cancelService;
+            this.createDeliveryService = createDeliveryService;
         }
 
         /// <summary>
@@ -123,12 +127,12 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <returns>the status.</returns>
         public async Task<ResultDto> CreateDelivery(List<CreateDeliveryDto> createDelivery)
         {
-            return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateDelivery(this.mapper.Map<List<CreateDeliveryModel>>(createDelivery)));
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDelivery(this.mapper.Map<List<CreateDeliveryModel>>(createDelivery)));
         }
 
         public async Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryDto> createDeliveries)
         {
-            return this.mapper.Map<ResultDto>(await this.sapDiApiService.CreateDeliveryPartial(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDeliveryPartial(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
         }
 
         /// <inheritdoc/>
@@ -141,6 +145,11 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveries)
         {
             return this.mapper.Map<ResultDto>(await this.cancelService.CancelDelivery(type, this.mapper.Map<List< CancelDeliveryModel>>(deliveries)));
+        }
+
+        public async Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryDto> createDeliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDeliveryBatch(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
         }
     }
 }
