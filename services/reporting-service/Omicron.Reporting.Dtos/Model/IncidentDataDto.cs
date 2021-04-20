@@ -20,6 +20,12 @@ namespace Omicron.Reporting.Dtos.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public DateTime CreateDate { get; set; }
 
         /// <summary>

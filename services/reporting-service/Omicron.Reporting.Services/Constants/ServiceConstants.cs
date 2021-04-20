@@ -202,6 +202,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string BodyIncidentReport = "Documento de incidencias mensuales";
 
         /// <summary>
+        /// subject for email.
+        /// </summary>
+        public const string IncidentDataTableName = "Incidencias";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -224,7 +229,7 @@ namespace Omicron.Reporting.Services.Constants
         /// </value>
         public static Dictionary<string, string> IncidentKeys { get; } = new Dictionary<string, string>
         {
-            // { "ID", "Id" },
+            { "ID", "Id" },
             { "FECHA INCIDENCIA", "CreateDate" },
             { "PEDIDO", "SaleOrder" },
             { "REMISIÓN", "Delivery" },

@@ -14,11 +14,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
     using System.IO;
     using System.Linq;
     using System.Text;
+    using ClosedXML.Excel;
     using DocumentFormat.OpenXml;
     using DocumentFormat.OpenXml.Spreadsheet;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Constants;
-    using SpreadsheetLight;
 
     /// <summary>
     /// Class to create Excel reports.
@@ -32,26 +32,15 @@ namespace Omicron.Reporting.Services.ReportBuilder
         /// <returns>the data.</returns>
         public (MemoryStream, string) CreateIncidentExcel(List<IncidentDataModel> incidents)
         {
-            var ms = new MemoryStream();
             var fileName = $"{ServiceConstants.IncidentFileName}{DateTime.Today.Day}{DateTime.Today.Month}{DateTime.Today.Year}.xlsx";
             var dataTable = this.CreateIncidentDataTable(incidents, ServiceConstants.IncidentKeys);
-            using (SLDocument sl = new SLDocument())
-            {
-                var startRowIndex = 0;
-                var startColumnIndex = 0;
-                sl.ImportDataTable(startRowIndex, startColumnIndex, dataTable, true);
 
-                int endRowIndex = startRowIndex + dataTable.Rows.Count + 1 - 1;
-                int endColumnIndex = startColumnIndex + dataTable.Columns.Count - 1;
-                SLTable table = sl.CreateTable(startRowIndex, startColumnIndex, endRowIndex, endColumnIndex);
-                table.SetTableStyle(SLTableStyleTypeValues.Medium17);
-                sl.InsertTable(table);
-                sl.SaveAs(ms);
-            }
-
-            ms.Position = 0;
-
-            return (ms, fileName);
+            var mss = new MemoryStream();
+            var wb = new XLWorkbook();
+            wb.Worksheets.Add(dataTable);
+            wb.SaveAs(mss);
+            mss.Position = 0;
+            return (mss, fileName);
         }
 
         /// <summary>
@@ -63,6 +52,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
         private DataTable CreateIncidentDataTable(List<IncidentDataModel> incidents, Dictionary<string, string> columns)
         {
             var dt = new DataTable();
+            dt.TableName = ServiceConstants.IncidentDataTableName;
             columns.Keys.ToList().ForEach(x => dt.Columns.Add(x, typeof(string)));
 
             incidents.ForEach(i =>
