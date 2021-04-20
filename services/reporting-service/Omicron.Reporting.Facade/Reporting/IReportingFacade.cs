@@ -64,6 +64,6 @@ namespace Omicron.Reporting.Facade.Request
         /// </summary>
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
-        Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request)
+        Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request);
     }
 }
