@@ -205,7 +205,7 @@ namespace Omicron.Reporting.Services
                 string.Empty,
                 dictFile);
 
-            return new ResultModel { Success = true, Code = 200, Response = null };
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
         /// <summary>

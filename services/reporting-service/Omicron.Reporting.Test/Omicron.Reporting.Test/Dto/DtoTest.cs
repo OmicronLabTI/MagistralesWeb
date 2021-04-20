@@ -30,6 +30,7 @@ namespace Omicron.Reporting.Test.Dto
             new SendPackageDto(),
             new SendRejectedEmailDto(),
             new RejectedOrdersDto(),
+            new IncidentDataDto(),
         };
 
         /// <summary>

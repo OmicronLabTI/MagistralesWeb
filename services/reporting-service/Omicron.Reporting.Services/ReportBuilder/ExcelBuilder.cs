@@ -32,7 +32,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
         /// <returns>the data.</returns>
         public (MemoryStream, string) CreateIncidentExcel(List<IncidentDataModel> incidents)
         {
-            var fileName = $"{ServiceConstants.IncidentFileName}{DateTime.Today.Day}{DateTime.Today.Month}{DateTime.Today.Year}.xlsx";
+            var day = DateTime.Today.Day.ToString().Length <= 1 ? $"0{DateTime.Today.Day}" : DateTime.Today.Day.ToString();
+            var month = DateTime.Today.Month.ToString().Length <= 1 ? $"0{DateTime.Today.Month}" : DateTime.Today.Month.ToString();
+            var year = DateTime.Today.Year;
+
+            var fileName = $"{ServiceConstants.IncidentFileName}{day}{month}{year}.xlsx";
             var dataTable = this.CreateIncidentDataTable(incidents, ServiceConstants.IncidentKeys);
 
             var mss = new MemoryStream();

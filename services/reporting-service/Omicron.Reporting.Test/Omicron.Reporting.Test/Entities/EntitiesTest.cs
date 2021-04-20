@@ -33,6 +33,7 @@ namespace Omicron.Reporting.Test.Entities
             new SendLocalPackageModel(),
             new SendPackageModel(),
             new SendRejectedEmailModel(),
+            new IncidentDataModel(),
         };
 
         /// <summary>
