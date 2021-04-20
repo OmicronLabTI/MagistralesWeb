@@ -552,7 +552,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = (await this.sapDao.GetProductById(invoice.ProductoId)).FirstOrDefault();
                 item = item == null ? new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty } : item;
 
-                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value);
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && x.ProductoId == invoice.ProductoId);
                 var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
 
                 var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
@@ -614,7 +614,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private Tuple<string, int, int> GetProductStatus(List<DeliveryDetailModel> deliveries, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, InvoiceDetailModel invoice)
         {
             var status = ServiceConstants.Almacenado;
-            var deliveriesDetail = deliveries.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value);
+            var deliveriesDetail = deliveries.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && invoice.ProductoId == x.ProductoId);
             var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
             var order = orders.FirstOrDefault(x => x.PedidoId == saleId && x.ProductoId == invoice.ProductoId);
 
