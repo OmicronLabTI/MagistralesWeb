@@ -633,14 +633,14 @@ namespace Omicron.SapAdapter.Test
         {
             var userOrders = new List<UserOrderModel>
             {
-                new UserOrderModel { Id = 1, Productionorderid = "122808", Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 2, Productionorderid = null, Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 3, Productionorderid = null, Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 4, Productionorderid = "122824", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 5, Productionorderid = "122825", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 6, Productionorderid = "122821", Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
-                new UserOrderModel { Id = 7, Productionorderid = "122826", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 1, Productionorderid = "122808", Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 2, Productionorderid = null, Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 3, Productionorderid = null, Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 4, Productionorderid = "122824", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 5, Productionorderid = "122825", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 6, Productionorderid = "122821", Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                new UserOrderModel { Id = 7, Productionorderid = "122826", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
             };
 
             return new ResultDto

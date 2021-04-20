@@ -58,15 +58,14 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.AsesorModel.AddRange(this.GetAsesorModel());
             this.context.SaveChanges();
 
-            var mockPedidoService = new Mock<IPedidosService>();
-            var mockAlmacen = new Mock<IAlmacenService>();
             var userMock = new Mock<IUsersService>();
 
-            var mockPedidos = new Mock<IPedidosService>();
-            mockPedidos
+            var mockPedidoService = new Mock<IPedidosService>();
+            mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
 
+            var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
                 .Returns(Task.FromResult(this.GetLineProductsForDoctorOrders()));
@@ -83,17 +82,19 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
-        /// <param name="chip">the chips.</param>
+        /// <param name="type">the type of orders.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task SearchAlmacenOrdersByDoctor()
+        [TestCase("magistral, mixto, maquila, linea")]
+        [TestCase("magistral, mixto, linea")]
+        public async Task SearchAlmacenOrdersByAllsDoctors(string type)
         {
             // arrange
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, "magistral,mixto,maquila,linea" },
+                { ServiceConstants.Type, type },
             };
 
             // act
@@ -103,6 +104,29 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(response);
         }
 
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersByDoctor()
+        {
+            // arrange
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Doctor, "Medico B" },
+            };
+
+            // act
+            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /*
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
@@ -120,5 +144,6 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+        */
     }
 }
