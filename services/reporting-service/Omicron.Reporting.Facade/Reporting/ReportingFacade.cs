@@ -80,5 +80,11 @@ namespace Omicron.Reporting.Facade.Request
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailCancelDeliveryOrders(this.mapper.Map<List<SendCancelDeliveryModel>>(request)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SubmitIncidentsExel(this.mapper.Map<List<IncidentDataModel>>(request)));
+        }
     }
 }

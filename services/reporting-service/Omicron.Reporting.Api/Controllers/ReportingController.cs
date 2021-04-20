@@ -116,6 +116,19 @@ namespace Omicron.Reporting.Api.Controllers
         }
 
         /// <summary>
+        /// Submit file of raw material request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Operation result.</returns>
+        [Route("/submit/incidents/exel")]
+        [HttpPost]
+        public async Task<IActionResult> SubmitIncidentsExel(List<IncidentDataDto> request)
+        {
+            var response = await this.reportingFacade.SubmitIncidentsExel(request);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>
