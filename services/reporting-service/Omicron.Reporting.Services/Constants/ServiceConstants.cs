@@ -194,12 +194,12 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string SubjectIncidentReport = "Documento de incidencias mensuales";
+        public const string SubjectIncidentReport = "Incidencias internas {0}";
 
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string BodyIncidentReport = "Documento de incidencias mensuales";
+        public const string BodyIncidentReport = "Se adjunta el reporte mensual de Incidencias internas, favor de no responder este correo.";
 
         /// <summary>
         /// subject for email.

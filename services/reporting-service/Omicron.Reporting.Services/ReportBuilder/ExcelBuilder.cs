@@ -30,7 +30,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
         /// </summary>
         /// <param name="incidents">the incidets.</param>
         /// <returns>the data.</returns>
-        public (MemoryStream, string) CreateIncidentExcel(List<IncidentDataModel> incidents)
+        public (MemoryStream, string, string) CreateIncidentExcel(List<IncidentDataModel> incidents)
         {
             var day = DateTime.Today.Day.ToString().Length <= 1 ? $"0{DateTime.Today.Day}" : DateTime.Today.Day.ToString();
             var month = DateTime.Today.Month.ToString().Length <= 1 ? $"0{DateTime.Today.Month}" : DateTime.Today.Month.ToString();
@@ -44,7 +44,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
             wb.Worksheets.Add(dataTable);
             wb.SaveAs(mss);
             mss.Position = 0;
-            return (mss, fileName);
+            return (mss, fileName, $"{day}{month}{year}");
         }
 
         /// <summary>

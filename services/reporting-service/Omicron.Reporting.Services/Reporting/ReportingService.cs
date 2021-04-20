@@ -200,7 +200,7 @@ namespace Omicron.Reporting.Services
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 incidentEmail.Value,
-                ServiceConstants.SubjectIncidentReport,
+                string.Format(ServiceConstants.SubjectIncidentReport, ms.Item3),
                 ServiceConstants.BodyIncidentReport,
                 string.Empty,
                 dictFile);
